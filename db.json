@@ -1,69 +1,18 @@
 {
-  "posts": [
-    {
-      "id": 1,
-      "title": "json-server",
-      "author": "typicode"
-    }
-  ],
-  "comments": [
-    {
-      "id": 1,
-      "body": "some comment",
-      "postId": 1
-    }
-  ],
-  "profile": {
-    "name": "typicode"
-  },
   "employees": [
     {
       "firstName": "moshe1",
-      "lastName": "mamamn",
-      "email": "moshe@work.com",
-      "dob": "2023-08-09T21:00:00.000Z",
+      "lastName": "maman",
+      "email": "moshe@gmail.com",
+      "phone": "",
       "gender": "female",
-      "education": "Intermediate",
+      "education": "Post Gradute",
       "company": "google",
-      "experience": 5,
-      "package": 9,
+      "experience": 2,
+      "package": 5,
+      "cardOwnerName": "",
+      "dob": "2023-10-09T21:00:00.000Z",
       "id": 1
-    },
-    {
-      "firstName": "1111",
-      "lastName": "11111",
-      "email": "fdsfds",
-      "dob": "2023-08-01T21:00:00.000Z",
-      "gender": "female",
-      "education": "Diploma",
-      "company": "fdssfd",
-      "experience": 32432,
-      "package": 32,
-      "id": 2
-    },
-    {
-      "firstName": "moshesss",
-      "lastName": "mamamn",
-      "email": "moshe@work.com",
-      "dob": "2023-08-09T21:00:00.000Z",
-      "gender": "female",
-      "education": "Intermediate",
-      "company": "google",
-      "experience": 5,
-      "package": 9,
-      "id": 4
-    },
-    {
-      "firstName": "mmm",
-      "lastName": "jjj",
-      "email": "ddsfd",
-      "dob": "2023-08-07T21:00:00.000Z",
-      "gender": "male",
-      "education": "Diploma",
-      "company": "dsads",
-      "experience": 22,
-      "package": 11,
-      "id": 5
     }
   ]
 }

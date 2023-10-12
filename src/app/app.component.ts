@@ -19,14 +19,9 @@ export class AppComponent implements OnInit {
     'id',
     'firstName',
     'lastName',
-    'gender',
-    'dob',
-    'education',
-    'email',
-    'company',
-    'experience',
-    'package',
-    'action',
+    'emailAddress',
+    'phoneNo',
+ 
   ];
   dataSource!: MatTableDataSource<any>;
 

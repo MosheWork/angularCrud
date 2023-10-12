@@ -1,4 +1,3 @@
-import { createInjectableType } from '@angular/compiler';
 import { Component, Inject } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
@@ -18,6 +17,7 @@ export class EmpAddEditComponent {
     'Intermediate',
     'Grad',
     'Post Gradute',
+    'cardOwnerName',
   ];
 
   constructor(
@@ -30,13 +30,15 @@ export class EmpAddEditComponent {
     this.empForm = this._fb.group({
       firstName: '',
       lastName: '',
-      email: '',
-      dob: '',
+      EmailAddress: '',
+      PhoneNo: '',
       gender: '',
       education: '',
       company: '',
       experience: '',
       package: '',
+      cardOwnerName: '',
+      dob: '',
     });
   }
 

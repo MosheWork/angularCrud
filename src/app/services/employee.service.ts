@@ -13,7 +13,7 @@ export class EmployeeService {
   }
 
   getEmployeeList(): Observable<any> {
-    return this._http.get('http://localhost:3000/employees');
+    return this._http.get('http://localhost:7144/api/EmployeesApi');
   }
 
   deleteEmplyee(id: number): Observable<any> {
