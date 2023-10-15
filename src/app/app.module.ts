@@ -21,9 +21,12 @@ import { MatTableModule } from '@angular/material/table';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatSortModule } from '@angular/material/sort';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { UnitsComponent } from './units/units.component';
+import { UsersComponent } from './users/users.component';
+import { HosListComponent } from './hos-list/hos-list.component';
 
 @NgModule({
-  declarations: [AppComponent, EmpAddEditComponent],
+  declarations: [AppComponent, EmpAddEditComponent, UnitsComponent, UsersComponent, HosListComponent],
   imports: [
     BrowserModule,
     AppRoutingModule,

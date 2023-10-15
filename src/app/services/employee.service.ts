@@ -15,6 +15,12 @@ export class EmployeeService {
   getEmployeeList(): Observable<any> {
     return this._http.get('http://localhost:7144/api/ChameleonAPI');
   }
+  getUnitsList(): Observable<any> {
+    return this._http.get('http://localhost:7144/api/UnitsAPI');
+  }
+  getHosList(): Observable<any> {
+    return this._http.get('http://localhost:7144/api/HostAPI');
+  }
 
   deleteEmplyee(id: number): Observable<any> {
     return this._http.delete(`http://localhost:3000/employees/${id}`);

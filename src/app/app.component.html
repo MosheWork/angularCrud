@@ -1,57 +1,25 @@
-<mat-toolbar color="primary">
-  <span>Crud Application</span>
-  <span class="example-spacer"></span>
-  <button mat-raised-button (click)="openAddEditEmpForm()">Add Employee</button>
+<mat-toolbar color="primary" class="example-spacer">
+  <span>
+    <button mat-fab color="warn" aria-label="Example icon button with a home icon" routerLink="/">
+      <mat-icon>home</mat-icon>
+    </button>
+  </span>
+  
+  <span >Moshe The King of Online</span>
+
+  <!-- <span class="example-spacer"></span> -->
+  <!-- <button mat-raised-button (click)="openAddEditEmpForm()">Add Employee</button> -->
 </mat-toolbar>
-<div class="main-body">
-  <mat-form-field>
-    <mat-label>Filter</mat-label>
-    <input
-      matInput
-      (keyup)="applyFilter($event)"
-      placeholder="Ex. Mia"
-      #input
-    />
-  </mat-form-field>
 
-  <div class="talbe-container">
-    <table mat-table [dataSource]="dataSource" matSort>
-      <!-- ID Column -->
-      <ng-container matColumnDef="id">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header>ID</th>
-        <td mat-cell *matCellDef="let row">{{ row.id }}</td>
-      </ng-container>
-      <ng-container matColumnDef="first_Name">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header>firstName</th>
-        <td mat-cell *matCellDef="let row">{{ row.first_Name}}</td>
-      </ng-container>
-      <ng-container matColumnDef="last_Name">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header>lastName</th>
-        <td mat-cell *matCellDef="let row">{{ row.last_Name }}</td>
-      </ng-container>
-      <ng-container matColumnDef="phoneNo">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header>PhoneNo</th>
-        <td mat-cell *matCellDef="let row">{{ row.phoneNo }}</td>
-      </ng-container>
-      <ng-container matColumnDef="emailAddress">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header>EmailAddress</th>
-        <td mat-cell *matCellDef="let row">{{ row.emailAddress }}</td>
-      </ng-container>
-    
-      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-      <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
 
-      <!-- Row shown when there is no matching data. -->
-      <tr class="mat-row" *matNoDataRow>
-        <td class="mat-cell" colspan="4">
-          No data matching the filter "{{ input.value }}"
-        </td>
-      </tr>
-    </table>
 
-    <mat-paginator
-      [pageSizeOptions]="[5, 10, 25, 100]"
-      aria-label="Select page of users"
-    ></mat-paginator>
-  </div>
+<div class="body">
+<span ><button  mat-stroked-button color="primary" routerLink="/units">Units</button></span>
+<span ><button  mat-stroked-button color="primary" routerLink="/users">Users</button></span>
+<span ><button  mat-stroked-button color="primary" routerLink="/hosList">רשימת מאושפים פר מחלקה</button></span>
+
 </div>
+
+<router-outlet></router-outlet>
+
+

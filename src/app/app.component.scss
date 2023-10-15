@@ -1,6 +1,8 @@
 .example-spacer {
   flex: 1 1 auto;
+  justify-content: center;
 }
+
 
 .main-body {
   padding-top: 20px;
@@ -10,3 +12,4 @@
     width: 100%;
   }
 }
+
