@@ -24,9 +24,10 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { UnitsComponent } from './units/units.component';
 import { UsersComponent } from './users/users.component';
 import { HosListComponent } from './hos-list/hos-list.component';
+import { MychartComponent } from './mychart/mychart.component';
 
 @NgModule({
-  declarations: [AppComponent, EmpAddEditComponent, UnitsComponent, UsersComponent, HosListComponent],
+  declarations: [AppComponent, EmpAddEditComponent, UnitsComponent, UsersComponent, HosListComponent, MychartComponent],
   imports: [
     BrowserModule,
     AppRoutingModule,

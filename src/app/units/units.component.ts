@@ -1,6 +1,4 @@
-
-
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
@@ -11,24 +9,24 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { EmployeeService } from '../services/employee.service';
 import { CoreService } from '../core/core.service';
 import { EmpAddEditComponent } from '../emp-add-edit/emp-add-edit.component';
-
-
-
-
+//import * as xls from 'xlsx';
+import * as XLSX from 'xlsx';
+import { read, utils, writeFile } from 'xlsx';
 @Component({
   selector: 'app-units',
   templateUrl: './units.component.html',
-  styleUrls: ['./units.component.scss']
+  styleUrls: ['./units.component.scss'],
 })
 export class UnitsComponent {
+  // @ViewChild("table") table!: ElementRef;
+
   displayedColumns: string[] = [
     // must be small letter on start to get  from back end
     'unit',
     'name',
     'phone',
-    'head_Nurse'
+    'head_Nurse',
 
-   
     //'profile_Code'
   ];
   dataSource!: MatTableDataSource<any>;
@@ -82,4 +80,15 @@ export class UnitsComponent {
   //     error: console.log,
   //   });
   // }
+
+  convertExcel() {
+    var table_elt = document.getElementById('table');
+
+    var workbook = XLSX.utils.table_to_book(table_elt);
+    var ws = workbook.Sheets['Sheet1'];
+    XLSX.utils.sheet_add_aoa(ws, [['Created ' + new Date().toISOString()]], {
+      origin: -1,
+    });
+    XLSX.writeFile(workbook, 'Units.xlsb');
+  }
 }
