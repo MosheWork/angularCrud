@@ -9,6 +9,8 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { EmployeeService } from '../services/employee.service';
 import { CoreService } from '../core/core.service';
 import { EmpAddEditComponent } from '../emp-add-edit/emp-add-edit.component';
+import * as XLSX from 'xlsx';
+import * as FileSaver from 'file-saver';
 
 @Component({
   selector: 'app-hos-list',
@@ -20,7 +22,6 @@ export class HosListComponent {
     // must be small letter on start to get  from back end
     'departName',
     'totalHos',
-   
 
     //'profile_Code'
   ];
@@ -75,4 +76,23 @@ export class HosListComponent {
   //     error: console.log,
   //   });
   // }
+
+  exportToExcel(data: any[], fileName: string): void {
+    const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(data);
+    const workbook: XLSX.WorkBook = {
+      Sheets: { data: worksheet },
+      SheetNames: ['data'],
+    };
+    const excelBuffer: any = XLSX.write(workbook, {
+      bookType: 'xlsx',
+      type: 'array',
+    });
+    const fileData: Blob = new Blob([excelBuffer], {
+      type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8',
+    });
+    FileSaver.saveAs(
+      fileData,
+      fileName + '_export_' + new Date().getTime() + '.xlsx'
+    );
+  }
 }
