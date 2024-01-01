@@ -1,0 +1,36 @@
+
+
+.card {
+ // max-width: 400px;
+  //min-width: 400px;
+  margin-bottom: 18px;
+  margin-top: 18px;
+  margin-left: 18px;
+  border-style: solid;
+  border-width: 4px 4px 4px 4px;
+  border-color: rgb(197, 197, 223);
+  border-radius: 0.3rem;
+ text-align: right;
+}
+
+.button {
+  background-color: rgb(70, 100, 222);
+  color: white;
+  font-weight: bold;
+}
+
+.card-container {
+  display: flex;
+  flex-flow: row wrap;
+}
+
+.title1 {
+
+text-align: center;
+margin-top: 8px;
+}
+
+.dept {
+  display:grid;
+  justify-content: center;
+}

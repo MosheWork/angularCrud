@@ -1,0 +1,59 @@
+<!-- Cards with media area -->
+
+<div class="body">
+<mat-form-field appearance="outline" class="dept">
+  <mat-label>מחלקה</mat-label>
+  <mat-select  (selectionChange)="someMethod($event.value)" disableRipple>
+    <mat-option value="משה">משה</mat-option>
+    <mat-option value="ריאות">ריאות</mat-option>
+    <mat-option value="ריק">ריק</mat-option>
+    <mat-option value="הכל">הכל</mat-option>
+  </mat-select>
+</mat-form-field>
+
+<!-- <div class="col-md-12 no-padding">
+  <label>Reply Type</label>
+
+  <select (change)="onChange($event)" formControlName="replytype" class="form-control select2" type="text" style="width: 100%;">
+    <option value="1">1</option>
+    <option selected value="2">2</option>
+  </select>
+</div> -->
+
+<div class="card-container">
+  <div
+    class="card"
+    *ngIf="selectionChange === 'ריאות' || selectionChange === 'הכל'"
+  >
+    <mat-card class="example-card">
+      <mat-card-header>
+        <mat-card-title-group>
+          <mat-card-title>ברוכנסקופיה</mat-card-title>
+          <mat-card-subtitle>דר נזאל</mat-card-subtitle>
+        </mat-card-title-group>
+      </mat-card-header>
+      <mat-card-content>
+        דוח מטופלים שעברו ברכונסקופיה במרפאה
+      </mat-card-content>
+      <button mat-button class="button">להרצת הדוח</button>
+    </mat-card>
+  </div>
+
+  <div class="card" *ngIf="selectionChange === 'משה' || selectionChange === 'הכל'">
+    <mat-card>
+      <mat-card-title class="title1">רשימת עובדים פר סקטור</mat-card-title>
+      <mat-card-subtitle class="title1"> מבקש הדוח: משה ממן</mat-card-subtitle>
+      <mat-card-content>
+        דוח להצגת כמות עובדים פר סקטור +שורת סה"כ"</mat-card-content
+      >
+      <button
+        mat-button
+        class="button"
+        routerLink="/report_employee_per_sector"
+      >
+        להרצת הדוח
+      </button>
+    </mat-card>
+  </div>
+</div>
+</div>

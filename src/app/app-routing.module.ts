@@ -7,6 +7,9 @@ import { MychartComponent } from './mychart/mychart.component';
 import { UnitsComponent } from './units/units.component';
 import { UsersComponent } from './users/users.component';
 import { UploadPicComponent } from './upload-pic/upload-pic.component';
+import { SQLComponent } from './sql/sql.component';
+import { ReportEmployeesPerSectorComponent } from './report-employees-per-sector/report-employees-per-sector.component';
+import { ConsiliumsComponent } from './consiliums/consiliums.component';
 
 const routes: Routes = [
   { path: 'units', component: UnitsComponent },
@@ -15,6 +18,12 @@ const routes: Routes = [
   { path: 'hosList', component: HosListComponent },
   { path: 'chart', component: MychartComponent },
   { path: 'uploadPic', component: UploadPicComponent },
+  { path: 'sql', component: SQLComponent },
+  {
+    path: 'report_employee_per_sector',
+    component: ReportEmployeesPerSectorComponent,
+  },
+  { path: 'Consiliums', component: ConsiliumsComponent },
 ];
 
 @NgModule({

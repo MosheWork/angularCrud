@@ -1,26 +1,56 @@
-<mat-toolbar color="primary" class="example-spacer">
+<mat-toolbar class="example-spacer">
   <span>
-    <button mat-fab color="warn" aria-label="Example icon button with a home icon" routerLink="/">
+    <button
+      mat-fab
+      color="warn"
+      aria-label="Example icon button with a home icon"
+      routerLink="/"
+    >
       <mat-icon>home</mat-icon>
     </button>
   </span>
-  
-  <span >Moshe The King of Online</span>
+
+  <span>Moshe The King of Online</span>
 
   <!-- <span class="example-spacer"></span> -->
   <!-- <button mat-raised-button (click)="openAddEditEmpForm()">Add Employee</button> -->
 </mat-toolbar>
 
-
-
 <div class="body">
-<span ><button  mat-stroked-button color="primary" routerLink="/units">Units</button></span>
-<span ><button  mat-stroked-button color="primary" routerLink="/users">Users</button></span>
-<span ><button  mat-stroked-button color="primary" routerLink="/hosList">רשימת מאושפים פר מחלקה</button></span>
-<span ><button  mat-stroked-button color="primary" routerLink="/chart"> charts</button></span>
-
+  <span
+    ><button mat-stroked-button color="primary" routerLink="/units">
+      Units
+    </button></span
+  >
+  <span
+    ><button mat-stroked-button color="primary" routerLink="/users">
+      Users
+    </button></span
+  >
+  <span
+    ><button mat-stroked-button color="primary" routerLink="/hosList">
+      רשימת מאושפים פר מחלקה
+    </button></span
+  >
+  <span
+    ><button mat-stroked-button color="primary" routerLink="/chart">
+      charts
+    </button></span
+  >
+  <span
+    ><button mat-stroked-button color="primary" routerLink="/sql">
+      שאילתות
+    </button></span
+  >
+  <span
+  ><button mat-stroked-button color="primary" routerLink="/Consiliums">
+    ייעוצים
+  </button></span
+>
 </div>
 
-<router-outlet></router-outlet>
+<div class="body">
+  <router-outlet></router-outlet>
+</div>
 
-
+<app-footer></app-footer>

@@ -23,14 +23,14 @@ export class MychartComponent implements OnInit {
         for (let i = 0; i < this.chartdata.length; i++) {
           //console.log(this.chartdata[i]);
 
-          this.labeldata.push(this.chartdata[i].departName);
-          this.realdata.push(this.chartdata[i].totalHos);
+          this.labeldata.push(this.chartdata[i].name);
+          this.realdata.push(this.chartdata[i].admission_No);
         }
-        this.RenderChart(this.labeldata, this.realdata,'bar','barchart');
-        this.RenderChart(this.labeldata, this.realdata,'pie','piechart');
-        this.RenderChart(this.labeldata,this.realdata,'doughnut','dochart');
-        this.RenderChart(this.labeldata,this.realdata,'polarArea','pochart');
-        this.RenderChart(this.labeldata,this.realdata,'radar','rochart')
+        this.RenderChart(this.labeldata, this.realdata, 'bar', 'barchart');
+        this.RenderChart(this.labeldata, this.realdata, 'pie', 'piechart');
+        this.RenderChart(this.labeldata, this.realdata, 'doughnut', 'dochart');
+        this.RenderChart(this.labeldata, this.realdata, 'polarArea', 'pochart');
+        this.RenderChart(this.labeldata, this.realdata, 'radar', 'rochart');
       }
     });
   }

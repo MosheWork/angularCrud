@@ -1,24 +1,29 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
+
 import { MatDialog } from '@angular/material/dialog';
+
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatSort, MatSortModule } from '@angular/material/sort';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { EmployeeService } from '../services/employee.service';
 import { CoreService } from '../core/core.service';
 import { EmpAddEditComponent } from '../emp-add-edit/emp-add-edit.component';
+//import * as xls from 'xlsx';
 import * as XLSX from 'xlsx';
 import * as FileSaver from 'file-saver';
 
 @Component({
-  selector: 'app-hos-list',
-  templateUrl: './hos-list.component.html',
-  styleUrls: ['./hos-list.component.scss'],
+  selector: 'app-report-employees-per-sector',
+  templateUrl: './report-employees-per-sector.component.html',
+  styleUrls: ['./report-employees-per-sector.component.scss'],
 })
-export class HosListComponent {
+export class ReportEmployeesPerSectorComponent implements OnInit {
+  tableDataSource = new MatTableDataSource<any>();
+  _totalRows: number = 0;
   displayedColumns: string[] = [
     // must be small letter on start to get  from back end
-    'name',
-    'admission_No',
+    'answer_Text',
+    'total',
 
     //'profile_Code'
   ];
@@ -33,23 +38,26 @@ export class HosListComponent {
     private _coreService: CoreService
   ) {}
   ngOnInit(): void {
-    this.getHosList();
+    this.getRportsEmployessPerSector();
+    this._empService.getAllTableData(this.tableDataSource);
+    //debugger;
   }
   openAddEditEmpForm() {
     const DialogRef = this._dialog.open(EmpAddEditComponent);
     DialogRef.afterClosed().subscribe({
       next: (val) => {
         if (val) {
-          this.getHosList();
+          this.getRportsEmployessPerSector();
         }
       },
     });
   }
 
-  getHosList() {
-    this._empService.getHosList().subscribe({
+  getRportsEmployessPerSector() {
+    this._empService.getRportsEmployessPerSector().subscribe({
       next: (res) => {
         this.dataSource = new MatTableDataSource(res);
+        if (res.length > 0) this._totalRows = res[res.length - 1]?.total;
         this.dataSource.sort = this.sort;
         this.dataSource.paginator = this.paginator;
       },
@@ -72,6 +80,40 @@ export class HosListComponent {
   //     },
   //     error: console.log,
   //   });
+  // }
+
+  convertExcel() {
+    var table_elt = document.getElementById('table');
+
+    var workbook = XLSX.utils.table_to_book(table_elt);
+    var ws = workbook.Sheets['Sheet1'];
+    XLSX.utils.sheet_add_aoa(ws, [['Created ' + new Date().toISOString()]], {
+      origin: -1,
+    });
+    XLSX.writeFile(workbook, 'Units.xlsb');
+  }
+
+  // exportToExceltest(objects: any[]) {
+
+  //   // Create a workbook.
+  //   const workbook = XLSX.utils.book_new();
+
+  //   // Create a worksheet.
+  //   const worksheet = XLSX.utils.aoa_to_sheet(objects);
+
+  //   // Add the worksheet to the workbook.
+  //   XLSX.utils.book_append_sheet(workbook, worksheet, 'Data');
+
+  //   // Create a blob from the workbook.
+  //   const blob = new Blob([XLSX.write(workbook, {type: 'binary'})], {type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});
+
+  //   // Create a download link.
+  //   const downloadLink = document.createElement('a');
+  //   downloadLink.href = window.URL.createObjectURL(blob);
+  //   downloadLink.download = 'data.xlsx';
+
+  //   // Click the download link.
+  //   downloadLink.click();
   // }
 
   exportToExcel(data: any[], fileName: string): void {

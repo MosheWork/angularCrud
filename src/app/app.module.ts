@@ -27,9 +27,32 @@ import { HosListComponent } from './hos-list/hos-list.component';
 import { MychartComponent } from './mychart/mychart.component';
 import { UploadPicComponent } from './upload-pic/upload-pic.component';
 import { PicturesComponent } from './pictures/pictures.component';
+import { SQLComponent } from './sql/sql.component';
+
+import { MatCardModule } from '@angular/material/card';
+import { ReportEmployeesPerSectorComponent } from './report-employees-per-sector/report-employees-per-sector.component';
+import { MatSidenavModule } from '@angular/material/sidenav';
+import { FooterComponent } from './footer/footer.component';
+import { SideBarComponent } from './side-bar/side-bar.component';
+import { ConsiliumsComponent } from './consiliums/consiliums.component';
+
 
 @NgModule({
-  declarations: [AppComponent, EmpAddEditComponent, UnitsComponent, UsersComponent, HosListComponent, MychartComponent, UploadPicComponent, PicturesComponent],
+  declarations: [
+    AppComponent,
+    EmpAddEditComponent,
+    UnitsComponent,
+    UsersComponent,
+    HosListComponent,
+    MychartComponent,
+    UploadPicComponent,
+    PicturesComponent,
+    SQLComponent,
+    ReportEmployeesPerSectorComponent,
+    FooterComponent,
+    SideBarComponent,
+    ConsiliumsComponent,
+  ],
   imports: [
     BrowserModule,
     AppRoutingModule,
@@ -50,6 +73,11 @@ import { PicturesComponent } from './pictures/pictures.component';
     MatPaginatorModule,
     MatSortModule,
     MatSnackBarModule,
+    MatCardModule,
+    MatSidenavModule,
+    MatIconModule,
+    MatButtonModule,
+    MatToolbarModule,
   ],
   providers: [],
   bootstrap: [AppComponent],

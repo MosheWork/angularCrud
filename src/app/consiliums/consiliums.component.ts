@@ -1,28 +1,41 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatSort, MatSortModule } from '@angular/material/sort';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
+import { MatInputModule } from '@angular/material/input';
+import { MatFormFieldModule } from '@angular/material/form-field';
 import { EmployeeService } from '../services/employee.service';
 import { CoreService } from '../core/core.service';
-import { EmpAddEditComponent } from '../emp-add-edit/emp-add-edit.component';
 import * as XLSX from 'xlsx';
 import * as FileSaver from 'file-saver';
+import { HttpClient } from
+ 
+'@angular/common/http';
 
 @Component({
-  selector: 'app-hos-list',
-  templateUrl: './hos-list.component.html',
-  styleUrls: ['./hos-list.component.scss'],
+  selector: 'app-consiliums',
+  templateUrl: './consiliums.component.html',
+  styleUrls: ['./consiliums.component.scss'],
 })
-export class HosListComponent {
+export class ConsiliumsComponent  implements OnInit{
   displayedColumns: string[] = [
     // must be small letter on start to get  from back end
     'name',
-    'admission_No',
-
+    'id',
+    'first_Name',
+    'last_Name',
+    'question',
+    'time',
+    'consiliumsUnit',
     //'profile_Code'
   ];
-  dataSource!: MatTableDataSource<any>;
+
+  // dataSource!: MatTableDataSource<any>;
+  //dataSource = new MatTableDataSource<any>();
+  dataSource = new MatTableDataSource<any>([]);
+filterValues = {};
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
@@ -30,24 +43,16 @@ export class HosListComponent {
   constructor(
     private _dialog: MatDialog,
     private _empService: EmployeeService,
-    private _coreService: CoreService
+    private _coreService: CoreService,
+    private http: HttpClient,
   ) {}
-  ngOnInit(): void {
-    this.getHosList();
-  }
-  openAddEditEmpForm() {
-    const DialogRef = this._dialog.open(EmpAddEditComponent);
-    DialogRef.afterClosed().subscribe({
-      next: (val) => {
-        if (val) {
-          this.getHosList();
-        }
-      },
-    });
+
+  ngOnInit() {
+    this.getConsiliums();
   }
 
-  getHosList() {
-    this._empService.getHosList().subscribe({
+  getConsiliums() {
+    this._empService.getConsiliums().subscribe({
       next: (res) => {
         this.dataSource = new MatTableDataSource(res);
         this.dataSource.sort = this.sort;
@@ -56,24 +61,21 @@ export class HosListComponent {
       error: console.log,
     });
   }
-  applyFilter(event: Event) {
-    const filterValue = (event.target as HTMLInputElement).value;
-    this.dataSource.filter = filterValue.trim().toLowerCase();
 
+
+  applyFilter(event: Event): void {
+    const filter = (event.target as HTMLInputElement).value
+      .trim()
+      .toLocaleLowerCase();
+    this.dataSource.filter = filter;
     if (this.dataSource.paginator) {
       this.dataSource.paginator.firstPage();
     }
   }
-  // deleteEmplyee(id: number) {
-  //   this._empService.deleteEmplyee(id).subscribe({
-  //     next: (res) => {
-  //       this._coreService.openSnackBar('emplyee deleted', 'done');
-  //       this.getUnitsList();
-  //     },
-  //     error: console.log,
-  //   });
-  // }
+ 
+  
 
+  
   exportToExcel(data: any[], fileName: string): void {
     const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(data);
     const workbook: XLSX.WorkBook = {

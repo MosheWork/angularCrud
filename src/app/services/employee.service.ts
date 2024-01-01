@@ -3,7 +3,6 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { MatTableDataSource } from '@angular/material/table';
 
-
 @Injectable({
   providedIn: 'root',
 })
@@ -23,8 +22,15 @@ export class EmployeeService {
   getHosList(): Observable<any> {
     return this._http.get('http://localhost:7144/api/HostAPI');
   }
- 
-
+  getRportsEmployessPerSector(): Observable<any> {
+    return this._http.get('http://localhost:7144/api/reportsAPI');
+  }
+  getTotalEmployee(): Observable<any> {
+    return this._http.get('http://localhost:7144/api/HostAPI');
+  }
+  getConsiliums(): Observable<any> {
+    return this._http.get('http://localhost:7144/api/ConsiliumsAPI');
+  }
   deleteEmplyee(id: number): Observable<any> {
     return this._http.delete(`http://localhost:3000/employees/${id}`);
   }
@@ -32,8 +38,9 @@ export class EmployeeService {
     return this._http.put(`http://localhost:3000/employees/${id}`, data);
   }
 
-
-  async getAllTableData(tableDataSource: MatTableDataSource<any>): Promise<any[][]> {
+  async getAllTableData(
+    tableDataSource: MatTableDataSource<any>
+  ): Promise<any[][]> {
     const data: any[][] = [];
 
     for (const row of tableDataSource.data) {
@@ -44,9 +51,9 @@ export class EmployeeService {
       }
 
       data.push(rowData);
+      //debugger;
     }
 
     return data;
   }
-
 }
