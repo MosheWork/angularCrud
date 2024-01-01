@@ -35,7 +35,11 @@ import { MatSidenavModule } from '@angular/material/sidenav';
 import { FooterComponent } from './footer/footer.component';
 import { SideBarComponent } from './side-bar/side-bar.component';
 import { ConsiliumsComponent } from './consiliums/consiliums.component';
+import { MatTableDataSource } from '@angular/material/table';
+import { YourTableComponentComponent } from './your-table-component/your-table-component.component';
 
+import { FormsModule } from '@angular/forms';
+import { IsolationComponent } from './isolation/isolation.component';
 
 @NgModule({
   declarations: [
@@ -52,6 +56,8 @@ import { ConsiliumsComponent } from './consiliums/consiliums.component';
     FooterComponent,
     SideBarComponent,
     ConsiliumsComponent,
+    YourTableComponentComponent,
+    IsolationComponent,
   ],
   imports: [
     BrowserModule,
@@ -78,6 +84,7 @@ import { ConsiliumsComponent } from './consiliums/consiliums.component';
     MatIconModule,
     MatButtonModule,
     MatToolbarModule,
+    FormsModule,
   ],
   providers: [],
   bootstrap: [AppComponent],

@@ -10,6 +10,8 @@ import { UploadPicComponent } from './upload-pic/upload-pic.component';
 import { SQLComponent } from './sql/sql.component';
 import { ReportEmployeesPerSectorComponent } from './report-employees-per-sector/report-employees-per-sector.component';
 import { ConsiliumsComponent } from './consiliums/consiliums.component';
+import { YourTableComponentComponent } from './your-table-component/your-table-component.component';
+import { IsolationComponent } from './isolation/isolation.component';
 
 const routes: Routes = [
   { path: 'units', component: UnitsComponent },
@@ -24,6 +26,8 @@ const routes: Routes = [
     component: ReportEmployeesPerSectorComponent,
   },
   { path: 'Consiliums', component: ConsiliumsComponent },
+  { path: 'Isolation', component: IsolationComponent },
+  { path: 'Test', component: YourTableComponentComponent },
 ];
 
 @NgModule({

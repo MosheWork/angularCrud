@@ -10,21 +10,21 @@ interface FormControls {
   [key: string]: FormControl;
 }
 @Component({
-  selector: 'app-consiliums',
-  templateUrl: './consiliums.component.html',
-  styleUrls: ['./consiliums.component.scss'],
+  selector: 'app-your-table-component',
+  templateUrl: './your-table-component.component.html',
+  styleUrls: ['./your-table-component.component.scss'],
 })
-export class ConsiliumsComponent  implements OnInit{
+export class YourTableComponentComponent {
   filterForm: FormGroup;
   dataSource: any[] = [];
   filteredData: any[] = [];
-  columns: string[] = ['name', 'id','first_Name','last_Name','question','time','consiliumsUnit']; // Add more column names
+  columns: string[] = ['name', 'id']; // Add more column names
 
 
   constructor(private http: HttpClient) {
     this.filterForm = this.createFilterForm();
   }
- 
+
   ngOnInit() {
     // Fetch data from your API endpoint
     // Replace 'YOUR_API_ENDPOINT' with the actual endpoint

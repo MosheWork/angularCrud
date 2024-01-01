@@ -6,6 +6,7 @@
   <mat-select  (selectionChange)="someMethod($event.value)" disableRipple>
     <mat-option value="משה">משה</mat-option>
     <mat-option value="ריאות">ריאות</mat-option>
+    <mat-option value="בידודים">בידוד</mat-option>
     <mat-option value="ריק">ריק</mat-option>
     <mat-option value="הכל">הכל</mat-option>
   </mat-select>
@@ -50,6 +51,22 @@
         mat-button
         class="button"
         routerLink="/report_employee_per_sector"
+      >
+        להרצת הדוח
+      </button>
+    </mat-card>
+  </div>
+  <div class="card" *ngIf="selectionChange === 'בידודים' || selectionChange === 'הכל'">
+    <mat-card>
+      <mat-card-title class="title1">רשימת מבודדים כללית</mat-card-title>
+      <mat-card-subtitle class="title1"> מבקש הדוח: משה ממן</mat-card-subtitle>
+      <mat-card-content>
+        סה"כ מטופלים שהיו בבידוד +פילוח+שם מכניס לבידוד"</mat-card-content
+      >
+      <button
+        mat-button
+        class="button"
+        routerLink="/Isolation"
       >
         להרצת הדוח
       </button>

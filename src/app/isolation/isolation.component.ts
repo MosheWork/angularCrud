@@ -1,5 +1,3 @@
-// your-table.component.ts
-
 import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { FormControl, FormGroup } from '@angular/forms';
@@ -10,11 +8,11 @@ interface FormControls {
   [key: string]: FormControl;
 }
 @Component({
-  selector: 'app-consiliums',
-  templateUrl: './consiliums.component.html',
-  styleUrls: ['./consiliums.component.scss'],
+  selector: 'app-isolation',
+  templateUrl: './isolation.component.html',
+  styleUrls: ['./isolation.component.scss']
 })
-export class ConsiliumsComponent  implements OnInit{
+export class IsolationComponent implements OnInit {
   filterForm: FormGroup;
   dataSource: any[] = [];
   filteredData: any[] = [];
@@ -28,7 +26,7 @@ export class ConsiliumsComponent  implements OnInit{
   ngOnInit() {
     // Fetch data from your API endpoint
     // Replace 'YOUR_API_ENDPOINT' with the actual endpoint
-    this.http.get<any[]>('http://localhost:7144/api/ConsiliumsAPI').subscribe((data) => {
+    this.http.get<any[]>('http://localhost:7144/api/IsolationAPI').subscribe((data) => {
       this.dataSource = data;
       this.filteredData = [...data]; // Initially set filtered data to all data
     });
@@ -58,4 +56,5 @@ export class ConsiliumsComponent  implements OnInit{
       )
     );
   }
+
 }
