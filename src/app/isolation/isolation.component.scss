@@ -1,0 +1,19 @@
+.title {
+  text-align: center;
+  font-size: 24px;
+  font-weight: bold;
+  border-bottom: 2px solid #333; /* Adjust the color as needed */
+  padding-bottom: 8px;
+  margin-bottom: 16px;
+}
+
+.global-filter {
+    padding: 50px;
+}
+
+.mat-mdc-form-field-focus-overlay {
+    background-color: white;
+  }
+  .mdc-text-field--filled:not(.mdc-text-field--disabled) {
+    background-color: white
+  }

@@ -1,21 +1,40 @@
-<!-- app.component.html -->
+<h2 class="title">{{ tableTitle }}</h2>
 
-<form  [formGroup]="filterForm">
-    <mat-form-field *ngFor="let column of columns" appearance="fill">
-      <mat-label class="filters">{{ column }}</mat-label>
+<form [formGroup]="filterForm" dir="rtl" class="filter-form">
+  <ng-container *ngFor="let column of columns">
+    <mat-form-field appearance="outline">
+      <mat-label class="filters">{{ getColumnLabel(column) }}</mat-label>
       <input matInput [formControlName]="column" />
     </mat-form-field>
-  </form>
-  <!-- <button mat-raised-button color="primary" (click)="applyFilters()">Apply Filters</button> -->
-  <mat-table [dataSource]="filteredData" matSort>
-    <ng-container *ngFor="let column of columns" [matColumnDef]="column">
-      <mat-header-cell *matHeaderCellDef mat-sort-header>
-        {{ column }}
-      </mat-header-cell>
-      <mat-cell *matCellDef="let element">{{ element[column] }}</mat-cell>
-    </ng-container>
+  </ng-container>
+
+  <div class="global-filter" >
+    <mat-form-field appearance="outline" >
+      <mat-label class="filters" style="color: blue;">Global Filter</mat-label>
+      <input matInput [formControlName]="'globalFilter'" />
+    </mat-form-field>
+  </div>
   
-    <mat-header-row *matHeaderRowDef="columns"></mat-header-row>
-    <mat-row *matRowDef="let row; columns: columns"></mat-row>
-  </mat-table>
-  
+</form>
+
+<mat-table [dataSource]="filteredData" matSort dir="rtl">
+  <!-- Loop through columns to define each column in the table -->
+  <ng-container *ngFor="let column of columns" [matColumnDef]="column">
+    <mat-header-cell *matHeaderCellDef mat-sort-header>
+      {{ getColumnLabel(column) }}
+      <!-- Use the function to get display-friendly labels -->
+    </mat-header-cell>
+    <mat-cell *matCellDef="let element">{{ element[column] }}</mat-cell>
+  </ng-container>
+
+  <!-- Define the header row -->
+  <mat-header-row *matHeaderRowDef="columns"></mat-header-row>
+  <!-- Define the data row -->
+  <mat-row *matRowDef="let row; columns: columns"></mat-row>
+</mat-table>
+
+<!-- Define the paginator with page size options -->
+<mat-paginator
+  [pageSizeOptions]="[5, 10, 20]"
+  showFirstLastButtons
+></mat-paginator>

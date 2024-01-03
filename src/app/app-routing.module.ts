@@ -12,6 +12,7 @@ import { ReportEmployeesPerSectorComponent } from './report-employees-per-sector
 import { ConsiliumsComponent } from './consiliums/consiliums.component';
 import { YourTableComponentComponent } from './your-table-component/your-table-component.component';
 import { IsolationComponent } from './isolation/isolation.component';
+import { QualityNationalComponent } from './quality-national/quality-national.component';
 
 const routes: Routes = [
   { path: 'units', component: UnitsComponent },
@@ -27,6 +28,7 @@ const routes: Routes = [
   },
   { path: 'Consiliums', component: ConsiliumsComponent },
   { path: 'Isolation', component: IsolationComponent },
+  { path: 'Quality_National', component: QualityNationalComponent },
   { path: 'Test', component: YourTableComponentComponent },
 ];
 

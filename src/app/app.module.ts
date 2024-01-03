@@ -40,6 +40,9 @@ import { YourTableComponentComponent } from './your-table-component/your-table-c
 
 import { FormsModule } from '@angular/forms';
 import { IsolationComponent } from './isolation/isolation.component';
+import { QualityNationalComponent } from './quality-national/quality-national.component';
+
+
 
 @NgModule({
   declarations: [
@@ -58,6 +61,7 @@ import { IsolationComponent } from './isolation/isolation.component';
     ConsiliumsComponent,
     YourTableComponentComponent,
     IsolationComponent,
+    QualityNationalComponent,
   ],
   imports: [
     BrowserModule,
