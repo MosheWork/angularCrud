@@ -10,7 +10,7 @@ import { CoreService } from '../core/core.service';
 import { EmpAddEditComponent } from '../emp-add-edit/emp-add-edit.component';
 //import * as xls from 'xlsx';
 import * as XLSX from 'xlsx';
-import * as FileSaver from 'file-saver';
+//import * as FileSaver from 'file-saver';
 
 @Component({
   selector: 'app-report-employees-per-sector',
@@ -129,9 +129,9 @@ export class ReportEmployeesPerSectorComponent implements OnInit {
     const fileData: Blob = new Blob([excelBuffer], {
       type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8',
     });
-    FileSaver.saveAs(
-      fileData,
-      fileName + '_export_' + new Date().getTime() + '.xlsx'
-    );
+    // FileSaver.saveAs(
+    //   fileData,
+    //   fileName + '_export_' + new Date().getTime() + '.xlsx'
+    // );
   }
 }

@@ -3,17 +3,45 @@
   font-size: 24px;
   font-weight: bold;
   border-bottom: 2px solid #333; /* Adjust the color as needed */
-  padding-bottom: 8px;
-  margin-bottom: 16px;
+  padding-bottom: 2px;
+  margin-bottom: 2px;
+  font-family: "Franklin Gothic Medium", "Arial Narrow", Arial, sans-serif;
 }
+.title2 {
+  text-align: right;
+  font-size: 16px;
+  font-weight: bold;
+
+  padding-bottom: 2px;
+  margin-bottom: 2px;
+  font-family: "Franklin Gothic Medium", "Arial Narrow", Arial, sans-serif;
+}
+
+
+/* Add this to your isolation.component.scss file */
 
 .global-filter {
-    padding: 50px;
+  display: flex;
+  align-items:flex-start;
+  padding: 8px; /* Adjust the padding as needed */
+  // background-color: #ef1313; /* Set the background color */
 }
 
-.mat-mdc-form-field-focus-overlay {
-    background-color: white;
-  }
-  .mdc-text-field--filled:not(.mdc-text-field--disabled) {
-    background-color: white
-  }
+.search-bar {
+  width: 100%;
+  border: none;
+  outline: none;
+  padding: 8px; /* Adjust the padding as needed */
+  border-radius: 4px; /* Add some border-radius for rounded corners */
+  box-shadow: 0 2px 4px rgba(223, 9, 9, 0.1); /* Add a subtle box-shadow */
+}
+
+/* Optional: Add transition for a smooth effect */
+.search-bar {
+  transition: background-color 0.3s, box-shadow 0.3s;
+}
+
+.search-bar:focus {
+  background-color: rgb(230, 10, 10); /* Change background color on focus */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Enhance box-shadow on focus */
+}

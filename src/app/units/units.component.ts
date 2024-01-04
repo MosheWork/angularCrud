@@ -9,7 +9,7 @@ import { CoreService } from '../core/core.service';
 import { EmpAddEditComponent } from '../emp-add-edit/emp-add-edit.component';
 //import * as xls from 'xlsx';
 import * as XLSX from 'xlsx';
-import * as FileSaver from 'file-saver';
+//import * as FileSaver from 'file-saver';
 
 
 @Component({
@@ -124,7 +124,7 @@ export class UnitsComponent implements OnInit{
     const workbook: XLSX.WorkBook = { Sheets: { 'data': worksheet }, SheetNames: ['data'] };
     const excelBuffer: any = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
     const fileData: Blob = new Blob([excelBuffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8' });
-    FileSaver.saveAs(fileData, fileName + '_export_' + new Date().getTime() + '.xlsx');
+    //FileSaver.saveAs(fileData, fileName + '_export_' + new Date().getTime() + '.xlsx');
   }
 
 }
