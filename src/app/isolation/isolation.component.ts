@@ -45,17 +45,17 @@ export class IsolationComponent implements OnInit {
 
     const columnLabels: Record<string, string> = {
       id_Num: 'תעודת זהות',
-      answer_Text: 'Answer Text',
-      answer_Text_Type: 'Answer Text Type',
-      department: 'Department',
-      enterance_Date: 'Entrance Date',
-      departure_Date: 'Departure Date',
-      departure_Reason: 'Departure Reason',
-      first_Name: 'First Name',
-      last_Name: 'Last Name',
-      first_Name_g: 'First Name (G)',
-      last_Name_g: 'Last Name (G)',
-      login_Name: 'Login Name',
+      answer_Text: 'סיבת בידוד',
+      answer_Text_Type: 'סוג בידוד',
+      department: 'מחלקה',
+      enterance_Date: 'תאריך כניסה לבידוד',
+      departure_Date: 'תאריך יציאה מבידוד',
+      departure_Reason: 'סיבת יציאה מבידוד',
+      first_Name: 'שם פרטי',
+      last_Name: 'שם משפחה',
+      first_Name_g: 'שם פרטי העובד המתעד',
+      last_Name_g:' שם משפחה העובד המתעד',
+      login_Name: 'שם משתמש',
     };
    
     return columnLabels[column] || column; // Use the label if available, otherwise use the column name
