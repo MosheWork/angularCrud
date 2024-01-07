@@ -6,6 +6,8 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatSort } from '@angular/material/sort';
 
+import * as XLSX from 'xlsx';
+
 
 interface FormControls {
   [key: string]: FormControl;
@@ -21,7 +23,6 @@ export class IsolationComponent implements OnInit {
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
-
 
   filterForm: FormGroup;
   dataSource: any[] = [];
@@ -106,16 +107,45 @@ export class IsolationComponent implements OnInit {
     const filters = this.filterForm.value;
     const globalFilter = filters['globalFilter'].toLowerCase();
 
-    this.filteredData = this.dataSource.filter((item) =>
-      this.columns.every((column) => {
-        const value = String(item[column]).toLowerCase();
-        return !filters[column] || value.includes(filters[column]);
-      }) &&
-      (globalFilter === '' ||
-        this.columns.some((column) => String(item[column]).toLowerCase().includes(globalFilter)))
+    this.filteredData = this.dataSource.filter(
+      (item) =>
+        this.columns.every((column) => {
+          const value = String(item[column]).toLowerCase();
+          return !filters[column] || value.includes(filters[column]);
+        }) &&
+        (globalFilter === '' ||
+          this.columns.some((column) =>
+            String(item[column]).toLowerCase().includes(globalFilter)
+          ))
     );
 
     this.matTableDataSource.data = this.filteredData;
     this.matTableDataSource.paginator = this.paginator;
   }
+
+  exportToExcel() {
+    // Assuming you have a method to convert the filtered data to Excel format
+    const excelData = this.convertToExcelFormat(this.filteredData);
+  
+    // Create a Blob with the Excel data
+    const blob = new Blob([excelData], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+  
+    // Create a download link and trigger the download
+    const link = document.createElement('a');
+    link.href = window.URL.createObjectURL(blob);
+    link.download = 'filtered_data.xlsx';
+    link.click();
+  }
+ 
+
+// ...
+
+convertToExcelFormat(data: any[]) {
+  const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(data);
+  const workbook: XLSX.WorkBook = { Sheets: { 'data': worksheet }, SheetNames: ['data'] };
+  const excelBuffer: any = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
+  return new Blob([excelBuffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+}
+
+  
 }

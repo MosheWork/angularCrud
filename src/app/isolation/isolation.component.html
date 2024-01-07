@@ -10,14 +10,26 @@
 
   <div class="global-filter">
     <mat-form-field appearance="outline" class="long-search-bar">
-      <mat-label class="filters" style="color: blue;">חיפוש</mat-label>
+      <mat-label class="filters" style="color: blue">חיפוש</mat-label>
       <input matInput [formControlName]="'globalFilter'" class="search-input" />
     </mat-form-field>
+    <div class="icon">
+      <img
+        src="../../assets/excel.png"
+        alt="Download"
+        (click)="exportToExcel()"
+        class="download-icon"
+      />
+    </div>
   </div>
-  
 </form>
 
-<mat-table [dataSource]="matTableDataSource" matSort dir="rtl">
+<mat-table
+  [dataSource]="matTableDataSource"
+  matSort
+  dir="rtl"
+  class="mat-elevation-z8"
+>
   <!-- Loop through columns to define each column in the table -->
   <ng-container *ngFor="let column of columns" [matColumnDef]="column">
     <mat-header-cell *matHeaderCellDef mat-sort-header>
@@ -30,13 +42,13 @@
   <!-- Define the header row -->
   <mat-header-row *matHeaderRowDef="columns"></mat-header-row>
   <!-- Define the data row -->
-  <mat-row *matRowDef="let row; columns: columns"></mat-row>
+  <mat-row *matRowDef="let row; columns: columns" class="mat-row"></mat-row>
 </mat-table>
 
 <!-- Define the paginator with page size options -->
 <mat-paginator
-  [length]="matTableDataSource?.paginator?.length || 0"
-  [pageIndex]="matTableDataSource?.paginator?.pageIndex"
-  [pageSize]="matTableDataSource?.paginator?.pageSize"
+  [length]="matTableDataSource.paginator?.length || 0"
+  [pageIndex]="matTableDataSource.paginator?.pageIndex"
+  [pageSize]="matTableDataSource.paginator?.pageSize"
   [pageSizeOptions]="[10, 15, 20]"
 ></mat-paginator>

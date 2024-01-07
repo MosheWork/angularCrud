@@ -10,7 +10,7 @@ mat-table mat-row {
   }
 
   &.even {
-    background-color: white; /* Set the background color for even rows */
+    background-color: rgb(220, 17, 17); /* Set the background color for even rows */
   }
 }
 
@@ -77,4 +77,13 @@ mat-table mat-header-cell {
 .search-bar:focus {
   background-color: rgb(230, 10, 10); /* Change background color on focus */
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Enhance box-shadow on focus */
+}
+.download-icon {
+  width: 48px;
+  height: 48px;
+}
+
+.icon {
+  padding-right: 10px;
+  padding-left: 10px;
 }

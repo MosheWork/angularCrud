@@ -19,7 +19,7 @@
     "target": "ES2022",
     "module": "esnext",
     "useDefineForClassFields": false,
-    "lib": [ "dom", "es2015"]
+    "lib": ["dom", "es2015"]
   },
   "angularCompilerOptions": {
     "enableI18nLegacyMessageIdFormat": false,
