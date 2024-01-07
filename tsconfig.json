@@ -17,9 +17,9 @@
     "moduleResolution": "node",
     "importHelpers": true,
     "target": "ES2022",
-    "module": "ES2022",
+    "module": "esnext",
     "useDefineForClassFields": false,
-    "lib": ["ES2022", "dom", "es2015"]
+    "lib": [ "dom", "es2015"]
   },
   "angularCompilerOptions": {
     "enableI18nLegacyMessageIdFormat": false,
