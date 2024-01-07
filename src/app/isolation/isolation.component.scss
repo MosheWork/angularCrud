@@ -1,3 +1,25 @@
+/* isolation.component.scss */
+
+mat-table mat-row {
+  &.odd {
+    background-color: rgb(
+      222,
+      238,
+      255
+    ); /* Set the background color for odd rows */
+  }
+
+  &.even {
+    background-color: white; /* Set the background color for even rows */
+  }
+}
+
+mat-table mat-header-cell {
+  color: rgb(8, 0, 255);
+  font-style: italic;
+  font-weight: bolder;
+}
+
 .title {
   text-align: center;
   font-size: 24px;
@@ -17,7 +39,6 @@
   font-family: "Franklin Gothic Medium", "Arial Narrow", Arial, sans-serif;
 }
 
-
 .global-filter {
   width: 100%; /* Set the width of the container to 100% */
 }
@@ -34,7 +55,7 @@
 
 .global-filter {
   display: flex;
-  align-items:flex-start;
+  align-items: flex-start;
   padding: 8px; /* Adjust the padding as needed */
   // background-color: #ef1313; /* Set the background color */
 }

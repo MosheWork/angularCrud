@@ -1,18 +1,14 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { FormControl, FormGroup,FormBuilder } from '@angular/forms';
+import { FormControl, FormGroup, FormBuilder } from '@angular/forms';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { MatPaginator } from '@angular/material/paginator';
-import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
-
-
-
-
 
 interface FormControls {
   [key: string]: FormControl;
 }
+
 @Component({
   selector: 'app-isolation',
   templateUrl: './isolation.component.html',
@@ -26,6 +22,7 @@ export class IsolationComponent implements OnInit {
   filterForm: FormGroup;
   dataSource: any[] = [];
   filteredData: any[] = [];
+  matTableDataSource: MatTableDataSource<any>; // Define MatTableDataSource
 
   columns: string[] = [
     'id_Num',
@@ -39,10 +36,9 @@ export class IsolationComponent implements OnInit {
     'first_Name_g',
     'last_Name_g',
     'login_Name',
-  ]; // Add more column names
+  ];
 
   getColumnLabel(column: string): string {
-
     const columnLabels: Record<string, string> = {
       id_Num: 'תעודת זהות',
       answer_Text: 'סיבת בידוד',
@@ -54,27 +50,27 @@ export class IsolationComponent implements OnInit {
       first_Name: 'שם פרטי',
       last_Name: 'שם משפחה',
       first_Name_g: 'שם פרטי העובד המתעד',
-      last_Name_g:' שם משפחה העובד המתעד',
+      last_Name_g: ' שם משפחה העובד המתעד',
       login_Name: 'שם משתמש',
     };
-   
-    return columnLabels[column] || column; // Use the label if available, otherwise use the column name
+    return columnLabels[column] || column;
   }
-  constructor(private http: HttpClient) {
-    this.filterForm = this.createFilterForm();
-   
 
+  constructor(private http: HttpClient, private fb: FormBuilder) {
+    this.filterForm = this.createFilterForm();
+    this.matTableDataSource = new MatTableDataSource<any>([]);
   }
 
   ngOnInit() {
-    // Fetch data from your API endpoint
-    // Replace 'YOUR_API_ENDPOINT' with the actual endpoint
     this.http
       .get<any[]>('http://localhost:7144/api/IsolationAPI')
       .subscribe((data) => {
         this.dataSource = data;
-        this.filteredData = [...data]; // Initially set filtered data to all data
+        this.filteredData = [...data];
+        this.matTableDataSource = new MatTableDataSource(this.filteredData);
+        this.matTableDataSource.paginator = this.paginator;
       });
+
     this.columns.forEach((column) => {
       this.filterForm
         .get(column)
@@ -82,7 +78,6 @@ export class IsolationComponent implements OnInit {
         .subscribe(() => this.applyFilters());
     });
 
-    // Set up paginator after data is loaded
     this.filterForm.valueChanges.subscribe(() => {
       this.applyFilters();
       this.paginator.firstPage();
@@ -94,24 +89,28 @@ export class IsolationComponent implements OnInit {
     this.columns.forEach((column) => {
       formControls[column] = new FormControl('');
     });
-    formControls['globalFilter'] = new FormControl(''); // Add global filter
 
-    return new FormGroup(formControls);
+    formControls['pageSize'] = new FormControl(10);
+    formControls['pageIndex'] = new FormControl(0);
+    formControls['globalFilter'] = new FormControl('');
+
+    return this.fb.group(formControls);
   }
 
   applyFilters() {
     const filters = this.filterForm.value;
-    const globalFilter = filters['globalFilter'].toLowerCase(); // Get global filter value
-  
+    const globalFilter = filters['globalFilter'].toLowerCase();
+
     this.filteredData = this.dataSource.filter((item) =>
       this.columns.every((column) => {
         const value = String(item[column]).toLowerCase();
         return !filters[column] || value.includes(filters[column]);
       }) &&
-      (
-        globalFilter === '' || // Include the row if global filter is empty
-        this.columns.some((column) => String(item[column]).toLowerCase().includes(globalFilter))
-      )
+      (globalFilter === '' ||
+        this.columns.some((column) => String(item[column]).toLowerCase().includes(globalFilter)))
     );
+
+    this.matTableDataSource.data = this.filteredData;
+    this.matTableDataSource.paginator = this.paginator;
   }
 }

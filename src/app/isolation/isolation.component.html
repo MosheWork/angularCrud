@@ -17,7 +17,7 @@
   
 </form>
 
-<mat-table [dataSource]="filteredData" matSort dir="rtl">
+<mat-table [dataSource]="matTableDataSource" matSort dir="rtl">
   <!-- Loop through columns to define each column in the table -->
   <ng-container *ngFor="let column of columns" [matColumnDef]="column">
     <mat-header-cell *matHeaderCellDef mat-sort-header>
@@ -35,6 +35,8 @@
 
 <!-- Define the paginator with page size options -->
 <mat-paginator
-  [pageSizeOptions]="[5, 10, 20]"
-  showFirstLastButtons
+  [length]="matTableDataSource?.paginator?.length || 0"
+  [pageIndex]="matTableDataSource?.paginator?.pageIndex"
+  [pageSize]="matTableDataSource?.paginator?.pageSize"
+  [pageSizeOptions]="[10, 15, 20]"
 ></mat-paginator>
