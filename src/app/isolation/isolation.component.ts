@@ -4,6 +4,8 @@ import { FormControl, FormGroup, FormBuilder } from '@angular/forms';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
+import { MatSort } from '@angular/material/sort';
+
 
 interface FormControls {
   [key: string]: FormControl;
@@ -18,6 +20,8 @@ export class IsolationComponent implements OnInit {
   tableTitle: string = 'דוח בידודים';
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
+  @ViewChild(MatSort) sort!: MatSort;
+
 
   filterForm: FormGroup;
   dataSource: any[] = [];
@@ -69,6 +73,7 @@ export class IsolationComponent implements OnInit {
         this.filteredData = [...data];
         this.matTableDataSource = new MatTableDataSource(this.filteredData);
         this.matTableDataSource.paginator = this.paginator;
+        this.matTableDataSource.sort = this.sort;
       });
 
     this.columns.forEach((column) => {
