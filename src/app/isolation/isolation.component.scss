@@ -1,25 +1,19 @@
 /* isolation.component.scss */
 
-mat-table mat-row {
-  &.odd {
-    background-color: rgb(
-      222,
-      238,
-      255
-    ); /* Set the background color for odd rows */
-  }
+mat-table.mat-elevation-z8 mat-row:nth-child(odd) {
+  background-color: #c2d8ef;
+}
 
-  &.even {
-    background-color: rgb(220, 17, 17); /* Set the background color for even rows */
-  }
+mat-table.mat-elevation-z8 mat-row:nth-child(even) {
+  background-color: white;
 }
 
 mat-table mat-header-cell {
   color: rgb(8, 0, 255);
   font-style: italic;
   font-weight: bolder;
+  font-size: larger;
 }
-
 .title {
   text-align: center;
   font-size: 24px;
@@ -86,4 +80,7 @@ mat-table mat-header-cell {
 .icon {
   padding-right: 10px;
   padding-left: 10px;
+}
+.filter-form {
+  padding-top: 10px;
 }
