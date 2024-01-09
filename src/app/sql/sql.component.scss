@@ -1,8 +1,6 @@
-
-
 .card {
- // max-width: 400px;
-  //min-width: 400px;
+  // max-width: 400px;
+  min-width: 300px;
   margin-bottom: 18px;
   margin-top: 18px;
   margin-left: 18px;
@@ -10,7 +8,7 @@
   border-width: 4px 4px 4px 4px;
   border-color: rgb(197, 197, 223);
   border-radius: 0.3rem;
- text-align: right;
+  text-align: right;
 }
 
 .button {
@@ -25,12 +23,11 @@
 }
 
 .title1 {
-
-text-align: center;
-margin-top: 8px;
+  text-align: center;
+  margin-top: 8px;
 }
 
 .dept {
-  display:grid;
+  display: grid;
   justify-content: center;
 }

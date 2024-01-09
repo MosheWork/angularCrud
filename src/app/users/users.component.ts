@@ -28,6 +28,7 @@ export class UsersComponent implements OnInit {
   filterForm: FormGroup;
   dataSource: any[] = [];
   filteredData: any[] = [];
+  answerTextOptions: any[] = [];
   matTableDataSource: MatTableDataSource<any>; // Define MatTableDataSource
 
   columns: string[] = [
@@ -76,40 +77,51 @@ export class UsersComponent implements OnInit {
     this.matTableDataSource = new MatTableDataSource<any>([]);
   }
   ngOnInit() {
-    this.http.get<any[]>('http://localhost:7144/api/ChameleonAPI').subscribe((data) => {
-      this.dataSource = data;
-      this.filteredData = [...data];
-      this.matTableDataSource = new MatTableDataSource(this.filteredData);
-      this.matTableDataSource.paginator = this.paginator;
-      this.matTableDataSource.sort = this.sort;
-  
-      this.columns.forEach((column) => {
-        this.filterForm
-          .get(column)
-          ?.valueChanges.pipe(debounceTime(300), distinctUntilChanged())
-          .subscribe(() => this.applyFilters());
-      });
-  
-      this.filterForm.valueChanges.subscribe(() => {
+    this.http
+      .get<any[]>('http://localhost:7144/api/ChameleonAPI')
+      .subscribe((data) => {
+        //console.log('Received data:', data); // Log the data received from the API
+        this.dataSource = data;
+        this.filteredData = [...data];
+        this.matTableDataSource = new MatTableDataSource(this.filteredData);
+        this.matTableDataSource.paginator = this.paginator;
+        this.matTableDataSource.sort = this.sort;
+
+        this.columns.forEach((column) => {
+          this.filterForm
+            .get(column)
+            ?.valueChanges.pipe(debounceTime(300), distinctUntilChanged())
+            .subscribe(() => this.applyFilters());
+        });
+        this.fetchAnswerTextOptions();
+        this.filterForm.valueChanges.subscribe(() => {
+          this.applyFilters();
+          this.paginator.firstPage();
+        });
+
+        // Call applyFilters initially to set the initial totalResults
         this.applyFilters();
-        this.paginator.firstPage();
       });
-  
-      // Call applyFilters initially to set the initial totalResults
-      this.applyFilters();
-    });
   }
-  
 
   private createFilterForm() {
     const formControls: FormControls = {};
+
     this.columns.forEach((column) => {
       formControls[column] = new FormControl('');
 
       if (column === 'enterance_Date' || column === 'departure_Date') {
-        formControls[column] = new FormControl(null); // Initialize as null for date picker
+        formControls[column] = new FormControl(null);
+      }
+
+      if (column === 'answer_Text') {
+        formControls[column] = new FormControl('');
+        formControls[column + 'Options'] = new FormControl([]);
       }
     });
+
+    // Add a dummy control to handle potential null values
+    //formControls['dummyControl'] = new FormControl('');
 
     formControls['pageSize'] = new FormControl(10);
     formControls['pageIndex'] = new FormControl(0);
@@ -144,6 +156,9 @@ export class UsersComponent implements OnInit {
             String(item[column]).toLowerCase().includes(globalFilter)
           ))
     );
+
+    //console.log('Filtered Data:', this.filteredData); // Log the filtered data
+
     this.totalResults = this.filteredData.length;
     this.matTableDataSource.data = this.filteredData;
     this.matTableDataSource.paginator = this.paginator;
@@ -192,5 +207,20 @@ export class UsersComponent implements OnInit {
     return new Blob([excelBuffer], {
       type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
     });
+  }
+  fetchAnswerTextOptions() {
+    this.http
+      .get<any[]>('http://localhost:7144/api/ChameleonAPI')
+      .subscribe((data) => {
+        // Extract distinct values from the 'answer_Text' column
+        this.answerTextOptions = [
+          ...new Set(data.map((item) => item.answer_Text)),
+        ];
+        console.log('Answer Text Options:', this.answerTextOptions);
+      });
+  }
+
+  getFormControl(column: string): FormControl {
+    return (this.filterForm.get(column) as FormControl) || new FormControl('');
   }
 }

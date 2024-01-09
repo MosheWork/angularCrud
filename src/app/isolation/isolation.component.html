@@ -15,10 +15,33 @@
             else datepicker
           "
         >
-          <input matInput [formControlName]="column" />
+          <input matInput [formControl]="getFormControl(column)" />
+          <mat-select
+            *ngIf="column === 'answer_Text' "
+            [formControl]="getFormControl(column)"
+          >
+            <mat-option
+              *ngFor="let option of answerTextOptions"
+              [value]="option"
+            >
+              {{ option }}
+            </mat-option>
+          </mat-select>
+          
+        </ng-container>
+        <ng-container *ngIf="column === 'answer_Text_Type' ">
+          <mat-select [formControl]="getFormControl(column)">
+            <mat-option *ngFor="let option of answerTextTypeOptions" [value]="option">
+              {{ option }}
+            </mat-option>
+          </mat-select>
         </ng-container>
         <ng-template #datepicker>
-          <input matInput [formControlName]="column" [matDatepicker]="picker" />
+          <input
+            matInput
+            [formControl]="getFormControl(column)"
+            [matDatepicker]="picker"
+          />
           <mat-datepicker-toggle
             matSuffix
             [for]="picker"

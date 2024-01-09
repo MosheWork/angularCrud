@@ -19,16 +19,38 @@ interface FormControls {
 export class HospitalizationsListComponent implements OnInit {
   Title1: string = ' כמות מאושפזים';
   Title2: string = 'משה-כללי ';
+  totalResults: number = 0;
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
+  // Form group for filtering controls
+
   filterForm: FormGroup;
+
+  // Arrays to store data and options for dropdowns
+
   dataSource: any[] = [];
   filteredData: any[] = [];
+  answerTextOptions: any[] = [];
+  answerTextTypeOptions: any[] = []; // New array for 'answer_Text_Type'
+
+  // MatTableDataSource for Angular Material table
+
   matTableDataSource: MatTableDataSource<any>; // Define MatTableDataSource
 
+  // Column names for the table
   columns: string[] = ['name', 'admission_No'];
+
+  // Add this method to reset filters
+  resetFilters() {
+    // Reset all form controls to their default values
+    this.filterForm.reset();
+
+    // Trigger the applyFilters method to apply the changes
+    this.applyFilters();
+  }
+  // Method to parse a date string into a Date object or null
 
   parseDate(dateString: string | null): Date | null {
     if (!dateString) {
@@ -53,7 +75,7 @@ export class HospitalizationsListComponent implements OnInit {
     };
     return columnLabels[column] || column;
   }
-
+  // Constructor to initialize HttpClient and FormBuilder
   constructor(private http: HttpClient, private fb: FormBuilder) {
     this.filterForm = this.createFilterForm();
     this.matTableDataSource = new MatTableDataSource<any>([]);
@@ -63,26 +85,40 @@ export class HospitalizationsListComponent implements OnInit {
     this.http
       .get<any[]>('http://localhost:7144/api/HostAPI')
       .subscribe((data) => {
+        //console.log('Received data:', data); // Log the data received from the API
+
+        // Set up data sources and filters
+
         this.dataSource = data;
         this.filteredData = [...data];
         this.matTableDataSource = new MatTableDataSource(this.filteredData);
         this.matTableDataSource.paginator = this.paginator;
         this.matTableDataSource.sort = this.sort;
+        // Set up form control change subscriptions for filtering
+
+        this.columns.forEach((column) => {
+          this.filterForm
+            .get(column)
+            ?.valueChanges.pipe(debounceTime(300), distinctUntilChanged())
+            .subscribe(() => this.applyFilters());
+        });
+
+        // Fetch options for dropdowns
+
+        this.fetchAnswerTextOptions();
+        this.fetchAnswerTextTypeOptions(); // Fetch options for 'answer_Text_Type'
+
+        // Set up form value change subscription for filtering
+        this.filterForm.valueChanges.subscribe(() => {
+          this.applyFilters();
+          this.paginator.firstPage();
+        });
+
+        // Call applyFilters initially to set the initial totalResults
+        this.applyFilters();
       });
-
-    this.columns.forEach((column) => {
-      this.filterForm
-        .get(column)
-        ?.valueChanges.pipe(debounceTime(300), distinctUntilChanged())
-        .subscribe(() => this.applyFilters());
-    });
-
-    this.filterForm.valueChanges.subscribe(() => {
-      this.applyFilters();
-      this.paginator.firstPage();
-    });
   }
-
+  // Method to create the filter form with form controls
   private createFilterForm() {
     const formControls: FormControls = {};
     this.columns.forEach((column) => {
@@ -90,6 +126,10 @@ export class HospitalizationsListComponent implements OnInit {
 
       if (column === 'enterance_Date' || column === 'departure_Date') {
         formControls[column] = new FormControl(null); // Initialize as null for date picker
+      }
+      if (column === 'answer_Text') {
+        formControls[column] = new FormControl('');
+        formControls[column + 'Options'] = new FormControl([]);
       }
     });
 
@@ -99,6 +139,7 @@ export class HospitalizationsListComponent implements OnInit {
 
     return this.fb.group(formControls);
   }
+  // Method to apply filters based on form values
 
   applyFilters() {
     const filters = this.filterForm.value;
@@ -126,9 +167,18 @@ export class HospitalizationsListComponent implements OnInit {
             String(item[column]).toLowerCase().includes(globalFilter)
           ))
     );
-
+    // Sum up the values in the admission_No column
+    const sumAdmissionNo = this.filteredData.reduce(
+      (total, item) => total + (parseFloat(item.admission_No) || 0),
+      0
+    );
+    // Update the totalResults and the title
+    this.totalResults = this.filteredData.length;
+    this.Title2 = `משה כללי - סה"כ תוצאות: ${this.totalResults}, סה"כ כמות מאושפזים: ${sumAdmissionNo}`;
     this.matTableDataSource.data = this.filteredData;
     this.matTableDataSource.paginator = this.paginator;
+    // Update the title with the total number of results
+    //this.Title2 = ` משה כללי - סה"כ תוצאות: ${this.totalResults}`;
   }
 
   private isDateInRange(date: Date, filterDate: Date, column: string): boolean {
@@ -171,5 +221,30 @@ export class HospitalizationsListComponent implements OnInit {
     return new Blob([excelBuffer], {
       type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
     });
+  }
+  fetchAnswerTextOptions() {
+    this.http
+      .get<any[]>('http://localhost:7144/api/HostAPI')
+      .subscribe((data) => {
+        // Extract distinct values from the 'answer_Text' column
+        this.answerTextOptions = [...new Set(data.map((item) => item.name))];
+        //console.log('Answer Text Options:', this.answerTextOptions);
+      });
+  }
+  // Method to fetch options for 'answer_Text_Type' dropdown
+  fetchAnswerTextTypeOptions() {
+    // Fetch options specifically for 'answer_Text_Type'
+    this.http
+      .get<any[]>('http://localhost:7144/api/HostAPI')
+      .subscribe((data) => {
+        this.answerTextTypeOptions = [
+          ...new Set(data.map((item) => item.answer_Text_Type)),
+        ];
+      });
+  }
+  // Method to get a form control for a given column
+
+  getFormControl(column: string): FormControl {
+    return (this.filterForm.get(column) as FormControl) || new FormControl('');
   }
 }

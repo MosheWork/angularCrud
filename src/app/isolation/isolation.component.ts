@@ -18,16 +18,33 @@ interface FormControls {
   styleUrls: ['./isolation.component.scss'],
 })
 export class IsolationComponent implements OnInit {
+  // Properties for titles, data sources, options, and more
+
   Title1: string = 'דוח בידודים';
   Title2: string = 'היחידה למניעת זיהומים';
+  totalResults: number = 0;
+
+  // ViewChild decorators for accessing Angular Material components
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
+  // Form group for filtering controls
+
   filterForm: FormGroup;
+
+  // Arrays to store data and options for dropdowns
+
   dataSource: any[] = [];
   filteredData: any[] = [];
+  answerTextOptions: any[] = [];
+  answerTextTypeOptions: any[] = []; // New array for 'answer_Text_Type'
+
+  // MatTableDataSource for Angular Material table
+
   matTableDataSource: MatTableDataSource<any>; // Define MatTableDataSource
+
+  // Column names for the table
 
   columns: string[] = [
     'department',
@@ -43,6 +60,7 @@ export class IsolationComponent implements OnInit {
     'enterance_Date',
     'departure_Date',
   ];
+  // Method to parse a date string into a Date object or null
 
   parseDate(dateString: string | null): Date | null {
     if (!dateString) {
@@ -59,6 +77,7 @@ export class IsolationComponent implements OnInit {
 
     return parsedDate;
   }
+  // Method to get display-friendly column labels
 
   getColumnLabel(column: string): string {
     const columnLabels: Record<string, string> = {
@@ -77,36 +96,55 @@ export class IsolationComponent implements OnInit {
     };
     return columnLabels[column] || column;
   }
+  // Constructor to initialize HttpClient and FormBuilder
 
   constructor(private http: HttpClient, private fb: FormBuilder) {
     this.filterForm = this.createFilterForm();
     this.matTableDataSource = new MatTableDataSource<any>([]);
   }
+  // OnInit lifecycle hook
 
   ngOnInit() {
+    // Fetch data from the API when the component initializes
+
     this.http
       .get<any[]>('http://localhost:7144/api/IsolationAPI')
       .subscribe((data) => {
+        //console.log('Received data:', data); // Log the data received from the API
+
+        // Set up data sources and filters
+
         this.dataSource = data;
         this.filteredData = [...data];
         this.matTableDataSource = new MatTableDataSource(this.filteredData);
         this.matTableDataSource.paginator = this.paginator;
         this.matTableDataSource.sort = this.sort;
+        // Set up form control change subscriptions for filtering
+
+        this.columns.forEach((column) => {
+          this.filterForm
+            .get(column)
+            ?.valueChanges.pipe(debounceTime(300), distinctUntilChanged())
+            .subscribe(() => this.applyFilters());
+        });
+
+        // Fetch options for dropdowns
+
+        this.fetchAnswerTextOptions();
+        this.fetchAnswerTextTypeOptions(); // Fetch options for 'answer_Text_Type'
+
+        // Set up form value change subscription for filtering
+        this.filterForm.valueChanges.subscribe(() => {
+          this.applyFilters();
+          this.paginator.firstPage();
+        });
+
+        // Call applyFilters initially to set the initial totalResults
+        this.applyFilters();
       });
-
-    this.columns.forEach((column) => {
-      this.filterForm
-        .get(column)
-        ?.valueChanges.pipe(debounceTime(300), distinctUntilChanged())
-        .subscribe(() => this.applyFilters());
-    });
-
-    this.filterForm.valueChanges.subscribe(() => {
-      this.applyFilters();
-      this.paginator.firstPage();
-    });
   }
 
+  // Method to create the filter form with form controls
   private createFilterForm() {
     const formControls: FormControls = {};
     this.columns.forEach((column) => {
@@ -114,6 +152,10 @@ export class IsolationComponent implements OnInit {
 
       if (column === 'enterance_Date' || column === 'departure_Date') {
         formControls[column] = new FormControl(null); // Initialize as null for date picker
+      }
+      if (column === 'answer_Text') {
+        formControls[column] = new FormControl('');
+        formControls[column + 'Options'] = new FormControl([]);
       }
     });
 
@@ -123,6 +165,7 @@ export class IsolationComponent implements OnInit {
 
     return this.fb.group(formControls);
   }
+  // Method to apply filters based on form values
 
   applyFilters() {
     const filters = this.filterForm.value;
@@ -150,11 +193,14 @@ export class IsolationComponent implements OnInit {
             String(item[column]).toLowerCase().includes(globalFilter)
           ))
     );
-
+    this.totalResults = this.filteredData.length;
     this.matTableDataSource.data = this.filteredData;
     this.matTableDataSource.paginator = this.paginator;
+    // Update the title with the total number of results
+    this.Title2 = ` יחידה למניעת זיהומים  - סה"כ תוצאות: ${this.totalResults}`;
   }
 
+  // Method to check if a date is in a specified range
   private isDateInRange(date: Date, filterDate: Date, column: string): boolean {
     if (column === 'enterance_Date') {
       return date >= filterDate;
@@ -164,6 +210,7 @@ export class IsolationComponent implements OnInit {
     return false;
   }
 
+  // Method to export filtered data to Excel
   exportToExcel() {
     // Assuming you have a method to convert the filtered data to Excel format
     const excelData = this.convertToExcelFormat(this.filteredData);
@@ -180,7 +227,7 @@ export class IsolationComponent implements OnInit {
     link.click();
   }
 
-  // ...
+  // Method to convert data to Excel format
 
   convertToExcelFormat(data: any[]) {
     const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(data);
@@ -195,5 +242,34 @@ export class IsolationComponent implements OnInit {
     return new Blob([excelBuffer], {
       type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
     });
+  }
+  // Method to fetch options for 'answer_Text' dropdown
+
+  fetchAnswerTextOptions() {
+    this.http
+      .get<any[]>('http://localhost:7144/api/IsolationAPI')
+      .subscribe((data) => {
+        // Extract distinct values from the 'answer_Text' column
+        this.answerTextOptions = [
+          ...new Set(data.map((item) => item.answer_Text)),
+        ];
+        //console.log('Answer Text Options:', this.answerTextOptions);
+      });
+  }
+  // Method to fetch options for 'answer_Text_Type' dropdown
+  fetchAnswerTextTypeOptions() {
+    // Fetch options specifically for 'answer_Text_Type'
+    this.http
+      .get<any[]>('http://localhost:7144/api/IsolationAPI')
+      .subscribe((data) => {
+        this.answerTextTypeOptions = [
+          ...new Set(data.map((item) => item.answer_Text_Type)),
+        ];
+      });
+  }
+  // Method to get a form control for a given column
+
+  getFormControl(column: string): FormControl {
+    return (this.filterForm.get(column) as FormControl) || new FormControl('');
   }
 }
