@@ -17,7 +17,7 @@
         >
           <input matInput [formControl]="getFormControl(column)" />
           <mat-select
-            *ngIf="column === 'answer_Text' "
+            *ngIf="column === 'answer_Text'"
             [formControl]="getFormControl(column)"
           >
             <mat-option
@@ -27,11 +27,13 @@
               {{ option }}
             </mat-option>
           </mat-select>
-          
         </ng-container>
-        <ng-container *ngIf="column === 'answer_Text_Type' ">
+        <ng-container *ngIf="column === 'answer_Text_Type'">
           <mat-select [formControl]="getFormControl(column)">
-            <mat-option *ngFor="let option of answerTextTypeOptions" [value]="option">
+            <mat-option
+              *ngFor="let option of answerTextTypeOptions"
+              [value]="option"
+            >
               {{ option }}
             </mat-option>
           </mat-select>
@@ -50,7 +52,15 @@
         </ng-template>
       </mat-form-field>
     </ng-container>
-
+    <button
+      mat-button
+      (click)="resetFilters()"
+      mat-raised-button
+      color="primary"
+      class="custom-button"
+    >
+      Reset Filters
+    </button>
     <div class="global-filter">
       <mat-form-field appearance="outline" class="long-search-bar">
         <mat-label class="filters" style="color: blue">חיפוש</mat-label>

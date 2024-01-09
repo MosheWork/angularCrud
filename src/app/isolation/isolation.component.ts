@@ -61,7 +61,7 @@ export class IsolationComponent implements OnInit {
     'departure_Date',
   ];
   // Method to parse a date string into a Date object or null
- 
+
   parseDate(dateString: string | null): Date | null {
     if (!dateString) {
       return null; // Return null for empty or null date strings
@@ -76,6 +76,26 @@ export class IsolationComponent implements OnInit {
     }
 
     return parsedDate;
+  }
+
+  resetFilters() {
+    // Reset all form controls to their default values
+    this.filterForm.reset();
+
+    // Clear the global filter input separately
+    this.filterForm.get('globalFilter')?.setValue('');
+
+    // Trigger the applyFilters method to apply the changes
+    this.applyFilters();
+
+    // Set the filteredData to be the same as the original dataSource
+    this.filteredData = [...this.dataSource];
+    this.totalResults = this.filteredData.length;
+
+    // Update the title and the MatTableDataSource
+    this.Title2 = `משה כללי - סה"כ תוצאות: ${this.totalResults}`;
+    this.matTableDataSource.data = this.filteredData;
+    this.matTableDataSource.paginator = this.paginator;
   }
   // Method to get display-friendly column labels
 

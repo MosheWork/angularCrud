@@ -47,9 +47,20 @@ export class HospitalizationsListComponent implements OnInit {
     // Reset all form controls to their default values
     this.filterForm.reset();
 
+    // Clear the global filter input separately
+    this.filterForm.get('globalFilter')?.setValue('');
+
     // Trigger the applyFilters method to apply the changes
     this.applyFilters();
-   
+
+    // Set the filteredData to be the same as the original dataSource
+    this.filteredData = [...this.dataSource];
+    this.totalResults = this.filteredData.length;
+
+    // Update the title and the MatTableDataSource
+    this.Title2 = `משה כללי - סה"כ תוצאות: ${this.totalResults}`;
+    this.matTableDataSource.data = this.filteredData;
+    this.matTableDataSource.paginator = this.paginator;
   }
   // Method to parse a date string into a Date object or null
 
@@ -249,14 +260,16 @@ export class HospitalizationsListComponent implements OnInit {
     return (this.filterForm.get(column) as FormControl) || new FormControl('');
   }
   fetchData() {
-  this.http.get<any[]>('http://localhost:7144/api/HostAPI').subscribe((data) => {
-    // Update your data source and apply filters if necessary
-    this.dataSource = data;
-    this.filteredData = [...data];
-    this.matTableDataSource.data = this.filteredData;
+    this.http
+      .get<any[]>('http://localhost:7144/api/HostAPI')
+      .subscribe((data) => {
+        // Update your data source and apply filters if necessary
+        this.dataSource = data;
+        this.filteredData = [...data];
+        this.matTableDataSource.data = this.filteredData;
 
-    // Optional: Apply filters if needed
-    this.applyFilters();
-  });
-}
+        // Optional: Apply filters if needed
+        this.applyFilters();
+      });
+  }
 }
