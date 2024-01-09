@@ -24,7 +24,7 @@ import { MatSortModule } from '@angular/material/sort';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { UnitsComponent } from './units/units.component';
 import { UsersComponent } from './users/users.component';
-import { HosListComponent } from './hos-list/hos-list.component';
+import { HosListComponent } from './old/hos-list/hos-list.component';
 import { MychartComponent } from './mychart/mychart.component';
 import { UploadPicComponent } from './upload-pic/upload-pic.component';
 import { PicturesComponent } from './pictures/pictures.component';
@@ -42,6 +42,7 @@ import { YourTableComponentComponent } from './your-table-component/your-table-c
 import { IsolationComponent } from './isolation/isolation.component';
 import { QualityNationalComponent } from './quality-national/quality-national.component';
 import { DatePipe } from '@angular/common';
+import { HospitalizationsListComponent } from './hospitalizations-list/hospitalizations-list.component';
 
 @NgModule({
   declarations: [
@@ -61,6 +62,7 @@ import { DatePipe } from '@angular/common';
     YourTableComponentComponent,
     IsolationComponent,
     QualityNationalComponent,
+    HospitalizationsListComponent,
   ],
   imports: [
     BrowserModule,

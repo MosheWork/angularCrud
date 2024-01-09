@@ -1,68 +1,79 @@
-
-<div class="main-body">
-    <mat-form-field>
-      <mat-label>Filter</mat-label>
-      <input
-        matInput
-        (keyup)="applyFilter($event)"
-        placeholder="Ex. Mia"
-        #input
-      />
-    </mat-form-field>
-  
-    <div class="talbe-container">
-      <table mat-table [dataSource]="dataSource" matSort>
-        <!-- ID Column -->
-        <ng-container matColumnDef="iD_No">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>ID</th>
-          <td mat-cell *matCellDef="let row">{{ row.iD_No }}</td>
-        </ng-container>
-        <ng-container matColumnDef="first_Name">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>firstName</th>
-          <td mat-cell *matCellDef="let row">{{ row.first_Name }}</td>
-        </ng-container>
-        <ng-container matColumnDef="last_Name">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>lastName</th>
-          <td mat-cell *matCellDef="let row">{{ row.last_Name }}</td>
-        </ng-container>
-        <ng-container matColumnDef="sector">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>sector code</th>
-          <td mat-cell *matCellDef="let row">{{ row.sector }}</td>
-        </ng-container>
-        <ng-container matColumnDef="login_Name">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>login_Name</th>
-          <td mat-cell *matCellDef="let row">{{ row.login_Name }}</td>
-        </ng-container>
-        <ng-container matColumnDef="answer_Text">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>sector</th>
-          <td mat-cell *matCellDef="let row">{{ row.answer_Text }}</td>
-        </ng-container>
-        <ng-container matColumnDef="unit">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>Units</th>
-          <td mat-cell *matCellDef="let row">{{ row.unit }}</td>
-        </ng-container>
-        <!-- <ng-container matColumnDef="profile_Code">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>profile_Code</th>
-          <td mat-cell *matCellDef="let row">{{ row.profile_Code }}</td>
-        </ng-container> -->
-  
-        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-        <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
-  
-        <!-- Row shown when there is no matching data. -->
-        <tr class="mat-row" *matNoDataRow>
-          <td class="mat-cell" colspan="4">
-            No data matching the filter "{{ input.value }}"
-          </td>
-        </tr>
-      </table>
-  
-      <mat-paginator
-        [pageSizeOptions]="[5, 10, 25, 100]"
-        aria-label="Select page of users"
-      ></mat-paginator>
-    </div>
+<div class="body">
+  <div class="nine">
+    <h1>
+      {{ Title1 }}<span>{{ Title2 }}</span>
+    </h1>
   </div>
 
-  <button (click)="exportToExcel(dataSource.filteredData, 'test')" mat-raised-button color="primary">Excel- Full Report</button>
-  
+  <form [formGroup]="filterForm" dir="rtl" class="filter-form">
+    <ng-container *ngFor="let column of columns">
+      <mat-form-field appearance="outline">
+        <mat-label class="filters">{{ getColumnLabel(column) }}</mat-label>
+        <ng-container
+          *ngIf="
+            column !== 'enterance_Date' && column !== 'departure_Date';
+            else datepicker
+          "
+        >
+          <input matInput [formControlName]="column" />
+        </ng-container>
+        <ng-template #datepicker>
+          <input matInput [formControlName]="column" [matDatepicker]="picker" />
+          <mat-datepicker-toggle
+            matSuffix
+            [for]="picker"
+          ></mat-datepicker-toggle>
+          <mat-datepicker #picker></mat-datepicker>
+        </ng-template>
+      </mat-form-field>
+    </ng-container>
+
+    <div class="global-filter">
+      <mat-form-field appearance="outline" class="long-search-bar">
+        <mat-label class="filters" style="color: blue">חיפוש</mat-label>
+        <input
+          matInput
+          [formControlName]="'globalFilter'"
+          class="search-input"
+        />
+      </mat-form-field>
+      <div class="icon">
+        <img
+          src="../../assets/excel.png"
+          alt="Download"
+          (click)="exportToExcel()"
+          class="download-icon"
+        />
+      </div>
+    </div>
+  </form>
+
+  <mat-table
+    [dataSource]="matTableDataSource"
+    matSort
+    dir="rtl"
+    class="mat-elevation-z8"
+  >
+    <!-- Loop through columns to define each column in the table -->
+    <ng-container *ngFor="let column of columns" [matColumnDef]="column">
+      <mat-header-cell *matHeaderCellDef mat-sort-header>
+        {{ getColumnLabel(column) }}
+        <!-- Use the function to get display-friendly labels -->
+      </mat-header-cell>
+      <mat-cell *matCellDef="let element">{{ element[column] }}</mat-cell>
+    </ng-container>
+
+    <!-- Define the header row -->
+    <mat-header-row *matHeaderRowDef="columns"></mat-header-row>
+    <!-- Define the data row -->
+    <mat-row *matRowDef="let row; columns: columns" class="mat-row"></mat-row>
+  </mat-table>
+
+  <!-- Define the paginator with page size options -->
+  <mat-paginator
+    [length]="matTableDataSource.paginator?.length || 0"
+    [pageIndex]="matTableDataSource.paginator?.pageIndex"
+    [pageSize]="matTableDataSource.paginator?.pageSize"
+    [pageSizeOptions]="[5, 15, 20]"
+  ></mat-paginator>
+</div>

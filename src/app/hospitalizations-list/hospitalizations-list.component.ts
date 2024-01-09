@@ -11,16 +11,14 @@ import * as XLSX from 'xlsx';
 interface FormControls {
   [key: string]: FormControl;
 }
-
 @Component({
-  selector: 'app-users',
-  templateUrl: './users.component.html',
-  styleUrls: ['./users.component.scss'],
+  selector: 'app-hospitalizations-list',
+  templateUrl: './hospitalizations-list.component.html',
+  styleUrls: ['./hospitalizations-list.component.scss'],
 })
-export class UsersComponent implements OnInit {
-  Title1: string = 'רשימת משתמשים ';
-  Title2: string = ' משה כללי';
-  totalResults: number = 0;
+export class HospitalizationsListComponent implements OnInit {
+  Title1: string = ' כמות מאושפזים';
+  Title2: string = 'משה-כללי ';
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
@@ -30,17 +28,7 @@ export class UsersComponent implements OnInit {
   filteredData: any[] = [];
   matTableDataSource: MatTableDataSource<any>; // Define MatTableDataSource
 
-  columns: string[] = [
-    // must be small letter on start to get  from back end
-    'iD_No',
-    'first_Name',
-    'last_Name',
-    //'sector',
-    'login_Name',
-    'answer_Text',
-    'unit',
-    //'profile_Code'
-  ];
+  columns: string[] = ['name', 'admission_No'];
 
   parseDate(dateString: string | null): Date | null {
     if (!dateString) {
@@ -60,13 +48,8 @@ export class UsersComponent implements OnInit {
 
   getColumnLabel(column: string): string {
     const columnLabels: Record<string, string> = {
-      iD_No: 'תעודת זהות',
-      first_Name: ' שם פרטי',
-      last_Name: 'שם משפחה ',
-      //sector: 'סקטור',
-      login_Name: 'שם משתמש',
-      answer_Text: ' סקטור ',
-      unit: ' הרשאה למחלקות ',
+      name: ' מחלקה',
+      admission_No: 'כמות מאושפזים ',
     };
     return columnLabels[column] || column;
   }
@@ -75,31 +58,30 @@ export class UsersComponent implements OnInit {
     this.filterForm = this.createFilterForm();
     this.matTableDataSource = new MatTableDataSource<any>([]);
   }
+
   ngOnInit() {
-    this.http.get<any[]>('http://localhost:7144/api/ChameleonAPI').subscribe((data) => {
-      this.dataSource = data;
-      this.filteredData = [...data];
-      this.matTableDataSource = new MatTableDataSource(this.filteredData);
-      this.matTableDataSource.paginator = this.paginator;
-      this.matTableDataSource.sort = this.sort;
-  
-      this.columns.forEach((column) => {
-        this.filterForm
-          .get(column)
-          ?.valueChanges.pipe(debounceTime(300), distinctUntilChanged())
-          .subscribe(() => this.applyFilters());
+    this.http
+      .get<any[]>('http://localhost:7144/api/HostAPI')
+      .subscribe((data) => {
+        this.dataSource = data;
+        this.filteredData = [...data];
+        this.matTableDataSource = new MatTableDataSource(this.filteredData);
+        this.matTableDataSource.paginator = this.paginator;
+        this.matTableDataSource.sort = this.sort;
       });
-  
-      this.filterForm.valueChanges.subscribe(() => {
-        this.applyFilters();
-        this.paginator.firstPage();
-      });
-  
-      // Call applyFilters initially to set the initial totalResults
+
+    this.columns.forEach((column) => {
+      this.filterForm
+        .get(column)
+        ?.valueChanges.pipe(debounceTime(300), distinctUntilChanged())
+        .subscribe(() => this.applyFilters());
+    });
+
+    this.filterForm.valueChanges.subscribe(() => {
       this.applyFilters();
+      this.paginator.firstPage();
     });
   }
-  
 
   private createFilterForm() {
     const formControls: FormControls = {};
@@ -144,12 +126,9 @@ export class UsersComponent implements OnInit {
             String(item[column]).toLowerCase().includes(globalFilter)
           ))
     );
-    this.totalResults = this.filteredData.length;
+
     this.matTableDataSource.data = this.filteredData;
     this.matTableDataSource.paginator = this.paginator;
-
-    // Update the title with the total number of results
-    this.Title2 = ` משה כללי - סה"כ תוצאות: ${this.totalResults}`;
   }
 
   private isDateInRange(date: Date, filterDate: Date, column: string): boolean {

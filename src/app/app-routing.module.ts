@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { AppComponent } from './app.component';
-import { HosListComponent } from './hos-list/hos-list.component';
+import { HosListComponent } from './old/hos-list/hos-list.component';
 import { MychartComponent } from './mychart/mychart.component';
 import { UnitsComponent } from './units/units.component';
 import { UsersComponent } from './users/users.component';
@@ -13,12 +13,13 @@ import { ConsiliumsComponent } from './consiliums/consiliums.component';
 import { YourTableComponentComponent } from './your-table-component/your-table-component.component';
 import { IsolationComponent } from './isolation/isolation.component';
 import { QualityNationalComponent } from './quality-national/quality-national.component';
+import { HospitalizationsListComponent } from './hospitalizations-list/hospitalizations-list.component';
 
 const routes: Routes = [
   { path: 'units', component: UnitsComponent },
   { path: 'users', component: UsersComponent },
   { path: 'home', component: AppComponent },
-  { path: 'hosList', component: HosListComponent },
+  { path: 'HospitalizationsList', component: HospitalizationsListComponent },
   { path: 'chart', component: MychartComponent },
   { path: 'uploadPic', component: UploadPicComponent },
   { path: 'sql', component: SQLComponent },
