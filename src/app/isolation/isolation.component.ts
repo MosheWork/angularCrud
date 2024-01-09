@@ -18,7 +18,8 @@ interface FormControls {
   styleUrls: ['./isolation.component.scss'],
 })
 export class IsolationComponent implements OnInit {
-  tableTitle: string = 'דוח בידודים';
+  Title1: string = 'דוח בידודים';
+  Title2: string = 'היחידה למניעת זיהומים';
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
@@ -29,17 +30,18 @@ export class IsolationComponent implements OnInit {
   matTableDataSource: MatTableDataSource<any>; // Define MatTableDataSource
 
   columns: string[] = [
+    'department',
     'id_Num',
     'answer_Text_Type',
     'answer_Text',
     'first_Name',
     'last_Name',
-    'enterance_Date',
-    'departure_Date',
     'departure_Reason',
     'first_Name_g',
     'last_Name_g',
     'login_Name',
+    'enterance_Date',
+    'departure_Date',
   ];
 
   parseDate(dateString: string | null): Date | null {

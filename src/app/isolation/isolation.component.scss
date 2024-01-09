@@ -98,35 +98,29 @@ mat-table mat-header-cell {
   padding-left: 10px;
 }
 
-h1 {
-  position: relative;
-  padding: 0;
-  margin: 0;
-  font-family: "Raleway", sans-serif;
-  font-weight: 300;
-  font-size: 40px;
-  color: #080808;
-  -webkit-transition: all 0.4s ease 0s;
-  -o-transition: all 0.4s ease 0s;
-  transition: all 0.4s ease 0s;
+.filter-form {
+  padding-top: 10px;
 }
 
-h1 span {
-  display: block;
-  font-size: 0.5em;
-  line-height: 1.3;
-}
-h1 em {
-  font-style: normal;
-  font-weight: 600;
-}
-.seven h1 {
+.nine h1 {
   text-align: center;
-  font-size: 30px;
-  font-weight: 300;
-  color: #222;
-  letter-spacing: 1px;
+  font-size: 50px;
   text-transform: uppercase;
+  color: rgb(54, 10, 214);
+  letter-spacing: 1px;
+  font-family: "Playfair Display", serif;
+  font-weight: 400;
+}
+.nine h1 span {
+  margin-top: 5px;
+  font-size: 15px;
+  color: rgb(14, 108, 221);
+  word-spacing: 1px;
+  font-weight: normal;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  font-family: "Raleway", sans-serif;
+  font-weight: 500;
 
   display: grid;
   grid-template-columns: 1fr max-content 1fr;
@@ -135,15 +129,12 @@ h1 em {
   align-items: center;
 }
 
-.seven h1:after,
-.seven h1:before {
+.nine h1 span:after,
+.nine h1 span:before {
   content: " ";
   display: block;
-  border-bottom: 1px solid #2806ec;
-  border-top: 1px solid #2806ec;
+  border-bottom: 1px solid rgb(60, 15, 223);
+  border-top: 1px solid rgb(60, 15, 223);
   height: 5px;
-  background-color: #f8f8f8;
-}
-.filter-form {
-  padding-top: 10px;
+  background-color: rgb(187, 215, 254);
 }
