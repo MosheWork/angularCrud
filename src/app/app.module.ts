@@ -41,6 +41,7 @@ import { YourTableComponentComponent } from './your-table-component/your-table-c
 
 import { IsolationComponent } from './isolation/isolation.component';
 import { QualityNationalComponent } from './quality-national/quality-national.component';
+import { DatePipe } from '@angular/common';
 
 @NgModule({
   declarations: [
@@ -85,7 +86,7 @@ import { QualityNationalComponent } from './quality-national/quality-national.co
     MatSidenavModule,
     FormsModule,
   ],
-  providers: [],
+  providers: [DatePipe],
   bootstrap: [AppComponent],
 })
 export class AppModule {}

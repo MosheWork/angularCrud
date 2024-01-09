@@ -8,7 +8,6 @@ import { MatSort } from '@angular/material/sort';
 
 import * as XLSX from 'xlsx';
 
-
 interface FormControls {
   [key: string]: FormControl;
 }
@@ -42,6 +41,22 @@ export class IsolationComponent implements OnInit {
     'last_Name_g',
     'login_Name',
   ];
+
+  parseDate(dateString: string | null): Date | null {
+    if (!dateString) {
+      return null; // Return null for empty or null date strings
+    }
+
+    const parsedDate = new Date(dateString);
+
+    // Check if the parsedDate is a valid date
+    if (isNaN(parsedDate.getTime())) {
+      console.warn(`Invalid date string: ${dateString}`);
+      return null; // Return null for invalid date strings
+    }
+
+    return parsedDate;
+  }
 
   getColumnLabel(column: string): string {
     const columnLabels: Record<string, string> = {
@@ -94,6 +109,10 @@ export class IsolationComponent implements OnInit {
     const formControls: FormControls = {};
     this.columns.forEach((column) => {
       formControls[column] = new FormControl('');
+
+      if (column === 'enterance_Date' || column === 'departure_Date') {
+        formControls[column] = new FormControl(null); // Initialize as null for date picker
+      }
     });
 
     formControls['pageSize'] = new FormControl(10);
@@ -111,7 +130,18 @@ export class IsolationComponent implements OnInit {
       (item) =>
         this.columns.every((column) => {
           const value = String(item[column]).toLowerCase();
-          return !filters[column] || value.includes(filters[column]);
+
+          if (column === 'enterance_Date' || column === 'departure_Date') {
+            const dateValue = this.parseDate(item[column]);
+            const filterDate = this.parseDate(filters[column]);
+
+            return (
+              !filterDate ||
+              (dateValue && this.isDateInRange(dateValue, filterDate, column))
+            );
+          } else {
+            return !filters[column] || value.includes(filters[column]);
+          }
         }) &&
         (globalFilter === '' ||
           this.columns.some((column) =>
@@ -123,29 +153,45 @@ export class IsolationComponent implements OnInit {
     this.matTableDataSource.paginator = this.paginator;
   }
 
+  private isDateInRange(date: Date, filterDate: Date, column: string): boolean {
+    if (column === 'enterance_Date') {
+      return date >= filterDate;
+    } else if (column === 'departure_Date') {
+      return date <= filterDate;
+    }
+    return false;
+  }
+
   exportToExcel() {
     // Assuming you have a method to convert the filtered data to Excel format
     const excelData = this.convertToExcelFormat(this.filteredData);
-  
+
     // Create a Blob with the Excel data
-    const blob = new Blob([excelData], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-  
+    const blob = new Blob([excelData], {
+      type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    });
+
     // Create a download link and trigger the download
     const link = document.createElement('a');
     link.href = window.URL.createObjectURL(blob);
     link.download = 'filtered_data.xlsx';
     link.click();
   }
- 
 
-// ...
+  // ...
 
-convertToExcelFormat(data: any[]) {
-  const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(data);
-  const workbook: XLSX.WorkBook = { Sheets: { 'data': worksheet }, SheetNames: ['data'] };
-  const excelBuffer: any = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
-  return new Blob([excelBuffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-}
-
-  
+  convertToExcelFormat(data: any[]) {
+    const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(data);
+    const workbook: XLSX.WorkBook = {
+      Sheets: { data: worksheet },
+      SheetNames: ['data'],
+    };
+    const excelBuffer: any = XLSX.write(workbook, {
+      bookType: 'xlsx',
+      type: 'array',
+    });
+    return new Blob([excelBuffer], {
+      type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    });
+  }
 }

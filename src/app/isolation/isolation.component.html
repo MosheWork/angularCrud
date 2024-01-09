@@ -1,12 +1,22 @@
+
+<div class="body">
 <h2 class="title">{{ tableTitle }}</h2>
 
 <form [formGroup]="filterForm" dir="rtl" class="filter-form">
   <ng-container *ngFor="let column of columns">
     <mat-form-field appearance="outline">
       <mat-label class="filters">{{ getColumnLabel(column) }}</mat-label>
-      <input matInput [formControlName]="column" />
+      <ng-container *ngIf="column !== 'enterance_Date' && column !== 'departure_Date'; else datepicker">
+        <input matInput [formControlName]="column" />
+      </ng-container>
+      <ng-template #datepicker>
+        <input matInput [formControlName]="column" [matDatepicker]="picker" />
+        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker #picker></mat-datepicker>
+      </ng-template>
     </mat-form-field>
   </ng-container>
+  
 
   <div class="global-filter">
     <mat-form-field appearance="outline" class="long-search-bar">
@@ -50,5 +60,6 @@
   [length]="matTableDataSource.paginator?.length || 0"
   [pageIndex]="matTableDataSource.paginator?.pageIndex"
   [pageSize]="matTableDataSource.paginator?.pageSize"
-  [pageSizeOptions]="[10, 15, 20]"
+  [pageSizeOptions]="[5, 15, 20]"
 ></mat-paginator>
+</div>

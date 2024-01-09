@@ -1,11 +1,27 @@
 /* isolation.component.scss */
-
-mat-table.mat-elevation-z8 mat-row:nth-child(odd) {
-  background-color: #c2d8ef;
+.body {
+  padding-right: 20px;
+  padding-left: 20px;
+  padding-bottom: 50px;
+  padding-top: 20px;
 }
 
 mat-table.mat-elevation-z8 mat-row:nth-child(even) {
   background-color: white;
+}
+
+mat-table.mat-elevation-z8 mat-row:nth-child(odd) {
+  background-color: rgb(187, 215, 254);
+}
+mat-table.mat-elevation-z8 {
+  box-shadow: 0 4px 8px rgba(15, 15, 222, 0.2); /* Blue shadow effect */
+}
+mat-table mat-cell {
+  font-weight: bold;
+}
+
+mat-form-field {
+  padding-right: 5px;
 }
 
 mat-table mat-header-cell {
@@ -50,7 +66,7 @@ mat-table mat-header-cell {
 .global-filter {
   display: flex;
   align-items: flex-start;
-  padding: 8px; /* Adjust the padding as needed */
+  //padding: 8px; /* Adjust the padding as needed */
   // background-color: #ef1313; /* Set the background color */
 }
 
@@ -58,7 +74,7 @@ mat-table mat-header-cell {
   width: 100%;
   border: none;
   outline: none;
-  padding: 8px; /* Adjust the padding as needed */
+  //padding: 8px; /* Adjust the padding as needed */
   border-radius: 4px; /* Add some border-radius for rounded corners */
   box-shadow: 0 2px 4px rgba(223, 9, 9, 0.1); /* Add a subtle box-shadow */
 }
@@ -80,6 +96,53 @@ mat-table mat-header-cell {
 .icon {
   padding-right: 10px;
   padding-left: 10px;
+}
+
+h1 {
+  position: relative;
+  padding: 0;
+  margin: 0;
+  font-family: "Raleway", sans-serif;
+  font-weight: 300;
+  font-size: 40px;
+  color: #080808;
+  -webkit-transition: all 0.4s ease 0s;
+  -o-transition: all 0.4s ease 0s;
+  transition: all 0.4s ease 0s;
+}
+
+h1 span {
+  display: block;
+  font-size: 0.5em;
+  line-height: 1.3;
+}
+h1 em {
+  font-style: normal;
+  font-weight: 600;
+}
+.seven h1 {
+  text-align: center;
+  font-size: 30px;
+  font-weight: 300;
+  color: #222;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+
+  display: grid;
+  grid-template-columns: 1fr max-content 1fr;
+  grid-template-rows: 27px 0;
+  grid-gap: 20px;
+  align-items: center;
+}
+
+.seven h1:after,
+.seven h1:before {
+  content: " ";
+  display: block;
+  border-bottom: 1px solid #2806ec;
+  border-top: 1px solid #2806ec;
+  height: 5px;
+  background-color: #f8f8f8;
 }
 .filter-form {
   padding-top: 10px;
