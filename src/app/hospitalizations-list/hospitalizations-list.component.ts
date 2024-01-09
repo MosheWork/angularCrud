@@ -49,6 +49,7 @@ export class HospitalizationsListComponent implements OnInit {
 
     // Trigger the applyFilters method to apply the changes
     this.applyFilters();
+   
   }
   // Method to parse a date string into a Date object or null
 
@@ -174,7 +175,7 @@ export class HospitalizationsListComponent implements OnInit {
     );
     // Update the totalResults and the title
     this.totalResults = this.filteredData.length;
-    this.Title2 = `משה כללי - סה"כ תוצאות: ${this.totalResults}, סה"כ כמות מאושפזים: ${sumAdmissionNo}`;
+    this.Title2 = `משה כללי - סה"כ מחלקות: ${this.totalResults}, סה"כ כמות מאושפזים: ${sumAdmissionNo}`;
     this.matTableDataSource.data = this.filteredData;
     this.matTableDataSource.paginator = this.paginator;
     // Update the title with the total number of results
@@ -247,4 +248,15 @@ export class HospitalizationsListComponent implements OnInit {
   getFormControl(column: string): FormControl {
     return (this.filterForm.get(column) as FormControl) || new FormControl('');
   }
+  fetchData() {
+  this.http.get<any[]>('http://localhost:7144/api/HostAPI').subscribe((data) => {
+    // Update your data source and apply filters if necessary
+    this.dataSource = data;
+    this.filteredData = [...data];
+    this.matTableDataSource.data = this.filteredData;
+
+    // Optional: Apply filters if needed
+    this.applyFilters();
+  });
+}
 }

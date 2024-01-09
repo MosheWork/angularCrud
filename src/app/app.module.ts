@@ -22,7 +22,6 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { MatSortModule } from '@angular/material/sort';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
-import { UnitsComponent } from './units/units.component';
 import { UsersComponent } from './users/users.component';
 import { HosListComponent } from './old/hos-list/hos-list.component';
 import { MychartComponent } from './mychart/mychart.component';
@@ -31,16 +30,12 @@ import { PicturesComponent } from './pictures/pictures.component';
 import { SQLComponent } from './sql/sql.component';
 
 import { MatCardModule } from '@angular/material/card';
-import { ReportEmployeesPerSectorComponent } from './report-employees-per-sector/report-employees-per-sector.component';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { FooterComponent } from './footer/footer.component';
-import { SideBarComponent } from './side-bar/side-bar.component';
 import { ConsiliumsComponent } from './consiliums/consiliums.component';
 import { MatTableDataSource } from '@angular/material/table';
 import { YourTableComponentComponent } from './your-table-component/your-table-component.component';
-
 import { IsolationComponent } from './isolation/isolation.component';
-import { QualityNationalComponent } from './quality-national/quality-national.component';
 import { DatePipe } from '@angular/common';
 import { HospitalizationsListComponent } from './hospitalizations-list/hospitalizations-list.component';
 
@@ -48,20 +43,16 @@ import { HospitalizationsListComponent } from './hospitalizations-list/hospitali
   declarations: [
     AppComponent,
     EmpAddEditComponent,
-    UnitsComponent,
     UsersComponent,
     HosListComponent,
     MychartComponent,
     UploadPicComponent,
     PicturesComponent,
     SQLComponent,
-    ReportEmployeesPerSectorComponent,
     FooterComponent,
-    SideBarComponent,
     ConsiliumsComponent,
     YourTableComponentComponent,
     IsolationComponent,
-    QualityNationalComponent,
     HospitalizationsListComponent,
   ],
   imports: [

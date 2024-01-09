@@ -61,7 +61,7 @@ export class IsolationComponent implements OnInit {
     'departure_Date',
   ];
   // Method to parse a date string into a Date object or null
-
+ 
   parseDate(dateString: string | null): Date | null {
     if (!dateString) {
       return null; // Return null for empty or null date strings
