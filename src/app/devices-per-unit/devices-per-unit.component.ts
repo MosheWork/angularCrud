@@ -204,7 +204,7 @@ export class DevicesPerUnitComponent implements OnInit {
               (dateValue && this.isDateInRange(dateValue, filterDate, column))
             );
           } else if (column === 'name') {
-            const selectedValue = filters[column].value;
+            const selectedValue = filters[column];
             return (
               !selectedValue ||
               String(item[column]).toLowerCase() ===
