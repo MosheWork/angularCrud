@@ -38,6 +38,7 @@ import { YourTableComponentComponent } from './your-table-component/your-table-c
 import { IsolationComponent } from './isolation/isolation.component';
 import { DatePipe } from '@angular/common';
 import { HospitalizationsListComponent } from './hospitalizations-list/hospitalizations-list.component';
+import { DevicesPerUnitComponent } from './devices-per-unit/devices-per-unit.component';
 
 @NgModule({
   declarations: [
@@ -54,6 +55,7 @@ import { HospitalizationsListComponent } from './hospitalizations-list/hospitali
     YourTableComponentComponent,
     IsolationComponent,
     HospitalizationsListComponent,
+    DevicesPerUnitComponent,
   ],
   imports: [
     BrowserModule,

@@ -11,6 +11,7 @@ import { ConsiliumsComponent } from './consiliums/consiliums.component';
 import { YourTableComponentComponent } from './your-table-component/your-table-component.component';
 import { IsolationComponent } from './isolation/isolation.component';
 import { HospitalizationsListComponent } from './hospitalizations-list/hospitalizations-list.component';
+import { DevicesPerUnitComponent } from './devices-per-unit/devices-per-unit.component';
 
 const routes: Routes = [
   { path: 'users', component: UsersComponent },
@@ -19,9 +20,10 @@ const routes: Routes = [
   { path: 'chart', component: MychartComponent },
   { path: 'uploadPic', component: UploadPicComponent },
   { path: 'sql', component: SQLComponent },
-  
+
   { path: 'Consiliums', component: ConsiliumsComponent },
   { path: 'Isolation', component: IsolationComponent },
+  { path: 'DevicesPerUnit', component: DevicesPerUnitComponent },
   { path: 'Test', component: YourTableComponentComponent },
 ];
 

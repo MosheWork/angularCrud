@@ -83,6 +83,21 @@
       *ngIf="selectionChange === 'משה' || selectionChange === 'הכל'"
     >
       <mat-card>
+        <mat-card-title class="title1">רשימת מכשירים ביחידה</mat-card-title>
+        <mat-card-subtitle class="title1">
+          מבקש הדוח: משה ממן</mat-card-subtitle
+        >
+        <mat-card-content> פירוט מכשירים פר מחלקה</mat-card-content>
+        <button mat-button class="button" routerLink="/DevicesPerUnit">
+          להרצת הדוח
+        </button>
+      </mat-card>
+    </div>
+    <div
+      class="card"
+      *ngIf="selectionChange === 'משה' || selectionChange === 'הכל'"
+    >
+      <mat-card>
         <mat-card-title class="title1"> רשימת משתמשים</mat-card-title>
         <mat-card-subtitle class="title1">
           מבקש הדוח: משה ממן</mat-card-subtitle
