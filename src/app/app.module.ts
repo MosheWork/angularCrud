@@ -39,6 +39,9 @@ import { IsolationComponent } from './isolation/isolation.component';
 import { DatePipe } from '@angular/common';
 import { HospitalizationsListComponent } from './hospitalizations-list/hospitalizations-list.component';
 import { DevicesPerUnitComponent } from './devices-per-unit/devices-per-unit.component';
+import { MedicalDevicesComponent } from './chameleon-reports/moshe-reports/medical-devices/medical-devices.component';
+
+
 
 @NgModule({
   declarations: [
@@ -56,6 +59,7 @@ import { DevicesPerUnitComponent } from './devices-per-unit/devices-per-unit.com
     IsolationComponent,
     HospitalizationsListComponent,
     DevicesPerUnitComponent,
+    MedicalDevicesComponent,
   ],
   imports: [
     BrowserModule,

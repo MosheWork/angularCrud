@@ -1,0 +1,113 @@
+<div class="body">
+    <div class="nine">
+      <h1>
+        {{ Title1 }}<span>{{ Title2 }}</span>
+      </h1>
+    </div>
+  
+    <form [formGroup]="filterForm" dir="rtl" class="filter-form">
+      <ng-container *ngFor="let column of columns">
+        <mat-form-field appearance="outline">
+          <mat-label class="filters">{{ getColumnLabel(column) }}</mat-label>
+          <ng-container
+            *ngIf="
+              column !== 'enterance_Date' && column !== 'departure_Date';
+              else datepicker
+            "
+          >
+            <input matInput [formControl]="getFormControl(column)" />
+            <mat-select
+              *ngIf="column === 'test'"
+              [formControl]="getFormControl(column)"
+            >
+              <mat-option
+                *ngFor="let option of answerTextOptions"
+                [value]="option"
+              >
+                {{ option }}
+              </mat-option>
+            </mat-select>
+          </ng-container>
+          <ng-container *ngIf="column === 'name'">
+            <mat-select [formControl]="getFormControl(column)">
+              <mat-option
+                *ngFor="let option of answerTextTypeOptions"
+                [value]="option"
+              >
+                {{ option }}
+              </mat-option>
+            </mat-select>
+          </ng-container>
+          <ng-template #datepicker>
+            <input
+              matInput
+              [formControl]="getFormControl(column)"
+              [matDatepicker]="picker"
+            />
+            <mat-datepicker-toggle
+              matSuffix
+              [for]="picker"
+            ></mat-datepicker-toggle>
+            <mat-datepicker #picker></mat-datepicker>
+          </ng-template>
+        </mat-form-field>
+      </ng-container>
+      <button
+        mat-button
+        (click)="resetFilters()"
+        mat-raised-button
+        color="primary"
+        class="custom-button"
+      >
+        Reset Filters
+      </button>
+      <div class="global-filter">
+        <mat-form-field appearance="outline" class="long-search-bar">
+          <mat-label class="filters" style="color: blue">חיפוש</mat-label>
+          <input
+            matInput
+            [formControlName]="'globalFilter'"
+            class="search-input"
+          />
+        </mat-form-field>
+        <div class="icon">
+          <img
+            src="../../assets/excel.png"
+            alt="Download"
+            (click)="exportToExcel()"
+            class="download-icon"
+          />
+        </div>
+      </div>
+    </form>
+  
+    <mat-table
+      [dataSource]="matTableDataSource"
+      matSort
+      dir="rtl"
+      class="mat-elevation-z8"
+    >
+      <!-- Loop through columns to define each column in the table -->
+      <ng-container *ngFor="let column of columns" [matColumnDef]="column">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>
+          {{ getColumnLabel(column) }}
+          <!-- Use the function to get display-friendly labels -->
+        </mat-header-cell>
+        <mat-cell *matCellDef="let element">{{ element[column] }}</mat-cell>
+      </ng-container>
+  
+      <!-- Define the header row -->
+      <mat-header-row *matHeaderRowDef="columns"></mat-header-row>
+      <!-- Define the data row -->
+      <mat-row *matRowDef="let row; columns: columns" class="mat-row"></mat-row>
+    </mat-table>
+  
+    <!-- Define the paginator with page size options -->
+    <mat-paginator
+      [length]="matTableDataSource.paginator?.length || 0"
+      [pageIndex]="matTableDataSource.paginator?.pageIndex"
+      [pageSize]="matTableDataSource.paginator?.pageSize"
+      [pageSizeOptions]="[5, 15, 20]"
+    ></mat-paginator>
+  </div>
+  

@@ -12,6 +12,7 @@ import { YourTableComponentComponent } from './your-table-component/your-table-c
 import { IsolationComponent } from './isolation/isolation.component';
 import { HospitalizationsListComponent } from './hospitalizations-list/hospitalizations-list.component';
 import { DevicesPerUnitComponent } from './devices-per-unit/devices-per-unit.component';
+import { MedicalDevicesComponent } from './chameleon-reports/moshe-reports/medical-devices/medical-devices.component';
 
 const routes: Routes = [
   { path: 'users', component: UsersComponent },
@@ -25,6 +26,10 @@ const routes: Routes = [
   { path: 'Isolation', component: IsolationComponent },
   { path: 'DevicesPerUnit', component: DevicesPerUnitComponent },
   { path: 'Test', component: YourTableComponentComponent },
+
+  //moshe-reports
+  { path: 'medicalDevices', component: MedicalDevicesComponent },
+ 
 ];
 
 @NgModule({
