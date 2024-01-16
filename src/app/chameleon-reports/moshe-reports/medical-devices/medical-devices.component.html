@@ -1,113 +1,237 @@
-<div class="body">
-    <div class="nine">
-      <h1>
-        {{ Title1 }}<span>{{ Title2 }}</span>
-      </h1>
-    </div>
-  
-    <form [formGroup]="filterForm" dir="rtl" class="filter-form">
-      <ng-container *ngFor="let column of columns">
-        <mat-form-field appearance="outline">
-          <mat-label class="filters">{{ getColumnLabel(column) }}</mat-label>
-          <ng-container
-            *ngIf="
-              column !== 'enterance_Date' && column !== 'departure_Date';
-              else datepicker
-            "
-          >
-            <input matInput [formControl]="getFormControl(column)" />
-            <mat-select
-              *ngIf="column === 'test'"
-              [formControl]="getFormControl(column)"
+<div class="container-fluid mb-2">
+  <div class="row search-cont">
+    <div class="col">
+      <div dir="rtl" class="card">
+        <div dir="rtl" class="card-body">
+          <form class="form">
+            <div class="row">
+              <div class="col-3">
+                <div class="form-group">
+                  <mat-form-field>
+                    <input
+                      matInput
+                      type="text"
+                      autocomplete="off"
+                      placeholder="תעודת זהות"
+                      formControlName="EmpID"
+                    />
+                  </mat-form-field>
+                </div>
+              </div>
+              <div class="col-3">
+                <div class="form-group">
+                  <mat-form-field>
+                    <input
+                      matInput
+                      type="text"
+                      autocomplete="off"
+                      placeholder="שם פרטי"
+                      formControlName="EmpFirstName"
+                    />
+                  </mat-form-field>
+                </div>
+              </div>
+              <div class="col-3">
+                <div class="form-group">
+                  <mat-form-field>
+                    <input
+                      matInput
+                      type="text"
+                      autocomplete="off"
+                      placeholder="שם משפחה"
+                      formControlName="EmpLastName"
+                    />
+                  </mat-form-field>
+                </div>
+              </div>
+              <div class="col-3">
+                <div class="form-group lh-37">
+                  <mat-form-field>
+                    <mat-label>מאושר לבלוסום</mat-label>
+                    <mat-select formControlName="ApprovedToBlossom">
+                      <mat-option value="2">הכל</mat-option>
+                      <mat-option value="1"> כן </mat-option>
+                      <mat-option value="0"> לא </mat-option>
+                    </mat-select>
+                  </mat-form-field>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-3">
+                <div class="form-group lh-37">
+                  <mat-form-field>
+                    <mat-label>מספר טלפון</mat-label>
+                    <input
+                      type="tel"
+                      matInput
+                      autocomplete="off"
+                      placeholder="מספר טלפון"
+                      formControlName="PhoneNumber"
+                    />
+                  </mat-form-field>
+                </div>
+              </div>
+              <div class="col-3">
+                <div class="form-group lh-37">
+                  <mat-form-field>
+                    <mat-label>פעיל</mat-label>
+                    <mat-select formControlName="On">
+                      <mat-option value="0">הכל</mat-option>
+                      <mat-option value="1"> כן </mat-option>
+                      <mat-option value="2"> לא </mat-option>
+                    </mat-select>
+                  </mat-form-field>
+                </div>
+              </div>
+              <div class="col-3">
+                <div class="form-group lh-37">
+                  <mat-form-field>
+                    <mat-label>בוגר לימודי רפואה</mat-label>
+                    <mat-select formControlName="MedGrad">
+                      <mat-option value="0">הכל</mat-option>
+                      <mat-option value="1"> כן </mat-option>
+                      <mat-option value="2"> לא </mat-option>
+                    </mat-select>
+                  </mat-form-field>
+                </div>
+              </div>
+              <div class="col-3">
+                <div class="form-group lh-37">
+                  <mat-form-field>
+                    <mat-label>מאושר ממשאבי אנוש</mat-label>
+                    <mat-select formControlName="StatusRow">
+                      <mat-option value="2">הכל</mat-option>
+                      <mat-option value="1"> כן </mat-option>
+                      <mat-option value="0"> לא </mat-option>
+                    </mat-select>
+                  </mat-form-field>
+                </div>
+              </div>
+            </div>
+            <div class="row"></div>
+            <button
+              matTooltip="חיפוש"
+              mat-raised-button
+              type="submit"
+              class="btn btn-primary btn-raised"
             >
-              <mat-option
-                *ngFor="let option of answerTextOptions"
-                [value]="option"
-              >
-                {{ option }}
-              </mat-option>
-            </mat-select>
-          </ng-container>
-          <ng-container *ngIf="column === 'name'">
-            <mat-select [formControl]="getFormControl(column)">
-              <mat-option
-                *ngFor="let option of answerTextTypeOptions"
-                [value]="option"
-              >
-                {{ option }}
-              </mat-option>
-            </mat-select>
-          </ng-container>
-          <ng-template #datepicker>
-            <input
-              matInput
-              [formControl]="getFormControl(column)"
-              [matDatepicker]="picker"
-            />
-            <mat-datepicker-toggle
-              matSuffix
-              [for]="picker"
-            ></mat-datepicker-toggle>
-            <mat-datepicker #picker></mat-datepicker>
-          </ng-template>
-        </mat-form-field>
-      </ng-container>
-      <button
-        mat-button
-        (click)="resetFilters()"
-        mat-raised-button
-        color="primary"
-        class="custom-button"
-      >
-        Reset Filters
-      </button>
-      <div class="global-filter">
-        <mat-form-field appearance="outline" class="long-search-bar">
-          <mat-label class="filters" style="color: blue">חיפוש</mat-label>
-          <input
-            matInput
-            [formControlName]="'globalFilter'"
-            class="search-input"
-          />
-        </mat-form-field>
-        <div class="icon">
-          <img
-            src="../../assets/excel.png"
-            alt="Download"
-            (click)="exportToExcel()"
-            class="download-icon"
-          />
+              <span class="material-icons"> search </span>
+            </button>
+            &nbsp;&nbsp;
+            <!-- <button matTooltip="הדפסה" mat-raised-button type="button"
+                            class="btn btn-primary btn-raised">
+                            <span class="material-icons">
+                                local_printshop
+                            </span>
+                        </button> -->
+          </form>
         </div>
       </div>
-    </form>
-  
-    <mat-table
-      [dataSource]="matTableDataSource"
-      matSort
-      dir="rtl"
-      class="mat-elevation-z8"
-    >
-      <!-- Loop through columns to define each column in the table -->
-      <ng-container *ngFor="let column of columns" [matColumnDef]="column">
-        <mat-header-cell *matHeaderCellDef mat-sort-header>
-          {{ getColumnLabel(column) }}
-          <!-- Use the function to get display-friendly labels -->
-        </mat-header-cell>
-        <mat-cell *matCellDef="let element">{{ element[column] }}</mat-cell>
-      </ng-container>
-  
-      <!-- Define the header row -->
-      <mat-header-row *matHeaderRowDef="columns"></mat-header-row>
-      <!-- Define the data row -->
-      <mat-row *matRowDef="let row; columns: columns" class="mat-row"></mat-row>
-    </mat-table>
-  
-    <!-- Define the paginator with page size options -->
-    <mat-paginator
-      [length]="matTableDataSource.paginator?.length || 0"
-      [pageIndex]="matTableDataSource.paginator?.pageIndex"
-      [pageSize]="matTableDataSource.paginator?.pageSize"
-      [pageSizeOptions]="[5, 15, 20]"
-    ></mat-paginator>
+    </div>
   </div>
-  
+  <!-- <mat-progress-bar mode="buffer" id="buffer" *ngIf="Patientsloading"></mat-progress-bar> -->
+</div>
+<form [formGroup]="filterForm" dir="rtl" class="filter-form">
+  <div class="container-fluid mb-2">
+    <ng-container *ngFor="let column of columns">
+      <mat-form-field>
+        <mat-label class="filters">{{ getColumnLabel(column) }}</mat-label>
+        <ng-container
+          *ngIf="
+            column !== 'enterance_Date' && column !== 'departure_Date';
+            else datepicker
+          "
+        >
+          <input matInput [formControl]="getFormControl(column)" />
+          <mat-select
+            *ngIf="column === 'test'"
+            [formControl]="getFormControl(column)"
+          >
+            <mat-option
+              *ngFor="let option of answerTextOptions"
+              [value]="option"
+            >
+              {{ option }}
+            </mat-option>
+          </mat-select>
+        </ng-container>
+        <ng-container *ngIf="column === 'name'">
+          <mat-select [formControl]="getFormControl(column)">
+            <mat-option
+              *ngFor="let option of answerTextTypeOptions"
+              [value]="option"
+            >
+              {{ option }}
+            </mat-option>
+          </mat-select>
+        </ng-container>
+        <ng-template #datepicker>
+          <input
+            matInput
+            [formControl]="getFormControl(column)"
+            [matDatepicker]="picker"
+          />
+          <mat-datepicker-toggle
+            matSuffix
+            [for]="picker"
+          ></mat-datepicker-toggle>
+          <mat-datepicker #picker></mat-datepicker>
+        </ng-template>
+      </mat-form-field>
+    </ng-container>
+  </div>
+  <button
+    mat-button
+    (click)="resetFilters()"
+    mat-raised-button
+    color="primary"
+    class="custom-button"
+  >
+    Reset Filters
+  </button>
+
+  <div class="global-filter">
+    <mat-form-field appearance="outline" class="long-search-bar">
+      <mat-label class="filters" style="color: blue">חיפוש</mat-label>
+      <input matInput [formControlName]="'globalFilter'" class="search-input" />
+    </mat-form-field>
+    <div class="icon">
+      <img
+        src="../../assets/excel.png"
+        alt="Download"
+        (click)="exportToExcel()"
+        class="download-icon"
+      />
+    </div>
+  </div>
+</form>
+
+<mat-table
+  [dataSource]="matTableDataSource"
+  matSort
+  dir="rtl"
+  class="mat-elevation-z8"
+>
+  <!-- Loop through columns to define each column in the table -->
+  <ng-container *ngFor="let column of columns" [matColumnDef]="column">
+    <mat-header-cell *matHeaderCellDef mat-sort-header>
+      {{ getColumnLabel(column) }}
+      <!-- Use the function to get display-friendly labels -->
+    </mat-header-cell>
+    <mat-cell *matCellDef="let element">{{ element[column] }}</mat-cell>
+  </ng-container>
+
+  <!-- Define the header row -->
+  <mat-header-row *matHeaderRowDef="columns"></mat-header-row>
+  <!-- Define the data row -->
+  <mat-row *matRowDef="let row; columns: columns" class="mat-row"></mat-row>
+</mat-table>
+
+<!-- Define the paginator with page size options -->
+<mat-paginator
+  [length]="matTableDataSource.paginator?.length || 0"
+  [pageIndex]="matTableDataSource.paginator?.pageIndex"
+  [pageSize]="matTableDataSource.paginator?.pageSize"
+  [pageSizeOptions]="[15, 50, 100]"
+></mat-paginator>

@@ -1,44 +1,44 @@
 #rolesDetailsBtn{
-    position: fixed;
-    bottom: 50px;
-    left: 125px;
-    z-index: 10;
-  }
-  table{
-    width: 95%;
-    margin: 10px 23px 1px 0px;
-  }
-  .mat-row:nth-child(even){
-    background-color: white;
-  }
-  .spinner{
-    left: 50%;
-    display: unset;
-  }
-  .mat-row:nth-child(odd){
-    background-color: aliceblue;
-  }
-  .mat-row:hover {
-    background-color: darkgray;
-    cursor: pointer;
-  }
-  .container{
-    min-width: 100%;
-  }
-  mat-card:hover{
-    cursor: pointer;
-  }
-  mat-card{
-    width: 48%;
-    margin-top: 10%;
-    text-align: center;
-    margin-right: 2%;
-    background: burlywood;
-  }
-  mat-card-content{
-    font-size: 30px;
-    font-weight: bold;
-  }
-  a{
-    cursor: pointer;
-  }
+  position: fixed;
+  bottom: 50px;
+  left: 125px;
+  z-index: 10;
+}
+table{
+  width: 95%;
+  margin: 10px 23px 1px 0px;
+}
+.mat-row:nth-child(even){
+  background-color: white;
+}
+.spinner{
+  left: 50%;
+  display: unset;
+}
+.mat-row:nth-child(odd){
+  background-color: aliceblue;
+}
+.mat-row:hover {
+  background-color: darkgray;
+  cursor: pointer;
+}
+.container{
+  min-width: 100%;
+}
+mat-card:hover{
+  cursor: pointer;
+}
+mat-card{
+  width: 48%;
+  margin-top: 10%;
+  text-align: center;
+  margin-right: 2%;
+  background: burlywood;
+}
+mat-card-content{
+  font-size: 30px;
+  font-weight: bold;
+}
+a{
+  cursor: pointer;
+}
