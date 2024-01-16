@@ -28,7 +28,6 @@ import { MychartComponent } from './mychart/mychart.component';
 import { UploadPicComponent } from './upload-pic/upload-pic.component';
 import { PicturesComponent } from './pictures/pictures.component';
 import { SQLComponent } from './sql/sql.component';
-
 import { MatCardModule } from '@angular/material/card';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { FooterComponent } from './footer/footer.component';
@@ -40,8 +39,6 @@ import { DatePipe } from '@angular/common';
 import { HospitalizationsListComponent } from './hospitalizations-list/hospitalizations-list.component';
 import { DevicesPerUnitComponent } from './devices-per-unit/devices-per-unit.component';
 import { MedicalDevicesComponent } from './chameleon-reports/moshe-reports/medical-devices/medical-devices.component';
-
-
 
 @NgModule({
   declarations: [
