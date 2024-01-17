@@ -1,44 +1,134 @@
-#rolesDetailsBtn{
+#rolesDetailsBtn {
   position: fixed;
   bottom: 50px;
   left: 125px;
   z-index: 10;
 }
-table{
+table {
   width: 95%;
   margin: 10px 23px 1px 0px;
 }
-.mat-row:nth-child(even){
+.mat-row:nth-child(even) {
   background-color: white;
 }
-.spinner{
+.spinner {
   left: 50%;
   display: unset;
 }
-.mat-row:nth-child(odd){
+.mat-row:nth-child(odd) {
   background-color: aliceblue;
 }
 .mat-row:hover {
   background-color: darkgray;
   cursor: pointer;
 }
-.container{
+.container {
   min-width: 100%;
 }
-mat-card:hover{
+mat-card:hover {
   cursor: pointer;
 }
-mat-card{
+mat-card {
   width: 48%;
   margin-top: 10%;
   text-align: center;
   margin-right: 2%;
   background: burlywood;
 }
-mat-card-content{
+mat-card-content {
   font-size: 30px;
   font-weight: bold;
 }
-a{
+a {
   cursor: pointer;
 }
+
+/* Assuming you have a CSS class named 'filter-form' for the form */
+.filter-form {
+  width: 100%; /* Set the width to 100% to match the table's width */
+  padding: 10px; /* Add padding for spacing */
+  box-sizing: border-box; /* Include padding in the width calculation */
+}
+
+/* Style the 'name' select box */
+.name-select {
+  /* Set a fixed width to match other input fields */
+  width: auto; /* or specify a width in pixels or percentage */
+  display: flex;
+  align-items: center;
+}
+
+/* Add this CSS to your stylesheet */
+.name-select .mat-select-arrow {
+  position: absolute !important;
+  top: 5px !important; /* Adjust this value to position the arrow vertically as needed */
+  left: 5px !important; /* Adjust this value to position the arrow horizontally as needed */
+}
+/* Add this CSS to your stylesheet */
+.name-select {
+  width: 170px; /* Adjust the width to your desired size */
+  height: 0px;
+}
+/* Add margin to the mat-form-field elements */
+.filter-field {
+  margin-right: 20px; /* Adjust the margin as needed */
+}
+/* Set a fixed width and height for the mat-form-field elements */
+.filter-field {
+  width: 315px; /* Adjust the width as needed */
+  height: 80px; /* Adjust the height as needed */
+
+}
+/* Add this CSS to your stylesheet */
+.name-select {
+  width: 170px !important; /* Adjust the width to your desired size */
+  display: flex !important;
+  align-items: center !important;
+  position: relative !important; /* Add this line to make it a positioned container */
+}
+
+/* Adjust the position of the select arrow */
+.name-select {
+  position: absolute !important;
+  top: 70% !important; /* Center vertically */
+  left: 5px !important; /* Adjust this value to position the arrow to the right */
+  transform: translateY(
+    -50%
+  ) !important; /* Center vertically using translation */
+}
+/* Change the font family, color, and font size of the filter labels */
+.filter-field mat-label {
+  font-family: Arial, sans-serif; /* Change to your desired font family */
+  color: black; /* Change to your desired color */
+  font-size: 16px;
+  //font-weight: bold;
+  vertical-align: bottom; /* You can adjust this value as needed */
+
+}
+/* CSS */
+.filter-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.filter-field {
+  flex-grow: 1;
+  margin-right: 20px;
+  width: calc(25% - 20px); /* 25% to fit four filters in a row with spacing */
+}
+
+/* Add this CSS to ensure proper alignment of name-select */
+.name-select {
+  width: 100%;
+}
+
+/* Remove the width and height of name-select */
+.name-select-wrapper .mat-select-arrow {
+  position: absolute !important;
+  top: 5px !important;
+  left: 5px !important;
+  /* Adjust this value to position the arrow horizontally as needed */
+}
+

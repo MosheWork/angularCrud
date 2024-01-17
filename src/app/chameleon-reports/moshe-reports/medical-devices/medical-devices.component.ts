@@ -6,7 +6,6 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatSort } from '@angular/material/sort';
 
-
 import * as XLSX from 'xlsx';
 
 interface FormControls {
@@ -15,9 +14,10 @@ interface FormControls {
 @Component({
   selector: 'app-medical-devices',
   templateUrl: './medical-devices.component.html',
-  styleUrls: ['./medical-devices.component.scss'],
+  styleUrls: ['./medical-devices.component.scss']
 })
 export class MedicalDevicesComponent implements OnInit {
+
   // Properties for titles, data sources, options, and more
 
   Title1: string = 'רשימת מכשירים ביחידה';
