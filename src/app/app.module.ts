@@ -41,6 +41,8 @@ import { DevicesPerUnitComponent } from './devices-per-unit/devices-per-unit.com
 import { MedicalDevicesComponent } from './chameleon-reports/moshe-reports/medical-devices/medical-devices.component';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
+
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -58,6 +60,8 @@ import { MatTooltipModule } from '@angular/material/tooltip';
     HospitalizationsListComponent,
     DevicesPerUnitComponent,
     MedicalDevicesComponent,
+    
+    
   ],
   imports: [
     BrowserModule,
@@ -83,6 +87,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
     MatSidenavModule,
     FormsModule,
     MatTooltipModule,
+    
   ],
   providers: [DatePipe],
   bootstrap: [AppComponent],

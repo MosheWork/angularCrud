@@ -6,6 +6,7 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatSort } from '@angular/material/sort';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { Router } from '@angular/router'; // Import the Router
 
 
 import * as XLSX from 'xlsx';
@@ -16,15 +17,14 @@ interface FormControls {
 @Component({
   selector: 'app-medical-devices',
   templateUrl: './medical-devices.component.html',
-  styleUrls: ['./medical-devices.component.scss']
+  styleUrls: ['./medical-devices.component.scss'],
 })
 export class MedicalDevicesComponent implements OnInit {
-
   // Properties for titles, data sources, options, and more
 
   Title1: string = ' רשימת מכשירים ביחידה - ';
   Title2: string = 'סה"כ תוצאות   ';
-  titleUnit:string='הנדסה רפואית';
+  titleUnit: string = 'הנדסה רפואית';
   totalResults: number = 0;
 
   // ViewChild decorators for accessing Angular Material components
@@ -96,7 +96,7 @@ export class MedicalDevicesComponent implements OnInit {
     this.totalResults = this.filteredData.length;
 
     // Update the title and the MatTableDataSource
-   // this.Title2 = ` ${this.totalResults}`;
+    // this.Title2 = ` ${this.totalResults}`;
     this.matTableDataSource.data = this.filteredData;
     this.matTableDataSource.paginator = this.paginator;
   }
@@ -121,7 +121,11 @@ export class MedicalDevicesComponent implements OnInit {
   }
   // Constructor to initialize HttpClient and FormBuilder
 
-  constructor(private http: HttpClient, private fb: FormBuilder) {
+  constructor(
+    private http: HttpClient,
+    private fb: FormBuilder,
+    private router: Router
+  ) {
     this.filterForm = this.createFilterForm();
     this.matTableDataSource = new MatTableDataSource<any>([]);
   }
@@ -227,7 +231,6 @@ export class MedicalDevicesComponent implements OnInit {
     this.matTableDataSource.data = this.filteredData;
     this.matTableDataSource.paginator = this.paginator;
     // Update the title with the total number of results
-    
   }
 
   // Method to check if a date is in a specified range
@@ -299,5 +302,9 @@ export class MedicalDevicesComponent implements OnInit {
 
   getFormControl(column: string): FormControl {
     return (this.filterForm.get(column) as FormControl) || new FormControl('');
+  }
+  // MedicalDevicesComponent class
+  navigateToGraphPage() {
+    this.router.navigate(['/medicalDevicesGraph']); // Navigate to the "graph" route
   }
 }

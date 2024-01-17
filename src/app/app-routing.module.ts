@@ -29,7 +29,6 @@ const routes: Routes = [
 
   //moshe-reports
   { path: 'medicalDevices', component: MedicalDevicesComponent },
- 
 ];
 
 @NgModule({

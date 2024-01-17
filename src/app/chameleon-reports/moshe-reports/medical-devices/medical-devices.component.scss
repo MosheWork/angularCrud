@@ -78,12 +78,10 @@ a {
   width: 315px; /* Adjust the width as needed */
   height: 80px; /* Adjust the height as needed */
   width: calc(25% - 20px); /* 25% to fit four filters in a row with spacing */
- padding-top: 5px; /* Adjust this value to control the vertical spacing */
+  padding-top: 5px; /* Adjust this value to control the vertical spacing */
   //padding-left: -15px;
- //padding-right: 0px;
-  
+  //padding-right: 0px;
 }
-
 
 /* Add this CSS to your stylesheet */
 .name-select {
@@ -107,7 +105,7 @@ a {
   font-family: Arial, sans-serif; /* Change to your desired font family */
   color: black; /* Change to your desired color */
   font-size: 16px;
- //padding-right: none;
+  //padding-right: none;
 }
 /* CSS */
 .filter-container {
@@ -135,7 +133,6 @@ a {
   left: 5px !important;
   /* Adjust this value to position the arrow horizontally as needed */
 }
-
 
 /* Move the reset button to the bottom-left corner of the card-body */
 .reset-button-container {
@@ -200,8 +197,8 @@ a {
 .nine h1 span:before {
   content: " ";
   display: block;
- // border-bottom: 1px solid rgb(60, 15, 223);
- // border-top: 1px solid rgb(60, 15, 223);
- //height: 5px;
+  // border-bottom: 1px solid rgb(60, 15, 223);
+  // border-top: 1px solid rgb(60, 15, 223);
+  //height: 5px;
   //background-color: rgb(187, 215, 254);
 }
