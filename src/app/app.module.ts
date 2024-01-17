@@ -39,6 +39,7 @@ import { DatePipe } from '@angular/common';
 import { HospitalizationsListComponent } from './hospitalizations-list/hospitalizations-list.component';
 import { DevicesPerUnitComponent } from './devices-per-unit/devices-per-unit.component';
 import { MedicalDevicesComponent } from './chameleon-reports/moshe-reports/medical-devices/medical-devices.component';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 @NgModule({
   declarations: [
@@ -81,6 +82,7 @@ import { MedicalDevicesComponent } from './chameleon-reports/moshe-reports/medic
     MatCardModule,
     MatSidenavModule,
     FormsModule,
+    MatTooltipModule,
   ],
   providers: [DatePipe],
   bootstrap: [AppComponent],

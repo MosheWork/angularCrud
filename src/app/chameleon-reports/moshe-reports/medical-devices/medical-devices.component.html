@@ -1,5 +1,14 @@
-<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
-
+<link
+  rel="stylesheet"
+  href="https://fonts.googleapis.com/icon?family=Material+Icons"
+/>
+<div class="body">
+    <div class="nine">
+      <h1>
+        {{titleUnit}}<span>{{ Title1 }}{{ Title2 }}{{totalResults}}</span>
+      </h1>
+    </div>
+  
 <form [formGroup]="filterForm" dir="rtl" class="filter-form">
   <div class="container-fluid mb-2">
     <div class="row search-count">
@@ -12,19 +21,25 @@
                 <!-- Filter fields go here -->
               </div>
               <mat-form-field class="filter-field">
-                <mat-label class="filters">{{ getColumnLabel(column) }}</mat-label>
+                <mat-label class="filters">{{
+                  getColumnLabel(column)
+                }}</mat-label>
                 <ng-container
                   *ngIf="
                     column !== 'enterance_Date' && column !== 'departure_Date';
                     else datepicker
                   "
                 >
-                  <input matInput [formControl]="getFormControl(column)" />
+                  <input
+                    matInput
+                    [formControl]="getFormControl(column)"
+                    class="filter-input"
+                  />
                   <div class="name-select-wrapper">
                     <mat-select
                       *ngIf="column === 'test'"
                       [formControl]="getFormControl(column)"
-                      class="custom-select"
+                      class="name-select"
                     >
                       <mat-option
                         *ngFor="let option of answerTextOptions"
@@ -43,6 +58,7 @@
                     <mat-option
                       *ngFor="let option of answerTextTypeOptions"
                       [value]="option"
+                      disableOptionCenter
                     >
                       {{ option }}
                     </mat-option>
@@ -54,7 +70,10 @@
                     [formControl]="getFormControl(column)"
                     [matDatepicker]="picker"
                   />
-                  <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                  <mat-datepicker-toggle
+                    matSuffix
+                    [for]="picker"
+                  ></mat-datepicker-toggle>
                   <mat-datepicker #picker></mat-datepicker>
                 </ng-template>
               </mat-form-field>
@@ -67,6 +86,7 @@
               mat-raised-button
               color="primary"
               class="custom-button"
+              matTooltip="Reset Filters"
             >
               <i class="material-icons">refresh</i>
               <!-- Icon for reset -->
@@ -80,11 +100,14 @@
     dir="rtl"
     style="display: flex; justify-content: space-between; align-items: center"
   >
-    <mat-form-field class="long-search-bar" style="flex: 1; padding-right: 10px">
+    <mat-form-field
+      class="long-search-bar"
+      style="flex: 1; padding-right: 10px"
+    >
       <mat-label class="filters" style="color: blue">הקלד מסנן</mat-label>
       <input matInput [formControlName]="'globalFilter'" class="search-input" />
     </mat-form-field>
-    <div class="icon">
+    <div class="icon" matTooltip="Download Excel">
       <img
         src="../../assets/excel.png"
         alt="Download"
@@ -96,7 +119,12 @@
   </div>
 </form>
 
-<mat-table [dataSource]="matTableDataSource" matSort dir="rtl" class="mat-elevation-z8">
+<mat-table
+  [dataSource]="matTableDataSource"
+  matSort
+  dir="rtl"
+  class="mat-elevation-z8"
+>
   <!-- Loop through columns to define each column in the table -->
   <ng-container *ngFor="let column of columns" [matColumnDef]="column">
     <mat-header-cell *matHeaderCellDef mat-sort-header>

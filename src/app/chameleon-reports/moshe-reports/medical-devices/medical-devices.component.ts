@@ -5,6 +5,8 @@ import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatSort } from '@angular/material/sort';
+import { MatTooltipModule } from '@angular/material/tooltip';
+
 
 import * as XLSX from 'xlsx';
 
@@ -20,8 +22,9 @@ export class MedicalDevicesComponent implements OnInit {
 
   // Properties for titles, data sources, options, and more
 
-  Title1: string = 'רשימת מכשירים ביחידה';
-  Title2: string = ' הנדסה רפואית ';
+  Title1: string = ' רשימת מכשירים ביחידה - ';
+  Title2: string = 'סה"כ תוצאות   ';
+  titleUnit:string='הנדסה רפואית';
   totalResults: number = 0;
 
   // ViewChild decorators for accessing Angular Material components
@@ -93,7 +96,7 @@ export class MedicalDevicesComponent implements OnInit {
     this.totalResults = this.filteredData.length;
 
     // Update the title and the MatTableDataSource
-    this.Title2 = `משה כללי - סה"כ תוצאות: ${this.totalResults}`;
+   // this.Title2 = ` ${this.totalResults}`;
     this.matTableDataSource.data = this.filteredData;
     this.matTableDataSource.paginator = this.paginator;
   }
@@ -224,7 +227,7 @@ export class MedicalDevicesComponent implements OnInit {
     this.matTableDataSource.data = this.filteredData;
     this.matTableDataSource.paginator = this.paginator;
     // Update the title with the total number of results
-    this.Title2 = ` רשימת מכשירים - סה"כ תוצאות: ${this.totalResults}`;
+    
   }
 
   // Method to check if a date is in a specified range

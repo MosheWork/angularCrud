@@ -6,16 +6,16 @@
 }
 table {
   width: 95%;
-  margin: 10px 23px 1px 0px;
+  margin: 20px 23px 1px 0px;
 }
-.mat-row:nth-child(even) {
+.mat-row:nth-child(odd) {
   background-color: white;
 }
 .spinner {
   left: 50%;
   display: unset;
 }
-.mat-row:nth-child(odd) {
+.mat-row:nth-child(even) {
   background-color: aliceblue;
 }
 .mat-row:hover {
@@ -77,8 +77,14 @@ a {
 .filter-field {
   width: 315px; /* Adjust the width as needed */
   height: 80px; /* Adjust the height as needed */
-
+  width: calc(25% - 20px); /* 25% to fit four filters in a row with spacing */
+ padding-top: 5px; /* Adjust this value to control the vertical spacing */
+  //padding-left: -15px;
+ //padding-right: 0px;
+  
 }
+
+
 /* Add this CSS to your stylesheet */
 .name-select {
   width: 170px !important; /* Adjust the width to your desired size */
@@ -91,7 +97,7 @@ a {
 .name-select {
   position: absolute !important;
   top: 70% !important; /* Center vertically */
-  left: 5px !important; /* Adjust this value to position the arrow to the right */
+  left: 1px !important; /* Adjust this value to position the arrow to the right */
   transform: translateY(
     -50%
   ) !important; /* Center vertically using translation */
@@ -101,9 +107,7 @@ a {
   font-family: Arial, sans-serif; /* Change to your desired font family */
   color: black; /* Change to your desired color */
   font-size: 16px;
-  //font-weight: bold;
-  vertical-align: bottom; /* You can adjust this value as needed */
-
+ //padding-right: none;
 }
 /* CSS */
 .filter-container {
@@ -132,3 +136,72 @@ a {
   /* Adjust this value to position the arrow horizontally as needed */
 }
 
+
+/* Move the reset button to the bottom-left corner of the card-body */
+.reset-button-container {
+  position: absolute;
+  bottom: 10px; /* Adjust the bottom position as needed */
+  left: 10px; /* Adjust the left position as needed */
+}
+
+/* Adjust the padding of the card-body to make space for the reset button */
+.card-body {
+  position: relative;
+  padding-left: 40px; /* Adjust the padding-left to make space for the button */
+}
+/* Add space between the end of the search bar and the start of the Excel icon */
+.icon {
+  margin-right: 50px; /* Adjust the margin as needed for spacing */
+}
+/* Add this CSS to your stylesheet */
+.filter-input {
+  text-align: right; /* Align the input text to the right */
+  direction: rtl; /* Set the text direction to right-to-left */
+}
+/* Add this CSS to your stylesheet */
+.name-select .mat-select-value {
+  text-align: right; /* Align the selected text to the right */
+  direction: rtl; /* Set the text direction to right-to-left */
+}
+/* Use ::ng-deep to override Angular's View Encapsulation */
+::ng-deep .mat-select-trigger {
+  text-align: right !important;
+  direction: rtl !important;
+}
+
+.nine h1 {
+  text-align: center;
+  font-size: 50px;
+  text-transform: uppercase;
+  color: rgb(54, 10, 214);
+  letter-spacing: 1px;
+  font-family: "Playfair Display", serif;
+  font-weight: 400;
+}
+.nine h1 span {
+  margin-top: 5px;
+  font-size: 15px;
+  color: rgb(159, 52, 235);
+  word-spacing: 1px;
+  font-weight: normal;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  font-family: "Raleway", sans-serif;
+  font-weight: 500;
+
+  display: grid;
+  grid-template-columns: 1fr max-content 1fr;
+  grid-template-rows: 27px 0;
+  grid-gap: 20px;
+  align-items: center;
+}
+
+.nine h1 span:after,
+.nine h1 span:before {
+  content: " ";
+  display: block;
+ // border-bottom: 1px solid rgb(60, 15, 223);
+ // border-top: 1px solid rgb(60, 15, 223);
+ //height: 5px;
+  //background-color: rgb(187, 215, 254);
+}
