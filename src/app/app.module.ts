@@ -40,6 +40,8 @@ import { HospitalizationsListComponent } from './hospitalizations-list/hospitali
 import { DevicesPerUnitComponent } from './devices-per-unit/devices-per-unit.component';
 import { MedicalDevicesComponent } from './chameleon-reports/moshe-reports/medical-devices/medical-devices.component';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { SysAidComponent } from './sys-aid/sys-aid.component';
+import { MainPageReportsComponent } from './main-page-reports/main-page-reports.component'
 
 
 
@@ -60,6 +62,8 @@ import { MatTooltipModule } from '@angular/material/tooltip';
     HospitalizationsListComponent,
     DevicesPerUnitComponent,
     MedicalDevicesComponent,
+    SysAidComponent,
+    MainPageReportsComponent,
     
     
   ],

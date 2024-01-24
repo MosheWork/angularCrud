@@ -8,23 +8,22 @@ import { MatSort } from '@angular/material/sort';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { Router } from '@angular/router'; // Import the Router
 
-
 import * as XLSX from 'xlsx';
 
 interface FormControls {
   [key: string]: FormControl;
 }
 @Component({
-  selector: 'app-medical-devices',
-  templateUrl: './medical-devices.component.html',
-  styleUrls: ['./medical-devices.component.scss'],
+  selector: 'app-sys-aid',
+  templateUrl: './sys-aid.component.html',
+  styleUrls: ['./sys-aid.component.scss'],
 })
-export class MedicalDevicesComponent implements OnInit {
+export class SysAidComponent implements OnInit {
   // Properties for titles, data sources, options, and more
 
-  Title1: string = ' רשימת מכשירים ביחידה - ';
+  Title1: string = '  רשימת קריאות  - ';
   Title2: string = 'סה"כ תוצאות   ';
-  titleUnit: string = 'הנדסה רפואית';
+  titleUnit: string = 'SysAid ';
   totalResults: number = 0;
 
   // ViewChild decorators for accessing Angular Material components
@@ -50,18 +49,19 @@ export class MedicalDevicesComponent implements OnInit {
   // Column names for the table
 
   columns: string[] = [
-    'unit',
-    'name',
-    'dongle_Id',
-    'dongle_Description',
-    'timeOut_Minutes',
-    //  'last_Name',
-    //  'departure_Reason',
-    //  'first_Name_g',
-    //  'last_Name_g',
-    //  'login_Name',
-    //  'enterance_Date',
-    //  'departure_Date',
+    'id',
+    'assigned_group',
+    'problem_type',
+    'problem_sub_type',
+    'third_level_category',
+    'title',
+    'description',
+    'status',
+    'responsibility',
+    'insert_time',
+    'update_time',
+
+    // 'departure_Date',
   ];
   // Method to parse a date string into a Date object or null
 
@@ -104,17 +104,17 @@ export class MedicalDevicesComponent implements OnInit {
 
   getColumnLabel(column: string): string {
     const columnLabels: Record<string, string> = {
-      name: 'סוג מכשיר',
-      unit: ' מחלקה ',
-      dongle_Id: 'מזהה ייחודי',
-      dongle_Description: 'שם מכשיר ביחידה',
-      timeOut_Minutes: ' מספר דקות לניתוק אוטומטי',
-      //  departure_Date: 'תאריך יציאה מבידוד',
-      //  departure_Reason: 'סיבת יציאה מבידוד',
-      //  first_Name: 'שם פרטי',
-      //  last_Name: 'שם משפחה',
-      //  first_Name_g: 'שם פרטי העובד המתעד',
-      //  last_Name_g: ' שם משפחה העובד המתעד',
+      id: 'id',
+      assigned_group: ' קבוצה אחראית ',
+      problem_type: ' קטגוריה 1',
+      problem_sub_type: 'קטגוריה 2',
+      title: 'כותרת הקריאה',
+      description: 'פירוט הקריאה',
+      status: 'סטטוס',
+      responsibility: ' אחראי על הקריאה',
+      insert_time: ' זמן פתיחת הקריאה',
+      update_time: 'זמן סגירת הקריאה',
+      third_level_category: ' קטגוריה 3   ',
       //  login_Name: 'שם משתמש',
     };
     return columnLabels[column] || column;
@@ -135,7 +135,7 @@ export class MedicalDevicesComponent implements OnInit {
     // Fetch data from the API when the component initializes
 
     this.http
-      .get<any[]>('http://localhost:7144/api/DevicesPerUnitAPI')
+      .get<any[]>('http://localhost:7144/api/SysAidAPI')
       .subscribe((data) => {
         //console.log('Received data:', data); // Log the data received from the API
 
@@ -177,7 +177,7 @@ export class MedicalDevicesComponent implements OnInit {
     this.columns.forEach((column) => {
       formControls[column] = new FormControl('');
 
-      if (column === 'enterance_Date' || column === 'departure_Date') {
+      if (column === 'insert_time' || column === 'update_time') {
         formControls[column] = new FormControl(null); // Initialize as null for date picker
       }
       if (column === 'answer_Text') {
@@ -203,7 +203,7 @@ export class MedicalDevicesComponent implements OnInit {
         this.columns.every((column) => {
           const value = String(item[column]).toLowerCase();
 
-          if (column === 'enterance_Date' || column === 'departure_Date') {
+          if (column === 'insert_time' || column === 'update_time') {
             const dateValue = this.parseDate(item[column]);
             const filterDate = this.parseDate(filters[column]);
 
@@ -235,9 +235,9 @@ export class MedicalDevicesComponent implements OnInit {
 
   // Method to check if a date is in a specified range
   private isDateInRange(date: Date, filterDate: Date, column: string): boolean {
-    if (column === 'enterance_Date') {
+    if (column === 'insert_time') {
       return date >= filterDate;
-    } else if (column === 'departure_Date') {
+    } else if (column === 'update_time') {
       return date <= filterDate;
     }
     return false;
@@ -280,10 +280,10 @@ export class MedicalDevicesComponent implements OnInit {
 
   fetchAnswerTextOptions() {
     this.http
-      .get<any[]>('http://localhost:7144/api/DevicesPerUnitAPI')
+      .get<any[]>('http://localhost:7144/api/SysAidAPI')
       .subscribe((data) => {
         // Extract distinct values from the 'answer_Text' column
-        this.answerTextOptions = [...new Set(data.map((item) => item.unit))];
+        this.answerTextOptions = [...new Set(data.map((item) => item.status))];
         //console.log('Answer Text Options:', this.answerTextOptions);
       });
   }
@@ -291,10 +291,10 @@ export class MedicalDevicesComponent implements OnInit {
   fetchAnswerTextTypeOptions() {
     // Fetch options specifically for 'answer_Text_Type'
     this.http
-      .get<any[]>('http://localhost:7144/api/DevicesPerUnitAPI')
+      .get<any[]>('http://localhost:7144/api/SysAidAPI')
       .subscribe((data) => {
         this.answerTextTypeOptions = [
-          ...new Set(data.map((item) => item.name)),
+          ...new Set(data.map((item) => item.responsibility)),
         ];
       });
   }
@@ -305,9 +305,6 @@ export class MedicalDevicesComponent implements OnInit {
   }
   // MedicalDevicesComponent class
   navigateToGraphPage() {
-    this.router.navigate(['/medicalDevicesGraph']); // Navigate to the "graph" route
+    this.router.navigate(['/']); // Navigate to the "graph" route
   }
-  goToHome() {
-    this.router.navigate(['/MainPageReports']); // replace '/home' with your desired route
-}
 }

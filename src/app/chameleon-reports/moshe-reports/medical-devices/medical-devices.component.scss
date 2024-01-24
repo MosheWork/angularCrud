@@ -202,3 +202,8 @@ a {
   //height: 5px;
   //background-color: rgb(187, 215, 254);
 }
+.top-right-container {
+  display: flex;
+  justify-content: flex-end; /* Aligns horizontally to the right */
+  padding: 10px; /* Add some padding */
+}

@@ -2,20 +2,11 @@
   rel="stylesheet"
   href="https://fonts.googleapis.com/icon?family=Material+Icons"
 />
-
 <div class="body">
-  <div class="top-right-container">
-    <button mat-icon-button (click)="goToHome()" matTooltip="Go to Home">
-      <mat-icon>home</mat-icon>
-    </button>
-  </div>
   <div class="nine">
-  
     <h1>
       {{ titleUnit }}<span>{{ Title1 }}{{ Title2 }}{{ totalResults }}</span>
     </h1>
-
-  
   </div>
 
   <form [formGroup]="filterForm" dir="rtl" class="filter-form">
@@ -35,8 +26,7 @@
                   }}</mat-label>
                   <ng-container
                     *ngIf="
-                      column !== 'enterance_Date' &&
-                        column !== 'departure_Date';
+                      column !== 'insert_time' && column !== 'update_time';
                       else datepicker
                     "
                   >
@@ -47,7 +37,7 @@
                     />
                     <div class="name-select-wrapper">
                       <mat-select
-                        *ngIf="column === 'test'"
+                        *ngIf="column === 'status'"
                         [formControl]="getFormControl(column)"
                         class="name-select"
                       >
@@ -60,7 +50,7 @@
                       </mat-select>
                     </div>
                   </ng-container>
-                  <ng-container *ngIf="column === 'name'">
+                  <ng-container *ngIf="column === 'responsibility'">
                     <mat-select
                       [formControl]="getFormControl(column)"
                       class="name-select"

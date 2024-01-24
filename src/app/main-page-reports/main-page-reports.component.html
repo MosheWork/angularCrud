@@ -1,0 +1,13 @@
+<div class="body">
+    <div class="card" *ngFor="let card of cards">
+      <mat-card>
+        <mat-card-title class="title1">{{ card.title }}</mat-card-title>
+        <mat-card-subtitle class="title1">מבקש הדוח: {{ card.requester }}</mat-card-subtitle>
+        <mat-card-content>{{ card.content }}</mat-card-content>
+        <button mat-button class="button" [routerLink]="card.link">
+          להרצת הדוח
+        </button>
+      </mat-card>
+    </div>
+  </div>
+  
