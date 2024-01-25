@@ -41,9 +41,8 @@ import { DevicesPerUnitComponent } from './devices-per-unit/devices-per-unit.com
 import { MedicalDevicesComponent } from './chameleon-reports/moshe-reports/medical-devices/medical-devices.component';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { SysAidComponent } from './sys-aid/sys-aid.component';
-import { MainPageReportsComponent } from './main-page-reports/main-page-reports.component'
-
-
+import { MainPageReportsComponent } from './main-page-reports/main-page-reports.component';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
 
 @NgModule({
   declarations: [
@@ -64,8 +63,6 @@ import { MainPageReportsComponent } from './main-page-reports/main-page-reports.
     MedicalDevicesComponent,
     SysAidComponent,
     MainPageReportsComponent,
-    
-    
   ],
   imports: [
     BrowserModule,
@@ -91,7 +88,7 @@ import { MainPageReportsComponent } from './main-page-reports/main-page-reports.
     MatSidenavModule,
     FormsModule,
     MatTooltipModule,
-    
+    MatAutocompleteModule,
   ],
   providers: [DatePipe],
   bootstrap: [AppComponent],

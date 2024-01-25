@@ -34,13 +34,16 @@
                       matInput
                       [formControl]="getFormControl(column)"
                       class="filter-input"
+                      
                     />
+
                     <div class="name-select-wrapper">
                       <mat-select
                         *ngIf="column === 'status'"
                         [formControl]="getFormControl(column)"
                         class="name-select"
                       >
+                      
                         <mat-option
                           *ngFor="let option of answerTextOptions"
                           [value]="option"
@@ -64,18 +67,13 @@
                       </mat-option>
                     </mat-select>
                   </ng-container>
-                  <ng-template #datepicker>
-                    <input
-                      matInput
-                      [formControl]="getFormControl(column)"
-                      [matDatepicker]="picker"
-                    />
-                    <mat-datepicker-toggle
-                      matSuffix
-                      [for]="picker"
-                    ></mat-datepicker-toggle>
+                  
+                  <ng-template #datepicker class="datepicker-field">
+                    <input matInput [formControl]="getFormControl(column)" [matDatepicker]="picker" dir="rtl">
+                    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
                     <mat-datepicker #picker></mat-datepicker>
                   </ng-template>
+                  
                 </mat-form-field>
               </ng-container>
             </div>
