@@ -5,6 +5,7 @@ import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatSort } from '@angular/material/sort';
+import { Router } from '@angular/router'; // Import the Router
 
 import * as XLSX from 'xlsx';
 
@@ -118,7 +119,11 @@ export class IsolationComponent implements OnInit {
   }
   // Constructor to initialize HttpClient and FormBuilder
 
-  constructor(private http: HttpClient, private fb: FormBuilder) {
+  constructor(
+    private http: HttpClient,
+    private fb: FormBuilder,
+    private router: Router
+  ) {
     this.filterForm = this.createFilterForm();
     this.matTableDataSource = new MatTableDataSource<any>([]);
   }
@@ -291,5 +296,8 @@ export class IsolationComponent implements OnInit {
 
   getFormControl(column: string): FormControl {
     return (this.filterForm.get(column) as FormControl) || new FormControl('');
+  }
+  goToHome() {
+    this.router.navigate(['/MainPageReports']); // replace '/home' with your desired route
   }
 }

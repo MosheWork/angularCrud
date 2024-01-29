@@ -7,6 +7,9 @@ import { MatTableDataSource } from '@angular/material/table';
 import { MatSort } from '@angular/material/sort';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { Router } from '@angular/router'; // Import the Router
+import { Observable } from 'rxjs';
+import { map, startWith } from 'rxjs/operators';
+import { tap } from 'rxjs/operators';
 
 import * as XLSX from 'xlsx';
 
@@ -20,6 +23,7 @@ interface FormControls {
 })
 export class SysAidComponent implements OnInit {
   // Properties for titles, data sources, options, and more
+  filteredResponsibilities!: Observable<string[]>;
 
   Title1: string = '  רשימת קריאות  - ';
   Title2: string = 'סה"כ תוצאות   ';
@@ -169,10 +173,25 @@ export class SysAidComponent implements OnInit {
         // Call applyFilters initially to set the initial totalResults
         this.applyFilters();
       });
+    this.filteredResponsibilities = this.getFormControl(
+      'responsibility'
+    ).valueChanges.pipe(
+      startWith(''),
+      map((value) => this._filter(value)),
+      tap((filteredValues) => console.log('Filtered Values:', filteredValues))
+    );
   }
-
+  private _filter(value: string): string[] {
+    const filterValue = value.toLowerCase();
+    const filteredOptions = this.answerTextTypeOptions.filter((option) =>
+      option.toLowerCase().includes(filterValue)
+    );
+    console.log('Filtered Options:', filteredOptions);
+    return filteredOptions;
+  }
   // Method to create the filter form with form controls
   private createFilterForm() {
+    debugger;
     const formControls: FormControls = {};
     this.columns.forEach((column) => {
       formControls[column] = new FormControl('');
@@ -289,18 +308,21 @@ export class SysAidComponent implements OnInit {
   }
   // Method to fetch options for 'answer_Text_Type' dropdown
   fetchAnswerTextTypeOptions() {
-    // Fetch options specifically for 'answer_Text_Type'
     this.http
       .get<any[]>('http://localhost:7144/api/SysAidAPI')
       .subscribe((data) => {
         this.answerTextTypeOptions = [
           ...new Set(data.map((item) => item.responsibility)),
         ];
+        console.log('Responsibility Options:', this.answerTextTypeOptions);
       });
   }
   // Method to get a form control for a given column
 
   getFormControl(column: string): FormControl {
+    if (column == 'responsibility') {
+      debugger;
+    }
     return (this.filterForm.get(column) as FormControl) || new FormControl('');
   }
   // MedicalDevicesComponent class

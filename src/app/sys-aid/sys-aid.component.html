@@ -20,7 +20,34 @@
                 <div class="filter-row" *ngIf="i % 4 === 0">
                   <!-- Filter fields go here -->
                 </div>
-                <mat-form-field class="filter-field">
+                
+                <mat-form-field
+                  class="filter-field"
+                  *ngIf="column == 'responsibility'"
+                >
+                  <mat-label class="filters">{{
+                    getColumnLabel(column)
+                  }}</mat-label>
+                  <input
+                    type="text"
+                    matInput
+                    [formControl]="getFormControl(column)"
+                    [matAutocomplete]="auto"
+                  />
+
+                  <mat-autocomplete #auto="matAutocomplete">
+                    <mat-option
+                      *ngFor="let option of filteredResponsibilities | async"
+                      [value]="option"
+                    >
+                      {{ option }}
+                    </mat-option>
+                  </mat-autocomplete>
+                </mat-form-field>
+                <mat-form-field
+                  *ngIf="column !== 'responsibility'"
+                  class="filter-field"
+                >
                   <mat-label class="filters">{{
                     getColumnLabel(column)
                   }}</mat-label>
@@ -34,7 +61,6 @@
                       matInput
                       [formControl]="getFormControl(column)"
                       class="filter-input"
-                      
                     />
 
                     <div class="name-select-wrapper">
@@ -43,7 +69,6 @@
                         [formControl]="getFormControl(column)"
                         class="name-select"
                       >
-                      
                         <mat-option
                           *ngFor="let option of answerTextOptions"
                           [value]="option"
@@ -53,27 +78,20 @@
                       </mat-select>
                     </div>
                   </ng-container>
-                  <ng-container *ngIf="column === 'responsibility'">
-                    <mat-select
-                      [formControl]="getFormControl(column)"
-                      class="name-select"
-                    >
-                      <mat-option
-                        *ngFor="let option of answerTextTypeOptions"
-                        [value]="option"
-                        disableOptionCenter
-                      >
-                        {{ option }}
-                      </mat-option>
-                    </mat-select>
-                  </ng-container>
-                  
+
                   <ng-template #datepicker class="datepicker-field">
-                    <input matInput [formControl]="getFormControl(column)" [matDatepicker]="picker" dir="rtl">
-                    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                    <input
+                      matInput
+                      [formControl]="getFormControl(column)"
+                      [matDatepicker]="picker"
+                      dir="rtl"
+                    />
+                    <mat-datepicker-toggle
+                      matSuffix
+                      [for]="picker"
+                    ></mat-datepicker-toggle>
                     <mat-datepicker #picker></mat-datepicker>
                   </ng-template>
-                  
                 </mat-form-field>
               </ng-container>
             </div>
