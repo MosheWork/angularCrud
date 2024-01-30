@@ -20,7 +20,7 @@
                 <div class="filter-row" *ngIf="i % 4 === 0">
                   <!-- Filter fields go here -->
                 </div>
-                
+
                 <mat-form-field
                   class="filter-field"
                   *ngIf="column == 'responsibility'"
@@ -120,7 +120,7 @@
         class="long-search-bar"
         style="flex: 1; padding-right: 10px"
       >
-        <mat-label class="filters" style="color: blue">הקלד מסנן</mat-label>
+        <mat-label class="filters" style="color: blue"> חיפוש</mat-label>
         <input
           matInput
           [formControlName]="'globalFilter'"

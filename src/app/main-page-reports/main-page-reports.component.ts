@@ -21,6 +21,22 @@ export class MainPageReportsComponent implements OnInit {
     },
     // ... more cards
   ];
+  moshe = [
+    {
+      title: 'בדיקה1',
+      requester: 'משה ממן',
+      content: 'פירוט מכשירים פר מחלקה',
+      link: '',
+    },
+    {
+      title: '  רשימת קריאות',
+      requester: 'משה ממן',
+      content: 'פירוט כל ההקריאות למערכות מידע   ',
+      link: '/SysAid',
+    },
+    // ... more cards
+  ];
+
 
   constructor() {}
 
