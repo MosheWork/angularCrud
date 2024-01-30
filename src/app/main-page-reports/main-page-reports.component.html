@@ -1,23 +1,40 @@
-<div class="body">
-    <div class="card" *ngFor="let card of cards">
-      <mat-card>
-        <mat-card-title class="title1">{{ card.title }}</mat-card-title>
-        <mat-card-subtitle class="title1">מבקש הדוח: {{ card.requester }}</mat-card-subtitle>
-        <mat-card-content>{{ card.content }}</mat-card-content>
-        <button mat-button class="button" [routerLink]="card.link">
-          להרצת הדוח
-        </button>
-      </mat-card>
-    </div>
-    <div class="card" *ngFor="let mosh of moshe">
-      <mat-card>
-        <mat-card-title class="title1">{{ mosh.title }}</mat-card-title>
-        <mat-card-subtitle class="title1">מבקש הדוח: {{ mosh.requester }}</mat-card-subtitle>
-        <mat-card-content>{{ mosh.content }}</mat-card-content>
-        <button mat-button class="button" [routerLink]="mosh.link">
-          להרצת הדוח
-        </button>
-      </mat-card>
+
+<div class="body" >
+  <div class="seven" >
+    <h1>מחלקה 1</h1>
+    <div class="card-container">
+      <!-- This div will contain all cards for Block 1 -->
+      <div class="card" *ngFor="let card of cards" >
+        <mat-card>
+          <mat-card-title class="title1">{{ card.title }}</mat-card-title>
+          <mat-card-subtitle class="title1"
+            >מבקש הדוח: {{ card.requester }}</mat-card-subtitle
+          >
+          <mat-card-content>{{ card.content }}</mat-card-content>
+          <button mat-button class="button" [routerLink]="card.link">
+            להרצת הדוח
+          </button>
+        </mat-card>
+      </div>
     </div>
   </div>
-  
+
+  <div class="seven">
+    <h1>מחלקה 2</h1>
+    <div class="card-container">
+      <!-- This div will contain all cards for Block 2 -->
+      <div class="card" *ngFor="let mosh of moshe">
+        <mat-card>
+          <mat-card-title class="title1">{{ mosh.title }}</mat-card-title>
+          <mat-card-subtitle class="title1"
+            >מבקש הדוח: {{ mosh.requester }}</mat-card-subtitle
+          >
+          <mat-card-content>{{ mosh.content }}</mat-card-content>
+          <button mat-button class="button" [routerLink]="mosh.link">
+            להרצת הדוח
+          </button>
+        </mat-card>
+      </div>
+    </div>
+  </div>
+</div>

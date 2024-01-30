@@ -1,45 +1,72 @@
+
+
+.body {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start; /* Aligns sections to the right */
+  width: 100%;
+  margin-right: 0; /* Ensures the container is flush with the right side */
+  padding-right: 0; /* Ensures no padding is pushing content to the left */
+}
+
+.seven {
+  width: 100%;
+  margin-right: 0;
+  padding-right: 0;
+}
+
+.card-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end; /* Aligns cards to the right */
+  width: 100%;
+  margin-right: 0;
+  padding-right: 0;
+}
+
 .card {
-    // max-width: 400px;
-    min-width: 300px;
-    margin-bottom: 18px;
-    margin-top: 18px;
-    margin-left: 18px;
-    border-style: solid;
-    border-width: 4px 4px 4px 4px;
-    border-color: rgb(197, 197, 223);
-    border-radius: 0.3rem;
-    text-align: right;
-  }
-  
-  .button {
-    background-color: rgb(70, 100, 222);
-    color: white;
-    font-weight: bold;
-  }
-  
-  .card-container {
-    display: flex;
-    flex-flow: row wrap;
-  }
-  
-  .title1 {
-    text-align: center;
-    margin-top: 8px;
-  }
-  
-  .dept {
-    display: grid;
-    justify-content: center;
-  }
-  .body {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: flex-start; /* Aligns items to the start of the container */
-    gap: 10px; /* Optional: adds some space between the cards */
-  }
-  
-  .card {
-    flex: 0 0 18%; /* Each card will take up 18% of the container width */
-    box-sizing: border-box; /* Ensures padding and borders are included in the width */
-  }
-  
+   flex: 0 0 calc(16.66% - 10px); /* Adjust the percentage as needed */
+  max-width: calc(16.66% - 10px); /* Ensures that the card does not grow beyond 1/6th of the container width */
+  min-width: 300px; /* Minimum width of card */
+  margin-bottom: 18px;
+  margin-top: 10px;
+  margin-left: 18px;
+  border: 4px solid rgb(197, 197, 223);
+  border-radius: 0.3rem;
+  text-align: right;
+  box-sizing: border-box;
+}
+
+.button {
+  background-color: rgb(70, 100, 222);
+  color: white;
+  font-weight: bold;
+}
+
+.title1 {
+  text-align: center;
+  margin-top: 8px;
+}
+
+.seven h1 {
+  font-size: 30px;
+  font-weight: 300;
+  color: #222;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  display: grid;
+  grid-template-columns: 1fr max-content 1fr;
+  grid-template-rows: 27px 0;
+  grid-gap: 20px;
+  align-items: center;
+}
+
+.seven h1:after,
+.seven h1:before {
+  content: " ";
+  display: block;
+  border-bottom: 1px solid rgb(70, 100, 222);
+  border-top: 1px solid rgb(70, 100, 222);
+  height: 5px;
+  background-color: #f8f8f8;
+}
