@@ -11,6 +11,7 @@ import { Observable } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
 import { tap } from 'rxjs/operators';
 
+
 import * as XLSX from 'xlsx';
 
 interface FormControls {
@@ -24,7 +25,7 @@ interface FormControls {
 export class SysAidComponent implements OnInit {
   // Properties for titles, data sources, options, and more
   filteredResponsibilities!: Observable<string[]>;
-
+  showGraph: boolean = false;
   Title1: string = '  רשימת קריאות  - ';
   Title2: string = 'סה"כ תוצאות   ';
   titleUnit: string = 'SysAid ';
@@ -134,6 +135,7 @@ export class SysAidComponent implements OnInit {
     this.matTableDataSource = new MatTableDataSource<any>([]);
   }
   // OnInit lifecycle hook
+  
 
   ngOnInit() {
     // Fetch data from the API when the component initializes
@@ -327,6 +329,9 @@ export class SysAidComponent implements OnInit {
   }
   // MedicalDevicesComponent class
   navigateToGraphPage() {
-    this.router.navigate(['/']); // Navigate to the "graph" route
-  }
+    this.showGraph = !this.showGraph;  // Toggle the state
+}
+  goToHome() {
+    this.router.navigate(['/MainPageReports']); // replace '/home' with your desired route
+}
 }

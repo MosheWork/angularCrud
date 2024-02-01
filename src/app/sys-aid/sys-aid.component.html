@@ -3,6 +3,11 @@
   href="https://fonts.googleapis.com/icon?family=Material+Icons"
 />
 <div class="body">
+  <div class="top-right-container">
+    <button mat-icon-button (click)="goToHome()" matTooltip="Go to Home">
+      <mat-icon>home</mat-icon>
+    </button>
+  </div>
   <div class="nine">
     <h1>
       {{ titleUnit }}<span>{{ Title1 }}{{ Title2 }}{{ totalResults }}</span>
@@ -146,8 +151,10 @@
       </div>
     </div>
   </form>
+  <app-sys-graph *ngIf="showGraph" [graphData]="dataSource"></app-sys-graph>
 
   <mat-table
+  *ngIf="!showGraph"
     [dataSource]="matTableDataSource"
     matSort
     dir="rtl"

@@ -15,6 +15,7 @@ import { DevicesPerUnitComponent } from './devices-per-unit/devices-per-unit.com
 import { MedicalDevicesComponent } from './chameleon-reports/moshe-reports/medical-devices/medical-devices.component';
 import { SysAidComponent } from './sys-aid/sys-aid.component';
 import { MainPageReportsComponent } from './main-page-reports/main-page-reports.component';
+import { SysGraphComponent } from './sys-aid/sys-graph/sys-graph.component';
 
 const routes: Routes = [
   { path: 'users', component: UsersComponent },
@@ -35,6 +36,7 @@ const routes: Routes = [
   { path: 'medicalDevices', component: MedicalDevicesComponent },
   //sysreports
   { path: 'SysAid', component: SysAidComponent },
+  { path: 'sys-graph', component: SysGraphComponent },
 ];
 
 @NgModule({

@@ -223,3 +223,8 @@ a {
 ::ng-deep .mat-input-element {
   text-align: right; /* or 'left' depending on your layout */
 }
+.top-right-container {
+  display: flex;
+  justify-content: flex-end; /* Aligns horizontally to the right */
+  padding: 10px; /* Add some padding */
+}

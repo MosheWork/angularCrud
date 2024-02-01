@@ -43,6 +43,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { SysAidComponent } from './sys-aid/sys-aid.component';
 import { MainPageReportsComponent } from './main-page-reports/main-page-reports.component';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { SysGraphComponent } from './sys-aid/sys-graph/sys-graph.component';
 
 @NgModule({
   declarations: [
@@ -63,6 +64,7 @@ import { MatAutocompleteModule } from '@angular/material/autocomplete';
     MedicalDevicesComponent,
     SysAidComponent,
     MainPageReportsComponent,
+    SysGraphComponent,
   ],
   imports: [
     BrowserModule,
