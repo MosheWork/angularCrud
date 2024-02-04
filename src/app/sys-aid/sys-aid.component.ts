@@ -23,7 +23,7 @@ interface FormControls {
 })
 export class SysAidComponent implements OnInit {
   // Properties for titles, data sources, options, and more
-  filteredResponsibilities!: Observable<string[]>;
+  filteredResponsibilities: Observable<string[]> | undefined;
   showGraph: boolean = false;
   Title1: string = '  רשימת קריאות  - ';
   Title2: string = 'סה"כ תוצאות   ';
@@ -186,6 +186,7 @@ export class SysAidComponent implements OnInit {
   }
   private _filter(value: string): string[] {
     const filterValue = value.toLowerCase();
+    debugger;
     const filteredOptions = this.answerTextTypeOptions.filter((option) =>
       option.toLowerCase().includes(filterValue)
     );
@@ -197,9 +198,8 @@ export class SysAidComponent implements OnInit {
     const formControls: FormControls = {};
     this.columns.forEach((column) => {
       if (column === 'responsibility') {
-      formControls[column] = new FormControl([]); // Initialize as an empty array for multiple selection
-    } else 
-      formControls[column] = new FormControl('');
+        formControls[column] = new FormControl([]); // Initialize as an empty array for multiple selection
+      } else formControls[column] = new FormControl('');
 
       if (column === 'insert_time' || column === 'update_time') {
         formControls[column] = new FormControl(null); // Initialize as null for date picker
@@ -316,12 +316,25 @@ export class SysAidComponent implements OnInit {
   }
   // Method to fetch options for 'answer_Text_Type' dropdown
   fetchAnswerTextTypeOptions() {
+    debugger;
     this.http
       .get<any[]>('http://localhost:7144/api/SysAidAPI')
       .subscribe((data) => {
-        this.answerTextTypeOptions = [
-          ...new Set(data.map((item) => item.responsibility)),
-        ];
+        /// debugger;
+        // this.answerTextTypeOptions = [
+        //   ...new Set(data.map((item) => item.responsibility)),
+        // ];
+        this.answerTextTypeOptions = [];
+        data.forEach((item: any) => {
+          if (
+            this.answerTextTypeOptions.indexOf(item.responsibility) < 0 &&
+            item.responsibility
+          ) {
+            debugger;
+            this.answerTextTypeOptions.push(item.responsibility);
+          }
+        });
+        debugger;
         console.log('Responsibility Options:', this.answerTextTypeOptions);
       });
   }

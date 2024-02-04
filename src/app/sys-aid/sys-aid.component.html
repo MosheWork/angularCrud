@@ -56,11 +56,8 @@
                   <mat-label class="filters">{{
                     getColumnLabel(column)
                   }}</mat-label>
-                  <ng-container
-                    *ngIf="
-                      column !== 'insert_time' && column !== 'update_time';
-                      else datepicker
-                    "
+                  <div
+                    *ngIf="column !== 'insert_time' && column !== 'update_time'"
                   >
                     <input
                       matInput
@@ -82,9 +79,13 @@
                         </mat-option>
                       </mat-select>
                     </div>
-                  </ng-container>
+                  </div>
 
-                  <ng-template #datepicker class="datepicker-field">
+                  <div
+                    *ngIf="column == 'insert_time' || column == 'update_time'"
+                    #datepicker
+                    class="datepicker-field"
+                  >
                     <input
                       matInput
                       [formControl]="getFormControl(column)"
@@ -96,7 +97,7 @@
                       [for]="picker"
                     ></mat-datepicker-toggle>
                     <mat-datepicker #picker></mat-datepicker>
-                  </ng-template>
+                  </div>
                 </mat-form-field>
               </ng-container>
             </div>
@@ -154,7 +155,7 @@
   <app-sys-graph *ngIf="showGraph" [graphData]="graphData"></app-sys-graph>
 
   <mat-table
-  *ngIf="!showGraph"
+    *ngIf="!showGraph"
     [dataSource]="matTableDataSource"
     matSort
     dir="rtl"

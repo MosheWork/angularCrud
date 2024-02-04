@@ -83,23 +83,23 @@ a {
   //padding-right: 0px;
 }
 
-/* Add this CSS to your stylesheet */
-.name-select {
-  width: 170px !important; /* Adjust the width to your desired size */
-  display: flex !important;
-  align-items: center !important;
-  position: relative !important; /* Add this line to make it a positioned container */
-}
+// /* Add this CSS to your stylesheet */
+// .name-select {
+//   width: 170px !important; /* Adjust the width to your desired size */
+//   display: flex !important;
+//   align-items: center !important;
+//   position: relative !important; /* Add this line to make it a positioned container */
+// }
 
-/* Adjust the position of the select arrow */
-.name-select {
-  position: absolute !important;
-  top: 70% !important; /* Center vertically */
-  left: 1px !important; /* Adjust this value to position the arrow to the right */
-  transform: translateY(
-    -50%
-  ) !important; /* Center vertically using translation */
-}
+// /* Adjust the position of the select arrow */
+// .name-select {
+//   position: absolute !important;
+//   top: 70% !important; /* Center vertically */
+//   left: 1px !important; /* Adjust this value to position the arrow to the right */
+//   transform: translateY(
+//     -50%
+//   ) !important; /* Center vertically using translation */
+// }
 
 /* Change the font family, color, and font size of the filter labels */
 .filter-field mat-label {
