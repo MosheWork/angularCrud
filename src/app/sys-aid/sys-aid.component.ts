@@ -11,7 +11,6 @@ import { Observable } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
 import { tap } from 'rxjs/operators';
 
-
 import * as XLSX from 'xlsx';
 
 interface FormControls {
@@ -41,6 +40,8 @@ export class SysAidComponent implements OnInit {
   filterForm: FormGroup;
 
   // Arrays to store data and options for dropdowns
+
+  graphData!: any[]; // Using non-null assertion operator
 
   dataSource: any[] = [];
   filteredData: any[] = [];
@@ -133,9 +134,9 @@ export class SysAidComponent implements OnInit {
   ) {
     this.filterForm = this.createFilterForm();
     this.matTableDataSource = new MatTableDataSource<any>([]);
+    this.graphData = []; // Initialize graphData in the constructor
   }
   // OnInit lifecycle hook
-  
 
   ngOnInit() {
     // Fetch data from the API when the component initializes
@@ -193,9 +194,11 @@ export class SysAidComponent implements OnInit {
   }
   // Method to create the filter form with form controls
   private createFilterForm() {
-    debugger;
     const formControls: FormControls = {};
     this.columns.forEach((column) => {
+      if (column === 'responsibility') {
+      formControls[column] = new FormControl([]); // Initialize as an empty array for multiple selection
+    } else 
       formControls[column] = new FormControl('');
 
       if (column === 'insert_time' || column === 'update_time') {
@@ -251,7 +254,10 @@ export class SysAidComponent implements OnInit {
     this.totalResults = this.filteredData.length;
     this.matTableDataSource.data = this.filteredData;
     this.matTableDataSource.paginator = this.paginator;
-    // Update the title with the total number of results
+
+    this.graphData = this.filteredData;
+    // Update graphData with the filtered data
+    console.log(this.graphData);
   }
 
   // Method to check if a date is in a specified range
@@ -323,15 +329,15 @@ export class SysAidComponent implements OnInit {
 
   getFormControl(column: string): FormControl {
     if (column == 'responsibility') {
-      debugger;
+      // debugger;
     }
     return (this.filterForm.get(column) as FormControl) || new FormControl('');
   }
   // MedicalDevicesComponent class
   navigateToGraphPage() {
-    this.showGraph = !this.showGraph;  // Toggle the state
-}
+    this.showGraph = !this.showGraph; // Toggle the state
+  }
   goToHome() {
     this.router.navigate(['/MainPageReports']); // replace '/home' with your desired route
-}
+  }
 }
