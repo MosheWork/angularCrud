@@ -44,6 +44,7 @@ import { SysAidComponent } from './sys-aid/sys-aid.component';
 import { MainPageReportsComponent } from './main-page-reports/main-page-reports.component';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { SysGraphComponent } from './sys-aid/sys-graph/sys-graph.component';
+import { PermissionsDialogComponent } from './users/permissions-dialog/permissions-dialog.component';
 
 @NgModule({
   declarations: [
@@ -65,6 +66,7 @@ import { SysGraphComponent } from './sys-aid/sys-graph/sys-graph.component';
     SysAidComponent,
     MainPageReportsComponent,
     SysGraphComponent,
+    PermissionsDialogComponent,
   ],
   imports: [
     BrowserModule,
@@ -73,7 +75,7 @@ import { SysGraphComponent } from './sys-aid/sys-graph/sys-graph.component';
     MatToolbarModule,
     MatIconModule,
     MatButtonModule,
-    MatDialogModule,
+
     MatFormFieldModule,
     MatInputModule,
     MatDatepickerModule,
@@ -91,6 +93,7 @@ import { SysGraphComponent } from './sys-aid/sys-graph/sys-graph.component';
     FormsModule,
     MatTooltipModule,
     MatAutocompleteModule,
+    MatDialogModule,
   ],
   providers: [DatePipe],
   bootstrap: [AppComponent],

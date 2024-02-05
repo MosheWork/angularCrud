@@ -1,0 +1,64 @@
+<div class="body">
+
+
+  <mat-dialog-content>
+    <h2 mat-dialog-title>עדכון הרשאות</h2>
+    <form dir="rtl">
+      <div class="fields-container">
+        <div class="field">
+          <span class="label">תעודת זהות</span>
+          <span class="value">{{ user.employeeID }}</span>
+        </div>
+        <div class="field">
+          <span class="label">שם פרטי </span>
+          <span class="value"> {{ user.firstName }}</span>
+        </div>
+        <div class="field">
+          <span class="label"> שם משפחה</span>
+          <span class="value">{{ user.lastName }}</span>
+        </div>
+        <div class="field">
+            <span class="label"> שם משתמש</span>
+            <span class="value">{{ user.adUserName }}</span>
+          </div>
+          <div class="field">
+            <span class="label"> טלפון </span>
+            <span class="value">{{ user.cellNumber }}</span>
+          </div>
+        <!-- Repeat for other fields -->
+      </div>
+
+      <!-- mat-select for permissions -->
+      <mat-form-field class="permissions-select" appearance="fill">
+        <mat-label>הרשאות</mat-label>
+        <mat-select [(ngModel)]="user.permission">
+          <mat-option
+            *ngFor="let permission of permissions"
+            [value]="permission"
+          >
+            {{ permission }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </form>
+  </mat-dialog-content>
+  <!-- Buttons to close the dialog or perform actions -->
+  <div class="dialog-actions">
+    <button
+      mat-raised-button
+      color="primary"
+      class="cancel-button"
+      (click)="updatePermissions()"
+    >
+      עדכון
+    </button>
+    <button
+      mat-raised-button
+      color="warn"
+      class="update-button"
+      (click)="closeDialog()"
+    >
+      ביטול
+    </button>
+  </div>
+</div>

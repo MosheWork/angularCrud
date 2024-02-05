@@ -1,0 +1,53 @@
+.body {
+    padding: 10px;
+}
+.fields-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(0, 1fr)); // Creates a new column as space allows
+    gap: 50px; // Adjust the gap to your preference
+    
+    @media (min-width: 600px) { // Adjust the min-width as needed
+      grid-template-columns: repeat(4, 1fr); // Up to 4 items in a row
+    }
+    padding-bottom: 10px;
+  }
+  
+  .field {
+    display: flex;
+    flex-direction: column;
+    align-items: right;
+  
+    .label {
+      font-weight: bold;
+      margin-bottom: 4px; // Space between label and value
+    }
+  
+    .value {
+      border-bottom: 1px solid black; // Creates the underline
+      padding-bottom: 2px; // Gives some space between text and underline
+      width: 100%; // Ensures the underline stretches
+    }
+  }
+  .dialog-actions {
+    display: flex;
+    justify-content: space-between;
+    padding-top: 20px; // Add padding on top for some space above the buttons
+    
+    // In RTL layout, `margin-right: auto` will push the element to the left
+    .cancel-button {
+      margin-right: auto;
+    }
+  
+    // In RTL layout, `margin-left: auto` will push the element to the right
+    .update-button {
+      margin-left: auto;
+    }
+  }
+
+   .mdc-dialog__title {
+    
+    text-align: center;
+    font-weight: bolder;
+  
+  
+}

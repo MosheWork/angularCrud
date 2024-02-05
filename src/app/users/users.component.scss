@@ -1,141 +1,52 @@
-/* isolation.component.scss */
-.body {
-    padding-right: 20px;
-    padding-left: 20px;
-    padding-bottom: 50px;
-    padding-top: 20px;
-  }
-  
-  mat-table.mat-elevation-z8 mat-row:nth-child(even) {
-    background-color: white;
-  }
-  
-  mat-table.mat-elevation-z8 mat-row:nth-child(odd) {
-    background-color: rgb(187, 215, 254);
-  }
-  mat-table.mat-elevation-z8 {
-    box-shadow: 0 4px 8px rgba(15, 15, 222, 0.2); /* Blue shadow effect */
-  }
-  mat-table mat-cell {
-    font-weight: bold;
-  }
-  
-  mat-form-field {
-    padding-right: 5px;
-  }
-  
-  mat-table mat-header-cell {
-    color: rgb(8, 0, 255);
-    font-style: italic;
-    font-weight: bolder;
-    font-size: larger;
-  }
-  .title {
-    text-align: center;
-    font-size: 24px;
-    font-weight: bold;
-    border-bottom: 2px solid #333; /* Adjust the color as needed */
-    padding-bottom: 2px;
-    margin-bottom: 2px;
-    font-family: "Franklin Gothic Medium", "Arial Narrow", Arial, sans-serif;
-  }
-  .title2 {
-    text-align: right;
-    font-size: 16px;
-    font-weight: bold;
-  
-    padding-bottom: 2px;
-    margin-bottom: 2px;
-    font-family: "Franklin Gothic Medium", "Arial Narrow", Arial, sans-serif;
-  }
-  
-  .global-filter {
-    width: 100%; /* Set the width of the container to 100% */
-  }
-  
-  .long-search-bar {
-    width: 100%; /* Set the width of the form field to 100% */
-  }
-  
-  .search-input {
-    width: 100%; /* Set the width of the input field to 100% */
-  }
-  
-  /* Add this to your isolation.component.scss file */
-  
-  .global-filter {
-    display: flex;
-    align-items: flex-start;
-    //padding: 8px; /* Adjust the padding as needed */
-    // background-color: #ef1313; /* Set the background color */
-  }
-  
-  .search-bar {
-    width: 100%;
-    border: none;
-    outline: none;
-    //padding: 8px; /* Adjust the padding as needed */
-    border-radius: 4px; /* Add some border-radius for rounded corners */
-    box-shadow: 0 2px 4px rgba(223, 9, 9, 0.1); /* Add a subtle box-shadow */
-  }
-  
-  /* Optional: Add transition for a smooth effect */
-  .search-bar {
-    transition: background-color 0.3s, box-shadow 0.3s;
-  }
-  
-  .search-bar:focus {
-    background-color: rgb(230, 10, 10); /* Change background color on focus */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Enhance box-shadow on focus */
-  }
-  .download-icon {
-    width: 48px;
-    height: 48px;
-  }
-  
-  .icon {
-    padding-right: 10px;
-    padding-left: 10px;
-  }
-  
-  .filter-form {
-    padding-top: 10px;
-  }
-  
-  .nine h1 {
-    text-align: center;
-    font-size: 50px;
-    text-transform: uppercase;
-    color: rgb(54, 10, 214);
-    letter-spacing: 1px;
-    font-family: "Playfair Display", serif;
-    font-weight: 400;
-  }
-  .nine h1 span {
-    margin-top: 5px;
-    font-size: 15px;
-    color: rgb(14, 108, 221);
-    word-spacing: 1px;
-    font-weight: normal;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    font-family: "Raleway", sans-serif;
-    font-weight: 500;
-  
-    display: grid;
-    grid-template-columns: 1fr max-content 1fr;
-    grid-template-rows: 27px 0;
-    grid-gap: 20px;
-    align-items: center;
-  }
-  
-  .nine h1 span:after,
-  .nine h1 span:before {
-    content: " ";
-    display: block;
-    border-bottom: 1px solid rgb(60, 15, 223);
-    border-top: 1px solid rgb(60, 15, 223);
-    height: 5px;
-    background-color: rgb(187, 215, 254);
-  }
-  
+.mat-row:nth-child(odd) {
+  background-color: white;
+}
+.spinner {
+  left: 50%;
+  display: unset;
+}
+.mat-row:nth-child(even) {
+  background-color: aliceblue;
+}
+.mat-row:hover {
+  background-color: darkgray;
+  cursor: pointer;
+}
+
+
+.nine h1 {
+  text-align: center;
+  font-size: 50px;
+  text-transform: uppercase;
+  color: rgb(54, 10, 214);
+  letter-spacing: 1px;
+  font-family: "Playfair Display", serif;
+  font-weight: 400;
+}
+.nine h1 span {
+  margin-top: 5px;
+  font-size: 15px;
+  color: rgb(159, 52, 235);
+  word-spacing: 1px;
+  font-weight: normal;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  font-family: "Raleway", sans-serif;
+  font-weight: 500;
+
+  display: grid;
+  grid-template-columns: 1fr max-content 1fr;
+  grid-template-rows: 27px 0;
+  grid-gap: 20px;
+  align-items: center;
+}
+
+.nine h1 span:after,
+.nine h1 span:before {
+  content: " ";
+  display: block;
+  // border-bottom: 1px solid rgb(60, 15, 223);
+  // border-top: 1px solid rgb(60, 15, 223);
+  //height: 5px;
+  //background-color: rgb(187, 215, 254);
+}

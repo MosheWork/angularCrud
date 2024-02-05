@@ -1,94 +1,70 @@
-<div class="body">
-  <div class="nine">
-    <h1>
-      {{ Title1 }}<span>{{ Title2 }}</span>
-    </h1>
-  </div>
+<div class="nine">
+  <h1>
+    {{ titleUnit }}<span>{{ Title2 }}{{ totalResults }}</span>
+  </h1>
+</div>
 
-  <form [formGroup]="filterForm" dir="rtl" class="filter-form">
-    <ng-container *ngFor="let column of columns">
-      <mat-form-field appearance="outline">
-        <mat-label class="filters">{{ getColumnLabel(column) }}</mat-label>
-        <ng-container
-          *ngIf="
-            column !== 'enterance_Date' && column !== 'departure_Date';
-            else datepicker
-          "
-        >
-          <input matInput [formControl]="getFormControl(column)" />
-          <mat-select
-            *ngIf="column === 'answer_Text' "
-            [formControl]="getFormControl(column)"
-          >
-            <mat-option
-              *ngFor="let option of answerTextOptions"
-              [value]="option"
-            >
-              {{ option }}
-            </mat-option>
-          </mat-select>
-        </ng-container>
-        <ng-template #datepicker>
-          <input
-            matInput
-            [formControl]="getFormControl(column)"
-            [matDatepicker]="picker"
-          />
-          <mat-datepicker-toggle
-            matSuffix
-            [for]="picker"
-          ></mat-datepicker-toggle>
-          <mat-datepicker #picker></mat-datepicker>
-        </ng-template>
-      </mat-form-field>
-    </ng-container>
-
-    <div class="global-filter">
-      <mat-form-field appearance="outline" class="long-search-bar">
-        <mat-label class="filters" style="color: blue">חיפוש</mat-label>
-        <input
-          matInput
-          [formControlName]="'globalFilter'"
-          class="search-input"
-        />
-      </mat-form-field>
-      <div class="icon">
-        <img
-          src="../../assets/excel.png"
-          alt="Download"
-          (click)="exportToExcel()"
-          class="download-icon"
-        />
-      </div>
-    </div>
-  </form>
-
-  <mat-table
-    [dataSource]="matTableDataSource"
-    matSort
-    dir="rtl"
-    class="mat-elevation-z8"
+<div class="mat-elevation-z8" dir="rtl">
+  <div
+    class="table-header"
+    style="display: flex; justify-content: space-between; align-items: center"
   >
-    <!-- Loop through columns to define each column in the table -->
-    <ng-container *ngFor="let column of columns" [matColumnDef]="column">
-      <mat-header-cell *matHeaderCellDef mat-sort-header>
-        {{ getColumnLabel(column) }}
-        <!-- Use the function to get display-friendly labels -->
-      </mat-header-cell>
-      <mat-cell *matCellDef="let element">{{ element[column] }}</mat-cell>
+    <mat-form-field
+      class="long-search-bar"
+      style="flex: 1; padding-right: 10px"
+    >
+      <mat-label class="filters" style="color: blue">חיפוש</mat-label>
+      <input matInput (keyup)="applyFilter($event)" placeholder="חיפוש" />
+    </mat-form-field>
+  </div>
+  <table mat-table [dataSource]="dataSource" matSort>
+    <!-- ID Column -->
+    <ng-container matColumnDef="employeeID">
+      <th mat-header-cell *matHeaderCellDef>EmployeeID</th>
+      <td mat-cell *matCellDef="let element">{{ element.employeeID }}</td>
+    </ng-container>
+    employeeID: string; firstName: string; lastName: string; adUserName: string;
+    cellNumber: string;
+    <ng-container matColumnDef="firstName">
+      <th mat-header-cell *matHeaderCellDef>שם פרטי</th>
+      <td mat-cell *matCellDef="let element">{{ element.firstName }}</td>
     </ng-container>
 
-    <!-- Define the header row -->
-    <mat-header-row *matHeaderRowDef="columns"></mat-header-row>
-    <!-- Define the data row -->
-    <mat-row *matRowDef="let row; columns: columns" class="mat-row"></mat-row>
-  </mat-table>
+    <ng-container matColumnDef="lastName">
+      <th mat-header-cell *matHeaderCellDef>שם משפחה</th>
+      <td mat-cell *matCellDef="let element">{{ element.lastName }}</td>
+    </ng-container>
 
-  <!-- Define the paginator with page size options -->
+    <ng-container matColumnDef="adUserName">
+      <th mat-header-cell *matHeaderCellDef>שם משתמש</th>
+      <td mat-cell *matCellDef="let element">{{ element.adUserName }}</td>
+    </ng-container>
+    <ng-container matColumnDef="cellNumber">
+      <th mat-header-cell *matHeaderCellDef>טלפון</th>
+      <td mat-cell *matCellDef="let element">{{ element.cellNumber }}</td>
+    </ng-container>
+    <ng-container matColumnDef="btn">
+      <th mat-header-cell *matHeaderCellDef>הרשאות</th>
+      <td mat-cell *matCellDef="let element">
+        <button
+          mat-raised-button
+          color="primary"
+          class="permissions-button"
+          (click)="openDialog(element)"
+        >
+          <mat-icon>lock_open</mat-icon>
+          <!-- This is a Material icon for permissions -->
+          עדכון הרשאות
+        </button>
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+  </table>
+
   <mat-paginator
-    [length]="matTableDataSource.paginator?.length || 0"
-    [pageIndex]="matTableDataSource.paginator?.pageIndex"
-    [pageSize]="matTableDataSource.paginator?.pageSize"
-    [pageSizeOptions]="[5, 15, 20]"
+    [pageSizeOptions]="[15, 50, 100]"
+    showFirstLastButtons
   ></mat-paginator>
 </div>
