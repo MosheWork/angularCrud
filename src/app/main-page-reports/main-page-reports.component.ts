@@ -1,83 +1,126 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, ViewChild, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { FormControl, FormGroup, FormBuilder } from '@angular/forms';
-import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatSort } from '@angular/material/sort';
-import { MatTooltipModule } from '@angular/material/tooltip';
-import { Router } from '@angular/router'; // Import the Router
+import { MatDialog } from '@angular/material/dialog';
 
+//import { AuthService } from '../services/auth.service'; // Your authentication service
+
+export interface Reports {
+  reportID: string;
+  reportName: string;
+  departmentName: string;
+  info: string;
+  linkToPage: string;
+  permissions: string;
+}
 @Component({
   selector: 'app-main-page-reports',
   templateUrl: './main-page-reports.component.html',
   styleUrls: ['./main-page-reports.component.scss'],
 })
 export class MainPageReportsComponent implements OnInit {
-  
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
-  matTableDataSource: MatTableDataSource<any>; // Define MatTableDataSource
 
-  columns: string[] = [
-    'unit',
-    'name',
-    'dongle_Id',
-    'dongle_Description',
-    'timeOut_Minutes',
-  ];
-    // Example data array
-    ELEMENT_DATA: any[] = [
-      { unit: 'מחלקה 1', name: 'סוג מכשיר 1', dongle_Id: '123', dongle_Description: 'תיאור מכשיר 1', timeOut_Minutes: '30' },
-      { unit: 'מחלקה 2', name: 'סוג מכשיר 2', dongle_Id: '456', dongle_Description: 'תיאור מכשיר 2', timeOut_Minutes: '45' },
-      // ... more rows
-    ];
-  
-  cards = [
-    {
-      title: 'רשימת מכשירים ביחידה-חדש',
-      requester: 'משה ממן',
-      content: 'פירוט מכשירים פר מחלקה',
-      link: '/medicalDevices',
-    },
-    {
-      title: '  רשימת קריאות',
-      requester: 'משה ממן',
-      content: 'פירוט כל ההקריאות למערכות מידע   ',
-      link: '/SysAid',
-    },
-    // ... more cards
-  ];
-  moshe = [
-    {
-      title: 'בדיקה1',
-      requester: 'משה ממן',
-      content: 'פירוט מכשירים פר מחלקה',
-      link: '',
-    },
-    {
-      title: '  רשימת קריאות',
-      requester: 'משה ממן',
-      content: 'פירוט כל ההקריאות למערכות מידע   ',
-      link: '/SysAid',
-    },
-    // ... more cards
-  ];
-  getColumnLabel(column: string): string {
-    const columnLabels: Record<string, string> = {
-      name: 'סוג מכשיר',
-      unit: ' מחלקה ',
-      dongle_Id: 'מזהה ייחודי',
-      dongle_Description: 'שם מכשיר ביחידה',
-      timeOut_Minutes: ' מספר דקות לניתוק אוטומטי',
-    
-    };
-    return columnLabels[column] || column;
+  Title2: string = 'סה"כ תוצאות   ';
+  titleUnit: string = 'מסך דוחות ';
+  totalResults: number = 0;
+
+  displayedColumns: string[] = [ 'reportName', 'departmentName',
+  'info', 'btn'];
+
+  dataSource: MatTableDataSource<Reports> = new MatTableDataSource(); // Initialize dataSource
+
+  // Temporary constant for the current user's role
+  currentUserRole: string = '1';
+  loginUserName: string = '';
+
+  // Original reports data
+  // reportsData: Reports[] = [
+  //   {
+  //     Dept: 'מערכות מידע',
+  //     reportName: ' רשימת קריאות',
+  //     summry: 'רשימת כל הקריאות ממוקד אחוד',
+  //     link: '/SysAid',
+  //   },
+  //   {
+  //     Dept: 'הנדסה רפואית',
+  //     reportName: 'רשימת מכשירים',
+  //     summry: 'רשימת מכשירים בקמיליון',
+  //     link: '/medicalDevices',
+  //   },
+  //   // ... more reports ...
+  // ];
+
+  constructor(private http: HttpClient) {}
+
+  ngOnInit(): void {
+    const loginUserName = localStorage.getItem('loginUserName');
+    console.log('UserAD:' + loginUserName);
+
+    //this.filterReportsDataBasedOnRole();
+    this.dataSource.paginator = this.paginator;
+    this.dataSource.sort = this.sort;
+    this.fetchReportsData();
   }
+  // filterReportsDataBasedOnRole() {
+  //   let filteredData = this.reportsData;
 
-  constructor() {
-    this.matTableDataSource = new MatTableDataSource<any>([]);
+  //   switch (this.currentUserRole) {
+  //     case '1':
+  //       // Filtering logic for role 1
+  //       filteredData = this.reportsData.filter(
+  //         (report) => report.Dept === 'מערכות מידע'
+  //       );
+  //       break;
+  //     case '2':
+  //       // Filtering logic for role 1
+  //       filteredData = this.reportsData.filter(
+  //         (report) => report.Dept === 'הנדסה רפואית'
+  //       );
+  //       break;
+  //     case 'Admin':
+  //       // Filtering logic for admin (show all reports)
+  //       // You can adjust this logic based on your requirements
+  //       break;
+
+  //     // Add more cases for other roles as needed
+  //     // case 'roleX':
+  //     //   // Filtering logic for role X
+  //     //   break;
+
+  //     default:
+  //       // If there is no matching role, show nothing
+  //       filteredData = [];
+  //       break;
+  //   }
+
+  //   this.dataSource = new MatTableDataSource(filteredData);
+  //   this.totalResults = filteredData.length;
+  // }
+  applyFilter(event: Event) {
+    const filterValue = (event.target as HTMLInputElement).value;
+    this.dataSource.filter = filterValue.trim().toLowerCase();
   }
-
-  ngOnInit(): void {}
+  fetchReportsData() {
+    this.http.get<Reports[]>('http://localhost:7144/api/ChameleonOnlineReportsAPI').subscribe(
+      (data: Reports[]) => {
+        // Map the API response to the new property names
+        const mappedData = data.map(report => ({
+          reportID: report.reportID,
+          reportName: report.reportName,
+          departmentName: report.departmentName,
+          info: report.info,
+          linkToPage: report.linkToPage,
+          permissions: report.permissions
+        }));
+        this.dataSource.data = mappedData;
+      },
+      (error: any) => {
+        console.error('Error fetching reports data:', error);
+      }
+    );
+  }
 }

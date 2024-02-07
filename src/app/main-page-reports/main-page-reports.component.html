@@ -1,10 +1,78 @@
+<div class="nine">
+  <h1>
+    {{ titleUnit }}<span></span>
+  </h1>
+</div>
 
-<div class="body" >
-  <div class="seven" >
+<div class="mat-elevation-z8" dir="rtl">
+  <div
+    class="table-header"
+    style="display: flex; justify-content: space-between; align-items: center"
+  >
+    <mat-form-field
+      class="long-search-bar"
+      style="flex: 1; padding-right: 10px"
+    >
+      <mat-label class="filters" style="color: blue">חיפוש</mat-label>
+      <input matInput (keyup)="applyFilter($event)" placeholder="חיפוש" />
+    </mat-form-field>
+  </div>
+  <table mat-table [dataSource]="dataSource" matSort>
+    <!-- ID Column -->
+    <ng-container matColumnDef="reportID">
+      <th mat-header-cell *matHeaderCellDef>מספר דוח</th>
+      <td mat-cell *matCellDef="let element">{{ element.reportID }}</td>
+    </ng-container>
+    <ng-container matColumnDef="reportName">
+      <th mat-header-cell *matHeaderCellDef>שם הדוח</th>
+      <td mat-cell *matCellDef="let element">{{ element.reportName }}</td>
+    </ng-container>
+    <ng-container matColumnDef="departmentName">
+      <th mat-header-cell *matHeaderCellDef>שם המחלקה</th>
+      <td mat-cell *matCellDef="let element">{{ element.departmentName }}</td>
+    </ng-container>
+    <ng-container matColumnDef="info">
+      <th mat-header-cell *matHeaderCellDef>מידע</th>
+      <td mat-cell *matCellDef="let element">{{ element.info }}</td>
+    </ng-container>
+    <!-- <ng-container matColumnDef="linkToPage">
+      <th mat-header-cell *matHeaderCellDef>קישור לדף</th>
+      <td mat-cell *matCellDef="let element">{{ element.linkToPage }}</td>
+    </ng-container> -->
+    <!-- <ng-container matColumnDef="permissions">
+      <th mat-header-cell *matHeaderCellDef>הרשאות</th>
+      <td mat-cell *matCellDef="let element">{{ element.permissions }}</td>
+    </ng-container> -->
+    <ng-container matColumnDef="btn">
+      <th mat-header-cell *matHeaderCellDef class="bold-header">מעבר לדוחות</th>
+      <td mat-cell *matCellDef="let element">
+        <button
+          mat-raised-button
+          color="primary"
+          class="reports-button"
+          [routerLink]="element.linkToPage"
+        >
+          <mat-icon>assessment</mat-icon>
+          צפייה בדוח
+        </button>
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+  </table>
+
+  <mat-paginator
+    [pageSizeOptions]="[15, 50, 100]"
+    showFirstLastButtons
+  ></mat-paginator>
+</div>
+
+<!-- <div class="body" dir="rtl">
+  <div class="department one">
     <h1>מחלקה 1</h1>
     <div class="card-container">
-      <!-- This div will contain all cards for Block 1 -->
-      <div class="card" *ngFor="let card of cards" >
+      <div class="card" *ngFor="let card of cards">
         <mat-card>
           <mat-card-title class="title1">{{ card.title }}</mat-card-title>
           <mat-card-subtitle class="title1"
@@ -19,10 +87,9 @@
     </div>
   </div>
 
-  <div class="seven">
+  <div class="department two">
     <h1>מחלקה 2</h1>
     <div class="card-container">
-      <!-- This div will contain all cards for Block 2 -->
       <div class="card" *ngFor="let mosh of moshe">
         <mat-card>
           <mat-card-title class="title1">{{ mosh.title }}</mat-card-title>
@@ -37,32 +104,4 @@
       </div>
     </div>
   </div>
-</div>
-<mat-table
-    [dataSource]="matTableDataSource"
-    matSort
-    dir="rtl"
-    class="mat-elevation-z8"
-  >
-    <!-- Loop through columns to define each column in the table -->
-    <ng-container *ngFor="let column of columns" [matColumnDef]="column">
-      <mat-header-cell *matHeaderCellDef mat-sort-header>
-        {{ getColumnLabel(column) }}
-        <!-- Use the function to get display-friendly labels -->
-      </mat-header-cell>
-      <mat-cell *matCellDef="let element">{{ element[column] }}</mat-cell>
-    </ng-container>
-
-    <!-- Define the header row -->
-    <mat-header-row *matHeaderRowDef="columns"></mat-header-row>
-    <!-- Define the data row -->
-    <mat-row *matRowDef="let row; columns: columns" class="mat-row"></mat-row>
-  </mat-table>
-
-  <!-- Define the paginator with page size options -->
-  <mat-paginator
-    [length]="matTableDataSource.paginator?.length || 0"
-    [pageIndex]="matTableDataSource.paginator?.pageIndex"
-    [pageSize]="matTableDataSource.paginator?.pageSize"
-    [pageSizeOptions]="[15, 50, 100]"
-  ></mat-paginator>
+</div> -->

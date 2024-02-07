@@ -186,7 +186,6 @@ export class SysAidComponent implements OnInit {
   }
   private _filter(value: string): string[] {
     const filterValue = value.toLowerCase();
-    debugger;
     const filteredOptions = this.answerTextTypeOptions.filter((option) =>
       option.toLowerCase().includes(filterValue)
     );
@@ -316,7 +315,6 @@ export class SysAidComponent implements OnInit {
   }
   // Method to fetch options for 'answer_Text_Type' dropdown
   fetchAnswerTextTypeOptions() {
-    debugger;
     this.http
       .get<any[]>('http://localhost:7144/api/SysAidAPI')
       .subscribe((data) => {
@@ -330,11 +328,9 @@ export class SysAidComponent implements OnInit {
             this.answerTextTypeOptions.indexOf(item.responsibility) < 0 &&
             item.responsibility
           ) {
-            debugger;
             this.answerTextTypeOptions.push(item.responsibility);
           }
         });
-        debugger;
         console.log('Responsibility Options:', this.answerTextTypeOptions);
       });
   }

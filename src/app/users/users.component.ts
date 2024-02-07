@@ -12,6 +12,8 @@ export interface Users {
   progress: string;
   color: string;
   btn: string;
+  roles: string;
+  department: string;
   // Add other properties as per your data structure
 }
 
@@ -26,14 +28,14 @@ export class UsersComponent implements AfterViewInit {
   titleUnit: string = 'ניהול הרשאות';
   totalResults: number = 0;
 
-
-
   displayedColumns: string[] = [
     'employeeID',
     'firstName',
     'lastName',
     'adUserName',
     'cellNumber',
+    'roles',
+    'department',
     'btn',
   ];
   dataSource: MatTableDataSource<Users> = new MatTableDataSource(); // Initialize dataSource
@@ -65,7 +67,7 @@ export class UsersComponent implements AfterViewInit {
     const dialogRef = this.dialog.open(PermissionsDialogComponent, {
       width: 'auto', // Set your desired width
       height: 'auto', // Set your desired height
-      data: user // Passing the entire user object
+      data: user, // Passing the entire user object
     });
 
     dialogRef.afterClosed().subscribe((result) => {
