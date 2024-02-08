@@ -10,8 +10,19 @@
       grid-template-columns: repeat(4, 1fr); // Up to 4 items in a row
     }
     padding-bottom: 10px;
+    margin-top: 16px
   }
-  
+  .fields-container2 {
+    // display: grid;
+    // grid-template-columns: repeat(auto-fill, minmax(0, 1fr)); // Creates a new column as space allows
+    // gap: 50px; // Adjust the gap to your preference
+    
+    @media (min-width: 600px) { // Adjust the min-width as needed
+      grid-template-columns: repeat(4, 1fr); // Up to 4 items in a row
+    }
+    padding-bottom: 10px;
+    gap: 20px;
+  }
   .field {
     display: flex;
     flex-direction: column;
@@ -44,10 +55,12 @@
     }
   }
 
-   .mdc-dialog__title {
-    
+   .mdc-dialog__title {  
     text-align: center;
     font-weight: bolder;
-  
-  
 }
+.spaced-select {
+  margin-top: 16px; /* Adjust the value to the desired spacing */
+  margin-right: 16px;
+}
+

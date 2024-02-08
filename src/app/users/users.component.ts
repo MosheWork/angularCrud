@@ -75,7 +75,9 @@ export class UsersComponent implements AfterViewInit {
         // result will contain the updated data if the user clicked "Update"
         console.log('Updated permissions:', result);
         // You can now send this data back to the server or update your local data source
+        this.fetchData();
       }
     });
   }
+ 
 }

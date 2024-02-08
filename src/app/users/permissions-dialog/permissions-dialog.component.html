@@ -1,23 +1,23 @@
-<div class="body">
-
-
+<div class="body" dir="rtl">
   <mat-dialog-content>
-    <h2 mat-dialog-title>עדכון הרשאות</h2>
-    <form dir="rtl">
-      <div class="fields-container">
-        <div class="field">
-          <span class="label">תעודת זהות</span>
-          <span class="value">{{ user.employeeID }}</span>
-        </div>
-        <div class="field">
-          <span class="label">שם פרטי </span>
-          <span class="value"> {{ user.firstName }}</span>
-        </div>
-        <div class="field">
-          <span class="label"> שם משפחה</span>
-          <span class="value">{{ user.lastName }}</span>
-        </div>
-        <div class="field">
+    <!-- <h2 mat-dialog-title>עדכון הרשאות</h2> -->
+
+    <mat-tab-group animationDuration="0ms">
+      <mat-tab label="פרטים">
+        <div class="fields-container">
+          <div class="field">
+            <span class="label">תעודת זהות</span>
+            <span class="value">{{ user.employeeID }}</span>
+          </div>
+          <div class="field">
+            <span class="label">שם פרטי</span>
+            <span class="value">{{ user.firstName }}</span>
+          </div>
+          <div class="field">
+            <span class="label"> שם משפחה</span>
+            <span class="value">{{ user.lastName }}</span>
+          </div>
+          <div class="field">
             <span class="label"> שם משתמש</span>
             <span class="value">{{ user.adUserName }}</span>
           </div>
@@ -27,52 +27,102 @@
           </div>
           <div class="field">
             <span class="label"> הרשאות </span>
-            <span class="value">{{ user.role }}</span>
+            <span class="value">{{ user.roles }}</span>
           </div>
           <div class="field">
-            <span class="label"> הרשאות </span>
+            <span class="label"> הרשאה למחלקות </span>
             <span class="value">{{ user.department }}</span>
           </div>
-        <!-- Repeat for other fields -->
-      </div>
+          <!-- ... more fields ... -->
+        </div>
+      </mat-tab>
 
-      <!-- mat-select for permissions -->
-      <mat-form-field class="permissions-select" appearance="fill">
-        <mat-label>הוספת הרשאה</mat-label>
-        <mat-select [(ngModel)]="user.role" name="roles" multiple>
-          <mat-option *ngFor="let permission of permissions" [value]="permission">
-            {{ permission }}
-          </mat-option>
-        </mat-select>
-      </mat-form-field>
-      <mat-form-field class="permissions-select" appearance="fill">
-        <mat-label>הוספת מחלקה</mat-label>
-        <mat-select [(ngModel)]="user.department" name="department" multiple>
-          <mat-option *ngFor="let department of Department" [value]="department">
-            {{ department }}
-          </mat-option>
-        </mat-select>
-      </mat-form-field>
-      
-    </form>
+      <mat-tab label="הוספת הרשאות">
+        <div class="fields-container2">
+          <form dir="rtl">
+            <mat-form-field
+              class="permissions-select spaced-select"
+              appearance="fill"
+            >
+              <mat-label>הוספת הרשאה</mat-label>
+              <mat-select [(ngModel)]="selectedRoles" name="roles" multiple>
+                <mat-option
+                  *ngFor="let permission of permissions"
+                  [value]="permission"
+                >
+                  {{ permission }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+            <mat-form-field
+              class="permissions-select spaced-select"
+              appearance="fill"
+            >
+              <mat-label>הוספת מחלקה</mat-label>
+              <mat-select
+                [(ngModel)]="selectedDepartments"
+                name="department"
+                multiple
+              >
+                <mat-option
+                  *ngFor="let department of Department"
+                  [value]="department"
+                >
+                  {{ department }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+            <div class="dialog-actions">
+              <button
+                mat-raised-button
+                color="primary"
+                (click)="updatePermissions()"
+              >
+                עדכון
+              </button>
+              <button mat-raised-button color="warn" (click)="closeDialog()">
+                ביטול
+              </button>
+            </div>
+          </form>
+        </div>
+      </mat-tab>
+      <mat-tab label="עדכון הרשאות קיימות ">
+        <div class="fields-container2">
+          <form dir="rtl">
+            <!-- Display User Roles -->
+            <div>
+              <span>הרשאות המשתמש:</span>
+              <div *ngFor="let role of user.roles">
+                <mat-checkbox [checked]="true" [disabled]="false">
+                  {{ role }}
+                </mat-checkbox>
+              </div>
+            </div>
+            <!-- Display User Departments -->
+            <div>
+              <span>מחלקות המשתמש:</span>
+              <div *ngFor="let department of user.department">
+                <mat-checkbox [checked]="true" [disabled]="false">
+                  {{ department }}
+                </mat-checkbox>
+              </div>
+            </div>
+            <div class="dialog-actions">
+              <button
+                mat-raised-button
+                color="primary"
+                (click)="updateUserPermissions()"
+              >
+                עדכון
+              </button>
+              <button mat-raised-button color="warn" (click)="closeDialog()">
+                ביטול
+              </button>
+            </div>
+          </form>
+        </div>
+      </mat-tab>
+    </mat-tab-group>
   </mat-dialog-content>
-  <!-- Buttons to close the dialog or perform actions -->
-  <div class="dialog-actions">
-    <button
-      mat-raised-button
-      color="primary"
-      class="cancel-button"
-      (click)="updatePermissions()"
-    >
-      עדכון
-    </button>
-    <button
-      mat-raised-button
-      color="warn"
-      class="update-button"
-      (click)="closeDialog()"
-    >
-      ביטול
-    </button>
-  </div>
 </div>

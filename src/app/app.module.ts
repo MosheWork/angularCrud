@@ -45,6 +45,8 @@ import { MainPageReportsComponent } from './main-page-reports/main-page-reports.
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { SysGraphComponent } from './sys-aid/sys-graph/sys-graph.component';
 import { PermissionsDialogComponent } from './users/permissions-dialog/permissions-dialog.component';
+import { MatTabsModule } from '@angular/material/tabs';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 
 @NgModule({
   declarations: [
@@ -75,7 +77,7 @@ import { PermissionsDialogComponent } from './users/permissions-dialog/permissio
     MatToolbarModule,
     MatIconModule,
     MatButtonModule,
-
+    MatTabsModule,
     MatFormFieldModule,
     MatInputModule,
     MatDatepickerModule,
@@ -94,6 +96,7 @@ import { PermissionsDialogComponent } from './users/permissions-dialog/permissio
     MatTooltipModule,
     MatAutocompleteModule,
     MatDialogModule,
+    MatCheckboxModule,
   ],
   providers: [DatePipe],
   bootstrap: [AppComponent],
