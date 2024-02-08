@@ -25,19 +25,19 @@
             <span class="label"> טלפון </span>
             <span class="value">{{ user.cellNumber }}</span>
           </div>
-          <div class="field">
+          <!-- <div class="field">
             <span class="label"> הרשאות </span>
             <span class="value">{{ user.roles }}</span>
           </div>
           <div class="field">
             <span class="label"> הרשאה למחלקות </span>
             <span class="value">{{ user.department }}</span>
-          </div>
+          </div> -->
           <!-- ... more fields ... -->
         </div>
       </mat-tab>
 
-      <mat-tab label="הוספת הרשאות">
+      <!-- <mat-tab label="הוספת הרשאות">
         <div class="fields-container2">
           <form dir="rtl">
             <mat-form-field
@@ -86,33 +86,42 @@
             </div>
           </form>
         </div>
-      </mat-tab>
+      </mat-tab> -->
       <mat-tab label="עדכון הרשאות קיימות ">
         <div class="fields-container2">
           <form dir="rtl">
-            <!-- Display User Roles -->
+            <!-- Department Checkboxes -->
             <div>
-              <span>הרשאות המשתמש:</span>
-              <div *ngFor="let role of user.roles">
-                <mat-checkbox [checked]="true" [disabled]="false">
-                  {{ role }}
-                </mat-checkbox>
-              </div>
+              
+              <mat-checkbox [(ngModel)]="department1" name="department1"
+                >Department 1</mat-checkbox
+              >
+              <mat-checkbox [(ngModel)]="department2" name="department2"
+                >Department 2</mat-checkbox
+              >
+              <mat-checkbox [(ngModel)]="department3" name="department3"
+                >Department 3</mat-checkbox
+              >
             </div>
-            <!-- Display User Departments -->
+
+            <!-- Role Checkboxes -->
             <div>
-              <span>מחלקות המשתמש:</span>
-              <div *ngFor="let department of user.department">
-                <mat-checkbox [checked]="true" [disabled]="false">
-                  {{ department }}
-                </mat-checkbox>
-              </div>
+              <mat-checkbox [(ngModel)]="roleAdmin" name="roleAdmin"
+                >Admin</mat-checkbox
+              >
+              <mat-checkbox [(ngModel)]="roleAdminViewer" name="roleAdminViewer"
+                >Admin Viewer</mat-checkbox
+              >
+              <mat-checkbox [(ngModel)]="roleUser" name="roleUser"
+                >User</mat-checkbox
+              >
             </div>
+
             <div class="dialog-actions">
               <button
                 mat-raised-button
                 color="primary"
-                (click)="updateUserPermissions()"
+                (click)="updatePermissions()"
               >
                 עדכון
               </button>

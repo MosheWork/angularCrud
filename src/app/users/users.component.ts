@@ -34,8 +34,6 @@ export class UsersComponent implements AfterViewInit {
     'lastName',
     'adUserName',
     'cellNumber',
-    'roles',
-    'department',
     'btn',
   ];
   dataSource: MatTableDataSource<Users> = new MatTableDataSource(); // Initialize dataSource
@@ -48,6 +46,8 @@ export class UsersComponent implements AfterViewInit {
   ngAfterViewInit() {
     this.fetchData();
   }
+
+  
 
   fetchData() {
     this.http
