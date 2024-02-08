@@ -35,20 +35,20 @@ export class PermissionsDialogComponent implements OnInit {
 
   ngOnInit(): void {
     this.fetchUserPermissions(this.user.adUserName).subscribe((permissions: any) => {
-      this.fetchUserPermissions(this.user.adUserName).subscribe((permissions: any) => {
-        this.department1 = permissions.Department1;
-        this.department2 = permissions.Department2;
-        this.department3 = permissions.Department3;
-        this.roleAdmin = permissions.RoleAdmin;
-        this.roleAdminViewer = permissions.RoleAdminViewer;
-        this.roleUser = permissions.RoleUser;
-      });
+      this.department1 = permissions.Department1;
+      this.department2 = permissions.Department2;
+      this.department3 = permissions.Department3;
+      this.roleAdmin = permissions.RoleAdmin;
+      this.roleAdminViewer = permissions.RoleAdminViewer;
+      this.roleUser = permissions.RoleUser;
+      console.log (permissions)
     });
   }
 
-  fetchUserPermissions(adUserName: string) {
-    const apiUrl = `http://localhost:7144/api/Users/${adUserName}`;
+  fetchUserPermissions(rowId: string) {
+    const apiUrl = `http://localhost:7144/api/Users/${this.user.adUserName}`;
     return this.http.get(apiUrl);
+    console.log (this.user.adUserName)
   }
 
   closeDialog(): void {
@@ -69,37 +69,13 @@ export class PermissionsDialogComponent implements OnInit {
     };
 
     this.http.post(apiUrl, payload).subscribe({
-      next: (response) => {
+      next: (response: any) => {
         console.log('Update successful', response);
-        this.dialogRef.close(); 
+        this.dialogRef.close();
       },
-      error: (error) => {
+      error: (error: any) => {
         console.error('There was an error!', error);
       },
     });
   }
-  
-
-  // updateUserPermissions() {
-  //   const payload = {
-  //     ...this.user,
-  //     Department1: this.department1,
-  //     Department2: this.department2,
-  //     Department3: this.department3,
-  //     RoleAdmin: this.roleAdmin,
-  //     RoleAdminViewer: this.roleAdminViewer,
-  //     RoleUser: this.roleUser
-  //   };
-  
-  //   this.http.put(`your-api-endpoint/users/${this.user.employeeID}`, payload)
-  //     .subscribe({
-  //       next: (response) => {
-  //         console.log('User permissions updated successfully', response);
-  //         this.dialogRef.close(payload); 
-  //       },
-  //       error: (error) => {
-  //         console.error('Failed to update user permissions', error);
-  //       }
-  //     });
-  // }
 }
