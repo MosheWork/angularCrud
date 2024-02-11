@@ -47,6 +47,9 @@ import { SysGraphComponent } from './sys-aid/sys-graph/sys-graph.component';
 import { PermissionsDialogComponent } from './users/permissions-dialog/permissions-dialog.component';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatCheckboxModule } from '@angular/material/checkbox';
+import { AngularDualListBoxModule } from 'angular-dual-listbox';
+
+
 
 @NgModule({
   declarations: [
@@ -97,6 +100,7 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
     MatAutocompleteModule,
     MatDialogModule,
     MatCheckboxModule,
+    AngularDualListBoxModule,
   ],
   providers: [DatePipe],
   bootstrap: [AppComponent],

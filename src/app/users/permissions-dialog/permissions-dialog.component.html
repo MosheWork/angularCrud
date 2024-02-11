@@ -1,6 +1,5 @@
 <div class="body" dir="rtl">
   <mat-dialog-content>
-    <!-- <h2 mat-dialog-title>עדכון הרשאות</h2> -->
 
     <mat-tab-group animationDuration="0ms">
       <mat-tab label="פרטים">
@@ -25,53 +24,26 @@
             <span class="label"> טלפון </span>
             <span class="value">{{ user.cellNumber }}</span>
           </div>
-          <!-- <div class="field">
-            <span class="label"> הרשאות </span>
-            <span class="value">{{ user.roles }}</span>
-          </div>
-          <div class="field">
-            <span class="label"> הרשאה למחלקות </span>
-            <span class="value">{{ user.department }}</span>
-          </div> -->
+      
           <!-- ... more fields ... -->
         </div>
       </mat-tab>
 
-      <!-- <mat-tab label="הוספת הרשאות">
+      
+      <mat-tab label="עדכון תפקיד ">
         <div class="fields-container2">
           <form dir="rtl">
-            <mat-form-field
-              class="permissions-select spaced-select"
-              appearance="fill"
-            >
-              <mat-label>הוספת הרשאה</mat-label>
-              <mat-select [(ngModel)]="selectedRoles" name="roles" multiple>
-                <mat-option
-                  *ngFor="let permission of permissions"
-                  [value]="permission"
-                >
-                  {{ permission }}
-                </mat-option>
-              </mat-select>
-            </mat-form-field>
-            <mat-form-field
-              class="permissions-select spaced-select"
-              appearance="fill"
-            >
-              <mat-label>הוספת מחלקה</mat-label>
-              <mat-select
-                [(ngModel)]="selectedDepartments"
-                name="department"
-                multiple
-              >
-                <mat-option
-                  *ngFor="let department of Department"
-                  [value]="department"
-                >
-                  {{ department }}
-                </mat-option>
-              </mat-select>
-            </mat-form-field>
+            <div>
+              <dual-list
+                [source]="availableRoles"
+                key="key"
+                display="value"
+                [(destination)]="selectedRoles"
+                height="200px"
+                [format]="format"
+              ></dual-list>
+            </div>
+
             <div class="dialog-actions">
               <button
                 mat-raised-button
@@ -86,35 +58,22 @@
             </div>
           </form>
         </div>
-      </mat-tab> -->
-      <mat-tab label="עדכון הרשאות קיימות ">
+      </mat-tab>
+      <mat-tab label="עדכון מחלקה ">
         <div class="fields-container2">
           <form dir="rtl">
-            <!-- Department Checkboxes -->
+          
             <div>
-              
-              <mat-checkbox [(ngModel)]="department1" name="department1"
-                >Department 1</mat-checkbox
-              >
-              <mat-checkbox [(ngModel)]="department2" name="department2"
-                >Department 2</mat-checkbox
-              >
-              <mat-checkbox [(ngModel)]="department3" name="department3"
-                >Department 3</mat-checkbox
-              >
-            </div>
+                 <!-- Department Dual-Listbox -->
+                 <dual-list
+                   [source]="availableDepartments"
+                   key="key"
+                   display="value"
+                   [(destination)]="selectedDepartments"
+                   height="200px"
+                   [format]="format"
+                 ></dual-list>
 
-            <!-- Role Checkboxes -->
-            <div>
-              <mat-checkbox [(ngModel)]="roleAdmin" name="roleAdmin"
-                >Admin</mat-checkbox
-              >
-              <mat-checkbox [(ngModel)]="roleAdminViewer" name="roleAdminViewer"
-                >Admin Viewer</mat-checkbox
-              >
-              <mat-checkbox [(ngModel)]="roleUser" name="roleUser"
-                >User</mat-checkbox
-              >
             </div>
 
             <div class="dialog-actions">
