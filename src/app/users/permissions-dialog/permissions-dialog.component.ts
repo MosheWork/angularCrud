@@ -11,7 +11,7 @@ export interface Users {
 }
 interface Role {
   key: string;
-  value?: string; // Include other properties as needed, marking optional ones with ?
+  value: string;
 }
 interface Department {
   key: string;
@@ -25,34 +25,34 @@ interface Department {
 export class PermissionsDialogComponent implements OnInit {
   // Source array for the dual list box
   availableRoles: Role[] = [
-    { key: 'RoleAdmin', value: 'Admin' },
-    { key: 'RoleAdminViewer', value: 'Admin Viewer' },
-    { key: 'RoleUser', value: 'User' },
+    { key: 'RoleAdmin', value: 'RoleAdmin' },
+    { key: 'RoleAdminViewer', value: 'RoleAdminViewer' },
+    { key: 'RoleUser', value: 'RoleUser' },
   ];
   // Inside PermissionsDialogComponent
-availableDepartments: Department[] = [
-  { key: 'Department1', value: 'Department 1' },
-  { key: 'Department2', value: 'Department 2' },
-  { key: 'Department3', value: 'Department 3' },
-  // Add more departments as needed
-];
+  availableDepartments: Department[] = [
+    { key: 'Department1', value: 'Department 1' },
+    { key: 'Department2', value: 'Department 2' },
+    { key: 'Department3', value: 'Department 3' },
+    // Add more departments as needed
+  ];
 
-format = {
-  add: 'הוסף', // Translated 'Add' to Hebrew
-  remove: 'הסר', // Translated 'Remove' to Hebrew
-  all: 'הכל', // Translated 'All' to Hebrew
-  none: 'מחק', // Translated 'None' to Hebrew
-  direction: 'left-to-right', // Set direction to RTL
-  draggable: true,
-  locale: undefined
-};
+  format = {
+    add: 'הוסף', // Translated 'Add' to Hebrew
+    remove: 'הסר', // Translated 'Remove' to Hebrew
+    all: 'הכל', // Translated 'All' to Hebrew
+    none: 'מחק', // Translated 'None' to Hebrew
+    direction: 'left-to-right', // Set direction to RTL
+    draggable: true,
+    locale: undefined,
+  };
 
-selectedDepartments: Department[] = []; // Will be populated based on user selection
+  selectedDepartments: Department[] = []; // Will be populated based on user selection
 
   selectedRoles: Role[] = []; // Now explicitly typed as an array of Role objects
 
-  permissions: string[] = ['RoleAdmin', 'RoleAdminViewer', 'RoleUser'];
-  departments: string[] = ['Department1', 'Department2', 'Department3'];
+  // permissions: string[] = ['RoleAdmin', 'RoleAdminViewer', 'RoleUser'];
+  // departments: string[] = ['Department1', 'Department2', 'Department3'];
 
   // Initialize flags for checkboxes
   department1: boolean = false;
@@ -71,12 +71,12 @@ selectedDepartments: Department[] = []; // Will be populated based on user selec
   ngOnInit(): void {
     this.fetchUserPermissions(this.user.adUserName).subscribe(
       (permissions: any) => {
-        this.department1 = permissions.Department1;
-        this.department2 = permissions.Department2;
-        this.department3 = permissions.Department3;
-        this.roleAdmin = permissions.RoleAdmin;
-        this.roleAdminViewer = permissions.RoleAdminViewer;
-        this.roleUser = permissions.RoleUser;
+        // this.department1 = permissions.Department1;
+        // this.department2 = permissions.Department2;
+        // this.department3 = permissions.Department3;
+        // this.roleAdmin = permissions.RoleAdmin;
+        // this.roleAdminViewer = permissions.RoleAdminViewer;
+        // this.roleUser = permissions.RoleUser;
         console.log(permissions);
 
         this.availableRoles = [
@@ -91,7 +91,18 @@ selectedDepartments: Department[] = []; // Will be populated based on user selec
           { key: 'Department3', value: 'Department 3' },
           // Add more departments as needed
         ];
-        
+        this.fetchUserPermissions(this.user.adUserName).subscribe(
+          (permissions: any) => {
+            this.selectedDepartments = this.availableDepartments.filter(
+              (department) => permissions[department.key.toLowerCase()]
+            );
+            this.selectedRoles = this.availableRoles.filter(
+              (role) => permissions[role.key.toLowerCase()]
+            );
+            console.log('Selected Departments:', this.selectedDepartments);
+            console.log('Selected Roles:', this.selectedRoles);
+          }
+        );
       }
     );
   }
@@ -108,27 +119,31 @@ selectedDepartments: Department[] = []; // Will be populated based on user selec
 
   updatePermissions(): void {
     const apiUrl = 'http://localhost:7144/api/Users';
-  
-    // Helper function to check if a role is selected
-    const isRoleSelected = (roleKey: string) => this.selectedRoles.some(role => role.key === roleKey);
-    // Helper function to check if a department is selected
-    const isDepartmentSelected = (departmentKey: string) => this.selectedDepartments.some(dept => dept.key === departmentKey);
 
-  
+    // Constructing payload based on selectedRoles and selectedDepartments
     const payload = {
       ADUserName: this.user.adUserName,
-      // Use the helper function to check if each role is selected
-      roleAdmin: isRoleSelected('RoleAdmin'),
-      roleAdminViewer: isRoleSelected('RoleAdminViewer'),
-      roleUser: isRoleSelected('RoleUser'),
-      department1: isDepartmentSelected('Department1'),
-      department2: isDepartmentSelected('Department2'),
-      department3: isDepartmentSelected('Department3'),
-      // Include other data as needed...
+      // Dynamically create entries for each role and department
+      ...this.availableRoles.reduce(
+        (acc, role) => ({
+          ...acc,
+          [role.key]: this.selectedRoles.some(
+            (selectedRole) => selectedRole.key === role.key
+          ),
+        }),
+        {}
+      ),
+      ...this.availableDepartments.reduce(
+        (acc, dept) => ({
+          ...acc,
+          [dept.key]: this.selectedDepartments.some(
+            (selectedDept) => selectedDept.key === dept.key
+          ),
+        }),
+        {}
+      ),
     };
-  
-    console.log('Sending payload:', payload);
-  
+
     this.http.post(apiUrl, payload).subscribe({
       next: (response: any) => {
         console.log('Update successful', response);
@@ -139,6 +154,4 @@ selectedDepartments: Department[] = []; // Will be populated based on user selec
       },
     });
   }
-  
-  
 }

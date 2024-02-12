@@ -48,6 +48,8 @@ import { PermissionsDialogComponent } from './users/permissions-dialog/permissio
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { AngularDualListBoxModule } from 'angular-dual-listbox';
+import { ReportsPermissionsComponent } from './reports-permissions/reports-permissions.component';
+import { PermissionsDialogNewComponent } from './reports-permissions/permissions-dialog-new/permissions-dialog-new.component';
 
 
 
@@ -72,6 +74,8 @@ import { AngularDualListBoxModule } from 'angular-dual-listbox';
     MainPageReportsComponent,
     SysGraphComponent,
     PermissionsDialogComponent,
+    ReportsPermissionsComponent,
+    PermissionsDialogNewComponent,
   ],
   imports: [
     BrowserModule,

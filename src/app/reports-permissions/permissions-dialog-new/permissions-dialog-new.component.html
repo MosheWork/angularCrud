@@ -1,0 +1,96 @@
+<div class="body" dir="rtl">
+    <mat-dialog-content>
+  
+      <mat-tab-group animationDuration="0ms">
+        <!-- <mat-tab label="פרטים">
+          <div class="fields-container">
+            <div class="field">
+              <span class="label">תעודת זהות</span>
+              <span class="value">{{ user.employeeID }}</span>
+            </div>
+            <div class="field">
+              <span class="label">שם פרטי</span>
+              <span class="value">{{ user.firstName }}</span>
+            </div>
+            <div class="field">
+              <span class="label"> שם משפחה</span>
+              <span class="value">{{ user.lastName }}</span>
+            </div>
+            <div class="field">
+              <span class="label"> שם משתמש</span>
+              <span class="value">{{ user.adUserName }}</span>
+            </div>
+            <div class="field">
+              <span class="label"> טלפון </span>
+              <span class="value">{{ user.cellNumber }}</span>
+            </div>
+        
+          </div>
+        </mat-tab> -->
+  
+        
+        <!-- <mat-tab label="עדכון תפקיד ">
+          <div class="fields-container2">
+            <form dir="rtl">
+              <div>
+                <dual-list
+                  [source]="availableRoles"
+                  key="key"
+                  display="value"
+                  [(destination)]="selectedRoles"
+                  height="200px"
+                  [format]="format"
+                ></dual-list>
+              </div>
+  
+              <div class="dialog-actions">
+                <button
+                  mat-raised-button
+                  color="primary"
+                  (click)="updatePermissions()"
+                >
+                  עדכון
+                </button>
+                <button mat-raised-button color="warn" (click)="closeDialog()">
+                  ביטול
+                </button>
+              </div>
+            </form>
+          </div>
+        </mat-tab> -->
+        <mat-tab label="עדכון מחלקה ">
+          <div class="fields-container2">
+            <form dir="rtl">
+            
+              <div>
+                   <!-- Department Dual-Listbox -->
+                   <dual-list
+                     [source]="availableDepartments"
+                     key="key"
+                     display="value"
+                     [(destination)]="selectedDepartments"
+                     height="200px"
+                     [format]="format"
+                   ></dual-list>
+  
+              </div>
+  
+              <div class="dialog-actions">
+                <button
+                  mat-raised-button
+                  color="primary"
+                  (click)="updatePermissions()"
+                >
+                  עדכון
+                </button>
+                <button mat-raised-button color="warn" (click)="closeDialog()">
+                  ביטול
+                </button>
+              </div>
+            </form>
+          </div>
+        </mat-tab>
+      </mat-tab-group>
+    </mat-dialog-content>
+  </div>
+  

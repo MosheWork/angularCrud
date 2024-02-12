@@ -16,6 +16,7 @@ import { MedicalDevicesComponent } from './chameleon-reports/moshe-reports/medic
 import { SysAidComponent } from './sys-aid/sys-aid.component';
 import { MainPageReportsComponent } from './main-page-reports/main-page-reports.component';
 import { SysGraphComponent } from './sys-aid/sys-graph/sys-graph.component';
+import { ReportsPermissionsComponent } from './reports-permissions/reports-permissions.component';
 
 const routes: Routes = [
   { path: 'users', component: UsersComponent },
@@ -30,6 +31,7 @@ const routes: Routes = [
   { path: 'DevicesPerUnit', component: DevicesPerUnitComponent },
   { path: 'Test', component: YourTableComponentComponent },
   { path: 'MainPageReports', component: MainPageReportsComponent },
+  { path: 'reports-permissions', component: ReportsPermissionsComponent },
 
 
   //moshe-reports

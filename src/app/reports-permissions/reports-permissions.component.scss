@@ -1,0 +1,141 @@
+#rolesDetailsBtn {
+    position: fixed;
+    bottom: 50px;
+    left: 125px;
+    z-index: 10;
+  }
+  table {
+    width: 95%;
+    margin: 20px 23px 1px 0px;
+  }
+  .mat-row:nth-child(odd) {
+    background-color: white;
+  }
+  .spinner {
+    left: 50%;
+    display: unset;
+  }
+  .mat-row:nth-child(even) {
+    background-color: aliceblue;
+  }
+  .mat-row:hover {
+    background-color: darkgray;
+    cursor: pointer;
+  }
+  
+  .body {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start; /* Aligns sections to the right */
+    width: 100%;
+    margin-right: 0; /* Ensures the container is flush with the right side */
+    padding-right: 0; /* Ensures no padding is pushing content to the left */
+  
+  
+  }
+  
+  // .seven {
+  //   width: 100%;
+  //   margin-right: 0;
+  //   padding-right: 0;
+  // }
+  
+  .card-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end; /* Aligns cards to the right */
+    width: 100%;
+    margin-right: 0;
+    padding-right: 0;
+  }
+  
+  .card {
+     flex: 0 0 calc(16.66% - 10px); /* Adjust the percentage as needed */
+    max-width: calc(16.66% - 10px); /* Ensures that the card does not grow beyond 1/6th of the container width */
+    min-width: 300px; /* Minimum width of card */
+    margin-bottom: 18px;
+    margin-top: 10px;
+    margin-left: 18px;
+    border: 4px solid rgb(197, 197, 223);
+    border-radius: 0.3rem;
+    text-align: right;
+    box-sizing: border-box;
+  }
+  
+  .button {
+    background-color: rgb(70, 100, 222);
+    color: white;
+    font-weight: bold;
+  }
+  
+  // .title1 {
+  //   text-align: center;
+  //   margin-top: 8px;
+  // }
+  
+  /* This targets all h1 elements that are inside a 'department' class, regardless of the department's unique class */
+  // .department h1 {
+  //   font-size: 30px;
+  //   font-weight: 300;
+  //   color: #222;
+  //   letter-spacing: 1px;
+  //   text-align: center; /* Centers the text within the H1 element */
+  
+  //   text-transform: uppercase;
+  //   display: grid;
+  //   grid-template-columns: 1fr max-content 1fr;
+  //   grid-template-rows: 27px 0;
+  //   grid-gap: 20px;
+  //   align-items: center;
+  // }
+  
+  // .department h1:after,
+  // .department h1:before {
+  //   content: " ";
+  //   display: block;
+  //   border-bottom: 1px solid rgb(70, 100, 222);
+  //   border-top: 1px solid rgb(70, 100, 222);
+  //   height: 5px;
+  //   background-color: #f8f8f8;
+  // }
+  
+  
+  .nine h1 {
+    text-align: center;
+    font-size: 50px;
+    text-transform: uppercase;
+    color: rgb(54, 10, 214);
+    letter-spacing: 1px;
+    font-family: "Playfair Display", serif;
+    font-weight: 400;
+  }
+  .nine h1 span {
+    margin-top: 5px;
+    font-size: 15px;
+    color: rgb(159, 52, 235);
+    word-spacing: 1px;
+    font-weight: normal;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    font-family: "Raleway", sans-serif;
+    font-weight: 500;
+  
+    display: grid;
+    grid-template-columns: 1fr max-content 1fr;
+    grid-template-rows: 27px 0;
+    grid-gap: 20px;
+    align-items: center;
+  }
+  
+  .nine h1 span:after,
+  .nine h1 span:before {
+    content: " ";
+    display: block;
+    // border-bottom: 1px solid rgb(60, 15, 223);
+    // border-top: 1px solid rgb(60, 15, 223);
+    //height: 5px;
+    //background-color: rgb(187, 215, 254);
+  }
+  .bold-header {
+    font-weight: bold;
+  }
