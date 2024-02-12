@@ -8,10 +8,6 @@ import { Router } from '@angular/router';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { PermissionsDialogNewComponent } from './permissions-dialog-new/permissions-dialog-new.component'; // Update the path as necessary
 
-
-
-//import { AuthService } from '../services/auth.service'; // Your authentication service
-
 export interface Reports {
   rowid: string;
   linkDescription: string;
@@ -19,6 +15,10 @@ export interface Reports {
   reportName: string;
   linkAdress: string;
   //permissions: string;
+}
+export interface Users {
+  aDUserName: string;
+  
 }
 
 @Component({
@@ -44,7 +44,6 @@ export class ReportsPermissionsComponent implements OnInit {
   ];
 
   dataSource: MatTableDataSource<Reports> = new MatTableDataSource(); // Initialize dataSource
-
   // Temporary constant for the current user's role
   currentUserRole: string = '1';
   loginUserName: string = '';
@@ -65,6 +64,7 @@ export class ReportsPermissionsComponent implements OnInit {
     const filterValue = (event.target as HTMLInputElement).value;
     this.dataSource.filter = filterValue.trim().toLowerCase();
   }
+
   fetchReportsData() {
     this.http
       .get<Reports[]>('http://localhost:7144/api/ChameleonOnlineReportsAPI')
@@ -85,20 +85,30 @@ export class ReportsPermissionsComponent implements OnInit {
         }
       );
   }
+  
+
   navigate(linkAdress: string) {
     this.router.navigate([linkAdress]); // Use the passed link address for navigation
   }
-  openPermissionsDialog(report: Reports): void {
-    const dialogRef = this.dialog.open(PermissionsDialogNewComponent, {
-      width: 'auto', // Set your desired width
-      height: 'auto', // Set your desired height
-      data: report // Pass the report data to the dialog
-    });
 
-    dialogRef.afterClosed().subscribe(result => {
-      console.log('The dialog was closed');
-      // Handle dialog close event, e.g., refresh data or display a message
-    });
+  openPermissionsDialog(): void {
+    this.http.get<Users[]>('http://localhost:7144/api/Users').subscribe(
+      (users: Users[]) => {
+        const dialogRef = this.dialog.open(PermissionsDialogNewComponent, {
+          width: 'auto', // Set your desired width
+          height: 'auto', // Set your desired height
+          data: users // Pass the fetched users to the dialog
+        });
+  
+        dialogRef.afterClosed().subscribe(result => {
+          console.log('The dialog was closed');
+          // Handle dialog close event, e.g., refresh data or display a message
+        });
+      },
+      (error: any) => {
+        console.error('Error fetching users data:', error);
+      }
+    );
   }
-
+  
 }
