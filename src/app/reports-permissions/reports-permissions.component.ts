@@ -91,13 +91,13 @@ export class ReportsPermissionsComponent implements OnInit {
     this.router.navigate([linkAdress]); // Use the passed link address for navigation
   }
 
-  openPermissionsDialog(): void {
+  openPermissionsDialog(linkAdress: string): void {
     this.http.get<Users[]>('http://localhost:7144/api/Users').subscribe(
       (users: Users[]) => {
         const dialogRef = this.dialog.open(PermissionsDialogNewComponent, {
-          width: 'auto', // Set your desired width
+          width: '800px', // Set your desired width
           height: 'auto', // Set your desired height
-          data: users // Pass the fetched users to the dialog
+          data: { users: users, linkAdress: linkAdress } // Pass both users and linkAdress to the dialog
         });
   
         dialogRef.afterClosed().subscribe(result => {
@@ -109,6 +109,7 @@ export class ReportsPermissionsComponent implements OnInit {
         console.error('Error fetching users data:', error);
       }
     );
-  }
+}
+
   
 }
