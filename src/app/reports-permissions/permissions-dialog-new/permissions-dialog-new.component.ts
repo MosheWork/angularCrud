@@ -53,45 +53,47 @@ export class PermissionsDialogNewComponent implements OnInit {
     this.users = this.data.users;
     this.linkAdress = this.data.linkAdress;
 
-    this.filteredUsers = this.users; // Initialize filteredUsers with all users initially
+    // Initialize filteredUsers with all users initially
     // New: Fetch all permissions and then filter users
-    this.fetchAllPermissions();
+
+    this.filteredUsers = this.users;
+    this.loadInitialData();
   }
 
-  fetchAllPermissions(): void {
+  loadInitialData(): void {
+    // Fetch the permissions for the report
     this.http
       .get<{ userId: string; linkRowId: string }[]>(
         'http://localhost:7144/api/ChameleonOnlineReportsAPI/allPermissions'
       )
-      .subscribe({
-        next: (permissions) => {
-          this.filterUsersBasedOnPermissions(permissions);
+      .subscribe(
+        (permissions) => {
+          this.processPermissionsData(permissions);
         },
-        error: (error) => {
+        (error) => {
           console.error('Error fetching permissions:', error);
-        },
-      });
+        }
+      );
   }
-  filterUsersBasedOnPermissions(
+
+  processPermissionsData(
     permissions: { userId: string; linkRowId: string }[]
   ): void {
-    // Filter permissions for the current report link
-    const permissionsForLink = permissions.filter(
-      (p) => p.linkRowId === this.linkAdress
-    );
+    // Determine which users should be in the selectedUsers list
+    const usersWithPermission = permissions
+      .filter((p) => p.linkRowId === this.linkAdress)
+      .map((p) => p.userId);
 
-    // Extract UserIds of users with permissions for this linkAdress
-    const userIdsWithPermission = permissionsForLink.map((p) => p.userId);
-
-    // Filter users into selectedUsers and filteredUsers based on permissions
+    // Update selectedUsers and filteredUsers by creating new arrays
+    // This helps Angular detect the changes and update the view accordingly.
     this.selectedUsers = this.users.filter((user) =>
-      userIdsWithPermission.includes(user.adUserName)
+      usersWithPermission.includes(user.adUserName)
     );
-    this.filteredUsers = this.users.filter(
-      (user) => !userIdsWithPermission.includes(user.adUserName)
-    );
+    
+    console.log(this.selectedUsers); // To check if users are being set correctly
 
-    // Trigger change detection to update the UI
+    // If you're already calling cdr.detectChanges() after setting selectedUsers and filteredUsers,
+    // make sure it's still there. If not, add it to ensure the view updates with the new data.
     this.cdr.detectChanges();
   }
 

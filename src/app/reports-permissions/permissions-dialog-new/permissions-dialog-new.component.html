@@ -3,7 +3,7 @@
     <mat-tab-group animationDuration="0ms">
       >
 
-      <mat-tab label="עדכון מחלקה ">
+      <mat-tab label="ניהול הרשאות  רשימת מכשירים">
         <div class="fields-container2">
           <form dir="rtl">
             <div>
@@ -17,10 +17,10 @@
             <div>
               <!-- Department Dual-Listbox -->
               <dual-list
-                [source]="filteredUsers"
                 key="display"
                 display="display"
                 [(destination)]="selectedUsers"
+                [source]="filteredUsers"
                 height="300px"
                 [format]="format"
               ></dual-list>
