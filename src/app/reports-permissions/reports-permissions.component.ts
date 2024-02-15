@@ -7,6 +7,8 @@ import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { PermissionsDialogNewComponent } from './permissions-dialog-new/permissions-dialog-new.component'; // Update the path as necessary
+import { AddReportComponent } from './add-report/add-report.component'
+import { UpdateReportComponent } from './update-report/update-report.component'
 
 export interface Reports {
   rowid: string;
@@ -40,7 +42,9 @@ export class ReportsPermissionsComponent implements OnInit {
     'linkDescription',
     'linkAdress',
     'btn',
-    'permissions'
+    'permissions',
+    'edit'
+
   ];
 
   dataSource: MatTableDataSource<Reports> = new MatTableDataSource(); // Initialize dataSource
@@ -99,7 +103,7 @@ export class ReportsPermissionsComponent implements OnInit {
           height: 'auto', // Set your desired height
           data: { users: users, linkAdress: linkAdress } // Pass both users and linkAdress to the dialog
         });
-  
+        
         dialogRef.afterClosed().subscribe(result => {
           console.log('The dialog was closed');
           // Handle dialog close event, e.g., refresh data or display a message
@@ -111,5 +115,34 @@ export class ReportsPermissionsComponent implements OnInit {
     );
 }
 
+openAddNewDialog(): void {
+  const dialogRef = this.dialog.open(AddReportComponent, {
+    width: '800px',
+    height: 'auto'
+  });
   
+  dialogRef.afterClosed().subscribe(result => {
+    if (result) {
+      // The dialog was closed after a successful POST request
+      this.fetchReportsData(); // Refresh the table data
+    }
+  });
+
 }
+
+openUpdateDialog(report: Reports): void {
+  const dialogRef = this.dialog.open(UpdateReportComponent, {
+    width: '800px',
+    height: 'auto',
+    data: report // Pass the selected report's data to the dialog
+  });
+
+  dialogRef.afterClosed().subscribe(result => {
+    if (result) {
+      // If the dialog was closed with updated report data, refresh the reports list
+      this.fetchReportsData();
+    }
+  });
+}
+}
+

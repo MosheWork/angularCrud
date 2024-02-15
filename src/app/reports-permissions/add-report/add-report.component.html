@@ -1,0 +1,44 @@
+<link
+  href="https://fonts.googleapis.com/icon?family=Material+Icons"
+  rel="stylesheet"
+/>
+
+<h2 mat-dialog-title>Add New Report Link</h2>
+<mat-dialog-content dir="rtl">
+  <form [formGroup]="newRowForm"  class="custom-form">
+    <mat-form-field>
+      <mat-label>Link Description</mat-label>
+      <input matInput formControlName="LinkDescription" />
+    </mat-form-field>
+
+    <mat-radio-group aria-label="Select Link Status" formControlName="LinkStatus">
+        <mat-radio-button *ngFor="let status of linkStatusOptions" [value]="status.value">
+          {{ status.label }}
+        </mat-radio-button>
+      </mat-radio-group>
+
+    <mat-form-field>
+      <mat-label>Report Name</mat-label>
+      <input matInput formControlName="ReportName" />
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Link Address</mat-label>
+      <input matInput formControlName="LinkAdress" />
+    </mat-form-field>
+
+    <div class="form-actions">
+      <button mat-raised-button class="cancel-button" (click)="onNoClick()">
+        Cancel
+      </button>
+      <button
+        mat-raised-button
+        class="add-button"
+        [disabled]="!newRowForm.valid"
+        (click)="onSubmit()"
+      >
+        Add
+      </button>
+    </div>
+  </form>
+</mat-dialog-content>

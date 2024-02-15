@@ -1,0 +1,40 @@
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+
+<h2 mat-dialog-title>Update Report</h2>
+<mat-dialog-content dir="rtl">
+  <form [formGroup]="updateForm" class="custom-form">
+    <mat-form-field>
+      <mat-label>Link Description</mat-label>
+      <input matInput formControlName="linkDescription" />
+    </mat-form-field>
+
+    <mat-radio-group aria-label="Select Link Status" formControlName="linkStatus">
+      <mat-radio-button *ngFor="let status of linkStatusOptions" [value]="status.value">
+        {{ status.label }}
+      </mat-radio-button>
+    </mat-radio-group>
+
+    <mat-form-field>
+      <mat-label>Report Name</mat-label>
+      <input matInput formControlName="reportName" />
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Link Address</mat-label>
+      <input matInput formControlName="linkAdress" />
+    </mat-form-field>
+
+    <div class="form-actions">
+      <button mat-button class="cancel-button" (click)="onNoClick()">Cancel</button>
+      <button
+        mat-raised-button
+        class="update-button" 
+        [disabled]="!updateForm.valid"
+        (click)="onSubmit()"
+      >
+        Update <!-- Changed button text -->
+      </button>
+    </div>
+  </form>
+</mat-dialog-content>
+

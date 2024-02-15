@@ -50,6 +50,8 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { AngularDualListBoxModule } from 'angular-dual-listbox';
 import { ReportsPermissionsComponent } from './reports-permissions/reports-permissions.component';
 import { PermissionsDialogNewComponent } from './reports-permissions/permissions-dialog-new/permissions-dialog-new.component';
+import { AddReportComponent } from './reports-permissions/add-report/add-report.component';
+import { UpdateReportComponent } from './reports-permissions/update-report/update-report.component';
 
 
 
@@ -76,6 +78,8 @@ import { PermissionsDialogNewComponent } from './reports-permissions/permissions
     PermissionsDialogComponent,
     ReportsPermissionsComponent,
     PermissionsDialogNewComponent,
+    AddReportComponent,
+    UpdateReportComponent,
   ],
   imports: [
     BrowserModule,

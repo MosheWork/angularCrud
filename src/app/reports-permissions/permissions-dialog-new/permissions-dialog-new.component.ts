@@ -37,6 +37,8 @@ export class PermissionsDialogNewComponent implements OnInit {
   filteredUsers: Users[] = []; // Add this line to hold the filtered list
 
   selectedUsers: Users[] = [];
+  filteredSelectedUsers: Users[] = []; // You will use this to hold the filtered list of selected users
+
 
   constructor(
     private http: HttpClient,
@@ -52,6 +54,8 @@ export class PermissionsDialogNewComponent implements OnInit {
     // Assuming the data passed to the dialog includes both users and linkAdress
     this.users = this.data.users;
     this.linkAdress = this.data.linkAdress;
+    this.filteredSelectedUsers = this.selectedUsers;
+
 
     // Initialize filteredUsers with all users initially
     // New: Fetch all permissions and then filter users
@@ -133,4 +137,5 @@ export class PermissionsDialogNewComponent implements OnInit {
   closeDialog(): void {
     this.dialogRef.close();
   }
+  
 }

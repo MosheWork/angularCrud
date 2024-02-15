@@ -1,0 +1,46 @@
+/* In your component's scss file */
+mat-form-field {
+    width: 100%;
+    margin-bottom: 8px; // Adjust as needed
+  
+    .mat-form-field-label {
+      color: #E91E63; // Pink color for labels, adjust as needed
+    }
+  
+    .mat-form-field-underline {
+      background-color: #E91E63; // Pink underline, adjust as needed
+    }
+  
+    .mat-form-field-ripple {
+      background-color: #E91E63; // Pink ripple effect, adjust as needed
+    }
+  
+    .mat-form-field-wrapper {
+      padding-bottom: 0.25em; // Reduces the space under the input line
+    }
+  
+    .mat-input-element {
+      color: #000; // Text color for input
+    }
+  
+    &.mat-focused .mat-form-field-label {
+      color: #673AB7; // Purple color when focused, adjust as needed
+    }
+  }
+  
+  // Aligning label to start
+  .mat-form-field-label-wrapper {
+    align-self: start;
+  }
+  
+  // Specific styles for buttons
+  .add-button {
+    background-color: #4CAF50; // Green color for add button
+    color: white;
+  }
+  
+  .cancel-button {
+    background-color: #F44336; // Red color for cancel button
+    color: white;
+  }
+  
