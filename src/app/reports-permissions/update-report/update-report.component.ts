@@ -2,9 +2,6 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { MatDialogModule } from '@angular/material/dialog';
-
-
 
 export interface Reports {
   rowid: string;
@@ -17,15 +14,14 @@ export interface Reports {
 @Component({
   selector: 'app-update-report',
   templateUrl: './update-report.component.html',
-  styleUrls: ['./update-report.component.scss']
+  styleUrls: ['./update-report.component.scss'],
 })
 export class UpdateReportComponent implements OnInit {
-
   updateForm!: FormGroup;
 
   linkStatusOptions = [
     { label: 'Active', value: '1' },
-    { label: 'Not Active', value: '0' }
+    { label: 'Not Active', value: '0' },
   ];
 
   ngOnInit(): void {
@@ -40,36 +36,49 @@ export class UpdateReportComponent implements OnInit {
     // Initialize your form here, using data to populate the fields
     this.initializeForm();
   }
-  
+
   initializeForm(): void {
     this.updateForm = this.formBuilder.group({
       rowid: [this.data.rowid, Validators.required],
       linkDescription: [this.data.linkDescription, Validators.required],
       linkStatus: [this.data.linkStatus, Validators.required],
       reportName: [this.data.reportName, Validators.required],
-      linkAdress: [this.data.linkAdress, Validators.required]
+      linkAdress: [this.data.linkAdress, Validators.required],
     });
-  
-    // Subscribe to changes in the linkStatus control
-    this.updateForm.get('linkStatus')!.valueChanges.subscribe(value => {
-      if (value === '0') { // Assuming '0' represents "Not Active"
-        // Display an alert
-        alert('Warning: Changing the status to Not Active.');
+
+    // Add the subscription to linkStatus value changes here
+    this.updateForm.get('linkStatus')!.valueChanges.subscribe((value) => {
+      if (value === '0') {
+        // Assuming '0' represents "Not Active"
+        const confirmed = confirm(
+          'Are you sure you want to change the status to Not Active?'
+        );
+        if (!confirmed) {
+          // User did not confirm, revert the value
+          this.updateForm
+            .get('linkStatus')!
+            .setValue(this.data.linkStatus, { emitEvent: false });
+        }
       }
     });
   }
+
   onSubmit(): void {
     if (this.updateForm.valid) {
-      this.http.put(`http://localhost:7144/api/ChameleonOnlineReportsAPI/${this.updateForm.value.rowid}`, this.updateForm.value)
+      this.http
+        .put(
+          `http://localhost:7144/api/ChameleonOnlineReportsAPI/${this.updateForm.value.rowid}`,
+          this.updateForm.value
+        )
         .subscribe(
-          response => {
+          (response) => {
             this.dialogRef.close(true); // Indicate success
           },
-          error => {
+          (error) => {
             console.error('Error updating report:', error);
           }
         );
-        console.log(this.updateForm.value)
+      console.log(this.updateForm.value);
     }
   }
   onNoClick(): void {
