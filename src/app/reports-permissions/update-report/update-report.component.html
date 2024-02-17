@@ -1,6 +1,8 @@
 <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
 
-<h2 mat-dialog-title>Update Report</h2>
+<div class="nine">
+    <h2>עריכת הדוח</h2>
+  </div>
 <mat-dialog-content dir="rtl">
   <form [formGroup]="updateForm" class="custom-form">
     <mat-form-field>
@@ -8,7 +10,7 @@
       <input matInput formControlName="linkDescription" />
     </mat-form-field>
 
-    <mat-radio-group aria-label="Select Link Status" formControlName="linkStatus">
+    <mat-radio-group aria-label="Select Link Status" formControlName="linkStatus"> דוח פעיל ?
       <mat-radio-button *ngFor="let status of linkStatusOptions" [value]="status.value">
         {{ status.label }}
       </mat-radio-button>
