@@ -29,6 +29,7 @@ export class PermissionsDialogNewComponent implements OnInit {
     direction: 'left-to-right', // Set direction to RTL
     draggable: true,
     locale: undefined,
+    
   };
 
   linkAdress: string;

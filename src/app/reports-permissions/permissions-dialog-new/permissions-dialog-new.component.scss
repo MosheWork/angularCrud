@@ -117,3 +117,10 @@
     font-family: "Playfair Display", serif;
     font-weight: 400;
   }
+  
+  ::ng-deep .point-right::after {
+    content: "\25c0" !important;
+  }
+  ::ng-deep .point-left::before {
+    content: "\25b6" !important; /* Right-pointing arrow Unicode */
+  }
