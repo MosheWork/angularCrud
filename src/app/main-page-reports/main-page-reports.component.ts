@@ -8,12 +8,11 @@ import { MatDialog } from '@angular/material/dialog';
 //import { AuthService } from '../services/auth.service'; // Your authentication service
 
 export interface Reports {
-  reportID: string;
+  rowid: number; // assuming Rowid is a number
+  linkDescription: string;
+  linkStatus: string; // assuming LinkStatus is a number
   reportName: string;
-  departmentName: string;
-  info: string;
-  linkToPage: string;
-  permissions: string;
+  linkAdress: string;
 }
 @Component({
   selector: 'app-main-page-reports',
@@ -28,8 +27,8 @@ export class MainPageReportsComponent implements OnInit {
   titleUnit: string = 'מסך דוחות ';
   totalResults: number = 0;
 
-  displayedColumns: string[] = [ 'reportName', 'departmentName',
-  'info', 'btn'];
+  displayedColumns: string[] = [ 'Rowid', 'LinkDescription',
+  'LinkStatus','ReportName','LinkAdress', 'btn'];
 
   dataSource: MatTableDataSource<Reports> = new MatTableDataSource(); // Initialize dataSource
 
@@ -108,13 +107,15 @@ export class MainPageReportsComponent implements OnInit {
     this.http.get<Reports[]>('http://localhost:7144/api/ChameleonOnlineReportsAPI').subscribe(
       (data: Reports[]) => {
         // Map the API response to the new property names
+
+      
         const mappedData = data.map(report => ({
-          reportID: report.reportID,
+          rowid: report.rowid,
+          linkDescription: report.linkDescription,
+          linkStatus: report.linkStatus,
           reportName: report.reportName,
-          departmentName: report.departmentName,
-          info: report.info,
-          linkToPage: report.linkToPage,
-          permissions: report.permissions
+          linkAdress: report.linkAdress,
+          
         }));
         this.dataSource.data = mappedData;
       },
