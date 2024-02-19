@@ -27,8 +27,14 @@ export class MainPageReportsComponent implements OnInit {
   titleUnit: string = 'מסך דוחות ';
   totalResults: number = 0;
 
-  displayedColumns: string[] = [ 'Rowid', 'LinkDescription',
-  'LinkStatus','ReportName','LinkAdress', 'btn'];
+  displayedColumns: string[] = [
+    'Rowid',
+    'LinkDescription',
+    'LinkStatus',
+    'ReportName',
+    'LinkAdress',
+    'btn',
+  ];
 
   dataSource: MatTableDataSource<Reports> = new MatTableDataSource(); // Initialize dataSource
 
@@ -104,24 +110,39 @@ export class MainPageReportsComponent implements OnInit {
     this.dataSource.filter = filterValue.trim().toLowerCase();
   }
   fetchReportsData() {
-    this.http.get<Reports[]>('http://localhost:7144/api/ChameleonOnlineReportsAPI').subscribe(
-      (data: Reports[]) => {
-        // Map the API response to the new property names
-
-      
-        const mappedData = data.map(report => ({
+    this.http.get<any[]>(
+      'http://localhost:7144/api/ChameleonOnlineReportsAPI/allPermissions'
+    ).subscribe(permissions => {
+      console.log('Permissions:', permissions);
+      this.http.get<Reports[]>(
+        'http://localhost:7144/api/ChameleonOnlineReportsAPI'
+      ).subscribe(reports => {
+        const accessibleReports = reports.filter(report => {
+          const hasPermission = permissions.some(permission => {
+            // Debugging output for each comparison
+            const comparisonResult = permission.linkRowId === report.linkAdress;
+            console.log(`Comparing permission.linkRowID: ${permission.linkRowID} with report.linkAdress: ${report.linkAdress}, Result: ${comparisonResult}`);
+            return comparisonResult;
+           
+          });
+          return hasPermission;
+        });
+  
+        console.log('Reports:', reports);
+        console.log('Accessible Reports:', accessibleReports);
+  
+        const mappedData = accessibleReports.map(report => ({
           rowid: report.rowid,
           linkDescription: report.linkDescription,
           linkStatus: report.linkStatus,
           reportName: report.reportName,
           linkAdress: report.linkAdress,
-          
         }));
+        console.log('Mapped Data:', mappedData);
         this.dataSource.data = mappedData;
-      },
-      (error: any) => {
-        console.error('Error fetching reports data:', error);
-      }
-    );
+        this.totalResults = mappedData.length;
+      }, error => console.error('Error fetching reports data:', error));
+    }, error => console.error('Error fetching user permissions:', error));
   }
+  
 }
