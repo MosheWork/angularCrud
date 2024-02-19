@@ -56,7 +56,7 @@
           mat-raised-button
           color="primary"
           class="reports-button"
-          [routerLink]="element.linkAdress"
+          (click)="navigate(element.linkAdress)"
         >
           <mat-icon>assessment</mat-icon>
           צפייה בדוח

@@ -4,6 +4,7 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatSort } from '@angular/material/sort';
 import { MatDialog } from '@angular/material/dialog';
+import { Router } from '@angular/router';
 
 //import { AuthService } from '../services/auth.service'; // Your authentication service
 
@@ -59,11 +60,11 @@ export class MainPageReportsComponent implements OnInit {
   //   // ... more reports ...
   // ];
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private router: Router) {}
 
   ngOnInit(): void {
-    const loginUserName = localStorage.getItem('loginUserName');
-    console.log('UserAD:' + loginUserName);
+    this.loginUserName = localStorage.getItem('loginUserName') || ''; // Provide a default empty string as fallback
+    console.log('UserAD set in ngOnInit:', this.loginUserName);
 
     //this.filterReportsDataBasedOnRole();
     this.dataSource.paginator = this.paginator;
@@ -110,39 +111,67 @@ export class MainPageReportsComponent implements OnInit {
     this.dataSource.filter = filterValue.trim().toLowerCase();
   }
   fetchReportsData() {
-    this.http.get<any[]>(
-      'http://localhost:7144/api/ChameleonOnlineReportsAPI/allPermissions'
-    ).subscribe(permissions => {
-      console.log('Permissions:', permissions);
-      this.http.get<Reports[]>(
-        'http://localhost:7144/api/ChameleonOnlineReportsAPI'
-      ).subscribe(reports => {
-        const accessibleReports = reports.filter(report => {
-          const hasPermission = permissions.some(permission => {
-            // Debugging output for each comparison
-            const comparisonResult = permission.linkRowId === report.linkAdress;
-            console.log(`Comparing permission.linkRowID: ${permission.linkRowID} with report.linkAdress: ${report.linkAdress}, Result: ${comparisonResult}`);
-            return comparisonResult;
-           
+    this.http
+      .get<any[]>(
+        'http://localhost:7144/api/ChameleonOnlineReportsAPI/allPermissions'
+      )
+      .subscribe(
+        (permissions) => {
+          console.log('Permissions:', permissions);
+
+          // Filter permissions and log each comparison
+          const userPermissions = permissions.filter((permission) => {
+            // Log the comparison of each permission's userId with loginUserName
+            const match =
+              permission.userId.toUpperCase() ===
+              this.loginUserName.toUpperCase();
+            console.log(
+              `Comparing permission.userId: ${permission.userId.toUpperCase()} with loginUserName: ${this.loginUserName.toUpperCase()}, Match: ${match}`
+            );
+            return match;
           });
-          return hasPermission;
-        });
-  
-        console.log('Reports:', reports);
-        console.log('Accessible Reports:', accessibleReports);
-  
-        const mappedData = accessibleReports.map(report => ({
-          rowid: report.rowid,
-          linkDescription: report.linkDescription,
-          linkStatus: report.linkStatus,
-          reportName: report.reportName,
-          linkAdress: report.linkAdress,
-        }));
-        console.log('Mapped Data:', mappedData);
-        this.dataSource.data = mappedData;
-        this.totalResults = mappedData.length;
-      }, error => console.error('Error fetching reports data:', error));
-    }, error => console.error('Error fetching user permissions:', error));
+
+          // Log the filtered userPermissions to the console
+          console.log('Filtered User Permissions:', userPermissions);
+
+          this.http
+            .get<Reports[]>(
+              'http://localhost:7144/api/ChameleonOnlineReportsAPI'
+            )
+            .subscribe(
+              (reports) => {
+                const accessibleReports = reports.filter((report) => {
+                  const hasPermission = userPermissions.some((permission) => {
+                    return (
+                      permission.linkRowId.toUpperCase() ===
+                      report.linkAdress.toUpperCase()
+                    );
+                  });
+                  return hasPermission;
+                });
+
+                console.log('Reports:', reports);
+                console.log('Accessible Reports:', accessibleReports);
+
+                const mappedData = accessibleReports.map((report) => ({
+                  rowid: report.rowid,
+                  linkDescription: report.linkDescription,
+                  linkStatus: report.linkStatus,
+                  reportName: report.reportName,
+                  linkAdress: report.linkAdress,
+                }));
+                console.log('Mapped Data:', mappedData);
+                this.dataSource.data = mappedData;
+                this.totalResults = mappedData.length;
+              },
+              (error) => console.error('Error fetching reports data:', error)
+            );
+        },
+        (error) => console.error('Error fetching user permissions:', error)
+      );
   }
-  
+
+  navigate(linkAdress: string) {
+    this.router.navigate([linkAdress]); // Use the passed link address for navigation
+  }
 }
