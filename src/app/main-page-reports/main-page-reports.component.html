@@ -22,25 +22,26 @@
   <table mat-table [dataSource]="dataSource" matSort>
     <!-- ID Column -->
     <ng-container matColumnDef="Rowid">
-      <th mat-header-cell *matHeaderCellDef>מספר דוח</th>
+      <th mat-header-cell *matHeaderCellDef>מספר דוח </th>
       <td mat-cell *matCellDef="let element">{{ element.rowid }}</td>
     </ng-container>
+    <ng-container matColumnDef="ReportName">
+      <th mat-header-cell *matHeaderCellDef>שם הדוח</th>
+      <td mat-cell *matCellDef="let element">{{ element.reportName }}</td>
+    </ng-container>
     <ng-container matColumnDef="LinkAdress">
-      <th mat-header-cell *matHeaderCellDef>מספר דוח</th>
+      <th mat-header-cell *matHeaderCellDef>שם הדוח באנגלית </th>
       <td mat-cell *matCellDef="let element">{{ element.linkAdress }}</td>
     </ng-container>
     <ng-container matColumnDef="LinkDescription">
-      <th mat-header-cell *matHeaderCellDef>שם הדוח</th>
+      <th mat-header-cell *matHeaderCellDef> תיאור הדוח</th>
       <td mat-cell *matCellDef="let element">{{ element.linkDescription }}</td>
     </ng-container>
     <ng-container matColumnDef="LinkStatus">
-      <th mat-header-cell *matHeaderCellDef>שם המחלקה</th>
+      <th mat-header-cell *matHeaderCellDef>דוח פעיל ? </th>
       <td mat-cell *matCellDef="let element">{{ element.linkStatus }}</td>
     </ng-container>
-    <ng-container matColumnDef="ReportName">
-      <th mat-header-cell *matHeaderCellDef>מידע</th>
-      <td mat-cell *matCellDef="let element">{{ element.reportName }}</td>
-    </ng-container>
+    
     <!-- <ng-container matColumnDef="linkToPage">
       <th mat-header-cell *matHeaderCellDef>קישור לדף</th>
       <td mat-cell *matCellDef="let element">{{ element.linkToPage }}</td>

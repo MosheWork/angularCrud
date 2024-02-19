@@ -6,172 +6,87 @@ import { MatSort } from '@angular/material/sort';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 
-//import { AuthService } from '../services/auth.service'; // Your authentication service
-
+// This is a list of things each report needs to have.
 export interface Reports {
-  rowid: number; // assuming Rowid is a number
-  linkDescription: string;
-  linkStatus: string; // assuming LinkStatus is a number
-  reportName: string;
-  linkAdress: string;
+  rowid: number; // This is like the report's special number.
+  linkDescription: string; // This tells us what the report is about.
+  linkStatus: string; // This shows if the report is okay or not.
+  reportName: string; // The name of the report.
+  linkAdress: string; // Where to find the report.
 }
+
+// This is the main part of our code where we make everything work!
 @Component({
-  selector: 'app-main-page-reports',
-  templateUrl: './main-page-reports.component.html',
-  styleUrls: ['./main-page-reports.component.scss'],
+  selector: 'app-main-page-reports', // This is how we find this part of our code.
+  templateUrl: './main-page-reports.component.html', // This is the design of our page.
+  styleUrls: ['./main-page-reports.component.scss'], // This makes our page look nice.
 })
 export class MainPageReportsComponent implements OnInit {
+  // These lines help us organize our list of reports on the page.
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
+  // These are just titles we see on the page.
   Title2: string = 'סה"כ תוצאות   ';
   titleUnit: string = 'מסך דוחות ';
-  totalResults: number = 0;
+  totalResults: number = 0; // This keeps track of how many reports we have.
 
+  // This tells us what details to show for each report in our list.
   displayedColumns: string[] = [
-    'Rowid',
-    'LinkDescription',
-    'LinkStatus',
-    'ReportName',
-    'LinkAdress',
-    'btn',
+    'Rowid', 'LinkDescription', 'LinkStatus',  'LinkAdress', 'btn',
   ];
 
-  dataSource: MatTableDataSource<Reports> = new MatTableDataSource(); // Initialize dataSource
+  // This is where we keep all the reports we want to show on the page.
+  dataSource: MatTableDataSource<Reports> = new MatTableDataSource();
 
-  // Temporary constant for the current user's role
-  currentUserRole: string = '1';
+  // We'll use this later to check who is using our app.
   loginUserName: string = '';
-
-  // Original reports data
-  // reportsData: Reports[] = [
-  //   {
-  //     Dept: 'מערכות מידע',
-  //     reportName: ' רשימת קריאות',
-  //     summry: 'רשימת כל הקריאות ממוקד אחוד',
-  //     link: '/SysAid',
-  //   },
-  //   {
-  //     Dept: 'הנדסה רפואית',
-  //     reportName: 'רשימת מכשירים',
-  //     summry: 'רשימת מכשירים בקמיליון',
-  //     link: '/medicalDevices',
-  //   },
-  //   // ... more reports ...
-  // ];
 
   constructor(private http: HttpClient, private router: Router) {}
 
+  // This happens when our page starts up.
   ngOnInit(): void {
-    this.loginUserName = localStorage.getItem('loginUserName') || ''; // Provide a default empty string as fallback
-    console.log('UserAD set in ngOnInit:', this.loginUserName);
+    // We check who is using our app and remember them.
+    this.loginUserName = localStorage.getItem('loginUserName') || '';
 
-    //this.filterReportsDataBasedOnRole();
+    // These lines make sure our list of reports works nicely (like sorting and moving through pages).
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
-    this.fetchReportsData();
+    this.fetchReportsData(); // We go and get the list of reports.
   }
-  // filterReportsDataBasedOnRole() {
-  //   let filteredData = this.reportsData;
-
-  //   switch (this.currentUserRole) {
-  //     case '1':
-  //       // Filtering logic for role 1
-  //       filteredData = this.reportsData.filter(
-  //         (report) => report.Dept === 'מערכות מידע'
-  //       );
-  //       break;
-  //     case '2':
-  //       // Filtering logic for role 1
-  //       filteredData = this.reportsData.filter(
-  //         (report) => report.Dept === 'הנדסה רפואית'
-  //       );
-  //       break;
-  //     case 'Admin':
-  //       // Filtering logic for admin (show all reports)
-  //       // You can adjust this logic based on your requirements
-  //       break;
-
-  //     // Add more cases for other roles as needed
-  //     // case 'roleX':
-  //     //   // Filtering logic for role X
-  //     //   break;
-
-  //     default:
-  //       // If there is no matching role, show nothing
-  //       filteredData = [];
-  //       break;
-  //   }
-
-  //   this.dataSource = new MatTableDataSource(filteredData);
-  //   this.totalResults = filteredData.length;
-  // }
+  
+  // This lets us find specific reports in our list.
   applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
     this.dataSource.filter = filterValue.trim().toLowerCase();
   }
+
+  // This is where we go and get the reports to show on our page.
   fetchReportsData() {
-    this.http
-      .get<any[]>(
-        'http://localhost:7144/api/ChameleonOnlineReportsAPI/allPermissions'
-      )
-      .subscribe(
-        (permissions) => {
-          console.log('Permissions:', permissions);
+    // First, we ask for permission to see the reports.
+    this.http.get<any[]>('http://localhost:7144/api/ChameleonOnlineReportsAPI/allPermissions').subscribe(permissions => {
+      // Then, we get all the reports.
+      this.http.get<Reports[]>('http://localhost:7144/api/ChameleonOnlineReportsAPI').subscribe(reports => {
+        // We only keep the reports we're allowed to see.
+        const accessibleReports = reports.filter(report => permissions.some(permission => permission.linkRowId.toUpperCase() === report.linkAdress.toUpperCase()));
 
-          // Filter permissions and log each comparison
-          const userPermissions = permissions.filter((permission) => {
-            // Log the comparison of each permission's userId with loginUserName
-            const match =
-              permission.userId.toUpperCase() ===
-              this.loginUserName.toUpperCase();
-            console.log(
-              `Comparing permission.userId: ${permission.userId.toUpperCase()} with loginUserName: ${this.loginUserName.toUpperCase()}, Match: ${match}`
-            );
-            return match;
-          });
-
-          // Log the filtered userPermissions to the console
-          console.log('Filtered User Permissions:', userPermissions);
-
-          this.http
-            .get<Reports[]>(
-              'http://localhost:7144/api/ChameleonOnlineReportsAPI'
-            )
-            .subscribe(
-              (reports) => {
-                const accessibleReports = reports.filter((report) => {
-                  const hasPermission = userPermissions.some((permission) => {
-                    return (
-                      permission.linkRowId.toUpperCase() ===
-                      report.linkAdress.toUpperCase()
-                    );
-                  });
-                  return hasPermission;
-                });
-
-                console.log('Reports:', reports);
-                console.log('Accessible Reports:', accessibleReports);
-
-                const mappedData = accessibleReports.map((report) => ({
-                  rowid: report.rowid,
-                  linkDescription: report.linkDescription,
-                  linkStatus: report.linkStatus,
-                  reportName: report.reportName,
-                  linkAdress: report.linkAdress,
-                }));
-                console.log('Mapped Data:', mappedData);
-                this.dataSource.data = mappedData;
-                this.totalResults = mappedData.length;
-              },
-              (error) => console.error('Error fetching reports data:', error)
-            );
-        },
-        (error) => console.error('Error fetching user permissions:', error)
-      );
+        // We make a list of these reports to show on the page.
+        const mappedData = accessibleReports.map(report => ({
+          rowid: report.rowid,
+          linkDescription: report.linkDescription,
+          linkStatus: report.linkStatus,
+          reportName: report.reportName,
+          linkAdress: report.linkAdress,
+        }));
+        
+        this.dataSource.data = mappedData; // We update our list with the reports we can show.
+        this.totalResults = mappedData.length; // We count how many reports we have to show.
+      });
+    });
   }
 
+  // This lets us click on a report to see more about it.
   navigate(linkAdress: string) {
-    this.router.navigate([linkAdress]); // Use the passed link address for navigation
+    this.router.navigate([linkAdress]); // We go to the report's page.
   }
 }
