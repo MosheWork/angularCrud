@@ -3,10 +3,20 @@
     <mat-tab-group animationDuration="0ms">
       >
 
-      <mat-tab label="ניהול הרשאות  רשימת מכשירים" >
-        <div class="fields-container2">  
+      <mat-tab label="ניהול הרשאות  רשימת מכשירים">
+        <div class="fields-container2">
           <form dir="rtl">
-            <div>
+            <div class="search-selected-users">
+              <!-- New search box for the "Remove" list -->
+              <input
+                type="text"
+                placeholder="חפש בהסר..."
+                #searchDestinationInput
+                (input)="filterSelectedUsers(searchDestinationInput.value)"
+                style="margin-bottom: 10px; direction: rtl"
+              />
+            </div>
+            <div class="search-users">
               <input
                 type="text"
                 placeholder="חפש..."
@@ -14,7 +24,8 @@
                 (input)="filterUsers(searchInput.value)"
               />
             </div>
-            
+         
+
             <div>
               <!-- Department Dual-Listbox -->
               <dual-list
@@ -26,7 +37,6 @@
                 [format]="format"
               ></dual-list>
             </div>
-           
 
             <div class="dialog-actions">
               <button mat-raised-button color="primary" (click)="updateUsers()">

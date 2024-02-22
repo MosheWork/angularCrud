@@ -29,7 +29,6 @@ export class PermissionsDialogNewComponent implements OnInit {
     direction: 'left-to-right', // Set direction to RTL
     draggable: true,
     locale: undefined,
-    
   };
 
   linkAdress: string;
@@ -38,8 +37,8 @@ export class PermissionsDialogNewComponent implements OnInit {
   filteredUsers: Users[] = []; // Add this line to hold the filtered list
 
   selectedUsers: Users[] = [];
+  selectedUsersNotToFilter: Users[] = [];
   filteredSelectedUsers: Users[] = []; // You will use this to hold the filtered list of selected users
-
 
   constructor(
     private http: HttpClient,
@@ -56,7 +55,8 @@ export class PermissionsDialogNewComponent implements OnInit {
     this.users = this.data.users;
     this.linkAdress = this.data.linkAdress;
     this.filteredSelectedUsers = this.selectedUsers;
-
+    this.filteredSelectedUsers = [...this.selectedUsers];
+    this.filteredUsers = [...this.users];
 
     // Initialize filteredUsers with all users initially
     // New: Fetch all permissions and then filter users
@@ -94,9 +94,9 @@ export class PermissionsDialogNewComponent implements OnInit {
     this.selectedUsers = this.users.filter((user) =>
       usersWithPermission.includes(user.adUserName)
     );
-    
-    console.log(this.selectedUsers); // To check if users are being set correctly
 
+    console.log(this.selectedUsers); // To check if users are being set correctly
+    this.selectedUsersNotToFilter = this.selectedUsers;
     // If you're already calling cdr.detectChanges() after setting selectedUsers and filteredUsers,
     // make sure it's still there. If not, add it to ensure the view updates with the new data.
     this.cdr.detectChanges();
@@ -138,5 +138,18 @@ export class PermissionsDialogNewComponent implements OnInit {
   closeDialog(): void {
     this.dialogRef.close();
   }
-  
+  // New filter method for the destination list
+  filterSelectedUsers(searchText: string): void {
+    console.log('Filtering with:', searchText); // Debug log
+    if (!searchText) {
+      this.selectedUsers = this.selectedUsersNotToFilter;
+    } else {
+      searchText = searchText.toLowerCase();
+      this.selectedUsers = this.selectedUsersNotToFilter.filter((user) =>
+        user.display.toLowerCase().includes(searchText)
+      );
+    }
+    console.log('Filtered Selected Users:', this.selectedUsers); // Debug log
+    this.cdr.detectChanges();
+  }
 }
