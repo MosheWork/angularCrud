@@ -6,6 +6,17 @@
       <mat-tab label="ניהול הרשאות  רשימת מכשירים">
         <div class="fields-container2">
           <form dir="rtl">
+            <div class="search-container">
+
+         
+            <div class="search-users">
+              <input
+                type="text"
+                placeholder="חפש..."
+                #searchInput
+                (input)="filterUsers(searchInput.value)"
+              />
+            </div>
             <div class="search-selected-users">
               <!-- New search box for the "Remove" list -->
               <input
@@ -16,13 +27,6 @@
                 style="margin-bottom: 10px; direction: rtl"
               />
             </div>
-            <div class="search-users">
-              <input
-                type="text"
-                placeholder="חפש..."
-                #searchInput
-                (input)="filterUsers(searchInput.value)"
-              />
             </div>
          
 

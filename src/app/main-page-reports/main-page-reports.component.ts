@@ -48,6 +48,7 @@ export class MainPageReportsComponent implements OnInit {
   ngOnInit(): void {
     // We check who is using our app and remember them.
     this.loginUserName = localStorage.getItem('loginUserName') || '';
+    console.log(this.loginUserName)
 
     // These lines make sure our list of reports works nicely (like sorting and moving through pages).
     this.dataSource.paginator = this.paginator;
@@ -63,14 +64,35 @@ export class MainPageReportsComponent implements OnInit {
 
   // This is where we go and get the reports to show on our page.
   fetchReportsData() {
-    // First, we ask for permission to see the reports.
-    this.http.get<any[]>('http://localhost:7144/api/ChameleonOnlineReportsAPI/allPermissions').subscribe(permissions => {
-      // Then, we get all the reports.
+    this.http.get<{userId: string, linkRowId: string}[]>('http://localhost:7144/api/ChameleonOnlineReportsAPI/allPermissions').subscribe(permissions => {
+      if (!this.loginUserName) {
+        console.error('loginUserName is undefined or empty');
+        return; // Exit the function if loginUserName is not set.
+      }
+  
+      const upperLoginUserName = this.loginUserName.toUpperCase();
+  
+      // Transform userId to uppercase in the comparison to ensure case-insensitive matching.
+      const userPermissions = permissions.filter(permission => permission.userId.toUpperCase() === upperLoginUserName);
+  
+      console.log(`Filtered userPermissions for ${this.loginUserName}:`, userPermissions);
+  
+      if (userPermissions.length === 0) {
+        console.log(`No permissions found for user: ${this.loginUserName}`);
+        return; // Exit if no permissions are found for the user.
+      }
+  
       this.http.get<Reports[]>('http://localhost:7144/api/ChameleonOnlineReportsAPI').subscribe(reports => {
-        // We only keep the reports we're allowed to see.
-        const accessibleReports = reports.filter(report => permissions.some(permission => permission.linkRowId.toUpperCase() === report.linkAdress.toUpperCase()));
-
-        // We make a list of these reports to show on the page.
+        const accessibleReports = reports.filter(report => 
+          userPermissions.some(permission => permission.linkRowId.toUpperCase() === report.linkAdress.toUpperCase())
+        );
+  
+        if (accessibleReports.length === 0) {
+          console.log(`No accessible reports found for user: ${this.loginUserName}`);
+        } else {
+          console.log(`Accessible reports found for user: ${this.loginUserName}`, accessibleReports);
+        }
+  
         const mappedData = accessibleReports.map(report => ({
           rowid: report.rowid,
           linkDescription: report.linkDescription,
@@ -78,12 +100,15 @@ export class MainPageReportsComponent implements OnInit {
           reportName: report.reportName,
           linkAdress: report.linkAdress,
         }));
-        
-        this.dataSource.data = mappedData; // We update our list with the reports we can show.
-        this.totalResults = mappedData.length; // We count how many reports we have to show.
+  
+        this.dataSource.data = mappedData;
+        this.totalResults = mappedData.length;
       });
     });
   }
+  
+  
+  
 
   // This lets us click on a report to see more about it.
   navigate(linkAdress: string) {

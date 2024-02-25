@@ -57,6 +57,7 @@ export class ReportsPermissionsComponent implements OnInit {
   ngOnInit(): void {
     const loginUserName = localStorage.getItem('loginUserName');
     console.log('UserAD:' + loginUserName);
+    
 
     //this.filterReportsDataBasedOnRole();
     this.dataSource.paginator = this.paginator;

@@ -124,3 +124,20 @@
   ::ng-deep .point-left::before {
     content: "\25b6" !important; /* Right-pointing arrow Unicode */
   }
+  .search-container {
+    display: flex; /* Establishes this container as a flex container */
+    flex-direction: row; /* Aligns children (the search bars) in a row */
+    justify-content: space-between; /* Puts space between the search bars */
+    align-items: center; /* Centers them vertically */
+  }
+  
+  .search-selected-users, .search-users {
+    flex: 1; /* Each search bar will take up an equal amount of space */
+    padding: 0 10px; /* Adds some space inside each search bar container */
+  }
+  
+  input[type="text"] {
+    width: 100%; /* Forces the input to take up all available width */
+    /* Retain your current input styles here */
+  }
+  
