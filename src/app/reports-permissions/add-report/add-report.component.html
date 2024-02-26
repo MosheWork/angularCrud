@@ -30,17 +30,19 @@
     </mat-form-field>
 
     <div class="form-actions">
-      <button mat-raised-button class="cancel-button" (click)="onNoClick()">
-        Cancel
-      </button>
       <button
-        mat-raised-button
-        class="add-button"
-        [disabled]="!newRowForm.valid"
-        (click)="onSubmit()"
-      >
-        Add
+      mat-raised-button
+      color="primary"
+      class="add-button"
+      [disabled]="!newRowForm.valid"
+      (click)="onSubmit()"
+    >
+      הוספה
+    </button>
+      <button mat-raised-button class="cancel-button" (click)="onNoClick()">
+        ביטול
       </button>
+     
     </div>
   </form>
 </mat-dialog-content>

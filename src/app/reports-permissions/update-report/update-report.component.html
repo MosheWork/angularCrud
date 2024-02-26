@@ -1,8 +1,11 @@
-<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+<link
+  href="https://fonts.googleapis.com/icon?family=Material+Icons"
+  rel="stylesheet"
+/>
 
 <div class="nine">
-    <h2>עריכת הדוח</h2>
-  </div>
+  <h2>עריכת הדוח</h2>
+</div>
 <mat-dialog-content dir="rtl">
   <form [formGroup]="updateForm" class="custom-form">
     <mat-form-field>
@@ -10,8 +13,15 @@
       <input matInput formControlName="linkDescription" />
     </mat-form-field>
 
-    <mat-radio-group aria-label="Select Link Status" formControlName="linkStatus"> דוח פעיל ?
-      <mat-radio-button *ngFor="let status of linkStatusOptions" [value]="status.value">
+    <mat-radio-group
+      aria-label="Select Link Status"
+      formControlName="linkStatus"
+    >
+     
+      <mat-radio-button
+        *ngFor="let status of linkStatusOptions"
+        [value]="status.value"
+      >
         {{ status.label }}
       </mat-radio-button>
     </mat-radio-group>
@@ -27,17 +37,18 @@
     </mat-form-field>
 
     <div class="form-actions">
-      <button mat-button class="cancel-button" (click)="onNoClick()">ביטול</button>
       <button
         mat-raised-button
-        class="update-button" 
+        class="update-button"
         color="primary"
         [disabled]="!updateForm.valid"
         (click)="onSubmit()"
       >
-        עדכון 
+        עדכון
+      </button>
+      <button mat-button class="cancel-button" (click)="onNoClick()">
+        ביטול
       </button>
     </div>
   </form>
 </mat-dialog-content>
-

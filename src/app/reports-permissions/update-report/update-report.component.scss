@@ -78,3 +78,18 @@ mat-form-field {
   // .bold-header {
   //   font-weight: bold;
   // }
+
+  .form-actions {
+    display: flex;
+    justify-content: space-between; // This will place the child elements on each end
+  }
+  
+  .cancel-button {
+    // other styles
+    margin-right: auto; // This pushes the button to the left
+  }
+  
+  .update-button {
+    // other styles
+    margin-left: auto; // This pushes the button to the right
+  }

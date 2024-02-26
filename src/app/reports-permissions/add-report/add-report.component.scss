@@ -34,11 +34,7 @@ mat-form-field {
   }
   
   // Specific styles for buttons
-  .add-button {
-    background-color: #4CAF50; // Green color for add button
-    color: white;
-  }
-  
+
   .cancel-button {
     background-color: #F44336; // Red color for cancel button
     color: white;
@@ -51,4 +47,18 @@ mat-form-field {
     letter-spacing: 1px;
     font-family: "Playfair Display", serif;
     font-weight: 400;
+  }
+  .form-actions {
+    display: flex;
+    justify-content: space-between; // This will place the child elements on each end
+  }
+  
+  .cancel-button {
+    // other styles
+    margin-right: auto; // This pushes the button to the left
+  }
+  
+  .update-button {
+    // other styles
+    margin-left: auto; // This pushes the button to the right
   }

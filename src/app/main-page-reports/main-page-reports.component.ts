@@ -33,7 +33,7 @@ export class MainPageReportsComponent implements OnInit {
 
   // This tells us what details to show for each report in our list.
   displayedColumns: string[] = [
-    'Rowid', 'LinkDescription', 'LinkStatus',  'LinkAdress', 'btn',
+    'ReportName', 'LinkDescription',   'LinkAdress', 'btn'//,'Rowid','LinkStatus',
   ];
 
   // This is where we keep all the reports we want to show on the page.
