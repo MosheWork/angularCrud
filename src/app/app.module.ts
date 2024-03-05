@@ -53,6 +53,7 @@ import { PermissionsDialogNewComponent } from './reports-permissions/permissions
 import { AddReportComponent } from './reports-permissions/add-report/add-report.component';
 import { UpdateReportComponent } from './reports-permissions/update-report/update-report.component';
 import { CatheterComponent } from './chameleon-reports/catheter/catheter.component';
+import { StazerimComponent } from './chameleon-reports/moshe-reports/stazerim/stazerim.component';
 
 
 
@@ -82,6 +83,7 @@ import { CatheterComponent } from './chameleon-reports/catheter/catheter.compone
     AddReportComponent,
     UpdateReportComponent,
     CatheterComponent,
+    StazerimComponent,
   ],
   imports: [
     BrowserModule,

@@ -140,3 +140,8 @@
     font-weight: bold;
   }
 
+  .top-right-container {
+    display: flex;
+    justify-content: flex-end; /* Aligns horizontally to the right */
+    padding: 10px; /* Add some padding */
+  }

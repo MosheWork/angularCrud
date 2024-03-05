@@ -145,5 +145,8 @@ openUpdateDialog(report: Reports): void {
     }
   });
 }
+goToHome() {
+  this.router.navigate(['/MainPageReports']); // replace '/home' with your desired route
+}
 }
 
