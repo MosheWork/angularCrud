@@ -54,6 +54,7 @@ import { AddReportComponent } from './reports-permissions/add-report/add-report.
 import { UpdateReportComponent } from './reports-permissions/update-report/update-report.component';
 import { CatheterComponent } from './chameleon-reports/catheter/catheter.component';
 import { StazerimComponent } from './chameleon-reports/moshe-reports/stazerim/stazerim.component';
+import { UserDashboardComponent } from './user-dashboard/user-dashboard.component';
 
 
 
@@ -84,6 +85,7 @@ import { StazerimComponent } from './chameleon-reports/moshe-reports/stazerim/st
     UpdateReportComponent,
     CatheterComponent,
     StazerimComponent,
+    UserDashboardComponent,
   ],
   imports: [
     BrowserModule,

@@ -19,6 +19,7 @@ import { SysGraphComponent } from './sys-aid/sys-graph/sys-graph.component';
 import { ReportsPermissionsComponent } from './reports-permissions/reports-permissions.component';
 import { CatheterComponent } from './chameleon-reports/catheter/catheter.component';
 import { StazerimComponent } from './chameleon-reports/moshe-reports/stazerim/stazerim.component';
+import { UserDashboardComponent } from './user-dashboard/user-dashboard.component';
 
 const routes: Routes = [
   { path: 'users', component: UsersComponent },
@@ -34,6 +35,7 @@ const routes: Routes = [
   { path: 'Test', component: YourTableComponentComponent },
   { path: 'MainPageReports', component: MainPageReportsComponent },
   { path: 'reports-permissions', component: ReportsPermissionsComponent },
+  { path: 'UserDashboard', component: UserDashboardComponent },
 
   // chameleon report
   { path: 'catheter', component: CatheterComponent },
