@@ -5,7 +5,7 @@ import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatSort } from '@angular/material/sort';
-
+import { environment } from '../../environments/environment'
 import * as XLSX from 'xlsx';
 
 interface FormControls {
@@ -94,41 +94,39 @@ export class HospitalizationsListComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.http
-      .get<any[]>('http://localhost:7144/api/HostAPI')
-      .subscribe((data) => {
-        //console.log('Received data:', data); // Log the data received from the API
+    this.http.get<any[]>(environment.apiUrl + 'HostAPI').subscribe((data) => {
+      //console.log('Received data:', data); // Log the data received from the API
 
-        // Set up data sources and filters
+      // Set up data sources and filters
 
-        this.dataSource = data;
-        this.filteredData = [...data];
-        this.matTableDataSource = new MatTableDataSource(this.filteredData);
-        this.matTableDataSource.paginator = this.paginator;
-        this.matTableDataSource.sort = this.sort;
-        // Set up form control change subscriptions for filtering
+      this.dataSource = data;
+      this.filteredData = [...data];
+      this.matTableDataSource = new MatTableDataSource(this.filteredData);
+      this.matTableDataSource.paginator = this.paginator;
+      this.matTableDataSource.sort = this.sort;
+      // Set up form control change subscriptions for filtering
 
-        this.columns.forEach((column) => {
-          this.filterForm
-            .get(column)
-            ?.valueChanges.pipe(debounceTime(300), distinctUntilChanged())
-            .subscribe(() => this.applyFilters());
-        });
-
-        // Fetch options for dropdowns
-
-        this.fetchAnswerTextOptions();
-        this.fetchAnswerTextTypeOptions(); // Fetch options for 'answer_Text_Type'
-
-        // Set up form value change subscription for filtering
-        this.filterForm.valueChanges.subscribe(() => {
-          this.applyFilters();
-          this.paginator.firstPage();
-        });
-
-        // Call applyFilters initially to set the initial totalResults
-        this.applyFilters();
+      this.columns.forEach((column) => {
+        this.filterForm
+          .get(column)
+          ?.valueChanges.pipe(debounceTime(300), distinctUntilChanged())
+          .subscribe(() => this.applyFilters());
       });
+
+      // Fetch options for dropdowns
+
+      this.fetchAnswerTextOptions();
+      this.fetchAnswerTextTypeOptions(); // Fetch options for 'answer_Text_Type'
+
+      // Set up form value change subscription for filtering
+      this.filterForm.valueChanges.subscribe(() => {
+        this.applyFilters();
+        this.paginator.firstPage();
+      });
+
+      // Call applyFilters initially to set the initial totalResults
+      this.applyFilters();
+    });
   }
   // Method to create the filter form with form controls
   private createFilterForm() {
@@ -235,24 +233,20 @@ export class HospitalizationsListComponent implements OnInit {
     });
   }
   fetchAnswerTextOptions() {
-    this.http
-      .get<any[]>('http://localhost:7144/api/HostAPI')
-      .subscribe((data) => {
-        // Extract distinct values from the 'answer_Text' column
-        this.answerTextOptions = [...new Set(data.map((item) => item.name))];
-        //console.log('Answer Text Options:', this.answerTextOptions);
-      });
+    this.http.get<any[]>(environment.apiUrl + 'HostAPI').subscribe((data) => {
+      // Extract distinct values from the 'answer_Text' column
+      this.answerTextOptions = [...new Set(data.map((item) => item.name))];
+      //console.log('Answer Text Options:', this.answerTextOptions);
+    });
   }
   // Method to fetch options for 'answer_Text_Type' dropdown
   fetchAnswerTextTypeOptions() {
     // Fetch options specifically for 'answer_Text_Type'
-    this.http
-      .get<any[]>('http://localhost:7144/api/HostAPI')
-      .subscribe((data) => {
-        this.answerTextTypeOptions = [
-          ...new Set(data.map((item) => item.answer_Text_Type)),
-        ];
-      });
+    this.http.get<any[]>(environment.apiUrl + 'HostAPI').subscribe((data) => {
+      this.answerTextTypeOptions = [
+        ...new Set(data.map((item) => item.answer_Text_Type)),
+      ];
+    });
   }
   // Method to get a form control for a given column
 
@@ -260,16 +254,14 @@ export class HospitalizationsListComponent implements OnInit {
     return (this.filterForm.get(column) as FormControl) || new FormControl('');
   }
   fetchData() {
-    this.http
-      .get<any[]>('http://localhost:7144/api/HostAPI')
-      .subscribe((data) => {
-        // Update your data source and apply filters if necessary
-        this.dataSource = data;
-        this.filteredData = [...data];
-        this.matTableDataSource.data = this.filteredData;
+    this.http.get<any[]>(environment.apiUrl + 'HostAPI').subscribe((data) => {
+      // Update your data source and apply filters if necessary
+      this.dataSource = data;
+      this.filteredData = [...data];
+      this.matTableDataSource.data = this.filteredData;
 
-        // Optional: Apply filters if needed
-        this.applyFilters();
-      });
+      // Optional: Apply filters if needed
+      this.applyFilters();
+    });
   }
 }

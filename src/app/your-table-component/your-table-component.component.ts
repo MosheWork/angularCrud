@@ -4,7 +4,7 @@ import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { FormControl, FormGroup } from '@angular/forms';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
-
+import { environment } from '../../../src/environments/environment';
 
 interface FormControls {
   [key: string]: FormControl;
@@ -20,7 +20,6 @@ export class YourTableComponentComponent {
   filteredData: any[] = [];
   columns: string[] = ['name', 'id']; // Add more column names
 
-
   constructor(private http: HttpClient) {
     this.filterForm = this.createFilterForm();
   }
@@ -28,17 +27,19 @@ export class YourTableComponentComponent {
   ngOnInit() {
     // Fetch data from your API endpoint
     // Replace 'YOUR_API_ENDPOINT' with the actual endpoint
-    this.http.get<any[]>('http://localhost:7144/api/ConsiliumsAPI').subscribe((data) => {
-      this.dataSource = data;
-      this.filteredData = [...data]; // Initially set filtered data to all data
-    });
+    this.http
+      .get<any[]>(environment.apiUrl + 'ConsiliumsAPI')
+      .subscribe((data) => {
+        this.dataSource = data;
+        this.filteredData = [...data]; // Initially set filtered data to all data
+      });
     this.columns.forEach((column) => {
-      this.filterForm.get(column)?.valueChanges
-        .pipe(debounceTime(300), distinctUntilChanged())
+      this.filterForm
+        .get(column)
+        ?.valueChanges.pipe(debounceTime(300), distinctUntilChanged())
         .subscribe(() => this.applyFilters());
     });
   }
-
 
   private createFilterForm() {
     const formControls: FormControls = {};

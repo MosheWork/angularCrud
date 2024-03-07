@@ -10,7 +10,7 @@ import { Router } from '@angular/router'; // Import the Router
 import { Observable } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
 import { tap } from 'rxjs/operators';
-
+import { environment } from '../../environments/environment'
 import * as XLSX from 'xlsx';
 
 interface FormControls {
@@ -141,41 +141,39 @@ export class SysAidComponent implements OnInit {
   ngOnInit() {
     // Fetch data from the API when the component initializes
 
-    this.http
-      .get<any[]>('http://localhost:7144/api/SysAidAPI')
-      .subscribe((data) => {
-        //console.log('Received data:', data); // Log the data received from the API
+    this.http.get<any[]>(environment.apiUrl + 'SysAidAPI').subscribe((data) => {
+      //console.log('Received data:', data); // Log the data received from the API
 
-        // Set up data sources and filters
+      // Set up data sources and filters
 
-        this.dataSource = data;
-        this.filteredData = [...data];
-        this.matTableDataSource = new MatTableDataSource(this.filteredData);
-        this.matTableDataSource.paginator = this.paginator;
-        this.matTableDataSource.sort = this.sort;
-        // Set up form control change subscriptions for filtering
+      this.dataSource = data;
+      this.filteredData = [...data];
+      this.matTableDataSource = new MatTableDataSource(this.filteredData);
+      this.matTableDataSource.paginator = this.paginator;
+      this.matTableDataSource.sort = this.sort;
+      // Set up form control change subscriptions for filtering
 
-        this.columns.forEach((column) => {
-          this.filterForm
-            .get(column)
-            ?.valueChanges.pipe(debounceTime(300), distinctUntilChanged())
-            .subscribe(() => this.applyFilters());
-        });
-
-        // Fetch options for dropdowns
-
-        this.fetchAnswerTextOptions();
-        this.fetchAnswerTextTypeOptions(); // Fetch options for 'answer_Text_Type'
-
-        // Set up form value change subscription for filtering
-        this.filterForm.valueChanges.subscribe(() => {
-          this.applyFilters();
-          this.paginator.firstPage();
-        });
-
-        // Call applyFilters initially to set the initial totalResults
-        this.applyFilters();
+      this.columns.forEach((column) => {
+        this.filterForm
+          .get(column)
+          ?.valueChanges.pipe(debounceTime(300), distinctUntilChanged())
+          .subscribe(() => this.applyFilters());
       });
+
+      // Fetch options for dropdowns
+
+      this.fetchAnswerTextOptions();
+      this.fetchAnswerTextTypeOptions(); // Fetch options for 'answer_Text_Type'
+
+      // Set up form value change subscription for filtering
+      this.filterForm.valueChanges.subscribe(() => {
+        this.applyFilters();
+        this.paginator.firstPage();
+      });
+
+      // Call applyFilters initially to set the initial totalResults
+      this.applyFilters();
+    });
     this.filteredResponsibilities = this.getFormControl(
       'responsibility'
     ).valueChanges.pipe(
@@ -305,34 +303,30 @@ export class SysAidComponent implements OnInit {
   // Method to fetch options for 'answer_Text' dropdown
 
   fetchAnswerTextOptions() {
-    this.http
-      .get<any[]>('http://localhost:7144/api/SysAidAPI')
-      .subscribe((data) => {
-        // Extract distinct values from the 'answer_Text' column
-        this.answerTextOptions = [...new Set(data.map((item) => item.status))];
-        //console.log('Answer Text Options:', this.answerTextOptions);
-      });
+    this.http.get<any[]>(environment.apiUrl + 'SysAidAPI').subscribe((data) => {
+      // Extract distinct values from the 'answer_Text' column
+      this.answerTextOptions = [...new Set(data.map((item) => item.status))];
+      //console.log('Answer Text Options:', this.answerTextOptions);
+    });
   }
   // Method to fetch options for 'answer_Text_Type' dropdown
   fetchAnswerTextTypeOptions() {
-    this.http
-      .get<any[]>('http://localhost:7144/api/SysAidAPI')
-      .subscribe((data) => {
-        /// debugger;
-        // this.answerTextTypeOptions = [
-        //   ...new Set(data.map((item) => item.responsibility)),
-        // ];
-        this.answerTextTypeOptions = [];
-        data.forEach((item: any) => {
-          if (
-            this.answerTextTypeOptions.indexOf(item.responsibility) < 0 &&
-            item.responsibility
-          ) {
-            this.answerTextTypeOptions.push(item.responsibility);
-          }
-        });
-        console.log('Responsibility Options:', this.answerTextTypeOptions);
+    this.http.get<any[]>(environment.apiUrl + 'SysAidAPI').subscribe((data) => {
+      /// debugger;
+      // this.answerTextTypeOptions = [
+      //   ...new Set(data.map((item) => item.responsibility)),
+      // ];
+      this.answerTextTypeOptions = [];
+      data.forEach((item: any) => {
+        if (
+          this.answerTextTypeOptions.indexOf(item.responsibility) < 0 &&
+          item.responsibility
+        ) {
+          this.answerTextTypeOptions.push(item.responsibility);
+        }
       });
+      console.log('Responsibility Options:', this.answerTextTypeOptions);
+    });
   }
   // Method to get a form control for a given column
 

@@ -8,8 +8,8 @@ import { MatSort } from '@angular/material/sort';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { Router } from '@angular/router'; // Import the Router
 
-
 import * as XLSX from 'xlsx';
+import { environment } from '../../../../environments/environment';
 
 interface FormControls {
   [key: string]: FormControl;
@@ -135,7 +135,7 @@ export class MedicalDevicesComponent implements OnInit {
     // Fetch data from the API when the component initializes
 
     this.http
-      .get<any[]>('http://localhost:7144/api/DevicesPerUnitAPI')
+      .get<any[]>(environment.apiUrl + 'DevicesPerUnitAPI')
       .subscribe((data) => {
         //console.log('Received data:', data); // Log the data received from the API
 
@@ -280,7 +280,7 @@ export class MedicalDevicesComponent implements OnInit {
 
   fetchAnswerTextOptions() {
     this.http
-      .get<any[]>('http://localhost:7144/api/DevicesPerUnitAPI')
+      .get<any[]>(environment.apiUrl + 'DevicesPerUnitAPI')
       .subscribe((data) => {
         // Extract distinct values from the 'answer_Text' column
         this.answerTextOptions = [...new Set(data.map((item) => item.unit))];
@@ -291,7 +291,7 @@ export class MedicalDevicesComponent implements OnInit {
   fetchAnswerTextTypeOptions() {
     // Fetch options specifically for 'answer_Text_Type'
     this.http
-      .get<any[]>('http://localhost:7144/api/DevicesPerUnitAPI')
+      .get<any[]>(environment.apiUrl + 'DevicesPerUnitAPI')
       .subscribe((data) => {
         this.answerTextTypeOptions = [
           ...new Set(data.map((item) => item.name)),
@@ -309,5 +309,5 @@ export class MedicalDevicesComponent implements OnInit {
   }
   goToHome() {
     this.router.navigate(['/MainPageReports']); // replace '/home' with your desired route
-}
+  }
 }

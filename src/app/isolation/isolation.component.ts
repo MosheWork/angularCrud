@@ -6,7 +6,7 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatSort } from '@angular/material/sort';
 import { Router } from '@angular/router'; // Import the Router
-
+import { environment } from '../../environments/environment'
 import * as XLSX from 'xlsx';
 
 interface FormControls {
@@ -133,7 +133,7 @@ export class IsolationComponent implements OnInit {
     // Fetch data from the API when the component initializes
 
     this.http
-      .get<any[]>('http://localhost:7144/api/IsolationAPI')
+      .get<any[]>(environment.apiUrl + 'IsolationAPI')
       .subscribe((data) => {
         //console.log('Received data:', data); // Log the data received from the API
 
@@ -272,7 +272,7 @@ export class IsolationComponent implements OnInit {
 
   fetchAnswerTextOptions() {
     this.http
-      .get<any[]>('http://localhost:7144/api/IsolationAPI')
+      .get<any[]>(environment.apiUrl + 'IsolationAPI')
       .subscribe((data) => {
         // Extract distinct values from the 'answer_Text' column
         this.answerTextOptions = [
@@ -285,7 +285,7 @@ export class IsolationComponent implements OnInit {
   fetchAnswerTextTypeOptions() {
     // Fetch options specifically for 'answer_Text_Type'
     this.http
-      .get<any[]>('http://localhost:7144/api/IsolationAPI')
+      .get<any[]>(environment.apiUrl + 'IsolationAPI')
       .subscribe((data) => {
         this.answerTextTypeOptions = [
           ...new Set(data.map((item) => item.answer_Text_Type)),

@@ -5,7 +5,7 @@ import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatSort } from '@angular/material/sort';
-
+import { environment } from '../../environments/environment'
 import * as XLSX from 'xlsx';
 
 interface FormControls {
@@ -127,7 +127,7 @@ export class DevicesPerUnitComponent implements OnInit {
     // Fetch data from the API when the component initializes
 
     this.http
-      .get<any[]>('http://localhost:7144/api/DevicesPerUnitAPI')
+      .get<any[]>(environment.apiUrl + 'DevicesPerUnitAPI')
       .subscribe((data) => {
         //console.log('Received data:', data); // Log the data received from the API
 
@@ -273,7 +273,7 @@ export class DevicesPerUnitComponent implements OnInit {
 
   fetchAnswerTextOptions() {
     this.http
-      .get<any[]>('http://localhost:7144/api/DevicesPerUnitAPI')
+      .get<any[]>(environment.apiUrl + 'DevicesPerUnitAPI')
       .subscribe((data) => {
         // Extract distinct values from the 'answer_Text' column
         this.answerTextOptions = [...new Set(data.map((item) => item.unit))];
@@ -284,7 +284,7 @@ export class DevicesPerUnitComponent implements OnInit {
   fetchAnswerTextTypeOptions() {
     // Fetch options specifically for 'answer_Text_Type'
     this.http
-      .get<any[]>('http://localhost:7144/api/DevicesPerUnitAPI')
+      .get<any[]>(environment.apiUrl + 'DevicesPerUnitAPI')
       .subscribe((data) => {
         this.answerTextTypeOptions = [
           ...new Set(data.map((item) => item.name)),

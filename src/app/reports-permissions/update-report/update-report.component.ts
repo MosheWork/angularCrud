@@ -2,6 +2,7 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { environment } from '../../../environments/environment'
 
 export interface Reports {
   rowid: string;
@@ -67,7 +68,9 @@ export class UpdateReportComponent implements OnInit {
     if (this.updateForm.valid) {
       this.http
         .put(
-          `http://localhost:7144/api/ChameleonOnlineReportsAPI/${this.updateForm.value.rowid}`,
+          environment.apiUrl +
+            'ChameleonOnlineReportsAPI/' +
+            this.updateForm.value.rowid,
           this.updateForm.value
         )
         .subscribe(

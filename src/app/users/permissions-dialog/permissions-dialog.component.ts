@@ -1,6 +1,7 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { HttpClient } from '@angular/common/http';
+import { environment } from '../../../environments/environment'
 
 export interface Users {
   employeeID: string;
@@ -118,7 +119,7 @@ export class PermissionsDialogComponent implements OnInit {
   }
 
   updatePermissions(): void {
-    const apiUrl = 'http://localhost:7144/api/Users';
+    const apiUrl = environment.apiUrl + 'Users';
 
     // Constructing payload based on selectedRoles and selectedDepartments
     const payload = {

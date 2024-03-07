@@ -2,7 +2,7 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { HttpClient } from '@angular/common/http';
 import { ChangeDetectorRef } from '@angular/core';
-
+import { environment } from '../../../environments/environment'
 export interface Users {
   employeeID: string;
   firstName: string;
@@ -69,7 +69,7 @@ export class PermissionsDialogNewComponent implements OnInit {
     // Fetch the permissions for the report
     this.http
       .get<{ userId: string; linkRowId: string }[]>(
-        'http://localhost:7144/api/ChameleonOnlineReportsAPI/allPermissions'
+        environment.apiUrl + 'ChameleonOnlineReportsAPI/allPermissions'
       )
       .subscribe(
         (permissions) => {
@@ -115,7 +115,7 @@ export class PermissionsDialogNewComponent implements OnInit {
 
   updateUsers(): void {
     // Remove the parameter
-    const apiUrl = 'http://localhost:7144/api/Users'; // Adjust this to your actual endpoint
+    const apiUrl = environment.apiUrl + 'Users'; // Adjust this to your actual endpoint
 
     // Use this.linkAdress directly
     const permissions = this.selectedUsers.map((user) => ({

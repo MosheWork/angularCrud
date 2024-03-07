@@ -5,7 +5,7 @@ import { MatSort } from '@angular/material/sort';
 import { HttpClient } from '@angular/common/http';
 import { MatDialog } from '@angular/material/dialog';
 import { PermissionsDialogComponent } from './permissions-dialog/permissions-dialog.component'; // adjust the path as needed
-
+import { environment } from '../../environments/environment'
 export interface Users {
   employeeID: string;
   name: string;
@@ -47,16 +47,12 @@ export class UsersComponent implements AfterViewInit {
     this.fetchData();
   }
 
-  
-
   fetchData() {
-    this.http
-      .get<Users[]>('http://localhost:7144/api/Users')
-      .subscribe((data) => {
-        this.dataSource.data = data; // Set the data for dataSource
-        this.dataSource.paginator = this.paginator;
-        this.dataSource.sort = this.sort;
-      });
+    this.http.get<Users[]>(environment.apiUrl + 'Users').subscribe((data) => {
+      this.dataSource.data = data; // Set the data for dataSource
+      this.dataSource.paginator = this.paginator;
+      this.dataSource.sort = this.sort;
+    });
   }
 
   applyFilter(event: Event) {
@@ -79,5 +75,4 @@ export class UsersComponent implements AfterViewInit {
       }
     });
   }
- 
 }
