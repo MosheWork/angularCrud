@@ -1,9 +1,23 @@
-<div class="dashboard">
+<mat-toolbar color="primary">
+  <button mat-icon-button class="example-icon" aria-label="Example icon-button with menu icon">
+    <mat-icon>menu</mat-icon>
+  </button>
+  <span>My App</span>
+  <span class="example-spacer"></span>
+  <button mat-icon-button class="example-icon favorite-icon" aria-label="Example icon-button with heart icon">
+    <mat-icon>favorite</mat-icon>
+  </button>
+  <button mat-icon-button class="example-icon" aria-label="Example icon-button with share icon">
+    <mat-icon>share</mat-icon>
+  </button>
   <div class="welcome-message">Welcome, {{ loginUserName }}</div>
+</mat-toolbar>
+<div class="dashboard">
+
 
   <div class="content">
     <div class="tasks-table">
-      <h2>Tasks</h2>
+    
       <mat-table
         [dataSource]="matTableDataSource"
         matSort

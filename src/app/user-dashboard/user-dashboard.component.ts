@@ -8,6 +8,8 @@ import { MatSort } from '@angular/material/sort';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { Router } from '@angular/router'; // Import the Router
 import { environment } from '../../environments/environment'
+import { DatePipe } from '@angular/common';
+
 
 @Component({
   selector: 'app-user-dashboard',
@@ -31,7 +33,7 @@ export class UserDashboardComponent implements OnInit {
     // 'departure_Date',
   ];
 
-  constructor(private http: HttpClient) {
+  constructor(private http: HttpClient,private datePipe: DatePipe) {
     this.matTableDataSource = new MatTableDataSource<any>([]);
   }
   // ViewChild decorators for accessing Angular Material components
@@ -55,7 +57,9 @@ export class UserDashboardComponent implements OnInit {
 
         this.fetchTodoListData().subscribe((data) => {
           // Assuming 'data' is the array of todos you want to display
-          this.matTableDataSource.data = data;
+          // Filter the data to only include tasks where adUserName matches loginUserName
+          const filteredData = data.filter((task: any) => task.adUserName === this.loginUserName);
+          this.matTableDataSource.data = filteredData;
         });
       });
   }
@@ -96,4 +100,5 @@ export class UserDashboardComponent implements OnInit {
     };
     return columnLabels[column] || column;
   }
+  
 }

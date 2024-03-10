@@ -10,7 +10,7 @@
 
 /* Align the welcome message to the right */
 .welcome-message {
-  text-align: right;
+  text-align: center;
   width: 100%;
   font-size: 24px; /* Larger font for the welcome message */
   margin-bottom: 20px; /* Space below the welcome message */
@@ -26,6 +26,7 @@
 .tasks-table {
   width: 70%;
   margin-right: 2%; /* Space between table and cards */
+
 }
 
 /* Cards container taking up 30% width and positioned to the right */
@@ -36,6 +37,7 @@
   flex-wrap: wrap; /* Allow wrapping to next line */
   justify-content: flex-start; /* Align to the start of the container */
   align-items: flex-start; /* Align to the top of the container */
+  height: 1vh;
 }
 
 /* Individual card styling */
@@ -43,7 +45,9 @@
   background-color: aliceblue;
   border-radius: 10px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  width: calc(50% - 10px); /* Each card takes up half the width of .cards, minus margin */
+  width: calc(
+    50% - 10px
+  ); /* Each card takes up half the width of .cards, minus margin */
   margin: 5px; /* Margin around cards */
   padding: 20px; /* Padding inside cards */
   display: flex;
@@ -60,7 +64,8 @@
   .content {
     flex-direction: column;
   }
-  .tasks-table, .cards {
+  .tasks-table,
+  .cards {
     width: 100%; /* Full width on smaller screens */
     margin-right: 0; /* No margin on the right */
   }
@@ -82,7 +87,6 @@
 /* Additional styling for other elements */
 /* ... (Your other styles) ... */
 
-
 .welcome-message {
   text-align: right;
 }
@@ -96,6 +100,7 @@
 table {
   width: 95%;
   margin: 20px auto;
+
 }
 
 .mat-row:nth-child(odd) {
@@ -161,3 +166,16 @@ a {
 }
 
 
+//header
+
+mat-toolbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000; /* Make sure the toolbar is above other content */
+}
+
+.content {
+  margin-top: 64px; /* Add a top margin to your content that equals the toolbar height */
+}
