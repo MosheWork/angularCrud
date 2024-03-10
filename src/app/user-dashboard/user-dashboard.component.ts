@@ -20,12 +20,12 @@ export class UserDashboardComponent implements OnInit {
   previousOpenCalls: number | null = null;
 
   columns: string[] = [
-    'id',
+    //'id',
     'usersAssigned',
     'title',
     'description',
     'dateCreated',
-    'dateClosed',
+    //'dateClosed',
     'status',
 
     // 'departure_Date',
@@ -86,12 +86,12 @@ export class UserDashboardComponent implements OnInit {
 
   getColumnLabel(column: string): string {
     const columnLabels: Record<string, string> = {
-      id: 'id',
-      usersAssigned: 'משתמש מטפל ',
+     // id: 'id',
+      //usersAssigned: 'משתמש מטפל ',
       title: 'משימה  ',
       description: ' פירוט המשימה ',
       dateCreated: ' תאריך יצירה  ',
-      dateClosed: ' תאריך סגירה  ',
+      //dateClosed: ' תאריך סגירה  ',
       status: 'סטטוס ',
     };
     return columnLabels[column] || column;

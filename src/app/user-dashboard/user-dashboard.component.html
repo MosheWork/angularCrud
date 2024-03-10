@@ -1,44 +1,80 @@
 <div class="dashboard">
+  <div class="dashboard">
     <div class="welcome-message">Welcome, {{ loginUserName }}!</div>
-
     <h2>User Dashboard</h2>
-    <div class="dashboard-cards">
-        <!-- Open Calls Card -->
-        <div class="card">
-            <div class="card-title">Open Calls</div>
-            <div class="card-value" [ngClass]="userData.open_calls > 0 ? 'card-value-red' : 'card-value-blue'">
-                {{ userData.open_calls }}
-            </div>
-        </div>
-        
-        <!-- Follow-Up Calls Card -->
-        <div class="card">
-            <div class="card-title">Follow-Up Calls</div>
-            <div class="card-value" [ngClass]="{'card-value-blue': userData.fallowUp_calls == '0', 'card-value-red': userData.fallowUp_calls != '0'}">{{ userData.fallowUp_calls }}</div>
-        </div>
 
-        <!-- Other cards remain unchanged for closed_today and closed_this_month -->
+    <!-- Section for the first four cards -->
+    <div class="card-container">
+      <div class="card-row">
         <div class="card">
-            <div class="card-title">Closed Today</div>
-            <div class="card-value">{{ userData.closed_today }}</div>
+          <div class="card-title">Open Calls</div>
+          <div
+            class="card-value"
+            [ngClass]="
+              userData.open_calls > 0 ? 'card-value-red' : 'card-value-blue'
+            "
+          >
+            {{ userData.open_calls }}
+          </div>
         </div>
         <div class="card">
-            <div class="card-title">Closed This Month</div>
-            <div class="card-value">{{ userData.closed_this_month }}</div>
+          <div class="card-title">Follow-Up Calls</div>
+          <div
+            class="card-value"
+            [ngClass]="{
+              'card-value-blue': userData.fallowUp_calls == '0',
+              'card-value-red': userData.fallowUp_calls != '0'
+            }"
+          >
+            {{ userData.fallowUp_calls }}
+          </div>
         </div>
-
-        <!-- Additional Cards with Condition -->
+      </div>
+      <div class="card-row">
         <div class="card">
-            <div class="card-title">Waiting for User Response</div>
-            <div class="card-value" [ngClass]="{'card-value-blue': userData.waiting_for_user_response == '0', 'card-value-red': userData.waiting_for_user_response != '0'}">{{ userData.waiting_for_user_response }}</div>
+          <div class="card-title">Waiting for User Response</div>
+          <div
+            class="card-value"
+            [ngClass]="{
+              'card-value-blue': userData.waiting_for_user_response == '0',
+              'card-value-red': userData.waiting_for_user_response != '0'
+            }"
+          >
+            {{ userData.waiting_for_user_response }}
+          </div>
         </div>
         <div class="card">
-            <div class="card-title">On Hold</div>
-            <div class="card-value" [ngClass]="{'card-value-blue': userData.on_hold == '0', 'card-value-red': userData.on_hold != '0'}">{{ userData.on_hold }}</div>
+          <div class="card-title">On Hold</div>
+          <div
+            class="card-value"
+            [ngClass]="{
+              'card-value-blue': userData.on_hold == '0',
+              'card-value-red': userData.on_hold != '0'
+            }"
+          >
+            {{ userData.on_hold }}
+          </div>
         </div>
+      </div>
     </div>
-    <mat-table
-    
+
+    <!-- Section for the last two cards -->
+    <div class="card-container" style="flex-direction: column">
+      <div class="card">
+        <div class="card-title">Closed Today</div>
+        <div class="card-value">{{ userData.closed_today }}</div>
+      </div>
+      <div class="card">
+        <div class="card-title">Closed This Month</div>
+        <div class="card-value">{{ userData.closed_this_month }}</div>
+      </div>
+    </div>
+
+    <!-- ... Your Tasks Table and Other Content ... -->
+  </div>
+
+  <h2>Tasks</h2>
+  <mat-table
     [dataSource]="matTableDataSource"
     matSort
     dir="rtl"
