@@ -157,13 +157,14 @@ table {
 
 /* Messages styling */
 .important-messages {
-  width: 100%; /* Take the full width of the right-content div */
+  height: calc(50vh - 10px); /* Subtracting the margin between the cards and messages */
+  overflow-y: auto; /* Scrollbar appears if content overflows */
   border: 2px solid #ccc;
   padding: 10px;
-  box-sizing: border-box;
-  direction: rtl;
+  box-sizing: border-box; /* Include padding and border in the height calculation */
+  direction: rtl; /* For right-to-left text direction */
+  height: calc(100vh - 64px - 20px - 50vh - 10px); /* height of the viewport - header - padding - height of cards - margin */
 }
-
 .important-messages-title {
   font-size: 20px;
   font-weight: bold;
