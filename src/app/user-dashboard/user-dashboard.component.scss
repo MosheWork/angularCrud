@@ -135,7 +135,7 @@ table {
 
 /* Style for the table and cards section titles */
 .table-title,
-.cards-title {
+.cards-title ,.important-messages-title  {
   font-size: 15px;
   font-weight: bold;
   color: #090808;
@@ -160,19 +160,21 @@ table {
   height: calc(50vh - 10px); /* Subtracting the margin between the cards and messages */
   overflow-y: auto; /* Scrollbar appears if content overflows */
   border: 2px solid #ccc;
-  padding: 10px;
+  padding: 5px;
+  //margin-top: 1%;
+  margin-top: 10px;
   box-sizing: border-box; /* Include padding and border in the height calculation */
   direction: rtl; /* For right-to-left text direction */
-  height: calc(100vh - 64px - 20px - 50vh - 10px); /* height of the viewport - header - padding - height of cards - margin */
+  height: calc(100vh - 64px - 20px - 50vh - 50px); /* height of the viewport - header - padding - height of cards - margin */
 }
-.important-messages-title {
-  font-size: 20px;
-  font-weight: bold;
-  color: #090808;
-  text-align: right;
-  padding: 10px 0;
-  border-bottom: 2px solid #ccc;
-}
+// .important-messages-title {
+//   font-size: 20px;
+//   font-weight: bold;
+//   color: #090808;
+//   text-align: right;
+//   padding: 10px 0;
+//   border-bottom: 2px solid #ccc;
+// }
 
 .message {
   background-color: rgb(222, 212, 241);
