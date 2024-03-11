@@ -38,7 +38,7 @@ mat-toolbar .welcome-message {
 /* Task table and Cards container styling adjusted for equal heights */
 .tasks-table,
 .cards {
-  height: 40vh; /* Adjusted height to be 50% of content's 80vh */
+  height: 50vh; /* Adjusted height to be 50% of content's 80vh */
   overflow-y: auto; /* Ensures content within can scroll if it exceeds the container's height */
 }
 
@@ -129,4 +129,26 @@ table {
 /* General container styling */
 .container {
   min-width: 100%;
+}
+/* Style for the table and cards section titles */
+.table-title,
+.cards-title {
+  font-size: 15px; /* Size that fits the overall design */
+  font-weight: bold; /* Consistency with the boldness of card titles */
+  color: #090808; /* Matching the general text color scheme */
+  text-align: center; /* Aligns with the general layout of your content */
+  padding: 10px 0; /* Adequate spacing above and below the title */
+  margin-left: 20px; /* Aligns text with the content of the cards/table */
+  border-bottom: 2px solid #ccc; /* Adds a subtle separation, similar to the borders around cards/tables */
+  width: calc(100% - 40px); /* Adjusts width to account for margin */
+
+}
+
+@media (max-width: 768px) {
+  .table-title,
+  .cards-title {
+    margin-left: 10px; /* Adjusts for smaller screens */
+    margin-right: 10px;
+    width: calc(100% - 20px); /* Ensures consistency in responsive layout */
+  }
 }
