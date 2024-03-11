@@ -152,3 +152,34 @@ table {
     width: calc(100% - 20px); /* Ensures consistency in responsive layout */
   }
 }
+
+//msg css
+.important-messages {
+  width: 30%; /* Match the width of the cards container */
+  border: 2px solid #ccc;
+  padding: 10px; /* Reduced padding */
+  margin-top: 10px; /* Small space from the cards container */
+  box-sizing: border-box; /* Include padding and border in the width */
+  direction: rtl; /* Ensure right-to-left text direction */
+  
+}
+
+.important-messages-title {
+  font-size: 20px;
+  font-weight: bold;
+  color: #090808;
+  text-align: right;
+  padding: 10px 0;
+  border-bottom: 2px solid #ccc;
+}
+
+.message {
+  background-color: rgb(222, 212, 241);
+  border-radius: 10px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 15px;
+  margin: 5px 0; /* Maintain a small space between messages */
+  color: #090808;
+  font-weight: bold;
+  text-align: right;
+}
