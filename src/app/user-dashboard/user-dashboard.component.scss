@@ -208,4 +208,65 @@ table {
   flex-basis: 30%; /* Adjust the width of the right content here if necessary */
   /* Make sure to not set both flex-basis and width or it might lead to conflicts */
 }
+/* Important Links styling */
+/* Important Links styling to match the dashboard design */
+.important-links {
+  //background-color: rgb(222, 212, 241); /* Using the same purple shade as other parts */
+  //border-radius: 10px; /* Consistent border radius as cards */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Consistent shadow as cards */
+  padding: 15px; /* Consistent padding as cards */
+  margin: 10px 0; /* Consistent spacing as other elements */
+  box-sizing: border-box; /* Box-sizing similar to other elements */
+  direction: rtl; /* Right-to-left text direction */
+  margin-right: 1%;
+  border: 2px solid #ccc;
+  height: calc(100vh - 64px - 20px - 50vh - 50px); /* height of the viewport - header - padding - height of cards - margin */
+}
 
+.links-title {
+  font-size: 15px; /* Matching font size as other titles */
+  font-weight: bold; /* Bold text as other titles */
+  color: #090808; /* Consistent text color */
+  text-align: center; /* Titles centered as other parts */
+  padding: 10px 0; /* Consistent padding */
+  margin: 0 20px; /* Consistent margin */
+  border-bottom: 2px solid #ccc; /* Consistent border as other titles */
+}
+
+.links-list {
+  list-style-type: none; /* No bullets for list items */
+  padding: 0; /* No padding for the list */
+  margin: 10px 0; /* Consistent margin as other elements */
+}
+
+.links-list li {
+  background-color: rgb(222, 212, 241);  border: 1px solid #ddd; /* Light grey border for list items */
+  border-radius: 5px; /* Slightly rounded corners for list items */
+  margin-bottom: 8px; /* Space between list items */
+  padding: 10px; /* Padding inside list items */
+  text-align: right; /* Text align to the right */
+  transition: background-color 0.3s; /* Transition for hover effect */
+}
+
+.links-list li a {
+  text-decoration: none; /* No underline for links */
+  color: #333; /* Dark grey color for links for better readability */
+  font-weight: 500; /* Medium font weight for links */
+}
+
+.links-list li:hover {
+  background-color: #eae0f8; /* Lighter purple background for hover effect */
+  cursor: pointer; /* Pointer cursor on hover */
+}
+
+.links-list li a:hover {
+  text-decoration: underline; /* Underline link on hover for indication */
+}
+
+/* Responsive adjustments for smaller screens */
+@media (max-width: 768px) {
+  .important-links {
+    margin: 20px 10px; /* Adjust margins for smaller screens */
+    width: calc(100% - 20px); /* Adjust width for smaller screens */
+  }
+}
