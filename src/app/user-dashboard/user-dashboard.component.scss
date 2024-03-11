@@ -30,19 +30,21 @@ mat-toolbar .welcome-message {
 .content {
   display: flex;
   width: 100%;
-  height: 80vh;
-  padding-top: 64px;
-  flex-direction: row;
+  padding-top: 64px; /* Adjusted to prevent overlap with fixed header */
+  box-sizing: border-box;
 }
 
-/* Task table and Cards container styling adjusted for equal heights */
-.tasks-table,
-.cards {
-  height: 50vh; /* Adjusted height to be 50% of content's 80vh */
-  overflow-y: auto; /* Ensures content within can scroll if it exceeds the container's height */
+/* Right side content layout */
+.right-content {
+  width: 30%; /* Width to match the cards */
+  display: flex;
+  flex-direction: column;
 }
 
+/* Task table styling */
 .tasks-table {
+  height: 50vh;
+  overflow-y: auto;
   flex: 1;
   margin-right: 1%;
   border: 2px solid #ccc;
@@ -67,16 +69,17 @@ table {
   cursor: pointer;
 }
 
-/* Cards container adjusted for equal height with tasks-table */
+/* Cards styling */
 .cards {
-  width: 30%;
   display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  justify-content: flex-start;
-  align-items: flex-start;
+  flex-wrap: wrap; /* Allows cards to wrap to the next row */
+  justify-content: space-between; /* Evenly distributes space between cards */
+  align-items: flex-start; /* Aligns cards to the top of the container */
+  height: 50vh; /* Fixed height as specified */
+  overflow-y: auto; /* Scroll if content exceeds the container's height */
+  width: 100%; /* Take the full width of its parent container */
   border: 2px solid #ccc;
-  padding: 5px;
+  padding: 5px; /* Padding inside the cards container */
 }
 
 /* Individual card styling */
@@ -84,9 +87,10 @@ table {
   background-color: rgb(222, 212, 241);
   border-radius: 10px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  width: calc(50% - 10px);
-  margin: 5px;
+  width: calc(50% - 10px); /* Adjust width to fit two cards per row including margin */
+  margin: 5px; /* Margin around each card */
   padding: 15px;
+  box-sizing: border-box; /* Include padding and border in width calculation */
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -106,6 +110,12 @@ table {
 
 /* Responsive adjustments */
 @media (max-width: 768px) {
+  .content {
+    flex-direction: column;
+  }
+  .right-content {
+    width: 100%;
+  }
   .tasks-table,
   .cards {
     width: 100%;
@@ -113,55 +123,45 @@ table {
   }
   
   .card {
-    width: 100%; /* Full width cards on smaller screens */
+    width: 100%;
     margin-bottom: 10px;
   }
-}
-
-/* Fixed elements styling */
-#rolesDetailsBtn {
-  position: fixed;
-  bottom: 50px;
-  left: 125px;
-  z-index: 10;
 }
 
 /* General container styling */
 .container {
   min-width: 100%;
 }
+
 /* Style for the table and cards section titles */
 .table-title,
 .cards-title {
-  font-size: 15px; /* Size that fits the overall design */
-  font-weight: bold; /* Consistency with the boldness of card titles */
-  color: #090808; /* Matching the general text color scheme */
-  text-align: center; /* Aligns with the general layout of your content */
-  padding: 10px 0; /* Adequate spacing above and below the title */
-  margin-left: 20px; /* Aligns text with the content of the cards/table */
-  border-bottom: 2px solid #ccc; /* Adds a subtle separation, similar to the borders around cards/tables */
-  width: calc(100% - 40px); /* Adjusts width to account for margin */
-
+  font-size: 15px;
+  font-weight: bold;
+  color: #090808;
+  text-align: center;
+  padding: 10px 0;
+  margin-left: 20px;
+  border-bottom: 2px solid #ccc;
+  width: calc(100% - 40px);
 }
 
 @media (max-width: 768px) {
   .table-title,
   .cards-title {
-    margin-left: 10px; /* Adjusts for smaller screens */
+    margin-left: 10px;
     margin-right: 10px;
-    width: calc(100% - 20px); /* Ensures consistency in responsive layout */
+    width: calc(100% - 20px);
   }
 }
 
-//msg css
+/* Messages styling */
 .important-messages {
-  width: 30%; /* Match the width of the cards container */
+  width: 100%; /* Take the full width of the right-content div */
   border: 2px solid #ccc;
-  padding: 10px; /* Reduced padding */
-  margin-top: 10px; /* Small space from the cards container */
-  box-sizing: border-box; /* Include padding and border in the width */
-  direction: rtl; /* Ensure right-to-left text direction */
-  
+  padding: 10px;
+  box-sizing: border-box;
+  direction: rtl;
 }
 
 .important-messages-title {
@@ -178,8 +178,15 @@ table {
   border-radius: 10px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   padding: 15px;
-  margin: 5px 0; /* Maintain a small space between messages */
+  margin: 5px 0;
   color: #090808;
   font-weight: bold;
   text-align: right;
+}
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .card {
+    width: 100%; /* Full width cards on smaller screens */
+    margin-bottom: 10px; /* Adjust margin as needed */
+  }
 }

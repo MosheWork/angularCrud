@@ -5,97 +5,76 @@
     <mat-icon>menu</mat-icon>
   </button>
 </mat-toolbar>
+
 <div class="dashboard">
-
-
   <div class="content">
     <div class="tasks-table">
       <h2 class="table-title">משימות</h2>
-
-      <mat-table
-        [dataSource]="matTableDataSource"
-        matSort
-        dir="rtl"
-        class="mat-elevation-z8"
-      >
-        <!-- Loop through columns to define each column in the table -->
+      <mat-table [dataSource]="matTableDataSource" matSort dir="rtl" class="mat-elevation-z8">
+        <!-- Columns defined here -->
         <ng-container *ngFor="let column of columns" [matColumnDef]="column">
-          <mat-header-cell *matHeaderCellDef mat-sort-header>
-            {{ getColumnLabel(column) }}
-            <!-- Use the function to get display-friendly labels -->
-          </mat-header-cell>
+          <mat-header-cell *matHeaderCellDef mat-sort-header>{{ getColumnLabel(column) }}</mat-header-cell>
           <mat-cell *matCellDef="let element">{{ element[column] }}</mat-cell>
         </ng-container>
-
-        <!-- Define the header row -->
         <mat-header-row *matHeaderRowDef="columns"></mat-header-row>
-        <!-- Define the data row -->
         <mat-row *matRowDef="let row; columns: columns" class="mat-row"></mat-row>
       </mat-table>
-
-      <!-- Define the paginator with page size options -->
-      <mat-paginator
-        [length]="matTableDataSource.paginator?.length || 0"
-        [pageIndex]="matTableDataSource.paginator?.pageIndex"
-        [pageSize]="matTableDataSource.paginator?.pageSize"
-        [pageSizeOptions]="[15, 50, 100]"
-      ></mat-paginator>
+      <mat-paginator [length]="matTableDataSource.paginator?.length || 0"
+                     [pageIndex]="matTableDataSource.paginator?.pageIndex"
+                     [pageSize]="matTableDataSource.paginator?.pageSize"
+                     [pageSizeOptions]="[15, 50, 100]"></mat-paginator>
     </div>
-    
-    <div class="cards">
-      <h2 class="cards-title">מצב קריאות</h2>
 
-      <!-- Flatten out the structure to have all cards directly within .cards -->
-      <!-- First row of cards -->
-      <div class="card">
-        <div class="card-title">קריאות פתוחות</div>
-        <div class="card-value" [ngClass]="userData.open_calls > 0 ? 'card-value-red' : 'card-value-blue'">
-          {{ userData.open_calls }}
+    <div class="right-content">
+      <div class="cards">
+        <h2 class="cards-title">מצב קריאות</h2>
+        <!-- First row of cards -->
+        <div class="card">
+          <div class="card-title">קריאות פתוחות</div>
+          <div class="card-value" [ngClass]="userData.open_calls > 0 ? 'card-value-red' : 'card-value-blue'">
+            {{ userData.open_calls }}
+          </div>
         </div>
-      </div>
-      <div class="card">
-        <div class="card-title">המשך טיפול</div>
-        <div class="card-value" [ngClass]="{'card-value-blue': userData.fallowUp_calls == '0', 'card-value-red': userData.fallowUp_calls != '0'}">
-          {{ userData.fallowUp_calls }}
+        <div class="card">
+          <div class="card-title">המשך טיפול</div>
+          <div class="card-value" [ngClass]="{'card-value-blue': userData.fallowUp_calls == '0', 'card-value-red': userData.fallowUp_calls != '0'}">
+            {{ userData.fallowUp_calls }}
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">ממתין לתגובת המשתמש</div>
+          <div class="card-value" [ngClass]="{'card-value-blue': userData.waiting_for_user_response == '0', 'card-value-red': userData.waiting_for_user_response != '0'}">
+            {{ userData.waiting_for_user_response }}
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">בהמתנה</div>
+          <div class="card-value" [ngClass]="{'card-value-blue': userData.on_hold == '0', 'card-value-red': userData.on_hold != '0'}">
+            {{ userData.on_hold }}
+          </div>
+        </div>
+  
+        <div class="card">
+          <div class="card-title">קריאות סגורות- היום</div>
+         
+          <div class="card-value [ngClass]= card-value-blue">{{ userData.closed_today }}</div>
+        </div>
+        <div class="card">
+          <div class="card-title">קריאות סגורות - החודש</div>
+          <div class="card-value [ngClass]= card-value-blue">{{ userData.closed_this_month }}</div>
         </div>
       </div>
 
-      <!-- Second row of cards -->
-      <div class="card">
-        <div class="card-title">ממתין לתגובת המשתמש</div>
-        <div class="card-value" [ngClass]="{'card-value-blue': userData.waiting_for_user_response == '0', 'card-value-red': userData.waiting_for_user_response != '0'}">
-          {{ userData.waiting_for_user_response }}
+      <div class="important-messages" dir="rtl">
+        <h2 class="important-messages-title">הודעות חשובות</h2>
+        <div class="message">
+          <p>הודעה חשובה #1</p>
         </div>
-      </div>
-      <div class="card">
-        <div class="card-title">בהמתנה</div>
-        <div class="card-value" [ngClass]="{'card-value-blue': userData.on_hold == '0', 'card-value-red': userData.on_hold != '0'}">
-          {{ userData.on_hold }}
+        <div class="message">
+          <p>הודעה חשובה #2</p>
         </div>
-      </div>
-
-      <div class="card">
-        <div class="card-title">קריאות סגורות- היום</div>
-       
-        <div class="card-value [ngClass]= card-value-blue">{{ userData.closed_today }}</div>
-      </div>
-      <div class="card">
-        <div class="card-title">קריאות סגורות - החודש</div>
-        <div class="card-value [ngClass]= card-value-blue">{{ userData.closed_this_month }}</div>
+        <!-- ... Other messages ... -->
       </div>
     </div>
-   
   </div>
-  <div class="important-messages" dir="rtl">
-    <h2 class="important-messages-title">הודעות חשובות</h2>
-    <!-- Right to left messages -->
-    <div class="message">
-      <p>הודעה חשובה #1</p>
-    </div>
-    <div class="message">
-      <p>הודעה חשובה #2</p>
-    </div>
-    <!-- Additional messages as needed -->
-  </div>
-
 </div>
