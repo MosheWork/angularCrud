@@ -8,7 +8,11 @@
 
 <div class="dashboard">
   <div class="content">
+    <div class="left-content">
+
     <div class="tasks-table">
+
+
       <h2 class="table-title">משימות</h2>
       <mat-table [dataSource]="matTableDataSource" matSort dir="rtl" class="mat-elevation-z8">
         <!-- Columns defined here -->
@@ -23,8 +27,20 @@
                      [pageIndex]="matTableDataSource.paginator?.pageIndex"
                      [pageSize]="matTableDataSource.paginator?.pageSize"
                      [pageSizeOptions]="[15, 50, 100]"></mat-paginator>
+      
+                     
     </div>
-
+    <div class="important-links">
+      <h2 class="links-title">קישורים חשובים</h2>
+      <ul class="links-list">
+        <!-- Individual link items -->
+        <li><a href="http://example.com/link1" target="_blank">קישור 1</a></li>
+        <li><a href="http://example.com/link2" target="_blank">קישור 2</a></li>
+        <!-- Add more link items as needed -->
+      </ul>
+    </div>
+    </div>
+    
     <div class="right-content">
       <div class="cards">
         <h2 class="cards-title">מצב קריאות</h2>

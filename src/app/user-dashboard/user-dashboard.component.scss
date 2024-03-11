@@ -193,3 +193,19 @@ table {
     margin-bottom: 10px; /* Adjust margin as needed */
   }
 }
+
+.content {
+  display: flex;
+  justify-content: space-between; /* Adjust if you want the children to use up the available space */
+}
+
+.left-content {
+  flex-grow: 1; /* Allow left content to expand and take up available space */
+  /* You might want to set a max-width if needed */
+}
+
+.right-content {
+  flex-basis: 30%; /* Adjust the width of the right content here if necessary */
+  /* Make sure to not set both flex-basis and width or it might lead to conflicts */
+}
+
