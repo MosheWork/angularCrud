@@ -28,11 +28,10 @@ mat-toolbar .welcome-message {
 
 .content {
   display: flex;
-  flex-direction: row; /* Arrange children in a row */
-  align-items: stretch; /* Stretch children to fill the container height */
+  flex-direction: row;
   width: 100%;
-  padding-top: 64px; /* Adjust based on the header height */
-  gap: 10px; /* Space between sections */
+  margin-top: 64px; /* Adjust if header height changes */
+  height: calc(100vh - 64px); /* Adjust if additional elements affect total height */
 }
 /* Ensure full height for all main sections */
 // .cards,
@@ -60,6 +59,7 @@ mat-toolbar .welcome-message {
   flex: 1;
   margin-right: 1%;
   border: 2px solid #ccc;
+  
   
 }
 
@@ -317,7 +317,7 @@ table {
   flex-direction: column;
   align-items: center;
   padding: 10px;
-
+  width: 100%; /* Takes full width of its container */
 }
 
 /* Container for all messages including the title */
@@ -391,4 +391,22 @@ table {
   margin-bottom: 15px; /* Space between messages */
   padding: 10px; /* Padding inside each message for spacing */
   border-radius: 4px; /* Optionally round the corners of the message borders */
+}
+.priority-1 {
+  color:#893232;
+  background-color: #fadddd;
+  border-color:#f7cbcb;
+}
+
+
+.priority-2 {
+  color:#1c6e37;
+  background-color: #d5f1de;
+  border-color:#c0eace;
+}
+
+.priority-3 {
+  color:rgba(131, 107, 52, .97);
+  background-color: #feefd0;
+  border-color:#fde8b9;
 }

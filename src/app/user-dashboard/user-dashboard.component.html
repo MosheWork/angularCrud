@@ -34,8 +34,15 @@
     <div class="important-messages-cards" dir="rtl">
       <div class="messages-container">
         <h2 class="important-messages-title">הודעות חשובות</h2>
+        
         <div class="message-cards-container">
-          <mat-card class="message-card" *ngFor="let message of importantMessages">
+          <mat-card *ngFor="let message of importantMessages" 
+                    [ngClass]="{
+                      'priority-1': message.priority === 1,
+                      'priority-2': message.priority === 2,
+                      'priority-3': message.priority === 3
+                    }" 
+                    class="message-card">
             <mat-card-header>
               <mat-card-title>{{ message.messageTitle }}</mat-card-title>
               <mat-card-subtitle>{{ message.createTime | date: 'medium' }}</mat-card-subtitle>
@@ -43,14 +50,14 @@
             <mat-card-content>
               <p>{{ message.messageBody }}</p>
             </mat-card-content>
-            <mat-card-actions>
-              <button mat-button>פעולה 1</button>
-              <button mat-button>פעולה 2</button>
-            </mat-card-actions>
+            <!-- <mat-card-actions>
+              <button mat-button> אשר קריאה</button>
+            </mat-card-actions> -->
           </mat-card>
         </div>
       </div>
     </div>
+    
     
     
     </div>
