@@ -7,10 +7,8 @@ import { MatTableDataSource } from '@angular/material/table';
 import { MatSort } from '@angular/material/sort';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { Router } from '@angular/router'; // Import the Router
-import { environment } from '../../environments/environment'
+import { environment } from '../../environments/environment';
 import { DatePipe } from '@angular/common';
-
-
 
 @Component({
   selector: 'app-user-dashboard',
@@ -23,6 +21,7 @@ export class UserDashboardComponent implements OnInit {
   previousOpenCalls: number | null = null;
   importantMessages: any[] = []; // Assuming the data structure is an array of objects
 
+  dateFormat = 'dd/MM/yyyy HH:mm'; // Custom format for date
 
   columns: string[] = [
     'status',
@@ -32,11 +31,12 @@ export class UserDashboardComponent implements OnInit {
     'creationDate',
     'dueDate',
     'createdBy',
+    'timeLeft',
 
     // 'departure_Date',
   ];
 
-  constructor(private http: HttpClient,private datePipe: DatePipe) {
+  constructor(private http: HttpClient, private datePipe: DatePipe) {
     this.matTableDataSource = new MatTableDataSource<any>([]);
   }
   // ViewChild decorators for accessing Angular Material components
@@ -61,14 +61,16 @@ export class UserDashboardComponent implements OnInit {
         this.fetchTodoListData().subscribe((data) => {
           // Assuming 'data' is the array of todos you want to display
           // Filter the data to only include tasks where adUserName matches loginUserName
-          const filteredData = data.filter((task: any) => task.adUserName === this.loginUserName);
+          const filteredData = data.filter(
+            (task: any) => task.adUserName === this.loginUserName
+          );
           this.matTableDataSource.data = filteredData;
         });
       });
-       // Fetching important messages
+    // Fetching important messages
     this.fetchImportantMessages().subscribe((messages) => {
-    this.importantMessages = messages;
-    console.log (this.importantMessages)
+      this.importantMessages = messages;
+      console.log(this.importantMessages);
     });
   }
 
@@ -98,9 +100,9 @@ export class UserDashboardComponent implements OnInit {
 
   getColumnLabel(column: string): string {
     const columnLabels: Record<string, string> = {
-     status: 'status',
-     adUserName: 'משתמש מטפל ',
-     taskName: 'משימה  ',
+      status: 'status',
+      adUserName: 'משתמש מטפל ',
+      taskName: 'משימה  ',
       description: ' פירוט המשימה ',
       creationDate: ' תאריך יצירה  ',
       dueDate: ' dueDate   ',
@@ -112,4 +114,32 @@ export class UserDashboardComponent implements OnInit {
     const url = 'http://localhost:7144/api/importantMessagesAPI';
     return this.http.get(url);
   }
+  // Method to format dates
+  formatDate(date: string): string | null {
+    return this.datePipe.transform(date, 'dd/MM/yyyy HH:mm');
+  }
+  getTimeLeft(dueDate: string): string {
+    const dueDateTime = new Date(dueDate).getTime();
+    const now = new Date().getTime();
+    const timeLeft = dueDateTime - now;
+  
+    // Convert time left from milliseconds to a more readable format
+    const days = Math.floor(timeLeft / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
+  
+    return `${days}d ${hours}h ${minutes}m`;
+  }
+  calculateProgress(creationDate: string, dueDate: string): number {
+    const start = new Date(creationDate).getTime();
+    const end = new Date(dueDate).getTime();
+    const now = new Date().getTime();
+    
+    const totalDuration = end - start;
+    const elapsed = now - start;
+    
+    // Ensure we don't return more than 100% or less than 0%
+    return Math.min(100, Math.max(0, (elapsed / totalDuration) * 100));
+  }
+  
 }

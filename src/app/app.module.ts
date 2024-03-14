@@ -4,7 +4,6 @@ import { FormsModule } from '@angular/forms';
 import { MatTableModule } from '@angular/material/table';
 import { MatPaginatorModule } from '@angular/material/paginator';
 
-
 import { NgModule } from '@angular/core';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -56,8 +55,7 @@ import { UpdateReportComponent } from './reports-permissions/update-report/updat
 import { CatheterComponent } from './chameleon-reports/catheter/catheter.component';
 import { StazerimComponent } from './chameleon-reports/moshe-reports/stazerim/stazerim.component';
 import { UserDashboardComponent } from './user-dashboard/user-dashboard.component';
-
-
+import { MatProgressBarModule } from '@angular/material/progress-bar';
 
 @NgModule({
   declarations: [
@@ -87,7 +85,6 @@ import { UserDashboardComponent } from './user-dashboard/user-dashboard.componen
     CatheterComponent,
     StazerimComponent,
     UserDashboardComponent,
-    
   ],
   imports: [
     BrowserModule,
@@ -117,6 +114,7 @@ import { UserDashboardComponent } from './user-dashboard/user-dashboard.componen
     MatDialogModule,
     MatCheckboxModule,
     AngularDualListBoxModule,
+    MatProgressBarModule,
   ],
   providers: [DatePipe],
   bootstrap: [AppComponent],

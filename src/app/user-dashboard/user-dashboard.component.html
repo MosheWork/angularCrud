@@ -15,17 +15,29 @@
 
       <h2 class="table-title">משימות</h2>
       <mat-table [dataSource]="matTableDataSource" matSort dir="rtl" class="mat-elevation-z8">
-        <!-- Columns defined here -->
+        <!-- Dynamically create each column based on the columns array -->
         <ng-container *ngFor="let column of columns" [matColumnDef]="column">
-          <mat-header-cell *matHeaderCellDef mat-sort-header>{{ getColumnLabel(column) }}</mat-header-cell>
-          <mat-cell *matCellDef="let element">{{ element[column] }}</mat-cell>
+          <mat-header-cell *matHeaderCellDef mat-sort-header> {{ getColumnLabel(column) }} </mat-header-cell>
+          <!-- Check the column name and apply formatting if needed -->
+          <mat-cell *matCellDef="let element">
+            <ng-container [ngSwitch]="column">
+              <!-- Special formatting for 'creationDate' and 'dueDate' columns -->
+              <ng-container *ngSwitchCase="'creationDate'">{{ element[column] | date:'dd/MM/yyyy HH:mm' }}</ng-container>
+              <ng-container *ngSwitchCase="'dueDate'">{{ element[column] | date:'dd/MM/yyyy HH:mm' }}</ng-container>
+              <!-- Custom calculation and display for 'timeLeft' column -->
+              <ng-container *ngSwitchCase="'timeLeft'">{{ getTimeLeft(element.dueDate) }}</ng-container>
+              
+              <!-- Default case for other columns -->
+              <ng-container *ngSwitchDefault>{{ element[column] }}</ng-container>
+            </ng-container>
+          </mat-cell>
         </ng-container>
         <mat-header-row *matHeaderRowDef="columns"></mat-header-row>
         <mat-row *matRowDef="let row; columns: columns" 
                  [ngClass]="{
                    'priority-1': row.status === 'Not Started',
-                   'priority-3': row.status === 'In Progress',
-                   'priority-2': row.status === 'Completed'
+                   'priority-2': row.status === 'In Progress',
+                   'priority-3': row.status === 'Completed'
                  }" 
                  class="mat-row"></mat-row>
       </mat-table>
