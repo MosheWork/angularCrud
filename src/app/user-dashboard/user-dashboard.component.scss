@@ -300,4 +300,77 @@ table {
   }
 }
 
+.important-messages-cards {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+}
 
+/* Container for all messages including the title */
+.messages-container {
+  width: 100%;
+  border: 2px solid #ccc; /* Border around the entire container */
+  padding: 10px;
+  box-sizing: border-box;
+  margin-top: 1px; /* Space between the container and other elements */
+  background-color: #fff; /* White background for the container */
+}
+
+/* Title within the container */
+.important-messages-title {
+  font-size: 20px;
+  font-weight: bold;
+  color: #090808;
+  text-align: center;
+  width: 100%;
+  margin-bottom: 20px; /* Adds space below the title */
+  padding-bottom: 10px;
+  border-bottom: 2px solid #ccc; /* Separates the title from the cards */
+}
+
+/* Flex container for cards */
+.message-cards-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around; /* Centers cards with space around them */
+  gap: 10px; /* Space between cards */
+}
+
+/* Individual message card */
+.message-card {
+  flex: 0 0 calc(33% - 20px); /* Sets the basis for two cards per row accounting for gap */
+  border: 1px solid #ccc; /* Border around each card */
+  border-radius: 5px; /* Rounded corners for each card */
+  padding: 5px; /* Padding inside each card */
+  margin-bottom: 10px; /* Space between rows of cards */
+  background-color: #E6F4F1; /* Background color for each card */
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+}
+
+.message-card:hover {
+  box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
+}
+
+.mat-card-header, .mat-card-content, .mat-card-actions {
+  padding: 8px;
+}
+
+.mat-card-title, .mat-card-subtitle {
+  margin-right: 10px;
+}
+
+/* Responsive adjustments for very small screens */
+@media (max-width: 600px) {
+  .message-card {
+    flex: 0 0 100%; /* Each card takes full width on small screens */
+    max-width: 100%; /* Ensures card doesn't exceed the container's width */
+  }
+}
+
+.message {
+  border: 1px solid #ccc; /* Subtle border for individual messages */
+  margin-bottom: 15px; /* Space between messages */
+  padding: 10px; /* Padding inside each message for spacing */
+  border-radius: 4px; /* Optionally round the corners of the message borders */
+}
