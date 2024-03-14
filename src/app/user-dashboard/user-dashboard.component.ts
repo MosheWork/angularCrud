@@ -129,55 +129,67 @@ export class UserDashboardComponent implements OnInit {
   formatDate(date: string): string | null {
     return this.datePipe.transform(date, 'dd/MM/yyyy HH:mm');
   }
-  getTimeLeft(dueDate: string): string {
-    const dueDateTime = new Date(dueDate).getTime();
-    const now = new Date().getTime();
-    const timeLeft = dueDateTime - now;
+   getTimeLeft(dueDate: string, status: string): string {
+    // Check if the task status is not 'Completed'
+    if (status !== 'Completed') {
+      const dueDateTime = new Date(dueDate).getTime();
+      const now = new Date().getTime();
+      const timeLeft = dueDateTime - now;
   
-    // Convert time left from milliseconds to a more readable format
-    const days = Math.floor(timeLeft / (1000 * 60 * 60 * 24));
-    const hours = Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-    const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
+      // Convert time left from milliseconds to a more readable format
+      const days = Math.floor(timeLeft / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
   
-    return `${days}d ${hours}h ${minutes}m`;
+      return `${days}d ${hours}h ${minutes}m`;
+    } else {
+      // Return a message indicating the task is completed
+      return "Task is already completed.";
+    }
   }
+  
 
   
   // In your Angular component
 
-// This function will check if the time left is less than 25 hours and return a boolean
-isLessThan25Hours(dueDate: string): boolean {
-  const hoursLeft = this.getHoursLeft(dueDate);
+// Checks if the due date is less than 25 hours away, considering the task's status
+isLessThan25Hours(dueDate: string, status: string): boolean {
+  const hoursLeft = this.getHoursLeft(dueDate, status);
   return hoursLeft <= 25;
 }
+// Calculates the hours left until the due date, considering the task's status
+getHoursLeft(dueDate: string, status: string): number {
+  if (status === 'Completed') {
+    // Task is completed, so there are effectively 0 hours left until the due date
+    // Or return a specific value that indicates the task is completed, based on your application's needs
+    return 0;
+  }
 
-// Calculates the hours left until the due date
-getHoursLeft(dueDate: string): number {
   const dueDateTime = new Date(dueDate).getTime();
   const currentTime = new Date().getTime();
   const hoursLeft = (dueDateTime - currentTime) / (1000 * 60 * 60);
   return hoursLeft;
 }
-
-// Call this method to send alerts
-checkAndAlertUserAboutTimeLeft(task:Task): void {
-  const hoursLeft = this.getHoursLeft(task.dueDate);
+// Corrected method to check time left and alert the user accordingly
+checkAndAlertUserAboutTimeLeft(task: Task): void {
+  const hoursLeft = this.getHoursLeft(task.dueDate,task.Status);
   if (task.Status !== 'Completed') {
     if (hoursLeft <= 1) {
       this.sendAlert('You have less than 1 hour left to complete the task.');
-    } else if (hoursLeft <= 22) {
+    } else if (hoursLeft <= 12) { // Corrected condition for less than 12 hours
       this.sendAlert('You have less than 12 hours left to complete the task.');
-    } else if (hoursLeft <= 21) {
+    } else if (hoursLeft <= 25) { // Corrected condition for less than 25 hours
       this.sendAlert('You have less than 25 hours left to complete the task.');
     }
   }
 }
 
-// Mock function to simulate sending an alert
+// Ensure sendAlert method uses the passed message
 sendAlert(message: string): void {
-  alert('You have less than 1 hour left to complete the task.');
+  alert(message); // Use the passed message for the alert
   console.log(message);
 }
+
 
 // Call this method at an appropriate lifecycle hook or after data retrieval
 performTimeChecks(): void {
