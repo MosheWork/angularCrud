@@ -20,6 +20,8 @@ export class UserDashboardComponent implements OnInit {
   loginUserName = '';
   userData: any = {};
   previousOpenCalls: number | null = null;
+  importantMessages: any[] = []; // Assuming the data structure is an array of objects
+
 
   columns: string[] = [
     'status',
@@ -62,6 +64,11 @@ export class UserDashboardComponent implements OnInit {
           this.matTableDataSource.data = filteredData;
         });
       });
+       // Fetching important messages
+    this.fetchImportantMessages().subscribe((messages) => {
+    this.importantMessages = messages;
+    console.log (this.importantMessages)
+    });
   }
 
   fetchUserData(userName: string): Observable<any> {
@@ -100,5 +107,8 @@ export class UserDashboardComponent implements OnInit {
     };
     return columnLabels[column] || column;
   }
-  
+  fetchImportantMessages(): Observable<any> {
+    const url = 'http://localhost:7144/api/importantMessagesAPI';
+    return this.http.get(url);
+  }
 }

@@ -30,19 +30,17 @@
       
                      
     </div>
-    <div class="important-links">
-      <h2 class="links-title">קישורים חשובים</h2>
-      <ul class="links-list">
-        <!-- Individual link items -->
-        <li><a href="http://srv-apps-prod/app/#/employeesmanagedashboard" target="_blank">ONNLINE </a></li>
-        <li><a href="http://example.com/link2" target="_blank">קישור 2</a></li>
-        <li><a href="http://example.com/link2" target="_blank">קישור 3</a></li>
-        <li><a href="http://example.com/link2" target="_blank">קישור 4</a></li>
-        <li><a href="http://example.com/link2" target="_blank">קישור 5</a></li>
-        <li><a href="http://example.com/link2" target="_blank">קישור 6</a></li>
-        <!-- Add more link items as needed -->
-      </ul>
+  
+    <div class="important-messages" dir="rtl">
+      <h2 class="important-messages-title">הודעות חשובות</h2>
+      <div class="message">
+        <div *ngFor="let message of importantMessages" class="message">
+          <p class="message-title">Title: {{ message.messageTitle }}</p>
+          <p>{{ message.messageBody }}</p>
+          <!-- If you have a formatted date ready, you can add it here -->
+          <p class="message-date">{{ message.createTime | date: 'medium' }}</p>          </div>
     </div>
+  </div>
     </div>
     
     <div class="right-content">
@@ -84,23 +82,19 @@
           <div class="card-value [ngClass]= card-value-blue">{{ userData.closed_this_month }}</div>
         </div>
       </div>
-
-      <div class="important-messages" dir="rtl">
-        <h2 class="important-messages-title">הודעות חשובות</h2>
-        <div class="message">
-          <p>הודעה חשובה #1</p>
-        </div>
-        <div class="message">
-          <p>הודעה חשובה #2</p>
-        </div>
-        <div class="message">
-          <p>הודעה חשובה #3</p>
-        </div>
-        <div class="message">
-          <p>הודעה חשובה #4</p>
-        </div>
-        <!-- ... Other messages ... -->
+      <div class="important-links">
+        <h2 class="links-title">קישורים חשובים</h2>
+        <ul class="links-list">
+          <!-- Individual link items -->
+          <li><a href="http://srv-apps-prod/app/#/employeesmanagedashboard" target="_blank">ONNLINE </a></li>
+          <li><a href="http://srv-sysaid/Home.jsp" target="_blank">sysaid </a></li>
+          <li><a href="http://example.com/link2" target="_blank">קישור 3</a></li>
+          <li><a href="http://example.com/link2" target="_blank">קישור 4</a></li>
+          <li><a href="http://example.com/link2" target="_blank">קישור 5</a></li>
+          <li><a href="http://example.com/link2" target="_blank">קישור 6</a></li>
+          <!-- Add more link items as needed -->
+        </ul>
       </div>
-    </div>
+   
   </div>
 </div>
