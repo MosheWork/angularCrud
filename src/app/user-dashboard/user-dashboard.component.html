@@ -25,7 +25,11 @@
               <ng-container *ngSwitchCase="'creationDate'">{{ element[column] | date:'dd/MM/yyyy HH:mm' }}</ng-container>
               <ng-container *ngSwitchCase="'dueDate'">{{ element[column] | date:'dd/MM/yyyy HH:mm' }}</ng-container>
               <!-- Custom calculation and display for 'timeLeft' column -->
-              <ng-container *ngSwitchCase="'timeLeft'">{{ getTimeLeft(element.dueDate) }}</ng-container>
+              <ng-container *ngSwitchCase="'timeLeft'">
+                <span [class.bold-font]="isLessThan25Hours(element.dueDate)">
+                  {{ getTimeLeft(element.dueDate) }}
+                </span>
+              </ng-container>
               
               <!-- Default case for other columns -->
               <ng-container *ngSwitchDefault>{{ element[column] }}</ng-container>
@@ -36,11 +40,13 @@
         <mat-row *matRowDef="let row; columns: columns" 
                  [ngClass]="{
                    'priority-1': row.status === 'Not Started',
-                   'priority-2': row.status === 'In Progress',
-                   'priority-3': row.status === 'Completed'
+                   'priority-3': row.status === 'In Progress',
+                   'priority-2': row.status === 'Completed',
+                   'bold-font': isLessThan25Hours(row.dueDate)
                  }" 
                  class="mat-row"></mat-row>
       </mat-table>
+      
       
       <mat-paginator [length]="matTableDataSource.paginator?.length || 0"
                      [pageIndex]="matTableDataSource.paginator?.pageIndex"

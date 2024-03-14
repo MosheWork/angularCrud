@@ -10,6 +10,17 @@ import { Router } from '@angular/router'; // Import the Router
 import { environment } from '../../environments/environment';
 import { DatePipe } from '@angular/common';
 
+interface Task {
+  UserTaskID: number;
+  ADUserName: string;
+  TaskID: number;
+  Status: string; // 'Not Started' | 'In Progress' | 'Completed'
+  Progress: number;
+  LastUpdated: string; // Assuming this is a date in string format
+  dueDate: string; // Assuming this is a date in string format
+  // Add other properties that are relevant to your tasks
+}
+
 @Component({
   selector: 'app-user-dashboard',
   templateUrl: './user-dashboard.component.html',
@@ -130,16 +141,51 @@ export class UserDashboardComponent implements OnInit {
   
     return `${days}d ${hours}h ${minutes}m`;
   }
-  calculateProgress(creationDate: string, dueDate: string): number {
-    const start = new Date(creationDate).getTime();
-    const end = new Date(dueDate).getTime();
-    const now = new Date().getTime();
-    
-    const totalDuration = end - start;
-    const elapsed = now - start;
-    
-    // Ensure we don't return more than 100% or less than 0%
-    return Math.min(100, Math.max(0, (elapsed / totalDuration) * 100));
-  }
+
   
+  // In your Angular component
+
+// This function will check if the time left is less than 25 hours and return a boolean
+isLessThan25Hours(dueDate: string): boolean {
+  const hoursLeft = this.getHoursLeft(dueDate);
+  return hoursLeft <= 25;
+}
+
+// Calculates the hours left until the due date
+getHoursLeft(dueDate: string): number {
+  const dueDateTime = new Date(dueDate).getTime();
+  const currentTime = new Date().getTime();
+  const hoursLeft = (dueDateTime - currentTime) / (1000 * 60 * 60);
+  return hoursLeft;
+}
+
+// Call this method to send alerts
+checkAndAlertUserAboutTimeLeft(task:Task): void {
+  const hoursLeft = this.getHoursLeft(task.dueDate);
+  if (task.Status !== 'Completed') {
+    if (hoursLeft <= 1) {
+      this.sendAlert('You have less than 1 hour left to complete the task.');
+    } else if (hoursLeft <= 22) {
+      this.sendAlert('You have less than 12 hours left to complete the task.');
+    } else if (hoursLeft <= 21) {
+      this.sendAlert('You have less than 25 hours left to complete the task.');
+    }
+  }
+}
+
+// Mock function to simulate sending an alert
+sendAlert(message: string): void {
+  alert('You have less than 1 hour left to complete the task.');
+  console.log(message);
+}
+
+// Call this method at an appropriate lifecycle hook or after data retrieval
+performTimeChecks(): void {
+  this.matTableDataSource.data.forEach(task => {
+    this.checkAndAlertUserAboutTimeLeft(task);
+  });
+}
+
+// Then call performTimeChecks periodically, perhaps using setInterval
+
 }
