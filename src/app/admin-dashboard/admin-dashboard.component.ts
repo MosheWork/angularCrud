@@ -9,6 +9,8 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { Router } from '@angular/router'; // Import the Router
 import { environment } from '../../environments/environment';
 import { DatePipe } from '@angular/common';
+import { MatDialog } from '@angular/material/dialog';
+import { AddTaskDialogComponentComponent } from './add-task-dialog-component/add-task-dialog-component.component';
 
 interface Task {
   UserTaskID: number;
@@ -22,11 +24,11 @@ interface Task {
 }
 
 @Component({
-  selector: 'app-user-dashboard',
-  templateUrl: './user-dashboard.component.html',
-  styleUrls: ['./user-dashboard.component.scss'],
+  selector: 'app-admin-dashboard',
+  templateUrl: './admin-dashboard.component.html',
+  styleUrls: ['./admin-dashboard.component.scss'],
 })
-export class UserDashboardComponent implements OnInit {
+export class AdminDashboardComponent implements OnInit {
   loginUserName = '';
   userData: any = {};
   previousOpenCalls: number | null = null;
@@ -51,7 +53,22 @@ export class UserDashboardComponent implements OnInit {
     // 'departure_Date',
   ];
 
-  constructor(private http: HttpClient, private datePipe: DatePipe) {
+  dashboardData: any[] = []; // Assuming the data structure is an array of objects
+  dashboardColumns: string[] = [
+    'responsibility',
+    'open_calls',
+    'followUp_calls',
+    'waiting_for_user_response',
+    'on_hold',
+    'closed_today',
+    'closed_this_month',
+  ];
+
+  constructor(
+    private http: HttpClient,
+    private datePipe: DatePipe,
+    private dialog: MatDialog // Inject MatDialog service
+  ) {
     this.matTableDataSource = new MatTableDataSource<any>([]);
   }
   // ViewChild decorators for accessing Angular Material components
@@ -63,25 +80,21 @@ export class UserDashboardComponent implements OnInit {
 
   ngOnInit(): void {
     this.loginUserName = localStorage.getItem('loginUserName') || '';
-    interval(60000) // 60000 milliseconds = 1 minute
+    interval(60000) // Every 60 seconds
       .pipe(
-        startWith(0),
-        switchMap(() => this.fetchUserData(this.loginUserName)) // Adjusted to pass loginUserName
+        startWith(0), // Start immediately upon component initialization
+        switchMap(() => this.fetchUserData()) // Switch to this Observable every time it emits
       )
-      .subscribe((data) => {
-        // This assumes your backend returns the data in the format you expect for userData
-        this.userData = data;
-        this.checkForNewServiceCall(this.userData.open_calls);
-
-        this.fetchTodoListData().subscribe((data) => {
-          // Assuming 'data' is the array of todos you want to display
-          // Filter the data to only include tasks where adUserName matches loginUserName
-          const filteredData = data.filter(
-            (task: any) => task.adUserName === this.loginUserName
-          );
-          this.matTableDataSource.data = filteredData;
-        });
-      });
+      .subscribe(
+        (data) => {
+          if (data.length > 0) this.userData = data[0]; // Update userData with the fetched data
+          console.log('Data fetched:', this.userData); // Debugging
+          this.checkForNewServiceCall(this.userData.open_calls); // Additional logic
+        },
+        (error) => {
+          console.error('Error fetching user data:', error); // Handle any errors
+        }
+      );
 
     // Initialize the filter predicate to filter based on the status text
     this.matTableDataSource.filterPredicate = (
@@ -96,18 +109,24 @@ export class UserDashboardComponent implements OnInit {
       this.importantMessages = messages;
       console.log(this.importantMessages);
     });
+
+    // New interval for fetching dashboard data
+    interval(60000) // 60000 milliseconds = 1 minute
+      .pipe(
+        startWith(0),
+        switchMap(() => this.fetchDashboardData())
+      )
+      .subscribe((data) => {
+        this.dashboardData = data;
+        // Assuming you want to update the MatTableDataSource for the dashboard
+        this.matTableDataSource.data = this.dashboardData;
+        this.matTableDataSource._updateChangeSubscription(); // Refresh the table view
+      });
   }
 
-  fetchUserData(userName: string): Observable<any> {
-    if (!userName) {
-      return of({}); // Return an empty object wrapped in an Observable if userName is falsy
-    }
-    const url = environment.apiUrl + 'UsersDashboardAPI/' + userName;
-    return this.http.get(url); // Directly return the Observable from the HTTP GET request
-  }
-  fetchTodoListData(): Observable<any> {
-    const url = environment.apiUrl + 'UsersDashboardAPI/TodoList';
-    return this.http.get(url);
+  fetchUserData(): Observable<any> {
+    const url = 'http://localhost:7144/api/AdminDashboardAPI/GetTotalSysAid';
+    return this.http.get<any>(url);
   }
 
   checkForNewServiceCall(openCalls: string) {
@@ -135,7 +154,7 @@ export class UserDashboardComponent implements OnInit {
     return columnLabels[column] || column;
   }
   fetchImportantMessages(): Observable<any> {
-    const url = 'http://localhost:7144/api/importantMessagesAPI';
+    const url = environment.apiUrl + 'importantMessagesAPI';
     return this.http.get(url);
   }
   // Method to format dates
@@ -231,5 +250,26 @@ export class UserDashboardComponent implements OnInit {
     if (this.matTableDataSource.paginator) {
       this.matTableDataSource.paginator.firstPage();
     }
+  }
+  openAddTaskDialog(): void {
+    const dialogRef = this.dialog.open(AddTaskDialogComponentComponent, {
+      width: '250px',
+      // Pass any data you need for the dialog
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      console.log('The dialog was closed', result);
+      if (result) {
+        // If result has data, it means a new task was created
+        // You can call a method to refresh the tasks table or push the new task to the data array
+        // this.fetchTodoListData(); // If you want to fetch all tasks again
+        this.matTableDataSource.data.push(result); // If you just want to add the new task
+        this.matTableDataSource._updateChangeSubscription(); // Refresh the table
+      }
+    });
+  }
+  fetchDashboardData(): Observable<any> {
+    const url = environment.apiUrl + 'AdminDashboardAPI/GetDashboardData';
+    return this.http.get(url);
   }
 }

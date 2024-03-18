@@ -20,6 +20,7 @@ import { ReportsPermissionsComponent } from './reports-permissions/reports-permi
 import { CatheterComponent } from './chameleon-reports/catheter/catheter.component';
 import { StazerimComponent } from './chameleon-reports/moshe-reports/stazerim/stazerim.component';
 import { UserDashboardComponent } from './user-dashboard/user-dashboard.component';
+import { AdminDashboardComponent } from './admin-dashboard/admin-dashboard.component';
 
 const routes: Routes = [
   { path: 'users', component: UsersComponent },
@@ -36,6 +37,7 @@ const routes: Routes = [
   { path: 'MainPageReports', component: MainPageReportsComponent },
   { path: 'reports-permissions', component: ReportsPermissionsComponent },
   { path: 'UserDashboard', component: UserDashboardComponent },
+  { path: 'AdminDashboard', component: AdminDashboardComponent },
 
   // chameleon report
   { path: 'catheter', component: CatheterComponent },
