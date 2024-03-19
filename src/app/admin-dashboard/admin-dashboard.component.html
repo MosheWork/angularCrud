@@ -12,8 +12,8 @@
   </button>
 </mat-toolbar>
 
-<mat-tab-group>
-  <mat-tab label="ראשי"> <div class="dashboard">
+<mat-tab-group dir="rtl">
+  <mat-tab label="ראשי"> <div class="dashboard" dir="ltr">
     <div class="content">
       <div class="left-content">
         <div class="tasks-table">
@@ -105,12 +105,12 @@
             <tr mat-row *matRowDef="let row; columns: dashboardColumns"></tr>
           </table>
   
-          <mat-paginator
+          <!-- <mat-paginator
             [length]="matTableDataSource.paginator?.length || 0"
             [pageIndex]="matTableDataSource.paginator?.pageIndex"
             [pageSize]="matTableDataSource.paginator?.pageSize"
             [pageSizeOptions]="[15, 50, 100]"
-          ></mat-paginator>
+          ></mat-paginator> -->
         </div>
   
         <div class="important-messages-cards" dir="rtl">
@@ -253,8 +253,8 @@
       </div>
     </div>
   </div> </mat-tab>
-  <mat-tab label="Second"> Content 2 </mat-tab>
-  <mat-tab label="Third"> Content 3 </mat-tab>
+  <mat-tab label="ניהול משימות"> Content 2 </mat-tab>
+  <mat-tab label="ניהול הודעות"> Content 3 </mat-tab>
 </mat-tab-group>
 
 
