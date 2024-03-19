@@ -425,3 +425,35 @@
     color: blue;
     font-weight: bold;
   }
+
+  .links-list {
+    display: flex;
+    flex-wrap: wrap;
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .links-list li {
+    width: calc(100% / 3 - 10px); /* Adjust '3' to the number of items per row you want */
+    height: 80px; /* Example height, adjust as needed */
+    margin: 5px;
+    box-sizing: border-box; /* Include padding and border in the element's total width and height */
+  }
+  
+  .links-list li a {
+    display: flex;
+    align-items: center; /* This will vertically center the text */
+    justify-content: center; /* This will horizontally center the text */
+    height: 100%; /* Full height of the parent <li> */
+    padding: 10px; /* Adjust padding as necessary */
+    border: 1px solid rgb(17, 16, 16); /* Border styling */
+    border-radius: 5px; /* Rounded corners */
+    background-color: rgb(222, 212, 241); /* Background color */
+    text-decoration: none; /* No underline */
+    color: #333; /* Text color */
+    box-sizing: border-box; /* Padding and border are included in width/height */
+  }
+
+
+ 
