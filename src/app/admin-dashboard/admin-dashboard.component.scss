@@ -10,11 +10,11 @@
   
   /* Header styling */
   mat-toolbar {
-    position: fixed;
+    //position: fixed;
     top: 0;
     left: 0;
     right: 0;
-    z-index: 1000;
+    z-index: 100;
   }
   
   mat-toolbar > div {
@@ -30,7 +30,7 @@
     display: flex;
     flex-direction: row;
     width: 100%;
-    margin-top: 64px; /* Adjust if header height changes */
+    margin-top: 5px; /* Adjust if header height changes */
     height: calc(100vh - 64px); /* Adjust if additional elements affect total height */
   }
   /* Ensure full height for all main sections */
@@ -456,4 +456,6 @@
   }
 
 
- 
+  mat-toolbar {
+    height: 48px; /* Adjust to the actual desired height */
+  }
