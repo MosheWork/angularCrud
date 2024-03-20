@@ -332,7 +332,7 @@
         <mat-row
           *matRowDef="let row; columns: columns"
           [ngClass]="{
-            'priority-1': row.status === 'Not Started',
+            'priority-1': row.status === 'new',
             'priority-3': row.status === 'In Progress',
             'priority-2': row.status === 'Completed',
             'bold-font': isLessThan25Hours(row.dueDate, row.status)

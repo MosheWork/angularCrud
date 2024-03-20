@@ -41,14 +41,15 @@ export class AdminDashboardComponent implements OnInit {
   statusOptions: string[] = ['Not Started', 'In Progress', 'Completed'];
 
   columns: string[] = [
-    'status',
-    'adUserName',
+    //'taskID',
     'taskName',
     'description',
+    'createdBy',
     'creationDate',
     'dueDate',
-    'createdBy',
     'timeLeft',
+    'userStatuses',
+    //'adUserName',
   ];
   todoListDataSource = new MatTableDataSource<Task>(); // Separate DataSource for TodoList
   dashboardDataSource = new MatTableDataSource<any>(); // Separate DataSource for DashboardData
@@ -160,7 +161,7 @@ export class AdminDashboardComponent implements OnInit {
   getColumnLabel(column: string): string {
     const columnLabels: Record<string, string> = {
       status: 'status',
-      adUserName: 'משתמש מטפל ',
+      //adUserName: 'משתמש מטפל ',
       taskName: 'משימה  ',
       description: ' פירוט המשימה ',
       creationDate: ' תאריך יצירה  ',
@@ -268,20 +269,19 @@ export class AdminDashboardComponent implements OnInit {
     }
   }
   openAddTaskDialog(): void {
-    const dialogRef = this.dialog.open(AddTaskDialogComponentComponent, {
-      width: '650px',
-      // Pass any data you need for the dialog
-    });
-
-    dialogRef.afterClosed().subscribe((result) => {
-      console.log('The dialog was closed', result);
-      if (result) {
-        // If result has data, it means a new task was created
-        // You can call a method to refresh the tasks table or push the new task to the data array
-        // this.fetchTodoListData(); // If you want to fetch all tasks again
-        this.matTableDataSource.data.push(result); // If you just want to add the new task
-        this.matTableDataSource._updateChangeSubscription(); // Refresh the table
-      }
+    this.http.get<any[]>('http://localhost:7144/api/AdminDashboardAPI/GetAllUsers').subscribe(users => {
+      const dialogRef = this.dialog.open(AddTaskDialogComponentComponent, {
+        width: '650px',
+        data: { users: users } // Passing users to the dialog
+        
+      });
+      console.log(users)
+      dialogRef.afterClosed().subscribe(result => {
+        console.log('The dialog was closed', result);
+        // Refresh data if needed
+      });
+    }, error => {
+      console.error('Error fetching users:', error);
     });
   }
   fetchDashboardData(): Observable<any> {
@@ -290,7 +290,7 @@ export class AdminDashboardComponent implements OnInit {
   }
 
   fetchTodoListData(): Observable<Task[]> {
-    const url = environment.apiUrl + 'UsersDashboardAPI/TodoList';
+    const url = environment.apiUrl + 'AdminDashboardAPI/GetTaskListForAdmin';
     return this.http.get<Task[]>(url);
   }
 }

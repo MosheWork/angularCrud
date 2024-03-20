@@ -15,27 +15,32 @@
     <input matInput placeholder="Creation Date" [(ngModel)]="creationDate" type="datetime-local" required>
   </mat-form-field> -->
 
-  <mat-form-field appearance="fill">
-    <mat-label>Due Date</mat-label>
-    <input matInput [matDatepicker]="picker" [(ngModel)]="dueDate" placeholder="Choose a date" (dateChange)="dueDateChange($event)">
-    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-    <mat-datepicker #picker></mat-datepicker>
-  </mat-form-field>
-  
-  <!-- Time input -->
-  <mat-form-field appearance="fill">
-    <mat-label>Due Time</mat-label>
-    <input matInput type="time" [(ngModel)]="dueTime" placeholder="HH:MM" (change)="dueTimeChange()">
-  </mat-form-field>
+ <!-- Due Date input with DatePicker -->
+<mat-form-field appearance="fill">
+  <mat-label>Due Date</mat-label>
+  <input matInput [matDatepicker]="dueDatePicker" [(ngModel)]="dueDate" placeholder="DD/MM/YYYY" (dateChange)="dueDateChange($event)" required>
+  <mat-datepicker-toggle matSuffix [for]="dueDatePicker"></mat-datepicker-toggle>
+  <mat-datepicker #dueDatePicker></mat-datepicker>
+</mat-form-field>
 
-  <mat-form-field appearance="fill">
+<!-- Due Time input without DatePicker -->
+<mat-form-field appearance="fill">
+  <mat-label>Due Time</mat-label>
+  <input matInput type="time" [(ngModel)]="dueTime" placeholder="HH:MM" (change)="dueTimeChange($event)" required>
+</mat-form-field>
+
+  <!-- <mat-form-field appearance="fill">
     <mat-label>Created By</mat-label>
-    <input matInput placeholder="Created By" [(ngModel)]="createdBy" required>
-  </mat-form-field>
+    <input matInput placeholder="{}" [(ngModel)]="createdBy" >
+  </mat-form-field> -->
 
   <mat-form-field appearance="fill">
-    <mat-label>Assigned AD User Names (comma-separated)</mat-label>
-    <input matInput placeholder="Assigned AD User Names (comma-separated)" [(ngModel)]="assignedADUserNames" required>
+    <mat-label>User</mat-label>
+    <mat-select [(ngModel)]="selectedUsers" multiple>
+      <mat-option *ngFor="let user of data.users" [value]="user.adUserName">
+        {{ user.adUserName }}
+      </mat-option>
+    </mat-select>
   </mat-form-field>
 </div>
 <div mat-dialog-actions>
