@@ -27,6 +27,7 @@ interface Task {
   styleUrls: ['./user-dashboard.component.scss'],
 })
 export class UserDashboardComponent implements OnInit {
+  
   loginUserName = '';
   userData: any = {};
   previousOpenCalls: number | null = null;

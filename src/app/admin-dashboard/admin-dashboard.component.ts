@@ -12,7 +12,6 @@ import { DatePipe } from '@angular/common';
 import { MatDialog } from '@angular/material/dialog';
 import { AddTaskDialogComponentComponent } from './add-task-dialog-component/add-task-dialog-component.component';
 
-
 interface Task {
   UserTaskID: number;
   ADUserName: string;
@@ -50,9 +49,14 @@ export class AdminDashboardComponent implements OnInit {
     'dueDate',
     'createdBy',
     'timeLeft',
-
-    // 'departure_Date',
   ];
+  todoListDataSource = new MatTableDataSource<Task>(); // Separate DataSource for TodoList
+  dashboardDataSource = new MatTableDataSource<any>(); // Separate DataSource for DashboardData
+
+  @ViewChild('dashboardPaginator') dashboardPaginator!: MatPaginator;
+  @ViewChild('dashboardSort') dashboardSort!: MatSort;
+  @ViewChild('todoListPaginator') todoListPaginator!: MatPaginator;
+  @ViewChild('todoListSort') todoListSort!: MatSort;
 
   dashboardData: any[] = []; // Assuming the data structure is an array of objects
   dashboardColumns: string[] = [
@@ -111,22 +115,33 @@ export class AdminDashboardComponent implements OnInit {
       console.log(this.importantMessages);
     });
 
-    // New interval for fetching dashboard data
-    interval(60000) // 60000 milliseconds = 1 minute
+    // Refresh dashboard data every 60 seconds
+    interval(60000)
       .pipe(
-        startWith(0),
+        startWith(0), // Start immediately
         switchMap(() => this.fetchDashboardData())
       )
-      .subscribe((data) => {
-        this.dashboardData = data;
-        // Assuming you want to update the MatTableDataSource for the dashboard
-        this.matTableDataSource.data = this.dashboardData;
-        this.matTableDataSource._updateChangeSubscription(); // Refresh the table view
+      .subscribe((dashboardData) => {
+        this.dashboardDataSource.data = dashboardData;
+        this.dashboardDataSource.paginator = this.dashboardPaginator;
+        this.dashboardDataSource.sort = this.dashboardSort;
+      });
+
+    // Refresh todo list data every 60 seconds
+    interval(60000)
+      .pipe(
+        startWith(0), // Start immediately
+        switchMap(() => this.fetchTodoListData())
+      )
+      .subscribe((todoListData) => {
+        this.todoListDataSource.data = todoListData;
+        this.todoListDataSource.paginator = this.todoListPaginator;
+        this.todoListDataSource.sort = this.todoListSort;
       });
   }
 
   fetchUserData(): Observable<any> {
-    const url = 'http://localhost:7144/api/AdminDashboardAPI/GetTotalSysAid';
+    const url = environment.apiUrl +'AdminDashboardAPI/GetTotalSysAid';
     return this.http.get<any>(url);
   }
 
@@ -254,7 +269,7 @@ export class AdminDashboardComponent implements OnInit {
   }
   openAddTaskDialog(): void {
     const dialogRef = this.dialog.open(AddTaskDialogComponentComponent, {
-      width: '250px',
+      width: '650px',
       // Pass any data you need for the dialog
     });
 
@@ -272,5 +287,10 @@ export class AdminDashboardComponent implements OnInit {
   fetchDashboardData(): Observable<any> {
     const url = environment.apiUrl + 'AdminDashboardAPI/GetDashboardData';
     return this.http.get(url);
+  }
+
+  fetchTodoListData(): Observable<Task[]> {
+    const url = environment.apiUrl + 'UsersDashboardAPI/TodoList';
+    return this.http.get<Task[]>(url);
   }
 }

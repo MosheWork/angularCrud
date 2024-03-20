@@ -1,5 +1,3 @@
-
-
 <mat-toolbar color="primary">
   <div class="welcome-message">Welcome, {{ loginUserName }}</div>
   <div class="example-spacer">מסך מנהל</div>
@@ -13,248 +11,341 @@
 </mat-toolbar>
 
 <mat-tab-group dir="rtl">
-  <mat-tab label="ראשי"> <div class="dashboard" dir="ltr">
-    <div class="content">
-      <div class="left-content">
-        <div class="tasks-table">
-          <h2 class="table-title">קריאות של הצוות</h2>
-          <!-- <button mat-icon-button (click)="openAddTaskDialog()">
+  <mat-tab label="ראשי">
+    <div class="dashboard" dir="ltr">
+      <div class="content">
+        <div class="left-content">
+          <div class="tasks-table">
+            <h2 class="table-title">קריאות של הצוות</h2>
+            <!-- <button mat-icon-button (click)="openAddTaskDialog()">
             <mat-icon>add</mat-icon>
           </button>
           -->
-          <!-- MUI Table -->
-          <table mat-table [dataSource]="dashboardData" class="mat-elevation-z8">
-            <!-- Define each column definition and cell definitions here -->
-            <ng-container matColumnDef="responsibility">
-              <th mat-header-cell *matHeaderCellDef>responsibility</th>
-              <td mat-cell *matCellDef="let element">
-                {{ element.responsibility }}
-              </td>
-            </ng-container>
-            <!-- Open Calls Column -->
-            <ng-container matColumnDef="open_calls">
-              <th mat-header-cell *matHeaderCellDef>Open Calls</th>
-              <td
-                mat-cell
-                *matCellDef="let element"
-                [ngClass]="
-                  element.open_calls > 0 ? 'bold-font-red' : 'bold-font-blue'
-                "
-              >
-                {{ element.open_calls }}
-              </td>
-            </ng-container>
-  
-            <!-- Follow Up Calls Column -->
-            <ng-container matColumnDef="followUp_calls">
-              <th mat-header-cell *matHeaderCellDef>Follow Up Calls</th>
-              <td
-                mat-cell
-                *matCellDef="let element"
-                [ngClass]="
-                  element.followUp_calls > 0 ? 'bold-font-red' : 'bold-font-blue'
-                "
-              >
-                {{ element.followUp_calls }}
-              </td>
-            </ng-container>
-            <ng-container matColumnDef="closed_today">
-              <th mat-header-cell *matHeaderCellDef>closed_today</th>
-              <td mat-cell *matCellDef="let element">
-                {{ element.closed_today }}
-              </td>
-            </ng-container>
-            <ng-container matColumnDef="closed_this_month">
-              <th mat-header-cell *matHeaderCellDef>closed_this_month</th>
-              <td mat-cell *matCellDef="let element">
-                {{ element.closed_this_month }}
-              </td>
-            </ng-container>
-            <!-- Waiting For User Response Column -->
-            <ng-container matColumnDef="waiting_for_user_response">
-              <th mat-header-cell *matHeaderCellDef>Waiting For User Response</th>
-              <td
-                mat-cell
-                *matCellDef="let element"
-                [ngClass]="
-                  element.waiting_for_user_response > 0
-                    ? 'bold-font-red'
-                    : 'bold-font-blue'
-                "
-              >
-                {{ element.waiting_for_user_response }}
-              </td>
-            </ng-container>
-  
-            <!-- On Hold Column -->
-            <ng-container matColumnDef="on_hold">
-              <th mat-header-cell *matHeaderCellDef>On Hold</th>
-              <td
-                mat-cell
-                *matCellDef="let element"
-                [ngClass]="
-                  element.on_hold > 0 ? 'bold-font-red' : 'bold-font-blue'
-                "
-              >
-                {{ element.on_hold }}
-              </td>
-            </ng-container>
-            <!-- Add other columns based on dashboardColumns -->
-  
-            <tr mat-header-row *matHeaderRowDef="dashboardColumns"></tr>
-            <tr mat-row *matRowDef="let row; columns: dashboardColumns"></tr>
-          </table>
-  
-          <!-- <mat-paginator
+            <!-- MUI Table -->
+            <table
+              mat-table
+              [dataSource]="dashboardDataSource"
+              class="mat-elevation-z8"
+            >
+              <!-- Define each column definition and cell definitions here -->
+              <ng-container matColumnDef="responsibility">
+                <th mat-header-cell *matHeaderCellDef>responsibility</th>
+                <td mat-cell *matCellDef="let element">
+                  {{ element.responsibility }}
+                </td>
+              </ng-container>
+              <!-- Open Calls Column -->
+              <ng-container matColumnDef="open_calls">
+                <th mat-header-cell *matHeaderCellDef>Open Calls</th>
+                <td
+                  mat-cell
+                  *matCellDef="let element"
+                  [ngClass]="
+                    element.open_calls > 0 ? 'bold-font-red' : 'bold-font-blue'
+                  "
+                >
+                  {{ element.open_calls }}
+                </td>
+              </ng-container>
+
+              <!-- Follow Up Calls Column -->
+              <ng-container matColumnDef="followUp_calls">
+                <th mat-header-cell *matHeaderCellDef>Follow Up Calls</th>
+                <td
+                  mat-cell
+                  *matCellDef="let element"
+                  [ngClass]="
+                    element.followUp_calls > 0
+                      ? 'bold-font-red'
+                      : 'bold-font-blue'
+                  "
+                >
+                  {{ element.followUp_calls }}
+                </td>
+              </ng-container>
+              <ng-container matColumnDef="closed_today">
+                <th mat-header-cell *matHeaderCellDef>closed_today</th>
+                <td mat-cell *matCellDef="let element">
+                  {{ element.closed_today }}
+                </td>
+              </ng-container>
+              <ng-container matColumnDef="closed_this_month">
+                <th mat-header-cell *matHeaderCellDef>closed_this_month</th>
+                <td mat-cell *matCellDef="let element">
+                  {{ element.closed_this_month }}
+                </td>
+              </ng-container>
+              <!-- Waiting For User Response Column -->
+              <ng-container matColumnDef="waiting_for_user_response">
+                <th mat-header-cell *matHeaderCellDef>
+                  Waiting For User Response
+                </th>
+                <td
+                  mat-cell
+                  *matCellDef="let element"
+                  [ngClass]="
+                    element.waiting_for_user_response > 0
+                      ? 'bold-font-red'
+                      : 'bold-font-blue'
+                  "
+                >
+                  {{ element.waiting_for_user_response }}
+                </td>
+              </ng-container>
+
+              <!-- On Hold Column -->
+              <ng-container matColumnDef="on_hold">
+                <th mat-header-cell *matHeaderCellDef>On Hold</th>
+                <td
+                  mat-cell
+                  *matCellDef="let element"
+                  [ngClass]="
+                    element.on_hold > 0 ? 'bold-font-red' : 'bold-font-blue'
+                  "
+                >
+                  {{ element.on_hold }}
+                </td>
+              </ng-container>
+              <!-- Add other columns based on dashboardColumns -->
+
+              <tr mat-header-row *matHeaderRowDef="dashboardColumns"></tr>
+              <tr mat-row *matRowDef="let row; columns: dashboardColumns"></tr>
+            </table>
+
+            <!-- <mat-paginator
             [length]="matTableDataSource.paginator?.length || 0"
             [pageIndex]="matTableDataSource.paginator?.pageIndex"
             [pageSize]="matTableDataSource.paginator?.pageSize"
             [pageSizeOptions]="[15, 50, 100]"
           ></mat-paginator> -->
-        </div>
-  
-        <div class="important-messages-cards" dir="rtl">
-          <div class="messages-container">
-            <h2 class="important-messages-title">הודעות חשובות </h2>
-  
-            <div class="message-cards-container">
-              <mat-card
-                *ngFor="let message of importantMessages"
-                [ngClass]="{
-                  'priority-1': message.priority === 1,
-                  'priority-2': message.priority === 2,
-                  'priority-3': message.priority === 3
-                }"
-                class="message-card"
-              >
-                <mat-card-header>
-                  <mat-card-title>{{ message.messageTitle }}</mat-card-title>
-                  <mat-card-subtitle>{{
-                    message.createTime | date : "medium"
-                  }}</mat-card-subtitle>
-                </mat-card-header>
-                <mat-card-content>
-                  <p>{{ message.messageBody }}</p>
-                </mat-card-content>
-                <!-- <mat-card-actions>
+          </div>
+
+          <div class="important-messages-cards" dir="rtl">
+            <div class="messages-container">
+              <h2 class="important-messages-title">הודעות חשובות</h2>
+
+              <div class="message-cards-container">
+                <mat-card
+                  *ngFor="let message of importantMessages"
+                  [ngClass]="{
+                    'priority-1': message.priority === 1,
+                    'priority-2': message.priority === 2,
+                    'priority-3': message.priority === 3
+                  }"
+                  class="message-card"
+                >
+                  <mat-card-header>
+                    <mat-card-title>{{ message.messageTitle }}</mat-card-title>
+                    <mat-card-subtitle>{{
+                      message.createTime | date : "medium"
+                    }}</mat-card-subtitle>
+                  </mat-card-header>
+                  <mat-card-content>
+                    <p>{{ message.messageBody }}</p>
+                  </mat-card-content>
+                  <!-- <mat-card-actions>
                   <button mat-button> אשר קריאה</button>
                 </mat-card-actions> -->
-              </mat-card>
+                </mat-card>
+              </div>
             </div>
           </div>
         </div>
-      </div>
-  
-      <div class="right-content">
-        <div class="cards">
-          <h2 class="cards-title">מצב קריאות</h2>
-          <!-- First row of cards -->
-          <div class="card">
-            <div class="card-title">קריאות פתוחות</div>
-            <div
-              class="card-value"
-              [ngClass]="
-                userData.open_calls > 0 ? 'card-value-red' : 'card-value-blue'
-              "
-            >
-              {{ userData.open_calls }}
+
+        <div class="right-content">
+          <div class="cards">
+            <h2 class="cards-title">מצב קריאות</h2>
+            <!-- First row of cards -->
+            <div class="card">
+              <div class="card-title">קריאות פתוחות</div>
+              <div
+                class="card-value"
+                [ngClass]="
+                  userData.open_calls > 0 ? 'card-value-red' : 'card-value-blue'
+                "
+              >
+                {{ userData.open_calls }}
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-title">המשך טיפול</div>
+              <div
+                class="card-value"
+                [ngClass]="{
+                  'card-value-blue': userData.fallowUp_calls == '0',
+                  'card-value-red': userData.fallowUp_calls != '0'
+                }"
+              >
+                {{ userData.followUp_calls }}
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-title">ממתין לתגובת המשתמש</div>
+              <div
+                class="card-value"
+                [ngClass]="{
+                  'card-value-blue': userData.waiting_for_user_response == '0',
+                  'card-value-red': userData.waiting_for_user_response != '0'
+                }"
+              >
+                {{ userData.waiting_for_user_response }}
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-title">בהמתנה</div>
+              <div
+                class="card-value"
+                [ngClass]="{
+                  'card-value-blue': userData.on_hold == '0',
+                  'card-value-red': userData.on_hold != '0'
+                }"
+              >
+                {{ userData.on_hold }}
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-title">קריאות סגורות- היום</div>
+
+              <div
+                class="card-value"
+                [ngClass]="{
+                  'card-value-blue': userData.closed_today > 0,
+                  'card-value-red': userData.closed_today <= 0
+                }"
+              >
+                {{ userData.closed_today }}
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-title">קריאות סגורות - החודש</div>
+              <div class="card-value [ngClass]= card-value-blue">
+                {{ userData.closed_this_month }}
+              </div>
             </div>
           </div>
-          <div class="card">
-            <div class="card-title">המשך טיפול</div>
-            <div
-              class="card-value"
-              [ngClass]="{
-                'card-value-blue': userData.fallowUp_calls == '0',
-                'card-value-red': userData.fallowUp_calls != '0'
-              }"
-            >
-              {{ userData.followUp_calls
-              }}
-            </div>
+          <div class="important-links">
+            <h2 class="links-title">קישורים חשובים</h2>
+            <ul class="links-list">
+              <!-- Individual link items -->
+              <li>
+                <a
+                  href="http://srv-apps-prod/app/#/employeesmanagedashboard"
+                  target="_blank"
+                  >ONNLINE
+                </a>
+              </li>
+              <li>
+                <a
+                  href="http://srv-sysaid/HelpDesk.jsp?helpdeskfrm&fromId=IncidentsList&showAll=1&historyPage=Y"
+                  target="_blank"
+                  >sysaid
+                </a>
+              </li>
+              <li>
+                <a
+                  href="http://srv-apps-04:8080/#/mgmt/modifysingleuser?reportId=6008"
+                  target="_blank"
+                  >AD
+                </a>
+              </li>
+              <li>
+                <a href="http://localhost:4200/stazerim" target="_blank">
+                  הרשאות לסטאזרים</a
+                >
+              </li>
+              <li>
+                <a
+                  href="https://innovation-tzmc.monday.com/boards/1335449086"
+                  target="_blank"
+                >
+                  monday</a
+                >
+              </li>
+              <li>
+                <a
+                  href="http://srv-profile/App/Portal/ChangeOrgUnit/OpenRequest.aspx"
+                  target="_blank"
+                >
+                  אקספנדיון - העברת מחלקה</a
+                >
+              </li>
+              <li>
+                <a
+                  href="http://srv-cp-inter:57772/csp/elad/EnsPortal.ProductionConfig.zen?PRODUCTION=Productions.Poria&$NAMESPACE=ELAD"
+                  target="_blank"
+                >
+                  אנסמבל
+                </a>
+              </li>
+              <!-- Add more link items as needed -->
+            </ul>
           </div>
-          <div class="card">
-            <div class="card-title">ממתין לתגובת המשתמש</div>
-            <div
-              class="card-value"
-              [ngClass]="{
-                'card-value-blue': userData.waiting_for_user_response == '0',
-                'card-value-red': userData.waiting_for_user_response != '0'
-              }"
-            >
-              {{ userData.waiting_for_user_response }}
-            </div>
-          </div>
-          <div class="card">
-            <div class="card-title">בהמתנה</div>
-            <div
-              class="card-value"
-              [ngClass]="{
-                'card-value-blue': userData.on_hold == '0',
-                'card-value-red': userData.on_hold != '0'
-              }"
-            >
-              {{ userData.on_hold }}
-            </div>
-          </div>
-  
-          <div class="card">
-            <div class="card-title">קריאות סגורות- היום</div>
-  
-            <div
-              class="card-value"
-              [ngClass]="{
-                'card-value-blue': userData.closed_today > 0,
-                'card-value-red': userData.closed_today <= 0
-              }"
-            >
-              {{ userData.closed_today }}
-            </div>
-          </div>
-          <div class="card">
-            <div class="card-title">קריאות סגורות - החודש</div>
-            <div class="card-value [ngClass]= card-value-blue">
-              {{ userData.closed_this_month }}
-            </div>
-          </div>
-        </div>
-        <div class="important-links">
-          <h2 class="links-title">קישורים חשובים</h2>
-          <ul class="links-list">
-            <!-- Individual link items -->
-            <li>
-              <a
-                href="http://srv-apps-prod/app/#/employeesmanagedashboard"
-                target="_blank"
-                >ONNLINE
-              </a>
-            </li>
-            <li>
-              <a href="http://srv-sysaid/HelpDesk.jsp?helpdeskfrm&fromId=IncidentsList&showAll=1&historyPage=Y" target="_blank">sysaid </a>
-            </li>
-            <li>
-              <a href="http://srv-apps-04:8080/#/mgmt/modifysingleuser?reportId=6008" target="_blank">AD </a>
-            </li>
-            <li>
-              <a href="http://localhost:4200/stazerim" target="_blank"> הרשאות לסטאזרים</a>
-            </li>
-            <li>
-              <a href="https://innovation-tzmc.monday.com/boards/1335449086" target="_blank"> monday</a>
-            </li>
-            <li>
-              <a href="http://srv-profile/App/Portal/ChangeOrgUnit/OpenRequest.aspx" target="_blank"> אקספנדיון - העברת מחלקה</a>
-            </li>
-            <li>
-              <a href="http://srv-cp-inter:57772/csp/elad/EnsPortal.ProductionConfig.zen?PRODUCTION=Productions.Poria&$NAMESPACE=ELAD" target="_blank">  אנסמבל </a>
-            </li>
-            <!-- Add more link items as needed -->
-          </ul>
         </div>
       </div>
     </div>
-  </div> </mat-tab>
-  <mat-tab label="ניהול משימות"> Content 2 </mat-tab>
+  </mat-tab>
+  <mat-tab label="ניהול משימות">
+    <div class="tasks-table">
+      <h2 class="table-title">משימות</h2>
+        <!-- Add Task Button -->
+    <button mat-fab color="primary" class="add-task-btn" (click)="openAddTaskDialog()">
+      <mat-icon>add</mat-icon>
+    </button>
+      <mat-table
+        [dataSource]="todoListDataSource"
+        matSort
+        dir="rtl"
+        class="mat-elevation-z8"
+      >
+        <!-- Dynamically create each column based on the columns array -->
+        <ng-container *ngFor="let column of columns" [matColumnDef]="column">
+          <mat-header-cell *matHeaderCellDef mat-sort-header>
+            {{ getColumnLabel(column) }}
+          </mat-header-cell>
+          <mat-cell *matCellDef="let element">
+            <ng-container [ngSwitch]="column">
+              <!-- Custom case for each column as needed -->
+              <ng-container *ngSwitchCase="'creationDate'">{{
+                element[column] | date : "dd/MM/yyyy HH:mm"
+              }}</ng-container>
+              <ng-container *ngSwitchCase="'dueDate'">{{
+                element[column] | date : "dd/MM/yyyy HH:mm"
+              }}</ng-container>
+              <ng-container *ngSwitchCase="'timeLeft'">
+                <span
+                  [class.bold-font]="
+                    isLessThan25Hours(element.dueDate, element.status)
+                  "
+                >
+                  {{ getTimeLeft(element.dueDate, element.status) }}
+                </span>
+              </ng-container>
+              <!-- Default display for other columns -->
+              <ng-container *ngSwitchDefault>{{
+                element[column]
+              }}</ng-container>
+            </ng-container>
+          </mat-cell>
+        </ng-container>
+        <mat-header-row *matHeaderRowDef="columns"></mat-header-row>
+        <mat-row
+          *matRowDef="let row; columns: columns"
+          [ngClass]="{
+            'priority-1': row.status === 'Not Started',
+            'priority-3': row.status === 'In Progress',
+            'priority-2': row.status === 'Completed',
+            'bold-font': isLessThan25Hours(row.dueDate, row.status)
+          }"
+          class="mat-row"
+        ></mat-row>
+      </mat-table>
+
+      <mat-paginator
+        #todoListPaginator="matPaginator"
+        [pageSizeOptions]="[ 10, 20,50]"
+      ></mat-paginator>
+    </div>
+  </mat-tab>
   <mat-tab label="ניהול הודעות"> Content 3 </mat-tab>
 </mat-tab-group>
-
-

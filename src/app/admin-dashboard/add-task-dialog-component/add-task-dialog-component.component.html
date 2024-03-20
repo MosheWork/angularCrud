@@ -1,12 +1,44 @@
-<!-- add-task-dialog.component.html -->
 <h1 mat-dialog-title>Add New Task</h1>
-<div mat-dialog-content>
-  <mat-form-field>
-    <input matInput placeholder="Task Name" [(ngModel)]="taskName">
+<div mat-dialog-content class="form-content">
+  <mat-form-field appearance="fill">
+    <mat-label>Task Name</mat-label>
+    <input matInput placeholder="Task Name" [(ngModel)]="taskName" required>
   </mat-form-field>
-  <!-- Add other fields as needed -->
+
+  <mat-form-field appearance="fill">
+    <mat-label>Description</mat-label>
+    <textarea matInput placeholder="Description" [(ngModel)]="description" required></textarea>
+  </mat-form-field>
+
+  <!-- <mat-form-field appearance="fill">
+    <mat-label>Creation Date</mat-label>
+    <input matInput placeholder="Creation Date" [(ngModel)]="creationDate" type="datetime-local" required>
+  </mat-form-field> -->
+
+  <mat-form-field appearance="fill">
+    <mat-label>Due Date</mat-label>
+    <input matInput [matDatepicker]="picker" [(ngModel)]="dueDate" placeholder="Choose a date" (dateChange)="dueDateChange($event)">
+    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+    <mat-datepicker #picker></mat-datepicker>
+  </mat-form-field>
+  
+  <!-- Time input -->
+  <mat-form-field appearance="fill">
+    <mat-label>Due Time</mat-label>
+    <input matInput type="time" [(ngModel)]="dueTime" placeholder="HH:MM" (change)="dueTimeChange()">
+  </mat-form-field>
+
+  <mat-form-field appearance="fill">
+    <mat-label>Created By</mat-label>
+    <input matInput placeholder="Created By" [(ngModel)]="createdBy" required>
+  </mat-form-field>
+
+  <mat-form-field appearance="fill">
+    <mat-label>Assigned AD User Names (comma-separated)</mat-label>
+    <input matInput placeholder="Assigned AD User Names (comma-separated)" [(ngModel)]="assignedADUserNames" required>
+  </mat-form-field>
 </div>
 <div mat-dialog-actions>
   <button mat-button (click)="onNoClick()">Cancel</button>
-  <button mat-button (click)="saveTask()">Save</button>
+  <button mat-button [disabled]="!formValid()" (click)="saveTask()">Save</button>
 </div>
