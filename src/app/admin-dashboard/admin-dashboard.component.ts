@@ -31,6 +31,7 @@ interface Task {
 export class AdminDashboardComponent implements OnInit {
   loginUserName = '';
   userData: any = {};
+  taskSummeryData: any = {};
   previousOpenCalls: number | null = null;
   importantMessages: any[] = []; // Assuming the data structure is an array of objects
 
@@ -51,13 +52,19 @@ export class AdminDashboardComponent implements OnInit {
     'userStatuses',
     //'adUserName',
   ];
+
+  displayedColumns: string[] = ['adUserName', 'new', 'inProgress', 'completed'];
+
   todoListDataSource = new MatTableDataSource<Task>(); // Separate DataSource for TodoList
   dashboardDataSource = new MatTableDataSource<any>(); // Separate DataSource for DashboardData
+ TaskSummeryDataSource = new MatTableDataSource<any>(); // Separate DataSource for TodoList
 
   @ViewChild('dashboardPaginator') dashboardPaginator!: MatPaginator;
   @ViewChild('dashboardSort') dashboardSort!: MatSort;
   @ViewChild('todoListPaginator') todoListPaginator!: MatPaginator;
   @ViewChild('todoListSort') todoListSort!: MatSort;
+  @ViewChild('taskSummeryDataPaginator') taskSummeryDataPaginator!: MatPaginator;
+  @ViewChild('taskSummeryDataSort') taskSummeryDataSort!: MatSort;
 
   dashboardData: any[] = []; // Assuming the data structure is an array of objects
   dashboardColumns: string[] = [
@@ -94,14 +101,13 @@ export class AdminDashboardComponent implements OnInit {
       .subscribe(
         (data) => {
           if (data.length > 0) this.userData = data[0]; // Update userData with the fetched data
-          console.log('Data fetched:', this.userData); // Debugging
           this.checkForNewServiceCall(this.userData.open_calls); // Additional logic
         },
         (error) => {
           console.error('Error fetching user data:', error); // Handle any errors
         }
       );
-
+     
     // Initialize the filter predicate to filter based on the status text
     this.matTableDataSource.filterPredicate = (
       data: { status: string },
@@ -127,7 +133,7 @@ export class AdminDashboardComponent implements OnInit {
         this.dashboardDataSource.paginator = this.dashboardPaginator;
         this.dashboardDataSource.sort = this.dashboardSort;
       });
-
+      
     // Refresh todo list data every 60 seconds
     interval(60000)
       .pipe(
@@ -138,6 +144,17 @@ export class AdminDashboardComponent implements OnInit {
         this.todoListDataSource.data = todoListData;
         this.todoListDataSource.paginator = this.todoListPaginator;
         this.todoListDataSource.sort = this.todoListSort;
+      });
+      interval(60000)
+      .pipe(
+        startWith(0), // Start immediately
+        switchMap(() => this.fetchTaskSummery())
+      )
+      .subscribe((taskSummeryData) => {
+        this.TaskSummeryDataSource.data = taskSummeryData;
+        this.TaskSummeryDataSource.paginator = this.taskSummeryDataPaginator;
+        this.TaskSummeryDataSource.sort = this.taskSummeryDataSort;
+      
       });
   }
 
@@ -170,6 +187,7 @@ export class AdminDashboardComponent implements OnInit {
     };
     return columnLabels[column] || column;
   }
+  
   fetchImportantMessages(): Observable<any> {
     const url = environment.apiUrl + 'importantMessagesAPI';
     return this.http.get(url);
@@ -292,5 +310,10 @@ export class AdminDashboardComponent implements OnInit {
   fetchTodoListData(): Observable<Task[]> {
     const url = environment.apiUrl + 'AdminDashboardAPI/GetTaskListForAdmin';
     return this.http.get<Task[]>(url);
+  }
+
+  fetchTaskSummery(): Observable<any[]> {
+    const url = environment.apiUrl + 'AdminDashboardAPI/TaskSummary';
+    return this.http.get<any[]>(url); // Return Observable<any[]>
   }
 }
