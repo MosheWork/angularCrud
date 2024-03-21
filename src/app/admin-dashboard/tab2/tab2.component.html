@@ -2,15 +2,7 @@
     <div class="left-content">
       <div class="tasks-table">
         <h2 class="table-title">משימות</h2>
-        <!-- Add Task Button -->
-        <button
-          mat-fab
-          color="primary"
-          class="add-task-btn"
-          (click)="openAddTaskDialog()"
-        >
-          <mat-icon>add</mat-icon>
-        </button>
+      
         <mat-table
           [dataSource]="todoListDataSource"
           matSort
@@ -68,9 +60,20 @@
           [pageSizeOptions]="[10, 20, 50]"
         ></mat-paginator>
       </div>
+
+        <!-- Add Task Button -->
+        <button
+          mat-fab
+          color="primary"
+          class="add-task-btn"
+          matTooltip="הוספת משימה חדשה" 
+          (click)="openAddTaskDialog()"
+        >
+          <mat-icon>add</mat-icon>
+        </button>
     </div>
     <div class="right-content">
-      <div class="tasks-table">
+      <div class="tasks-table-2">
         <h2 class="table-title">משימות</h2>
         <!-- Add Task Button -->
 

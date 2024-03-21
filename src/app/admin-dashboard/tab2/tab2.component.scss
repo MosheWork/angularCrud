@@ -48,19 +48,25 @@
   /* Right side content layout */
   .right-content {
     width: 30%; /* Width to match the cards */
-    display: flex;
+    //display: flex;
     flex-direction: column;
   }
   
   /* Task table styling */
   .tasks-table {
-    height: 90%;
+    height: 80%;
     overflow-y: auto;
     flex: 1;
     margin-right: 1%;
-    border: 2px solid #ccc;
-    
-    
+    border: 2px solid #ccc; 
+  }
+
+  .tasks-table-2 {
+    height: auto;
+    overflow-y: auto;
+    flex: 1;
+    margin-right: 1%;
+    border: 2px solid #ccc; 
   }
   
   /* Table row styling */
@@ -82,44 +88,7 @@
     cursor: pointer;
   }
   
-  /* Cards styling */
-  .cards {
-    display: flex;
-    flex-wrap: wrap; /* Allows cards to wrap to the next row */
-    justify-content: space-between; /* Evenly distributes space between cards */
-    align-items: flex-start; /* Aligns cards to the top of the container */
-    height: 50vh; /* Fixed height as specified */
-    overflow-y: auto; /* Scroll if content exceeds the container's height */
-    width: 100%; /* Take the full width of its parent container */
-    border: 2px solid #ccc;
-    padding: 2px; /* Padding inside the cards container */
-  }
-  
-  /* Individual card styling */
-  .card {
-    background-color: rgb(222, 212, 241);
-    border-radius: 10px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    width: calc(50% - 10px); /* Adjust width to fit two cards per row including margin */
-    margin: 5px; /* Margin around each card */
-    padding: 15px;
-    box-sizing: border-box; /* Include padding and border in width calculation */
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    font-weight: bolder;
-    color: #090808;
-  }
-  
-  /* Card value colors */
-  .card-value-red {
-    color: red;
-  }
-  
-  .card-value-blue {
-    color: blue;
-  }
+
   
   /* Responsive adjustments */
   @media (max-width: 768px) {
@@ -225,173 +194,8 @@
   }
   /* Important Links styling */
   /* Important Links styling to match the dashboard design */
-  .important-links {
-    //background-color: rgb(222, 212, 241); /* Using the same purple shade as other parts */
-    //border-radius: 10px; /* Consistent border radius as cards */
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Consistent shadow as cards */
-    padding: 2px; /* Consistent padding as cards */
-    margin: 10px 0; /* Consistent spacing as other elements */
-    box-sizing: border-box; /* Box-sizing similar to other elements */
-    direction: rtl; /* Right-to-left text direction */
-    overflow-y: auto; /* Scrollbar appears if content overflows */
-    border: 2px solid #ccc;
-    height: calc(100vh - 64px - 20px - 50vh - 40px); /* height of the viewport - header - padding - height of cards - margin */
-  }
-  
-  .links-title {
-    font-size: 15px; /* Matching font size as other titles */
-    font-weight: bold; /* Bold text as other titles */
-    color: #090808; /* Consistent text color */
-    text-align: center; /* Titles centered as other parts */
-    padding: 1px 0; /* Consistent padding */
-    margin: 0 20px; /* Consistent margin */
-    border-bottom: 2px solid #ccc; /* Consistent border as other titles */
-  }
-  
-  /* Links list styling for a 6-in-a-row layout */
-  .links-list {
-    display: flex; /* Use flexbox to create a row */
-    flex-wrap: wrap; /* Allow items to wrap to the next line */
-    justify-content: flex-start; /* Align items to the start of the flex container */
-    align-items: stretch; /* Stretch items to fill the container */
-    padding: 0; /* Remove default padding */
-    margin: 0; /* Remove default margin */
-    list-style-type: none; /* Remove list bullet points */
-  }
-  
-  .links-list li {
-    flex: 0 0 20%; /* Each item takes up 16.66% of the container width */
-    max-width: 20%; /* Ensure the item does not grow larger than 16.66% */
-    box-sizing: border-box; /* Include padding and border in the element's total width and height */
-    padding: 5px; /* Add some padding around each item */
-    text-align: center; /* Center text in each item */
-    margin-bottom: 10px; /* Add some margin below each item */
-    
-  }
-  
-  .links-list li a {
-    display: block; /* Make the link fill the entire list item area */
-    text-decoration: none; /* Remove underline from links */
-    color: #333; /* Color of the text */
-    background-color: rgb(222, 212, 241);
-      padding: 10px; /* Padding inside the link for spacing */
-    border: 1px solid rgb(17, 16, 16); /* Border for the link */
-    border-radius: 5px; /* Rounded corners for the link */
-    transition: all 0.3s ease; /* Transition for interactive states */
-  }
-  
-  
-  .links-list li a:hover {
-    background-color: #eae0f8; /* Change background color on hover */
-    text-decoration: underline; /* Underline text on hover */
-  }
-  
-  .links-list li a:hover {
-    text-decoration: underline; /* Underline link on hover for indication */
-  }
-  
-  /* Responsive adjustments */
-  @media (max-width: 1200px) {
-    .links-list li {
-      flex: 0 0 33.33%; /* Switch to 3 items per row */
-      max-width: 33.33%;
-    }
-  }
-  
-  @media (max-width: 768px) {
-    .links-list li {
-      flex: 0 0 50%; /* Switch to 2 items per row */
-      max-width: 50%;
-    }
-  }
-  
-  @media (max-width: 480px) {
-    .links-list li {
-      flex: 0 0 100%; /* Switch to 1 item per row */
-      max-width: 100%;
-    }
-  }
-  
-  .important-messages-cards {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 10px;
-    width: 100%; /* Takes full width of its container */
-  }
-  
-  /* Container for all messages including the title */
-  .messages-container {
-   // width: 100%;
-    border: 2px solid #ccc; /* Border around the entire container */
-    padding: 2px;
-    box-sizing: border-box;
-    margin-top: 1px; /* Space between the container and other elements */
-    background-color: #fff; /* White background for the container */
-    overflow-y: auto; /* Scrollbar appears if content overflows */
-    
-    height: calc(100vh - 64px - 20px - 50vh - 40px); /* height of the viewport - header - padding - height of cards - margin */
-  }
-  
-  /* Title within the container */
-  .important-messages-title {
-    font-size: 15px; /* Matching font size as other titles */
-    font-weight: bold; /* Bold text as other titles */
-    color: #090808; /* Consistent text color */
-    text-align: center; /* Titles centered as other parts */
-    padding: 1px 0; /* Consistent padding */
-    margin: 0 20px; /* Consistent margin */
-    border-bottom: 2px solid #ccc; /* Consistent border as other titles */
-   
-  }
-  
-  /* Flex container for cards */
-  .message-cards-container {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-around; /* Centers cards with space around them */
-    gap: 1px; /* Space between cards */
-    padding-top: 5px;
-   
-  }
-  
-  /* Individual message card */
-  .message-card {
-    flex: 0 0 calc(33% - 20px); /* Sets the basis for two cards per row accounting for gap */
-    border: 1px solid #ccc; /* Border around each card */
-    border-radius: 5px; /* Rounded corners for each card */
-    padding: 5px; /* Padding inside each card */
-    margin-bottom: 10px; /* Space between rows of cards */
-    background-color: #E6F4F1; /* Background color for each card */
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
-  }
-  
-  .message-card:hover {
-    box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
-  }
-  
-  .mat-card-header, .mat-card-content, .mat-card-actions {
-    padding: 8px;
-  }
-  
-  .mat-card-title, .mat-card-subtitle {
-    margin-right: 10px;
-  }
-  
-  /* Responsive adjustments for very small screens */
-  @media (max-width: 600px) {
-    .message-card {
-      flex: 0 0 100%; /* Each card takes full width on small screens */
-      max-width: 100%; /* Ensures card doesn't exceed the container's width */
-    }
-  }
-  
-  .message {
-    border: 1px solid #ccc; /* Subtle border for individual messages */
-    margin-bottom: 15px; /* Space between messages */
-    padding: 10px; /* Padding inside each message for spacing */
-    border-radius: 4px; /* Optionally round the corners of the message borders */
-  }
+
+ 
   .priority-1 {
     color:#893232;
     background-color: #fadddd;
@@ -426,35 +230,7 @@
     font-weight: bold;
   }
 
-  .links-list {
-    display: flex;
-    flex-wrap: wrap;
-    list-style-type: none;
-    padding: 0;
-    margin: 0;
-  }
-  
-  .links-list li {
-    width: calc(100% / 3 - 10px); /* Adjust '3' to the number of items per row you want */
-    height: 80px; /* Example height, adjust as needed */
-    margin: 5px;
-    box-sizing: border-box; /* Include padding and border in the element's total width and height */
-  }
-  
-  .links-list li a {
-    display: flex;
-    align-items: center; /* This will vertically center the text */
-    justify-content: center; /* This will horizontally center the text */
-    height: 100%; /* Full height of the parent <li> */
-    padding: 10px; /* Adjust padding as necessary */
-    border: 1px solid rgb(17, 16, 16); /* Border styling */
-    border-radius: 5px; /* Rounded corners */
-    background-color: rgb(222, 212, 241); /* Background color */
-    text-decoration: none; /* No underline */
-    color: #333; /* Text color */
-    box-sizing: border-box; /* Padding and border are included in width/height */
-  }
-
+ 
 
   mat-toolbar {
     height: 48px; /* Adjust to the actual desired height */
