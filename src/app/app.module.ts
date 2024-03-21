@@ -58,7 +58,8 @@ import { UserDashboardComponent } from './user-dashboard/user-dashboard.componen
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { AdminDashboardComponent } from './admin-dashboard/admin-dashboard.component';
 import { AddTaskDialogComponentComponent } from './admin-dashboard/add-task-dialog-component/add-task-dialog-component.component';
-import { MatListModule } from '@angular/material/list'; 
+import { MatListModule } from '@angular/material/list';
+import { Tab2Component } from './admin-dashboard/tab2/tab2.component'; 
 
 
 
@@ -92,6 +93,7 @@ import { MatListModule } from '@angular/material/list';
     UserDashboardComponent,
     AdminDashboardComponent,
     AddTaskDialogComponentComponent,
+    Tab2Component,
   ],
   imports: [
     BrowserModule,
