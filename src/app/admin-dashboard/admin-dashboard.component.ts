@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild,AfterViewInit  } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, of } from 'rxjs'; // Import 'of' to handle cases where you don't need to make an HTTP call
 import { interval, switchMap, startWith } from 'rxjs';
@@ -11,6 +11,11 @@ import { environment } from '../../environments/environment';
 import { DatePipe } from '@angular/common';
 import { MatDialog } from '@angular/material/dialog';
 import { AddTaskDialogComponentComponent } from './add-task-dialog-component/add-task-dialog-component.component';
+import { ChartOptions, ChartType, ChartData } from 'chart.js';
+import { Chart, registerables } from 'chart.js';
+
+
+
 
 interface Task {
   UserTaskID: number;
@@ -28,7 +33,7 @@ interface Task {
   templateUrl: './admin-dashboard.component.html',
   styleUrls: ['./admin-dashboard.component.scss'],
 })
-export class AdminDashboardComponent implements OnInit {
+export class AdminDashboardComponent implements OnInit,AfterViewInit  {
   loginUserName = '';
   userData: any = {};
   taskSummeryData: any = {};
@@ -40,6 +45,23 @@ export class AdminDashboardComponent implements OnInit {
   statusMenuOpened = false;
   selectedStatus: string | null = null;
   statusOptions: string[] = ['Not Started', 'In Progress', 'Completed'];
+
+  public barChartOptions: ChartOptions = {
+    responsive: true,
+  };
+  public barChartType: ChartType = 'bar';
+  public barChartData: ChartData<'bar'> = {
+    labels: [],
+    datasets: [
+      {
+        data: [],
+        label: 'SysAid Data',
+        backgroundColor: 'rgba(54, 162, 235, 0.2)',
+        borderColor: 'rgba(54, 162, 235, 1)',
+        borderWidth: 1,
+      },
+    ],
+  };
 
   columns: string[] = [
     //'taskID',
@@ -57,13 +79,14 @@ export class AdminDashboardComponent implements OnInit {
 
   todoListDataSource = new MatTableDataSource<Task>(); // Separate DataSource for TodoList
   dashboardDataSource = new MatTableDataSource<any>(); // Separate DataSource for DashboardData
- TaskSummeryDataSource = new MatTableDataSource<any>(); // Separate DataSource for TodoList
+  TaskSummeryDataSource = new MatTableDataSource<any>(); // Separate DataSource for TodoList
 
   @ViewChild('dashboardPaginator') dashboardPaginator!: MatPaginator;
   @ViewChild('dashboardSort') dashboardSort!: MatSort;
   @ViewChild('todoListPaginator') todoListPaginator!: MatPaginator;
   @ViewChild('todoListSort') todoListSort!: MatSort;
-  @ViewChild('taskSummeryDataPaginator') taskSummeryDataPaginator!: MatPaginator;
+  @ViewChild('taskSummeryDataPaginator')
+  taskSummeryDataPaginator!: MatPaginator;
   @ViewChild('taskSummeryDataSort') taskSummeryDataSort!: MatSort;
 
   dashboardData: any[] = []; // Assuming the data structure is an array of objects
@@ -107,7 +130,7 @@ export class AdminDashboardComponent implements OnInit {
           console.error('Error fetching user data:', error); // Handle any errors
         }
       );
-     
+
     // Initialize the filter predicate to filter based on the status text
     this.matTableDataSource.filterPredicate = (
       data: { status: string },
@@ -133,7 +156,7 @@ export class AdminDashboardComponent implements OnInit {
         this.dashboardDataSource.paginator = this.dashboardPaginator;
         this.dashboardDataSource.sort = this.dashboardSort;
       });
-      
+
     // Refresh todo list data every 60 seconds
     interval(60000)
       .pipe(
@@ -145,7 +168,7 @@ export class AdminDashboardComponent implements OnInit {
         this.todoListDataSource.paginator = this.todoListPaginator;
         this.todoListDataSource.sort = this.todoListSort;
       });
-      interval(60000)
+    interval(60000)
       .pipe(
         startWith(0), // Start immediately
         switchMap(() => this.fetchTaskSummery())
@@ -154,12 +177,16 @@ export class AdminDashboardComponent implements OnInit {
         this.TaskSummeryDataSource.data = taskSummeryData;
         this.TaskSummeryDataSource.paginator = this.taskSummeryDataPaginator;
         this.TaskSummeryDataSource.sort = this.taskSummeryDataSort;
-      
       });
-  }
 
+    this.fetchSysAidData();
+  }
+  ngAfterViewInit(): void {
+    Chart.register(...registerables); // Ensure you register Chart.js components
+    this.initializeChart(); // Initialize the chart
+  }
   fetchUserData(): Observable<any> {
-    const url = environment.apiUrl +'AdminDashboardAPI/GetTotalSysAid';
+    const url = environment.apiUrl + 'AdminDashboardAPI/GetTotalSysAid';
     return this.http.get<any>(url);
   }
 
@@ -187,7 +214,7 @@ export class AdminDashboardComponent implements OnInit {
     };
     return columnLabels[column] || column;
   }
-  
+
   fetchImportantMessages(): Observable<any> {
     const url = environment.apiUrl + 'importantMessagesAPI';
     return this.http.get(url);
@@ -287,20 +314,24 @@ export class AdminDashboardComponent implements OnInit {
     }
   }
   openAddTaskDialog(): void {
-    this.http.get<any[]>('http://localhost:7144/api/AdminDashboardAPI/GetAllUsers').subscribe(users => {
-      const dialogRef = this.dialog.open(AddTaskDialogComponentComponent, {
-        width: '650px',
-        data: { users: users } // Passing users to the dialog
-        
-      });
-      console.log(users)
-      dialogRef.afterClosed().subscribe(result => {
-        console.log('The dialog was closed', result);
-        // Refresh data if needed
-      });
-    }, error => {
-      console.error('Error fetching users:', error);
-    });
+    this.http
+      .get<any[]>('http://localhost:7144/api/AdminDashboardAPI/GetAllUsers')
+      .subscribe(
+        (users) => {
+          const dialogRef = this.dialog.open(AddTaskDialogComponentComponent, {
+            width: '650px',
+            data: { users: users }, // Passing users to the dialog
+          });
+          console.log(users);
+          dialogRef.afterClosed().subscribe((result) => {
+            console.log('The dialog was closed', result);
+            // Refresh data if needed
+          });
+        },
+        (error) => {
+          console.error('Error fetching users:', error);
+        }
+      );
   }
   fetchDashboardData(): Observable<any> {
     const url = environment.apiUrl + 'AdminDashboardAPI/GetDashboardData';
@@ -315,5 +346,25 @@ export class AdminDashboardComponent implements OnInit {
   fetchTaskSummery(): Observable<any[]> {
     const url = environment.apiUrl + 'AdminDashboardAPI/TaskSummary';
     return this.http.get<any[]>(url); // Return Observable<any[]>
+  }
+
+
+  fetchSysAidData(): void {
+    this.http.get<any[]>('http://localhost:7144/api/AdminDashboardAPI/GetSysAidData').subscribe({
+      next: (response) => {
+        this.barChartData.labels = response.map(item => item.problem_sub_type);
+        this.barChartData.datasets[0].data = response.map(item => item.total_count);
+        this.initializeChart(); // Re-initialize the chart with fetched data
+      },
+      error: (error) => console.error('Error fetching SysAid data:', error),
+    });
+  }
+
+  private initializeChart(): void {
+    new Chart('myChart', {
+      type: this.barChartType,
+      data: this.barChartData,
+      options: this.barChartOptions,
+    });
   }
 }

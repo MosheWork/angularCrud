@@ -124,7 +124,7 @@
             <div class="messages-container">
               <h2 class="important-messages-title">הודעות חשובות</h2>
 
-              <div class="message-cards-container">
+              <!-- <div class="message-cards-container">
                 <mat-card
                   *ngFor="let message of importantMessages"
                   [ngClass]="{
@@ -143,11 +143,18 @@
                   <mat-card-content>
                     <p>{{ message.messageBody }}</p>
                   </mat-card-content>
-                  <!-- <mat-card-actions>
-                  <button mat-button> אשר קריאה</button>
-                </mat-card-actions> -->
+                  
                 </mat-card>
-              </div>
+              </div> -->
+              <mat-tab-group>
+                <mat-tab label="קריאות גרף שנתי"
+                  ><div class="chart-container"  >
+                    <canvas id="myChart"></canvas>
+                  </div>
+                </mat-tab>
+                <mat-tab label="Tab 2 Title">Content for Tab 2</mat-tab>
+                <mat-tab label="Tab 3 Title">Content for Tab 3</mat-tab>
+              </mat-tab-group>
             </div>
           </div>
         </div>

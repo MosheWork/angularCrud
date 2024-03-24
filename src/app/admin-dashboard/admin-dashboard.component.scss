@@ -322,7 +322,7 @@
   
   /* Container for all messages including the title */
   .messages-container {
-   // width: 100%;
+   width: 100%;
     border: 2px solid #ccc; /* Border around the entire container */
     padding: 2px;
     box-sizing: border-box;
@@ -463,3 +463,13 @@
     font-weight: bold;
 }
 
+canvas {
+  width: 100% !important;
+  height: 100% !important;
+}
+.chart-container {
+  width: 100%; // Full width of its parent to utilize the space efficiently
+  // Adjust height based on the space left after other contents within important-messages-cards
+  height: auto; // Example, adjust based on your actual layout and space available
+  margin-bottom: 20px; // Provides spacing between the chart and any following content
+}

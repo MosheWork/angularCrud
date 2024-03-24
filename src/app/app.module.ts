@@ -60,7 +60,8 @@ import { AdminDashboardComponent } from './admin-dashboard/admin-dashboard.compo
 import { AddTaskDialogComponentComponent } from './admin-dashboard/add-task-dialog-component/add-task-dialog-component.component';
 import { MatListModule } from '@angular/material/list';
 import { Tab2Component } from './admin-dashboard/tab2/tab2.component';
-import { EditTaskDialogComponent } from './admin-dashboard/edit-task-dialog/edit-task-dialog.component'; 
+import { EditTaskDialogComponent } from './admin-dashboard/edit-task-dialog/edit-task-dialog.component';
+import { SysAidGraphComponent } from './admin-dashboard/sys-aid-graph/sys-aid-graph.component'; 
 
 
 
@@ -96,6 +97,7 @@ import { EditTaskDialogComponent } from './admin-dashboard/edit-task-dialog/edit
     AddTaskDialogComponentComponent,
     Tab2Component,
     EditTaskDialogComponent,
+    SysAidGraphComponent,
   ],
   imports: [
     BrowserModule,
