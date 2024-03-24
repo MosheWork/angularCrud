@@ -32,6 +32,7 @@
     width: 100%;
     margin-top: 5px; /* Adjust if header height changes */
     height: calc(100vh - 64px); /* Adjust if additional elements affect total height */
+  
   }
   /* Ensure full height for all main sections */
   // .cards,
@@ -47,7 +48,7 @@
   
   /* Right side content layout */
   .right-content {
-    width: 30%; /* Width to match the cards */
+    width: auto; /* Width to match the cards */
     //display: flex;
     flex-direction: column;
   }
@@ -71,8 +72,8 @@
   
   /* Table row styling */
   table {
-    width: 95%;
-    margin: 20px auto;
+    width: auto;
+    margin: 5px auto;
   }
   
   // .mat-row:nth-child(odd) {
@@ -112,7 +113,7 @@
   
   /* General container styling */
   .container {
-    min-width: 100%;
+    min-width:auto;
   }
   
   /* Style for the table and cards section titles */
@@ -189,7 +190,7 @@
   }
   
   .right-content {
-    flex-basis: 30%; /* Adjust the width of the right content here if necessary */
+    flex-basis: 35%; /* Adjust the width of the right content here if necessary */
     /* Make sure to not set both flex-basis and width or it might lead to conflicts */
   }
   /* Important Links styling */

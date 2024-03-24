@@ -1,66 +1,63 @@
 <div class="content" dir="ltr">
     <div class="left-content">
-      <div class="tasks-table">
-        <h2 class="table-title">משימות</h2>
-      
-        <mat-table
-          [dataSource]="todoListDataSource"
-          matSort
-          dir="rtl"
-          class="mat-elevation-z8"
-        >
-          <!-- Dynamically create each column based on the columns array -->
-          <ng-container
-            *ngFor="let column of columns"
-            [matColumnDef]="column"
-          >
-            <mat-header-cell *matHeaderCellDef mat-sort-header>
-              {{ getColumnLabel(column) }}
-            </mat-header-cell>
-            <mat-cell *matCellDef="let element">
-              <ng-container [ngSwitch]="column">
-                <!-- Custom case for each column as needed -->
-                <ng-container *ngSwitchCase="'creationDate'">{{
-                  element[column] | date : "dd/MM/yyyy HH:mm"
-                }}</ng-container>
-                <ng-container *ngSwitchCase="'dueDate'">{{
-                  element[column] | date : "dd/MM/yyyy HH:mm"
-                }}</ng-container>
-                <ng-container *ngSwitchCase="'timeLeft'">
-                  <span
-                    [class.bold-font]="
-                      isLessThan25Hours(element.dueDate, element.status)
-                    "
-                  >
-                    {{ getTimeLeft(element.dueDate, element.status) }}
-                  </span>
-                </ng-container>
-                <!-- Default display for other columns -->
-                <ng-container *ngSwitchDefault>{{
-                  element[column]
-                }}</ng-container>
+        <div class="tasks-table">
+            <h2 class="table-title">משימות</h2>
+          
+            <mat-table [dataSource]="todoListDataSource" matSort dir="rtl" class="mat-elevation-z8">
+              <!-- Dynamically create each column based on the todoListDisplayedColumns array -->
+              <ng-container *ngFor="let column of todoListDisplayedColumns" [matColumnDef]="column">
+                <mat-header-cell *matHeaderCellDef mat-sort-header>
+                  {{ getColumnLabel(column) }}
+                </mat-header-cell>
+                <mat-cell *matCellDef="let element">
+                  <ng-container [ngSwitch]="column">
+                    <!-- Custom cases for each column as needed -->
+                    <ng-container *ngSwitchCase="'creationDate'">
+                      {{ element[column] | date:"dd/MM/yyyy HH:mm" }}
+                    </ng-container>
+                    <ng-container *ngSwitchCase="'dueDate'">
+                      {{ element[column] | date:"dd/MM/yyyy HH:mm" }}
+                    </ng-container>
+                    <ng-container *ngSwitchCase="'timeLeft'">
+                      <span [class.bold-font]="isLessThan25Hours(element.dueDate, element.status)">
+                        {{ getTimeLeft(element.dueDate, element.status) }}
+                      </span>
+                    </ng-container>
+                    <ng-container *ngSwitchCase="'editTodo'">
+                        <button mat-icon-button (click)="openEditTaskDialog(element)">
+                            <mat-icon>edit</mat-icon>
+                          </button>
+                      </ng-container>
+                    <ng-container *ngSwitchDefault>
+                      {{ element[column] }}
+                    </ng-container>
+                  </ng-container>
+                </mat-cell>
               </ng-container>
-            </mat-cell>
-          </ng-container>
-          <mat-header-row *matHeaderRowDef="columns"></mat-header-row>
-          <mat-row
-            *matRowDef="let row; columns: columns"
-            [ngClass]="{
-              'priority-1': row.status === 'new',
-              'priority-3': row.status === 'In Progress',
-              'priority-2': row.status === 'Completed',
-              'bold-font': isLessThan25Hours(row.dueDate, row.status)
-            }"
-            class="mat-row"
-          ></mat-row>
-        </mat-table>
-
-        <mat-paginator
-          #todoListPaginator="matPaginator"
-          [pageSizeOptions]="[10, 20, 50]"
-        ></mat-paginator>
-      </div>
-
+          
+              <!-- Edit Column Definition -->
+              <!-- <ng-container matColumnDef="editTodo">
+                <mat-header-cell *matHeaderCellDef>Edit</mat-header-cell>
+                <mat-cell *matCellDef="let element">
+                  
+                  <button mat-icon-button (click)="openEditTaskDialog(element)">
+                    <mat-icon>edit</mat-icon>
+                  </button>
+                </mat-cell>
+              </ng-container>
+           -->
+              <mat-header-row *matHeaderRowDef="todoListDisplayedColumns"></mat-header-row>
+              <mat-row *matRowDef="let row; columns: todoListDisplayedColumns" [ngClass]="{
+                'priority-1': row.status === 'new',
+                'priority-3': row.status === 'In Progress',
+                'priority-2': row.status === 'Completed',
+                'bold-font': isLessThan25Hours(row.dueDate, row.status)
+              }" class="mat-row"></mat-row>
+            </mat-table>
+          
+            <mat-paginator #todoListPaginator="matPaginator" [pageSizeOptions]="[10, 20, 50]"></mat-paginator>
+          </div>
+          
         <!-- Add Task Button -->
         <button
           mat-fab
@@ -122,12 +119,13 @@
               {{ row.completed }}</mat-cell
             >
           </ng-container>
-
+       
           <!-- Set up columns to display -->
           <mat-header-row
             *matHeaderRowDef="displayedColumns"
           ></mat-header-row>
           <mat-row *matRowDef="let row; columns: displayedColumns"></mat-row>
+     
         </mat-table>
       </div>
     </div>

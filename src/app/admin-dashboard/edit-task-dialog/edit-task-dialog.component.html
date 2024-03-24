@@ -1,0 +1,41 @@
+<h2 mat-dialog-title>Edit Task</h2>
+
+<mat-dialog-content class="edit-task-dialog-content">
+  <form [formGroup]="editTaskForm" class="edit-task-form">
+    <mat-form-field appearance="fill" class="edit-task-field">
+      <mat-label>Task Name</mat-label>
+      <input matInput formControlName="taskName">
+    </mat-form-field>
+
+    <mat-form-field appearance="fill" class="edit-task-field">
+      <mat-label>Description</mat-label>
+      <textarea matInput formControlName="description"></textarea>
+    </mat-form-field>
+
+    <!-- <mat-form-field appearance="fill" class="edit-task-field">
+        <mat-label>userStatuses</mat-label>
+        <textarea matInput formControlName="userStatuses"></textarea>
+      </mat-form-field> -->
+
+    <mat-form-field appearance="fill" class="edit-task-field">
+      <mat-label>Due Date</mat-label>
+      <input matInput [matDatepicker]="picker" formControlName="dueDate">
+      <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+      <mat-datepicker #picker></mat-datepicker>
+    </mat-form-field>
+
+    <mat-form-field appearance="fill" class="edit-task-field">
+      <mat-label>Status</mat-label>
+      <mat-select formControlName="status">
+        <mat-option value="Not Started">Not Started</mat-option>
+        <mat-option value="In Progress">In Progress</mat-option>
+        <mat-option value="Completed">Completed</mat-option>
+      </mat-select>
+    </mat-form-field>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions>
+  <button mat-button (click)="cancel()">Cancel</button>
+  <button mat-button (click)="save()">Save</button>
+</mat-dialog-actions>

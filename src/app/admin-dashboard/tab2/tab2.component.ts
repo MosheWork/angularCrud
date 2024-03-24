@@ -10,8 +10,9 @@ import { Router } from '@angular/router'; // Import the Router
 import { environment } from '../../../environments/environment';
 import { DatePipe } from '@angular/common';
 import { MatDialog } from '@angular/material/dialog';
-
+import {EditTaskDialogComponent} from '../edit-task-dialog/edit-task-dialog.component'
 import { AddTaskDialogComponentComponent } from '../add-task-dialog-component/add-task-dialog-component.component';
+
 interface Task {
   UserTaskID: number;
   ADUserName: string;
@@ -20,7 +21,7 @@ interface Task {
   Progress: number;
   LastUpdated: string; // Assuming this is a date in string format
   dueDate: string; // Assuming this is a date in string format
-  // Add other properties that are relevant to your tasks
+  //editTodo: string; 
 }
 
 @Component({
@@ -42,8 +43,7 @@ export class Tab2Component implements OnInit {
   selectedStatus: string | null = null;
   statusOptions: string[] = ['Not Started', 'In Progress', 'Completed'];
 
-  columns: string[] = [
-    //'taskID',
+  todoListDisplayedColumns: string[] = [
     'taskName',
     'description',
     'createdBy',
@@ -51,7 +51,7 @@ export class Tab2Component implements OnInit {
     'dueDate',
     'timeLeft',
     'userStatuses',
-    //'adUserName',
+    'editTodo' 
   ];
 
   displayedColumns: string[] = ['adUserName', 'new', 'inProgress', 'completed'];
@@ -317,4 +317,18 @@ export class Tab2Component implements OnInit {
     const url = environment.apiUrl + 'AdminDashboardAPI/TaskSummary';
     return this.http.get<any[]>(url); // Return Observable<any[]>
   }
+  openEditTaskDialog(task: any): void {
+    const dialogRef = this.dialog.open(EditTaskDialogComponent, {
+      width: '400px',
+      data: { task: task } // Pass the entire task object to the dialog
+    });
+  
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        console.log('Updated Task:', result);
+        // Perform the update operation on your task list or backend
+      }
+    });
+  }
+  
 }

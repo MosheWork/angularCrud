@@ -39,7 +39,7 @@ export class AddTaskDialogComponentComponent {
     // Use current date/time as creation date if not provided
     const currentDate = new Date().toISOString();
     const combinedDueDateTime = `${this.dueDate}T${this.dueTime}`;
-    this.loginUserName = localStorage.getItem('loginUserName')|| '';
+    this.loginUserName = (localStorage.getItem('loginUserName') || '').toUpperCase();
 
     const taskData = {
 
