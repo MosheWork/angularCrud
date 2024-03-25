@@ -30,7 +30,7 @@
     display: flex;
     flex-direction: row;
     width: 100%;
-    margin-top: 5px; /* Adjust if header height changes */
+    margin-top: 1px; /* Adjust if header height changes */
     height: calc(100vh - 5px); /* Adjust if additional elements affect total height */
   }
   /* Ensure full height for all main sections */
@@ -58,9 +58,7 @@
     overflow-y: auto;
     flex: 1;
     margin-right: 1%;
-    border: 2px solid #ccc;
-    
-    
+    border: 2px solid #ccc;  
   }
   
   /* Table row styling */
@@ -351,7 +349,7 @@
     flex-wrap: wrap;
     justify-content: space-around; /* Centers cards with space around them */
     gap: 1px; /* Space between cards */
-    padding-top: 5px;
+    padding-top: 1px;
    
   }
   
@@ -371,7 +369,7 @@
   }
   
   .mat-card-header, .mat-card-content, .mat-card-actions {
-    padding: 8px;
+    padding: 2px;
   }
   
   .mat-card-title, .mat-card-subtitle {

@@ -38,7 +38,10 @@ export class AdminDashboardComponent implements OnInit,AfterViewInit  {
 
   activeTabIndex: number = 0; // Default to the first tab
 
-
+  private yearlyChartInstance?: Chart;
+  private dailyChartInstance?: Chart;
+  private monthlyChartInstance?: Chart;
+  
   loginUserName = '';
   userData: any = {};
   taskSummeryData: any = {};
@@ -212,6 +215,11 @@ export class AdminDashboardComponent implements OnInit,AfterViewInit  {
   }
   ngAfterViewInit(): void {
     Chart.register(...registerables); 
+    this.initializeDailyChart();
+    this.initializeMonthlyChart();
+    this.initializeYearlyChart();
+  
+
   }
 
   fetchUserData(): Observable<any> {
@@ -378,31 +386,28 @@ export class AdminDashboardComponent implements OnInit,AfterViewInit  {
   }
 
 
-  private fetchSysAidData(apiEndpoint: string, chartData: ChartData<'bar'>, chartCanvas: ElementRef<HTMLCanvasElement>): void {
+  private fetchSysAidData(apiEndpoint: string, chartData: ChartData<'bar'>, chartCanvas: ElementRef<HTMLCanvasElement>, callback: (newChart: Chart) => void): void {
     this.http.get<any[]>(`${environment.apiUrl}AdminDashboardAPI/${apiEndpoint}`).subscribe({
       next: (response) => {
-        console.log("API Response:", response); // Debugging line
-    
         chartData.labels = response.map(item => item.problem_sub_type);
         chartData.datasets[0].data = response.map(item => item.count);
-    
-        console.log("Chart Data:", chartData); // Debugging line
-    
+  
         const context = chartCanvas.nativeElement.getContext('2d');
         if (context !== null) {
-          new Chart(context, {
+          const newChart = new Chart(context, {
             type: this.barChartType,
             data: chartData,
             options: this.barChartOptions,
           });
+          callback(newChart);
         } else {
           console.error('Failed to get canvas context');
         }
       },
       error: (error) => console.error(`Error fetching SysAid data from ${apiEndpoint}:`, error),
     });
-    
   }
+  
   
 
   // private initializeChart(): void {
@@ -415,32 +420,54 @@ export class AdminDashboardComponent implements OnInit,AfterViewInit  {
 
   private initializeYearlyChart(): void {
     if (this.yearlyChartCanvas) {
-      this.fetchSysAidData('GetSysAidDataGraphYear', this.barChartData, this.yearlyChartCanvas);
+      if (this.yearlyChartInstance) {
+        this.yearlyChartInstance.destroy();
+      }
+      this.fetchSysAidData('GetSysAidDataGraphYear', this.barChartData, this.yearlyChartCanvas, (newChart) => {
+        this.yearlyChartInstance = newChart;
+      });
     }
   }
   
   private initializeDailyChart(): void {
     if (this.dailyChartCanvas) {
-      this.fetchSysAidData('GetSysAidDataGraphDay', this.dailyChartData, this.dailyChartCanvas);
+      if (this.dailyChartInstance) {
+        this.dailyChartInstance.destroy();
+      }
+      this.fetchSysAidData('GetSysAidDataGraphDay', this.dailyChartData, this.dailyChartCanvas, (newChart) => {
+        this.dailyChartInstance = newChart;
+      });
     }
   }
   
   private initializeMonthlyChart(): void {
     if (this.monthlyChartCanvas) {
-      this.fetchSysAidData('GetSysAidDataGraphMonth', this.monthlyChartData, this.monthlyChartCanvas);
+      if (this.monthlyChartInstance) {
+        this.monthlyChartInstance.destroy();
+      }
+      this.fetchSysAidData('GetSysAidDataGraphMonth', this.monthlyChartData, this.monthlyChartCanvas, (newChart) => {
+        this.monthlyChartInstance = newChart;
+      });
     }
   }
   
 
   onTabChanged(event: MatTabChangeEvent): void {
-    // Use a slight delay to ensure the canvas elements are available
+    // Use a slight delay to ensure the canvas elements are available if needed
     setTimeout(() => {
-      if (event.index === 0 && this.yearlyChartCanvas) {
-        this.initializeYearlyChart();
-      } else if (event.index === 1 && this.dailyChartCanvas) {
-        this.initializeDailyChart();
-      } else if (event.index === 2 && this.monthlyChartCanvas) {
-        this.initializeMonthlyChart();
+      switch (event.index) {
+        case 0: // Yearly tab index
+          this.initializeYearlyChart();
+          break;
+        case 1: // Daily tab index
+          this.initializeDailyChart();
+          break;
+        case 2: // Monthly tab index
+          this.initializeMonthlyChart();
+          break;
+        default:
+          console.error('Unknown tab index:', event.index);
+          break;
       }
     });
   }
