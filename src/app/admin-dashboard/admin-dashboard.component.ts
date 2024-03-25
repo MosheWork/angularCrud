@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild,AfterViewInit  } from '@angular/core';
+import { Component, OnInit, ViewChild,AfterViewInit,ElementRef   } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, of } from 'rxjs'; // Import 'of' to handle cases where you don't need to make an HTTP call
 import { interval, switchMap, startWith } from 'rxjs';
@@ -11,8 +11,9 @@ import { environment } from '../../environments/environment';
 import { DatePipe } from '@angular/common';
 import { MatDialog } from '@angular/material/dialog';
 import { AddTaskDialogComponentComponent } from './add-task-dialog-component/add-task-dialog-component.component';
-import { ChartOptions, ChartType, ChartData } from 'chart.js';
-import { Chart, registerables } from 'chart.js';
+import { ChartOptions, ChartType, ChartData, Chart,registerables  } from 'chart.js';
+import { MatTabChangeEvent } from '@angular/material/tabs';
+
 
 
 
@@ -34,6 +35,10 @@ interface Task {
   styleUrls: ['./admin-dashboard.component.scss'],
 })
 export class AdminDashboardComponent implements OnInit,AfterViewInit  {
+
+  activeTabIndex: number = 0; // Default to the first tab
+
+
   loginUserName = '';
   userData: any = {};
   taskSummeryData: any = {};
@@ -62,7 +67,27 @@ export class AdminDashboardComponent implements OnInit,AfterViewInit  {
       },
     ],
   };
+  public dailyChartData: ChartData<'bar'> = {
+    labels: [],
+    datasets: [{
+      data: [],
+      label: 'קריאות - יומי',
+      backgroundColor: 'rgba(255, 99, 132, 0.2)',
+      borderColor: 'rgba(255, 99, 132, 1)',
+      borderWidth: 1,
+    }]
+  };
 
+  public monthlyChartData: ChartData<'bar'> = {
+    labels: [],
+    datasets: [{
+      data: [],
+      label: 'קריאות - חודשי',
+      backgroundColor: 'rgba(255, 206, 86, 0.2)',
+      borderColor: 'rgba(255, 206, 86, 1)',
+      borderWidth: 1,
+    }]
+  };
   columns: string[] = [
     //'taskID',
     'taskName',
@@ -88,6 +113,10 @@ export class AdminDashboardComponent implements OnInit,AfterViewInit  {
   @ViewChild('taskSummeryDataPaginator')
   taskSummeryDataPaginator!: MatPaginator;
   @ViewChild('taskSummeryDataSort') taskSummeryDataSort!: MatSort;
+  @ViewChild('yearlyChartCanvas') yearlyChartCanvas!: ElementRef<HTMLCanvasElement>;
+@ViewChild('dailyChartCanvas') dailyChartCanvas!: ElementRef<HTMLCanvasElement>;
+@ViewChild('monthlyChartCanvas') monthlyChartCanvas!: ElementRef<HTMLCanvasElement>;
+
 
   dashboardData: any[] = []; // Assuming the data structure is an array of objects
   dashboardColumns: string[] = [
@@ -179,12 +208,12 @@ export class AdminDashboardComponent implements OnInit,AfterViewInit  {
         this.TaskSummeryDataSource.sort = this.taskSummeryDataSort;
       });
 
-    this.fetchSysAidData();
+    
   }
   ngAfterViewInit(): void {
-    Chart.register(...registerables); // Ensure you register Chart.js components
-    this.initializeChart(); // Initialize the chart
+    Chart.register(...registerables); 
   }
+
   fetchUserData(): Observable<any> {
     const url = environment.apiUrl + 'AdminDashboardAPI/GetTotalSysAid';
     return this.http.get<any>(url);
@@ -349,22 +378,73 @@ export class AdminDashboardComponent implements OnInit,AfterViewInit  {
   }
 
 
-  fetchSysAidData(): void {
-    this.http.get<any[]>(environment.apiUrl + 'AdminDashboardAPI/GetSysAidDataGraphYear').subscribe({
+  private fetchSysAidData(apiEndpoint: string, chartData: ChartData<'bar'>, chartCanvas: ElementRef<HTMLCanvasElement>): void {
+    this.http.get<any[]>(`${environment.apiUrl}AdminDashboardAPI/${apiEndpoint}`).subscribe({
       next: (response) => {
-        this.barChartData.labels = response.map(item => item.problem_sub_type);
-        this.barChartData.datasets[0].data = response.map(item => item.total_count);
-        this.initializeChart(); // Re-initialize the chart with fetched data
+        console.log("API Response:", response); // Debugging line
+    
+        chartData.labels = response.map(item => item.problem_sub_type);
+        chartData.datasets[0].data = response.map(item => item.count);
+    
+        console.log("Chart Data:", chartData); // Debugging line
+    
+        const context = chartCanvas.nativeElement.getContext('2d');
+        if (context !== null) {
+          new Chart(context, {
+            type: this.barChartType,
+            data: chartData,
+            options: this.barChartOptions,
+          });
+        } else {
+          console.error('Failed to get canvas context');
+        }
       },
-      error: (error) => console.error('Error fetching SysAid data:', error),
+      error: (error) => console.error(`Error fetching SysAid data from ${apiEndpoint}:`, error),
     });
+    
   }
+  
 
-  private initializeChart(): void {
-    new Chart('myChart', {
-      type: this.barChartType,
-      data: this.barChartData,
-      options: this.barChartOptions,
+  // private initializeChart(): void {
+  //   new Chart('myChart', {
+  //     type: this.barChartType,
+  //     data: this.barChartData,
+  //     options: this.barChartOptions,
+  //   });
+  // }
+
+  private initializeYearlyChart(): void {
+    if (this.yearlyChartCanvas) {
+      this.fetchSysAidData('GetSysAidDataGraphYear', this.barChartData, this.yearlyChartCanvas);
+    }
+  }
+  
+  private initializeDailyChart(): void {
+    if (this.dailyChartCanvas) {
+      this.fetchSysAidData('GetSysAidDataGraphDay', this.dailyChartData, this.dailyChartCanvas);
+    }
+  }
+  
+  private initializeMonthlyChart(): void {
+    if (this.monthlyChartCanvas) {
+      this.fetchSysAidData('GetSysAidDataGraphMonth', this.monthlyChartData, this.monthlyChartCanvas);
+    }
+  }
+  
+
+  onTabChanged(event: MatTabChangeEvent): void {
+    // Use a slight delay to ensure the canvas elements are available
+    setTimeout(() => {
+      if (event.index === 0 && this.yearlyChartCanvas) {
+        this.initializeYearlyChart();
+      } else if (event.index === 1 && this.dailyChartCanvas) {
+        this.initializeDailyChart();
+      } else if (event.index === 2 && this.monthlyChartCanvas) {
+        this.initializeMonthlyChart();
+      }
     });
   }
+  
+  
+  
 }
