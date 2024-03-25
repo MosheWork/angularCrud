@@ -55,7 +55,7 @@ export class AdminDashboardComponent implements OnInit,AfterViewInit  {
     datasets: [
       {
         data: [],
-        label: 'SysAid Data',
+        label: 'קריאות - שנתי',
         backgroundColor: 'rgba(54, 162, 235, 0.2)',
         borderColor: 'rgba(54, 162, 235, 1)',
         borderWidth: 1,
@@ -350,7 +350,7 @@ export class AdminDashboardComponent implements OnInit,AfterViewInit  {
 
 
   fetchSysAidData(): void {
-    this.http.get<any[]>('http://localhost:7144/api/AdminDashboardAPI/GetSysAidData').subscribe({
+    this.http.get<any[]>(environment.apiUrl + 'AdminDashboardAPI/GetSysAidDataGraphYear').subscribe({
       next: (response) => {
         this.barChartData.labels = response.map(item => item.problem_sub_type);
         this.barChartData.datasets[0].data = response.map(item => item.total_count);
