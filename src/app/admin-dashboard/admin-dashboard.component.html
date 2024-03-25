@@ -147,11 +147,7 @@
                 </mat-card>
               </div> -->
               <mat-tab-group (selectedTabChange)="onTabChanged($event)">
-                <mat-tab label="קריאות גרף שנתי">
-                  <div class="chart-container">
-                    <canvas id="yearlyChart" #yearlyChartCanvas></canvas>
-                  </div>
-                </mat-tab>
+             
                 <mat-tab label="קריאות גרף יומי">
                   <div class="chart-container">
                     <canvas id="dailyChart" #dailyChartCanvas></canvas>
@@ -160,6 +156,11 @@
                 <mat-tab label="קריאות גרף חודשי">
                   <div class="chart-container">
                     <canvas id="monthlyChart" #monthlyChartCanvas></canvas>
+                  </div>
+                </mat-tab>
+                <mat-tab label="קריאות גרף שנתי">
+                  <div class="chart-container">
+                    <canvas id="yearlyChart" #yearlyChartCanvas></canvas>
                   </div>
                 </mat-tab>
                 <!-- Other tabs remain unchanged -->
