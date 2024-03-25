@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient,HttpHeaders  } from '@angular/common/http';
 import { Observable, of } from 'rxjs'; // Import 'of' to handle cases where you don't need to make an HTTP call
 import { interval, switchMap, startWith } from 'rxjs';
 import { MatPaginator } from '@angular/material/paginator';
@@ -13,7 +13,7 @@ import { DatePipe } from '@angular/common';
 interface Task {
   UserTaskID: number;
   ADUserName: string;
-  TaskID: number;
+  taskID: number;
   Status: string; // 'Not Started' | 'In Progress' | 'Completed'
   Progress: number;
   LastUpdated: string; // Assuming this is a date in string format
@@ -27,7 +27,6 @@ interface Task {
   styleUrls: ['./user-dashboard.component.scss'],
 })
 export class UserDashboardComponent implements OnInit {
-  
   loginUserName = '';
   userData: any = {};
   previousOpenCalls: number | null = null;
@@ -37,9 +36,10 @@ export class UserDashboardComponent implements OnInit {
 
   statusMenuOpened = false;
   selectedStatus: string | null = null;
-  statusOptions: string[] = ['Not Started', 'In Progress', 'Completed'];
+  statusOptions: string[] = ['new', 'In Progress', 'Completed']; // Update as needed
 
   columns: string[] = [
+    'taskID',
     'status',
     'adUserName',
     'taskName',
@@ -48,9 +48,8 @@ export class UserDashboardComponent implements OnInit {
     'dueDate',
     'createdBy',
     'timeLeft',
-
-    // 'departure_Date',
   ];
+
 
   constructor(private http: HttpClient, private datePipe: DatePipe) {
     this.matTableDataSource = new MatTableDataSource<any>([]);
@@ -78,7 +77,8 @@ export class UserDashboardComponent implements OnInit {
           // Assuming 'data' is the array of todos you want to display
           // Filter the data to only include tasks where adUserName matches loginUserName
           const filteredData = data.filter(
-            (task: any) => task.adUserName === this.loginUserName
+            (task: any) =>
+              task.adUserName.toLowerCase() === this.loginUserName.toLowerCase()
           );
           this.matTableDataSource.data = filteredData;
         });
@@ -233,4 +233,38 @@ export class UserDashboardComponent implements OnInit {
       this.matTableDataSource.paginator.firstPage();
     }
   }
+
+  onStatusChange(task: any, newStatus: string): void {
+    const url = `${environment.apiUrl}UsersDashboardAPI/UpdateTaskStatus`;
+    const body = { 
+      TaskID: task.taskID, 
+      NewStatus: newStatus,
+      ADUserName: task.adUserName // Assuming you have ADUserName in your task object
+    };
+    console.log(body)
+  
+    this.http.patch(url, body, {headers: new HttpHeaders({'Content-Type': 'application/json'}), responseType: 'text'}).subscribe({
+      next: () => console.log('Status updated successfully'),
+      error: (error) => console.error('Error updating status', error)
+    });
+  }
+  
+  updateTaskStatus(taskID: number, newStatus: string, adUserName: string): Observable<any> {
+    const url = `${environment.apiUrl}UsersDashboardAPI/UpdateTaskStatus`;
+    const body = { 
+      TaskID: taskID, 
+      NewStatus: newStatus,
+      ADUserName: adUserName // Added ADUserName parameter
+    };
+    const httpOptions = {
+      headers: new HttpHeaders({
+        'Content-Type': 'application/json'
+      }),
+      responseType: 'text' as 'json' // Expect a text response
+    };
+  
+    return this.http.patch(url, body, httpOptions);
+  }
+  
+  
 }

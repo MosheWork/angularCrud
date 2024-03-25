@@ -7,7 +7,7 @@
     padding: 1px;
     box-sizing: border-box;
     overflow-y: auto;
-    height: auto;
+    
   }
   
   /* Header styling */
@@ -49,12 +49,15 @@
     flex: 1;
     margin-right: 10px;
     border: 2px solid #ccc;  
+    font-weight: bold;
   }
   
   /* Table row styling */
   table {
     width: 100%;
     //margin: 10px auto;
+    
+    
   }
 
   .mat-row:hover {

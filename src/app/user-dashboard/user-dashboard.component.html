@@ -15,37 +15,62 @@
 
       <h2 class="table-title">משימות</h2>
       <mat-table [dataSource]="matTableDataSource" matSort dir="rtl" class="mat-elevation-z8">
-        <!-- Dynamically create each column based on the columns array -->
-        <ng-container *ngFor="let column of columns" [matColumnDef]="column">
-          <mat-header-cell *matHeaderCellDef mat-sort-header> {{ getColumnLabel(column) }} </mat-header-cell>
-          <!-- Check the column name and apply formatting if needed -->
+
+        <ng-container matColumnDef="taskID">
+          <mat-header-cell *matHeaderCellDef> ID</mat-header-cell>
+          <mat-cell *matCellDef="let element">{{ element.taskID }}</mat-cell>
+        </ng-container>
+        <!-- AD User Name Column -->
+        <ng-container matColumnDef="adUserName">
+          <mat-header-cell *matHeaderCellDef> משתמש מטפל </mat-header-cell>
+          <mat-cell *matCellDef="let element">{{ element.adUserName }}</mat-cell>
+        </ng-container>
+      
+        <!-- Task Name Column -->
+        <ng-container matColumnDef="taskName">
+          <mat-header-cell *matHeaderCellDef> משימה </mat-header-cell>
+          <mat-cell *matCellDef="let element">{{ element.taskName }}</mat-cell>
+        </ng-container>
+      
+        <!-- Description Column -->
+        <ng-container matColumnDef="description">
+          <mat-header-cell *matHeaderCellDef> פירוט המשימה </mat-header-cell>
+          <mat-cell *matCellDef="let element">{{ element.description }}</mat-cell>
+        </ng-container>
+      
+        <!-- Creation Date Column -->
+        <ng-container matColumnDef="creationDate">
+          <mat-header-cell *matHeaderCellDef> תאריך יצירה </mat-header-cell>
+          <mat-cell *matCellDef="let element">{{ element.creationDate | date:'dd/MM/yyyy HH:mm' }}</mat-cell>
+        </ng-container>
+      
+        <!-- Due Date Column -->
+        <ng-container matColumnDef="dueDate">
+          <mat-header-cell *matHeaderCellDef> Due Date </mat-header-cell>
+          <mat-cell *matCellDef="let element">{{ element.dueDate | date:'dd/MM/yyyy HH:mm' }}</mat-cell>
+        </ng-container>
+      
+        <!-- Status Column with Dropdown -->
+        <ng-container matColumnDef="status">
+          <mat-header-cell *matHeaderCellDef> Status </mat-header-cell>
           <mat-cell *matCellDef="let element">
-            <ng-container [ngSwitch]="column">
-              <!-- Special formatting for 'creationDate' and 'dueDate' columns -->
-              <ng-container *ngSwitchCase="'creationDate'">{{ element[column] | date:'dd/MM/yyyy HH:mm' }}</ng-container>
-              <ng-container *ngSwitchCase="'dueDate'">{{ element[column] | date:'dd/MM/yyyy HH:mm' }}</ng-container>
-              <!-- Custom calculation and display for 'timeLeft' column -->
-              <ng-container *ngSwitchCase="'timeLeft'">
-                <span [class.bold-font]="isLessThan25Hours(element.dueDate,element.status)">
-                  {{ getTimeLeft(element.dueDate,(element.status)) }} 
-                </span>
-              </ng-container>
-              
-              <!-- Default case for other columns -->
-              <ng-container *ngSwitchDefault>{{ element[column] }}</ng-container>
-            </ng-container>
+            <mat-form-field appearance="fill">
+              <mat-select [(value)]="element.status" (selectionChange)="onStatusChange(element, $event.value)">
+                <mat-option *ngFor="let statusOption of statusOptions" [value]="statusOption">
+                  {{ statusOption }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
           </mat-cell>
         </ng-container>
-        <mat-header-row *matHeaderRowDef="columns"></mat-header-row>
-        <mat-row *matRowDef="let row; columns: columns" 
-                 [ngClass]="{
-                   'priority-1': row.status === 'Not Started',
-                   'priority-3': row.status === 'In Progress',
-                   'priority-2': row.status === 'Completed',
-                   'bold-font': isLessThan25Hours(row.dueDate,row.status)
-                 }" 
-                 class="mat-row"></mat-row>
+        
+      
+        <!-- Header and Row Definitions -->
+        <mat-header-row *matHeaderRowDef="['taskID','adUserName', 'taskName', 'description', 'creationDate', 'dueDate', 'status']"></mat-header-row>
+        <mat-row *matRowDef="let row; columns: ['taskID', 'taskName', 'description', 'creationDate', 'dueDate', 'status']"></mat-row>
+        
       </mat-table>
+      
       
       
       <mat-paginator [length]="matTableDataSource.paginator?.length || 0"
