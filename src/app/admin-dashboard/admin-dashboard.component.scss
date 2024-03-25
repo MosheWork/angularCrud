@@ -31,7 +31,7 @@
     flex-direction: row;
     width: 100%;
     margin-top: 5px; /* Adjust if header height changes */
-    height: calc(100vh - 64px); /* Adjust if additional elements affect total height */
+    height: calc(100vh - 5px); /* Adjust if additional elements affect total height */
   }
   /* Ensure full height for all main sections */
   // .cards,
@@ -54,7 +54,7 @@
   
   /* Task table styling */
   .tasks-table {
-    height: 50vh;
+    height: 45vh;
     overflow-y: auto;
     flex: 1;
     margin-right: 1%;
@@ -88,7 +88,7 @@
     flex-wrap: wrap; /* Allows cards to wrap to the next row */
     justify-content: space-between; /* Evenly distributes space between cards */
     align-items: flex-start; /* Aligns cards to the top of the container */
-    height: 50vh; /* Fixed height as specified */
+    height: 45vh; /* Fixed height as specified */
     overflow-y: auto; /* Scroll if content exceeds the container's height */
     width: 100%; /* Take the full width of its parent container */
     border: 2px solid #ccc;
