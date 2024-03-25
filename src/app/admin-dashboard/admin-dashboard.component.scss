@@ -6,6 +6,8 @@
     width: 100%;
     padding: 1px;
     box-sizing: border-box;
+    overflow-y: auto;
+    height: auto;
   }
   
   /* Header styling */
@@ -33,19 +35,7 @@
     margin-top: 1px; /* Adjust if header height changes */
     height: calc(100vh - 5px); /* Adjust if additional elements affect total height */
   }
-  /* Ensure full height for all main sections */
-  // .cards,
-  // .important-links,
-  // .tasks-table,.important-messages-cards {
-  //   flex-grow: 1; /* Grow to use up available space */
-  //   height: calc(100vh - 64px - 20px); /* Full viewport height minus header and any additional spacing */
-  //   overflow-y: auto; /* Allow scrolling within sections if content is too long */
-  //   border: 2px solid #ccc; /* Consistent border */
-  //   padding: 10px;
-  //   box-sizing: border-box; /* Include padding and border in the height calculation */
-  // }
-  
-  /* Right side content layout */
+ 
   .right-content {
     width: 30%; /* Width to match the cards */
     display: flex;
@@ -66,15 +56,7 @@
     width: 100%;
     //margin: 10px auto;
   }
-  
-  // .mat-row:nth-child(odd) {
-  //   background-color: white;
-  // }
-  
-  // .mat-row:nth-child(even) {
-  //   background-color: rgb(222, 212, 241);
-  // }
-  
+
   .mat-row:hover {
     background-color: darkgray;
     cursor: pointer;
@@ -138,7 +120,7 @@
     
     .card {
       width: 100%;
-      margin-bottom: 10px;
+      margin-bottom: 1px;
     }
   }
   
@@ -169,46 +151,6 @@
     }
   }
   
-  // /* Messages styling */
-  // .important-messages {
-  //   height: calc(50vh - 10px); /* Subtracting the margin between the cards and messages */
-  //   overflow-y: auto; /* Scrollbar appears if content overflows */
-  //   border: 2px solid #ccc;
-  //   padding: 2px;
-  //   //margin-top: 1%;
-  //   margin-right: 1%;
-  //   margin-top: 10px;
-  //   box-sizing: border-box; /* Include padding and border in the height calculation */
-  //   direction: rtl; /* For right-to-left text direction */
-  //   height: calc(100vh - 64px - 20px - 50vh - 50px); /* height of the viewport - header - padding - height of cards - margin */
-  // }
-  // .important-messages-title {
-  //   font-size: 20px;
-  //   font-weight: bold;
-  //   color: #090808;
-  //   text-align: right;
-  //   padding: 10px 0;
-  //   border-bottom: 2px solid #ccc;
-  // }
-  
-  // .message {
-  //   background-color: rgb(222, 212, 241);
-  //   border-radius: 10px;
-  //   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  //   padding: 2px;
-  //   margin: 5px 0;
-  //   color: #090808;
-  //   //font-weight: bold;
-  //   text-align: right;
-  //   border: 1px solid rgb(17, 16, 16);
-  // }
-  // /* Responsive adjustments */
-  // @media (max-width: 768px) {
-  //   .card {
-  //     width: 100%; /* Full width cards on smaller screens */
-  //     margin-bottom: 10px; /* Adjust margin as needed */
-  //   }
-  // }
   
   .content {
     display: flex;
