@@ -35,6 +35,7 @@ interface Task {
   styleUrls: ['./admin-dashboard.component.scss'],
 })
 export class AdminDashboardComponent implements OnInit,AfterViewInit  {
+ 
 
   activeTabIndex: number = 0; // Default to the first tab
 
@@ -147,6 +148,7 @@ export class AdminDashboardComponent implements OnInit,AfterViewInit  {
   matTableDataSource: MatTableDataSource<any>; // Define MatTableDataSource
 
   ngOnInit(): void {
+    document.title = 'מערכת ניהול';
     this.loginUserName = localStorage.getItem('loginUserName') || '';
     interval(60000) // Every 60 seconds
       .pipe(

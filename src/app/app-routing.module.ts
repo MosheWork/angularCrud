@@ -21,6 +21,7 @@ import { CatheterComponent } from './chameleon-reports/catheter/catheter.compone
 import { StazerimComponent } from './chameleon-reports/moshe-reports/stazerim/stazerim.component';
 import { UserDashboardComponent } from './user-dashboard/user-dashboard.component';
 import { AdminDashboardComponent } from './admin-dashboard/admin-dashboard.component';
+import { MainServiceCallsScreenComponent } from './serviceCalls/main-service-calls-screen/main-service-calls-screen.component';
 
 const routes: Routes = [
   { path: 'users', component: UsersComponent },
@@ -48,6 +49,12 @@ const routes: Routes = [
   //sysreports
   { path: 'SysAid', component: SysAidComponent },
   { path: 'sys-graph', component: SysGraphComponent },
+
+
+  //service calls
+  { path: 'MainServiceCallsScreen', component: MainServiceCallsScreenComponent },
+
+
 ];
 
 @NgModule({

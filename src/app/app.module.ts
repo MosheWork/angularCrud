@@ -3,7 +3,6 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FormsModule } from '@angular/forms';
 import { MatTableModule } from '@angular/material/table';
 import { MatPaginatorModule } from '@angular/material/paginator';
-
 import { NgModule } from '@angular/core';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -61,8 +60,10 @@ import { AddTaskDialogComponentComponent } from './admin-dashboard/add-task-dial
 import { MatListModule } from '@angular/material/list';
 import { Tab2Component } from './admin-dashboard/tab2/tab2.component';
 import { EditTaskDialogComponent } from './admin-dashboard/edit-task-dialog/edit-task-dialog.component';
-import { SysAidGraphComponent } from './admin-dashboard/sys-aid-graph/sys-aid-graph.component'; 
-
+import { SysAidGraphComponent } from './admin-dashboard/sys-aid-graph/sys-aid-graph.component';
+import { NewServiceCallComponent } from './serviceCalls/new-service-call/new-service-call.component';
+import { MainServiceCallsScreenComponent } from './serviceCalls/main-service-calls-screen/main-service-calls-screen.component';
+import { MatGridListModule } from '@angular/material/grid-list';
 
 
 @NgModule({
@@ -98,6 +99,8 @@ import { SysAidGraphComponent } from './admin-dashboard/sys-aid-graph/sys-aid-gr
     Tab2Component,
     EditTaskDialogComponent,
     SysAidGraphComponent,
+    NewServiceCallComponent,
+    MainServiceCallsScreenComponent,
   ],
   imports: [
     BrowserModule,
@@ -128,7 +131,8 @@ import { SysAidGraphComponent } from './admin-dashboard/sys-aid-graph/sys-aid-gr
     MatCheckboxModule,
     AngularDualListBoxModule,
     MatProgressBarModule,
-    MatListModule
+    MatListModule,
+    MatGridListModule,
   ],
   providers: [DatePipe],
   bootstrap: [AppComponent],

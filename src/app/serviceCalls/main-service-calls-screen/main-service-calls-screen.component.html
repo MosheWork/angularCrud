@@ -1,0 +1,29 @@
+<mat-toolbar color="primary">
+  <img
+    src="../../../assets/poria icon.jpg"
+    height="50"
+    alt="Logo"
+    class="header-logo"
+  />
+  <span class="toolbar-spacer"></span>
+  <span class="header-name">Your Name</span>
+</mat-toolbar>
+<img
+  src="../../../assets/poria2.jpg"
+  class="header-banner"
+  alt="Header Banner"
+/>
+
+<div class="cards-container" dir="rtl">
+  <mat-card class="service-card" *ngFor="let item of serviceItems">
+    <img src="{{ item.pic }}" class="card-image" alt="{{ item.title }}" />
+    <mat-card-title class="card-title">{{ item.title }}</mat-card-title>
+    <mat-card-content>
+      {{ item.content }}
+    </mat-card-content>
+    <button mat-button class="open-call-button">
+        <mat-icon>add</mat-icon>
+         קריאה חדשה
+      </button>
+  </mat-card>
+</div>

@@ -1,0 +1,69 @@
+.cards-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  justify-content: center;
+}
+
+.service-card {
+  width: 300px; /* Or whatever width you prefer */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 10px;
+  
+}
+
+mat-icon {
+  font-size: 20px;
+  margin: 8px;
+}
+
+
+.toolbar-spacer {
+  flex: 1 1 auto;
+}
+
+.header-name {
+  text-align: right;
+}
+
+mat-toolbar.mat-primary {
+  background: #2196F3; /* This is a shade of blue. */
+}
+.header-logo {
+  /* Adjust the height if necessary to fit your toolbar's size */
+  height: 80%;
+}
+
+.header-banner {
+  width: 100%; /* This makes the image full width under the header */
+  display: block; /* Ensures no extra space below the image */
+  height: 200px;
+}
+
+mat-toolbar {
+  position: relative;
+  z-index: 2;
+  /* Add bottom padding to the toolbar */
+  padding-bottom: 10px; /* Adjust the padding size as needed */
+}
+
+.card-image {
+  width: 100%; /* Or the size you prefer */
+  height: 150px; /* Maintain aspect ratio */
+  border-radius: 4px; /* Optional: if you want rounded corners */
+}
+.card-title {
+  color: blue; /* Set the color you want */
+  font-weight: bold;
+}
+.open-call-button {
+  margin-top: 15px; /* Spacing above the button */
+  background-color: #2196F3; /* Example blue color, change as desired */
+  color: white; /* Text color */
+}
+/* Add hover effect for the button */
+.open-call-button:hover {
+  background-color: #4b93dc; /* Darker blue on hover, change as desired */
+}
