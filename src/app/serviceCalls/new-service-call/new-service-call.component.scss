@@ -1,0 +1,77 @@
+.form-title {
+    text-align: center;
+    font-size: 24px;
+    margin-bottom: 20px;
+  }
+  
+  mat-card-actions {
+    display: flex;
+    justify-content: flex-end; /* Aligns buttons to the right */
+  }
+
+  /* This style will be applied when the RTL direction is set in your application */
+  [dir="rtl"] mat-card-actions {
+    justify-content: flex-start; /* Aligns buttons to the right in RTL mode */
+  }
+  
+  .form-container {
+    display: flex;
+    flex-direction: column;
+    width: 100%; // Full width of the container
+    border: 1px solid #ccc; // Border around the form
+    padding: 16px;
+    border-radius: 8px; // Rounded corners for the form
+  }
+  
+  .form-title {
+    text-align: center;
+    margin-bottom: 20px;
+  
+    h2 {
+      margin-bottom: 0.5rem;
+      text-decoration: underline; // Underline the title
+    }
+  
+    mat-divider {
+      margin-left: auto;
+      margin-right: auto;
+      width: 80%;
+    }
+  }
+  
+  mat-form-field {
+    width: 100%; // Full width fields
+    margin-top: 8px; // Spacing between form fields
+  }
+  
+  .full-width {
+    width: calc(100% - 32px); // Adjust width based on padding
+  }
+  
+  .action-buttons {
+    display: flex;
+    justify-content: space-between; // Buttons on opposite ends
+    margin-top: 20px;
+  }
+  
+  button[mat-raised-button] {
+    margin-right: 8px; // Spacing between buttons
+  }
+  
+  [dir="rtl"] {
+    .action-buttons {
+      justify-content: space-between; // Respect RTL layout
+    }
+  }
+  .full-width {
+    width: 100%;
+  }
+  
+  mat-form-field {
+    display: flex;
+    align-items: center;
+  }
+  
+  mat-icon {
+    color: blue;
+  }

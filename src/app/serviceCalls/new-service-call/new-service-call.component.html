@@ -1,1 +1,49 @@
-<p>new-service-call works!</p>
+<div class="form-container" dir="rtl">
+    <form [formGroup]="serviceCallForm" (ngSubmit)="onSubmit()" class="service-call-form">
+  
+      <div class="form-title">
+        <h2>פתיחת קריאה חדשה</h2>
+        <mat-divider></mat-divider>
+      </div>
+  
+      <mat-form-field appearance="outline" class="full-width" >
+        <mat-label>עדיפות</mat-label>
+        
+        <mat-select formControlName="Priority">
+          <mat-option value="High">גבוהה</mat-option>
+          <mat-option value="Medium">בינונית</mat-option>
+          <mat-option value="Low">נמוכה</mat-option>
+        </mat-select>
+        <mat-icon matPrefix>priority_high</mat-icon>
+      </mat-form-field>
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>מחלקה</mat-label>
+        <mat-icon matPrefix>add_location</mat-icon>
+        <input matInput formControlName="DepartmentName" placeholder="מקום התקלה">
+      </mat-form-field>
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>טלפון לחזרה</mat-label>
+        <mat-icon matPrefix>phone</mat-icon>
+        <input matInput formControlName="CallbackPhone" type="tel" placeholder="הכנס מספר טלפון">
+      </mat-form-field>
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>IP Address</mat-label>
+        <mat-icon matPrefix>computer</mat-icon>
+        <input matInput formControlName="IP" placeholder="ניתן ללחוץ על איקון שם המחשב">
+      </mat-form-field>
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>כותרת</mat-label>
+        <input matInput formControlName="Title">
+      </mat-form-field>
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>תיאור התקלה </mat-label>
+        <textarea matInput formControlName="ProblemDescription"></textarea>
+      </mat-form-field>
+      <div class="action-buttons">
+        <button mat-raised-button color="warn" (click)="closeDialog()">ביטול</button>
+        <button mat-raised-button color="primary" type="submit" [disabled]="!serviceCallForm.valid">פתח קריאה חדשה</button>
+      </div>
+      
+    </form>
+  </div>
+  

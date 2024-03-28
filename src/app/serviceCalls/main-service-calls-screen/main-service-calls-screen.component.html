@@ -6,7 +6,7 @@
     class="header-logo"
   />
   <span class="toolbar-spacer"></span>
-  <span class="header-name">Your Name</span>
+  <span class="header-name">{{loginUserName}}</span>
 </mat-toolbar>
 <img
   src="../../../assets/poria2.jpg"
@@ -21,9 +21,10 @@
     <mat-card-content>
       {{ item.content }}
     </mat-card-content>
-    <button mat-button class="open-call-button">
+    <button mat-button class="open-call-button" (click)="openNewServiceCallDialog()">
         <mat-icon>add</mat-icon>
-         קריאה חדשה
+        פתח קריאה חדשה
       </button>
+      
   </mat-card>
 </div>

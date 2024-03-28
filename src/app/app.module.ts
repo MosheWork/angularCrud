@@ -64,6 +64,7 @@ import { SysAidGraphComponent } from './admin-dashboard/sys-aid-graph/sys-aid-gr
 import { NewServiceCallComponent } from './serviceCalls/new-service-call/new-service-call.component';
 import { MainServiceCallsScreenComponent } from './serviceCalls/main-service-calls-screen/main-service-calls-screen.component';
 import { MatGridListModule } from '@angular/material/grid-list';
+import { ServiceCallsScreenITComponent } from './serviceCalls/service-calls-screen-it/service-calls-screen-it.component';
 
 
 @NgModule({
@@ -101,6 +102,7 @@ import { MatGridListModule } from '@angular/material/grid-list';
     SysAidGraphComponent,
     NewServiceCallComponent,
     MainServiceCallsScreenComponent,
+    ServiceCallsScreenITComponent,
   ],
   imports: [
     BrowserModule,
