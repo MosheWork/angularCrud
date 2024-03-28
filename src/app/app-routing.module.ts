@@ -22,6 +22,7 @@ import { StazerimComponent } from './chameleon-reports/moshe-reports/stazerim/st
 import { UserDashboardComponent } from './user-dashboard/user-dashboard.component';
 import { AdminDashboardComponent } from './admin-dashboard/admin-dashboard.component';
 import { MainServiceCallsScreenComponent } from './serviceCalls/main-service-calls-screen/main-service-calls-screen.component';
+import { ServiceCallsScreenITComponent } from './serviceCalls/service-calls-screen-it/service-calls-screen-it.component';
 
 const routes: Routes = [
   { path: 'users', component: UsersComponent },
@@ -53,6 +54,8 @@ const routes: Routes = [
 
   //service calls
   { path: 'MainServiceCallsScreen', component: MainServiceCallsScreenComponent },
+  { path: 'serviceCallsScreenIt', component: ServiceCallsScreenITComponent }
+
 
 
 ];

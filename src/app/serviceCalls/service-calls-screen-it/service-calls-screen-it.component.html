@@ -1,0 +1,80 @@
+<link
+  rel="stylesheet"
+  href="https://fonts.googleapis.com/icon?family=Material+Icons"
+/>
+<div class="body">
+  <form [formGroup]="filterForm" dir="rtl" class="filter-form">
+    <div class="container-fluid mb-2">
+      <div class="row search-count">
+        <div class="col">
+         
+        </div>
+      </div>
+    </div>
+    <div
+      dir="rtl"
+      style="display: flex; justify-content: space-between; align-items: center"
+    >
+      <mat-form-field
+        class="long-search-bar"
+        style="flex: 1; padding-right: 10px"
+      >
+        <mat-label class="filters" style="color: blue"> חיפוש</mat-label>
+        <input
+          matInput
+          [formControlName]="'globalFilter'"
+          class="search-input"
+        />
+      </mat-form-field>
+      <!-- <div class="graph-button-container">
+        <img
+          (click)="navigateToGraphPage()"
+          matTooltip="Move To Graph"
+          src="../../../../assets/graphIcon.png"
+          width="50px"
+        />
+      </div> -->
+      <div class="icon" matTooltip="Download Excel">
+        <img
+          src="../../assets/excel.png"
+          alt="Download"
+          (click)="exportToExcel()"
+          class="download-icon"
+          width="50px"
+        />
+      </div>
+    </div>
+  </form>
+  <!-- <app-sys-graph *ngIf="showGraph" [graphData]="graphData"></app-sys-graph> -->
+
+  <mat-table
+    *ngIf="!showGraph"
+    [dataSource]="matTableDataSource"
+    matSort
+    dir="rtl"
+    class="mat-elevation-z8"
+  >
+    <!-- Loop through columns to define each column in the table -->
+    <ng-container *ngFor="let column of columns" [matColumnDef]="column">
+      <mat-header-cell *matHeaderCellDef mat-sort-header>
+        {{ getColumnLabel(column) }}
+        <!-- Use the function to get display-friendly labels -->
+      </mat-header-cell>
+      <mat-cell *matCellDef="let element">{{ element[column] }}</mat-cell>
+    </ng-container>
+
+    <!-- Define the header row -->
+    <mat-header-row *matHeaderRowDef="columns"></mat-header-row>
+    <!-- Define the data row -->
+    <mat-row *matRowDef="let row; columns: columns" class="mat-row"></mat-row>
+  </mat-table>
+
+  <!-- Define the paginator with page size options -->
+  <mat-paginator
+    [length]="matTableDataSource.paginator?.length || 0"
+    [pageIndex]="matTableDataSource.paginator?.pageIndex"
+    [pageSize]="matTableDataSource.paginator?.pageSize"
+    [pageSizeOptions]="[15, 50, 100]"
+  ></mat-paginator>
+</div>
+
