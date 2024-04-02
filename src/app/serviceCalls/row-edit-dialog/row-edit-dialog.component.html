@@ -1,0 +1,16 @@
+<h2 mat-dialog-title>Edit Row</h2>
+<mat-dialog-content>
+  <div *ngFor="let key of objectKeys(data)">
+    <!-- Assuming you don't want to create an input for the ServiceCallID -->
+    <ng-container *ngIf="key !== 'ServiceCallID'">
+      <mat-form-field appearance="fill" class="full-width-input">
+        <mat-label>{{ key }}</mat-label>
+        <input matInput [(ngModel)]="data[key]" [name]="key" [type]="getType(key)">
+      </mat-form-field>
+    </ng-container>
+  </div>
+</mat-dialog-content>
+<mat-dialog-actions>
+    <button mat-button (click)="save()">Save changes</button>
+    <button mat-button [mat-dialog-close]="null">Cancel</button>
+</mat-dialog-actions>

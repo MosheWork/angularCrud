@@ -1,0 +1,37 @@
+/* row-edit-dialog.component.scss */
+:host {
+    display: block; /* Makes it easier to manage width/height */
+  }
+  
+  .full-width-input {
+    width: 100%;
+  }
+  
+  /* Example of custom styles */
+  .dialog-content {
+    padding: 24px;
+  }
+  
+  .dialog-actions {
+    display: flex;
+    justify-content: flex-end;
+    padding: 8px 24px;
+  }
+  
+  /* Specific class for inputs if needed */
+  .input-field {
+    margin-bottom: 16px; /* Spacing between fields */
+  }
+  /* styles.scss */
+.custom-dialog-container {
+    max-width: 95%;
+    width: auto; /* Adjust width based on content or to a fixed size */
+    border-radius: 8px; /* Optional: for rounded corners */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Optional: for shadow */
+  }
+  
+  /* To style the overlay backdrop */
+  .cdk-overlay-dark-backdrop {
+    background-color: rgba(0,0,0,0.5); /* Darker overlay */
+  }
+  

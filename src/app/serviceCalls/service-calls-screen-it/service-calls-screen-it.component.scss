@@ -207,4 +207,57 @@
     justify-content: flex-end; /* Aligns horizontally to the right */
     padding: 10px; /* Add some padding */
   }
+  .mat-table {
+    width: 100%;
+  }
+  
+  .mat-header-cell, .mat-cell {
+    word-wrap: break-word;
+    white-space: normal;
+    min-width: 120px; /* Adjust the minimum width as needed */
+    max-width: 200px; /* Adjust the maximum width as needed */
+    overflow-wrap: break-word;
+  }
+  
+  .mat-header-cell {
+    font-weight: bold; /* Make the header bold */
+  }
+  
+  /* Optional: If you want to add ellipsis to cells with overflow */
+  .mat-cell {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  
+  /* Improve spacing and layout */
+  .mat-row, .mat-header-row {
+    display: flex;
+    align-items: center;
+  }
+  
+  /* Reduce padding if necessary */
+  .mat-header-cell, .mat-cell {
+    padding: 4px 8px; /* Reduce padding to fit content */
+  }
+  
+  /* Ensure table layout is fixed */
+  .mat-table {
+    table-layout: fixed;
+  }
+  .toolbar-spacer {
+    flex: 1 1 auto;
+  }
+  
+  .header-name {
+    text-align: right;
+  }
+  
+  mat-toolbar.mat-primary {
+    background: #2196F3; /* This is a shade of blue. */
+  }
+  .header-logo {
+    /* Adjust the height if necessary to fit your toolbar's size */
+    height: 80%;
+  }
   
