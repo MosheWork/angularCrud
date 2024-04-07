@@ -1,5 +1,4 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
@@ -10,6 +9,7 @@ import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { DatePipe } from '@angular/common';
 import { MatDialog } from '@angular/material/dialog';
 import { RowEditDialogComponent } from '../row-edit-dialog/row-edit-dialog.component'; // Adjust the path as necessary
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 
 
 
@@ -37,11 +37,12 @@ export class ServiceCallsScreenITComponent implements OnInit {
 
   // Columns to be displayed in the table are specified here.
   columns: string[] = [
-    'timeOpened', 'timeClosed', 'priority', 'status', 'userRequested',
+   'serviceCallID', 'timeOpened', 'timeClosed', 'priority', 'status', 'userRequested',
     //'callbackPhone',
      'title', //'problemDescription', 'solutionText',
     //'comments', 'ip', 'departmentName',
      'mainCategory',
+
      'category2',
     'category3', 'teamInCharge'
   ];
@@ -84,7 +85,7 @@ export class ServiceCallsScreenITComponent implements OnInit {
   
 
   loadData() {
-    const apiUrl = environment.apiUrl + 'ServiceCallsTable'; // Update with your actual API URL.
+    const apiUrl = environment.apiUrl + 'ServiceCallDataAPI'; // Update with your actual API URL.
     this.http.get<any[]>(apiUrl).subscribe(data => {
       // Format the dates before assigning to the data source
       const formattedData = data.map(item => ({
@@ -120,6 +121,7 @@ export class ServiceCallsScreenITComponent implements OnInit {
   getColumnLabel(column: string): string {
     // Labels are provided for header cells in the HTML.
     const labels: Record<string, string> = {
+      serviceCallID:'מספר קריאה',
       timeOpened: 'זמן בקשה',
       timeClosed: ' תאריך סגירה',
       priority: 'עדיפות',
@@ -143,44 +145,47 @@ export class ServiceCallsScreenITComponent implements OnInit {
 // ...
 
 openEditDialog(rowData: any): void {
-  console.log('Opening dialog with data:', rowData); // Add this to check the data
-
   const dialogRef = this.dialog.open(RowEditDialogComponent, {
     width: '600px',
-    data: rowData, // Pass the row data to the dialog
-    panelClass: 'custom-dialog-container' // Custom class for styling
+    data: { rowData: rowData },
+    panelClass: 'custom-dialog-container'
   });
-  dialogRef.afterClosed().subscribe(result => {
-    if (result) {
-      // Access serviceCallID directly from result using the correct case
-      this.updateServiceCall(result.serviceCallID, result); 
+
+  dialogRef.afterClosed().subscribe(updatedRowData  => {
+    if (updatedRowData ) {
+      console.log('Dialog result:', updatedRowData );
+
+      // Assuming result contains the updated row data
+      this.updateServiceCall(updatedRowData .serviceCallID, this.toPascalCase(updatedRowData ));
     } else {
       console.log('The dialog was closed without saving.');
     }
   });
-  
 }
 
+
+
 updateServiceCall(serviceCallID: number, serviceCallData: any): void {
-  // Create a new object from serviceCallData excluding TimeOpened and TimeClosed
-  const { TimeOpened, TimeClosed, ...payloadWithoutDates } = serviceCallData;
+  console.log(`Updating service call with ID: ${serviceCallID}`); // Confirm ID is correct here
 
-  // Prepare the payload as expected by your API
-  const payload = {
-    serviceCallUpdate: { ...payloadWithoutDates }
+  const apiUrl = `${environment.apiUrl}ServiceCallDataAPI/${serviceCallID}`;
+
+  // Define HTTP options, including headers
+  const httpOptions = {
+    headers: new HttpHeaders({
+      'Content-Type': 'application/json'
+    })
   };
-  console.log('payload: '+payload)
-  const apiUrl = `${environment.apiUrl}ServiceCallsTable/${serviceCallID}`;
 
-  // Use the modified payload for the PUT request
-  this.http.put(apiUrl, payload).subscribe({
+  // Use the serviceCallData for the PUT request, including httpOptions
+  this.http.put(apiUrl, serviceCallData, httpOptions).subscribe({
     next: (response) => {
       console.log('Service call updated successfully', response);
       this.loadData(); // Refresh the data in your table
     },
     error: (error) => {
       console.error('Error updating service call', error);
-      // Additional error handling...
+      // Implement additional error handling as needed
     }
   });
 }

@@ -1,16 +1,33 @@
 <h2 mat-dialog-title>Edit Row</h2>
-<mat-dialog-content>
-  <div *ngFor="let key of objectKeys(data)">
-    <!-- Assuming you don't want to create an input for the ServiceCallID -->
-    <ng-container *ngIf="key !== 'ServiceCallID'">
-      <mat-form-field appearance="fill" class="full-width-input">
-        <mat-label>{{ key }}</mat-label>
-        <input matInput [(ngModel)]="data[key]" [name]="key" [type]="getType(key)">
-      </mat-form-field>
-    </ng-container>
+<mat-dialog-content [formGroup]="form">
+  <!-- ID (Read-only, not part of form group) -->
+  <mat-form-field appearance="fill" class="full-width-input">
+    <mat-label>ID</mat-label>
+    <input matInput [value]="data?.rowData?.serviceCallID" disabled>
+  </mat-form-field>
+
+  <!-- TimeOpened (Read-only, not part of form group) -->
+  <mat-form-field appearance="fill" class="full-width-input">
+    <mat-label>Time Opened</mat-label>
+    <input matInput [value]="data?.rowData?.timeOpened" disabled>
+  </mat-form-field>
+
+  <!-- TimeClosed (Read-only, not part of form group) -->
+  <mat-form-field appearance="fill" class="full-width-input">
+    <mat-label>Time Closed</mat-label>
+    <input matInput [value]="data?.rowData?.timeClosed" disabled>
+  </mat-form-field>
+
+  <!-- Dynamic form fields for editable properties -->
+  <div *ngFor="let field of objectKeys(form.controls)">
+    <mat-form-field appearance="fill" class="full-width-input">
+      <mat-label>{{ field }}</mat-label>
+      <input matInput [formControlName]="field">
+    </mat-form-field>
   </div>
+
 </mat-dialog-content>
 <mat-dialog-actions>
-    <button mat-button (click)="save()">Save changes</button>
-    <button mat-button [mat-dialog-close]="null">Cancel</button>
+  <button mat-button (click)="save()">Save changes</button>
+  <!-- <button mat-button (click)="close()">Cancel</button> -->
 </mat-dialog-actions>

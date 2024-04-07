@@ -1,33 +1,91 @@
-import { Component, Inject } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-row-edit-dialog',
   templateUrl: './row-edit-dialog.component.html',
   styleUrls: ['./row-edit-dialog.component.scss']
 })
-export class RowEditDialogComponent {
-  // Inject both MatDialogRef and MAT_DIALOG_DATA into your component's constructor
+export class RowEditDialogComponent implements OnInit {
+  form: FormGroup;
+
   constructor(
-    public dialogRef: MatDialogRef<RowEditDialogComponent>, // Add this line
+    private fb: FormBuilder,
+    public dialogRef: MatDialogRef<RowEditDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any
-  ) { }
+  ) {
+    this.form = this.fb.group({});
+  }
+
+  ngOnInit(): void {
+    const formControls: { [key: string]: any } = {};
+    Object.keys(this.data.rowData).forEach(key => {
+      // Assume that we have an array of keys that are not required
+      const nonRequiredFields = [
+        'timeClosed', 
+        'solutionText', 
+        'comments', 
+        'mainCategory', 
+        'category2', 
+        'category3', 
+        'teamInCharge', 
+        'userRequestedEmployeeID', 
+        'userInChargeEmployeeID'
+      ];
+      
+      const isRequired = !nonRequiredFields.includes(key);
+      formControls[key] = isRequired 
+        ? [this.data.rowData[key], Validators.required]
+        : [this.data.rowData[key]]; // No validators for non-required fields
+    });
+    this.form = this.fb.group(formControls);
+  }
+  
+  
+  save(): void {
+    if (this.form.valid) {
+      this.dialogRef.close(this.form.value);
+    } else {
+      console.error("Form is not valid.");
+  
+      // Log the form values and individual control errors
+      console.log("Form values:", this.form.value);
+      Object.keys(this.form.controls).forEach(key => {
+        const controlErrors = this.form.controls[key].errors;
+        if (controlErrors != null) {
+          Object.keys(controlErrors).forEach(keyError => {
+            console.log('Key control: ' + key + ', keyError: ' + keyError + ', err value:', controlErrors[keyError]);
+          });
+        }
+      });
+    }
+  }
+  
+  
+  
+  
 
   objectKeys = Object.keys;
 
-  save(): void {
-    this.dialogRef.close(this.data); // Now dialogRef is recognized
-  }
-
   getType(key: string): string {
-    const typeMap: {[key: string]: string} = {
+    const typeMap: { [key: string]: string } = {
       TimeOpened: 'datetime-local',
       TimeClosed: 'datetime-local',
-      // Add other fields with specific types here
+      // Define other specific types here
       UserRequestedEmployeeID: 'number',
       UserInChargeEmployeeID: 'number'
     };
-    return typeMap[key] || 'text'; // Default to text if not specified
+    return typeMap[key] || 'text';
   }
-  
+
+  private transformDataToPascalCase(data: any): any {
+    const result: any = {};
+    Object.keys(data).forEach(key => {
+      const pascalKey = key.replace(/(\w)(\w*)/g,
+        (g0, g1, g2) => g1.toUpperCase() + g2.toLowerCase());
+      result[pascalKey] = data[key];
+    });
+    return result;
+  }
 }
