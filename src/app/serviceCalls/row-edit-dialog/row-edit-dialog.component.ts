@@ -12,7 +12,9 @@ export class RowEditDialogComponent implements OnInit {
   form: FormGroup;
   teams: any[] = []; // Add this line to hold the team list
   statuses: any[] = []; // Add this line to hold the status list
-
+  filteredCategories: any[] = [];
+  categories: any[] = [];
+  
 
   constructor(
     private fb: FormBuilder,
@@ -53,7 +55,16 @@ export class RowEditDialogComponent implements OnInit {
   
   save(): void {
     if (this.form.valid) {
-      this.dialogRef.close(this.form.value);
+      console.log("Form is valid:", this.form.value);
+      const formData = this.form.value;
+      // Extract only the required fields
+      const requestData = {
+        ...formData, // Copy all form data
+        teamInCharge: formData.teamInCharge.name, // Extract team name
+        category2: formData.category2.categoryName // Extract category name
+      };
+      console.log("Request Data:", requestData);
+      this.dialogRef.close(requestData);
     } else {
       console.error("Form is not valid.");
   
@@ -68,10 +79,10 @@ export class RowEditDialogComponent implements OnInit {
         }
       });
     }
-
-
-    
   }
+  
+  
+  
   
   
   
@@ -128,6 +139,7 @@ export class RowEditDialogComponent implements OnInit {
   loadTeams(): void {
     this.http.get<any[]>('http://localhost:7144/api/GetDiffrentListServiceAPI/TeamsInCharge').subscribe(data => {
       this.teams = data;
+      this.loadCategories(); // Call loadCategories after loading teams
     }, error => {
       console.error('Could not load teams', error);
     });
@@ -139,4 +151,18 @@ export class RowEditDialogComponent implements OnInit {
       console.error('Could not load statuses', error);
     });
   }
+  onTeamChange(event: any): void {
+    const selectedTeamID = event.value.teamID; // Assuming your team object has a 'teamID' property
+    this.filteredCategories = this.categories.filter(category => category.teamID === selectedTeamID);
+  }
+
+  // Load categories from the API
+loadCategories(): void {
+  this.http.get<any[]>('http://localhost:7144/api/GetDiffrentListServiceAPI/Categories').subscribe(data => {
+    this.categories = data;
+    this.filteredCategories = data; // Initially set filteredCategories to all categories
+  }, error => {
+    console.error('Could not load categories', error);
+  });
+}
 }

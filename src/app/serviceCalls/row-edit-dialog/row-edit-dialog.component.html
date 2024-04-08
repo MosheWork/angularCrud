@@ -28,22 +28,17 @@
       </div>
       <mat-form-field appearance="fill" class="full-width-input">
         <mat-label>צוות מטפל</mat-label>
-        <mat-select formControlName="teamInCharge">
-          <mat-option *ngFor="let team of teams" [value]="team.name">{{
-            team.name
-          }}</mat-option>
+        <mat-select formControlName="teamInCharge" (selectionChange)="onTeamChange($event)">
+          <mat-option *ngFor="let team of teams" [value]="team">{{ team.name }}</mat-option>
         </mat-select>
       </mat-form-field>
+   
       <div class="grid-cell">
         <mat-form-field appearance="fill" class="full-width-input">
           <mat-label>קטגוריה ראשית</mat-label>
-          <input matInput [value]="data?.rowData?.category2" />
-        </mat-form-field>
-      </div>
-      <div class="grid-cell">
-        <mat-form-field appearance="fill" class="full-width-input">
-          <mat-label>קטגוריה משנית</mat-label>
-          <input matInput [value]="data?.rowData?.category3" />
+          <mat-select formControlName="category2">
+            <mat-option *ngFor="let category of filteredCategories" [value]="category">{{ category.categoryName }}</mat-option>
+          </mat-select>
         </mat-form-field>
       </div>
     </div>
@@ -84,7 +79,7 @@
       </div>
       <div class="grid-cell textarea-cell">
         <mat-form-field appearance="fill" class="full-width-input">
-          <mat-label>comments</mat-label>
+          <mat-label>הערות</mat-label>
           <textarea matInput formControlName="comments"></textarea>
         </mat-form-field>
       </div>
@@ -93,18 +88,13 @@
         <mat-form-field appearance="fill" class="full-width-input">
           <mat-label>סטטוס</mat-label>
           <mat-select formControlName="status">
-            <mat-option
-              *ngFor="let status of statuses"
-              [value]="status.name"
-              >{{ status.statusName }}</mat-option
-            >
+            <mat-option *ngFor="let status of statuses" [value]="status.statusName">{{ status.statusName }}</mat-option>
           </mat-select>
         </mat-form-field>
-       
       </div>
     </div>
   </div>
 </mat-dialog-content>
 <mat-dialog-actions>
-  <button mat-button (click)="save()">Save changes</button>
+  <button mat-button (click)="save()">שמור שינויים</button>
 </mat-dialog-actions>
