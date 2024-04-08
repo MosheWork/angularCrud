@@ -1,33 +1,110 @@
-<h2 mat-dialog-title>Edit Row</h2>
-<mat-dialog-content [formGroup]="form">
-  <!-- ID (Read-only, not part of form group) -->
-  <mat-form-field appearance="fill" class="full-width-input">
-    <mat-label>ID</mat-label>
-    <input matInput [value]="data?.rowData?.serviceCallID" disabled>
-  </mat-form-field>
-
-  <!-- TimeOpened (Read-only, not part of form group) -->
-  <mat-form-field appearance="fill" class="full-width-input">
-    <mat-label>Time Opened</mat-label>
-    <input matInput [value]="data?.rowData?.timeOpened" disabled>
-  </mat-form-field>
-
-  <!-- TimeClosed (Read-only, not part of form group) -->
-  <mat-form-field appearance="fill" class="full-width-input">
-    <mat-label>Time Closed</mat-label>
-    <input matInput [value]="data?.rowData?.timeClosed" disabled>
-  </mat-form-field>
-
-  <!-- Dynamic form fields for editable properties -->
-  <div *ngFor="let field of objectKeys(form.controls)">
-    <mat-form-field appearance="fill" class="full-width-input">
-      <mat-label>{{ field }}</mat-label>
-      <input matInput [formControlName]="field">
-    </mat-form-field>
+<h2 mat-dialog-title class="custom-dialog-title">
+  מספר קריאה: {{ data.rowData.serviceCallID }} {{ data.rowData.userRequested }}
+  {{ data.rowData.callbackPhone }}
+</h2>
+<mat-dialog-content [formGroup]="form" dir="rtl">
+  <!-- Part 1: General Information -->
+  <div class="section">
+    <h3 class="section-title">מידע כללי</h3>
+    <div class="section-content">
+      <div class="grid-cell">
+        <mat-form-field appearance="fill" class="full-width-input">
+          <mat-label>עדיפות</mat-label>
+          <input matInput formControlName="priority" />
+        </mat-form-field>
+      </div>
+      <div class="grid-cell">
+        <mat-form-field appearance="fill" class="full-width-input">
+          <mat-label>זמן בקשה</mat-label>
+          <input matInput [value]="data?.rowData?.timeOpened" disabled />
+        </mat-form-field>
+      </div>
+      <!-- Time Closed (Read-only, not part of form group) -->
+      <div class="grid-cell">
+        <mat-form-field appearance="fill" class="full-width-input">
+          <mat-label>שעת סגירה </mat-label>
+          <input matInput [value]="data?.rowData?.timeClosed" disabled />
+        </mat-form-field>
+      </div>
+      <mat-form-field appearance="fill" class="full-width-input">
+        <mat-label>צוות מטפל</mat-label>
+        <mat-select formControlName="teamInCharge">
+          <mat-option *ngFor="let team of teams" [value]="team.name">{{
+            team.name
+          }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+      <div class="grid-cell">
+        <mat-form-field appearance="fill" class="full-width-input">
+          <mat-label>קטגוריה ראשית</mat-label>
+          <input matInput [value]="data?.rowData?.category2" />
+        </mat-form-field>
+      </div>
+      <div class="grid-cell">
+        <mat-form-field appearance="fill" class="full-width-input">
+          <mat-label>קטגוריה משנית</mat-label>
+          <input matInput [value]="data?.rowData?.category3" />
+        </mat-form-field>
+      </div>
+    </div>
   </div>
 
+  <!-- Part 2: -->
+  <div class="section">
+    <h3 class="section-title">פרטי התקלה</h3>
+    <div class="section-content">
+      <div class="grid-cell">
+        <mat-form-field appearance="fill" class="full-width-input">
+          <mat-label>כותרת</mat-label>
+          <input matInput formControlName="title" />
+        </mat-form-field>
+      </div>
+      <div class="grid-cell">
+        <mat-form-field appearance="fill" class="full-width-input">
+          <mat-label>IP</mat-label>
+          <input matInput formControlName="serviceCallID" />
+        </mat-form-field>
+      </div>
+      <div class="grid-cell textarea-cell">
+        <mat-form-field appearance="fill" class="full-width-input">
+          <mat-label>תיאור הבעיה </mat-label>
+          <textarea matInput formControlName="problemDescription"></textarea>
+        </mat-form-field>
+      </div>
+    </div>
+  </div>
+  <div class="section">
+    <h3 class="section-title">טיפול בתקלה</h3>
+    <div class="section-content">
+      <div class="grid-cell textarea-cell">
+        <mat-form-field appearance="fill" class="full-width-input">
+          <mat-label>פתרון</mat-label>
+          <textarea matInput formControlName="solutionText"></textarea>
+        </mat-form-field>
+      </div>
+      <div class="grid-cell textarea-cell">
+        <mat-form-field appearance="fill" class="full-width-input">
+          <mat-label>comments</mat-label>
+          <textarea matInput formControlName="comments"></textarea>
+        </mat-form-field>
+      </div>
+      <!-- Status Dropdown -->
+      <div class="grid-cell">
+        <mat-form-field appearance="fill" class="full-width-input">
+          <mat-label>סטטוס</mat-label>
+          <mat-select formControlName="status">
+            <mat-option
+              *ngFor="let status of statuses"
+              [value]="status.name"
+              >{{ status.statusName }}</mat-option
+            >
+          </mat-select>
+        </mat-form-field>
+       
+      </div>
+    </div>
+  </div>
 </mat-dialog-content>
 <mat-dialog-actions>
   <button mat-button (click)="save()">Save changes</button>
-  <!-- <button mat-button (click)="close()">Cancel</button> -->
 </mat-dialog-actions>

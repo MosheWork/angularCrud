@@ -1,37 +1,75 @@
-/* row-edit-dialog.component.scss */
 :host {
-    display: block; /* Makes it easier to manage width/height */
-  }
+  display: block; /* Makes it easier to manage width/height */
+}
+
+.section {
+  border: 1px solid #ccc; /* Add border around each section */
+  padding: 16px; /* Add padding inside each section */
+  margin-bottom: 20px; /* Add margin between sections */
+}
+
+.section-title {
+  font-size: 15px;
+  font-weight: bold;
+  color: #090808;
+  text-align: center;
+  padding: 1px 0;
+  margin-left: 20px;
+  border-bottom: 2px solid #ccc;
+  width: calc(100% - 40px);
+  /* padding: 10px; */
+}
+
+.section-content {
+  display: grid;
+  grid-template-columns: repeat(4, auto); /* 4 columns */
+  grid-gap: 16px; /* Adjust spacing between cells */
   
-  .full-width-input {
-    width: 100%;
+  .grid-cell:not(.textarea-cell) { /* Apply to all grid cells except for textarea cell */
+    grid-column: span 1; /* Each cell takes up one column */
   }
+
+  .textarea-cell { /* Specific class for the grid cell that contains the textarea */
+    grid-column: span 4; /* Let the textarea take up all 4 columns */
+  }
+}
+
+.full-width-input {
+  width: 100%; /* Full width for form fields */
+}
+
+.dialog-content {
+  padding: 24px;
+}
+
+.dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+  padding: 8px 24px;
+}
+
+.custom-dialog-title {
+  font-size: 20px;
+  color: #333;
+  font-weight: bold;
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+.mat-form-field {
+  width: 100%; /* Full width for Material form field */
   
-  /* Example of custom styles */
-  .dialog-content {
-    padding: 24px;
-  }
-  
-  .dialog-actions {
-    display: flex;
-    justify-content: flex-end;
-    padding: 8px 24px;
-  }
-  
-  /* Specific class for inputs if needed */
-  .input-field {
-    margin-bottom: 16px; /* Spacing between fields */
-  }
-  /* styles.scss */
-.custom-dialog-container {
-    max-width: 95%;
-    width: auto; /* Adjust width based on content or to a fixed size */
-    border-radius: 8px; /* Optional: for rounded corners */
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Optional: for shadow */
-  }
-  
-  /* To style the overlay backdrop */
-  .cdk-overlay-dark-backdrop {
-    background-color: rgba(0,0,0,0.5); /* Darker overlay */
-  }
-  
+  // textarea.mat-input-element {
+  //   height: auto; /* Adjust height to content, can also use min-height */
+  //   min-height: 250px !important; /* Minimum height */
+  //   overflow-y: auto; /* Show scrollbar when content overflows */
+  // }
+}
+
+textarea[matInput] {
+  min-height: 75px !important; /* Enforce minimum height */
+  overflow-y: auto; /* Show scrollbar when content overflows */
+  resize: none; /* Disables the resize handle */
+  white-space: normal; /* Ensures text wraps to next line as needed */
+  overflow-wrap: break-word; /* Ensures long words do not break the layout */
+}

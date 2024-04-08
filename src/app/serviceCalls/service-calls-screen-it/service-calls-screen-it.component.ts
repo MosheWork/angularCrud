@@ -146,9 +146,10 @@ export class ServiceCallsScreenITComponent implements OnInit {
 
 openEditDialog(rowData: any): void {
   const dialogRef = this.dialog.open(RowEditDialogComponent, {
-    width: '600px',
+    width: 'auto',
     data: { rowData: rowData },
-    panelClass: 'custom-dialog-container'
+    panelClass: 'custom-dialog-container',
+   
   });
 
   dialogRef.afterClosed().subscribe(updatedRowData  => {
