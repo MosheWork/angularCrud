@@ -49,10 +49,10 @@
 }
 
 .custom-dialog-title {
-  font-size: 20px;
+  font-size: 15px;
   color: #333;
   font-weight: bold;
-  margin-bottom: 10px;
+  margin-bottom: 5px;
   text-align: center;
 }
 
@@ -73,3 +73,39 @@ textarea[matInput] {
   white-space: normal; /* Ensures text wraps to next line as needed */
   overflow-wrap: break-word; /* Ensures long words do not break the layout */
 }
+.custom-dialog-title {
+  display: flex;
+  justify-content: center; /* Center the title content */
+  align-items: center;
+  flex-direction: column; /* Stack the children vertically */
+  
+}
+
+.user-info {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.user-requested {
+  order: 3; /* Move to the right */
+  /* Add right-aligned icon if desired */
+}
+
+.user-name {
+  order: 2; /* Keep in the center */
+  text-align: center;
+}
+
+.callback-phone {
+  order: 1; /* Move to the left */
+  /* Add left-aligned icon if desired */
+}
+
+.dialog-actions {
+  display: flex;
+  justify-content: space-between; /* Place buttons on each side */
+  
+}
+
+

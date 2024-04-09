@@ -165,4 +165,7 @@ loadCategories(): void {
     console.error('Could not load categories', error);
   });
 }
+closeDialog(): void {
+  this.dialogRef.close();
+}
 }

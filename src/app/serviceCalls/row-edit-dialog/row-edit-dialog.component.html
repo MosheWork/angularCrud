@@ -1,12 +1,24 @@
 <h2 mat-dialog-title class="custom-dialog-title">
-  מספר קריאה: {{ data.rowData.serviceCallID }} {{ data.rowData.userRequested }}
-  {{ data.rowData.callbackPhone }}
+  <div class="user-info">
+    <span class="callback-phone">{{ data.rowData.callbackPhone }}<mat-icon matPrefix>phone</mat-icon>
+    </span>
+    <span class="user-name">שם פרטי+משפחה</span>
+    <span class="user-requested">שם משתמש: {{ data.rowData.userRequested }}</span>
+  </div>
 </h2>
 <mat-dialog-content [formGroup]="form" dir="rtl">
   <!-- Part 1: General Information -->
   <div class="section">
-    <h3 class="section-title">מידע כללי</h3>
+    <h3 class="section-title">מידע כללי <mat-icon>info</mat-icon>
+    </h3>
+    
     <div class="section-content">
+      <div class="grid-cell">
+        <mat-form-field appearance="fill" class="full-width-input">
+          <mat-label>מספר קריאה</mat-label>
+          <input matInput [value]="data?.rowData?.serviceCallID" disabled />
+        </mat-form-field>
+      </div>
       <div class="grid-cell">
         <mat-form-field appearance="fill" class="full-width-input">
           <mat-label>עדיפות</mat-label>
@@ -32,7 +44,7 @@
           <mat-option *ngFor="let team of teams" [value]="team">{{ team.name }}</mat-option>
         </mat-select>
       </mat-form-field>
-   
+
       <div class="grid-cell">
         <mat-form-field appearance="fill" class="full-width-input">
           <mat-label>קטגוריה ראשית</mat-label>
@@ -46,7 +58,7 @@
 
   <!-- Part 2: -->
   <div class="section">
-    <h3 class="section-title">פרטי התקלה</h3>
+    <h3 class="section-title">פרטי התקלה <mat-icon>computer</mat-icon></h3>
     <div class="section-content">
       <div class="grid-cell">
         <mat-form-field appearance="fill" class="full-width-input">
@@ -69,7 +81,8 @@
     </div>
   </div>
   <div class="section">
-    <h3 class="section-title">טיפול בתקלה</h3>
+    <h3 class="section-title">טיפול בתקלה <mat-icon> border_color</mat-icon>
+    </h3>
     <div class="section-content">
       <div class="grid-cell textarea-cell">
         <mat-form-field appearance="fill" class="full-width-input">
@@ -95,6 +108,8 @@
     </div>
   </div>
 </mat-dialog-content>
-<mat-dialog-actions>
-  <button mat-button (click)="save()">שמור שינויים</button>
+<mat-dialog-actions class="dialog-actions">
+  <button mat-flat-button color="primary" (click)="save()">שמור שינויים</button>
+  <button mat-flat-button color="warn" (click)="closeDialog()">בטל</button>
+
 </mat-dialog-actions>
