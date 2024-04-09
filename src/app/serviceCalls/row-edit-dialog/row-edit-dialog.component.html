@@ -44,6 +44,13 @@
           <mat-option *ngFor="let team of teams" [value]="team">{{ team.name }}</mat-option>
         </mat-select>
       </mat-form-field>
+<!-- Inside the mat-dialog-content -->
+<mat-form-field appearance="fill" class="full-width-input">
+  <mat-label>User In Charge</mat-label>
+  <mat-select formControlName="userInCharge">
+    <mat-option *ngFor="let user of users" [value]="user.employeeID">{{ user.firstName }} {{ user.lastName }}</mat-option>
+  </mat-select>
+</mat-form-field>
 
       <div class="grid-cell">
         <mat-form-field appearance="fill" class="full-width-input">

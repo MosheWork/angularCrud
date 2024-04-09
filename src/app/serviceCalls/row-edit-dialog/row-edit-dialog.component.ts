@@ -14,6 +14,7 @@ export class RowEditDialogComponent implements OnInit {
   statuses: any[] = []; // Add this line to hold the status list
   filteredCategories: any[] = [];
   categories: any[] = [];
+  users: any[] = []; // Add this line to hold the user list
   
 
   constructor(
@@ -28,6 +29,7 @@ export class RowEditDialogComponent implements OnInit {
   ngOnInit(): void {
     this.loadTeams(); // Call this method to load teams from the API
     this.loadStatuses(); // Load statuses when the component initializes
+   
 
     const formControls: { [key: string]: any } = {};
     Object.keys(this.data.rowData).forEach(key => {
@@ -50,6 +52,8 @@ export class RowEditDialogComponent implements OnInit {
         : [this.data.rowData[key]]; // No validators for non-required fields
     });
     this.form = this.fb.group(formControls);
+    this.form.addControl('userInCharge', this.fb.control(''));
+
   }
   
   
@@ -154,7 +158,9 @@ export class RowEditDialogComponent implements OnInit {
   onTeamChange(event: any): void {
     const selectedTeamID = event.value.teamID; // Assuming your team object has a 'teamID' property
     this.filteredCategories = this.categories.filter(category => category.teamID === selectedTeamID);
+    this.loadUsers(selectedTeamID); // Pass selectedTeamID to loadUsers
   }
+  
 
   // Load categories from the API
 loadCategories(): void {
@@ -168,4 +174,21 @@ loadCategories(): void {
 closeDialog(): void {
   this.dialogRef.close();
 }
+
+loadUsers(selectedTeamID: string): void {
+  this.http.get<any[]>('http://localhost:7144/api/GetDiffrentListServiceAPI/UsersList')
+    .subscribe(data => {
+      console.log('Users:', data);
+      // Filter users based on the selected team
+      this.users = data.filter(user => user.teamID === selectedTeamID);
+      console.log('selectedTeamID:', selectedTeamID);
+    }, error => {
+      console.error('Error loading users:', error); // Log error
+    });
+
+   
+}
+
+
+
 }
