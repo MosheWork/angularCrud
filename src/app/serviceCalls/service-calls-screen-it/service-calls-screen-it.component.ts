@@ -38,13 +38,13 @@ export class ServiceCallsScreenITComponent implements OnInit {
   // Columns to be displayed in the table are specified here.
   columns: string[] = [
    'serviceCallID', 'timeOpened', 'timeClosed', 'priority', 'status', 'userRequested',
-    //'callbackPhone',
+    'userInChargeEmployeeID',
      'title', //'problemDescription', 'solutionText',
     //'comments', 'ip', 'departmentName',
-     'mainCategory',
-
+     //'mainCategory',
+      'teamInCharge',
      'category2',
-    'category3', 'teamInCharge'
+    'category3'
   ];
 
   constructor(
@@ -134,10 +134,11 @@ export class ServiceCallsScreenITComponent implements OnInit {
       comments: 'הערות',
       ip: 'IP',
       departmentName: 'מקום התקלה',
-      mainCategory: 'קטגוריה ראשית',
-      category2: 'קטגוריה משנית',
-      category3: 'קטגוריה שלישית',
+      //mainCategory: 'קטגוריה ראשית',
+      category2: 'קטגוריה ראשית',
+      category3: ' תת קטגוריה ',
       teamInCharge: 'צוות מטפל',
+      userInChargeEmployeeID:'משתמש אחראי'
     };
     return labels[column] || column;
   }

@@ -56,7 +56,6 @@ export class RowEditDialogComponent implements OnInit {
 
   }
   
-  
   save(): void {
     if (this.form.valid) {
       console.log("Form is valid:", this.form.value);
@@ -65,13 +64,13 @@ export class RowEditDialogComponent implements OnInit {
       const requestData = {
         ...formData, // Copy all form data
         teamInCharge: formData.teamInCharge.name, // Extract team name
-        category2: formData.category2.categoryName // Extract category name
+        category2: formData.category2.categoryName, // Extract category name
+        userInChargeEmployeeID: formData.userInCharge, // Set UserInChargeEmployeeID
       };
       console.log("Request Data:", requestData);
       this.dialogRef.close(requestData);
     } else {
       console.error("Form is not valid.");
-  
       // Log the form values and individual control errors
       console.log("Form values:", this.form.value);
       Object.keys(this.form.controls).forEach(key => {
@@ -84,6 +83,7 @@ export class RowEditDialogComponent implements OnInit {
       });
     }
   }
+  
   
   
   
