@@ -2,6 +2,8 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
+import { ChangeDetectorRef } from '@angular/core';
+
 
 @Component({
   selector: 'app-row-edit-dialog',
@@ -10,26 +12,34 @@ import { HttpClient } from '@angular/common/http';
 })
 export class RowEditDialogComponent implements OnInit {
   form: FormGroup;
-  teams: any[] = []; // Add this line to hold the team list
-  statuses: any[] = []; // Add this line to hold the status list
+  teams: any[] = [];
+  statuses: any[] = [];
   filteredCategories: any[] = [];
   categories: any[] = [];
-  users: any[] = []; // Add this line to hold the user list
-  
+  users: any[] = [];
 
   constructor(
+    private cdRef: ChangeDetectorRef,
     private fb: FormBuilder,
     public dialogRef: MatDialogRef<RowEditDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
-    private http: HttpClient // Inject HttpClient
+    private http: HttpClient
   ) {
-    this.form = this.fb.group({});
+    // Initialize form controls here with empty values or nulls
+    this.form = this.fb.group({
+      teamInCharge: [null], // Initialized with null or empty value
+      userInCharge: [null], // Initialize with null or empty value
+  category2: [null], // Initialize with null or empty value
+    });
   }
 
   ngOnInit(): void {
     this.loadTeams(); // Call this method to load teams from the API
     this.loadStatuses(); // Load statuses when the component initializes
-   
+    this.initializeFormControls(); // Initialize form controls based on passed data
+    this.loadCategories()
+    
+
 
     const formControls: { [key: string]: any } = {};
     Object.keys(this.data.rowData).forEach(key => {
@@ -143,11 +153,22 @@ export class RowEditDialogComponent implements OnInit {
   loadTeams(): void {
     this.http.get<any[]>('http://localhost:7144/api/GetDiffrentListServiceAPI/TeamsInCharge').subscribe(data => {
       this.teams = data;
-      this.loadCategories(); // Call loadCategories after loading teams
+  
+      if (this.data.rowData && this.data.rowData.teamInCharge) {
+        // Since teamInCharge is a string, find the team object that matches this name
+        const defaultTeam = this.teams.find(team => team.name === this.data.rowData.teamInCharge);
+        if (defaultTeam) {
+          this.form.get('teamInCharge')?.setValue(defaultTeam);
+          this.cdRef.detectChanges(); // Ensure Angular detects this change
+        }
+      }
     }, error => {
       console.error('Could not load teams', error);
     });
   }
+  
+  
+  
   loadStatuses(): void {
     this.http.get<any[]>('http://localhost:7144/api/GetDiffrentListServiceAPI/Statuses').subscribe(data => {
       this.statuses = data;
@@ -163,14 +184,23 @@ export class RowEditDialogComponent implements OnInit {
   
 
   // Load categories from the API
-loadCategories(): void {
-  this.http.get<any[]>('http://localhost:7144/api/GetDiffrentListServiceAPI/Categories').subscribe(data => {
-    this.categories = data;
-    this.filteredCategories = data; // Initially set filteredCategories to all categories
-  }, error => {
-    console.error('Could not load categories', error);
-  });
-}
+  loadCategories(): void {
+    this.http.get<any[]>('http://localhost:7144/api/GetDiffrentListServiceAPI/Categories').subscribe(data => {
+      this.categories = data;
+      console.log(this.categories)
+  
+      // Set default category2 if applicable
+      if (this.data.rowData && this.data.rowData.category2) {
+        const defaultCategory = this.categories.find(category => category.categoryName === this.data.rowData.category2);
+        if (defaultCategory) {
+          this.form.get('category2')?.setValue(defaultCategory);
+          this.cdRef.detectChanges();
+        }
+      }
+    }, error => {
+      console.error('Could not load categories', error);
+    });
+  }
 closeDialog(): void {
   this.dialogRef.close();
 }
@@ -178,17 +208,47 @@ closeDialog(): void {
 loadUsers(selectedTeamID: string): void {
   this.http.get<any[]>('http://localhost:7144/api/GetDiffrentListServiceAPI/UsersList')
     .subscribe(data => {
-      console.log('Users:', data);
-      // Filter users based on the selected team
       this.users = data.filter(user => user.teamID === selectedTeamID);
-      console.log('selectedTeamID:', selectedTeamID);
-    }, error => {
-      console.error('Error loading users:', error); // Log error
-    });
 
-   
+      // Assuming userInCharge is an ID that needs to match one of the user's employeeID
+      if (this.data.rowData && this.data.rowData.userInChargeEmployeeID) {
+        const defaultUser = this.users.find(user => user.employeeID === this.data.rowData.userInChargeEmployeeID);
+        if (defaultUser) {
+          this.form.get('userInCharge')?.setValue(defaultUser.employeeID);
+          this.cdRef.detectChanges();
+        }
+      }
+    }, error => {
+      console.error('Error loading users:', error);
+    });
 }
 
-
+private initializeFormControls(): void {
+  // Explicitly define the type of nonRequiredFields as an array of strings
+  const nonRequiredFields: string[] = [
+    'timeClosed', 
+    'solutionText', 
+    'comments', 
+    'mainCategory', 
+    'category2', 
+    'category3', 
+    'teamInCharge', 
+    'userRequestedEmployeeID', 
+    'userInChargeEmployeeID'
+    // ... any other non-required fields
+  ];
+  
+  const formControls: { [key: string]: any } = {};
+  Object.keys(this.data.rowData).forEach(key => {
+    const isRequired = !nonRequiredFields.includes(key);
+    formControls[key] = isRequired 
+      ? [this.data.rowData[key], Validators.required]
+      : [this.data.rowData[key]]; // No validators for non-required fields
+  });
+  this.form = this.fb.group(formControls);
+}
+// compareTeams(team1: any, team2: any): boolean {
+//   return team1 && team2 && team1.name === team2;
+// }
 
 }
