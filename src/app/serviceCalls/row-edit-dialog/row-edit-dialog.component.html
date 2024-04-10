@@ -40,7 +40,7 @@
       </div>
       <mat-form-field appearance="fill" class="full-width-input">
         <mat-label>צוות מטפל</mat-label>
-        <mat-select formControlName="teamInCharge" (selectionChange)="onTeamChange($event)"  >
+        <mat-select formControlName="teamInCharge">
           <mat-option *ngFor="let team of teams" [value]="team">{{ team.name }}</mat-option>
         </mat-select>
       </mat-form-field>
