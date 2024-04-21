@@ -66,6 +66,7 @@ import { MainServiceCallsScreenComponent } from './serviceCalls/main-service-cal
 import { MatGridListModule } from '@angular/material/grid-list';
 import { ServiceCallsScreenITComponent } from './serviceCalls/service-calls-screen-it/service-calls-screen-it.component';
 import { RowEditDialogComponent } from './serviceCalls/row-edit-dialog/row-edit-dialog.component';
+import { AdminHomePageComponent } from './admin-home-page/admin-home-page.component';
 
 
 @NgModule({
@@ -105,6 +106,7 @@ import { RowEditDialogComponent } from './serviceCalls/row-edit-dialog/row-edit-
     MainServiceCallsScreenComponent,
     ServiceCallsScreenITComponent,
     RowEditDialogComponent,
+    AdminHomePageComponent,
   ],
   imports: [
     BrowserModule,

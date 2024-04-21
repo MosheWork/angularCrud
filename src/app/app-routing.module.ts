@@ -23,6 +23,7 @@ import { UserDashboardComponent } from './user-dashboard/user-dashboard.componen
 import { AdminDashboardComponent } from './admin-dashboard/admin-dashboard.component';
 import { MainServiceCallsScreenComponent } from './serviceCalls/main-service-calls-screen/main-service-calls-screen.component';
 import { ServiceCallsScreenITComponent } from './serviceCalls/service-calls-screen-it/service-calls-screen-it.component';
+import { AdminHomePageComponent } from './admin-home-page/admin-home-page.component';
 
 const routes: Routes = [
   { path: 'users', component: UsersComponent },
@@ -54,7 +55,12 @@ const routes: Routes = [
 
   //service calls
   { path: 'MainServiceCallsScreen', component: MainServiceCallsScreenComponent },
-  { path: 'serviceCallsScreenIt', component: ServiceCallsScreenITComponent }
+  { path: 'serviceCallsScreenIt', component: ServiceCallsScreenITComponent },
+
+
+  //AdminHomePage
+  { path: 'AdminHomePage', component: AdminHomePageComponent }
+
 
 
 
