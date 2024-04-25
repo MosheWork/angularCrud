@@ -135,7 +135,7 @@ export class MedicalDevicesComponent implements OnInit {
     // Fetch data from the API when the component initializes
 
     this.http
-      .get<any[]>(environment.apiUrl + 'DevicesPerUnitAPI')
+      .get<any[]>(environment.apiUrl + 'MedicalDevicesAPI')
       .subscribe((data) => {
         //console.log('Received data:', data); // Log the data received from the API
 
@@ -280,7 +280,7 @@ export class MedicalDevicesComponent implements OnInit {
 
   fetchAnswerTextOptions() {
     this.http
-      .get<any[]>(environment.apiUrl + 'DevicesPerUnitAPI')
+      .get<any[]>(environment.apiUrl + 'MedicalDevicesAPI')
       .subscribe((data) => {
         // Extract distinct values from the 'answer_Text' column
         this.answerTextOptions = [...new Set(data.map((item) => item.unit))];
@@ -291,7 +291,7 @@ export class MedicalDevicesComponent implements OnInit {
   fetchAnswerTextTypeOptions() {
     // Fetch options specifically for 'answer_Text_Type'
     this.http
-      .get<any[]>(environment.apiUrl + 'DevicesPerUnitAPI')
+      .get<any[]>(environment.apiUrl + 'MedicalDevicesAPI')
       .subscribe((data) => {
         this.answerTextTypeOptions = [
           ...new Set(data.map((item) => item.name)),

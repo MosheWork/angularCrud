@@ -67,6 +67,8 @@ import { MatGridListModule } from '@angular/material/grid-list';
 import { ServiceCallsScreenITComponent } from './serviceCalls/service-calls-screen-it/service-calls-screen-it.component';
 import { RowEditDialogComponent } from './serviceCalls/row-edit-dialog/row-edit-dialog.component';
 import { AdminHomePageComponent } from './admin-home-page/admin-home-page.component';
+import { GuidesListComponent } from './Guides/guides-list/guides-list.component';
+import { NewGuideFormComponent } from './Guides/new-guide-form/new-guide-form.component';
 
 
 @NgModule({
@@ -107,6 +109,8 @@ import { AdminHomePageComponent } from './admin-home-page/admin-home-page.compon
     ServiceCallsScreenITComponent,
     RowEditDialogComponent,
     AdminHomePageComponent,
+    GuidesListComponent,
+    NewGuideFormComponent,
   ],
   imports: [
     BrowserModule,

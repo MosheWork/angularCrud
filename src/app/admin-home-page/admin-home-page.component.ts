@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { environment } from '../../environments/environment';
+
 
 @Component({
   selector: 'app-admin-home-page',
@@ -10,7 +12,7 @@ export class AdminHomePageComponent implements OnInit {
   links = [
     { title: 'מסך מנהל-קריאות', description: '', url: 'http://localhost:4200/AdminDashboard', imageUrl: './../../assets/AdminDashboard.jpg' },
     { title: 'ניהול הרשאות לדוחות', description: '', url: 'http://localhost:4200/reports-permissions', imageUrl: './../../assets/reports-permissions.jpg' },
-    { title: 'Project 3', description: 'A brief description of Project 3', url: 'https://www.example.com', imageUrl: 'assets/images/project3.jpg' },
+    { title: 'מערכת קריאות', description: '', url: 'http://localhost:4200/MainServiceCallsScreen', imageUrl: './../../assets/מערכת קריאות.jpg' },
     // Add more projects as needed
   ];
 

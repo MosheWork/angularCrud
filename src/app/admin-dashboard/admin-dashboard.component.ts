@@ -354,7 +354,7 @@ export class AdminDashboardComponent implements OnInit,AfterViewInit  {
   }
   openAddTaskDialog(): void {
     this.http
-      .get<any[]>('http://localhost:7144/api/AdminDashboardAPI/GetAllUsers')
+      .get<any[]>(environment.apiUrl + 'AdminDashboardAPI/GetAllUsers')
       .subscribe(
         (users) => {
           const dialogRef = this.dialog.open(AddTaskDialogComponentComponent, {

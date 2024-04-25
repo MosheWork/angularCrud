@@ -74,7 +74,7 @@ export class ReportsPermissionsComponent implements OnInit {
 
   fetchReportsData() {
     this.http
-      .get<Reports[]>(environment.apiUrl + 'ChameleonOnlineReportsAPI')
+      .get<Reports[]>(environment.apiUrl + 'ChameleonOnlineReportsAPI/AllReports')
       .subscribe(
         (data: Reports[]) => {
           // Map the API response to the new property names

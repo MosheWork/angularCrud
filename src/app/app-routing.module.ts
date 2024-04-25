@@ -24,6 +24,8 @@ import { AdminDashboardComponent } from './admin-dashboard/admin-dashboard.compo
 import { MainServiceCallsScreenComponent } from './serviceCalls/main-service-calls-screen/main-service-calls-screen.component';
 import { ServiceCallsScreenITComponent } from './serviceCalls/service-calls-screen-it/service-calls-screen-it.component';
 import { AdminHomePageComponent } from './admin-home-page/admin-home-page.component';
+import { GuidesListComponent } from './Guides/guides-list/guides-list.component';
+import { NewGuideFormComponent } from './Guides/new-guide-form/new-guide-form.component';
 
 const routes: Routes = [
   { path: 'users', component: UsersComponent },
@@ -59,7 +61,12 @@ const routes: Routes = [
 
 
   //AdminHomePage
-  { path: 'AdminHomePage', component: AdminHomePageComponent }
+  { path: 'AdminHomePage', component: AdminHomePageComponent },
+
+  
+  //guides
+  { path: 'GuidesList', component: GuidesListComponent },
+  { path: 'NewGuid', component: NewGuideFormComponent }
 
 
 
