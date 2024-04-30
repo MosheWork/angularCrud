@@ -12,24 +12,21 @@
   <!-- Dynamically add text sections or images -->
   <div *ngFor="let section of sections; let i = index" class="section">
     <div>Position: {{ section.position }}</div>
+    <button mat-icon-button (click)="moveSectionUp(i)" [disabled]="i === 0"><mat-icon>arrow_upward</mat-icon></button>
+    <button mat-icon-button (click)="moveSectionDown(i)" [disabled]="i === sections.length - 1"><mat-icon>arrow_downward</mat-icon></button>
     <mat-form-field *ngIf="section.type === 'text'" appearance="fill">
       <mat-label>Text content</mat-label>
-      <textarea matInput placeholder="Text content" [(ngModel)]="section.content" name="textContent{{i}}" style="width: 100%;"></textarea>
+      <textarea matInput placeholder="Text content" [(ngModel)]="section.content" name="textContent{{i}}"></textarea>
     </mat-form-field>
     
-    <div *ngIf="section.type === 'image'" class="image-upload full-width-input">
+    <div *ngIf="section.type === 'image'" class="image-upload">
       <input type="file" (change)="handleImageChange($event, i)">
-      <img *ngIf="section.preview" [src]="section.preview" class="image-preview" style="width: 100%; height: auto; margin-top: 10px;">
+      <img *ngIf="section.preview" [src]="section.preview" class="image-preview">
     </div>
   </div>
 
-  <!-- Buttons to add text sections or images -->
-  <button mat-button (click)="addTextSection()" type="button">
-    <mat-icon>add</mat-icon> Add Text Section
-  </button>
-  <button mat-button (click)="addImageSection()" type="button">
-    <mat-icon>add_photo_alternate</mat-icon> Add Image Section
-  </button>
+  <button mat-button (click)="addTextSection()" type="button">Add Text Section</button>
+  <button mat-button (click)="addImageSection()" type="button">Add Image Section</button>
 
   <button mat-raised-button color="primary" type="submit">Submit</button>
 </form>

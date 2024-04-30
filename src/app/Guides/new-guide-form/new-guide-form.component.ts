@@ -15,14 +15,11 @@ export class NewGuideFormComponent {
   constructor(private http: HttpClient) {}
 
   addTextSection() {
-    // Calculate the next position based on the current number of sections
-    let newPosition = this.sections.length + 1;
-    this.sections.push({ type: 'text', content: '', position: newPosition });
+    this.sections.push({ type: 'text', content: '', position: this.sections.length + 1 });
   }
 
   addImageSection() {
-    let newPosition = this.sections.length + 1;
-    this.sections.push({ type: 'image', content: null, position: newPosition });
+    this.sections.push({ type: 'image', content: null, position: this.sections.length + 1 });
   }
 
   handleImageChange(event: any, index: number) {
@@ -30,18 +27,31 @@ export class NewGuideFormComponent {
     if (file) {
       this.sections[index].content = file;
   
-      // Create a file reader
       const reader = new FileReader();
-      
-      // Set up the onload event handler
       reader.onload = (e: any) => {
-        this.sections[index].preview = e.target.result; // Assign the result to preview field
-        this.sections = [...this.sections]; // Update the sections array to trigger Angular change detection
+        this.sections[index].preview = e.target.result;
+        this.sections = [...this.sections]; // Trigger change detection
       };
-  
-      // Read the file as a data URL (base64)
       reader.readAsDataURL(file);
     }
+  }
+
+  moveSectionUp(index: number) {
+    if (index > 0) {
+      [this.sections[index], this.sections[index - 1]] = [this.sections[index - 1], this.sections[index]];
+      this.updatePositions();
+    }
+  }
+
+  moveSectionDown(index: number) {
+    if (index < this.sections.length - 1) {
+      [this.sections[index], this.sections[index + 1]] = [this.sections[index + 1], this.sections[index]];
+      this.updatePositions();
+    }
+  }
+
+  updatePositions() {
+    this.sections = this.sections.map((section, idx) => ({ ...section, position: idx + 1 }));
   }
 
   submitForm() {
@@ -49,9 +59,9 @@ export class NewGuideFormComponent {
     formData.append('title', this.title);
     formData.append('createdBy', this.createdBy);
     this.sections.forEach((section, index) => {
-      formData.append('positions', section.position.toString());
       if (section.type === 'text') {
-        formData.append('textContents', section.content);
+        formData.append('positions[]', String(section.position)); // Append position for each text content
+        formData.append('textContents[]', section.content); // Append text content
       } else if (section.type === 'image' && section.content) {
         formData.append('images', section.content);
       }
@@ -68,4 +78,5 @@ export class NewGuideFormComponent {
       }
     );
   }
+  
 }
