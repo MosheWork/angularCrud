@@ -14,9 +14,32 @@
 
   /* styles.scss or new-guide-form.component.scss */
 .image-preview {
-  width: 100px;  /* or any other dimensions */
+  width: 500px;  /* or any other dimensions */
   height: auto;
   margin-top: 10px;
 }
+/* new-guide-form.component.scss */
+/* styles.scss or new-guide-form.component.scss */
+/* new-guide-form.component.scss */
+.full-width-form {
+  display: flex;
+  flex-direction: column;
+  width: 100%; /* Ensure the form takes up the full width */
+}
 
-  
+.full-width-input {
+  width: 100%; /* Ensures input fields take full width */
+}
+
+.section {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+.new-guide-form .full-width-input {
+  width: 100%; /* Ensures input fields take full width */
+}
+
+.section .mat-form-field.full-width-input {
+  width: 100%;
+}

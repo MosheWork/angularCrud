@@ -15,11 +15,14 @@ export class NewGuideFormComponent {
   constructor(private http: HttpClient) {}
 
   addTextSection() {
-    this.sections.push({ type: 'text', content: '' });
+    // Calculate the next position based on the current number of sections
+    let newPosition = this.sections.length + 1;
+    this.sections.push({ type: 'text', content: '', position: newPosition });
   }
 
   addImageSection() {
-    this.sections.push({ type: 'image', content: null });
+    let newPosition = this.sections.length + 1;
+    this.sections.push({ type: 'image', content: null, position: newPosition });
   }
 
   handleImageChange(event: any, index: number) {
@@ -45,11 +48,12 @@ export class NewGuideFormComponent {
     const formData = new FormData();
     formData.append('title', this.title);
     formData.append('createdBy', this.createdBy);
-    this.sections.forEach((section) => {
+    this.sections.forEach((section, index) => {
+      formData.append('positions', section.position.toString());
       if (section.type === 'text') {
-        formData.append('textContents', section.content); // No index for textContents
+        formData.append('textContents', section.content);
       } else if (section.type === 'image' && section.content) {
-        formData.append('images', section.content); // Keep adding images with the same key
+        formData.append('images', section.content);
       }
     });
   
@@ -64,5 +68,4 @@ export class NewGuideFormComponent {
       }
     );
   }
-  
 }
