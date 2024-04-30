@@ -10,7 +10,7 @@ import { Router } from '@angular/router'; // Import the Router
 import { environment } from '../../../environments/environment';
 import { DatePipe } from '@angular/common';
 import { MatDialog } from '@angular/material/dialog';
-import {EditTaskDialogComponent} from '../edit-task-dialog/edit-task-dialog.component'
+import { EditTaskDialogComponent } from '../edit-task-dialog/edit-task-dialog.component';
 import { AddTaskDialogComponentComponent } from '../add-task-dialog-component/add-task-dialog-component.component';
 
 interface Task {
@@ -21,16 +21,15 @@ interface Task {
   Progress: number;
   LastUpdated: string; // Assuming this is a date in string format
   dueDate: string; // Assuming this is a date in string format
-  //editTodo: string; 
+  //editTodo: string;
 }
 
 @Component({
   selector: 'app-tab2',
   templateUrl: './tab2.component.html',
-  styleUrls: ['./tab2.component.scss']
+  styleUrls: ['./tab2.component.scss'],
 })
 export class Tab2Component implements OnInit {
-
   loginUserName = '';
   userData: any = {};
   taskSummeryData: any = {};
@@ -51,20 +50,21 @@ export class Tab2Component implements OnInit {
     'dueDate',
     'timeLeft',
     'userStatuses',
-    'editTodo' 
+    'editTodo',
   ];
 
   displayedColumns: string[] = ['adUserName', 'new', 'inProgress', 'completed'];
 
   todoListDataSource = new MatTableDataSource<Task>(); // Separate DataSource for TodoList
   dashboardDataSource = new MatTableDataSource<any>(); // Separate DataSource for DashboardData
- TaskSummeryDataSource = new MatTableDataSource<any>(); // Separate DataSource for TodoList
+  TaskSummeryDataSource = new MatTableDataSource<any>(); // Separate DataSource for TodoList
 
   @ViewChild('dashboardPaginator') dashboardPaginator!: MatPaginator;
   @ViewChild('dashboardSort') dashboardSort!: MatSort;
   @ViewChild('todoListPaginator') todoListPaginator!: MatPaginator;
   @ViewChild('todoListSort') todoListSort!: MatSort;
-  @ViewChild('taskSummeryDataPaginator') taskSummeryDataPaginator!: MatPaginator;
+  @ViewChild('taskSummeryDataPaginator')
+  taskSummeryDataPaginator!: MatPaginator;
   @ViewChild('taskSummeryDataSort') taskSummeryDataSort!: MatSort;
 
   dashboardData: any[] = []; // Assuming the data structure is an array of objects
@@ -108,7 +108,7 @@ export class Tab2Component implements OnInit {
           console.error('Error fetching user data:', error); // Handle any errors
         }
       );
-     
+
     // Initialize the filter predicate to filter based on the status text
     this.matTableDataSource.filterPredicate = (
       data: { status: string },
@@ -134,7 +134,7 @@ export class Tab2Component implements OnInit {
         this.dashboardDataSource.paginator = this.dashboardPaginator;
         this.dashboardDataSource.sort = this.dashboardSort;
       });
-      
+
     // Refresh todo list data every 60 seconds
     interval(60000)
       .pipe(
@@ -146,7 +146,7 @@ export class Tab2Component implements OnInit {
         this.todoListDataSource.paginator = this.todoListPaginator;
         this.todoListDataSource.sort = this.todoListSort;
       });
-      interval(60000)
+    interval(60000)
       .pipe(
         startWith(0), // Start immediately
         switchMap(() => this.fetchTaskSummery())
@@ -155,12 +155,11 @@ export class Tab2Component implements OnInit {
         this.TaskSummeryDataSource.data = taskSummeryData;
         this.TaskSummeryDataSource.paginator = this.taskSummeryDataPaginator;
         this.TaskSummeryDataSource.sort = this.taskSummeryDataSort;
-      
       });
   }
 
   fetchUserData(): Observable<any> {
-    const url = environment.apiUrl +'AdminDashboardAPI/GetTotalSysAid';
+    const url = environment.apiUrl + 'AdminDashboardAPI/GetTotalSysAid';
     return this.http.get<any>(url);
   }
 
@@ -188,7 +187,7 @@ export class Tab2Component implements OnInit {
     };
     return columnLabels[column] || column;
   }
-  
+
   fetchImportantMessages(): Observable<any> {
     const url = environment.apiUrl + 'importantMessagesAPI';
     return this.http.get(url);
@@ -288,20 +287,24 @@ export class Tab2Component implements OnInit {
     }
   }
   openAddTaskDialog(): void {
-    this.http.get<any[]>('http://localhost:7144/api/AdminDashboardAPI/GetAllUsers').subscribe(users => {
-      const dialogRef = this.dialog.open(AddTaskDialogComponentComponent, {
-        width: '650px',
-        data: { users: users } // Passing users to the dialog
-        
-      });
-      console.log(users)
-      dialogRef.afterClosed().subscribe(result => {
-        console.log('The dialog was closed', result);
-        // Refresh data if needed
-      });
-    }, error => {
-      console.error('Error fetching users:', error);
-    });
+    this.http
+      .get<any[]>(environment.apiUrl + 'AdminDashboardAPI/GetAllUsers')
+      .subscribe(
+        (users) => {
+          const dialogRef = this.dialog.open(AddTaskDialogComponentComponent, {
+            width: '650px',
+            data: { users: users }, // Passing users to the dialog
+          });
+          console.log(users);
+          dialogRef.afterClosed().subscribe((result) => {
+            console.log('The dialog was closed', result);
+            // Refresh data if needed
+          });
+        },
+        (error) => {
+          console.error('Error fetching users:', error);
+        }
+      );
   }
   fetchDashboardData(): Observable<any> {
     const url = environment.apiUrl + 'AdminDashboardAPI/GetDashboardData';
@@ -320,15 +323,14 @@ export class Tab2Component implements OnInit {
   openEditTaskDialog(task: any): void {
     const dialogRef = this.dialog.open(EditTaskDialogComponent, {
       width: '400px',
-      data: { task: task } // Pass the entire task object to the dialog
+      data: { task: task }, // Pass the entire task object to the dialog
     });
-  
-    dialogRef.afterClosed().subscribe(result => {
+
+    dialogRef.afterClosed().subscribe((result) => {
       if (result) {
         console.log('Updated Task:', result);
         // Perform the update operation on your task list or backend
       }
     });
   }
-  
 }

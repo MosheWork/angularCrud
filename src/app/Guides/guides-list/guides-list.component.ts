@@ -1,11 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router'; // Import Angular Router
+import { environment } from 'environments/environment';
 
 @Component({
   selector: 'app-guides-list',
   templateUrl: './guides-list.component.html',
-  styleUrls: ['./guides-list.component.scss']
+  styleUrls: ['./guides-list.component.scss'],
 })
 export class GuidesListComponent implements OnInit {
   guides: any[] = []; // Assuming the structure of guides returned from the API
@@ -13,14 +14,14 @@ export class GuidesListComponent implements OnInit {
   constructor(
     private http: HttpClient,
     private router: Router // Inject Angular Router
-  ) { }
+  ) {}
 
   ngOnInit(): void {
     this.fetchGuides();
   }
 
   fetchGuides(): void {
-    this.http.get<any[]>('https://localhost:7144/api/GuidesAPI').subscribe(
+    this.http.get<any[]>(environment.apiUrl + 'GuidesAPI').subscribe(
       (guides) => {
         this.guides = guides;
       },

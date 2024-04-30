@@ -10,121 +10,126 @@
   </button>
 </mat-toolbar>
 <div class="dashboard">
-<mat-tab-group dir="rtl">
-  <mat-tab label="ראשי">
-    <div class="dashboard" dir="ltr">
-      <div class="content">
-        <div class="left-content">
-          <div class="tasks-table">
-            <h2 class="table-title">קריאות של הצוות</h2>
-            <!-- <button mat-icon-button (click)="openAddTaskDialog()">
+  <mat-tab-group dir="rtl">
+    <mat-tab label="ראשי">
+      <div class="dashboard" dir="ltr">
+        <div class="content">
+          <div class="left-content">
+            <div class="tasks-table">
+              <h2 class="table-title">קריאות של הצוות</h2>
+              <!-- <button mat-icon-button (click)="openAddTaskDialog()">
             <mat-icon>add</mat-icon>
           </button>
           -->
-            <!-- MUI Table -->
-            <table
-              mat-table
-              [dataSource]="dashboardDataSource"
-              class="mat-elevation-z8"
-            >
-              <!-- Define each column definition and cell definitions here -->
-              <ng-container matColumnDef="responsibility">
-                <th mat-header-cell *matHeaderCellDef>responsibility</th>
-                <td mat-cell *matCellDef="let element">
-                  {{ element.responsibility }}
-                </td>
-              </ng-container>
-              <!-- Open Calls Column -->
-              <ng-container matColumnDef="open_calls">
-                <th mat-header-cell *matHeaderCellDef>Open Calls</th>
-                <td
-                  mat-cell
-                  *matCellDef="let element"
-                  [ngClass]="
-                    element.open_calls > 0 ? 'bold-font-red' : 'bold-font-blue'
-                  "
-                >
-                  {{ element.open_calls }}
-                </td>
-              </ng-container>
+              <!-- MUI Table -->
+              <table
+                mat-table
+                [dataSource]="dashboardDataSource"
+                class="mat-elevation-z8"
+              >
+                <!-- Define each column definition and cell definitions here -->
+                <ng-container matColumnDef="responsibility">
+                  <th mat-header-cell *matHeaderCellDef>responsibility</th>
+                  <td mat-cell *matCellDef="let element">
+                    {{ element.responsibility }}
+                  </td>
+                </ng-container>
+                <!-- Open Calls Column -->
+                <ng-container matColumnDef="open_calls">
+                  <th mat-header-cell *matHeaderCellDef>Open Calls</th>
+                  <td
+                    mat-cell
+                    *matCellDef="let element"
+                    [ngClass]="
+                      element.open_calls > 0
+                        ? 'bold-font-red'
+                        : 'bold-font-blue'
+                    "
+                  >
+                    {{ element.open_calls }}
+                  </td>
+                </ng-container>
 
-              <!-- Follow Up Calls Column -->
-              <ng-container matColumnDef="followUp_calls">
-                <th mat-header-cell *matHeaderCellDef>Follow Up Calls</th>
-                <td
-                  mat-cell
-                  *matCellDef="let element"
-                  [ngClass]="
-                    element.followUp_calls > 0
-                      ? 'bold-font-red'
-                      : 'bold-font-blue'
-                  "
-                >
-                  {{ element.followUp_calls }}
-                </td>
-              </ng-container>
-              <ng-container matColumnDef="closed_today">
-                <th mat-header-cell *matHeaderCellDef>closed_today</th>
-                <td mat-cell *matCellDef="let element">
-                  {{ element.closed_today }}
-                </td>
-              </ng-container>
-              <ng-container matColumnDef="closed_this_month">
-                <th mat-header-cell *matHeaderCellDef>closed_this_month</th>
-                <td mat-cell *matCellDef="let element">
-                  {{ element.closed_this_month }}
-                </td>
-              </ng-container>
-              <!-- Waiting For User Response Column -->
-              <ng-container matColumnDef="waiting_for_user_response">
-                <th mat-header-cell *matHeaderCellDef>
-                  Waiting For User Response
-                </th>
-                <td
-                  mat-cell
-                  *matCellDef="let element"
-                  [ngClass]="
-                    element.waiting_for_user_response > 0
-                      ? 'bold-font-red'
-                      : 'bold-font-blue'
-                  "
-                >
-                  {{ element.waiting_for_user_response }}
-                </td>
-              </ng-container>
+                <!-- Follow Up Calls Column -->
+                <ng-container matColumnDef="followUp_calls">
+                  <th mat-header-cell *matHeaderCellDef>Follow Up Calls</th>
+                  <td
+                    mat-cell
+                    *matCellDef="let element"
+                    [ngClass]="
+                      element.followUp_calls > 0
+                        ? 'bold-font-red'
+                        : 'bold-font-blue'
+                    "
+                  >
+                    {{ element.followUp_calls }}
+                  </td>
+                </ng-container>
+                <ng-container matColumnDef="closed_today">
+                  <th mat-header-cell *matHeaderCellDef>closed_today</th>
+                  <td mat-cell *matCellDef="let element">
+                    {{ element.closed_today }}
+                  </td>
+                </ng-container>
+                <ng-container matColumnDef="closed_this_month">
+                  <th mat-header-cell *matHeaderCellDef>closed_this_month</th>
+                  <td mat-cell *matCellDef="let element">
+                    {{ element.closed_this_month }}
+                  </td>
+                </ng-container>
+                <!-- Waiting For User Response Column -->
+                <ng-container matColumnDef="waiting_for_user_response">
+                  <th mat-header-cell *matHeaderCellDef>
+                    Waiting For User Response
+                  </th>
+                  <td
+                    mat-cell
+                    *matCellDef="let element"
+                    [ngClass]="
+                      element.waiting_for_user_response > 0
+                        ? 'bold-font-red'
+                        : 'bold-font-blue'
+                    "
+                  >
+                    {{ element.waiting_for_user_response }}
+                  </td>
+                </ng-container>
 
-              <!-- On Hold Column -->
-              <ng-container matColumnDef="on_hold">
-                <th mat-header-cell *matHeaderCellDef>On Hold</th>
-                <td
-                  mat-cell
-                  *matCellDef="let element"
-                  [ngClass]="
-                    element.on_hold > 0 ? 'bold-font-red' : 'bold-font-blue'
-                  "
-                >
-                  {{ element.on_hold }}
-                </td>
-              </ng-container>
-              <!-- Add other columns based on dashboardColumns -->
+                <!-- On Hold Column -->
+                <ng-container matColumnDef="on_hold">
+                  <th mat-header-cell *matHeaderCellDef>On Hold</th>
+                  <td
+                    mat-cell
+                    *matCellDef="let element"
+                    [ngClass]="
+                      element.on_hold > 0 ? 'bold-font-red' : 'bold-font-blue'
+                    "
+                  >
+                    {{ element.on_hold }}
+                  </td>
+                </ng-container>
+                <!-- Add other columns based on dashboardColumns -->
 
-              <tr mat-header-row *matHeaderRowDef="dashboardColumns"></tr>
-              <tr mat-row *matRowDef="let row; columns: dashboardColumns"></tr>
-            </table>
+                <tr mat-header-row *matHeaderRowDef="dashboardColumns"></tr>
+                <tr
+                  mat-row
+                  *matRowDef="let row; columns: dashboardColumns"
+                ></tr>
+              </table>
 
-            <!-- <mat-paginator
+              <!-- <mat-paginator
             [length]="matTableDataSource.paginator?.length || 0"
             [pageIndex]="matTableDataSource.paginator?.pageIndex"
             [pageSize]="matTableDataSource.paginator?.pageSize"
             [pageSizeOptions]="[15, 50, 100]"
           ></mat-paginator> -->
-          </div>
+            </div>
 
-          <div class="important-messages-cards" dir="rtl">
-            <div class="messages-container">
-              <h2 class="important-messages-title">גרפים </h2>
+            <div class="important-messages-cards" dir="rtl">
+              <div class="messages-container">
+                <h2 class="important-messages-title">גרפים</h2>
 
-              <!-- <div class="message-cards-container">
+                <!-- <div class="message-cards-container">
                 <mat-card
                   *ngFor="let message of importantMessages"
                   [ngClass]="{
@@ -146,176 +151,174 @@
                   
                 </mat-card>
               </div> -->
-              <mat-tab-group (selectedTabChange)="onTabChanged($event)">
-             
-                <mat-tab label="קריאות גרף יומי">
-                  <div class="chart-container">
-                    <canvas id="dailyChart" #dailyChartCanvas></canvas>
-                  </div>
-                </mat-tab>
-                <mat-tab label="קריאות גרף חודשי">
-                  <div class="chart-container">
-                    <canvas id="monthlyChart" #monthlyChartCanvas></canvas>
-                  </div>
-                </mat-tab>
-                   <mat-tab label="קריאות גרף שנתי">
-                  <div class="chart-container">
-                    <canvas id="yearlyChart" #yearlyChartCanvas></canvas>
-                  </div>
-                </mat-tab>
-                <!-- Other tabs remain unchanged -->
-              </mat-tab-group>
-            </div>
-          </div>
-        </div>
-
-        <div class="right-content">
-          <div class="cards">
-            <h2 class="cards-title">מצב קריאות</h2>
-            <!-- First row of cards -->
-            <div class="card">
-              <div class="card-title">קריאות פתוחות</div>
-              <div
-                class="card-value"
-                [ngClass]="
-                  userData.open_calls > 0 ? 'card-value-red' : 'card-value-blue'
-                "
-              >
-                {{ userData.open_calls }}
-              </div>
-            </div>
-            <div class="card">
-              <div class="card-title">המשך טיפול</div>
-              <div
-                class="card-value"
-                [ngClass]="{
-                  'card-value-blue': userData.fallowUp_calls == '0',
-                  'card-value-red': userData.fallowUp_calls != '0'
-                }"
-              >
-                {{ userData.followUp_calls }}
-              </div>
-            </div>
-            <div class="card">
-              <div class="card-title">ממתין לתגובת המשתמש</div>
-              <div
-                class="card-value"
-                [ngClass]="{
-                  'card-value-blue': userData.waiting_for_user_response == '0',
-                  'card-value-red': userData.waiting_for_user_response != '0'
-                }"
-              >
-                {{ userData.waiting_for_user_response }}
-              </div>
-            </div>
-            <div class="card">
-              <div class="card-title">בהמתנה</div>
-              <div
-                class="card-value"
-                [ngClass]="{
-                  'card-value-blue': userData.on_hold == '0',
-                  'card-value-red': userData.on_hold != '0'
-                }"
-              >
-                {{ userData.on_hold }}
-              </div>
-            </div>
-
-            <div class="card">
-              <div class="card-title">קריאות סגורות- היום</div>
-
-              <div
-                class="card-value"
-                [ngClass]="{
-                  'card-value-blue': userData.closed_today > 0,
-                  'card-value-red': userData.closed_today <= 0
-                }"
-              >
-                {{ userData.closed_today }}
-              </div>
-            </div>
-            <div class="card">
-              <div class="card-title">קריאות סגורות - החודש</div>
-              <div class="card-value [ngClass]= card-value-blue">
-                {{ userData.closed_this_month }}
+                <mat-tab-group (selectedTabChange)="onTabChanged($event)">
+                  <mat-tab label="קריאות גרף יומי">
+                    <div class="chart-container">
+                      <canvas id="dailyChart" #dailyChartCanvas></canvas>
+                    </div>
+                  </mat-tab>
+                  <mat-tab label="קריאות גרף חודשי">
+                    <div class="chart-container">
+                      <canvas id="monthlyChart" #monthlyChartCanvas></canvas>
+                    </div>
+                  </mat-tab>
+                  <mat-tab label="קריאות גרף שנתי">
+                    <div class="chart-container">
+                      <canvas id="yearlyChart" #yearlyChartCanvas></canvas>
+                    </div>
+                  </mat-tab>
+                  <!-- Other tabs remain unchanged -->
+                </mat-tab-group>
               </div>
             </div>
           </div>
-          <div class="important-links">
-            <h2 class="links-title">קישורים חשובים</h2>
-            <ul class="links-list">
-              <!-- Individual link items -->
-              <li>
-                <a
-                  href="http://srv-apps-prod/app/#/employeesmanagedashboard"
-                  target="_blank"
-                  class="bold-link"
-                  >ONNLINE
-                </a>
-              </li>
-              <li>
-                <a
-                  href="http://srv-sysaid/HelpDesk.jsp?helpdeskfrm&fromId=IncidentsList&showAll=1&historyPage=Y"
-                  target="_blank"
-                  class="bold-link"
-                  >sysaid
-                </a>
-              </li>
-              <li>
-                <a
-                  href="http://srv-apps-04:8080/#/mgmt/modifysingleuser?reportId=6008"
-                  target="_blank"
-                  class="bold-link"
-                  >AD
-                </a>
-              </li>
-              <li>
-                <a
-                  href="http://localhost:4200/stazerim"
-                  target="_blank"
-                  class="bold-link"
+
+          <div class="right-content">
+            <div class="cards">
+              <h2 class="cards-title">מצב קריאות</h2>
+              <!-- First row of cards -->
+              <div class="card">
+                <div class="card-title">קריאות פתוחות</div>
+                <div
+                  class="card-value"
+                  [ngClass]="
+                    userData.open_calls > 0
+                      ? 'card-value-red'
+                      : 'card-value-blue'
+                  "
                 >
-                  הרשאות לסטאזרים</a
+                  {{ userData.open_calls }}
+                </div>
+              </div>
+              <div class="card">
+                <div class="card-title">המשך טיפול</div>
+                <div
+                  class="card-value"
+                  [ngClass]="{
+                    'card-value-blue': userData.fallowUp_calls == '0',
+                    'card-value-red': userData.fallowUp_calls != '0'
+                  }"
                 >
-              </li>
-              <li>
-                <a
-                  href="https://innovation-tzmc.monday.com/boards/1335449086"
-                  target="_blank"
-                  class="bold-link"
+                  {{ userData.followUp_calls }}
+                </div>
+              </div>
+              <div class="card">
+                <div class="card-title">ממתין לתגובת המשתמש</div>
+                <div
+                  class="card-value"
+                  [ngClass]="{
+                    'card-value-blue':
+                      userData.waiting_for_user_response == '0',
+                    'card-value-red': userData.waiting_for_user_response != '0'
+                  }"
                 >
-                  monday</a
+                  {{ userData.waiting_for_user_response }}
+                </div>
+              </div>
+              <div class="card">
+                <div class="card-title">בהמתנה</div>
+                <div
+                  class="card-value"
+                  [ngClass]="{
+                    'card-value-blue': userData.on_hold == '0',
+                    'card-value-red': userData.on_hold != '0'
+                  }"
                 >
-              </li>
-              <li>
-                <a
-                  href="http://srv-profile/App/Portal/ChangeOrgUnit/OpenRequest.aspx"
-                  target="_blank"
-                  class="bold-link"
+                  {{ userData.on_hold }}
+                </div>
+              </div>
+
+              <div class="card">
+                <div class="card-title">קריאות סגורות- היום</div>
+
+                <div
+                  class="card-value"
+                  [ngClass]="{
+                    'card-value-blue': userData.closed_today > 0,
+                    'card-value-red': userData.closed_today <= 0
+                  }"
                 >
-                  אקספנדיון - העברת מחלקה</a
-                >
-              </li>
-              <li>
-                <a
-                  href="http://srv-cp-inter:57772/csp/elad/EnsPortal.ProductionConfig.zen?PRODUCTION=Productions.Poria&$NAMESPACE=ELAD"
-                  target="_blank"
-                  class="bold-link"
-                >
-                  אנסמבל
-                </a>
-              </li>
-              <!-- Add more link items as needed -->
-            </ul>
+                  {{ userData.closed_today }}
+                </div>
+              </div>
+              <div class="card">
+                <div class="card-title">קריאות סגורות - החודש</div>
+                <div class="card-value [ngClass]= card-value-blue">
+                  {{ userData.closed_this_month }}
+                </div>
+              </div>
+            </div>
+            <div class="important-links">
+              <h2 class="links-title">קישורים חשובים</h2>
+              <ul class="links-list">
+                <!-- Individual link items -->
+                <li>
+                  <a
+                    href="http://srv-apps-prod/app/#/employeesmanagedashboard"
+                    target="_blank"
+                    class="bold-link"
+                    >ONNLINE
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="http://srv-sysaid/HelpDesk.jsp?helpdeskfrm&fromId=IncidentsList&showAll=1&historyPage=Y"
+                    target="_blank"
+                    class="bold-link"
+                    >sysaid
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="http://srv-apps-04:8080/#/mgmt/modifysingleuser?reportId=6008"
+                    target="_blank"
+                    class="bold-link"
+                    >AD
+                  </a>
+                </li>
+                <li>
+                  <a routerLink="/stazerim" target="_blank" class="bold-link">
+                    הרשאות לסטאזרים</a
+                  >
+                </li>
+                <li>
+                  <a
+                    href="https://innovation-tzmc.monday.com/boards/1335449086"
+                    target="_blank"
+                    class="bold-link"
+                  >
+                    monday</a
+                  >
+                </li>
+                <li>
+                  <a
+                    href="http://srv-profile/App/Portal/ChangeOrgUnit/OpenRequest.aspx"
+                    target="_blank"
+                    class="bold-link"
+                  >
+                    אקספנדיון - העברת מחלקה</a
+                  >
+                </li>
+                <li>
+                  <a
+                    href="http://srv-cp-inter:57772/csp/elad/EnsPortal.ProductionConfig.zen?PRODUCTION=Productions.Poria&$NAMESPACE=ELAD"
+                    target="_blank"
+                    class="bold-link"
+                  >
+                    אנסמבל
+                  </a>
+                </li>
+                <!-- Add more link items as needed -->
+              </ul>
+            </div>
           </div>
         </div>
       </div>
-    </div>
-  </mat-tab>
+    </mat-tab>
 
-  <mat-tab label="ניהול משימות">
-    <app-tab2></app-tab2>
-  </mat-tab>
-  <mat-tab label="ניהול הודעות"> Content 3 </mat-tab>
-</mat-tab-group>
+    <mat-tab label="ניהול משימות">
+      <app-tab2></app-tab2>
+    </mat-tab>
+    <mat-tab label="ניהול הודעות"> Content 3 </mat-tab>
+  </mat-tab-group>
 </div>

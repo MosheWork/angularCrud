@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { HttpClient,HttpHeaders  } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, of } from 'rxjs'; // Import 'of' to handle cases where you don't need to make an HTTP call
 import { interval, switchMap, startWith } from 'rxjs';
 import { MatPaginator } from '@angular/material/paginator';
@@ -49,7 +49,6 @@ export class UserDashboardComponent implements OnInit {
     'createdBy',
     'timeLeft',
   ];
-
 
   constructor(private http: HttpClient, private datePipe: DatePipe) {
     this.matTableDataSource = new MatTableDataSource<any>([]);
@@ -136,7 +135,7 @@ export class UserDashboardComponent implements OnInit {
     return columnLabels[column] || column;
   }
   fetchImportantMessages(): Observable<any> {
-    const url = 'http://localhost:7144/api/importantMessagesAPI';
+    const url = environment.apiUrl + 'importantMessagesAPI';
     return this.http.get(url);
   }
   // Method to format dates
@@ -236,35 +235,42 @@ export class UserDashboardComponent implements OnInit {
 
   onStatusChange(task: any, newStatus: string): void {
     const url = `${environment.apiUrl}UsersDashboardAPI/UpdateTaskStatus`;
-    const body = { 
-      TaskID: task.taskID, 
+    const body = {
+      TaskID: task.taskID,
       NewStatus: newStatus,
-      ADUserName: task.adUserName // Assuming you have ADUserName in your task object
+      ADUserName: task.adUserName, // Assuming you have ADUserName in your task object
     };
-    console.log(body)
-  
-    this.http.patch(url, body, {headers: new HttpHeaders({'Content-Type': 'application/json'}), responseType: 'text'}).subscribe({
-      next: () => console.log('Status updated successfully'),
-      error: (error) => console.error('Error updating status', error)
-    });
+    console.log(body);
+
+    this.http
+      .patch(url, body, {
+        headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
+        responseType: 'text',
+      })
+      .subscribe({
+        next: () => console.log('Status updated successfully'),
+        error: (error) => console.error('Error updating status', error),
+      });
   }
-  
-  updateTaskStatus(taskID: number, newStatus: string, adUserName: string): Observable<any> {
+
+  updateTaskStatus(
+    taskID: number,
+    newStatus: string,
+    adUserName: string
+  ): Observable<any> {
     const url = `${environment.apiUrl}UsersDashboardAPI/UpdateTaskStatus`;
-    const body = { 
-      TaskID: taskID, 
+    const body = {
+      TaskID: taskID,
       NewStatus: newStatus,
-      ADUserName: adUserName // Added ADUserName parameter
+      ADUserName: adUserName, // Added ADUserName parameter
     };
     const httpOptions = {
       headers: new HttpHeaders({
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
       }),
-      responseType: 'text' as 'json' // Expect a text response
+      responseType: 'text' as 'json', // Expect a text response
     };
-  
+
     return this.http.patch(url, body, httpOptions);
   }
-  
-  
 }
