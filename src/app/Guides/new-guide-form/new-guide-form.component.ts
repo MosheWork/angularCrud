@@ -25,7 +25,19 @@ export class NewGuideFormComponent {
   handleImageChange(event: any, index: number) {
     const file = event.target.files[0];
     if (file) {
-      this.sections[index].content = file; // Ensure this is being hit
+      this.sections[index].content = file;
+  
+      // Create a file reader
+      const reader = new FileReader();
+      
+      // Set up the onload event handler
+      reader.onload = (e: any) => {
+        this.sections[index].preview = e.target.result; // Assign the result to preview field
+        this.sections = [...this.sections]; // Update the sections array to trigger Angular change detection
+      };
+  
+      // Read the file as a data URL (base64)
+      reader.readAsDataURL(file);
     }
   }
 

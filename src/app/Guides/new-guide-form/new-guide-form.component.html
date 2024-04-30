@@ -1,27 +1,35 @@
 <!-- new-guide-form.component.html -->
+<form (submit)="submitForm()">
+  <mat-form-field appearance="fill">
+    <mat-label>Title</mat-label>
+    <input matInput placeholder="Enter the title" [(ngModel)]="title" name="title">
+  </mat-form-field>
 
-<div>
-    <label for="title">Title:</label>
-    <input type="text" id="title" name="title" [(ngModel)]="title" required>
+  <mat-form-field appearance="fill">
+    <mat-label>Created By</mat-label>
+    <input matInput placeholder="Enter your name" [(ngModel)]="createdBy" name="createdBy">
+  </mat-form-field>
+
+  <!-- Dynamically add text sections or images -->
+<!-- new-guide-form.component.html -->
+<div *ngFor="let section of sections; let i = index">
+  <mat-form-field *ngIf="section.type === 'text'" appearance="fill">
+    <textarea matInput placeholder="Text content" [(ngModel)]="section.content" name="textContent{{i}}"></textarea>
+  </mat-form-field>
+  
+  <div *ngIf="section.type === 'image'" class="image-upload">
+    <input type="file" (change)="handleImageChange($event, i)">
+    <img *ngIf="section.preview" [src]="section.preview" class="image-preview">
   </div>
-  
-  <div *ngFor="let section of sections; let i = index">
-    <div *ngIf="section.type === 'text'">
-      <label for="textContent{{i}}">Text Content:</label>
-      <textarea id="textContent{{i}}" name="textContent{{i}}" [(ngModel)]="section.content" required></textarea>
-    </div>
-    <div *ngIf="section.type === 'image'">
-      <label for="image{{i}}">Image:</label>
-      <input type="file" id="image{{i}}" name="image{{i}}" (change)="handleImageChange($event, i)" accept="image/*" required>
-    </div>
-  </div>
-  
-  <button type="button" (click)="addTextSection()">Add Text Section</button>
-  <button type="button" (click)="addImageSection()">Add Image Section</button>
-  
-  <div>
-    <label for="createdBy">Created By:</label>
-    <input type="text" id="createdBy" name="createdBy" [(ngModel)]="createdBy" required>
-  </div>
-  
-  <button type="button" (click)="submitForm()">Submit</button>
+</div>
+
+  <!-- Buttons to add text sections or images -->
+  <button mat-button (click)="addTextSection()" type="button">
+    <mat-icon>add</mat-icon> Add Text Section
+  </button>
+  <button mat-button (click)="addImageSection()" type="button">
+    <mat-icon>add_photo_alternate</mat-icon> Add Image Section
+  </button>
+
+  <button mat-raised-button color="primary" type="submit">Submit</button>
+</form>
