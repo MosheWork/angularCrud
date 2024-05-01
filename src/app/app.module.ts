@@ -70,6 +70,7 @@ import { AdminHomePageComponent } from './admin-home-page/admin-home-page.compon
 import { GuidesListComponent } from './Guides/guides-list/guides-list.component';
 import { NewGuideFormComponent } from './Guides/new-guide-form/new-guide-form.component';
 import { ViewGuideComponent } from './Guides/view-guide/view-guide.component';
+import { EditGuideFormComponent } from './Guides/edit-guide-form/edit-guide-form.component';
 
 
 @NgModule({
@@ -113,6 +114,7 @@ import { ViewGuideComponent } from './Guides/view-guide/view-guide.component';
     GuidesListComponent,
     NewGuideFormComponent,
     ViewGuideComponent,
+    EditGuideFormComponent,
   
   ],
   imports: [

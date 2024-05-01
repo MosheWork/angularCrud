@@ -1,0 +1,34 @@
+<form (submit)="submitForm()" dir="rtl" class="full-width-form">
+    <mat-form-field appearance="fill" class="full-width-input">
+      <mat-label>Title</mat-label>
+      <input matInput placeholder="Enter the title" [(ngModel)]="title" name="title">
+    </mat-form-field>
+  
+    <mat-form-field appearance="fill" class="full-width-input">
+      <mat-label>Created By</mat-label>
+      <input matInput placeholder="Enter your name" [(ngModel)]="createdBy" name="createdBy">
+    </mat-form-field>
+  
+    <!-- Dynamically add text sections or images -->
+    <div *ngFor="let section of sections; let i = index" class="section">
+      <div>Position: {{ section.position }}</div>
+      <button mat-icon-button (click)="moveSectionUp(i)" [disabled]="i === 0"><mat-icon>arrow_upward</mat-icon></button>
+      <button mat-icon-button (click)="moveSectionDown(i)" [disabled]="i === sections.length - 1"><mat-icon>arrow_downward</mat-icon></button>
+      <mat-form-field *ngIf="section.type === 'text'" appearance="fill">
+        <mat-label>Text content</mat-label>
+        <textarea matInput placeholder="Text content" [(ngModel)]="section.content" name="textContent{{i}}"></textarea>
+      </mat-form-field>
+      
+      <div *ngIf="section.type === 'image'" class="image-upload">
+        <input type="file" (change)="handleImageChange($event, i)">
+        <img *ngIf="section.preview" [src]="section.preview" class="image-preview">
+      </div>
+      <button mat-icon-button color="warn" (click)="removeSection(i)"><mat-icon>delete</mat-icon></button>
+    </div>
+  
+    <button mat-button (click)="addTextSection()" type="button">Add Text Section</button>
+    <button mat-button (click)="addImageSection()" type="button">Add Image Section</button>
+  
+    <button mat-raised-button color="primary" type="button" (click)="submitForm()">Submit</button>
+</form>
+  

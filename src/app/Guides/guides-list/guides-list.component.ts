@@ -43,6 +43,6 @@ export class GuidesListComponent implements OnInit {
   }
 
   editGuide(id: number): void {
-    this.router.navigate(['/edit-guide', id]);  // Assume you have a route setup for editing
+    this.router.navigate(['/Editguide', id]);  // Assume you have a route setup for editing
   }
 }
