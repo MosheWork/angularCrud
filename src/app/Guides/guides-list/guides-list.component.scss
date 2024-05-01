@@ -1,45 +1,67 @@
-/* guides-list.component.css */
+/* Global table and shadow styles */
 .mat-elevation-z8 {
-    box-shadow: 0 6px 10px -5px rgba(0,0,0,.2);
-  }
-  
-  mat-header-cell, mat-cell {
-    padding: 8px;
-  }
-  
-  button {
-    margin: 0;
-    padding: 4px 8px;
-  }
-
-  /* styles.scss or new-guide-form.component.scss */
-.image-preview {
-  width: 500px;  /* or any other dimensions */
-  height: 500px;
-  margin-top: 10px;
+  box-shadow: 0 6px 10px -5px rgba(0,0,0,.2);
 }
-/* new-guide-form.component.scss */
-/* styles.scss or new-guide-form.component.scss */
-/* new-guide-form.component.scss */
-.full-width-form {
+
+/* Uniform padding for cells and header cells */
+mat-header-cell, mat-cell {
+  padding: 8px;
+}
+
+/* Bold style for table headers */
+th.mat-header-cell {
+  font-weight: bold;
+}
+
+/* Alternating row colors for readability */
+.mat-row:nth-child(odd) {
+  background-color: #ffffff; /* White for odd rows */
+}
+
+.mat-row:nth-child(even) {
+  background-color: #dfecf7; /* Light blue for even rows */
+}
+
+/* General button styling */
+button.mat-button {
+  margin: 0 8px; /* Spacing around buttons */
+}
+
+.mat-icon {
+  margin-right: 4px; /* Space between icon and text */
+}
+
+/* Full width for table */
+table {
+  width: 100%;
+  padding: 8px;
+}
+
+/* Elevated shadow effect for material table */
+table.mat-elevation-z8 {
+  overflow: hidden;
+  box-shadow: 0 6px 10px -5px rgba(0,0,0,0.2);
+}
+
+/* Flex container for positioning the add button to the right */
+.add-button-container {
   display: flex;
-  flex-direction: column;
-  width: 95%; /* Ensure the form takes up the full width */
+  justify-content: flex-end; /* Aligns the add button to the right */
+  padding: 8px;
+  background-color: #ffffff; /* Matching the table header background */
 }
 
-.full-width-input {
-  width: 95%; /* Ensures input fields take full width */
+/* Specific styles for the mat-icon-button */
+button.mat-icon-button {
+  color: #d40f82; /* A distinct pinkish color */
+  border-radius: 50%; /* Makes the button circular */
+  width: 40px; /* Fixed width for uniformity */
+  height: 40px; /* Fixed height for uniformity */
+  line-height: 40px; /* Aligns the icon vertically within the button */
+  margin-right: 10px; /* Right margin for spacing from edge */
 }
 
-.section {
-  display: flex;
-  flex-direction: column;
-  width: 95%;
-}
-.new-guide-form .full-width-input {
-  width: 95%; /* Ensures input fields take full width */
-}
-
-.section .mat-form-field.full-width-input {
-  width: 95%;
+/* Hover effect for the add button */
+button.mat-icon-button:hover {
+  background-color: #1b6ca5; /* Light blue background on hover */
 }

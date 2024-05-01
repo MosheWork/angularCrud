@@ -1,20 +1,20 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { GuideDisplayComponent } from './guide-display.component';
+import { ViewGuideComponent } from './view-guide.component';
 
-describe('GuideDisplayComponent', () => {
-  let component: GuideDisplayComponent;
-  let fixture: ComponentFixture<GuideDisplayComponent>;
+describe('ViewGuideComponent', () => {
+  let component: ViewGuideComponent;
+  let fixture: ComponentFixture<ViewGuideComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ GuideDisplayComponent ]
+      declarations: [ ViewGuideComponent ]
     })
     .compileComponents();
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(GuideDisplayComponent);
+    fixture = TestBed.createComponent(ViewGuideComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

@@ -1,0 +1,21 @@
+<!-- ViewGuideComponent.html -->
+<div class="guide-container" dir="rtl">
+
+<!-- view-guide.component.html -->
+<div *ngIf="guide">
+    <h1>{{ guide.title }}</h1>
+    <p>Created by: {{ guide.createdBy }}</p>
+    <p>Created date: {{ guide.createdDate | date:'medium' }}</p>
+    
+    <div *ngFor="let textSection of guide.textSections; let i = index">
+      <p><strong>Text Section {{ i + 1 }} (Position: {{ textSection.position }}):</strong> {{ textSection.textContent }}</p>
+    </div>
+    
+    <div *ngFor="let image of guide.pictures; let j = index">
+      <p><strong>Image {{ j + 1 }} (Position: {{ image.position }}):</strong></p>
+      <img [src]="image.imagePath" alt="Image {{ j + 1 }}" class="image-preview">
+    </div>
+  </div>
+  
+  </div>
+  

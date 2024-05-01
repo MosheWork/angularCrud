@@ -69,7 +69,7 @@ import { RowEditDialogComponent } from './serviceCalls/row-edit-dialog/row-edit-
 import { AdminHomePageComponent } from './admin-home-page/admin-home-page.component';
 import { GuidesListComponent } from './Guides/guides-list/guides-list.component';
 import { NewGuideFormComponent } from './Guides/new-guide-form/new-guide-form.component';
-import { GuideDisplayComponent } from './guide-display/guide-display.component';
+import { ViewGuideComponent } from './Guides/view-guide/view-guide.component';
 
 
 @NgModule({
@@ -112,7 +112,8 @@ import { GuideDisplayComponent } from './guide-display/guide-display.component';
     AdminHomePageComponent,
     GuidesListComponent,
     NewGuideFormComponent,
-    GuideDisplayComponent,
+    ViewGuideComponent,
+  
   ],
   imports: [
     BrowserModule,

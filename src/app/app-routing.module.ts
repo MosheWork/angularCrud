@@ -26,6 +26,7 @@ import { ServiceCallsScreenITComponent } from './serviceCalls/service-calls-scre
 import { AdminHomePageComponent } from './admin-home-page/admin-home-page.component';
 import { GuidesListComponent } from './Guides/guides-list/guides-list.component';
 import { NewGuideFormComponent } from './Guides/new-guide-form/new-guide-form.component';
+import { ViewGuideComponent } from './Guides/view-guide/view-guide.component';
 
 const routes: Routes = [
   { path: 'users', component: UsersComponent },
@@ -66,7 +67,9 @@ const routes: Routes = [
   
   //guides
   { path: 'GuidesList', component: GuidesListComponent },
-  { path: 'NewGuid', component: NewGuideFormComponent }
+  { path: 'NewGuid', component: NewGuideFormComponent },
+  { path: 'guide/:id', component: ViewGuideComponent }
+
 
 
 

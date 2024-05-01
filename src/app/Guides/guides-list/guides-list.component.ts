@@ -18,12 +18,15 @@ export class GuidesListComponent implements OnInit {
 
   ngOnInit(): void {
     this.fetchGuides();
+    document.title = 'רשימת מדריכים';
+
   }
 
   fetchGuides(): void {
     this.http.get<any[]>(environment.apiUrl + 'GuidesAPI').subscribe(
       (guides) => {
         this.guides = guides;
+   
       },
       (error) => {
         console.error('Error fetching guides:', error);
@@ -33,5 +36,13 @@ export class GuidesListComponent implements OnInit {
 
   navigateToNewGuide(): void {
     this.router.navigate(['/new-guide']); // Navigate to NewGuideFormComponent
+  }
+
+  openGuide(id: number): void {
+    this.router.navigate(['/guide/', id]);
+  }
+
+  editGuide(id: number): void {
+    this.router.navigate(['/edit-guide', id]);  // Assume you have a route setup for editing
   }
 }

@@ -1,27 +1,47 @@
-
-  <button mat-icon-button routerLink="/NewGuid">
+<div class="add-button-container">
+  <button mat-icon-button routerLink="/NewGuid" matTooltip="Add New Guide">
     <mat-icon>add</mat-icon>
   </button>
+</div>
+
+<table mat-table [dataSource]="guides" class="mat-elevation-z8">
+
+  <!-- Columns as previously defined -->
+
+  <ng-container matColumnDef="guideId">
+    <th mat-header-cell *matHeaderCellDef> guideId </th>
+    <td mat-cell *matCellDef="let guide"> {{ guide.guideId }} </td>
+  </ng-container>
+  <ng-container matColumnDef="title">
+    <th mat-header-cell *matHeaderCellDef> Title </th>
+    <td mat-cell *matCellDef="let guide"> {{ guide.title }} </td>
+  </ng-container>
   
-<table mat-table [dataSource]="guides">
-    <!-- Title Column -->
-    <ng-container matColumnDef="title">
-      <th mat-header-cell *matHeaderCellDef>Title</th>
-      <td mat-cell *matCellDef="let guide">{{ guide.title }}</td>
-    </ng-container>
-  
-    <!-- Created By Column -->
-    <ng-container matColumnDef="createdBy">
-      <th mat-header-cell *matHeaderCellDef>Created By</th>
-      <td mat-cell *matCellDef="let guide">{{ guide.createdBy }}</td>
-    </ng-container>
-  
-    <!-- Created Date Column -->
-    <ng-container matColumnDef="createdDate">
-      <th mat-header-cell *matHeaderCellDef>Created Date</th>
-      <td mat-cell *matCellDef="let guide">{{ guide.createdDate }}</td>
-    </ng-container>
-  
-    <tr mat-header-row *matHeaderRowDef="['title', 'createdBy', 'createdDate']"></tr>
-    <tr mat-row *matRowDef="let row; columns: ['title', 'createdBy', 'createdDate'];"></tr>
-  </table>
+  <ng-container matColumnDef="createdBy">
+    <th mat-header-cell *matHeaderCellDef> Created By </th>
+    <td mat-cell *matCellDef="let guide"> {{ guide.createdBy }} </td>
+  </ng-container>
+
+  <ng-container matColumnDef="createdDate">
+    <th mat-header-cell *matHeaderCellDef> Created Date </th>
+    <td mat-cell *matCellDef="let guide"> {{ guide.createdDate | date:'medium' }} </td>
+  </ng-container>
+
+
+  <!-- Actions Column -->
+  <ng-container matColumnDef="actions">
+    <th mat-header-cell *matHeaderCellDef> Actions </th>
+    <td mat-cell *matCellDef="let guide">
+      <button mat-button (click)="openGuide(guide.guideId)">
+        <mat-icon>visibility</mat-icon> View
+      </button>
+      <button mat-button (click)="editGuide(guide.guideId)">
+        <mat-icon>edit</mat-icon> Edit
+      </button>
+    </td>
+  </ng-container>
+
+  <!-- Header and Row Definitions -->
+  <tr mat-header-row *matHeaderRowDef="['guideId','title', 'createdBy', 'createdDate', 'actions']"></tr>
+  <tr mat-row *matRowDef="let row; columns: ['guideId','title', 'createdBy', 'createdDate', 'actions','guideId'];" class="mat-row"></tr>
+</table>
