@@ -52,6 +52,7 @@ export class EditGuideFormComponent implements OnInit {
   guide: Guide = {
     title: '',
     createdBy: '',
+    
     sections: []
   };
 
@@ -80,26 +81,39 @@ export class EditGuideFormComponent implements OnInit {
   fetchGuide(id: number): void {
     this.http.get<GuideData>(`${environment.apiUrl}GuidesAPI/${id}`).subscribe({
       next: (data) => {
+        // Assign title, createdBy, and createdDate from the fetched data
+        this.title = data.title;
+        this.createdBy = data.createdBy;
+  
+        // Continue handling sections
         this.sections = [
           ...data.pictures.map(picture => ({
             type: 'image',
             content: picture.imagePath,
             position: picture.position,
-            preview: this.transformImagePath(picture.imagePath) // Ensure preview is handled correctly
+            preview: this.transformImagePath(picture.imagePath) // Convert file path for web use
           })),
           ...data.textSections.map(text => ({
             type: 'text',
             content: text.textContent,
             position: text.position,
-            preview: '' // Text sections don't have images
+            preview: '' // Text sections typically don't have an image preview
           }))
-        ].sort((a, b) => a.position - b.position);
+        ].sort((a, b) => a.position - b.position); // Ensure sections are sorted by their position
+  
+        // Optional: Log the complete guide object to debug
+        console.log("Complete guide data:", {
+          title: this.title,
+          createdBy: this.createdBy,
+          sections: this.sections
+        });
       },
       error: (error) => {
         console.error('Error fetching guide:', error);
       }
     });
   }
+  
 
   
   
