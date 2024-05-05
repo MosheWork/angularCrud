@@ -6,9 +6,11 @@ import { environment } from 'environments/environment';
 interface Section {
   type: string;
   position: number;
-  content: string;
+  content: string | File;  // Adjust this to accept both string or File
   preview?: string;
-  createdBy: string; // Add createdBy property
+  createdBy: string;
+  isChanged: boolean;  // Ensure this property is included
+  isNew: boolean;      // Ensure this property is included
 }
 
 interface Guide {
@@ -41,6 +43,7 @@ interface GuideData {
   textSections: TextSection[];
 }
 
+
 @Component({
   selector: 'app-edit-guide-form',
   templateUrl: './edit-guide-form.component.html',
@@ -67,29 +70,34 @@ export class EditGuideFormComponent implements OnInit {
     });
   }
 
-  fetchGuide(id: number): void {
-    this.http.get<GuideData>(`${environment.apiUrl}GuidesAPI/${id}`).subscribe({
-      next: (data) => {
-        this.guide.title = data.title;
-        this.guide.createdBy = data.createdBy;
-        this.guide.sections = [
-          ...data.pictures.map(picture => ({
-            type: 'image',
-            content: picture.imagePath,
-            position: picture.position,
-            preview: this.transformImagePath(picture.imagePath),
-            createdBy: data.createdBy  // Add the createdBy property for images
-          })),
-          ...data.textSections.map(text => ({
-            type: 'text',
-            content: text.textContent,
-            position: text.position,
-            createdBy: data.createdBy  // Add the createdBy property for text sections
-          }))
-        ].sort((a, b) => a.position - b.position);
-      },
-      error: (error) => console.error('Error fetching guide:', error)
-    });
+ // When loading existing sections from the server
+ fetchGuide(id: number): void {
+  this.http.get<GuideData>(`${environment.apiUrl}GuidesAPI/${id}`).subscribe({
+    next: (data) => {
+      this.guide.title = data.title;
+      this.guide.createdBy = data.createdBy;
+      this.guide.sections = [
+        ...data.pictures.map(picture => ({
+          type: 'image',
+          content: picture.imagePath,
+          position: picture.position,
+          preview: this.transformImagePath(picture.imagePath),
+          createdBy: picture.createdBy,
+          isChanged: false,
+          isNew: false
+        })),
+        ...data.textSections.map((text, index) => ({  // Add index to map function
+          type: 'text',
+          content: text.textContent,
+          position: text.position,  // Preserve existing position
+          createdBy: text.createdBy,
+          isChanged: false,
+          isNew: false
+        }))
+      ].sort((a, b) => a.position - b.position);
+    },
+    error: (error) => console.error('Error fetching guide:', error)
+  });
 }
 
 
@@ -99,13 +107,47 @@ export class EditGuideFormComponent implements OnInit {
     return fileName ? `${environment.imageBaseUrl}${parts.join('/')}/${encodeURIComponent(fileName)}` : '';
   }
 
-  addTextSection(): void {
-    this.guide.sections.push({ type: 'text', content: '', position: this.guide.sections.length, createdBy: '' });
-  }
-  
-  addImageSection(): void {
-    this.guide.sections.push({ type: 'image', content: '', position: this.guide.sections.length, createdBy: '' });
-  }
+ // When adding a new text section
+ addTextSection(): void {
+  // Filter sections to get only text sections
+  const textSections = this.guide.sections.filter(section => section.type === 'text');
+
+  const maxPosition = Math.max(...this.guide.sections.map(section => section.position), 0);
+  const newPosition = maxPosition + 1;
+
+  // Add the new text section with the calculated position
+  this.guide.sections.push({
+    type: 'text',
+    content: '',
+    position: newPosition,
+    createdBy: '',
+    isChanged: false,
+    isNew: true  // Set isNew to true for new text sections
+  });
+
+  // Optionally, you can sort the sections array based on position
+  // to ensure they are in the correct order
+  this.guide.sections.sort((a, b) => a.position - b.position);
+}
+
+
+
+
+addImageSection(): void {
+  const maxPosition = Math.max(...this.guide.sections.map(section => section.position), 0);
+  const newPosition = maxPosition + 1;
+  this.guide.sections.push({
+    type: 'image',
+    content: '',
+    position: newPosition,
+    createdBy: '',
+    isChanged: false,
+    isNew: true
+  });
+}
+
+
+
   
   removeSection(index: number): void {
     this.guide.sections.splice(index, 1);
@@ -114,15 +156,19 @@ export class EditGuideFormComponent implements OnInit {
   handleImageChange(event: any, index: number): void {
     const file = event.target.files[0];
     if (file) {
-      const reader = new FileReader();
-      reader.onload = (e: any) => {
-        this.guide.sections[index].preview = e.target.result;
-        this.guide.sections[index].content = file; // Store the File object for upload
-      };
-      reader.readAsDataURL(file);
+      this.guide.sections[index].preview = URL.createObjectURL(file);
+      this.guide.sections[index].content = file;
+      this.guide.sections[index].isChanged = true;
     }
   }
-
+  
+  handleTextChange(event: any, index: number): void {
+    const text = event.target.value;
+    if (text !== this.guide.sections[index].content) {
+      this.guide.sections[index].content = text;
+      this.guide.sections[index].isChanged = true;
+    }
+  }
   moveSectionUp(index: number): void {
     if (index > 0) {
       [this.guide.sections[index - 1], this.guide.sections[index]] = [this.guide.sections[index], this.guide.sections[index - 1]];
@@ -134,41 +180,60 @@ export class EditGuideFormComponent implements OnInit {
       [this.guide.sections[index + 1], this.guide.sections[index]] = [this.guide.sections[index], this.guide.sections[index + 1]];
     }
   }
-
-  submitForm(): void {
-    const updateData = {
+ 
+  
+  
+  updateGuide(): void {
+    const updatedGuide = {
       title: this.guide.title,
       createdBy: this.guide.createdBy,
-      pictures: this.guide.sections.filter(s => s.type === 'image').map((s, i) => ({
-        imagePath: s.content,
-        position: i,
-        createdBy: s.createdBy  // Include createdBy for each picture
-      })) as Picture[],
-      textSections: this.guide.sections.filter(s => s.type === 'text').map((s, i) => ({
-        textContent: s.content,
-        position: i,
-        createdBy: s.createdBy  // Include createdBy for each text section
-      })) as TextSection[]
+      sections: this.guide.sections.filter(section => section.isChanged || section.isNew).map(section => {
+        const { type, content, position, createdBy, isNew } = section;
+        return { type, content, position, createdBy, isNew };
+      })
     };
-    if (updateData.pictures.length === 0) {
-      updateData.pictures = null as unknown as Picture[];
-    }
   
-    if (updateData.textSections.length === 0) {
-      updateData.textSections = null as unknown as TextSection[];
-    }
+    this.sendUpdateRequest(updatedGuide);
+  }
+   
   
-    console.log('Submitting updateData:', updateData);
   
-    this.http.put(`${environment.apiUrl}GuidesAPI/${this.guideId}`, updateData).subscribe({
+  
+
+  sendUpdateRequest(guideData: any): void {
+    const formData = new FormData();
+    formData.append('title', guideData.title);
+    formData.append('createdBy', guideData.createdBy);
+  
+    guideData.sections.forEach((section: any, index: number) => {
+      if (section.type === 'image' && section.content instanceof File) {
+        // Ensure the field name matches the backend expectations
+        formData.append('images', section.content, section.content.name);
+        formData.append('imagePositions[]', section.position.toString());
+      } else if (section.type === 'text') {
+        // Ensure the field name matches the backend expectations
+        formData.append('textContents[]', section.content);
+        formData.append('textPositions[]', section.position.toString());
+      }
+    });
+  
+    this.http.put(`${environment.apiUrl}GuidesAPI/${this.guideId}`, formData).subscribe({
       next: (response) => {
         console.log('Guide updated successfully:', response);
-        this.router.navigate(['/guides']);  // Adjust as necessary for your routing
+        this.router.navigate(['/guide-view', this.guideId]); // Navigate to the guide view page or another appropriate route
       },
       error: (error) => {
-        console.error('Failed to update guide:', error);
+        console.error('Error updating guide:', error);
+        alert('Failed to update the guide. Check console for more details.');
       }
     });
   }
+  
+  
+
+  
+
+  
+
   
 }
