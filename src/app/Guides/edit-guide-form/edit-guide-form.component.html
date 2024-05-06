@@ -17,9 +17,9 @@
       <button mat-icon-button (click)="moveSectionDown(i)" [disabled]="i === guide.sections.length - 1"><mat-icon>arrow_downward</mat-icon></button>
       <mat-form-field *ngIf="section.type === 'text'" appearance="fill">
         <mat-label>Text content</mat-label>
-        <textarea matInput placeholder="Text content" [(ngModel)]="section.content" name="textContent{{i}}"></textarea>
-      </mat-form-field>
-      
+        <textarea matInput [ngModel]="section.content" name="textContent{{i}}" (input)="handleTextChange($event, i)"></textarea>
+    </mat-form-field>
+    
       <div *ngIf="section.type === 'image'" class="image-upload">
         <input type="file" (change)="handleImageChange($event, i)">
         <img *ngIf="section.preview" [src]="section.preview" class="image-preview">

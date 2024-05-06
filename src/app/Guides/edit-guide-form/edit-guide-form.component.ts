@@ -12,11 +12,11 @@ interface ApiResponse {
 interface Section {
   type: string;
   position: number;
-  content: string | File; // Adjust this to accept both string or File
+  content: string | File; // Accept both string or File
   preview?: string;
   createdBy: string;
-  isChanged: boolean; // Ensure this property is included
-  isNew: boolean; // Ensure this property is included
+  isChanged: boolean;
+  isNew: boolean;
 }
 
 interface Guide {
@@ -172,13 +172,26 @@ export class EditGuideFormComponent implements OnInit {
     }
   }
 
-  handleTextChange(event: any, index: number): void {
-    const text = event.target.value;
-    if (text !== this.guide.sections[index].content) {
-      this.guide.sections[index].content = text;
-      this.guide.sections[index].isChanged = true;
+  handleTextChange(event: Event, index: number): void {
+    const element = event.target as HTMLInputElement | HTMLTextAreaElement;  // Type assertion
+
+    // Check if the element is correctly identified and has a value property
+    if (element && typeof element.value === 'string') {
+        const newText = element.value;
+        if (newText !== this.guide.sections[index].content) {
+            this.guide.sections[index].content = newText;
+            this.guide.sections[index].isChanged = true;
+            console.log('Text content changed:', newText);
+        }
+    } else {
+        console.error('Invalid element or event:', event);
     }
-  }
+}
+
+
+
+  
+  
   moveSectionUp(index: number): void {
     if (index > 0) {
       [this.guide.sections[index - 1], this.guide.sections[index]] = [
@@ -199,48 +212,45 @@ export class EditGuideFormComponent implements OnInit {
 
   updateGuide(): void {
     const updatedGuide = {
-      title: this.guide.title,
-      createdBy: this.guide.createdBy,
-      sections: this.guide.sections
-        .filter((section) => section.isChanged || section.isNew)
-        .map((section) => {
-          const { type, content, position, createdBy, isNew } = section;
-          return { type, content, position, createdBy, isNew };
-        }),
+        title: this.guide.title,
+        createdBy: this.guide.createdBy,
+        sections: this.guide.sections.filter(section => section.isChanged || section.isNew).map(section => {
+            const { type, content, position, createdBy, isNew } = section;
+            return { type, content, position, createdBy, isNew };
+        })
     };
 
+    console.log('Sending updated guide data to backend:', updatedGuide); // Ensure this logs correct data
     this.sendUpdateRequest(updatedGuide);
-  }
+}
 
+
+  
+  
+  
   sendUpdateRequest(guideData: any): void {
     const formData = new FormData();
     formData.append('title', guideData.title);
     formData.append('createdBy', guideData.createdBy);
-
-    guideData.sections.forEach((section: any, index: number) => {
+  
+    guideData.sections.forEach((section: Section, index: number) => {
       if (section.type === 'image' && section.content instanceof File) {
-        // Ensure the field name matches the backend expectations
         formData.append('images', section.content, section.content.name);
         formData.append('imagePositions[]', section.position.toString());
       } else if (section.type === 'text') {
-        // Ensure the field name matches the backend expectations
-        formData.append('textContents[]', section.content);
+        formData.append('textContents[]', section.content as string);
         formData.append('textPositions[]', section.position.toString());
       }
     });
-
-  // Modify your HTTP request to expect a response of type ApiResponse
-this.http.put<ApiResponse>(`${environment.apiUrl}GuidesAPI/${this.guideId}`, formData)
-.subscribe({
-  next: (response) => {
-    console.log('Guide updated successfully:', response.message);
-    // Navigate or perform other actions upon success
-    this.router.navigate(['guide/', this.guideId]);
-  },
-  error: (error) => {
-    console.error('Error updating guide:', error);
-    // Handle errors appropriately
+    
+  
+    // Send the request
+    this.http.put<ApiResponse>(`${environment.apiUrl}GuidesAPI/${this.guideId}`, formData).subscribe({
+      next: (response) => console.log('Guide updated successfully:', response.message),
+      error: (error) => console.error('Error updating guide:', error)
+    });
   }
-});
-  }
+  
+  
+  
 }
