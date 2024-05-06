@@ -30,3 +30,16 @@
   .section .mat-form-field.full-width-input {
     width: 95%;
   }
+  .highlight {
+    animation: highlightAnimation 0.3s ease-out;
+  }
+  
+  @keyframes highlightAnimation {
+    from {
+      background-color: yellow;
+    }
+    to {
+      background-color: transparent;
+    }
+  }
+  

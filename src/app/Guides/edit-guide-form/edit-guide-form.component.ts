@@ -4,12 +4,15 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { environment } from 'environments/environment';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { ChangeDetectorRef } from '@angular/core';
+
 
 interface ApiResponse {
   message: string;
 }
 
 interface Section {
+  id?: number;  // Optional identifier for the section
   type: string;
   position: number;
   content: string | File; // Accept both string or File
@@ -17,23 +20,26 @@ interface Section {
   createdBy: string;
   isChanged: boolean;
   isNew: boolean;
+  pictureId?: number;  // Optional identifier for linked picture
+  textSectionId?: number;  // Optional identifier for linked text section
 }
-
 interface Guide {
   title: string;
   createdBy: string;
   sections: Section[];
 }
 interface Picture {
+  pictureId: number; // Unique identifier for the picture
   imagePath: string;
   position: number;
-  createdBy: string; // Add createdBy property
+  createdBy: string;
 }
 
 interface TextSection {
+  textSectionId: number; // Unique identifier for the text section
   textContent: string;
   position: number;
-  createdBy: string; // Add createdBy property
+  createdBy: string;
 }
 
 interface GuideData {
@@ -64,7 +70,8 @@ export class EditGuideFormComponent implements OnInit {
   constructor(
     private http: HttpClient,
     private route: ActivatedRoute,
-    private router: Router
+    private router: Router,
+    private cdr: ChangeDetectorRef  // Inject ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
@@ -81,7 +88,8 @@ export class EditGuideFormComponent implements OnInit {
         this.guide.title = data.title;
         this.guide.createdBy = data.createdBy;
         this.guide.sections = [
-          ...data.pictures.map((picture) => ({
+          ...data.pictures.map((picture, index) => ({
+            id: picture.pictureId,  // Assuming pictureId is always defined and unique
             type: 'image',
             content: picture.imagePath,
             position: picture.position,
@@ -91,10 +99,10 @@ export class EditGuideFormComponent implements OnInit {
             isNew: false,
           })),
           ...data.textSections.map((text, index) => ({
-            // Add index to map function
+            id: text.textSectionId,  // Assuming textSectionId is always defined and unique
             type: 'text',
             content: text.textContent,
-            position: text.position, // Preserve existing position
+            position: text.position,
             createdBy: text.createdBy,
             isChanged: false,
             isNew: false,
@@ -104,6 +112,8 @@ export class EditGuideFormComponent implements OnInit {
       error: (error) => console.error('Error fetching guide:', error),
     });
   }
+  
+  
 
   transformImagePath(imagePath: string): string {
     const parts = imagePath.split('\\');
@@ -188,27 +198,33 @@ export class EditGuideFormComponent implements OnInit {
     }
 }
 
-
+trackBySection(index: number, section: Section): number {
+  return section.id ?? index;  // Use index as a fallback if id is undefined
+}
 
   
   
-  moveSectionUp(index: number): void {
-    if (index > 0) {
-      [this.guide.sections[index - 1], this.guide.sections[index]] = [
-        this.guide.sections[index],
-        this.guide.sections[index - 1],
-      ];
-    }
+moveSectionUp(index: number): void {
+  if (index > 0) {
+    this.swapSections(index, index - 1);
   }
+}
 
-  moveSectionDown(index: number): void {
-    if (index < this.guide.sections.length - 1) {
-      [this.guide.sections[index + 1], this.guide.sections[index]] = [
-        this.guide.sections[index],
-        this.guide.sections[index + 1],
-      ];
-    }
+moveSectionDown(index: number): void {
+  if (index < this.guide.sections.length - 1) {
+    this.swapSections(index, index + 1);
   }
+}
+
+private swapSections(index1: number, index2: number): void {
+  // Swap only the positions
+  let positionTemp = this.guide.sections[index1].position;
+  this.guide.sections[index1].position = this.guide.sections[index2].position;
+  this.guide.sections[index2].position = positionTemp;
+
+  // Ensure UI updates
+  this.cdr.detectChanges();
+}
 
   updateGuide(): void {
     const updatedGuide = {
@@ -251,6 +267,6 @@ export class EditGuideFormComponent implements OnInit {
     });
   }
   
-  
+
   
 }
