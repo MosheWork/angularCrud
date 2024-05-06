@@ -222,9 +222,14 @@ private swapSections(index1: number, index2: number): void {
   this.guide.sections[index1].position = this.guide.sections[index2].position;
   this.guide.sections[index2].position = positionTemp;
 
+  // Mark sections as changed
+  this.guide.sections[index1].isChanged = true;
+  this.guide.sections[index2].isChanged = true;
+
   // Ensure UI updates
   this.cdr.detectChanges();
 }
+
 
   updateGuide(): void {
     const updatedGuide = {
