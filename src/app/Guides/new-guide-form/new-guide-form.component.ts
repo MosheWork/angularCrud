@@ -25,14 +25,17 @@ export class NewGuideFormComponent {
     return this.guideForm.get('sections') as FormArray;
   }
 
+  private sectionCount = 0;  // Initialize a counter for the position
   createSection(): FormGroup {
     return this.formBuilder.group({
       type: new FormControl('Text', Validators.required),
       imageFile: new FormControl(null),
       textContent: new FormControl('', Validators.required),
-      position: new FormControl(0, Validators.required)
+      // Initialize position to the current count of sections plus one
+      position: new FormControl(this.sections.length + 1, [Validators.required, Validators.min(1)])
     });
   }
+  
 
   onFileSelect(event: any, sectionIndex: number): void {
     const file = event.target.files?.[0];
@@ -47,15 +50,15 @@ export class NewGuideFormComponent {
     const formData = new FormData();
     formData.append('title', this.guideForm.get('title')?.value ?? '');
     formData.append('createdBy', this.guideForm.get('createdBy')?.value ?? '');
-
+  
     this.sections.controls.forEach((section, index) => {
-      const type = section.get('type')?.value ?? 'Text';
-      const position = section.get('position')?.value ?? 0;
-      formData.append(`sections[${index}].position`, position.toString());
+      formData.append(`sections[${index}].position`, section.get('position')?.value.toString());
+  
+      const type = section.get('type')?.value;
       formData.append(`sections[${index}].type`, type);
-
+  
       if (type === 'Text') {
-        const textContent = section.get('textContent')?.value ?? '';
+        const textContent = section.get('textContent')?.value;
         formData.append(`sections[${index}].textContent`, textContent);
       } else if (type === 'Picture') {
         const file = section.get('imageFile')?.value;
@@ -67,7 +70,7 @@ export class NewGuideFormComponent {
         }
       }
     });
-
+  
     this.http.post(`${environment.apiUrl}GuidesAPI/CreateGuide`, formData).subscribe(
       response => console.log('Success!', response),
       error => {
@@ -76,6 +79,7 @@ export class NewGuideFormComponent {
       }
     );
   }
+  
 
   onSectionTypeChange(section: FormGroup): void {
     const typeControl = section.get('type');

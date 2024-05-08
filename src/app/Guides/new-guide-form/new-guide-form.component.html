@@ -17,6 +17,15 @@
         <option value="Picture">Picture</option>
       </select>
 
+      <!-- Position input field -->
+      <div>
+        <label>Position:</label>
+        <input type="number" formControlName="position" min="0">
+        <div *ngIf="guideForm.get('sections.' + i + '.position')?.hasError('required') && guideForm.get('sections.' + i + '.position')?.touched" class="error-message">
+          Position is required.
+        </div>
+      </div>
+
       <!-- Text content input field -->
       <div *ngIf="section.get('type')?.value === 'Text'">
         <label>Text Content:</label>
