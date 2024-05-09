@@ -53,8 +53,11 @@
           </div>
         </div>
 
-        <button mat-raised-button color="primary" type="button" (click)="addSection()">
-          <mat-icon>add</mat-icon> Add Section
+        <button mat-raised-button color="primary" type="button" (click)="addSection('Text')">
+          <mat-icon>add</mat-icon> Add Text Section
+        </button>
+        <button mat-raised-button color="primary" type="button" (click)="addSection('Picture')">
+          <mat-icon>add</mat-icon> Add Picture Section
         </button>
         <button mat-raised-button color="accent" type="submit">
           <mat-icon>send</mat-icon> Submit Guide

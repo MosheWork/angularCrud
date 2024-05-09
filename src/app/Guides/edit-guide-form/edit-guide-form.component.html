@@ -1,39 +1,33 @@
-<form>
-    <mat-form-field appearance="fill" class="full-width-input">
-      <mat-label>Title</mat-label>
-      <input matInput placeholder="Enter the title" [(ngModel)]="guide.title" name="title">
-    </mat-form-field>
-  
-    <mat-form-field appearance="fill" class="full-width-input">
-      <mat-label>Created By</mat-label>
-      <input matInput placeholder="Enter your name" [(ngModel)]="guide.createdBy" name="createdBy">
-    </mat-form-field>
-  
-    <!-- Dynamically add text sections or images -->
-    <div *ngFor="let section of guide.sections; let i = index; trackBy: trackBySection" class="section">
-        <div>Position: {{ section.position }}</div>
-        <button mat-icon-button (click)="moveSectionUp(i)" [disabled]="i === 0">
-            <mat-icon>arrow_upward</mat-icon>
-        </button>
-        <button mat-icon-button (click)="moveSectionDown(i)" [disabled]="i === guide.sections.length - 1">
-            <mat-icon>arrow_downward</mat-icon>
-        </button>
-        <mat-form-field *ngIf="section.type === 'text'" appearance="fill">
-            <mat-label>Text Content</mat-label>
-            <textarea matInput [ngModel]="section.content" name="textContent{{i}}" (input)="handleTextChange($event, i)"></textarea>
-        </mat-form-field>
-    
-        <div *ngIf="section.type === 'image'" class="image-upload">
-            <input type="file" (change)="handleImageChange($event, i)">
-            <img *ngIf="section.preview" [src]="section.preview" class="image-preview">
-        </div>
-        <button mat-icon-button color="warn" (click)="removeSection(i)">
-            <mat-icon>delete</mat-icon>
-        </button>
+<form [formGroup]="editGuideForm" (ngSubmit)="submitGuide()">
+    <div class="form-group">
+      <label>Title:</label>
+      <input formControlName="title" type="text" class="form-control" placeholder="Enter guide title">
     </div>
   
-    <button mat-button (click)="addTextSection()" type="button">Add Text Section</button>
-    <button mat-button (click)="addImageSection()" type="button">Add Image Section</button>
+    <div formArrayName="sections">
+      <div *ngFor="let section of sectionsFormArray.controls; let i = index" [formGroupName]="i" class="section">
+        <div class="form-group">
+          <label>Position:</label>
+          <input formControlName="position" type="number" class="form-control" placeholder="Section position">
+        </div>
+        
+        <!-- Conditional Rendering -->
+        <div *ngIf="section.get('type')?.value === 'Text'" class="form-group">
+          <label>Text Content:</label>
+          <textarea formControlName="textContent" class="form-control" placeholder="Enter text content"></textarea>
+        </div>
+        
+        <div *ngIf="section.get('type')?.value === 'Picture'" class="form-group">
+          <label>Image:</label>
+          <input type="file" (change)="onFileSelected($event, i)">
+          <img *ngIf="section.get('imagePath')?.value" [src]="transformImagePath(section.get('imagePath')?.value)" alt="Section Image" class="preview-img">
+        </div>
+
+        <button type="button" class="btn btn-secondary" (click)="addSection()">Add Section</button>
+
+      </div>
+    </div>
   
-    <button mat-raised-button color="primary" (click)="updateGuide()" type="button">Update</button>
-</form>
+    <button type="submit" class="btn btn-primary">Update Guide</button>
+  </form>
+  

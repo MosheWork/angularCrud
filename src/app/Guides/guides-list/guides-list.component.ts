@@ -54,7 +54,7 @@ export class GuidesListComponent implements OnInit {
   }
 
   navigateToNewGuide(): void {
-    this.router.navigate(['/new-guide']);
+    this.router.navigate(['/NewGuid']);
   }
 
   openGuide(id: number): void {
