@@ -15,11 +15,14 @@ export class NewGuideFormComponent {
     this.guideForm = this.formBuilder.group({
       title: new FormControl(''),
       createdBy: new FormControl(''),
-      sections: this.formBuilder.array([]) // No custom validator applied
+      categoryId: new FormControl('', Validators.required),  // Added category selection
+      sections: this.formBuilder.array([])
     });
     this.addSection(); // Initialize with one section
   }
-
+  ngOnInit() {
+    this.fetchCategories();
+  }
   get sections(): FormArray {
     return this.guideForm.get('sections') as FormArray;
   }
@@ -54,6 +57,8 @@ export class NewGuideFormComponent {
     const formData = new FormData();
     formData.append('title', this.guideForm.get('title')?.value ?? '');
     formData.append('createdBy', this.guideForm.get('createdBy')?.value ?? '');
+    formData.append('categoryId', this.guideForm.get('categoryId')?.value ?? '');  // Add category ID to the form data
+
 
     this.sections.controls.forEach((section, index) => {
       formData.append(`sections[${index}].position`, section.get('position')?.value.toString() ?? '0');
@@ -96,6 +101,18 @@ export class NewGuideFormComponent {
     section.get('textContent')?.updateValueAndValidity();
     section.get('imageFile')?.updateValueAndValidity();
   }
-  
+  categories: any[] = [];
+
+fetchCategories() {
+  this.http.get<any[]>(`${environment.apiUrl}GuidesAPI/GetCategories`).subscribe({
+    next: (data) => {
+      this.categories = data;
+    },
+    error: (error) => {
+      console.error('Error fetching categories:', error);
+    }
+  });
+}
+
   
 }

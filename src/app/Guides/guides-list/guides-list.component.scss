@@ -1,67 +1,41 @@
-/* Global table and shadow styles */
-.mat-elevation-z8 {
-  box-shadow: 0 6px 10px -5px rgba(0,0,0,.2);
+.guide-list-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
 }
 
-/* Uniform padding for cells and header cells */
-mat-header-cell, mat-cell {
-  padding: 8px;
+.search-bar {
+  margin: 20px;
 }
 
-/* Bold style for table headers */
-th.mat-header-cell {
-  font-weight: bold;
-}
-
-/* Alternating row colors for readability */
-.mat-row:nth-child(odd) {
-  background-color: #ffffff; /* White for odd rows */
-}
-
-.mat-row:nth-child(even) {
-  background-color: #dfecf7; /* Light blue for even rows */
-}
-
-/* General button styling */
-button.mat-button {
-  margin: 0 8px; /* Spacing around buttons */
-}
-
-.mat-icon {
-  margin-right: 4px; /* Space between icon and text */
-}
-
-/* Full width for table */
 table {
   width: 100%;
-  padding: 8px;
 }
-
-/* Elevated shadow effect for material table */
-table.mat-elevation-z8 {
-  overflow: hidden;
-  box-shadow: 0 6px 10px -5px rgba(0,0,0,0.2);
-}
-
-/* Flex container for positioning the add button to the right */
-.add-button-container {
+.guide-list-container {
   display: flex;
-  justify-content: flex-end; /* Aligns the add button to the right */
-  padding: 8px;
-  background-color: #ffffff; /* Matching the table header background */
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
 }
 
-/* Specific styles for the mat-icon-button */
-button.mat-icon-button {
-  color: #d40f82; /* A distinct pinkish color */
-  border-radius: 50%; /* Makes the button circular */
-  width: 40px; /* Fixed width for uniformity */
-  height: 40px; /* Fixed height for uniformity */
-  line-height: 40px; /* Aligns the icon vertically within the button */
-  margin-right: 10px; /* Right margin for spacing from edge */
+.toolbar {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 24px;
 }
 
-/* Hover effect for the add button */
-button.mat-icon-button:hover {
-  background-color: #1b6ca5; /* Light blue background on hover */
+.full-width {
+  width: 100%;
+}
+
+.add-button {
+  margin-left: 10px;
+  background-color: #0d47a1; // A deep blue color
+}
+
+mat-form-field.full-width {
+  width: 100%;
 }

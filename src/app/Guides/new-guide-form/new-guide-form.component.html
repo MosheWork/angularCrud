@@ -1,63 +1,65 @@
 <!-- new-guide-form.component.html -->
 <div class="body" dir="rtl">
-<mat-card>
-  <mat-card-header>
-    <mat-card-title class="center">Create New Guide</mat-card-title>
-    <mat-card-subtitle>Fill in the details to create a new guide.</mat-card-subtitle>
-  </mat-card-header>
-  <mat-card-content>
-    <form [formGroup]="guideForm" (ngSubmit)="onSubmit()">
-      <div class="form-row">
-        <mat-form-field appearance="fill" class="full-width">
-          <mat-label>Title</mat-label>
-          <input matInput formControlName="title" />
-        </mat-form-field>
+  <mat-card>
+    <mat-card-header>
+      <mat-card-title class="center">Create New Guide</mat-card-title>
+      <mat-card-subtitle>Fill in the details to create a new guide.</mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-content>
+      <form [formGroup]="guideForm" (ngSubmit)="onSubmit()">
+        <div class="form-row">
+          <mat-form-field appearance="fill" class="full-width">
+            <mat-label>Title</mat-label>
+            <input matInput formControlName="title" />
+          </mat-form-field>
 
-        <mat-form-field appearance="fill" class="full-width">
-          <mat-label>Created By</mat-label>
-          <input matInput formControlName="createdBy" />
-        </mat-form-field>
+          <mat-form-field appearance="fill" class="full-width">
+            <mat-label>Created By</mat-label>
+            <input matInput formControlName="createdBy" />
+          </mat-form-field>
 
-        <mat-form-field appearance="fill" class="full-width">
-          <mat-label>Type</mat-label>
-          <mat-select formControlName="type">
-            <mat-option value="Text">Text</mat-option>
-            <mat-option value="Picture">Picture</mat-option>
-          </mat-select>
-        </mat-form-field>
-      </div>
+          <!-- Category Dropdown -->
+          <mat-form-field appearance="fill" class="full-width">
+            <mat-label>Category</mat-label>
+            <mat-select formControlName="categoryId">
+              <mat-option *ngFor="let category of categories" [value]="category.categoryId">
+                {{ category.categoryName }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
 
-      <div formArrayName="sections">
-        <div *ngFor="let section of sections.controls; let i = index" [formGroupName]="i">
-          <div class="form-row">
-            <mat-form-field appearance="fill" class="full-width">
-              <mat-label>Position</mat-label>
-              <input matInput type="number" formControlName="position" min="1" />
-            </mat-form-field>
-
-            <ng-container *ngIf="section.get('type')?.value === 'Text'">
-              <mat-form-field appearance="fill" class="expand">
-                <mat-label>Text Content</mat-label>
-                <textarea matInput formControlName="textContent"></textarea>
+        <div formArrayName="sections">
+          <div *ngFor="let section of sections.controls; let i = index" [formGroupName]="i">
+            <div class="form-row">
+              <mat-form-field appearance="fill" class="full-width">
+                <mat-label>Position</mat-label>
+                <input matInput type="number" formControlName="position" min="1" />
               </mat-form-field>
-            </ng-container>
 
-            <div *ngIf="section.get('type')?.value === 'Picture'" class="full-width">
-              <label for="file-upload-{{ i }}">Upload Image</label>
-              <input id="file-upload-{{ i }}" type="file" (change)="onFileSelect($event, i)">
-              <img *ngIf="section.get('imageSrc')?.value" [src]="section.get('imageSrc')?.value" style="max-width: 100%; height: auto;">
+              <ng-container *ngIf="section.get('type')?.value === 'Text'">
+                <mat-form-field appearance="fill" class="expand">
+                  <mat-label>Text Content</mat-label>
+                  <textarea matInput formControlName="textContent"></textarea>
+                </mat-form-field>
+              </ng-container>
+
+              <div *ngIf="section.get('type')?.value === 'Picture'" class="full-width">
+                <label for="file-upload-{{ i }}">Upload Image</label>
+                <input id="file-upload-{{ i }}" type="file" (change)="onFileSelect($event, i)">
+                <img *ngIf="section.get('imageSrc')?.value" [src]="section.get('imageSrc')?.value" style="max-width: 100%; height: auto;">
+              </div>
             </div>
           </div>
         </div>
-      </div>
 
-      <button mat-raised-button color="primary" type="button" (click)="addSection()">
-        <mat-icon>add</mat-icon> Add Section
-      </button>
-      <button mat-raised-button color="accent" type="submit">
-        <mat-icon>send</mat-icon> Submit Guide
-      </button>
-    </form>
-  </mat-card-content>
-</mat-card>
+        <button mat-raised-button color="primary" type="button" (click)="addSection()">
+          <mat-icon>add</mat-icon> Add Section
+        </button>
+        <button mat-raised-button color="accent" type="submit">
+          <mat-icon>send</mat-icon> Submit Guide
+        </button>
+      </form>
+    </mat-card-content>
+  </mat-card>
 </div>
