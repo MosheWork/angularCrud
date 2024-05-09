@@ -56,17 +56,18 @@ export class EditGuideFormComponent implements OnInit {
     return this.editGuideForm.get('sections') as FormArray;
   }
 
-  createSectionGroup(section?: Section): FormGroup {
+  createSectionGroup(section?: Partial<Section>): FormGroup {
     return this.formBuilder.group({
       sectionId: [section?.sectionId],
       position: [section?.position, Validators.required],
-      textContent: [section?.textContent],
-      imagePath: [section?.imagePath],
+      textContent: [section?.type === 'Text' ? section?.textContent : ''],
+      imagePath: [section?.type === 'Picture' ? section?.imagePath : ''],
       imageFile: [null],
       type: [section?.type || 'Text'],
-      createdBy: [section?.createdBy]
+      createdBy: [section?.createdBy || '']
     });
   }
+  
 
   fetchGuide(id: number): void {
     this.http.get<{guide: Guide, sections: Section[]}>(`${environment.apiUrl}GuidesAPI/GetGuide/${id}`).subscribe({
@@ -90,8 +91,9 @@ export class EditGuideFormComponent implements OnInit {
     });
   }
 
-  addSection(): void {
-    this.sectionsFormArray.push(this.createSectionGroup());
+  addSection(type: 'Text' | 'Picture'): void {
+    const newSection = this.createSectionGroup({ type: type });
+    this.sectionsFormArray.push(newSection);
   }
 
   onFileSelected(event: any, index: number): void {
@@ -110,32 +112,41 @@ export class EditGuideFormComponent implements OnInit {
 
   submitGuide(): void {
     const formData = new FormData();
-    formData.append('guideId', this.guide.guideId.toString());
+    formData.append('guideId', this.guide.guideId.toString());  // Ensure guideId is never null
     formData.append('title', this.editGuideForm.get('title')?.value);
     formData.append('createdBy', this.guide.createdBy);
-
+  
     this.sectionsFormArray.controls.forEach((sectionControl, index) => {
       const section = sectionControl as FormGroup;
-      formData.append(`sections[${index}].sectionId`, section.get('sectionId')?.value.toString());
-      formData.append(`sections[${index}].position`, section.get('position')?.value.toString());
-      formData.append(`sections[${index}].type`, section.get('type')?.value);
-      formData.append(`sections[${index}].createdBy`, section.get('createdBy')?.value);
-
-      if (section.get('type')?.value === 'Text') {
-        formData.append(`sections[${index}].textContent`, section.get('textContent')?.value);
-      } else if (section.get('type')?.value === 'Picture') {
+      const sectionId = section.get('sectionId')?.value;
+      const position = section.get('position')?.value;
+      const type = section.get('type')?.value;
+      const createdBy = section.get('createdBy')?.value;
+  
+      // Ensuring values are not null before calling toString()
+      if (sectionId != null) formData.append(`sections[${index}].sectionId`, sectionId.toString());
+      if (position != null) formData.append(`sections[${index}].position`, position.toString());
+      formData.append(`sections[${index}].type`, type);
+  
+      if (type === 'Text') {
+        const textContent = section.get('textContent')?.value;
+        if (textContent != null) formData.append(`sections[${index}].textContent`, textContent);
+      } else if (type === 'Picture') {
         const file = section.get('imageFile')?.value;
-        if (file && file instanceof File) {
+        if (file instanceof File) {
           formData.append(`sections[${index}].imageFile`, file, file.name);
         }
       }
     });
-
+  
+    console.log("Submitting the following sections:", this.sectionsFormArray.value);
     this.http.post(`${environment.apiUrl}GuidesAPI/SaveGuide`, formData).subscribe({
       next: () => this.router.navigateByUrl('/guide-list'),
       error: error => console.error('Failed to update guide:', error)
     });
+    
   }
+  
 
   transformImagePath(imagePath: string): string {
     if (!imagePath) {

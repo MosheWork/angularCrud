@@ -23,8 +23,13 @@
           <img *ngIf="section.get('imagePath')?.value" [src]="transformImagePath(section.get('imagePath')?.value)" alt="Section Image" class="preview-img">
         </div>
 
-        <button type="button" class="btn btn-secondary" (click)="addSection()">Add Section</button>
-
+  <!-- Buttons to Add Text or Picture Section -->
+  <button mat-raised-button color="primary" type="button" (click)="addSection('Text')">
+    <mat-icon>add</mat-icon> Add Text Section
+  </button>
+  <button mat-raised-button color="primary" type="button" (click)="addSection('Picture')">
+    <mat-icon>add</mat-icon> Add Picture Section
+  </button>
       </div>
     </div>
   
