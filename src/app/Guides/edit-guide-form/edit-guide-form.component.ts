@@ -35,7 +35,10 @@ export class EditGuideFormComponent implements OnInit {
     private route: ActivatedRoute,
     private formBuilder: FormBuilder,
     private router: Router
-  ) {}
+  ) {
+    // This ensures that the 'this' context is preserved and the same reference is used for adding and removing the listener.
+    this.handlePaste = this.handlePaste.bind(this);
+  }
 
   ngOnInit(): void {
     this.route.params.subscribe(params => {
@@ -43,15 +46,36 @@ export class EditGuideFormComponent implements OnInit {
       this.fetchGuide(id);
     });
     this.setupForm();
+    this.setupPasteListener();
+    window.addEventListener('paste', this.handlePaste);
+
+
+  }
+  setupPasteListener(): void {
+    window.addEventListener('paste', this.handlePaste.bind(this));
   }
 
+  
   setupForm(): void {
     this.editGuideForm = this.formBuilder.group({
       title: ['', Validators.required],
       sections: this.formBuilder.array([])
     });
   }
+  addImageToForm(blob: Blob): void {
+    const newFile = new File([blob], `pasted-image-${Date.now()}.png`, { type: blob.type });
+    // Assuming the last section is where the user intends to add the image
+    const lastSectionIndex = this.sectionsFormArray.controls.length - 1;
+    const section = this.sectionsFormArray.at(lastSectionIndex) as FormGroup;
 
+    section.patchValue({ imageFile: newFile });
+    // Use FileReader to create a data URL for preview
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      section.get('imagePath')?.setValue(reader.result);
+    };
+    reader.readAsDataURL(newFile);
+  }
   get sectionsFormArray(): FormArray {
     return this.editGuideForm.get('sections') as FormArray;
   }
@@ -201,6 +225,24 @@ export class EditGuideFormComponent implements OnInit {
       control.get('position')?.setValue(index + 1);
     });
   }
+  handlePaste = (event: Event): void => {
+    const clipboardEvent = event as ClipboardEvent;
+    const items = clipboardEvent.clipboardData?.items;
+    if (items) {
+      for (let i = 0; i < items.length; i++) {
+        let item = items[i];
+        if (item.type.indexOf('image') !== -1) {
+          const blob = item.getAsFile();
+          if (blob) {
+            this.addImageToForm(blob);
+            event.preventDefault(); // Prevent the default paste behavior
+          }
+        }
+      }
+    }
+  }
   
-
+  ngOnDestroy(): void {
+    window.removeEventListener('paste', this.handlePaste);
+  }
 }
