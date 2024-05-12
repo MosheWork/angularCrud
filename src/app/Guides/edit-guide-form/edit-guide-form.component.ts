@@ -75,13 +75,17 @@ export class EditGuideFormComponent implements OnInit {
         if (!data || !data.guide) {
           console.error('No data or guide details returned for guide with ID:', id);
         } else {
-          console.log('Guide data received:', data);
           this.guide = data.guide;
           this.editGuideForm.patchValue({
             title: this.guide.title
           });
           data.sections.forEach(section => {
-            this.sectionsFormArray.push(this.createSectionGroup(section));
+            const sectionFormGroup = this.createSectionGroup(section);
+            this.sectionsFormArray.push(sectionFormGroup);
+            if (section.type === 'Picture' && section.imagePath) {
+              // Convert the server path to a usable client path if necessary
+              sectionFormGroup.get('imagePath')?.setValue(this.transformImagePath(section.imagePath));
+            }
           });
         }
       },
@@ -90,25 +94,42 @@ export class EditGuideFormComponent implements OnInit {
       }
     });
   }
+  
 
   addSection(type: 'Text' | 'Picture'): void {
-    const newSection = this.createSectionGroup({ type: type });
+    const newPosition = this.calculateNewPosition();
+    const newSection = this.createSectionGroup({ type: type, position: newPosition });
     this.sectionsFormArray.push(newSection);
   }
+  
+  calculateNewPosition(): number {
+    let highestPosition = 0;
+    this.sectionsFormArray.controls.forEach((control) => {
+      const position = control.get('position')?.value;
+      if (position > highestPosition) {
+        highestPosition = position;
+      }
+    });
+    return highestPosition + 1; // Increment by one to get the new position
+  }
+  
 
   onFileSelected(event: any, index: number): void {
     const file = event.target.files[0];
     if (file && file instanceof File) {
       const section = this.sectionsFormArray.at(index) as FormGroup;
       section.patchValue({ imageFile: file });
-      // Update image path to show the preview immediately
+  
+      // File reader to read the file and set as data URL for preview
       const reader = new FileReader();
       reader.onload = (e) => {
+        // Setting the 'imagePath' to the result of the file reader when it's loaded
         section.get('imagePath')?.setValue(reader.result);
       };
       reader.readAsDataURL(file);
     }
   }
+  
 
   submitGuide(): void {
     const formData = new FormData();
@@ -157,4 +178,29 @@ export class EditGuideFormComponent implements OnInit {
     const encodedFilename = encodeURIComponent(filename);
     return `${environment.imageBaseUrl}/${encodedFilename}`;
   }
+  moveSectionUp(index: number): void {
+    if (index === 0) return;
+    const currentSection = this.sectionsFormArray.at(index);
+    const previousSection = this.sectionsFormArray.at(index - 1);
+    this.sectionsFormArray.setControl(index, previousSection);
+    this.sectionsFormArray.setControl(index - 1, currentSection);
+    this.updatePositions();
+  }
+  
+  moveSectionDown(index: number): void {
+    if (index === this.sectionsFormArray.length - 1) return;
+    const currentSection = this.sectionsFormArray.at(index);
+    const nextSection = this.sectionsFormArray.at(index + 1);
+    this.sectionsFormArray.setControl(index, nextSection);
+    this.sectionsFormArray.setControl(index + 1, currentSection);
+    this.updatePositions();
+  }
+  
+  updatePositions(): void {
+    this.sectionsFormArray.controls.forEach((control, index) => {
+      control.get('position')?.setValue(index + 1);
+    });
+  }
+  
+
 }

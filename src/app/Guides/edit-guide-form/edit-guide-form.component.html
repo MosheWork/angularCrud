@@ -1,4 +1,5 @@
-<form [formGroup]="editGuideForm" (ngSubmit)="submitGuide()">
+<div class="body" dir="rtl">
+  <form [formGroup]="editGuideForm" (ngSubmit)="submitGuide()">
     <div class="form-group">
       <label>Title:</label>
       <input formControlName="title" type="text" class="form-control" placeholder="Enter guide title">
@@ -8,7 +9,12 @@
       <div *ngFor="let section of sectionsFormArray.controls; let i = index" [formGroupName]="i" class="section">
         <div class="form-group">
           <label>Position:</label>
-          <input formControlName="position" type="number" class="form-control" placeholder="Section position">
+          <input formControlName="position" type="number" class="form-control" placeholder="Section position" readonly>
+        </div>
+        
+        <div class="button-group">
+          <button type="button" (click)="moveSectionUp(i)" [disabled]="i === 0">▲ Move Up</button>
+          <button type="button" (click)="moveSectionDown(i)" [disabled]="i === sectionsFormArray.length - 1">▼ Move Down</button>
         </div>
         
         <!-- Conditional Rendering -->
@@ -20,19 +26,21 @@
         <div *ngIf="section.get('type')?.value === 'Picture'" class="form-group">
           <label>Image:</label>
           <input type="file" (change)="onFileSelected($event, i)">
-          <img *ngIf="section.get('imagePath')?.value" [src]="transformImagePath(section.get('imagePath')?.value)" alt="Section Image" class="preview-img">
+          <img *ngIf="section.get('imagePath')?.value" 
+               [src]="section.get('imagePath')?.value" 
+               alt="Section Image" 
+               class="preview-img">
         </div>
-
-  <!-- Buttons to Add Text or Picture Section -->
-  <button mat-raised-button color="primary" type="button" (click)="addSection('Text')">
-    <mat-icon>add</mat-icon> Add Text Section
-  </button>
-  <button mat-raised-button color="primary" type="button" (click)="addSection('Picture')">
-    <mat-icon>add</mat-icon> Add Picture Section
-  </button>
+        
       </div>
     </div>
   
+    <button mat-raised-button color="primary" type="button" (click)="addSection('Text')">
+      <mat-icon>add</mat-icon> Add Text Section
+    </button>
+    <button mat-raised-button color="primary" type="button" (click)="addSection('Picture')">
+      <mat-icon>add</mat-icon> Add Picture Section
+    </button>
     <button type="submit" class="btn btn-primary">Update Guide</button>
   </form>
-  
+</div>
