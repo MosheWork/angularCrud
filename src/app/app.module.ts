@@ -71,7 +71,8 @@ import { GuidesListComponent } from './Guides/guides-list/guides-list.component'
 import { NewGuideFormComponent } from './Guides/new-guide-form/new-guide-form.component';
 import { ViewGuideComponent } from './Guides/view-guide/view-guide.component';
 import { EditGuideFormComponent } from './Guides/edit-guide-form/edit-guide-form.component';
-
+import { HeaderComponent } from './Guides/header/header.component';
+import { FooterGuideComponent } from './Guides/footer-guide/footer-guide.component';
 
 
 @NgModule({
@@ -116,6 +117,9 @@ import { EditGuideFormComponent } from './Guides/edit-guide-form/edit-guide-form
     NewGuideFormComponent,
     ViewGuideComponent,
     EditGuideFormComponent,
+    HeaderComponent,
+    FooterGuideComponent,
+  
   
   ],
   imports: [

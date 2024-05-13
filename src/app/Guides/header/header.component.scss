@@ -1,0 +1,36 @@
+/* Header Toolbar Styles */
+mat-toolbar[color="primary"] {
+    color: white;
+    display: flex;
+    justify-content: space-between; /* Adjust to space-between to handle alignment */
+    align-items: center;
+    // Uncomment or adjust the background color as needed
+    // background-color: #007bff; /* Vibrant blue color for the header */
+}
+
+/* Ensure the title is centered */
+.toolbar-title {
+    flex-grow: 1;
+    text-align: center; /* Center the text within the span */
+}
+  
+/* Style adjustments for elements within the toolbar */
+.mat-toolbar .example-icon, .mat-toolbar span {
+    margin: 0 8px; /* Ensures consistent spacing around icons and text */
+}
+  
+.app-header {
+    position: sticky; /* Stick at the top */
+    top: 0; /* Align to the top */
+    z-index: 1000; /* Ensure it's above other content */
+    width: 100%;
+    height: 50px;
+    line-height: 50px; /* Center text vertically */
+    color: white;
+    background-color: #007bff; /* Uncomment this if you want to set a background color */
+  }
+  
+/* Optional spacer for alignment */
+.example-spacer {
+    flex: 1; /* Allow spacer to grow and push adjacent content */
+}

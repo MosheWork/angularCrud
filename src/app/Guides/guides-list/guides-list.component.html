@@ -1,18 +1,12 @@
-<mat-toolbar color="primary">
-  <span>Your Brand</span>
-  <span class="spacer"></span>
-  <button mat-button [routerLink]="['/home']">Home</button>
-  <button mat-button [routerLink]="['/guides']">Guides</button>
-  <button mat-button [routerLink]="['/about']">About</button>
-</mat-toolbar>
+<app-header></app-header>
 
 <div class="guide-list-container">
   <div class="toolbar">
-    <mat-form-field appearance="outline" class="full-width" style="width: 90%;">
-      <mat-label>Search guides</mat-label>
+    <mat-form-field appearance="outline" class="full-width" style="width: 90%;" >
+      <mat-label >Search guides</mat-label>
       <input matInput (keyup)="applyFilter($event)" placeholder="Filter by title, creator...">
     </mat-form-field>
-    <button mat-fab color="primary" class="add-button" (click)="navigateToNewGuide()">
+    <button mat-fab color="primary" class="add-button" hint="הוספת מדריך חדש" (click)="navigateToNewGuide()">
       <mat-icon>add</mat-icon>
     </button>
   </div>
@@ -50,12 +44,12 @@
 
     <!-- Actions Column -->
     <ng-container matColumnDef="actions">
-      <th mat-header-cell *matHeaderCellDef> Actions </th>
-      <td mat-cell *matCellDef="let guide">
-        <button mat-button (click)="openGuide(guide.guideId)">
+      <th mat-header-cell *matHeaderCellDef > Actions </th>
+      <td mat-cell *matCellDef="let guide" >
+        <button mat-button (click)="openGuide(guide.guideId) "color="primary">
           <mat-icon>visibility</mat-icon> View
         </button>
-        <button mat-button (click)="editGuide(guide.guideId)">
+        <button mat-button (click)="editGuide(guide.guideId)" color="primary">
           <mat-icon>edit</mat-icon> Edit
         </button>
       </td>
@@ -68,8 +62,4 @@
 
   <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
 </div>
-<mat-toolbar color="primary" class="footer">
-  <span>© 2024 Your Brand</span>
-  <span class="spacer"></span>
-  <a mat-button href="https://yourwebsite.com/privacy">Privacy Policy</a>
-</mat-toolbar>
+<app-footer-guide></app-footer-guide>
