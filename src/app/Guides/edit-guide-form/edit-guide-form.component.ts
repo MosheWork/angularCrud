@@ -29,6 +29,8 @@ interface Section {
 export class EditGuideFormComponent implements OnInit {
   guide!: Guide;
   editGuideForm!: FormGroup;
+  loginUserName = '';
+
 
   constructor(
     private http: HttpClient,
@@ -48,6 +50,8 @@ export class EditGuideFormComponent implements OnInit {
     this.setupForm();
     this.setupPasteListener();
     window.addEventListener('paste', this.handlePaste);
+    document.title = 'עריכת מדריך ';
+    this.loginUserName = localStorage.getItem('loginUserName') || '';
 
 
   }

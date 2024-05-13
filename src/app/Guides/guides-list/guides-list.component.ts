@@ -27,6 +27,7 @@ export class GuidesListComponent implements OnInit {
     private http: HttpClient,
     private router: Router
   ) {}
+  loginUserName = '';
 
 
 
@@ -35,6 +36,8 @@ export class GuidesListComponent implements OnInit {
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
     document.title = 'רשימת מדריכים';
+    this.loginUserName = localStorage.getItem('loginUserName') || '';
+
   }
 
   fetchGuides(): void {

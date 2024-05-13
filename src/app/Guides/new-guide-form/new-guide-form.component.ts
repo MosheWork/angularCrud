@@ -23,6 +23,7 @@ export class NewGuideFormComponent {
 
   ngOnInit() {
     this.fetchCategories();
+    document.title = ' הקמת מדריך חדש';
   }
 
   get sections(): FormArray {

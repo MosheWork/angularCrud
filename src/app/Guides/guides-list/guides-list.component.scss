@@ -3,39 +3,92 @@
   flex-direction: column;
   align-items: center;
   width: 100%;
-}
-
-.search-bar {
-  margin: 20px;
-}
-
-table {
-  width: 100%;
-}
-.guide-list-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: 100%;
+  background-color: #f8f8f8; /* Light grey background */
+  padding: 20px;
+  padding-bottom: 60px; /* Ensure there's space for the footer */
+  padding-top: 60px; /* Ensure there's space for the header */
 }
 
 .toolbar {
-  width: 100%;
+  width: 100%; /* Ensure full width */
   display: flex;
-  justify-content: space-between;
+  justify-content: space-between; /* This keeps the search field and add button on opposite ends */
   align-items: center;
   padding: 0 24px;
+  margin-bottom: 20px;
 }
 
-.full-width {
-  width: 100%;
+
+.search-field {
+  flex-grow: 1;
+  margin-right: 20px;
 }
 
 .add-button {
-  margin-left: 10px;
-  background-color: #0d47a1; // A deep blue color
+  background-color: #007bff; /* Sets the button color to match the header/footer */
+  color: white; /* Ensures the icon within the button is white */
 }
 
-mat-form-field.full-width {
+.table-style {
+  background-color: white;
+  border-radius: 8px;
+}
+
+/* Override Angular Material color for the button if necessary */
+.add-button.mat-fab {
+  background-color: #007bff;
+}
+
+.table-style {
+  width: 100%; /* Ensures the table uses the full available width */
+  background-color: white;
+  border-radius: 8px;
+}
+mat-header-cell {
+  color: #a8225e; /* Dark pink color for headers */
+  font-weight: bold;
+}
+
+mat-cell {
+  padding: 16px;
+}
+
+mat-icon-button {
+  color: #007bff; /* Blue color for icons */
+}
+
+mat-paginator {
+  background: transparent;
+  color: #007bff;
+  font-weight: bold;
+}
+
+.app-header, .app-footer {
+  color: white;
+  background-color: #007bff; /* Vibrant blue color for both header and footer */
   width: 100%;
+  height: 50px;
+  line-height: 50px; /* Align text vertically */
+}
+
+.app-footer {
+  position: absolute;
+  bottom: 0;
+}
+mat-toolbar[color="primary"] {
+  background-color: #007bff; // Explicitly set the vibrant blue color
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* If your toolbar has spacing elements like .example-spacer, ensure they are not affecting alignment */
+.example-spacer {
+  flex: 0; /* This removes the spacer's effect. Adjust or remove the spacer as needed */
+}
+
+/* Optionally, ensure icons and text within the toolbar are centered as well */
+.mat-toolbar .example-icon, .mat-toolbar span {
+  margin: 0 8px; /* Provides consistent spacing around items */
 }
