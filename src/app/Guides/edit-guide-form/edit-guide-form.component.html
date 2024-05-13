@@ -1,3 +1,5 @@
+<app-header></app-header>
+
 <div class="body" dir="rtl">
   <form [formGroup]="editGuideForm" (ngSubmit)="submitGuide()">
     <div class="form-group">
@@ -13,7 +15,7 @@
         </div>
         
         <div class="button-group">
-          <button type="button" (click)="moveSectionUp(i)" [disabled]="i === 0">▲ Move Up</button>
+          <button type="button" (click)="moveSectionUp(i)" [disabled]="i === 0" >▲ Move Up</button>
           <button type="button" (click)="moveSectionDown(i)" [disabled]="i === sectionsFormArray.length - 1">▼ Move Down</button>
         </div>
         
@@ -44,3 +46,4 @@
     <button type="submit" class="btn btn-primary">Update Guide</button>
   </form>
 </div>
+<app-footer-guide></app-footer-guide>
