@@ -1,3 +1,11 @@
+<mat-toolbar color="primary">
+  <span>Your Brand</span>
+  <span class="spacer"></span>
+  <button mat-button [routerLink]="['/home']">Home</button>
+  <button mat-button [routerLink]="['/guides']">Guides</button>
+  <button mat-button [routerLink]="['/about']">About</button>
+</mat-toolbar>
+
 <div class="guide-list-container">
   <div class="toolbar">
     <mat-form-field appearance="outline" class="full-width">
@@ -60,3 +68,8 @@
 
   <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
 </div>
+<mat-toolbar color="primary" class="footer">
+  <span>© 2024 Your Brand</span>
+  <span class="spacer"></span>
+  <a mat-button href="https://yourwebsite.com/privacy">Privacy Policy</a>
+</mat-toolbar>

@@ -14,7 +14,7 @@
   display: flex;
   justify-content: space-between; /* This keeps the search field and add button on opposite ends */
   align-items: center;
-  padding: 0 24px;
+  padding: 0 0px;
   margin-bottom: 20px;
 }
 
@@ -25,7 +25,7 @@
 }
 
 .add-button {
-  background-color: #007bff; /* Sets the button color to match the header/footer */
+ // background-color: #007bff; /* Sets the button color to match the header/footer */
   color: white; /* Ensures the icon within the button is white */
 }
 
@@ -34,10 +34,6 @@
   border-radius: 8px;
 }
 
-/* Override Angular Material color for the button if necessary */
-.add-button.mat-fab {
-  background-color: #007bff;
-}
 
 .table-style {
   width: 100%; /* Ensures the table uses the full available width */
@@ -65,7 +61,7 @@ mat-paginator {
 
 .app-header, .app-footer {
   color: white;
-  background-color: #007bff; /* Vibrant blue color for both header and footer */
+  //background-color: #007bff; /* Vibrant blue color for both header and footer */
   width: 100%;
   height: 50px;
   line-height: 50px; /* Align text vertically */
@@ -76,7 +72,7 @@ mat-paginator {
   bottom: 0;
 }
 mat-toolbar[color="primary"] {
-  background-color: #007bff; // Explicitly set the vibrant blue color
+ // background-color: #007bff; // Explicitly set the vibrant blue color
   color: white;
   display: flex;
   justify-content: center;
