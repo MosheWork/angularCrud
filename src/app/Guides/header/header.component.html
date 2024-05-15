@@ -1,6 +1,8 @@
 <mat-toolbar color="primary">
-    <!-- Empty span for alignment -->
-    <span></span>
+    <!-- Button with home icon for navigation -->
+    <button mat-icon-button (click)="goToGuidesList()">
+        <mat-icon>home</mat-icon>
+    </button>
     <span class="toolbar-title">רשימת מדריכים</span>
     <span class="spacer"></span> <!-- This will push the loginUserName to the right -->
     <span>{{loginUserName}}</span>
