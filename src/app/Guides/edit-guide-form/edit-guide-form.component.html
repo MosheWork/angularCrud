@@ -15,8 +15,12 @@
         </div>
         
         <div class="button-group">
-          <button type="button" (click)="moveSectionUp(i)" [disabled]="i === 0" >▲ Move Up</button>
-          <button type="button" (click)="moveSectionDown(i)" [disabled]="i === sectionsFormArray.length - 1">▼ Move Down</button>
+          <button mat-raised-button class="move-button" color="primary" type="button" (click)="moveSectionUp(i)" [disabled]="i === 0">
+            <mat-icon>arrow_upward</mat-icon> העלה למעלה
+          </button>
+          <button mat-raised-button class="move-button" color="primary" type="button" (click)="moveSectionDown(i)" [disabled]="i === sectionsFormArray.length - 1">
+            <mat-icon>arrow_downward</mat-icon> הורד למטה
+          </button>
         </div>
         
         <!-- Conditional Rendering -->
@@ -37,13 +41,21 @@
       </div>
     </div>
   
-    <button mat-raised-button color="primary" type="button" (click)="addSection('Text')">
-      <mat-icon>add</mat-icon> Add Text Section
-    </button>
-    <button mat-raised-button color="primary" type="button" (click)="addSection('Picture')">
-      <mat-icon>add</mat-icon> Add Picture Section
-    </button>
-    <button type="submit" class="btn btn-primary">Update Guide</button>
+    <div class="form-actions">
+      <button mat-raised-button color="primary" type="button" (click)="addSection('Text')">
+        <mat-icon>add</mat-icon> הוספת טקסט
+      </button>
+      <button mat-raised-button color="primary" type="button" (click)="addSection('Picture')">
+        <mat-icon>add</mat-icon> הוספת תמונה
+      </button>
+      <button mat-raised-button color="accent" type="submit" class="btn-primary">
+        <mat-icon>update</mat-icon> עדכון מדריך
+      </button>
+    </div>
   </form>
 </div>
-<app-footer-guide></app-footer-guide>
+
+<mat-toolbar color="primary" class="footer">
+  <span>© 2024 Moshe Maman</span>
+  <span class="spacer"></span>
+</mat-toolbar>

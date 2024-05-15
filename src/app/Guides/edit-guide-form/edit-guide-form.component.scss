@@ -1,93 +1,142 @@
-/* edit-guide-form.component.scss */
+html, body {
+  height: 100%;
+  margin: 0;
+}
+
+.body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh; /* Ensure the body takes the full height of the viewport */
+  padding: 20px; /* Added padding */
+}
+
+.guide-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  flex: 1; /* Ensure the guide container takes the available space */
+  background-color: #f8f8f8; /* Light grey background */
+  padding-top: 60px; /* Space for the header */
+}
+
 .form-group {
-    margin-bottom: 20px;
+  margin-bottom: 20px;
+}
+
+.form-control {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.section {
+  border: 1px solid #eee;
+  padding: 15px;
+  margin-bottom: 20px;
+  border-radius: 5px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.preview-img {
+  width: 100%;
+  max-width: 300px; /* Control the size of the image here */
+  height: auto;
+  margin-top: 10px;
+}
+
+.btn-primary {
+  background-color: #007bff;
+  border-color: #007bff;
+  color: white;
+  padding: 10px 15px;
+  border-radius: 4px;
+  cursor: pointer;
+  &:hover {
+    background-color: #0056b3;
+    border-color: #004085;
   }
-  
-  .form-control {
-    width: 100%;
-    padding: 8px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-  }
-  
-  .section {
-    border: 1px solid #eee;
-    padding: 15px;
-    margin-bottom: 20px;
-    border-radius: 5px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-  }
-  
-  .preview-img {
-    width: 100%;
-    max-width: 300px; // Control the size of the image here
-    height: auto;
-    margin-top: 10px;
-  }
-  
-  .btn-primary {
-    background-color: #007bff;
-    border-color: #007bff;
-    color: white;
-    padding: 10px 15px;
-    border-radius: 4px;
-    cursor: pointer;
-    &:hover {
-      background-color: #0056b3;
-      border-color: #004085;
-    }
+}
+
+.section {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 20px;
+
+  .form-group {
+    margin-bottom: 10px;
   }
 
-  .section {
+  .button-group {
     display: flex;
-    flex-direction: column;
-    margin-bottom: 20px;
-  
-    .form-group {
-      margin-bottom: 10px;
-    }
-  
-    .button-group {
+    flex-direction: column; /* Stack buttons vertically */
+    align-items: flex-start; /* Align the buttons to the left */
+    margin-bottom: 10px;
+
+    .move-button {
+      width: 180px; /* Set a fixed width for consistency */
+      margin: 5px 0; /* Add some margin for spacing */
       display: flex;
-      flex-direction: column; // Stack buttons vertically
-      align-items: right;    // Center-align the buttons
-      margin-bottom: 10px;
-  
-      button {
-        background-color: #007bff;
-        color: white;
-        border: none;
-        padding: 8px 12px;
-        font-size: 16px;
-        cursor: pointer;
-        border-radius: 5px;
-        margin: 2px 0; // Slight space between buttons
-  
-        &:hover {
-          background-color: #0056b3;
-        }
-  
-        &:disabled {
-          background-color: #cccccc;
-          cursor: not-allowed;
-        }
+      justify-content: space-between; /* Ensure text and icon are spaced correctly */
+    }
+
+    button {
+      background-color: #007bff;
+      color: white;
+      border: none;
+      padding: 8px 12px;
+      font-size: 16px;
+      cursor: pointer;
+      border-radius: 5px;
+      margin: 2px 0; /* Slight space between buttons */
+
+      &:hover {
+        background-color: #0056b3;
+      }
+
+      &:disabled {
+        background-color: #cccccc;
+        cursor: not-allowed;
       }
     }
   }
-  
-  .btn-primary {
-    background-color: #28a745;
-    border-color: #28a745;
-    &:hover {
-      background-color: #218838;
-      border-color: #1e7e34;
-    }
-  }
-  
-  .preview-img {
-    width: 100%;
-    max-width: 300px;
-    height: auto;
-    margin-top: 10px;
-  }
-  
+}
+
+.form-actions {
+  display: flex;
+  gap: 10px; /* Space between action buttons */
+  padding: 10px 0; /* Padding for the action buttons */
+}
+
+.preview-img {
+  width: 100%;
+  max-width: 300px;
+  height: auto;
+  margin-top: 10px;
+}
+
+.footer {
+  position: fixed; /* Fix at the bottom */
+  bottom: 0; /* Align to the bottom */
+  width: 99%;
+  height: 50px;
+  line-height: 50px; /* Center text vertically */
+  color: white;
+ // background-color: #007bff; /* Set the background color */
+  z-index: 1000; /* Ensure it's above other content */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+mat-toolbar[color="primary"] {
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.spacer {
+  flex: 1;
+}

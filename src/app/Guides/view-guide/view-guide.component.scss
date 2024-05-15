@@ -3,12 +3,18 @@ html, body {
   margin: 0;
 }
 
+.body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh; /* Ensure the body takes the full height of the viewport */
+}
+
 .guide-container {
   display: flex;
   flex-direction: column;
   align-items: center;
   width: 100%;
-  height: calc(100% - 50px); /* Adjust for fixed footer height */
+  flex: 1; /* Ensure the guide container takes the available space */
   background-color: #f8f8f8; /* Light grey background */
   padding-top: 60px; /* Space for the header */
 }
@@ -75,12 +81,26 @@ mat-card {
       box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1); /* Shadow for images */
     }
   }
+}
 
-  mat-card-footer {
-    padding: 10px; /* Padding inside the footer */
-    border-top: 1px solid #e0e0e0; /* Added border to the footer for separation */
-    text-align: center; /* Center-align the footer content */
-    background-color: #f8f9fa; /* Slight background color for contrast */
-    border-radius: 0 0 10px 10px; /* Match border radius with the card */
-  }
+.footer {
+  position: fixed; /* Fix at the bottom */
+  bottom: 0; /* Align to the bottom */
+  width: 99%;
+  height: 50px;
+  //line-height: 50px; /* Center text vertically */
+  color: white;
+  //background-color: #007bff; /* Set the background color */
+  z-index: 1000; /* Ensure it's above other content */
+}
+
+mat-toolbar[color="primary"] {
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.spacer {
+  flex: 1;
 }
