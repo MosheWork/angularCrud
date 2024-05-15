@@ -11,7 +11,9 @@ interface Guide {
   title: string;
   createdBy: string;
   createdDate: Date;
+  categoryName: string;
 }
+
 @Component({
   selector: 'app-guides-list',
   templateUrl: './guides-list.component.html',
@@ -19,17 +21,18 @@ interface Guide {
 })
 export class GuidesListComponent implements OnInit {
   dataSource = new MatTableDataSource<Guide>();
-  displayedColumns: string[] = ['guideId', 'title','categoryName', 'createdBy', 'createdDate', 'actions'];
+  displayedColumns: string[] = ['guideId', 'title', 'categoryName', 'createdBy', 'createdDate', 'actions'];
+  guideCount: number = 0; // Add property to store guide count
 
   @ViewChild(MatPaginator, { static: true }) paginator!: MatPaginator;
   @ViewChild(MatSort, { static: true }) sort!: MatSort;
+
   constructor(
     private http: HttpClient,
     private router: Router
   ) {}
+
   loginUserName = '';
-
-
 
   ngOnInit(): void {
     this.fetchGuides();
@@ -37,13 +40,13 @@ export class GuidesListComponent implements OnInit {
     this.dataSource.sort = this.sort;
     document.title = 'רשימת מדריכים';
     this.loginUserName = localStorage.getItem('loginUserName') || '';
-
   }
 
   fetchGuides(): void {
     this.http.get<Guide[]>(`${environment.apiUrl}GuidesAPI/GetAllGuides`).subscribe(
       (guides) => {
         this.dataSource.data = guides;
+        this.guideCount = guides.length; // Count the number of guides
       },
       (error) => {
         console.error('Error fetching guides:', error);

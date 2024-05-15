@@ -140,3 +140,14 @@ mat-toolbar[color="primary"] {
 .spacer {
   flex: 1;
 }
+angular-editor {
+  margin-bottom: 20px;
+}
+
+.form-group {
+  .angular-editor {
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 8px;
+  }
+}

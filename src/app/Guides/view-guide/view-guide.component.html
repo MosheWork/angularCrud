@@ -1,37 +1,35 @@
-<app-header [title]="'מדריך ' + guide.title "></app-header>
+<app-header [title]="'שם מדריך: ' + guide.title"></app-header>
 
-<div class="body">
-  <div class="guide-container" dir="rtl">
-    <mat-card>
-      <mat-card-header>
-        <mat-card-title>
-          <mat-icon>book</mat-icon>
-          {{ guide.title }}
-        </mat-card-title>
-        <mat-card-subtitle>
-          Created by: {{ guide.createdBy }}
-        </mat-card-subtitle>
-      </mat-card-header>
+<div class="guide-container" dir="rtl">
+  <mat-card>
+    <mat-card-header>
+      <mat-card-title>
+        <mat-icon>book</mat-icon>
+        {{ guide.title }}
+      </mat-card-title>
+      <mat-card-subtitle>
+        Created by: {{ guide.createdBy }}
+      </mat-card-subtitle>
+    </mat-card-header>
 
-      <mat-card-content>
-        <p>Created date: {{ guide.createdDate | date:'medium' }}</p>
-        <div *ngFor="let item of guideItems">
-          <ng-container *ngIf="item.type === 'Text'">
-            <p>{{ item.textContent }}</p>
-          </ng-container>
-          <ng-container *ngIf="item.type === 'Picture'">
-            <img [src]="transformImagePath(item.imagePath)" alt="Guide Image" class="guide-image">
-          </ng-container>
-        </div>
-        <div *ngIf="guideItems.length === 0">
-          <p>No content available.</p>
-        </div>
-      </mat-card-content>
-    </mat-card>
-  </div>
-  
-  <mat-toolbar color="primary" class="footer">
-    <span>© 2024 Moshe Maman</span>
-    <span class="spacer"></span>
-  </mat-toolbar>
+    <mat-card-content>
+      <p>Created date: {{ guide.createdDate | date:'medium' }}</p>
+      <div *ngFor="let item of guideItems">
+        <ng-container *ngIf="item.type === 'Text'">
+          <div [innerHTML]="item.textContent" class="styled-text"></div>
+        </ng-container>
+        <ng-container *ngIf="item.type === 'Picture'">
+          <img [src]="transformImagePath(item.imagePath)" alt="Guide Image" class="guide-image">
+        </ng-container>
+      </div>
+      <div *ngIf="guideItems.length === 0">
+        <p>No content available.</p>
+      </div>
+    </mat-card-content>
+  </mat-card>
 </div>
+
+<mat-toolbar color="primary" class="footer">
+  <span>© 2024 Moshe Maman</span>
+  <span class="spacer"></span>
+</mat-toolbar>

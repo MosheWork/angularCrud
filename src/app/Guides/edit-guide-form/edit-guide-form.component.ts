@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, FormArray, Validators } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { ActivatedRoute, Router } from '@angular/router';
+import { AngularEditorConfig } from '@kolkov/angular-editor';
 import { environment } from 'environments/environment';
 
 interface Guide {
@@ -30,7 +31,34 @@ export class EditGuideFormComponent implements OnInit {
   guide!: Guide;
   editGuideForm!: FormGroup;
   loginUserName = '';
-
+  editorConfig: AngularEditorConfig = {
+    editable: true,
+    spellcheck: true,
+    height: '15rem',
+    minHeight: '5rem',
+    placeholder: 'Enter text here...',
+    translate: 'no',
+    defaultParagraphSeparator: 'p',
+    defaultFontName: 'Arial',
+    toolbarHiddenButtons: [
+      ['italic']
+    ],
+    customClasses: [
+      {
+        name: 'quote',
+        class: 'quote',
+      },
+      {
+        name: 'redText',
+        class: 'redText'
+      },
+      {
+        name: 'titleText',
+        class: 'titleText',
+        tag: 'h1',
+      },
+    ]
+  };
 
   constructor(
     private http: HttpClient,
@@ -38,7 +66,6 @@ export class EditGuideFormComponent implements OnInit {
     private formBuilder: FormBuilder,
     private router: Router
   ) {
-    // This ensures that the 'this' context is preserved and the same reference is used for adding and removing the listener.
     this.handlePaste = this.handlePaste.bind(this);
   }
 
@@ -52,34 +79,32 @@ export class EditGuideFormComponent implements OnInit {
     window.addEventListener('paste', this.handlePaste);
     document.title = 'עריכת מדריך ';
     this.loginUserName = localStorage.getItem('loginUserName') || '';
-
-
   }
+
   setupPasteListener(): void {
     window.addEventListener('paste', this.handlePaste.bind(this));
   }
 
-  
   setupForm(): void {
     this.editGuideForm = this.formBuilder.group({
       title: ['', Validators.required],
       sections: this.formBuilder.array([])
     });
   }
+
   addImageToForm(blob: Blob): void {
     const newFile = new File([blob], `pasted-image-${Date.now()}.png`, { type: blob.type });
-    // Assuming the last section is where the user intends to add the image
     const lastSectionIndex = this.sectionsFormArray.controls.length - 1;
     const section = this.sectionsFormArray.at(lastSectionIndex) as FormGroup;
 
     section.patchValue({ imageFile: newFile });
-    // Use FileReader to create a data URL for preview
     const reader = new FileReader();
     reader.onload = (e) => {
       section.get('imagePath')?.setValue(reader.result);
     };
     reader.readAsDataURL(newFile);
   }
+
   get sectionsFormArray(): FormArray {
     return this.editGuideForm.get('sections') as FormArray;
   }
@@ -95,10 +120,9 @@ export class EditGuideFormComponent implements OnInit {
       createdBy: [section?.createdBy || '']
     });
   }
-  
 
   fetchGuide(id: number): void {
-    this.http.get<{guide: Guide, sections: Section[]}>(`${environment.apiUrl}GuidesAPI/GetGuide/${id}`).subscribe({
+    this.http.get<{ guide: Guide, sections: Section[] }>(`${environment.apiUrl}GuidesAPI/GetGuide/${id}`).subscribe({
       next: data => {
         if (!data || !data.guide) {
           console.error('No data or guide details returned for guide with ID:', id);
@@ -111,7 +135,6 @@ export class EditGuideFormComponent implements OnInit {
             const sectionFormGroup = this.createSectionGroup(section);
             this.sectionsFormArray.push(sectionFormGroup);
             if (section.type === 'Picture' && section.imagePath) {
-              // Convert the server path to a usable client path if necessary
               sectionFormGroup.get('imagePath')?.setValue(this.transformImagePath(section.imagePath));
             }
           });
@@ -122,14 +145,13 @@ export class EditGuideFormComponent implements OnInit {
       }
     });
   }
-  
 
   addSection(type: 'Text' | 'Picture'): void {
     const newPosition = this.calculateNewPosition();
     const newSection = this.createSectionGroup({ type: type, position: newPosition });
     this.sectionsFormArray.push(newSection);
   }
-  
+
   calculateNewPosition(): number {
     let highestPosition = 0;
     this.sectionsFormArray.controls.forEach((control) => {
@@ -138,45 +160,40 @@ export class EditGuideFormComponent implements OnInit {
         highestPosition = position;
       }
     });
-    return highestPosition + 1; // Increment by one to get the new position
+    return highestPosition + 1;
   }
-  
 
   onFileSelected(event: any, index: number): void {
     const file = event.target.files[0];
     if (file && file instanceof File) {
       const section = this.sectionsFormArray.at(index) as FormGroup;
       section.patchValue({ imageFile: file });
-  
-      // File reader to read the file and set as data URL for preview
+
       const reader = new FileReader();
       reader.onload = (e) => {
-        // Setting the 'imagePath' to the result of the file reader when it's loaded
         section.get('imagePath')?.setValue(reader.result);
       };
       reader.readAsDataURL(file);
     }
   }
-  
 
   submitGuide(): void {
     const formData = new FormData();
-    formData.append('guideId', this.guide.guideId.toString());  // Ensure guideId is never null
+    formData.append('guideId', this.guide.guideId.toString());
     formData.append('title', this.editGuideForm.get('title')?.value);
     formData.append('createdBy', this.guide.createdBy);
-  
+
     this.sectionsFormArray.controls.forEach((sectionControl, index) => {
       const section = sectionControl as FormGroup;
       const sectionId = section.get('sectionId')?.value;
       const position = section.get('position')?.value;
       const type = section.get('type')?.value;
       const createdBy = section.get('createdBy')?.value;
-  
-      // Ensuring values are not null before calling toString()
+
       if (sectionId != null) formData.append(`sections[${index}].sectionId`, sectionId.toString());
       if (position != null) formData.append(`sections[${index}].position`, position.toString());
       formData.append(`sections[${index}].type`, type);
-  
+
       if (type === 'Text') {
         const textContent = section.get('textContent')?.value;
         if (textContent != null) formData.append(`sections[${index}].textContent`, textContent);
@@ -187,15 +204,12 @@ export class EditGuideFormComponent implements OnInit {
         }
       }
     });
-  
-    console.log("Submitting the following sections:", this.sectionsFormArray.value);
+
     this.http.post(`${environment.apiUrl}GuidesAPI/SaveGuide`, formData).subscribe({
       next: () => this.router.navigateByUrl('/guide-list'),
       error: error => console.error('Failed to update guide:', error)
     });
-    
   }
-  
 
   transformImagePath(imagePath: string): string {
     if (!imagePath) {
@@ -206,6 +220,7 @@ export class EditGuideFormComponent implements OnInit {
     const encodedFilename = encodeURIComponent(filename);
     return `${environment.imageBaseUrl}/${encodedFilename}`;
   }
+
   moveSectionUp(index: number): void {
     if (index === 0) return;
     const currentSection = this.sectionsFormArray.at(index);
@@ -214,7 +229,7 @@ export class EditGuideFormComponent implements OnInit {
     this.sectionsFormArray.setControl(index - 1, currentSection);
     this.updatePositions();
   }
-  
+
   moveSectionDown(index: number): void {
     if (index === this.sectionsFormArray.length - 1) return;
     const currentSection = this.sectionsFormArray.at(index);
@@ -223,12 +238,13 @@ export class EditGuideFormComponent implements OnInit {
     this.sectionsFormArray.setControl(index + 1, currentSection);
     this.updatePositions();
   }
-  
+
   updatePositions(): void {
     this.sectionsFormArray.controls.forEach((control, index) => {
       control.get('position')?.setValue(index + 1);
     });
   }
+
   handlePaste = (event: Event): void => {
     const clipboardEvent = event as ClipboardEvent;
     const items = clipboardEvent.clipboardData?.items;
@@ -245,7 +261,7 @@ export class EditGuideFormComponent implements OnInit {
       }
     }
   }
-  
+
   ngOnDestroy(): void {
     window.removeEventListener('paste', this.handlePaste);
   }

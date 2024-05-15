@@ -1,9 +1,10 @@
 <mat-toolbar color="primary">
-    <!-- Button with home icon for navigation -->
     <button mat-icon-button (click)="goToGuidesList()">
-        <mat-icon>home</mat-icon>
+      <mat-icon>home</mat-icon>
     </button>
-    <span class="toolbar-title">{{ title }}</span>  <!-- Use the title property -->
     <span class="spacer"></span>
-    <span>{{loginUserName}}</span>
-</mat-toolbar>
+    <span *ngIf="title" class="toolbar-title">{{ title }}</span>
+    <span *ngIf="!title && guideCount > 0" class="guide-count">Total Guides: {{ guideCount }}</span>
+    <span class="spacer"></span>
+    <span>{{ loginUserName }}</span>
+  </mat-toolbar>

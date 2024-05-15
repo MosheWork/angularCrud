@@ -88,10 +88,13 @@ mat-card {
   bottom: 0; /* Align to the bottom */
   width: 99%;
   height: 50px;
-  //line-height: 50px; /* Center text vertically */
+  line-height: 50px; /* Center text vertically */
   color: white;
   //background-color: #007bff; /* Set the background color */
   z-index: 1000; /* Ensure it's above other content */
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 mat-toolbar[color="primary"] {
@@ -103,4 +106,42 @@ mat-toolbar[color="primary"] {
 
 .spacer {
   flex: 1;
+}
+
+.styled-text {
+  padding: 10px;
+  border: 1px solid #e0e0e0;
+  border-radius: 5px;
+  background-color: #f8f9fa;
+  margin-bottom: 10px;
+
+  p, h1, h2, h3, h4, h5, h6 {
+    margin: 0;
+    padding: 0;
+  }
+
+  p {
+    margin-bottom: 10px;
+  }
+
+  strong {
+    font-weight: bold;
+  }
+
+  em {
+    font-style: italic;
+  }
+
+  u {
+    text-decoration: underline;
+  }
+
+  .redText {
+    color: red;
+  }
+
+  .titleText {
+    font-size: 2em;
+    font-weight: bold;
+  }
 }

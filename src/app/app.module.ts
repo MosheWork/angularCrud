@@ -73,6 +73,8 @@ import { ViewGuideComponent } from './Guides/view-guide/view-guide.component';
 import { EditGuideFormComponent } from './Guides/edit-guide-form/edit-guide-form.component';
 import { HeaderComponent } from './Guides/header/header.component';
 import { FooterGuideComponent } from './Guides/footer-guide/footer-guide.component';
+import { AngularEditorModule } from '@kolkov/angular-editor';
+
 
 
 @NgModule({
@@ -153,6 +155,7 @@ import { FooterGuideComponent } from './Guides/footer-guide/footer-guide.compone
     MatProgressBarModule,
     MatListModule,
     MatGridListModule,
+    AngularEditorModule
   ],
   providers: [DatePipe],
   bootstrap: [AppComponent],
