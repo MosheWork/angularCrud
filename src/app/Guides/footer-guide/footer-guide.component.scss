@@ -9,10 +9,9 @@
   z-index: 1000; /* Ensure it's above other content */
 }
 
-  mat-toolbar[color="primary"] {
-    // background-color: #007bff; // Explicitly set the vibrant blue color
-     color: white;
-     display: flex;
-     justify-content: center;
-     align-items: center;
-   }
+mat-toolbar[color="primary"] {
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}

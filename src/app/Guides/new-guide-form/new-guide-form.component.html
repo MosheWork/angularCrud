@@ -1,7 +1,5 @@
 <app-header></app-header>
 
-
-
 <div class="body" dir="rtl">
   <mat-card>
     <mat-card-header>
@@ -10,15 +8,10 @@
     </mat-card-header>
     <mat-card-content>
       <form [formGroup]="guideForm" (ngSubmit)="onSubmit()">
-        <div class="form-row">
+        <div class="form-group">
           <mat-form-field appearance="fill" class="full-width">
             <mat-label>Title</mat-label>
             <input matInput formControlName="title" />
-          </mat-form-field>
-
-          <mat-form-field appearance="fill" class="full-width">
-            <mat-label>Created By</mat-label>
-            <input matInput formControlName="createdBy" />
           </mat-form-field>
 
           <!-- Category Dropdown -->
@@ -33,26 +26,31 @@
         </div>
 
         <div formArrayName="sections">
-          <div *ngFor="let section of sections.controls; let i = index" [formGroupName]="i">
-            <div class="form-row">
-              <mat-form-field appearance="fill" class="full-width">
-                <mat-label>Position</mat-label>
-                <input matInput type="number" formControlName="position" min="1" />
-              </mat-form-field>
-
-              <ng-container *ngIf="section.get('type')?.value === 'Text'">
-                <mat-form-field appearance="fill" class="expand">
-                  <mat-label>Text Content</mat-label>
-                  <textarea matInput formControlName="textContent"></textarea>
-                </mat-form-field>
-              </ng-container>
-
-              <div *ngIf="section.get('type')?.value === 'Picture'" class="full-width">
-                <label for="file-upload-{{ i }}">Upload Image</label>
-                <input id="file-upload-{{ i }}" type="file" (change)="onFileSelect($event, i)">
-                <img *ngIf="section.get('imageSrc')?.value" [src]="section.get('imageSrc')?.value" style="max-width: 100%; height: auto;">
-              </div>
+          <div *ngFor="let section of sections.controls; let i = index" [formGroupName]="i" class="section">
+            <div class="form-group">
+              <label>Position:</label>
+              <input matInput type="number" formControlName="position" readonly class="form-control" />
             </div>
+
+            <div class="button-group">
+              <button mat-button type="button" (click)="moveSectionUp(i)" [disabled]="i === 0">▲ Move Up</button>
+              <button mat-button type="button" (click)="moveSectionDown(i)" [disabled]="i === sections.length - 1">▼ Move Down</button>
+            </div>
+
+            <ng-container *ngIf="section.get('type')?.value === 'Text'">
+              <mat-form-field appearance="fill" class="expand">
+                <mat-label>Text Content</mat-label>
+                <textarea matInput formControlName="textContent"></textarea>
+              </mat-form-field>
+            </ng-container>
+
+            <ng-container *ngIf="section.get('type')?.value === 'Picture'">
+              <div class="form-group">
+                <label for="file-upload-{{ i }}">Upload Image</label>
+                <input id="file-upload-{{ i }}" type="file" (change)="onFileSelect($event, i)" />
+                <img *ngIf="section.get('imageSrc')?.value" [src]="section.get('imageSrc')?.value" class="preview-img" />
+              </div>
+            </ng-container>
           </div>
         </div>
 

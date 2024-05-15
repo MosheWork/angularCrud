@@ -3,7 +3,7 @@
     <button mat-icon-button (click)="goToGuidesList()">
         <mat-icon>home</mat-icon>
     </button>
-    <span class="toolbar-title">רשימת מדריכים</span>
-    <span class="spacer"></span> <!-- This will push the loginUserName to the right -->
+    <span class="toolbar-title">{{ title }}</span>  <!-- Use the title property -->
+    <span class="spacer"></span>
     <span>{{loginUserName}}</span>
 </mat-toolbar>

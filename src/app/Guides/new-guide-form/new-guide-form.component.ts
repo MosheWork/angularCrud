@@ -1,36 +1,45 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { FormBuilder, FormGroup, FormControl, FormArray, Validators } from '@angular/forms';
 import { environment } from '../../../environments/environment';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-new-guide-form',
   templateUrl: './new-guide-form.component.html',
   styleUrls: ['./new-guide-form.component.scss']
 })
-export class NewGuideFormComponent {
+export class NewGuideFormComponent implements OnInit, OnDestroy {
   guideForm: FormGroup;
   categories: any[] = [];
+  loginUserName = '';
 
-  constructor(private http: HttpClient, private formBuilder: FormBuilder) {
+  constructor(private http: HttpClient, private formBuilder: FormBuilder, private router: Router) {
+    this.loginUserName = localStorage.getItem('loginUserName') || '';
     this.guideForm = this.formBuilder.group({
       title: new FormControl('', Validators.required),
-      createdBy: new FormControl(''),
+      createdBy: new FormControl(this.loginUserName),
       categoryId: new FormControl('', Validators.required),
       sections: this.formBuilder.array([])
     });
+
+    this.handlePaste = this.handlePaste.bind(this);
   }
 
   ngOnInit() {
     this.fetchCategories();
-    document.title = ' הקמת מדריך חדש';
+    document.title = 'הקמת מדריך חדש';
+    this.loginUserName = localStorage.getItem('loginUserName') || '';
+    this.setupPasteListener();
+  }
+
+  ngOnDestroy(): void {
+    window.removeEventListener('paste', this.handlePaste as EventListener);
   }
 
   get sections(): FormArray {
     return this.guideForm.get('sections') as FormArray;
   }
-
- 
 
   addSection(sectionType: string): void {
     const section = this.createSection(sectionType);
@@ -58,10 +67,7 @@ export class NewGuideFormComponent {
     } else {
       throw new Error(`Unsupported section type: ${type}`);
     }
-}
-
-
- 
+  }
 
   onFileSelect(event: any, sectionIndex: number): void {
     const file = event?.target?.files[0];
@@ -102,10 +108,11 @@ export class NewGuideFormComponent {
       }
     });
 
-    this.http.post(`${environment.apiUrl}GuidesAPI/CreateGuide`, formData).subscribe({
+    this.http.post<{ guideId: number }>(`${environment.apiUrl}GuidesAPI/CreateGuide`, formData).subscribe({
       next: (response) => {
         console.log('Success!', response);
         alert('Guide submitted successfully!');
+        this.router.navigate(['/guide', response.guideId]); // Navigate to the view guide page
       },
       error: (error) => {
         console.error('Error:', error);
@@ -119,6 +126,64 @@ export class NewGuideFormComponent {
       this.categories = data || [];
     }, error => {
       console.error('Error fetching categories:', error);
+    });
+  }
+
+  setupPasteListener(): void {
+    window.addEventListener('paste', this.handlePaste as EventListener);
+  }
+
+  handlePaste(event: Event): void {
+    const clipboardEvent = event as ClipboardEvent;
+    const items = clipboardEvent.clipboardData?.items;
+    if (items) {
+      for (let i = 0; i < items.length; i++) {
+        let item = items[i];
+        if (item.type.indexOf('image') !== -1) {
+          const blob = item.getAsFile();
+          if (blob) {
+            this.addImageToForm(blob);
+            event.preventDefault(); // Prevent the default paste behavior
+          }
+        }
+      }
+    }
+  }
+
+  addImageToForm(blob: Blob): void {
+    const newFile = new File([blob], `pasted-image-${Date.now()}.png`, { type: blob.type });
+    const lastSectionIndex = this.sections.controls.length - 1;
+    const section = this.sections.at(lastSectionIndex) as FormGroup;
+
+    section.patchValue({ imageFile: newFile });
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      section.get('imageSrc')?.setValue(reader.result);
+    };
+    reader.readAsDataURL(newFile);
+  }
+
+  moveSectionUp(index: number): void {
+    if (index === 0) return;
+    const currentSection = this.sections.at(index);
+    const previousSection = this.sections.at(index - 1);
+    this.sections.setControl(index, previousSection);
+    this.sections.setControl(index - 1, currentSection);
+    this.updatePositions();
+  }
+
+  moveSectionDown(index: number): void {
+    if (index === this.sections.length - 1) return;
+    const currentSection = this.sections.at(index);
+    const nextSection = this.sections.at(index + 1);
+    this.sections.setControl(index, nextSection);
+    this.sections.setControl(index + 1, currentSection);
+    this.updatePositions();
+  }
+
+  updatePositions(): void {
+    this.sections.controls.forEach((control, index) => {
+      control.get('position')?.setValue(index + 1);
     });
   }
 }

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit ,Input} from '@angular/core';
 import { environment } from 'environments/environment';
 import { Router } from '@angular/router';
 
@@ -11,6 +11,7 @@ import { Router } from '@angular/router';
 })
 export class HeaderComponent implements OnInit {
   loginUserName = '';
+  @Input() title: string = '';  // Default title, can be overridden
 
   constructor(private router: Router) { }  // Inject the Router here
 

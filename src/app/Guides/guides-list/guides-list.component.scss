@@ -56,3 +56,17 @@ mat-paginator {
 .mat-toolbar .example-icon, .mat-toolbar span {
   margin: 0 8px; /* Consistent spacing around items */
 }
+html, body, .guide-container {
+  height: 100%;
+}
+
+.guide-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  background-color: #f8f8f8; /* Light grey background */
+  padding-bottom: 60px; /* Space for the footer */
+  padding-top: 60px; /* Space for the header */
+  flex: 1;
+}

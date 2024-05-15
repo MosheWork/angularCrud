@@ -1,47 +1,82 @@
 /* new-guide-form.component.scss */
+.body {
+  padding: 20px;
+}
+
 .center {
   text-align: center;
   width: 100%;
 }
 
-.form-row {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  align-items: center;
+.form-group {
+  margin-bottom: 20px;
 }
 
 .full-width {
-  flex: 1;
+  width: 100%;
   padding: 8px;
 }
 
-/* Assign a flex-basis to ensure fields in the same row do not wrap prematurely */
-.flex-item {
-  flex: 1 1 30%;  /* Adjusts the flex-basis to 30%, allowing three items to fit in a row */
+.form-control {
+  width: 100%;
   padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
 }
 
-.expand {
-  flex-grow: 1;
-  width: 100%;  /* Ensures that the textarea or other expandable elements take the full width when needed */
+.section {
+  border: 1px solid #eee;
+  padding: 15px;
+  margin-bottom: 20px;
+  border-radius: 5px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+
+  .form-group {
+    margin-bottom: 10px;
+  }
+
+  .button-group {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 10px;
+
+    button {
+      background-color: #007bff;
+      color: white;
+      border: none;
+      padding: 8px 12px;
+      font-size: 16px;
+      cursor: pointer;
+      border-radius: 5px;
+      margin: 2px 0;
+
+      &:hover {
+        background-color: #0056b3;
+      }
+
+      &:disabled {
+        background-color: #cccccc;
+        cursor: not-allowed;
+      }
+    }
+  }
 }
 
-/* Ensure that the position aligns on the same row */
-.position-field {
-  flex: 1 1 20%; /* Smaller flex-basis as it generally needs less space */
+.preview-img {
+  width: 100%;
+  max-width: 300px;
+  height: auto;
+  margin-top: 10px;
 }
 
-/* Styles for specific adjustments in input fields */
-mat-form-field {
-  width: 100%; /* Make sure each form field takes full width of its flex container */
-  padding: 10px;
-}
+.btn-primary {
+  background-color: #28a745;
+  border-color: #28a745;
 
-input[matInput], textarea[matInput] {
-  padding: 8px 12px; /* Padding inside the input for better text visibility */
-}
-
-textarea[matInput] {
-  min-height: 100px; /* Minimum height for text areas */
+  &:hover {
+    background-color: #218838;
+    border-color: #1e7e34;
+  }
 }

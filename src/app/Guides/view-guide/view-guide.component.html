@@ -1,4 +1,5 @@
-<!-- guide.component.html -->
+<app-header [title]="'מדריך ' + guide.title "></app-header>
+
 <div class="guide-container" dir="rtl">
   <mat-card>
     <mat-card-header>
@@ -25,5 +26,11 @@
         <p>No content available.</p>
       </div>
     </mat-card-content>
+
+    <mat-card-footer>
+      <p>Footer content (if any)</p>
+    </mat-card-footer>
   </mat-card>
 </div>
+
+<app-footer-guide></app-footer-guide>
