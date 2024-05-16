@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormBuilder, FormGroup, FormArray, Validators } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -11,6 +11,8 @@ interface Guide {
   createdBy: string;
   createdDate: Date;
   sections: Section[];
+  categoryId: number; // Ensure categoryId is part of the Guide interface
+
 }
 
 interface Section {
@@ -27,10 +29,12 @@ interface Section {
   templateUrl: './edit-guide-form.component.html',
   styleUrls: ['./edit-guide-form.component.scss']
 })
-export class EditGuideFormComponent implements OnInit {
+export class EditGuideFormComponent implements OnInit, OnDestroy {
   guide!: Guide;
   editGuideForm!: FormGroup;
   loginUserName = '';
+  deletedSections: number[] = []; // Add the deletedSections property
+
   editorConfig: AngularEditorConfig = {
     editable: true,
     spellcheck: true,
@@ -177,12 +181,22 @@ export class EditGuideFormComponent implements OnInit {
     }
   }
 
+  deleteSection(index: number): void {
+    const sectionId = this.sectionsFormArray.at(index).get('sectionId')?.value;
+    if (sectionId) {
+      this.deletedSections.push(sectionId);
+    }
+    this.sectionsFormArray.removeAt(index);
+    this.updatePositions(); // Update positions after deletion
+  }
   submitGuide(): void {
     const formData = new FormData();
     formData.append('guideId', this.guide.guideId.toString());
     formData.append('title', this.editGuideForm.get('title')?.value);
     formData.append('createdBy', this.guide.createdBy);
+    formData.append('categoryId', this.guide.categoryId.toString());
 
+    // Append each section to the formData
     this.sectionsFormArray.controls.forEach((sectionControl, index) => {
         const section = sectionControl as FormGroup;
         const sectionId = section.get('sectionId')?.value;
@@ -190,24 +204,32 @@ export class EditGuideFormComponent implements OnInit {
         const type = section.get('type')?.value;
         const createdBy = section.get('createdBy')?.value;
 
-        if (sectionId != null) formData.append(`sections[${index}].sectionId`, sectionId.toString());
-        if (position != null) formData.append(`sections[${index}].position`, position.toString());
-        formData.append(`sections[${index}].type`, type);
+        formData.append(`Sections[${index}].SectionId`, sectionId != null ? sectionId.toString() : '0');
+        formData.append(`Sections[${index}].Type`, type);
+        formData.append(`Sections[${index}].Position`, position.toString());
+        formData.append(`Sections[${index}].CreatedBy`, createdBy);
 
         if (type === 'Text') {
             const textContent = section.get('textContent')?.value;
-            if (textContent != null) formData.append(`sections[${index}].textContent`, textContent);
+            formData.append(`Sections[${index}].TextContent`, textContent);
         } else if (type === 'Picture') {
             const file = section.get('imageFile')?.value;
             if (file instanceof File) {
-                formData.append(`sections[${index}].imageFile`, file, file.name);
+                formData.append(`Sections[${index}].ImageFile`, file, file.name);
             }
         }
     });
 
-    this.http.post(`${environment.apiUrl}GuidesAPI/SaveGuide`, formData).subscribe({
-        next: () => {
-            console.log('Guide updated successfully', this.guide);
+    // Append each deleted section to the formData
+    this.deletedSections.forEach((sectionId, index) => {
+        formData.append(`SectionsToDelete[${index}]`, sectionId.toString());
+    });
+
+
+    this.http.post(`${environment.apiUrl}GuidesAPI/SaveGuide`, formData, { responseType: 'text' }).subscribe({
+        next: (response: any) => {
+            console.log('Guide updated successfully', response);
+            // Navigate to the view guide page after successful submission
             this.router.navigate(['/guide', this.guide.guideId]);
         },
         error: error => {
@@ -217,6 +239,9 @@ export class EditGuideFormComponent implements OnInit {
 }
 
 
+
+
+  
   transformImagePath(imagePath: string): string {
     if (!imagePath) {
       return '';

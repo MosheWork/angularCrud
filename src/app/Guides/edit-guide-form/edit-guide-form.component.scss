@@ -6,8 +6,8 @@ html, body {
 .body {
   display: flex;
   flex-direction: column;
-  min-height: 100vh; /* Ensure the body takes the full height of the viewport */
-  padding: 20px; /* Added padding */
+  min-height: 100vh; // Ensure the body takes the full height of the viewport
+  padding: 20px; // Added padding
 }
 
 .guide-container {
@@ -15,13 +15,19 @@ html, body {
   flex-direction: column;
   align-items: center;
   width: 100%;
-  flex: 1; /* Ensure the guide container takes the available space */
-  background-color: #f8f8f8; /* Light grey background */
-  padding-top: 60px; /* Space for the header */
+  flex: 1; // Ensure the guide container takes the available space
+  background-color: #f8f8f8; // Light grey background
+  padding-top: 60px; // Space for the header
 }
 
 .form-group {
   margin-bottom: 20px;
+
+  .angular-editor {
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 8px;
+  }
 }
 
 .form-control {
@@ -37,32 +43,8 @@ html, body {
   margin-bottom: 20px;
   border-radius: 5px;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-}
-
-.preview-img {
-  width: 100%;
-  max-width: 300px; /* Control the size of the image here */
-  height: auto;
-  margin-top: 10px;
-}
-
-.btn-primary {
-  background-color: #007bff;
-  border-color: #007bff;
-  color: white;
-  padding: 10px 15px;
-  border-radius: 4px;
-  cursor: pointer;
-  &:hover {
-    background-color: #0056b3;
-    border-color: #004085;
-  }
-}
-
-.section {
   display: flex;
   flex-direction: column;
-  margin-bottom: 20px;
 
   .form-group {
     margin-bottom: 10px;
@@ -70,15 +52,15 @@ html, body {
 
   .button-group {
     display: flex;
-    flex-direction: column; /* Stack buttons vertically */
-    align-items: flex-start; /* Align the buttons to the left */
+    flex-direction: column; // Stack buttons vertically
+    align-items: flex-start; // Align the buttons to the left
     margin-bottom: 10px;
 
     .move-button {
-      width: 180px; /* Set a fixed width for consistency */
-      margin: 5px 0; /* Add some margin for spacing */
+      width: 180px; // Set a fixed width for consistency
+      margin: 5px 0; // Add some margin for spacing
       display: flex;
-      justify-content: space-between; /* Ensure text and icon are spaced correctly */
+      justify-content: space-between; // Ensure text and icon are spaced correctly
     }
 
     button {
@@ -89,7 +71,7 @@ html, body {
       font-size: 16px;
       cursor: pointer;
       border-radius: 5px;
-      margin: 2px 0; /* Slight space between buttons */
+      margin: 2px 0; // Slight space between buttons
 
       &:hover {
         background-color: #0056b3;
@@ -103,28 +85,42 @@ html, body {
   }
 }
 
-.form-actions {
-  display: flex;
-  gap: 10px; /* Space between action buttons */
-  padding: 10px 0; /* Padding for the action buttons */
-}
-
 .preview-img {
   width: 100%;
-  max-width: 300px;
+  max-width: 300px; // Control the size of the image here
   height: auto;
   margin-top: 10px;
 }
 
+.btn-primary {
+  background-color: #007bff;
+  border-color: #007bff;
+  color: white;
+  padding: 10px 15px;
+  border-radius: 4px;
+  cursor: pointer;
+
+  &:hover {
+    background-color: #0056b3;
+    border-color: #004085;
+  }
+}
+
+.form-actions {
+  display: flex;
+  gap: 10px; // Space between action buttons
+  padding: 10px 0; // Padding for the action buttons
+}
+
 .footer {
-  position: fixed; /* Fix at the bottom */
-  bottom: 0; /* Align to the bottom */
+  position: fixed; // Fix at the bottom
+  bottom: 0; // Align to the bottom
   width: 99%;
   height: 50px;
-  line-height: 50px; /* Center text vertically */
+  line-height: 50px; // Center text vertically
   color: white;
- // background-color: #007bff; /* Set the background color */
-  z-index: 1000; /* Ensure it's above other content */
+  // background-color: #007bff; // Set the background color
+  z-index: 1000; // Ensure it's above other content
   display: flex;
   justify-content: center;
   align-items: center;
@@ -140,14 +136,7 @@ mat-toolbar[color="primary"] {
 .spacer {
   flex: 1;
 }
+
 angular-editor {
   margin-bottom: 20px;
-}
-
-.form-group {
-  .angular-editor {
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    padding: 8px;
-  }
 }

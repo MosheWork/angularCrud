@@ -1,11 +1,27 @@
+html, body, .guide-container {
+  height: 100%;
+  margin: 0;
+}
+
+.guide-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  background-color: #f8f8f8; /* Light grey background */
+  padding-bottom: 20px; /* Space for the footer */
+  padding-top: 20px; /* Space for the header */
+  flex: 1;
+}
+
 .guide-list-container {
   display: flex;
   flex-direction: column;
   align-items: center;
   width: 100%;
   background-color: #f8f8f8; /* Light grey background */
-  padding-bottom: 60px; /* Space for the footer */
-  padding-top: 60px; /* Space for the header */
+  padding-bottom: 20px; /* Space for the footer */
+  padding-top: 20px; /* Space for the header */
 }
 
 .toolbar {
@@ -56,17 +72,46 @@ mat-paginator {
 .mat-toolbar .example-icon, .mat-toolbar span {
   margin: 0 8px; /* Consistent spacing around items */
 }
-html, body, .guide-container {
-  height: 100%;
-}
 
-.guide-container {
+.content {
   display: flex;
   flex-direction: column;
-  align-items: center;
+  padding: 20px;
+}
+
+.main-content {
+  display: flex;
+  gap: 20px;
   width: 100%;
-  background-color: #f8f8f8; /* Light grey background */
-  padding-bottom: 60px; /* Space for the footer */
-  padding-top: 60px; /* Space for the header */
-  flex: 1;
+}
+
+.main-table-card, .side-table-card {
+  padding: 20px;
+  width: 100%;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.main-table-card {
+  flex: 2; /* Adjusts the proportion of the main table */
+  max-width: 80%; /* You can set a max width if needed */
+ 
+}
+
+.side-table-card {
+  flex: 1; /* Adjusts the proportion of the side table */
+  max-width: 20%; /* You can set a max width if needed */
+}
+
+.side-table-card table {
+  margin-top: 10px;
+}
+
+.mat-elevation-z8 {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.side-table-card mat-cell {
+  text-align: center;
 }

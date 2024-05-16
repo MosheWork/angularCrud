@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { FormBuilder, FormGroup, FormControl, FormArray, Validators } from '@angular/forms';
 import { environment } from '../../../environments/environment';
 import { Router } from '@angular/router';
+import { AngularEditorConfig } from '@kolkov/angular-editor';
 
 @Component({
   selector: 'app-new-guide-form',
@@ -13,6 +14,35 @@ export class NewGuideFormComponent implements OnInit, OnDestroy {
   guideForm: FormGroup;
   categories: any[] = [];
   loginUserName = '';
+
+  editorConfig: AngularEditorConfig = {
+    editable: true,
+    spellcheck: true,
+    height: '15rem',
+    minHeight: '5rem',
+    placeholder: 'Enter text here...',
+    translate: 'no',
+    defaultParagraphSeparator: 'p',
+    defaultFontName: 'Arial',
+    toolbarHiddenButtons: [
+      ['italic']
+    ],
+    customClasses: [
+      {
+        name: 'quote',
+        class: 'quote',
+      },
+      {
+        name: 'redText',
+        class: 'redText'
+      },
+      {
+        name: 'titleText',
+        class: 'titleText',
+        tag: 'h1',
+      },
+    ]
+  };
 
   constructor(private http: HttpClient, private formBuilder: FormBuilder, private router: Router) {
     this.loginUserName = localStorage.getItem('loginUserName') || '';
@@ -48,7 +78,8 @@ export class NewGuideFormComponent implements OnInit, OnDestroy {
 
   createSection(type: string): FormGroup {
     const baseSection = {
-      position: new FormControl((this.sections.length || 0) + 1, Validators.required)
+      position: new FormControl((this.sections.length || 0) + 1, Validators.required),
+      createdBy: new FormControl(this.loginUserName)
     };
 
     if (type === 'Text') {

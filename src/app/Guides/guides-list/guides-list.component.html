@@ -1,65 +1,89 @@
-<app-header  [guideCount]="guideCount"></app-header>
+<app-header [guideCount]="guideCount"></app-header>
 
-<div class="guide-list-container">
-  <div class="toolbar">
-    <mat-form-field appearance="outline" class="full-width" style="width: 90%;" >
-      <mat-label >Search guides</mat-label>
-      <input matInput (keyup)="applyFilter($event)" placeholder="Filter by title, creator...">
-    </mat-form-field>
-    <button mat-fab color="primary" class="add-button" hint="הוספת מדריך חדש" (click)="navigateToNewGuide()">
-      <mat-icon>add</mat-icon>
-    </button>
+<div class="content">
+  <div class="guide-list-container">
+    <div class="toolbar">
+      <mat-form-field appearance="outline" class="full-width search-field" style="width: 90%;">
+        <mat-label>חיפוש</mat-label>
+        <input matInput (keyup)="applyFilter($event)" placeholder="">
+      </mat-form-field>
+      <button mat-fab color="primary" class="add-button" matTooltip="הוספת מדריך חדש" (click)="navigateToNewGuide()">
+        <mat-icon>add</mat-icon>
+      </button>
+    </div>
+
+    <div class="main-content">
+      <mat-card class="main-table-card table-style">
+        <table mat-table [dataSource]="dataSource" matSort class="mat-elevation-z8 full-width">
+          <!-- Guide ID Column -->
+          <ng-container matColumnDef="guideId">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>קוד מדריך</th>
+            <td mat-cell *matCellDef="let guide"> {{ guide.guideId }} </td>
+          </ng-container>
+
+          <!-- Title Column -->
+          <ng-container matColumnDef="title">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>כותרת</th>
+            <td mat-cell *matCellDef="let guide"> {{ guide.title }} </td>
+          </ng-container>
+
+          <!-- Category Name Column -->
+          <ng-container matColumnDef="categoryName">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>קטגוריה</th>
+            <td mat-cell *matCellDef="let guide"> {{ guide.categoryName }} </td>
+          </ng-container>
+          
+          <!-- Created By Column -->
+          <ng-container matColumnDef="createdBy">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>נוצר על ידי</th>
+            <td mat-cell *matCellDef="let guide"> {{ guide.createdBy }} </td>
+          </ng-container>
+
+          <!-- Created Date Column -->
+          <ng-container matColumnDef="createdDate">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>תאריך יצירה</th>
+            <td mat-cell *matCellDef="let guide"> {{ guide.createdDate | date:'medium' }} </td>
+          </ng-container>
+
+          <!-- Actions Column -->
+          <ng-container matColumnDef="actions">
+            <th mat-header-cell *matHeaderCellDef>פעולות</th>
+            <td mat-cell *matCellDef="let guide">
+              <button mat-button (click)="openGuide(guide.guideId)" color="primary">
+                <mat-icon>visibility</mat-icon> View
+              </button>
+              <button mat-button (click)="editGuide(guide.guideId)" color="primary">
+                <mat-icon>edit</mat-icon> Edit
+              </button>
+            </td>
+          </ng-container>
+
+          <!-- Header and Row Definitions -->
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+        </table>
+
+        <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
+      </mat-card>
+
+      <mat-card class="side-table-card table-style" dir="rtl">
+        <table mat-table [dataSource]="categoryGuideCounts" class="mat-elevation-z8 full-width">
+          <ng-container matColumnDef="categoryName">
+            <th mat-header-cell *matHeaderCellDef>קטגוריה</th>
+            <td mat-cell *matCellDef="let count"> {{ count.categoryName }} </td>
+          </ng-container>
+
+          <ng-container matColumnDef="guideCount">
+            <th mat-header-cell *matHeaderCellDef>מספר מדריכים</th>
+            <td mat-cell *matCellDef="let count"> {{ count.guideCount }} </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="['categoryName', 'guideCount']"></tr>
+          <tr mat-row *matRowDef="let row; columns: ['categoryName', 'guideCount'];"></tr>
+        </table>
+      </mat-card>
+    </div>
   </div>
-
-  <table mat-table [dataSource]="dataSource" matSort class="mat-elevation-z8 full-width">
-
-    <!-- Guide ID Column -->
-    <ng-container matColumnDef="guideId">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header> Guide ID </th>
-      <td mat-cell *matCellDef="let guide"> {{ guide.guideId }} </td>
-    </ng-container>
-
-    <!-- Title Column -->
-    <ng-container matColumnDef="title">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header> Title </th>
-      <td mat-cell *matCellDef="let guide"> {{ guide.title }} </td>
-    </ng-container>
-       <!-- categoryName Column -->
-       <ng-container matColumnDef="categoryName">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header> categoryName </th>
-        <td mat-cell *matCellDef="let guide"> {{ guide.categoryName }} </td>
-      </ng-container>
-      
-    <!-- Created By Column -->
-    <ng-container matColumnDef="createdBy">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header> Created By </th>
-      <td mat-cell *matCellDef="let guide"> {{ guide.createdBy }} </td>
-    </ng-container>
-
-    <!-- Created Date Column -->
-    <ng-container matColumnDef="createdDate">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header> Created Date </th>
-      <td mat-cell *matCellDef="let guide"> {{ guide.createdDate | date:'medium' }} </td>
-    </ng-container>
-
-    <!-- Actions Column -->
-    <ng-container matColumnDef="actions">
-      <th mat-header-cell *matHeaderCellDef > Actions </th>
-      <td mat-cell *matCellDef="let guide" >
-        <button mat-button (click)="openGuide(guide.guideId) "color="primary">
-          <mat-icon>visibility</mat-icon> View
-        </button>
-        <button mat-button (click)="editGuide(guide.guideId)" color="primary">
-          <mat-icon>edit</mat-icon> Edit
-        </button>
-      </td>
-    </ng-container>
-
-    <!-- Header and Row Definitions -->
-    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-  </table>
-
-  <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
 </div>
+
 <app-footer-guide></app-footer-guide>

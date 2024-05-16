@@ -38,10 +38,10 @@
             </div>
 
             <ng-container *ngIf="section.get('type')?.value === 'Text'">
-              <mat-form-field appearance="fill" class="expand">
-                <mat-label>Text Content</mat-label>
-                <textarea matInput formControlName="textContent"></textarea>
-              </mat-form-field>
+              <angular-editor
+                formControlName="textContent"
+                [config]="editorConfig">
+              </angular-editor>
             </ng-container>
 
             <ng-container *ngIf="section.get('type')?.value === 'Picture'">

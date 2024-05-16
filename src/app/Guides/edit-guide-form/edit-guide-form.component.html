@@ -21,6 +21,9 @@
           <button mat-raised-button class="move-button" color="primary" type="button" (click)="moveSectionDown(i)" [disabled]="i === sectionsFormArray.length - 1">
             <mat-icon>arrow_downward</mat-icon> הורד למטה
           </button>
+          <button mat-raised-button class="move-button" color="warn" type="button" (click)="deleteSection(i)">
+            <mat-icon>delete</mat-icon> מחק קטע
+          </button>
         </div>
         
         <!-- Conditional Rendering -->

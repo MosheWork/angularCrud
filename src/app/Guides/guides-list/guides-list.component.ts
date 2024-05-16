@@ -14,6 +14,11 @@ interface Guide {
   categoryName: string;
 }
 
+interface CategoryGuideCount {
+  categoryName: string;
+  guideCount: number;
+}
+
 @Component({
   selector: 'app-guides-list',
   templateUrl: './guides-list.component.html',
@@ -22,7 +27,9 @@ interface Guide {
 export class GuidesListComponent implements OnInit {
   dataSource = new MatTableDataSource<Guide>();
   displayedColumns: string[] = ['guideId', 'title', 'categoryName', 'createdBy', 'createdDate', 'actions'];
-  guideCount: number = 0; // Add property to store guide count
+  guideCount: number = 0; // Property to store guide count
+
+  categoryGuideCounts: CategoryGuideCount[] = []; // Property to store category guide counts
 
   @ViewChild(MatPaginator, { static: true }) paginator!: MatPaginator;
   @ViewChild(MatSort, { static: true }) sort!: MatSort;
@@ -36,6 +43,7 @@ export class GuidesListComponent implements OnInit {
 
   ngOnInit(): void {
     this.fetchGuides();
+    this.fetchCategoryGuideCounts();
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
     document.title = 'רשימת מדריכים';
@@ -50,6 +58,17 @@ export class GuidesListComponent implements OnInit {
       },
       (error) => {
         console.error('Error fetching guides:', error);
+      }
+    );
+  }
+
+  fetchCategoryGuideCounts(): void {
+    this.http.get<CategoryGuideCount[]>(`${environment.apiUrl}GuidesAPI/GetCategoryGuideCounts`).subscribe(
+      (counts) => {
+        this.categoryGuideCounts = counts;
+      },
+      (error) => {
+        console.error('Error fetching category guide counts:', error);
       }
     );
   }
