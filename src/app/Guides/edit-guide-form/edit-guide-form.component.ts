@@ -184,32 +184,38 @@ export class EditGuideFormComponent implements OnInit {
     formData.append('createdBy', this.guide.createdBy);
 
     this.sectionsFormArray.controls.forEach((sectionControl, index) => {
-      const section = sectionControl as FormGroup;
-      const sectionId = section.get('sectionId')?.value;
-      const position = section.get('position')?.value;
-      const type = section.get('type')?.value;
-      const createdBy = section.get('createdBy')?.value;
+        const section = sectionControl as FormGroup;
+        const sectionId = section.get('sectionId')?.value;
+        const position = section.get('position')?.value;
+        const type = section.get('type')?.value;
+        const createdBy = section.get('createdBy')?.value;
 
-      if (sectionId != null) formData.append(`sections[${index}].sectionId`, sectionId.toString());
-      if (position != null) formData.append(`sections[${index}].position`, position.toString());
-      formData.append(`sections[${index}].type`, type);
+        if (sectionId != null) formData.append(`sections[${index}].sectionId`, sectionId.toString());
+        if (position != null) formData.append(`sections[${index}].position`, position.toString());
+        formData.append(`sections[${index}].type`, type);
 
-      if (type === 'Text') {
-        const textContent = section.get('textContent')?.value;
-        if (textContent != null) formData.append(`sections[${index}].textContent`, textContent);
-      } else if (type === 'Picture') {
-        const file = section.get('imageFile')?.value;
-        if (file instanceof File) {
-          formData.append(`sections[${index}].imageFile`, file, file.name);
+        if (type === 'Text') {
+            const textContent = section.get('textContent')?.value;
+            if (textContent != null) formData.append(`sections[${index}].textContent`, textContent);
+        } else if (type === 'Picture') {
+            const file = section.get('imageFile')?.value;
+            if (file instanceof File) {
+                formData.append(`sections[${index}].imageFile`, file, file.name);
+            }
         }
-      }
     });
 
     this.http.post(`${environment.apiUrl}GuidesAPI/SaveGuide`, formData).subscribe({
-      next: () => this.router.navigateByUrl('/guide-list'),
-      error: error => console.error('Failed to update guide:', error)
+        next: () => {
+            console.log('Guide updated successfully', this.guide);
+            this.router.navigate(['/guide', this.guide.guideId]);
+        },
+        error: error => {
+            console.error('Failed to update guide:', error);
+        }
     });
-  }
+}
+
 
   transformImagePath(imagePath: string): string {
     if (!imagePath) {

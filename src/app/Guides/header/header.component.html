@@ -4,6 +4,7 @@
     </button>
     <span class="spacer"></span>
     <span *ngIf="title" class="toolbar-title">{{ title }}</span>
+    <span *ngIf="categoryName" class="toolbar-title">{{ categoryName }}</span>
     <span *ngIf="!title && guideCount > 0" class="guide-count">Total Guides: {{ guideCount }}</span>
     <span class="spacer"></span>
     <span>{{ loginUserName }}</span>

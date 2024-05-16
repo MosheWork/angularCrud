@@ -13,6 +13,8 @@ export class HeaderComponent implements OnInit {
   loginUserName = '';
   @Input() title: string = '';  // Default title, can be overridden
   @Input() guideCount: number = 0;  // Add input for guide count
+  @Input() categoryName: string = '';  // Default title, can be overridden
+
 
   constructor(private router: Router) { }  // Inject the Router here
 

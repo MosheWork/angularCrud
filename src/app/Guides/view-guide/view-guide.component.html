@@ -1,19 +1,19 @@
-<app-header [title]="'שם מדריך: ' + guide.title"></app-header>
+<app-header guide.categoryName [title]="'שם מדריך: ' + guide.title"></app-header>
 
 <div class="guide-container" dir="rtl">
   <mat-card>
     <mat-card-header>
-      <mat-card-title>
-        <mat-icon>book</mat-icon>
-        {{ guide.title }}
-      </mat-card-title>
-      <mat-card-subtitle>
-        Created by: {{ guide.createdBy }}
-      </mat-card-subtitle>
+      <div class="created-by header-section"> הקים: {{ guide.createdBy }}</div>
+      <div class="header-section">
+        <mat-card-title>
+          <mat-icon>book</mat-icon>
+          {{ guide.title }}
+        </mat-card-title>
+      </div>
+      <div class="created-date header-section">תאריך יצירה: {{ guide.createdDate | date:'medium' }}</div>
     </mat-card-header>
 
     <mat-card-content>
-      <p>Created date: {{ guide.createdDate | date:'medium' }}</p>
       <div *ngFor="let item of guideItems">
         <ng-container *ngIf="item.type === 'Text'">
           <div [innerHTML]="item.textContent" class="styled-text"></div>

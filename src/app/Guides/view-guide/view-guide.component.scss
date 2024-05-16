@@ -23,7 +23,7 @@ mat-card {
   display: flex;
   flex-direction: column; /* Ensure the card behaves like a column */
   width: 100%;
-  max-width: 800px;
+  max-width: 80%;
   background-color: #ffffff; /* Changed background color to white */
   border: 1px solid #e0e0e0; /* Lighter border color for a modern look */
   border-radius: 10px;
@@ -38,21 +38,36 @@ mat-card {
     border-bottom: 1px solid #e0e0e0; /* Added border to the header for separation */
     padding-bottom: 10px; /* Added padding to the header */
 
-    mat-card-title {
-      color: #007bff;
+    .header-section {
+      flex: 1;
       display: flex;
-      align-items: center;
-      
-      mat-icon {
-        vertical-align: middle;
-        margin-right: 8px;
-        color: #007bff; /* Match icon color with the title */
-      }
+      justify-content: center;
     }
 
-    mat-card-subtitle {
+    .created-by, .created-date {
       font-size: 14px;
       color: #6c757d; /* Subtle subtitle color */
+    }
+
+    .created-by {
+      justify-content: flex-start;
+    }
+
+    .created-date {
+      justify-content: flex-end;
+    }
+  }
+
+  mat-card-title {
+    color: #007bff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    mat-icon {
+      vertical-align: middle;
+      margin-right: 8px;
+      color: #007bff; /* Match icon color with the title */
     }
   }
 
@@ -70,9 +85,10 @@ mat-card {
 
     .guide-image {
       display: block;
-      width: 100%;
-      max-width: 100%;
-      height: auto;
+      width: auto; /* Maintain original width */
+      height: auto; /* Maintain original height */
+      max-width: 100%; /* Limit the width to 100% of the container */
+      max-height: 500px; /* Maximum height constraint */
       margin: 10px 0; /* Margin for images */
       padding: 10px; /* Padding inside image container */
       border: 1px solid #e0e0e0; /* Border for images */
@@ -90,7 +106,7 @@ mat-card {
   height: 50px;
   line-height: 50px; /* Center text vertically */
   color: white;
-  //background-color: #007bff; /* Set the background color */
+  background-color: #007bff; /* Set the background color */
   z-index: 1000; /* Ensure it's above other content */
   display: flex;
   justify-content: center;
