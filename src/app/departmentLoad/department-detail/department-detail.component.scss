@@ -1,0 +1,25 @@
+.department-dialog {
+  padding: 20px;
+}
+
+.dialog-title {
+  margin-bottom: 20px;
+  color: #3f51b5; /* Customize this color as per your theme */
+  font-weight: bold;
+}
+
+.department-details {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.department-details p {
+  margin: 0;
+}
+
+.dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 20px;
+}

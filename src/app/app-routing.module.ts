@@ -30,6 +30,8 @@ import { ViewGuideComponent } from './Guides/view-guide/view-guide.component';
 import { EditGuideFormComponent } from './Guides/edit-guide-form/edit-guide-form.component';
 import { ServerPingCheckAppComponent } from './server-ping-check-app/server-ping-check-app.component';
 import { ManageServersComponent } from './server-ping-check-app/manage-servers/manage-servers.component';
+import { DepartmentLoadDashboardComponent } from './departmentLoad/department-load-dashboard/department-load-dashboard.component';
+import { DepartmentDetailDialogComponent } from './departmentLoad/department-detail/department-detail.component';
 
 const routes: Routes = [
   { path: 'users', component: UsersComponent },
@@ -76,9 +78,13 @@ const routes: Routes = [
 
 //serverping check
 { path: 'ServersStatus', component: ServerPingCheckAppComponent },
-{ path: 'manage-servers', component: ManageServersComponent }
+{ path: 'manage-servers', component: ManageServersComponent },
 
 
+//departmentLoad
+
+{ path: 'departmentLoadDashboard', component: DepartmentLoadDashboardComponent },
+{ path: 'department-detail/:id', component: DepartmentDetailDialogComponent }
 
 
 
