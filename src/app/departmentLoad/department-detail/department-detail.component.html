@@ -1,9 +1,12 @@
-<mat-dialog-content *ngIf="department" class="department-dialog">
+<mat-dialog-content *ngIf="department" class="department-dialog" dir="rtl">
     <h2 mat-dialog-title class="dialog-title">{{ department.departName }}</h2>
     <div class="department-details">
       <p><strong>Current Patients:</strong> {{ department.currentPatients }}</p>
       <p><strong>Total Beds:</strong> {{ department.totalBeds }}</p>
       <p><strong>Department Type:</strong> {{ department.departType }}</p>
+      <p><strong>currentStaff</strong> {{ department.currentStaff }}</p>
+      <p><strong>totalStaff</strong> {{ department.totalStaff }}</p>
+      <p><strong>patientComplexity</strong> {{ department.patientComplexity }}</p>
       <p><strong>Chameleon Code:</strong> {{ department.departChameleonCode }}</p>
       <p><strong>Total Load:</strong> {{ department.totalLoad | number: '1.0-2' }}%</p>
     </div>

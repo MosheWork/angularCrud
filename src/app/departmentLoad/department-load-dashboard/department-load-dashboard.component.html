@@ -1,4 +1,4 @@
-<mat-sidenav-container class="sidenav-container">
+<mat-sidenav-container class="sidenav-container" dir="rtl">
   <mat-sidenav #drawer class="sidenav" fixedInViewport="true" [attr.role]="(isHandset$ | async) ? 'dialog' : 'navigation'" [mode]="(isHandset$ | async) ? 'over' : 'side'" [opened]="!(isHandset$ | async)">
     <mat-toolbar>Menu</mat-toolbar>
     <mat-nav-list>
@@ -40,14 +40,18 @@
               <td mat-cell *matCellDef="let element"> {{element.totalBeds}} </td>
             </ng-container>
 
-            <ng-container matColumnDef="departType">
-              <th mat-header-cell *matHeaderCellDef mat-sort-header> Department Type </th>
-              <td mat-cell *matCellDef="let element"> {{transformUnitType(element.departType)}} </td>
+            <ng-container matColumnDef="currentStaff">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header> currentStaff </th>
+              <td mat-cell *matCellDef="let element"> {{transformUnitType(element.currentStaff)}} </td>
             </ng-container>
 
-            <ng-container matColumnDef="departChameleonCode">
-              <th mat-header-cell *matHeaderCellDef mat-sort-header> Chameleon Code </th>
-              <td mat-cell *matCellDef="let element"> {{element.departChameleonCode}} </td>
+            <ng-container matColumnDef="totalStaff">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header> totalStaff </th>
+              <td mat-cell *matCellDef="let element"> {{element.totalStaff}} </td>
+            </ng-container>
+            <ng-container matColumnDef="patientComplexity">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>patientComplexity</th>
+              <td mat-cell *matCellDef="let element"> {{element.patientComplexity}} </td>
             </ng-container>
 
             <ng-container matColumnDef="totalLoad">

@@ -10,6 +10,9 @@ export interface DepartmentLoad {
   totalBeds: number;
   departType: string;
   departChameleonCode: string;
+  currentStaff: number;
+  totalStaff: number;
+  patientComplexity: number;
   totalLoad?: number;
 }
 

@@ -26,7 +26,7 @@ export interface DepartmentLoad {
   styleUrls: ['./department-load-dashboard.component.scss']
 })
 export class DepartmentLoadDashboardComponent implements OnInit {
-  displayedColumns: string[] = ['departName', 'currentPatients', 'totalBeds', 'departType', 'departChameleonCode', 'totalLoad'];
+  displayedColumns: string[] = ['departName', 'currentPatients', 'totalBeds',  'currentStaff','totalStaff','patientComplexity','totalLoad'];
   dataSource = new MatTableDataSource<DepartmentLoad>();
   isHandset$: Observable<boolean>;
 
