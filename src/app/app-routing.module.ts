@@ -28,6 +28,8 @@ import { GuidesListComponent } from './Guides/guides-list/guides-list.component'
 import { NewGuideFormComponent } from './Guides/new-guide-form/new-guide-form.component';
 import { ViewGuideComponent } from './Guides/view-guide/view-guide.component';
 import { EditGuideFormComponent } from './Guides/edit-guide-form/edit-guide-form.component';
+import { ServerPingCheckAppComponent } from './server-ping-check-app/server-ping-check-app.component';
+import { ManageServersComponent } from './server-ping-check-app/manage-servers/manage-servers.component';
 
 const routes: Routes = [
   { path: 'users', component: UsersComponent },
@@ -70,8 +72,11 @@ const routes: Routes = [
   { path: 'GuidesList', component: GuidesListComponent },
   { path: 'NewGuid', component: NewGuideFormComponent },
   { path: 'guide/:id', component: ViewGuideComponent },
-  { path: 'Editguide/:id', component: EditGuideFormComponent }
+  { path: 'Editguide/:id', component: EditGuideFormComponent },
 
+//serverping check
+{ path: 'ServersStatus', component: ServerPingCheckAppComponent },
+{ path: 'manage-servers', component: ManageServersComponent }
 
 
 

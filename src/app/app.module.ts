@@ -74,6 +74,9 @@ import { EditGuideFormComponent } from './Guides/edit-guide-form/edit-guide-form
 import { HeaderComponent } from './Guides/header/header.component';
 import { FooterGuideComponent } from './Guides/footer-guide/footer-guide.component';
 import { AngularEditorModule } from '@kolkov/angular-editor';
+import { ServerPingCheckAppComponent } from './server-ping-check-app/server-ping-check-app.component';
+import { ManageServersComponent } from './server-ping-check-app/manage-servers/manage-servers.component';
+import { AddEditServerDialogComponent } from './server-ping-check-app/add-edit-server-dialog/add-edit-server-dialog.component';
 
 
 
@@ -121,6 +124,9 @@ import { AngularEditorModule } from '@kolkov/angular-editor';
     EditGuideFormComponent,
     HeaderComponent,
     FooterGuideComponent,
+    ServerPingCheckAppComponent,
+    ManageServersComponent,
+    AddEditServerDialogComponent,
   
   
   ],

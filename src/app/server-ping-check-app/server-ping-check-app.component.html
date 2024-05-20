@@ -1,0 +1,37 @@
+<div class="container">
+    <!-- Header Section -->
+    <mat-toolbar color="primary">
+      <span>Server Management Dashboard</span>
+    </mat-toolbar>
+  
+    <div class="content">
+      <mat-form-field appearance="outline">
+        <mat-label>Search Servers</mat-label>
+        <input matInput [formControl]="searchControl" placeholder="Search by hostname or description">
+      </mat-form-field>
+  
+      <button mat-raised-button color="primary" (click)="sendPingNow()">Send Ping Now</button>
+      
+      <div class="server-container">
+        <mat-card *ngFor="let server of filteredServers" class="server-card" [ngStyle]="{ 'background-color': getStatusColor(pingResults[server.serverId]?.status) }">
+          <mat-card-title>{{ server.hostname }}</mat-card-title>
+          <mat-card-content>
+            <p>{{ server.description }}</p>
+            <p [ngClass]="{
+                  'status-online': pingResults[server.serverId]?.status === 'Online',
+                  'status-offline': pingResults[server.serverId]?.status === 'Offline'
+                }">
+              Status: {{ pingResults[server.serverId]?.status || 'Unknown' }}
+            </p>
+            <p>Last Check: {{ pingResults[server.serverId]?.lastCheck | date:'short' }}</p>
+          </mat-card-content>
+        </mat-card>
+      </div>
+    </div>
+  
+    <!-- Footer Section -->
+    <mat-toolbar color="primary" class="footer">
+      <span>&copy; 2024 Your Company. All rights reserved.</span>
+    </mat-toolbar>
+  </div>
+  

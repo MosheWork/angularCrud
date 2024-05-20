@@ -26,6 +26,12 @@ export class AdminHomePageComponent implements OnInit {
       url: environment.angularUrl + 'MainServiceCallsScreen',
       imageUrl: './../../assets/מערכת קריאות.jpg',
     },
+    {
+      title: 'מערכת מדריכים וניהול ידע',
+      description: '',
+      url: environment.angularUrl + 'GuidesList',
+      imageUrl: './../../assets/מערכת מדריכים.jpg',
+    },
     // Add more projects as needed
   ];
 
