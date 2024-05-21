@@ -61,15 +61,29 @@ export class DepartmentLoadDashboardComponent implements OnInit, AfterViewInit {
 
   ngOnInit(): void {
     this.fetchData();
-
+  
     this.dataSource.filterPredicate = (data: DepartmentLoad, filter: string) => {
-      if (this.selectedDepartments.length === 0) {
-        return true;
+      const matchFilter = [];
+      const filterArray = filter.split('$');
+  
+      const searchTerm = filterArray[0];
+      const selectedDepartments = filterArray[1] ? filterArray[1].split(',') : [];
+  
+      // Apply search filter
+      const customFilter = data.departName.toLowerCase().includes(searchTerm);
+  
+      // Apply department filter
+      if (selectedDepartments.length > 0) {
+        const departmentFilter = selectedDepartments.includes(data.departName);
+        matchFilter.push(customFilter && departmentFilter);
+      } else {
+        matchFilter.push(customFilter);
       }
-      return this.selectedDepartments.includes(data.departName);
+  
+      return matchFilter.every(Boolean);
     };
   }
-
+  
   ngAfterViewInit(): void {
     this.dataSource.sort = this.sort;
     this.dataSource.paginator = this.paginator;
@@ -120,24 +134,34 @@ export class DepartmentLoadDashboardComponent implements OnInit, AfterViewInit {
       return '#4caf50'; // green
     }
   }
-
   applyFilter(event: Event) {
-    const filterValue = (event.target as HTMLInputElement).value;
-    this.dataSource.filter = filterValue.trim().toLowerCase();
-    this.filterChangeSubject.next(this.dataSource.filter);
-
+    const filterValue = (event.target as HTMLInputElement).value.toLowerCase();
+    this.updateFilter(filterValue, this.selectedDepartments);
+  }
+  
+  onDepartmentFilterChange(selectedDepartments: string[]): void {
+    this.selectedDepartments = selectedDepartments;
+    this.updateFilter(this.dataSource.filter, selectedDepartments);
+  }
+  
+  updateFilter(searchTerm: string, selectedDepartments: string[]): void {
+    const filterValue = `${searchTerm}$${selectedDepartments.join(',')}`;
+    this.dataSource.filter = filterValue;
+    this.filterChangeSubject.next(filterValue);
+  
     if (this.dataSource.paginator) {
       this.dataSource.paginator.firstPage();
     }
   }
-
-  onDepartmentFilterChange(selectedDepartments: string[]): void {
-    this.selectedDepartments = selectedDepartments;
-    this.dataSource.filter = 'apply'; // Trigger the filter
+  
+  resetFilters(): void {
+    this.selectedDepartments = [];
+    this.dataSource.filter = '';
     this.filterChangeSubject.next('');
+    this.applyFilter({ target: { value: '' } } as any);
   }
-
-
+  
+ 
 
   onRowClicked(row: DepartmentLoad) {
     this.dialog.open(DepartmentDetailDialogComponent, {

@@ -106,3 +106,29 @@ ngx-gauge {
     display: none;
   }
 }
+.filter-container {
+  display: flex;
+  align-items: center;
+}
+
+.filter-container mat-form-field {
+  flex: 1;
+}
+
+.filter-container button {
+  margin-left: 10px;
+}
+
+.filter-container button {
+  margin-left: 10px;
+}
+
+.reset-filters-button {
+  background-color: #e0e0e0;
+  border-radius: 50%;
+  padding: 8px;
+}
+
+.reset-filters-button mat-icon {
+  color: blue;
+}
