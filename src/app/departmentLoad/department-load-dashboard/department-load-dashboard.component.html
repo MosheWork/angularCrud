@@ -26,8 +26,8 @@
             <table mat-table [dataSource]="dataSource" matSort class="mat-elevation-z8">
               <ng-container matColumnDef="departName">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header>
-                  שם מחלקה
-                  <mat-form-field appearance="fill">
+                 
+                  <mat-form-field  class="header-select">
                     <mat-select placeholder="בחר מחלקות" [value]="selectedDepartments" (selectionChange)="onDepartmentFilterChange($event.value)" multiple>
                       <mat-option *ngFor="let department of dataSource.data" [value]="department.departName">
                         {{department.departName}}
@@ -68,7 +68,7 @@
                 <td mat-cell *matCellDef="let element" [ngClass]="getTotalLoadClass(element.totalLoad)"> {{element.totalLoad | number: '1.0-2'}}% </td>
               </ng-container>
 
-              
+           
 
               <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
               <tr mat-row *matRowDef="let row; columns: displayedColumns;" (click)="onRowClicked(row)"></tr>

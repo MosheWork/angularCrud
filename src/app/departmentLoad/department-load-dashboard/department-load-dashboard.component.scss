@@ -89,7 +89,20 @@ ngx-gauge {
   color: #333;
   font-weight: bold;
 }
+
 .mat-form-field {
   margin-top: 10px;
   width: 100%;
+}
+
+.mat-form-field {
+  margin-top: 10px;
+  width: 100%;
+}
+
+.header-select {
+  width: 100%;
+  .mat-select-trigger {
+    display: none;
+  }
 }
