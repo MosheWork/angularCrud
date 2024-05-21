@@ -23,6 +23,7 @@ export interface DepartmentLoad {
 })
 export class DepartmentDetailDialogComponent implements OnInit {
   department: DepartmentLoad | undefined;
+  loginUserName = '';
 
   constructor(
     public dialogRef: MatDialogRef<DepartmentDetailDialogComponent>,
@@ -31,6 +32,8 @@ export class DepartmentDetailDialogComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    document.title = ' פרטי מחלקה';
+    this.loginUserName = localStorage.getItem('loginUserName') || '';
     this.http.get<DepartmentLoad>(`${environment.apiUrl}ChamelleonCurrentPatientsAPI/GetDepartmentById/${this.data.id}`)
       .subscribe(data => {
         this.department = data;

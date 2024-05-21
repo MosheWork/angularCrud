@@ -45,3 +45,21 @@
     color: #155724;
   }
   
+
+  //spinner
+
+  .total-load-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+  
+    mat-progress-spinner {
+      margin-right: 10px;
+    }
+  
+    span {
+      font-size: 1.2em;
+    }
+  }
+  

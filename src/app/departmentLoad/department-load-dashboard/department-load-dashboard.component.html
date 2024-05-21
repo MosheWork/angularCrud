@@ -1,10 +1,10 @@
 <mat-sidenav-container class="sidenav-container" dir="rtl">
   <mat-sidenav #drawer class="sidenav" fixedInViewport="true" [attr.role]="(isHandset$ | async) ? 'dialog' : 'navigation'" [mode]="(isHandset$ | async) ? 'over' : 'side'" [opened]="!(isHandset$ | async)">
-    <mat-toolbar>Menu</mat-toolbar>
+    <mat-toolbar>תפריט <span>{{loginUserName}}</span></mat-toolbar>
     <mat-nav-list>
-      <a mat-list-item routerLink="/dashboard">Dashboard</a>
-      <a mat-list-item href="#">Patients</a>
-      <a mat-list-item href="#">Settings</a>
+      <a mat-list-item routerLink="/dashboard">דף הבית</a>
+      <a mat-list-item href="#">מטופלים</a>
+      <a mat-list-item href="#">הגדרות</a>
     </mat-nav-list>
   </mat-sidenav>
   <mat-sidenav-content>
@@ -12,50 +12,66 @@
       <button type="button" aria-label="Toggle sidenav" mat-icon-button (click)="drawer.toggle()">
         <mat-icon aria-label="Side nav toggle icon">menu</mat-icon>
       </button>
-      <span>Admin Dashboard</span>
+      <span>מדד עומס</span>
     </mat-toolbar>
     <div class="content">
       <mat-card>
         <mat-card-header>
-          <mat-card-title>Department Load</mat-card-title>
+          <!-- <mat-card-title>עומס מחלקה</mat-card-title> -->
         </mat-card-header>
+        <ng-container matColumnDef="totalLoad">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header> מדד עומס (%) </th>
+          <td mat-cell *matCellDef="let element" [ngClass]="getTotalLoadClass(element.totalLoad)">
+            <div class="total-load-container">
+              <mat-progress-spinner 
+                [value]="element.totalLoad"
+                mode="determinate"
+                diameter="50"
+                strokeWidth="5"
+                color="primary">
+              </mat-progress-spinner>
+              <span>{{element.totalLoad | number: '1.0-2'}}%</span>
+            </div>
+          </td>
+        </ng-container>
         <mat-card-content>
           <mat-form-field appearance="fill">
-            <mat-label>Filter</mat-label>
-            <input matInput (keyup)="applyFilter($event)" placeholder="Filter by department name">
+            <mat-label>סינון</mat-label>
+            <input matInput (keyup)="applyFilter($event)" placeholder="סנן לפי שם המחלקה">
           </mat-form-field>
           <table mat-table [dataSource]="dataSource" matSort class="mat-elevation-z8">
             <ng-container matColumnDef="departName">
-              <th mat-header-cell *matHeaderCellDef mat-sort-header> Department Name </th>
+              <th mat-header-cell *matHeaderCellDef mat-sort-header> שם מחלקה </th>
               <td mat-cell *matCellDef="let element"> {{element.departName}} </td>
             </ng-container>
 
             <ng-container matColumnDef="currentPatients">
-              <th mat-header-cell *matHeaderCellDef mat-sort-header> Current Patients </th>
+              <th mat-header-cell *matHeaderCellDef mat-sort-header> סה"כ מטופלים </th>
               <td mat-cell *matCellDef="let element"> {{element.currentPatients}} </td>
             </ng-container>
 
             <ng-container matColumnDef="totalBeds">
-              <th mat-header-cell *matHeaderCellDef mat-sort-header> Total Beds </th>
+              <th mat-header-cell *matHeaderCellDef mat-sort-header> סה"כ מיטות </th>
               <td mat-cell *matCellDef="let element"> {{element.totalBeds}} </td>
             </ng-container>
 
             <ng-container matColumnDef="currentStaff">
-              <th mat-header-cell *matHeaderCellDef mat-sort-header> currentStaff </th>
-              <td mat-cell *matCellDef="let element"> {{transformUnitType(element.currentStaff)}} </td>
+              <th mat-header-cell *matHeaderCellDef mat-sort-header> צוות נוכחי </th>
+              <td mat-cell *matCellDef="let element"> {{element.currentStaff}} </td>
             </ng-container>
 
             <ng-container matColumnDef="totalStaff">
-              <th mat-header-cell *matHeaderCellDef mat-sort-header> totalStaff </th>
+              <th mat-header-cell *matHeaderCellDef mat-sort-header> תקן צוות </th>
               <td mat-cell *matCellDef="let element"> {{element.totalStaff}} </td>
             </ng-container>
+
             <ng-container matColumnDef="patientComplexity">
-              <th mat-header-cell *matHeaderCellDef mat-sort-header>patientComplexity</th>
+              <th mat-header-cell *matHeaderCellDef mat-sort-header> מורכבות המטופל </th>
               <td mat-cell *matCellDef="let element"> {{element.patientComplexity}} </td>
             </ng-container>
 
             <ng-container matColumnDef="totalLoad">
-              <th mat-header-cell *matHeaderCellDef mat-sort-header> Total Load (%) </th>
+              <th mat-header-cell *matHeaderCellDef mat-sort-header> מדד עומס (%) </th>
               <td mat-cell *matCellDef="let element" [ngClass]="getTotalLoadClass(element.totalLoad)"> {{element.totalLoad | number: '1.0-2'}}% </td>
             </ng-container>
 

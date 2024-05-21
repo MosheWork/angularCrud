@@ -17,6 +17,9 @@ export interface DepartmentLoad {
   totalBeds: number;
   departType: string;
   departChameleonCode: string;
+  currentStaff: number;
+  totalStaff: number;
+  patientComplexity: number;
   totalLoad?: number;
 }
 
@@ -26,9 +29,10 @@ export interface DepartmentLoad {
   styleUrls: ['./department-load-dashboard.component.scss']
 })
 export class DepartmentLoadDashboardComponent implements OnInit {
-  displayedColumns: string[] = ['departName', 'currentPatients', 'totalBeds',  'currentStaff','totalStaff','patientComplexity','totalLoad'];
+  displayedColumns: string[] = ['departName', 'currentPatients', 'totalBeds', 'currentStaff', 'totalStaff', 'patientComplexity', 'totalLoad'];
   dataSource = new MatTableDataSource<DepartmentLoad>();
   isHandset$: Observable<boolean>;
+  loginUserName = '';
 
   @ViewChild(MatSort) sort!: MatSort;
   @ViewChild(MatPaginator) paginator!: MatPaginator;
@@ -44,10 +48,13 @@ export class DepartmentLoadDashboardComponent implements OnInit {
         shareReplay()
       );
   }
-
   ngOnInit(): void {
+    console.log('Component initialized');
+    document.title = 'מדד עומס ';
+    this.loginUserName = localStorage.getItem('loginUserName') || '';
     this.http.get<DepartmentLoad[]>(environment.apiUrl + 'ChamelleonCurrentPatientsAPI/GetPatientCounts')
       .subscribe(data => {
+        console.log('Data fetched', data);
         const departments = data.map(department => ({
           ...department,
           totalLoad: this.calculateTotalLoad(department.currentPatients, department.totalBeds)
@@ -55,9 +62,10 @@ export class DepartmentLoadDashboardComponent implements OnInit {
         this.dataSource.data = departments;
         this.dataSource.sort = this.sort;
         this.dataSource.paginator = this.paginator;
+      }, error => {
+        console.error('Error fetching data', error);
       });
   }
-
   calculateTotalLoad(currentPatients: number, totalBeds: number): number {
     return totalBeds ? (currentPatients / totalBeds) * 100 : 0;
   }

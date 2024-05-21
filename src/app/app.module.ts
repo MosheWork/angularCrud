@@ -79,6 +79,7 @@ import { ManageServersComponent } from './server-ping-check-app/manage-servers/m
 import { AddEditServerDialogComponent } from './server-ping-check-app/add-edit-server-dialog/add-edit-server-dialog.component';
 import { DepartmentLoadDashboardComponent } from './departmentLoad/department-load-dashboard/department-load-dashboard.component';
 import {DepartmentDetailDialogComponent} from './departmentLoad/department-detail/department-detail.component'
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 
 @NgModule({
@@ -165,7 +166,8 @@ import {DepartmentDetailDialogComponent} from './departmentLoad/department-detai
     MatProgressBarModule,
     MatListModule,
     MatGridListModule,
-    AngularEditorModule
+    AngularEditorModule,
+    MatProgressSpinnerModule
   ],
   providers: [DatePipe],
   bootstrap: [AppComponent],
