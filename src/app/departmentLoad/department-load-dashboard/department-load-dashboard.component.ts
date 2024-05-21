@@ -1,12 +1,13 @@
 import { Component, OnInit, AfterViewInit, ViewChild } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
-import { Observable } from 'rxjs';
-import { map, shareReplay } from 'rxjs/operators';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatSort } from '@angular/material/sort';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatDialog } from '@angular/material/dialog';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { Observable, Subject } from 'rxjs';
+import { map, shareReplay } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
 import { DepartmentDetailDialogComponent } from '../../departmentLoad/department-detail/department-detail.component';
 
@@ -31,8 +32,11 @@ export interface DepartmentLoad {
 export class DepartmentLoadDashboardComponent implements OnInit, AfterViewInit {
   displayedColumns: string[] = ['departName', 'currentPatients', 'totalBeds', 'currentStaff', 'totalStaff', 'patientComplexity', 'totalLoad'];
   dataSource = new MatTableDataSource<DepartmentLoad>();
+  gaugeValue: number = 0;
+  totalPatients: number = 0;
   isHandset$: Observable<boolean>;
   loginUserName = '';
+  private filterChangeSubject = new Subject<string>();
 
   @ViewChild(MatSort) sort!: MatSort;
   @ViewChild(MatPaginator) paginator!: MatPaginator;
@@ -40,30 +44,26 @@ export class DepartmentLoadDashboardComponent implements OnInit, AfterViewInit {
   constructor(
     private http: HttpClient,
     private breakpointObserver: BreakpointObserver,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private snackBar: MatSnackBar
   ) {
     this.isHandset$ = this.breakpointObserver.observe(Breakpoints.Handset)
       .pipe(
-        map(result => result.matches),
+        map((result: any) => result.matches),
         shareReplay()
       );
+
+    this.filterChangeSubject.asObservable().subscribe(() => {
+      this.updateGaugeValue();
+    });
   }
 
   ngOnInit(): void {
-    console.log('Component initialized');
-    document.title = 'מדד עומס ';
-    this.loginUserName = localStorage.getItem('loginUserName') || '';
-    this.http.get<DepartmentLoad[]>(environment.apiUrl + 'ChamelleonCurrentPatientsAPI/GetPatientCounts')
-      .subscribe(data => {
-        console.log('Data fetched', data);
-        const departments = data.map(department => ({
-          ...department,
-          totalLoad: this.calculateTotalLoad(department.currentPatients, department.totalBeds)
-        }));
-        this.dataSource.data = departments;
-      }, error => {
-        console.error('Error fetching data', error);
-      });
+    this.fetchData();
+
+    this.dataSource.filterPredicate = (data: DepartmentLoad, filter: string) => {
+      return data.departName.trim().toLowerCase().indexOf(filter) !== -1;
+    };
   }
 
   ngAfterViewInit(): void {
@@ -71,8 +71,30 @@ export class DepartmentLoadDashboardComponent implements OnInit, AfterViewInit {
     this.dataSource.paginator = this.paginator;
   }
 
+  fetchData(): void {
+    this.http.get<DepartmentLoad[]>(`${environment.apiUrl}ChamelleonCurrentPatientsAPI/GetPatientCounts`)
+      .subscribe(data => {
+        const departments = data.map(department => ({
+          ...department,
+          totalLoad: this.calculateTotalLoad(department.currentPatients, department.totalBeds)
+        }));
+        this.dataSource.data = departments;
+        this.updateGaugeValue();
+      }, error => {
+        console.error('Error fetching data', error);
+      });
+  }
+
   calculateTotalLoad(currentPatients: number, totalBeds: number): number {
     return totalBeds ? (currentPatients / totalBeds) * 100 : 0;
+  }
+
+  updateGaugeValue(): void {
+    const filteredData = this.dataSource.filteredData;
+    const totalCurrentPatients = filteredData.reduce((sum, department) => sum + department.currentPatients, 0);
+    const totalBeds = filteredData.reduce((sum, department) => sum + department.totalBeds, 0);
+    this.totalPatients = totalCurrentPatients;
+    this.gaugeValue = totalBeds ? (totalCurrentPatients / totalBeds) * 100 : 0;
   }
 
   getTotalLoadClass(totalLoad: number): string {
@@ -95,23 +117,16 @@ export class DepartmentLoadDashboardComponent implements OnInit, AfterViewInit {
     }
   }
 
-  transformUnitType(unitType: string): string {
-    if (unitType === 'h') {
-      return 'אשפוז';
-    } else if (unitType === 'v') {
-      return 'מרפאה';
-    }
-    return unitType;
-  }
-
   applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
     this.dataSource.filter = filterValue.trim().toLowerCase();
+    this.filterChangeSubject.next(this.dataSource.filter);
 
     if (this.dataSource.paginator) {
       this.dataSource.paginator.firstPage();
     }
   }
+
 
   onRowClicked(row: DepartmentLoad) {
     this.dialog.open(DepartmentDetailDialogComponent, {

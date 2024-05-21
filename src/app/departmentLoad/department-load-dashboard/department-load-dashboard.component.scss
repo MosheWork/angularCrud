@@ -29,7 +29,7 @@ mat-card {
 }
 
 .gauge-card {
-  flex: 0 0 27%;
+  flex: 0 0 30%;
   max-width: 30%;
 }
 
@@ -76,13 +76,15 @@ ngx-gauge {
     font-weight: bold;
   }
 
-  .reading-block {
-    font-size: 1.2rem !important; /* Override the inline font-size */
-    transform: translateY(0) !important; /* Override the inline transform */
-  }
-
   ::ng-deep .reading-block {
     font-size: 25px !important; /* Override the inline font-size */
     //transform: translateY(0) !important; /* Override the inline transform */
   }
+}
+
+.total-patients {
+  text-align: center;
+  font-size: 1.2rem;
+  margin-top: 10px;
+  color: #333;
 }

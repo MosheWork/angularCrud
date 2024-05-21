@@ -59,6 +59,8 @@
                 <td mat-cell *matCellDef="let element" [ngClass]="getTotalLoadClass(element.totalLoad)"> {{element.totalLoad | number: '1.0-2'}}% </td>
               </ng-container>
 
+           
+
               <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
               <tr mat-row *matRowDef="let row; columns: displayedColumns;" (click)="onRowClicked(row)"></tr>
             </table>
@@ -72,18 +74,21 @@
           <mat-card-content>
             <ngx-gauge
               [size]="250"
-              [value]="calculateTotalLoad(dataSource.data[0].currentPatients, dataSource.data[0].totalBeds)"
+              [value]="gaugeValue"
               [min]="0"
               [max]="100"
               [type]="'semi'"
               [cap]="'round'"
               [thick]="20"
               [label]="'מדד עומס כולל'"
-              [foregroundColor]="getGaugeColor(calculateTotalLoad(dataSource.data[0].currentPatients, dataSource.data[0].totalBeds))"
+              [foregroundColor]="getGaugeColor(gaugeValue)"
               [backgroundColor]="'#e0e0e0'"
               [append]="'%'"
               [duration]="1500">
             </ngx-gauge>
+            <div class="total-patients">
+              <span>סה"כ מטופלים: {{ totalPatients }}</span>
+            </div>
           </mat-card-content>
         </mat-card>
       </div>
