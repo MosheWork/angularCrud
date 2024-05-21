@@ -81,9 +81,7 @@
           </mat-card-content>
         </mat-card>
         <mat-card class="gauge-card">
-          <mat-card-header>
-            <mat-card-title>מדד עומס כולל</mat-card-title>
-          </mat-card-header>
+         
           <mat-card-content>
             <ngx-gauge
               [size]="250"
@@ -101,6 +99,10 @@
             </ngx-gauge>
             <div class="total-patients">
               <span>סה"כ מטופלים: {{ totalPatients }}</span>
+              <span>סה"כ מונשמים:XX</span>
+              <span>סה"כ הועברו לחדר ניתוח:XX</span>
+              <span>סה"כ מטופלים בבידוד:XX</span>
+
             </div>
           </mat-card-content>
         </mat-card>
@@ -108,3 +110,6 @@
     </div>
   </mat-sidenav-content>
 </mat-sidenav-container>
+   <mat-toolbar color="primary" class="footer">
+      <span>&copy; משה ממן</span>
+    </mat-toolbar> 
