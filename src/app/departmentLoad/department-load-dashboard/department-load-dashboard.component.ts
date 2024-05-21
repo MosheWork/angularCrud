@@ -36,6 +36,7 @@ export class DepartmentLoadDashboardComponent implements OnInit, AfterViewInit {
   totalPatients: number = 0;
   isHandset$: Observable<boolean>;
   loginUserName = '';
+  selectedDepartments: string[] = [];
   private filterChangeSubject = new Subject<string>();
 
   @ViewChild(MatSort) sort!: MatSort;
@@ -62,7 +63,10 @@ export class DepartmentLoadDashboardComponent implements OnInit, AfterViewInit {
     this.fetchData();
 
     this.dataSource.filterPredicate = (data: DepartmentLoad, filter: string) => {
-      return data.departName.trim().toLowerCase().indexOf(filter) !== -1;
+      if (this.selectedDepartments.length === 0) {
+        return true;
+      }
+      return this.selectedDepartments.includes(data.departName);
     };
   }
 
@@ -126,6 +130,13 @@ export class DepartmentLoadDashboardComponent implements OnInit, AfterViewInit {
       this.dataSource.paginator.firstPage();
     }
   }
+
+  onDepartmentFilterChange(selectedDepartments: string[]): void {
+    this.selectedDepartments = selectedDepartments;
+    this.dataSource.filter = 'apply'; // Trigger the filter
+    this.filterChangeSubject.next('');
+  }
+
 
 
   onRowClicked(row: DepartmentLoad) {
