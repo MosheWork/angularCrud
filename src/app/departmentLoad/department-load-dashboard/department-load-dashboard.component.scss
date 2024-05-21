@@ -29,7 +29,7 @@ mat-card {
 }
 
 .gauge-card {
-  flex: 0 0 30%;
+  flex: 0 0 27%;
   max-width: 30%;
 }
 
@@ -87,4 +87,5 @@ ngx-gauge {
   font-size: 1.2rem;
   margin-top: 10px;
   color: #333;
+  font-weight: bold;
 }
