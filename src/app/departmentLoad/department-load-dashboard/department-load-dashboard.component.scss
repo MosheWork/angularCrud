@@ -29,7 +29,7 @@ mat-card {
 }
 
 .gauge-card {
-  flex: 0 0 25%;
+  flex: 0 0 27%;
   max-width: 30%;
 }
 
@@ -63,16 +63,26 @@ table {
 ngx-gauge {
   display: block;
   margin: 0 auto;
-  max-width: 200px;
+  max-width: 250px;
   text-align: center;
 
   .gauge-append, .gauge-label {
-    font-size: 1rem;
+    font-size: 0.8rem; /* Adjusted the font size for append and label */
     color: #333;
   }
 
   .gauge-value {
-    font-size: 1rem;
+    font-size: 1.2rem; /* Adjusted the font size for value */
     font-weight: bold;
+  }
+
+  .reading-block {
+    font-size: 1.2rem !important; /* Override the inline font-size */
+    transform: translateY(0) !important; /* Override the inline transform */
+  }
+
+  ::ng-deep .reading-block {
+    font-size: 25px !important; /* Override the inline font-size */
+    //transform: translateY(0) !important; /* Override the inline transform */
   }
 }

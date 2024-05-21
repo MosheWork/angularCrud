@@ -71,15 +71,15 @@
           </mat-card-header>
           <mat-card-content>
             <ngx-gauge
-              [size]="200"
+              [size]="250"
               [value]="calculateTotalLoad(dataSource.data[0].currentPatients, dataSource.data[0].totalBeds)"
               [min]="0"
               [max]="100"
               [type]="'semi'"
               [cap]="'round'"
-              [thick]="15"
+              [thick]="20"
               [label]="'מדד עומס כולל'"
-              [foregroundColor]="'#00ff00'"
+              [foregroundColor]="getGaugeColor(calculateTotalLoad(dataSource.data[0].currentPatients, dataSource.data[0].totalBeds))"
               [backgroundColor]="'#e0e0e0'"
               [append]="'%'"
               [duration]="1500">

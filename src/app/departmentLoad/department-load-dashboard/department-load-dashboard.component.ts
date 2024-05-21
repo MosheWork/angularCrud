@@ -85,6 +85,16 @@ export class DepartmentLoadDashboardComponent implements OnInit, AfterViewInit {
     }
   }
 
+  getGaugeColor(totalLoad: number): string {
+    if (totalLoad > 100) {
+      return '#f44336'; // red
+    } else if (totalLoad >= 80) {
+      return '#ff9800'; // orange
+    } else {
+      return '#4caf50'; // green
+    }
+  }
+
   transformUnitType(unitType: string): string {
     if (unitType === 'h') {
       return 'אשפוז';
