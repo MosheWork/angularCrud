@@ -48,18 +48,29 @@
 
   //spinner
 
-  .total-load-container {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
+  ngx-gauge {
+    display: block;
+    margin: 0 auto;
+    max-width: 200px;
+    text-align: center;
   
-    mat-progress-spinner {
-      margin-right: 10px;
+    .gauge-append, .gauge-label {
+      font-size: 1rem;
+      color: #333;
     }
   
-    span {
-      font-size: 1.2em;
+    .gauge-value {
+      font-size: 1rem;
+      font-weight: bold;
     }
   }
+  
+  .content {
+    padding: 16px;
+    .mat-card {
+      margin-bottom: 16px;
+    }
+  }
+  
+  
   

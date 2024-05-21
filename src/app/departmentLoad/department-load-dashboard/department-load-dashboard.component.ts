@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, AfterViewInit, ViewChild } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { Observable } from 'rxjs';
@@ -28,7 +28,7 @@ export interface DepartmentLoad {
   templateUrl: './department-load-dashboard.component.html',
   styleUrls: ['./department-load-dashboard.component.scss']
 })
-export class DepartmentLoadDashboardComponent implements OnInit {
+export class DepartmentLoadDashboardComponent implements OnInit, AfterViewInit {
   displayedColumns: string[] = ['departName', 'currentPatients', 'totalBeds', 'currentStaff', 'totalStaff', 'patientComplexity', 'totalLoad'];
   dataSource = new MatTableDataSource<DepartmentLoad>();
   isHandset$: Observable<boolean>;
@@ -48,6 +48,7 @@ export class DepartmentLoadDashboardComponent implements OnInit {
         shareReplay()
       );
   }
+
   ngOnInit(): void {
     console.log('Component initialized');
     document.title = 'מדד עומס ';
@@ -60,12 +61,16 @@ export class DepartmentLoadDashboardComponent implements OnInit {
           totalLoad: this.calculateTotalLoad(department.currentPatients, department.totalBeds)
         }));
         this.dataSource.data = departments;
-        this.dataSource.sort = this.sort;
-        this.dataSource.paginator = this.paginator;
       }, error => {
         console.error('Error fetching data', error);
       });
   }
+
+  ngAfterViewInit(): void {
+    this.dataSource.sort = this.sort;
+    this.dataSource.paginator = this.paginator;
+  }
+
   calculateTotalLoad(currentPatients: number, totalBeds: number): number {
     return totalBeds ? (currentPatients / totalBeds) * 100 : 0;
   }
