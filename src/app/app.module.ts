@@ -82,6 +82,7 @@ import {DepartmentDetailDialogComponent} from './departmentLoad/department-detai
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 
+
 @NgModule({
   declarations: [
     AppComponent,
