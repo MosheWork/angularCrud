@@ -134,6 +134,7 @@ export class DepartmentLoadDashboardComponent implements OnInit, AfterViewInit {
       return '#4caf50'; // green
     }
   }
+  
   applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value.toLowerCase();
     this.updateFilter(filterValue, this.selectedDepartments);
@@ -141,7 +142,7 @@ export class DepartmentLoadDashboardComponent implements OnInit, AfterViewInit {
   
   onDepartmentFilterChange(selectedDepartments: string[]): void {
     this.selectedDepartments = selectedDepartments;
-    this.updateFilter(this.dataSource.filter, selectedDepartments);
+    this.updateFilter(this.dataSource.filter.split('$')[0], selectedDepartments);
   }
   
   updateFilter(searchTerm: string, selectedDepartments: string[]): void {
@@ -161,8 +162,6 @@ export class DepartmentLoadDashboardComponent implements OnInit, AfterViewInit {
     this.applyFilter({ target: { value: '' } } as any);
   }
   
- 
-
   onRowClicked(row: DepartmentLoad) {
     this.dialog.open(DepartmentDetailDialogComponent, {
       width: '400px',

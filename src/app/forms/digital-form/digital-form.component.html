@@ -1,0 +1,13 @@
+<form [formGroup]="digitalForm" (ngSubmit)="onSubmit()">
+    <mat-form-field>
+      <input matInput placeholder="Person 1 Signature" formControlName="person1" [disabled]="isSigned[0]">
+    </mat-form-field>
+    <mat-form-field>
+      <input matInput placeholder="Person 2 Signature" formControlName="person2" [disabled]="!isSigned[0] || isSigned[1]">
+    </mat-form-field>
+    <mat-form-field>
+      <input matInput placeholder="Person 3 Signature" formControlName="person3" [disabled]="!isSigned[1] || isSigned[2]">
+    </mat-form-field>
+    <button mat-raised-button color="primary" type="submit">Submit</button>
+  </form>
+  

@@ -8,7 +8,6 @@ import { UsersComponent } from './users/users.component';
 import { UploadPicComponent } from './upload-pic/upload-pic.component';
 import { SQLComponent } from './sql/sql.component';
 import { ConsiliumsComponent } from './consiliums/consiliums.component';
-import { YourTableComponentComponent } from './your-table-component/your-table-component.component';
 import { IsolationComponent } from './isolation/isolation.component';
 import { HospitalizationsListComponent } from './hospitalizations-list/hospitalizations-list.component';
 import { DevicesPerUnitComponent } from './devices-per-unit/devices-per-unit.component';
@@ -32,6 +31,7 @@ import { ServerPingCheckAppComponent } from './server-ping-check-app/server-ping
 import { ManageServersComponent } from './server-ping-check-app/manage-servers/manage-servers.component';
 import { DepartmentLoadDashboardComponent } from './departmentLoad/department-load-dashboard/department-load-dashboard.component';
 import { DepartmentDetailDialogComponent } from './departmentLoad/department-detail/department-detail.component';
+import { CurrentPatientsComponent } from './departmentLoad/current-patients/current-patients.component';
 
 const routes: Routes = [
   { path: 'users', component: UsersComponent },
@@ -44,7 +44,6 @@ const routes: Routes = [
   { path: 'Consiliums', component: ConsiliumsComponent },
   { path: 'Isolation', component: IsolationComponent },
   { path: 'DevicesPerUnit', component: DevicesPerUnitComponent },
-  { path: 'Test', component: YourTableComponentComponent },
   { path: 'MainPageReports', component: MainPageReportsComponent },
   { path: 'reports-permissions', component: ReportsPermissionsComponent },
   { path: 'UserDashboard', component: UserDashboardComponent },
@@ -84,7 +83,8 @@ const routes: Routes = [
 //departmentLoad
 
 { path: 'departmentLoadDashboard', component: DepartmentLoadDashboardComponent },
-{ path: 'department-detail/:id', component: DepartmentDetailDialogComponent }
+{ path: 'department-detail/:id', component: DepartmentDetailDialogComponent },
+{ path: 'current-patients', component: CurrentPatientsComponent }
 
 
 

@@ -42,7 +42,6 @@ import { PicturesComponent } from './pictures/pictures.component';
 import { SQLComponent } from './sql/sql.component';
 import { FooterComponent } from './footer/footer.component';
 import { ConsiliumsComponent } from './consiliums/consiliums.component';
-import { YourTableComponentComponent } from './your-table-component/your-table-component.component';
 import { IsolationComponent } from './isolation/isolation.component';
 import { HospitalizationsListComponent } from './hospitalizations-list/hospitalizations-list.component';
 import { DevicesPerUnitComponent } from './devices-per-unit/devices-per-unit.component';
@@ -79,6 +78,8 @@ import { ManageServersComponent } from './server-ping-check-app/manage-servers/m
 import { AddEditServerDialogComponent } from './server-ping-check-app/add-edit-server-dialog/add-edit-server-dialog.component';
 import { DepartmentLoadDashboardComponent } from './departmentLoad/department-load-dashboard/department-load-dashboard.component';
 import { DepartmentDetailDialogComponent } from './departmentLoad/department-detail/department-detail.component';
+import { CurrentPatientsComponent } from './departmentLoad/current-patients/current-patients.component';
+import { DigitalFormComponent } from './forms/digital-form/digital-form.component';
 
 @NgModule({
   declarations: [
@@ -92,7 +93,6 @@ import { DepartmentDetailDialogComponent } from './departmentLoad/department-det
     SQLComponent,
     FooterComponent,
     ConsiliumsComponent,
-    YourTableComponentComponent,
     IsolationComponent,
     HospitalizationsListComponent,
     DevicesPerUnitComponent,
@@ -129,6 +129,8 @@ import { DepartmentDetailDialogComponent } from './departmentLoad/department-det
     AddEditServerDialogComponent,
     DepartmentLoadDashboardComponent,
     DepartmentDetailDialogComponent,
+    CurrentPatientsComponent,
+    DigitalFormComponent,
   ],
   imports: [
     BrowserModule,

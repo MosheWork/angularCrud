@@ -93,22 +93,12 @@ ngx-gauge {
 .total-patients span {
   display: block;
 }
-.mat-form-field {
-  margin-top: 10px;
-  width: 100%;
-}
 
 .mat-form-field {
   margin-top: 10px;
   width: 100%;
 }
 
-.header-select {
-  width: 100%;
-  .mat-select-trigger {
-    display: none;
-  }
-}
 .filter-container {
   display: flex;
   align-items: center;
@@ -116,10 +106,6 @@ ngx-gauge {
 
 .filter-container mat-form-field {
   flex: 1;
-}
-
-.filter-container button {
-  margin-left: 10px;
 }
 
 .filter-container button {
