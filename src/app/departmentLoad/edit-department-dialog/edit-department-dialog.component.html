@@ -1,0 +1,38 @@
+<h1 mat-dialog-title>ערוך מחלקה</h1>
+<div mat-dialog-content>
+  <form [formGroup]="editForm">
+    <mat-form-field appearance="fill">
+      <mat-label>שם מחלקה</mat-label>
+      <input matInput formControlName="departName">
+    </mat-form-field>
+
+    <mat-form-field appearance="fill">
+      <mat-label>סה"כ מטופלים</mat-label>
+      <input matInput formControlName="currentPatients" type="number" [disabled]="true">
+    </mat-form-field>
+
+    <mat-form-field appearance="fill">
+      <mat-label>סה"כ מיטות</mat-label>
+      <input matInput formControlName="totalBeds" type="number">
+    </mat-form-field>
+
+    <mat-form-field appearance="fill">
+      <mat-label>צוות נוכחי</mat-label>
+      <input matInput formControlName="currentStaff" type="number">
+    </mat-form-field>
+
+    <mat-form-field appearance="fill">
+      <mat-label>תקן צוות </mat-label>
+      <input matInput formControlName="totalStaff" type="number">
+    </mat-form-field>
+
+    <mat-form-field appearance="fill">
+      <mat-label>מורכבות המטופל</mat-label>
+      <input matInput formControlName="patientComplexity" type="number">
+    </mat-form-field>
+  </form>
+</div>
+<div mat-dialog-actions>
+  <button mat-button (click)="onCancel()">בטל</button>
+  <button mat-button (click)="onSave()">שמור</button>
+</div>

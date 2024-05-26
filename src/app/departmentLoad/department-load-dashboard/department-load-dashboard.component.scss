@@ -11,11 +11,11 @@
 }
 
 .content {
-  padding: 16px;
+  padding: 1px; // Reduced padding
 }
 
 mat-card {
-  margin: 16px;
+  margin: 1px; // Reduced margin
 }
 
 .cards-container {
@@ -24,13 +24,15 @@ mat-card {
 }
 
 .table-card {
-  flex: 0 0 70%;
-  max-width: 70%;
+  flex: 0 0 80%;
+  max-width: 80%;
+  margin-right: 1px; // Reduced margin to the right
 }
 
 .gauge-card {
-  flex: 0 0 27%;
-  max-width: 30%;
+  flex: 0 0 18%;
+  max-width: 18%;
+  margin-left: 4px; // Reduced margin to the left
 }
 
 table {
@@ -38,7 +40,7 @@ table {
 }
 
 .mat-header-cell, .mat-cell {
-  padding: 8px;
+  padding: 4px; // Reduced padding
 }
 
 .mat-header-cell {
@@ -120,4 +122,18 @@ ngx-gauge {
 
 .reset-filters-button mat-icon {
   color: blue;
+}
+
+.mat-cell .actions-cell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.mat-cell .actions-cell button {
+  margin-right: 2px; // Reduced margin
+}
+
+.mat-cell .actions-cell button:last-child {
+  margin-right: 0; // No margin for the last button
 }

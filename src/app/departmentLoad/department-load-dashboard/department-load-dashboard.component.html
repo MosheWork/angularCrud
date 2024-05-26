@@ -19,6 +19,7 @@
     <mat-tab-group>
       <mat-tab label="מדד עומס">
         <div class="content">
+          
           <div class="cards-container">
             <mat-card class="table-card">
               <mat-card-content>
@@ -46,9 +47,9 @@
                     <td mat-cell *matCellDef="let element"> {{element.departName}} </td>
                   </ng-container>
 
-                  <ng-container matColumnDef="currentPatients">
+                  <ng-container matColumnDef="patientCount">
                     <th mat-header-cell *matHeaderCellDef mat-sort-header> סה"כ מטופלים </th>
-                    <td mat-cell *matCellDef="let element"> {{element.currentPatients}} </td>
+                    <td mat-cell *matCellDef="let element"> {{element.patientCount}} </td>
                   </ng-container>
 
                   <ng-container matColumnDef="totalBeds">
@@ -76,8 +77,20 @@
                     <td mat-cell *matCellDef="let element" [ngClass]="getTotalLoadClass(element.totalLoad)"> {{element.totalLoad | number: '1.0-2'}}% </td>
                   </ng-container>
 
+                  <ng-container matColumnDef="actions">
+                    <th mat-header-cell *matHeaderCellDef> פעולות </th>
+                    <td mat-cell *matCellDef="let element" class="actions-cell">
+                      <button mat-icon-button (click)="openEditDialog(element)">
+                        <mat-icon>edit</mat-icon>
+                      </button>
+                      <button mat-icon-button (click)="openMoreInfo(element)">
+                        <mat-icon>info</mat-icon>
+                      </button>
+                    </td>
+                  </ng-container>
+
                   <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-                  <tr mat-row *matRowDef="let row; columns: displayedColumns;" (click)="onRowClicked(row)"></tr>
+                  <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
                 </table>
                 <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
               </mat-card-content>
@@ -88,7 +101,7 @@
               </mat-card-header>
               <mat-card-content>
                 <ngx-gauge
-                  [size]="250"
+                  [size]="200"
                   [value]="gaugeValue"
                   [min]="0"
                   [max]="100"
@@ -116,6 +129,11 @@
       <mat-tab label="רשימת חולים">
         <div class="content">
           <app-current-patients></app-current-patients>
+        </div>
+      </mat-tab>
+      <mat-tab label="מדד עומס פר משמרת">
+        <div class="content">
+          <app-department-load-by-shift></app-department-load-by-shift>
         </div>
       </mat-tab>
     </mat-tab-group>

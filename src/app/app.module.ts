@@ -80,6 +80,8 @@ import { DepartmentLoadDashboardComponent } from './departmentLoad/department-lo
 import { DepartmentDetailDialogComponent } from './departmentLoad/department-detail/department-detail.component';
 import { CurrentPatientsComponent } from './departmentLoad/current-patients/current-patients.component';
 import { DigitalFormComponent } from './forms/digital-form/digital-form.component';
+import { EditDepartmentDialogComponent } from './departmentLoad/edit-department-dialog/edit-department-dialog.component';
+import { DepartmentLoadByShiftComponent } from './departmentLoad/department-load-by-shift/department-load-by-shift.component';
 
 @NgModule({
   declarations: [
@@ -131,6 +133,8 @@ import { DigitalFormComponent } from './forms/digital-form/digital-form.componen
     DepartmentDetailDialogComponent,
     CurrentPatientsComponent,
     DigitalFormComponent,
+    EditDepartmentDialogComponent,
+    DepartmentLoadByShiftComponent,
   ],
   imports: [
     BrowserModule,

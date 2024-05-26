@@ -11,7 +11,6 @@ import { map, shareReplay } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
 import { DepartmentDetailDialogComponent } from '../../departmentLoad/department-detail/department-detail.component';
 import { EditDepartmentDialogComponent } from '../edit-department-dialog/edit-department-dialog.component';
-
 export interface DepartmentLoad {
   id: number;
   departName: string;
@@ -24,11 +23,12 @@ export interface DepartmentLoad {
 }
 
 @Component({
-  selector: 'app-department-load-dashboard',
-  templateUrl: './department-load-dashboard.component.html',
-  styleUrls: ['./department-load-dashboard.component.scss']
+  selector: 'app-department-load-by-shift',
+  templateUrl: './department-load-by-shift.component.html',
+  styleUrls: ['./department-load-by-shift.component.scss']
 })
-export class DepartmentLoadDashboardComponent implements OnInit, AfterViewInit {
+export class DepartmentLoadByShiftComponent implements OnInit {
+
   displayedColumns: string[] = ['departName', 'patientCount', 'totalBeds', 'currentStaff', 'totalStaff', 'patientComplexity', 'totalLoad', 'actions'];
   dataSource = new MatTableDataSource<DepartmentLoad>();
   gaugeValue: number = 0;
@@ -185,4 +185,5 @@ export class DepartmentLoadDashboardComponent implements OnInit, AfterViewInit {
       }
     });
   }
+
 }
