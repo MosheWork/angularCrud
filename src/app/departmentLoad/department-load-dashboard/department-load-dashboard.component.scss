@@ -11,11 +11,11 @@
 }
 
 .content {
-  padding: 1px; // Reduced padding
+  padding: 1px; /* Reduced padding */
 }
 
 mat-card {
-  margin: 1px; // Reduced margin
+  margin: 1px; /* Reduced margin */
 }
 
 .cards-container {
@@ -26,13 +26,13 @@ mat-card {
 .table-card {
   flex: 0 0 80%;
   max-width: 80%;
-  margin-right: 1px; // Reduced margin to the right
+  margin-right: 1px; /* Reduced margin to the right */
 }
 
 .gauge-card {
   flex: 0 0 18%;
   max-width: 18%;
-  margin-left: 4px; // Reduced margin to the left
+  margin-left: 4px; /* Reduced margin to the left */
 }
 
 table {
@@ -40,7 +40,7 @@ table {
 }
 
 .mat-header-cell, .mat-cell {
-  padding: 4px; // Reduced padding
+  padding: 4px; /* Reduced padding */
 }
 
 .mat-header-cell {
@@ -67,21 +67,20 @@ ngx-gauge {
   margin: 0 auto;
   max-width: 250px;
   text-align: center;
+}
 
-  .gauge-append, .gauge-label {
-    font-size: 0.8rem; /* Adjusted the font size for append and label */
-    color: #333;
-  }
+ngx-gauge .gauge-append, ngx-gauge .gauge-label {
+  font-size: 0.8rem; /* Adjusted the font size for append and label */
+  color: #333;
+}
 
-  .gauge-value {
-    font-size: 1.2rem; /* Adjusted the font size for value */
-    font-weight: bold;
-  }
+ngx-gauge .gauge-value {
+  font-size: 1.2rem; /* Adjusted the font size for value */
+  font-weight: bold;
+}
 
-  ::ng-deep .reading-block {
-    font-size: 25px !important; /* Override the inline font-size */
-    //transform: translateY(0) !important; /* Override the inline transform */
-  }
+ngx-gauge ::ng-deep .reading-block {
+  font-size: 25px !important; /* Override the inline font-size */
 }
 
 .total-patients {
@@ -110,14 +109,20 @@ ngx-gauge {
   flex: 1;
 }
 
-.filter-container button {
-  margin-left: 10px;
+.filter-container .buttons-container {
+  display: flex;
+  align-items: center;
+}
+
+.filter-container .buttons-container button,
+.filter-container .buttons-container img {
+  margin-left: 10px; /* Add margin to the left for spacing */
+  padding: 8px; /* Add padding for visual appeal */
 }
 
 .reset-filters-button {
   background-color: #e0e0e0;
   border-radius: 50%;
-  padding: 8px;
 }
 
 .reset-filters-button mat-icon {
@@ -131,9 +136,9 @@ ngx-gauge {
 }
 
 .mat-cell .actions-cell button {
-  margin-right: 2px; // Reduced margin
+  margin-right: 2px; /* Reduced margin */
 }
 
 .mat-cell .actions-cell button:last-child {
-  margin-right: 0; // No margin for the last button
+  margin-right: 0; /* No margin for the last button */
 }
