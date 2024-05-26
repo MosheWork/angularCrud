@@ -22,18 +22,27 @@
           <div class="filter-container">
             <mat-form-field appearance="fill">
               <mat-label>סינון</mat-label>
-              <input matInput (keyup)="applyFilter($event)" placeholder="סנן לפי שם המחלקה">
+              <input matInput (keyup)="applyFilter($event)" placeholder="  הכנס טקסט לחיפוש... ">
             </mat-form-field>
             <div class="buttons-container">
               <button mat-icon-button aria-label="Reset filters" matTooltip="אפס חיפוש" (click)="resetFilters()" class="reset-filters-button">
                 <mat-icon>clear</mat-icon>
               </button>
               <img
-                src="../../../../assets/graphIcon.png"
-                matTooltip="החלף תצוגה"
-                (click)="toggleView()"
-                width="50px"
-              />
+    *ngIf="showTable"
+    src="../../../../assets/graphIcon.png"
+    matTooltip="החלף לגרף"
+    (click)="toggleView()"
+    width="50px"
+  />
+  
+  <img
+    *ngIf="!showTable"
+    src="../../../../assets/TableIcon.png"
+    matTooltip="החלף לטבלה"
+    (click)="toggleView()"
+    width="50px"
+  />
               <img
                 src="../../../../assets/excel.png"
                 alt="Download"
@@ -145,8 +154,17 @@
           <ng-template #graphView>
             <div class="chart-container">
               <img
+              *ngIf="chartType === 'bar'"
               src="../../../../assets/pieIcon.jpg"
-              matTooltip="  החלף לגרף עוגה"
+              matTooltip="החלף לגרף עוגה"
+              (click)="switchChartType()"
+              width="50px"
+            />
+            
+            <img
+              *ngIf="chartType === 'pie'"
+              src="../../../../assets/BarIcon.png"
+              matTooltip="החלף לגרף עמודות"
               (click)="switchChartType()"
               width="50px"
             />

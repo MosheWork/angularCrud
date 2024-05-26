@@ -12,10 +12,10 @@ import { environment } from '../../../environments/environment';
 import { DepartmentDetailDialogComponent } from '../../departmentLoad/department-detail/department-detail.component';
 import { EditDepartmentDialogComponent } from '../edit-department-dialog/edit-department-dialog.component';
 import { Chart, registerables, ChartConfiguration } from 'chart.js';
-import ChartDataLabels from 'chartjs-plugin-datalabels';  // Import the plugin
+import ChartDataLabels from 'chartjs-plugin-datalabels';
 import * as XLSX from 'xlsx';
 
-Chart.register(...registerables, ChartDataLabels);  // Register the plugin
+Chart.register(...registerables, ChartDataLabels);
 
 export interface DepartmentLoad {
   id: number;
@@ -45,6 +45,8 @@ export class DepartmentLoadDashboardComponent implements OnInit, AfterViewInit {
   showTable: boolean = true;
   private chart?: Chart<'bar' | 'pie'>;
   chartType: 'bar' | 'pie' = 'bar';
+  isPieChart: boolean = true;
+
 
   @ViewChild(MatSort) sort!: MatSort;
   @ViewChild(MatPaginator) paginator!: MatPaginator;
@@ -198,29 +200,22 @@ export class DepartmentLoadDashboardComponent implements OnInit, AfterViewInit {
     });
   }
 
-  toggleView(): void {
-    this.showTable = !this.showTable;
-    if (!this.showTable) {
-      setTimeout(() => {
-        this.createChart(this.dataSource.data);
-      });
-    }
-  }
+
 
   switchChartType(): void {
     this.chartType = this.chartType === 'bar' ? 'pie' : 'bar';
-    this.createChart(this.dataSource.data);
+    this.createChart(this.dataSource.data); // Recreate the chart with the new type
   }
 
   createChart(departments: DepartmentLoad[]): void {
     if (this.chart) {
       this.chart.destroy();
     }
-  
+
     const totalLoads = departments.map(department => department.totalLoad ?? 0);  // Ensure no undefined values
     const departmentNames = departments.map(department => department.departName);
     const backgroundColors = departmentNames.map(() => this.getRandomColor());
-  
+
     const config: ChartConfiguration<'bar' | 'pie'> = {
       type: this.chartType,
       data: {
@@ -269,11 +264,9 @@ export class DepartmentLoadDashboardComponent implements OnInit, AfterViewInit {
         } : undefined
       }
     };
-  
+
     this.chart = new Chart(this.chartCanvas.nativeElement.getContext('2d') as CanvasRenderingContext2D, config);
   }
-  
-  
 
   getRandomColor(): string {
     const letters = '0123456789ABCDEF';
@@ -313,4 +306,14 @@ export class DepartmentLoadDashboardComponent implements OnInit, AfterViewInit {
     link.click();
     URL.revokeObjectURL(url); // Clean up URL.createObjectURL references
   }
+  toggleView(): void {
+    this.showTable = !this.showTable; // Toggle the view
+    if (!this.showTable) {
+      setTimeout(() => {
+        this.createChart(this.dataSource.data); // Create the chart if switching to graph view
+      });
+    }
+  }
+
+  
 }
