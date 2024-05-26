@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewInit, ViewChild } from '@angular/core';
+import { Component, OnInit, AfterViewInit, ViewChild, ElementRef } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { MatTableDataSource } from '@angular/material/table';
@@ -11,6 +11,8 @@ import { map, shareReplay } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
 import { DepartmentDetailDialogComponent } from '../../departmentLoad/department-detail/department-detail.component';
 import { EditDepartmentDialogComponent } from '../edit-department-dialog/edit-department-dialog.component';
+import { Chart, registerables, ChartConfiguration, ChartTypeRegistry } from 'chart.js';
+import * as XLSX from 'xlsx';
 
 export interface DepartmentLoad {
   id: number;
@@ -37,9 +39,13 @@ export class DepartmentLoadDashboardComponent implements OnInit, AfterViewInit {
   loginUserName = '';
   selectedDepartments: string[] = [];
   private filterChangeSubject = new Subject<string>();
+  showTable: boolean = true;
+  private chart?: Chart<'bar' | 'pie'>;
+  chartType: 'bar' | 'pie' = 'bar';
 
   @ViewChild(MatSort) sort!: MatSort;
   @ViewChild(MatPaginator) paginator!: MatPaginator;
+  @ViewChild('chartCanvas') chartCanvas!: ElementRef<HTMLCanvasElement>;
 
   constructor(
     private http: HttpClient,
@@ -56,21 +62,23 @@ export class DepartmentLoadDashboardComponent implements OnInit, AfterViewInit {
     this.filterChangeSubject.asObservable().subscribe(() => {
       this.updateGaugeValue();
     });
+
+    Chart.register(...registerables);
   }
 
   ngOnInit(): void {
     this.fetchData();
-  
+
     this.dataSource.filterPredicate = (data: DepartmentLoad, filter: string) => {
       const matchFilter = [];
       const filterArray = filter.split('$');
-  
+
       const searchTerm = filterArray[0];
       const selectedDepartments = filterArray[1] ? filterArray[1].split(',') : [];
-  
+
       // Apply search filter
       const customFilter = data.departName.toLowerCase().includes(searchTerm);
-  
+
       // Apply department filter
       if (selectedDepartments.length > 0) {
         const departmentFilter = selectedDepartments.includes(data.departName);
@@ -78,11 +86,11 @@ export class DepartmentLoadDashboardComponent implements OnInit, AfterViewInit {
       } else {
         matchFilter.push(customFilter);
       }
-  
+
       return matchFilter.every(Boolean);
     };
   }
-  
+
   ngAfterViewInit(): void {
     this.dataSource.sort = this.sort;
     this.dataSource.paginator = this.paginator;
@@ -90,14 +98,15 @@ export class DepartmentLoadDashboardComponent implements OnInit, AfterViewInit {
 
   fetchData(): void {
     this.http.get<DepartmentLoad[]>(`${environment.apiUrl}ChamelleonCurrentPatientsAPI/GetPatientCount`)
-      .subscribe(data => {
-        const departments = data.map(department => ({
+      .subscribe((data: DepartmentLoad[]) => {
+        const departments = data.map((department: DepartmentLoad) => ({
           ...department,
           totalLoad: this.calculateTotalLoad(department.patientCount, department.totalBeds)
         }));
         this.dataSource.data = departments;
         this.updateGaugeValue();
-      }, error => {
+        this.createChart(departments);
+      }, (error: any) => {
         console.error('Error fetching data', error);
       });
   }
@@ -133,34 +142,34 @@ export class DepartmentLoadDashboardComponent implements OnInit, AfterViewInit {
       return '#4caf50'; // green
     }
   }
-  
+
   applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value.toLowerCase();
     this.updateFilter(filterValue, this.selectedDepartments);
   }
-  
+
   onDepartmentFilterChange(selectedDepartments: string[]): void {
     this.selectedDepartments = selectedDepartments;
     this.updateFilter(this.dataSource.filter.split('$')[0], selectedDepartments);
   }
-  
+
   updateFilter(searchTerm: string, selectedDepartments: string[]): void {
     const filterValue = `${searchTerm}$${selectedDepartments.join(',')}`;
     this.dataSource.filter = filterValue;
     this.filterChangeSubject.next(filterValue);
-  
+
     if (this.dataSource.paginator) {
       this.dataSource.paginator.firstPage();
     }
   }
-  
+
   resetFilters(): void {
     this.selectedDepartments = [];
     this.dataSource.filter = '';
     this.filterChangeSubject.next('');
     this.applyFilter({ target: { value: '' } } as any);
   }
-  
+
   openMoreInfo(row: DepartmentLoad) {
     this.dialog.open(DepartmentDetailDialogComponent, {
       width: '400px',
@@ -184,5 +193,96 @@ export class DepartmentLoadDashboardComponent implements OnInit, AfterViewInit {
         }
       }
     });
+  }
+
+  toggleView(): void {
+    this.showTable = !this.showTable;
+    if (!this.showTable) {
+      setTimeout(() => {
+        this.createChart(this.dataSource.data);
+      });
+    }
+  }
+
+  switchChartType(): void {
+    this.chartType = this.chartType === 'bar' ? 'pie' : 'bar';
+    this.createChart(this.dataSource.data);
+  }
+
+  createChart(departments: DepartmentLoad[]): void {
+    if (this.chart) {
+      this.chart.destroy();
+    }
+  
+    const totalLoads = departments.map(department => department.totalLoad ?? 0);  // Ensure no undefined values
+    const departmentNames = departments.map(department => department.departName);
+    const backgroundColors = departmentNames.map(() => this.getRandomColor());
+  
+    const config: ChartConfiguration<'bar' | 'pie'> = {
+      type: this.chartType,
+      data: {
+        labels: departmentNames,
+        datasets: [
+          {
+            label: 'Total Load (%)',
+            data: totalLoads,
+            backgroundColor: backgroundColors,
+            borderColor: backgroundColors.map(color => color.replace('0.2', '1')),
+            borderWidth: 1
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: this.chartType === 'bar' ? {
+          y: {
+            beginAtZero: true
+          }
+        } : undefined
+      }
+    };
+  
+    this.chart = new Chart(this.chartCanvas.nativeElement.getContext('2d') as CanvasRenderingContext2D, config);
+  }
+  
+
+  getRandomColor(): string {
+    const letters = '0123456789ABCDEF';
+    let color = '#';
+    for (let i = 0; i < 6; i++) {
+      color += letters[Math.floor(Math.random() * 16)];
+    }
+    return color;
+  }
+
+  exportToExcel() {
+    const dataToExport = this.dataSource.filteredData.map(item => ({
+      'שם מחלקה': item.departName,
+      'סה"כ מטופלים': item.patientCount,
+      'סה"כ מיטות': item.totalBeds,
+      'צוות נוכחי': item.currentStaff,
+      'תקן צוות': item.totalStaff,
+      'מורכבות המטופל': item.patientComplexity,
+      'מדד עומס (%)': item.totalLoad ? item.totalLoad.toFixed(2) + '%' : 'N/A'
+    }));
+
+    const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(dataToExport);
+    const workbook: XLSX.WorkBook = { Sheets: { 'נתונים': worksheet }, SheetNames: ['נתונים'] };
+    const excelBuffer: any = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
+
+    this.saveAsExcelFile(excelBuffer, 'filtered_data');
+  }
+
+  private saveAsExcelFile(buffer: any, fileName: string): void {
+    const data: Blob = new Blob([buffer], {
+      type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8'
+    });
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(data);
+    link.href = url;
+    link.download = `${fileName}.xlsx`;
+    link.click();
+    URL.revokeObjectURL(url); // Clean up URL.createObjectURL references
   }
 }
