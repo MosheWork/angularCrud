@@ -11,8 +11,11 @@ import { map, shareReplay } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
 import { DepartmentDetailDialogComponent } from '../../departmentLoad/department-detail/department-detail.component';
 import { EditDepartmentDialogComponent } from '../edit-department-dialog/edit-department-dialog.component';
-import { Chart, registerables, ChartConfiguration, ChartTypeRegistry } from 'chart.js';
+import { Chart, registerables, ChartConfiguration } from 'chart.js';
+import ChartDataLabels from 'chartjs-plugin-datalabels';  // Import the plugin
 import * as XLSX from 'xlsx';
+
+Chart.register(...registerables, ChartDataLabels);  // Register the plugin
 
 export interface DepartmentLoad {
   id: number;
@@ -63,7 +66,7 @@ export class DepartmentLoadDashboardComponent implements OnInit, AfterViewInit {
       this.updateGaugeValue();
     });
 
-    Chart.register(...registerables);
+    Chart.register(...registerables, ChartDataLabels);
   }
 
   ngOnInit(): void {
@@ -235,7 +238,31 @@ export class DepartmentLoadDashboardComponent implements OnInit, AfterViewInit {
       options: {
         responsive: true,
         maintainAspectRatio: false,
+        plugins: {
+          datalabels: {
+            color: '#000000', // Change label color to black for better contrast
+            font: {
+              size: 10, // Adjust font size
+              weight: 'bold' // Adjust font weight
+            },
+            anchor: 'end',
+            align: 'start',
+            formatter: function(value, context) {
+              const label = context.chart.data.labels && context.chart.data.labels[context.dataIndex]
+                ? context.chart.data.labels[context.dataIndex]
+                : '';
+              return (label as string).length > 15 ? (label as string).substring(0, 15) + '...' : label; // Truncate long labels
+            }
+          }
+        },
         scales: this.chartType === 'bar' ? {
+          x: {
+            ticks: {
+              autoSkip: false, // Show all labels on the x-axis
+              maxRotation: 45, // Rotate labels for better fit
+              minRotation: 45
+            }
+          },
           y: {
             beginAtZero: true
           }
@@ -245,6 +272,7 @@ export class DepartmentLoadDashboardComponent implements OnInit, AfterViewInit {
   
     this.chart = new Chart(this.chartCanvas.nativeElement.getContext('2d') as CanvasRenderingContext2D, config);
   }
+  
   
 
   getRandomColor(): string {
