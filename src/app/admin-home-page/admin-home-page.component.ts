@@ -32,6 +32,18 @@ export class AdminHomePageComponent implements OnInit {
       url: environment.angularUrl + 'GuidesList',
       imageUrl: './../../assets/מערכת מדריכים.jpg',
     },
+    {
+      title: 'מדד עומס   ',
+      description: '',
+      url: environment.angularUrl + 'departmentLoadDashboard',
+      imageUrl: './../../assets/מדד עומס.png',
+    },
+    {
+      title: ' סטטוס שרתים   ',
+      description: '',
+      url: environment.angularUrl + 'ServersStatus',
+      imageUrl: './../../assets/סטטוס שרתים.png',
+    },
     // Add more projects as needed
   ];
 

@@ -124,7 +124,7 @@ export class AdminDashboardComponent implements OnInit,AfterViewInit  {
 
   dashboardData: any[] = []; // Assuming the data structure is an array of objects
   dashboardColumns: string[] = [
-    'responsibility',
+    'fullName',
     'open_calls',
     'followUp_calls',
     'waiting_for_user_response',
@@ -132,6 +132,7 @@ export class AdminDashboardComponent implements OnInit,AfterViewInit  {
     'closed_today',
     'closed_this_month',
   ];
+  
 
   constructor(
     private http: HttpClient,
@@ -150,21 +151,23 @@ export class AdminDashboardComponent implements OnInit,AfterViewInit  {
   ngOnInit(): void {
     document.title = 'מערכת ניהול';
     this.loginUserName = localStorage.getItem('loginUserName') || '';
-    interval(60000) // Every 60 seconds
+  
+    // Fetch and initialize user data
+    interval(60000)
       .pipe(
-        startWith(0), // Start immediately upon component initialization
-        switchMap(() => this.fetchUserData()) // Switch to this Observable every time it emits
+        startWith(0),
+        switchMap(() => this.fetchUserData())
       )
       .subscribe(
         (data) => {
-          if (data.length > 0) this.userData = data[0]; // Update userData with the fetched data
-          this.checkForNewServiceCall(this.userData.open_calls); // Additional logic
+          if (data.length > 0) this.userData = data[0];
+          this.checkForNewServiceCall(this.userData.open_calls);
         },
         (error) => {
-          console.error('Error fetching user data:', error); // Handle any errors
+          console.error('Error fetching user data:', error);
         }
       );
-
+  
     // Initialize the filter predicate to filter based on the status text
     this.matTableDataSource.filterPredicate = (
       data: { status: string },
@@ -172,29 +175,52 @@ export class AdminDashboardComponent implements OnInit,AfterViewInit  {
     ) => {
       return data.status.trim().toLowerCase().includes(filter);
     };
-
+  
     // Fetching important messages
     this.fetchImportantMessages().subscribe((messages) => {
       this.importantMessages = messages;
-      console.log(this.importantMessages);
+      console.log('Important Messages:', this.importantMessages);
     });
-
+  
+    // Fetch dashboard data and initialize moveDescription from local storage using fullName as the unique identifier
+    this.fetchDashboardData().subscribe((dashboardData: any[]) => {
+      console.log('Fetched Dashboard Data:', dashboardData);
+      this.dashboardDataSource.data = dashboardData.map((element: any) => {
+        const savedStatus = localStorage.getItem(`moveDescription-${element.fullName}`);
+        if (savedStatus) {
+          console.log(`Initializing moveDescription for ${element.fullName}: ${savedStatus}`);
+          element.moveDescription = savedStatus;
+        }
+        return element;
+      });
+      this.dashboardDataSource.paginator = this.dashboardPaginator;
+      this.dashboardDataSource.sort = this.dashboardSort;
+    });
+  
     // Refresh dashboard data every 60 seconds
     interval(60000)
       .pipe(
-        startWith(0), // Start immediately
+        startWith(0),
         switchMap(() => this.fetchDashboardData())
       )
-      .subscribe((dashboardData) => {
-        this.dashboardDataSource.data = dashboardData;
+      .subscribe((dashboardData: any[]) => {
+        console.log('Refreshed Dashboard Data:', dashboardData);
+        this.dashboardDataSource.data = dashboardData.map((element: any) => {
+          const savedStatus = localStorage.getItem(`moveDescription-${element.fullName}`);
+          if (savedStatus) {
+            console.log(`Initializing moveDescription for ${element.fullName}: ${savedStatus}`);
+            element.moveDescription = savedStatus;
+          }
+          return element;
+        });
         this.dashboardDataSource.paginator = this.dashboardPaginator;
         this.dashboardDataSource.sort = this.dashboardSort;
       });
-
+  
     // Refresh todo list data every 60 seconds
     interval(60000)
       .pipe(
-        startWith(0), // Start immediately
+        startWith(0),
         switchMap(() => this.fetchTodoListData())
       )
       .subscribe((todoListData) => {
@@ -202,9 +228,11 @@ export class AdminDashboardComponent implements OnInit,AfterViewInit  {
         this.todoListDataSource.paginator = this.todoListPaginator;
         this.todoListDataSource.sort = this.todoListSort;
       });
+  
+    // Refresh task summary data every 60 seconds
     interval(60000)
       .pipe(
-        startWith(0), // Start immediately
+        startWith(0),
         switchMap(() => this.fetchTaskSummery())
       )
       .subscribe((taskSummeryData) => {
@@ -212,9 +240,12 @@ export class AdminDashboardComponent implements OnInit,AfterViewInit  {
         this.TaskSummeryDataSource.paginator = this.taskSummeryDataPaginator;
         this.TaskSummeryDataSource.sort = this.taskSummeryDataSort;
       });
-
-    
   }
+  
+  
+  
+  
+  
   ngAfterViewInit(): void {
     Chart.register(...registerables); 
     this.initializeDailyChart();
@@ -473,6 +504,13 @@ export class AdminDashboardComponent implements OnInit,AfterViewInit  {
       }
     });
   }
+  
+  toggleMoveDescription(element: any) {
+    element.moveDescription = element.moveDescription === 'Online' ? 'Offline' : 'Online';
+    console.log(`Toggling moveDescription for ${element.fullName}: ${element.moveDescription}`);
+    localStorage.setItem(`moveDescription-${element.fullName}`, element.moveDescription);
+  }
+  
   
   
   

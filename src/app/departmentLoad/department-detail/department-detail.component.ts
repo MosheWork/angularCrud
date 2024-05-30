@@ -14,6 +14,9 @@ export interface DepartmentLoad {
   totalStaff: number;
   patientComplexity: number;
   totalLoad?: number;
+  onLifeSupport?: number;
+  quarantineDef?: number;
+  quarantineAirAndTouch?: number;
 }
 
 @Component({
@@ -37,6 +40,7 @@ export class DepartmentDetailDialogComponent implements OnInit {
     this.http.get<DepartmentLoad>(`${environment.apiUrl}ChamelleonCurrentPatientsAPI/GetDepartmentById/${this.data.id}`)
       .subscribe(data => {
         this.department = data;
+        console.log('Department details:', data); // Log to ensure data is correct
       });
   }
 

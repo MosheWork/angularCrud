@@ -12,6 +12,8 @@ import { map, startWith } from 'rxjs/operators';
 import { tap } from 'rxjs/operators';
 import { environment } from '../../environments/environment'
 import * as XLSX from 'xlsx';
+import { DatePipe } from '@angular/common';
+
 
 interface FormControls {
   [key: string]: FormControl;
@@ -125,17 +127,18 @@ export class SysAidComponent implements OnInit {
     };
     return columnLabels[column] || column;
   }
-  // Constructor to initialize HttpClient and FormBuilder
 
   constructor(
     private http: HttpClient,
     private fb: FormBuilder,
-    private router: Router
+    private router: Router,
+    private datePipe: DatePipe // Inject DatePipe
   ) {
     this.filterForm = this.createFilterForm();
     this.matTableDataSource = new MatTableDataSource<any>([]);
     this.graphData = []; // Initialize graphData in the constructor
   }
+  
   // OnInit lifecycle hook
 
   ngOnInit() {
@@ -218,16 +221,20 @@ export class SysAidComponent implements OnInit {
   applyFilters() {
     const filters = this.filterForm.value;
     const globalFilter = filters['globalFilter'].toLowerCase();
-
+  
     this.filteredData = this.dataSource.filter(
       (item) =>
         this.columns.every((column) => {
-          const value = String(item[column]).toLowerCase();
-
+          let value = String(item[column]).toLowerCase();
+  
           if (column === 'insert_time' || column === 'update_time') {
             const dateValue = this.parseDate(item[column]);
             const filterDate = this.parseDate(filters[column]);
-
+  
+            if (dateValue) {
+              value = this.datePipe.transform(dateValue, 'yyyy-MM-dd HH:mm:ss') || value;
+            }
+  
             return (
               !filterDate ||
               (dateValue && this.isDateInRange(dateValue, filterDate, column))
@@ -251,11 +258,12 @@ export class SysAidComponent implements OnInit {
     this.totalResults = this.filteredData.length;
     this.matTableDataSource.data = this.filteredData;
     this.matTableDataSource.paginator = this.paginator;
-
+  
     this.graphData = this.filteredData;
     // Update graphData with the filtered data
     console.log(this.graphData);
   }
+  
 
   // Method to check if a date is in a specified range
   private isDateInRange(date: Date, filterDate: Date, column: string): boolean {

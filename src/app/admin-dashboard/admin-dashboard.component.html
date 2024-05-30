@@ -27,13 +27,32 @@
                 [dataSource]="dashboardDataSource"
                 class="mat-elevation-z8"
               >
-                <!-- Define each column definition and cell definitions here -->
-                <ng-container matColumnDef="responsibility">
-                  <th mat-header-cell *matHeaderCellDef>responsibility</th>
-                  <td mat-cell *matCellDef="let element">
-                    {{ element.responsibility }}
-                  </td>
-                </ng-container>
+              <ng-container matColumnDef="fullName">
+                <th mat-header-cell *matHeaderCellDef>Full Name</th>
+                <td mat-cell *matCellDef="let element">
+                  <mat-icon
+                    class="status-icon"
+                    [ngClass]="{
+                      'green-text': element.moveDescription === 'Online',
+                      'red-text': element.moveDescription === 'Offline'
+                    }"
+                    (click)="toggleMoveDescription(element)"
+                  >
+                    {{ element.moveDescription === 'Online' ? 'check_circle' : 'highlight_off' }}
+                  </mat-icon>
+                  <span
+                    [ngClass]="{
+                      'green-text': element.moveDescription === 'Online',
+                      'red-text': element.moveDescription === 'Offline'
+                    }"
+                  >
+                    {{ element.fullName }}
+                  </span>
+                </td>
+              </ng-container>
+              
+              
+            
                 <!-- Open Calls Column -->
                 <ng-container matColumnDef="open_calls">
                   <th mat-header-cell *matHeaderCellDef>Open Calls</th>

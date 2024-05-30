@@ -167,7 +167,15 @@
         {{ getColumnLabel(column) }}
         <!-- Use the function to get display-friendly labels -->
       </mat-header-cell>
-      <mat-cell *matCellDef="let element">{{ element[column] }}</mat-cell>
+      <mat-cell *matCellDef="let element">
+        <!-- Use Angular's date pipe for date columns -->
+        <span *ngIf="column === 'insert_time' || column === 'update_time'">
+          {{ element[column] | date: 'yyyy-MM-dd HH:mm:ss' }}
+        </span>
+        <span *ngIf="column !== 'insert_time' && column !== 'update_time'">
+          {{ element[column] }}
+        </span>
+      </mat-cell>
     </ng-container>
 
     <!-- Define the header row -->

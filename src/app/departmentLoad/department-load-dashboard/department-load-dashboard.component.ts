@@ -25,6 +25,9 @@ export interface DepartmentLoad {
   currentStaff: number;
   totalStaff: number;
   patientComplexity: number;
+  onLifeSupport?: number;
+  quarantineDef?: number;
+  quarantineAirAndTouch?: number;
   totalLoad?: number;
 }
 
@@ -34,10 +37,22 @@ export interface DepartmentLoad {
   styleUrls: ['./department-load-dashboard.component.scss']
 })
 export class DepartmentLoadDashboardComponent implements OnInit, AfterViewInit {
-  displayedColumns: string[] = ['departName', 'patientCount', 'totalBeds', 'currentStaff', 'totalStaff', 'patientComplexity', 'totalLoad', 'actions'];
+  displayedColumns: string[] = [
+    'departName',
+    'patientCount',
+    'totalBeds',
+    'currentStaff',
+    'totalStaff',
+    'patientComplexity',
+    'totalLoad',
+    'actions'
+  ];
   dataSource = new MatTableDataSource<DepartmentLoad>();
   gaugeValue: number = 0;
   totalPatients: number = 0;
+  totalOnLifeSupport: number = 0;
+  totalQuarantineDef: number = 0;
+  totalQuarantineAirAndTouch: number = 0;
   isHandset$: Observable<boolean>;
   loginUserName = '';
   selectedDepartments: string[] = [];
@@ -46,7 +61,6 @@ export class DepartmentLoadDashboardComponent implements OnInit, AfterViewInit {
   private chart?: Chart<'bar' | 'pie'>;
   chartType: 'bar' | 'pie' = 'bar';
   isPieChart: boolean = true;
-
 
   @ViewChild(MatSort) sort!: MatSort;
   @ViewChild(MatPaginator) paginator!: MatPaginator;
@@ -104,17 +118,38 @@ export class DepartmentLoadDashboardComponent implements OnInit, AfterViewInit {
   fetchData(): void {
     this.http.get<DepartmentLoad[]>(`${environment.apiUrl}ChamelleonCurrentPatientsAPI/GetPatientCount`)
       .subscribe((data: DepartmentLoad[]) => {
+        console.log('Fetched data:', data); // Log fetched data to ensure it's correct
         const departments = data.map((department: DepartmentLoad) => ({
           ...department,
           totalLoad: this.calculateTotalLoad(department.patientCount, department.totalBeds)
         }));
+  
+        // Log each department to check values
+        departments.forEach(department => {
+          console.log('Department:', department);
+        });
+  
         this.dataSource.data = departments;
         this.updateGaugeValue();
-        this.createChart(departments);
+  
+        // Calculate totals for new properties
+        this.totalOnLifeSupport = departments.reduce((sum, department) => sum + (department.onLifeSupport ?? 0), 0);
+        this.totalQuarantineDef = departments.reduce((sum, department) => sum + (department.quarantineDef ?? 0), 0);
+        this.totalQuarantineAirAndTouch = departments.reduce((sum, department) => sum + (department.quarantineAirAndTouch ?? 0), 0);
+  
+        console.log('Total OnLifeSupport:', this.totalOnLifeSupport); // Log to check if values are correct
+        console.log('Total QuarantineDef:', this.totalQuarantineDef); // Log to check if values are correct
+        console.log('Total QuarantineAirAndTouch:', this.totalQuarantineAirAndTouch); // Log to check if values are correct
+  
+        // Create the chart if not already created
+        if (this.chartCanvas) {
+          this.createChart(departments);
+        }
       }, (error: any) => {
         console.error('Error fetching data', error);
       });
   }
+  
 
   calculateTotalLoad(patientCount: number, totalBeds: number): number {
     return totalBeds > 0 ? (patientCount / totalBeds) * 100 : 0;
@@ -200,11 +235,18 @@ export class DepartmentLoadDashboardComponent implements OnInit, AfterViewInit {
     });
   }
 
-
-
   switchChartType(): void {
     this.chartType = this.chartType === 'bar' ? 'pie' : 'bar';
     this.createChart(this.dataSource.data); // Recreate the chart with the new type
+  }
+
+  toggleView(): void {
+    this.showTable = !this.showTable; // Toggle the view
+    if (!this.showTable) {
+      setTimeout(() => {
+        this.createChart(this.dataSource.data); // Create the chart if switching to graph view
+      });
+    }
   }
 
   createChart(departments: DepartmentLoad[]): void {
@@ -285,6 +327,9 @@ export class DepartmentLoadDashboardComponent implements OnInit, AfterViewInit {
       'צוות נוכחי': item.currentStaff,
       'תקן צוות': item.totalStaff,
       'מורכבות המטופל': item.patientComplexity,
+      'מונשמים': item.onLifeSupport ? item.onLifeSupport.toFixed(2) : 'N/A',
+      'הבידוד הגנתי': item.quarantineDef ? item.quarantineDef.toFixed(2) : 'N/A',
+      'בידוד מגע ואויר': item.quarantineAirAndTouch ? item.quarantineAirAndTouch.toFixed(2) : 'N/A',
       'מדד עומס (%)': item.totalLoad ? item.totalLoad.toFixed(2) + '%' : 'N/A'
     }));
 
@@ -306,14 +351,4 @@ export class DepartmentLoadDashboardComponent implements OnInit, AfterViewInit {
     link.click();
     URL.revokeObjectURL(url); // Clean up URL.createObjectURL references
   }
-  toggleView(): void {
-    this.showTable = !this.showTable; // Toggle the view
-    if (!this.showTable) {
-      setTimeout(() => {
-        this.createChart(this.dataSource.data); // Create the chart if switching to graph view
-      });
-    }
-  }
-
-  
 }
