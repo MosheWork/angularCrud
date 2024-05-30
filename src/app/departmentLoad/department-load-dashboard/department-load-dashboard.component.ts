@@ -61,6 +61,7 @@ export class DepartmentLoadDashboardComponent implements OnInit, AfterViewInit {
   private chart?: Chart<'bar' | 'pie'>;
   chartType: 'bar' | 'pie' = 'bar';
   isPieChart: boolean = true;
+  showCardView: boolean = false; // Add this property to toggle between table and card views
 
   @ViewChild(MatSort) sort!: MatSort;
   @ViewChild(MatPaginator) paginator!: MatPaginator;
@@ -247,6 +248,10 @@ export class DepartmentLoadDashboardComponent implements OnInit, AfterViewInit {
         this.createChart(this.dataSource.data); // Create the chart if switching to graph view
       });
     }
+  }
+
+  toggleCardView(): void { // Add this method to toggle card view
+    this.showCardView = !this.showCardView;
   }
 
   createChart(departments: DepartmentLoad[]): void {

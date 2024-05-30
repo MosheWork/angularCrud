@@ -29,6 +29,11 @@
                 <mat-icon>clear</mat-icon>
               </button>
               
+              <!-- Add button to toggle card view -->
+              <button mat-icon-button aria-label="Toggle card view" matTooltip="החלף לתצוגת כרטיסים" (click)="toggleCardView()" class="toggle-card-view-button">
+                <mat-icon>view_module</mat-icon>
+              </button>
+
               <!-- Conditionally display the graph and table icons -->
               <img
                 *ngIf="showTable"
@@ -57,133 +62,159 @@
             </div>
           </div>
 
-          <div *ngIf="showTable; else graphView">
-            <div class="cards-container">
-              <mat-card class="table-card">
-                <mat-card-content>
-                  <table mat-table [dataSource]="dataSource" matSort class="mat-elevation-z8">
-                    <ng-container matColumnDef="departName">
-                      <th mat-header-cell *matHeaderCellDef mat-sort-header> שם מחלקה </th>
-                      <td mat-cell *matCellDef="let element"> {{element.departName}} </td>
-                    </ng-container>
+          <div *ngIf="!showCardView">
+            <div *ngIf="showTable; else graphView">
+              <div class="cards-container">
+                <mat-card class="table-card">
+                  <mat-card-content>
+                    <table mat-table [dataSource]="dataSource" matSort class="mat-elevation-z8">
+                      <ng-container matColumnDef="departName">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header> שם מחלקה </th>
+                        <td mat-cell *matCellDef="let element"> {{element.departName}} </td>
+                      </ng-container>
 
-                    <ng-container matColumnDef="patientCount">
-                      <th mat-header-cell *matHeaderCellDef mat-sort-header> סה"כ מטופלים </th>
-                      <td mat-cell *matCellDef="let element"> {{element.patientCount}} </td>
-                    </ng-container>
+                      <ng-container matColumnDef="patientCount">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header> סה"כ מטופלים </th>
+                        <td mat-cell *matCellDef="let element"> {{element.patientCount}} </td>
+                      </ng-container>
 
-                    <ng-container matColumnDef="totalBeds">
-                      <th mat-header-cell *matHeaderCellDef mat-sort-header> סה"כ מיטות </th>
-                      <td mat-cell *matCellDef="let element"> {{element.totalBeds}} </td>
-                    </ng-container>
+                      <ng-container matColumnDef="totalBeds">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header> סה"כ מיטות </th>
+                        <td mat-cell *matCellDef="let element"> {{element.totalBeds}} </td>
+                      </ng-container>
 
-                    <ng-container matColumnDef="currentStaff">
-                      <th mat-header-cell *matHeaderCellDef mat-sort-header> צוות נוכחי </th>
-                      <td mat-cell *matCellDef="let element"> {{element.currentStaff}} </td>
-                    </ng-container>
+                      <ng-container matColumnDef="currentStaff">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header> צוות נוכחי </th>
+                        <td mat-cell *matCellDef="let element"> {{element.currentStaff}} </td>
+                      </ng-container>
 
-                    <ng-container matColumnDef="totalStaff">
-                      <th mat-header-cell *matHeaderCellDef mat-sort-header> תקן צוות </th>
-                      <td mat-cell *matCellDef="let element"> {{element.totalStaff}} </td>
-                    </ng-container>
+                      <ng-container matColumnDef="totalStaff">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header> תקן צוות </th>
+                        <td mat-cell *matCellDef="let element"> {{element.totalStaff}} </td>
+                      </ng-container>
 
-                    <ng-container matColumnDef="patientComplexity">
-                      <th mat-header-cell *matHeaderCellDef mat-sort-header> מורכבות המטופל </th>
-                      <td mat-cell *matCellDef="let element"> {{element.patientComplexity}} </td>
-                    </ng-container>
+                      <ng-container matColumnDef="patientComplexity">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header> מורכבות המטופל </th>
+                        <td mat-cell *matCellDef="let element"> {{element.patientComplexity}} </td>
+                      </ng-container>
 
-                    <!-- <ng-container matColumnDef="onLifeSupport">
-                      <th mat-header-cell *matHeaderCellDef mat-sort-header> מונשמים </th>
-                      <td mat-cell *matCellDef="let element"> {{element.onLifeSupport}} </td>
-                    </ng-container>
+                      <!-- <ng-container matColumnDef="onLifeSupport">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header> מונשמים </th>
+                        <td mat-cell *matCellDef="let element"> {{element.onLifeSupport}} </td>
+                      </ng-container>
 
-                    <ng-container matColumnDef="quarantineDef">
-                      <th mat-header-cell *matHeaderCellDef mat-sort-header> הבידוד הגנתי </th>
-                      <td mat-cell *matCellDef="let element"> {{element.quarantineDef}} </td>
-                    </ng-container>
+                      <ng-container matColumnDef="quarantineDef">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header> הבידוד הגנתי </th>
+                        <td mat-cell *matCellDef="let element"> {{element.quarantineDef}} </td>
+                      </ng-container>
 
-                    <ng-container matColumnDef="quarantineAirAndTouch">
-                      <th mat-header-cell *matHeaderCellDef mat-sort-header> בידוד מגע ואויר </th>
-                      <td mat-cell *matCellDef="let element"> {{element.quarantineAirAndTouch}} </td>
-                    </ng-container> -->
+                      <ng-container matColumnDef="quarantineAirAndTouch">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header> בידוד מגע ואויר </th>
+                        <td mat-cell *matCellDef="let element"> {{element.quarantineAirAndTouch}} </td>
+                      </ng-container> -->
 
-                    <ng-container matColumnDef="totalLoad">
-                      <th mat-header-cell *matHeaderCellDef mat-sort-header> מדד עומס (%) </th>
-                      <td mat-cell *matCellDef="let element" [ngClass]="getTotalLoadClass(element.totalLoad)"> {{element.totalLoad | number: '1.0-2'}}% </td>
-                    </ng-container>
+                      <ng-container matColumnDef="totalLoad">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header> מדד עומס (%) </th>
+                        <td mat-cell *matCellDef="let element" [ngClass]="getTotalLoadClass(element.totalLoad)"> {{element.totalLoad | number: '1.0-2'}}% </td>
+                      </ng-container>
 
-                    <ng-container matColumnDef="actions">
-                      <th mat-header-cell *matHeaderCellDef> פעולות </th>
-                      <td mat-cell *matCellDef="let element" class="actions-cell">
-                        <button mat-icon-button (click)="openEditDialog(element)">
-                          <mat-icon>edit</mat-icon>
-                        </button>
-                        <button mat-icon-button (click)="openMoreInfo(element)">
-                          <mat-icon>info</mat-icon>
-                        </button>
-                      </td>
-                    </ng-container>
+                      <ng-container matColumnDef="actions">
+                        <th mat-header-cell *matHeaderCellDef> פעולות </th>
+                        <td mat-cell *matCellDef="let element" class="actions-cell">
+                          <button mat-icon-button (click)="openEditDialog(element)">
+                            <mat-icon>edit</mat-icon>
+                          </button>
+                          <button mat-icon-button (click)="openMoreInfo(element)">
+                            <mat-icon>info</mat-icon>
+                          </button>
+                        </td>
+                      </ng-container>
 
-                    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-                    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-                  </table>
-                  <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
-                </mat-card-content>
-              </mat-card>
-              <mat-card class="gauge-card">
-                <mat-card-header>
-                  <mat-card-title>מדד עומס כולל</mat-card-title>
-                </mat-card-header>
-                <mat-card-content>
-                  <ngx-gauge
-                    [size]="200"
-                    [value]="gaugeValue"
-                    [min]="0"
-                    [max]="100"
-                    [type]="'full'"
-                    [cap]="'round'"
-                    [thick]="20"
-                    [label]="'מדד עומס כולל'"
-                    [foregroundColor]="getGaugeColor(gaugeValue)"
-                    [backgroundColor]="'#e0e0e0'"
-                    [append]="'%'"
-                    [duration]="1500">
-                  </ngx-gauge>
-                  <div class="total-patients">
-                    <span>סה"כ מטופלים: {{ totalPatients }}</span>
-                    <span>סה"כ מונשמים: {{ totalOnLifeSupport }}</span>
-                    <span>סה"כ הועברו לחדר ניתוח: XX</span>
-                    <span>סה"כ הבידוד הגנתי: {{ totalQuarantineDef }}</span>
-                    <span>סה"כ בידוד מגע ואויר: {{ totalQuarantineAirAndTouch }}</span>
-                  </div>
-                  
-                </mat-card-content>
-              </mat-card>
-            </div>
-          </div>
-
-          <ng-template #graphView>
-            <div class="chart-container">
-              <img
-                *ngIf="chartType === 'bar'"
-                src="../../../../assets/pieIcon.jpg"
-                matTooltip="החלף לגרף עוגה"
-                (click)="switchChartType()"
-                width="50px"
-              />
-              
-              <img
-                *ngIf="chartType === 'pie'"
-                src="../../../../assets/BarIcon.png"
-                matTooltip="החלף לגרף עמודות"
-                (click)="switchChartType()"
-                width="50px"
-              />
-              <div style="width: 100%; height: 400px;">
-                <canvas #chartCanvas></canvas>
+                      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+                    </table>
+                    <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
+                  </mat-card-content>
+                </mat-card>
+                <mat-card class="gauge-card">
+                  <mat-card-header>
+                    <mat-card-title>מדד עומס כולל</mat-card-title>
+                  </mat-card-header>
+                  <mat-card-content>
+                    <ngx-gauge
+                      [size]="200"
+                      [value]="gaugeValue"
+                      [min]="0"
+                      [max]="100"
+                      [type]="'full'"
+                      [cap]="'round'"
+                      [thick]="20"
+                      [label]="'מדד עומס כולל'"
+                      [foregroundColor]="getGaugeColor(gaugeValue)"
+                      [backgroundColor]="'#e0e0e0'"
+                      [append]="'%'"
+                      [duration]="1500">
+                    </ngx-gauge>
+                    <div class="total-patients">
+                      <span>סה"כ מטופלים: {{ totalPatients }}</span>
+                      <span>סה"כ מונשמים: {{ totalOnLifeSupport }}</span>
+                      <span>סה"כ הועברו לחדר ניתוח: XX</span>
+                      <span>סה"כ הבידוד הגנתי: {{ totalQuarantineDef }}</span>
+                      <span>סה"כ בידוד מגע ואויר: {{ totalQuarantineAirAndTouch }}</span>
+                    </div>
+                    
+                  </mat-card-content>
+                </mat-card>
               </div>
             </div>
-          </ng-template>
+
+            <ng-template #graphView>
+              <div class="chart-container">
+                <img
+                  *ngIf="chartType === 'bar'"
+                  src="../../../../assets/pieIcon.jpg"
+                  matTooltip="החלף לגרף עוגה"
+                  (click)="switchChartType()"
+                  width="50px"
+                />
+                
+                <img
+                  *ngIf="chartType === 'pie'"
+                  src="../../../../assets/BarIcon.png"
+                  matTooltip="החלף לגרף עמודות"
+                  (click)="switchChartType()"
+                  width="50px"
+                />
+                <div style="width: 100%; height: 400px;">
+                  <canvas #chartCanvas></canvas>
+                </div>
+              </div>
+            </ng-template>
+          </div>
+          
+          <!-- Add card view template -->
+          <div *ngIf="showCardView" class="card-view-container">
+            <mat-card *ngFor="let element of dataSource.filteredData" class="department-card" [ngClass]="getTotalLoadClass(element.totalLoad ?? 0)">
+              <mat-card-header>
+                <mat-card-title>{{ element.departName }}</mat-card-title>
+              </mat-card-header>
+              <mat-card-content>
+                <p>סה"כ מטופלים: {{ element.patientCount }}</p>
+                <p>סה"כ מיטות: {{ element.totalBeds }}</p>
+                <p>צוות נוכחי: {{ element.currentStaff }}</p>
+                <p>תקן צוות: {{ element.totalStaff }}</p>
+                <p>מורכבות המטופל: {{ element.patientComplexity }}</p>
+                <p>מדד עומס (%): {{ element.totalLoad | number: '1.0-2' }}%</p>
+                <button mat-icon-button (click)="openEditDialog(element)">
+                  <mat-icon>edit</mat-icon>
+                </button>
+                <button mat-icon-button (click)="openMoreInfo(element)">
+                  <mat-icon>info</mat-icon>
+                </button>
+              </mat-card-content>
+            </mat-card>
+          </div>
+          
         </div>
       </mat-tab>
 

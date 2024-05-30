@@ -142,3 +142,39 @@ ngx-gauge ::ng-deep .reading-block {
 .mat-cell .actions-cell button:last-child {
   margin-right: 0; /* No margin for the last button */
 }
+.card-view-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.department-card {
+  width: calc(20% - 16px);
+  margin-bottom: 16px;
+}
+
+@media (max-width: 768px) {
+  .department-card {
+    width: calc(50% - 16px);
+  }
+}
+
+@media (max-width: 480px) {
+  .department-card {
+    width: 100%;
+  }
+}
+.total-load-red {
+  background-color: #f8d7da;
+  color: #721c24;
+}
+
+.total-load-yellow {
+  background-color: #fff3cd;
+  color: #856404;
+}
+
+.total-load-green {
+  background-color: #d4edda;
+  color: #155724;
+}
