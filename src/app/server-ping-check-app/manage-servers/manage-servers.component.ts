@@ -11,7 +11,7 @@ import { AddEditServerDialogComponent } from '../add-edit-server-dialog/add-edit
 })
 export class ManageServersComponent implements OnInit {
   servers: any[] = [];
-  displayedColumns: string[] = ['hostname', 'description', 'createdBy', 'actions'];
+  displayedColumns: string[] = ['hostname', 'description', 'type', 'createdBy', 'actions'];
 
   constructor(private http: HttpClient, public dialog: MatDialog) { }
 
@@ -50,7 +50,12 @@ export class ManageServersComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        this.loadServers();
+        console.log('Dialog result:', result); // Add this line
+        this.http.post(`${environment.apiUrl}ServerPingCheckAPI/CreateServer`, result).subscribe(() => {
+          this.loadServers();
+        }, error => {
+          console.error('Error creating server:', error);
+        });
       }
     });
   }
@@ -63,7 +68,12 @@ export class ManageServersComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        this.loadServers();
+        console.log('Dialog result:', result); // Add this line
+        this.http.put(`${environment.apiUrl}ServerPingCheckAPI/UpdateServer/${server.serverId}`, result).subscribe(() => {
+          this.loadServers();
+        }, error => {
+          console.error('Error updating server:', error);
+        });
       }
     });
   }

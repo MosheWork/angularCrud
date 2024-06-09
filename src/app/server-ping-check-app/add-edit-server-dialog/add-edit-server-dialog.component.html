@@ -1,19 +1,28 @@
-<h2 mat-dialog-title>{{ data.server ? 'Edit Server' : 'Add Server' }}</h2>
-<mat-dialog-content>
-  <mat-form-field appearance="fill">
-    <mat-label>Hostname</mat-label>
-    <input matInput [(ngModel)]="server.hostname" />
-  </mat-form-field>
-  <mat-form-field appearance="fill">
-    <mat-label>Description</mat-label>
-    <input matInput [(ngModel)]="server.description" />
-  </mat-form-field>
-  <mat-form-field appearance="fill">
-    <mat-label>Created By</mat-label>
-    <input matInput [(ngModel)]="server.createdBy" />
-  </mat-form-field>
-</mat-dialog-content>
-<mat-dialog-actions>
+<h1 mat-dialog-title>{{ data.server ? 'Edit Server' : 'Add Server' }}</h1>
+<div mat-dialog-content>
+  <form [formGroup]="serverForm">
+    <mat-form-field appearance="fill">
+      <mat-label>Hostname</mat-label>
+      <input matInput formControlName="hostname">
+    </mat-form-field>
+
+    <mat-form-field appearance="fill">
+      <mat-label>Description</mat-label>
+      <input matInput formControlName="description">
+    </mat-form-field>
+
+    <mat-form-field appearance="fill">
+      <mat-label>Type</mat-label>
+      <input matInput formControlName="type">
+    </mat-form-field>
+
+    <mat-form-field appearance="fill">
+      <mat-label>Created By</mat-label>
+      <input matInput formControlName="createdBy">
+    </mat-form-field>
+  </form>
+</div>
+<div mat-dialog-actions>
   <button mat-button (click)="onCancel()">Cancel</button>
-  <button mat-raised-button color="primary" (click)="onSave()">Save</button>
-</mat-dialog-actions>
+  <button mat-button (click)="onSave()">Save</button>
+</div>

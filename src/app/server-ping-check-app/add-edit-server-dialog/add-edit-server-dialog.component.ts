@@ -1,7 +1,6 @@
 import { Component, Inject } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { HttpClient } from '@angular/common/http';
-import { environment } from '../../../environments/environment';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-add-edit-server-dialog',
@@ -9,35 +8,29 @@ import { environment } from '../../../environments/environment';
   styleUrls: ['./add-edit-server-dialog.component.scss']
 })
 export class AddEditServerDialogComponent {
-  server: any;
+  serverForm: FormGroup;
 
   constructor(
     public dialogRef: MatDialogRef<AddEditServerDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
-    private http: HttpClient
+    private fb: FormBuilder
   ) {
-    this.server = data.server ? { ...data.server } : { hostname: '', description: '', createdBy: '' };
+    this.serverForm = this.fb.group({
+      hostname: [data.server ? data.server.hostname : '', Validators.required],
+      description: [data.server ? data.server.description : ''],
+      type: [data.server ? data.server.type : '', Validators.required], // New field
+      createdBy: [data.server ? data.server.createdBy : '', Validators.required]
+    });
+  }
+
+  onSave(): void {
+    if (this.serverForm.valid) {
+      console.log('Form data to be saved:', this.serverForm.value); // Add this line
+      this.dialogRef.close(this.serverForm.value);
+    }
   }
 
   onCancel(): void {
     this.dialogRef.close();
-  }
-
-  onSave(): void {
-    if (this.data.server) {
-      // Edit server
-      this.http.put(`${environment.apiUrl}ServerPingCheckAPI/UpdateServer/${this.server.serverId}`, this.server).subscribe(response => {
-        this.dialogRef.close(true);
-      }, error => {
-        console.error('Error updating server:', error);
-      });
-    } else {
-      // Add server
-      this.http.post(`${environment.apiUrl}ServerPingCheckAPI/CreateServer`, this.server).subscribe(response => {
-        this.dialogRef.close(true);
-      }, error => {
-        console.error('Error adding server:', error);
-      });
-    }
   }
 }
