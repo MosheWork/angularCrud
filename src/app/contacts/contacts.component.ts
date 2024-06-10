@@ -39,7 +39,7 @@ export class ContactsComponent implements OnInit {
 
   openEditDialog(contact: any): void {
     const dialogRef = this.dialog.open(AddEditContactDialogComponent, {
-      width: '400px',
+      width: '600px',
       data: { isEdit: true, contact }
     });
 
@@ -68,7 +68,7 @@ export class ContactsComponent implements OnInit {
 
   openAddDialog(): void {
     const dialogRef = this.dialog.open(AddEditContactDialogComponent, {
-      width: '400px',
+      width: '600px',
       data: { isEdit: false }
     });
 
