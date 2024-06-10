@@ -10,10 +10,7 @@
     <textarea matInput placeholder="Description" [(ngModel)]="description" required></textarea>
   </mat-form-field>
 
-  <!-- <mat-form-field appearance="fill">
-    <mat-label>Creation Date</mat-label>
-    <input matInput placeholder="Creation Date" [(ngModel)]="creationDate" type="datetime-local" required>
-  </mat-form-field> -->
+
 
  <!-- Due Date input with DatePicker -->
 <mat-form-field appearance="fill">
@@ -29,10 +26,7 @@
   <input matInput type="time" [(ngModel)]="dueTime" placeholder="HH:MM" (change)="dueTimeChange($event)" required>
 </mat-form-field>
 
-  <!-- <mat-form-field appearance="fill">
-    <mat-label>Created By</mat-label>
-    <input matInput placeholder="{}" [(ngModel)]="createdBy" >
-  </mat-form-field> -->
+ 
 
   <mat-form-field appearance="fill">
     <mat-label>User</mat-label>
@@ -47,3 +41,5 @@
   <button mat-button (click)="onNoClick()">Cancel</button>
   <button mat-button [disabled]="!formValid()" (click)="saveTask()">Save</button>
 </div>
+
+

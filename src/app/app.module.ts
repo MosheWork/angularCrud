@@ -82,6 +82,9 @@ import { CurrentPatientsComponent } from './departmentLoad/current-patients/curr
 import { DigitalFormComponent } from './forms/digital-form/digital-form.component';
 import { EditDepartmentDialogComponent } from './departmentLoad/edit-department-dialog/edit-department-dialog.component';
 import { DepartmentLoadByShiftComponent } from './departmentLoad/department-load-by-shift/department-load-by-shift.component';
+import { ContactsComponent } from './contacts/contacts.component';
+import { AddEditContactDialogComponent } from './contacts/add-edit-contact-dialog/add-edit-contact-dialog.component';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 
 @NgModule({
   declarations: [
@@ -135,6 +138,8 @@ import { DepartmentLoadByShiftComponent } from './departmentLoad/department-load
     DigitalFormComponent,
     EditDepartmentDialogComponent,
     DepartmentLoadByShiftComponent,
+    ContactsComponent,
+    AddEditContactDialogComponent,
   ],
   imports: [
     BrowserModule,
@@ -169,7 +174,9 @@ import { DepartmentLoadByShiftComponent } from './departmentLoad/department-load
     MatGridListModule,
     AngularEditorModule,
     MatProgressSpinnerModule,
-    NgxGaugeModule
+    NgxGaugeModule,
+    MatSlideToggleModule
+
   ],
   providers: [DatePipe],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],

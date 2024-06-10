@@ -12,6 +12,8 @@ import { interval, Subscription } from 'rxjs';
 export class ServerPingCheckAppComponent implements OnInit, OnDestroy {
   servers: any[] = [];
   filteredServers: any[] = [];
+  serverTypeServers: any[] = [];
+  otherTypeServers: any[] = [];
   pingResults: { [key: number]: any } = {};
   searchControl = new FormControl('');
   private pingInterval: Subscription | null = null;
@@ -37,9 +39,15 @@ export class ServerPingCheckAppComponent implements OnInit, OnDestroy {
       this.servers = servers;
       this.filteredServers = servers;
       this.autoPingServers();
+      this.categorizeServers();
     }, error => {
       console.error('Error loading servers:', error);
     });
+  }
+
+  categorizeServers(): void {
+    this.serverTypeServers = this.filteredServers.filter(server => server.type === 'Server');
+    this.otherTypeServers = this.filteredServers.filter(server => server.type !== 'Server');
   }
 
   filterServers(searchText: string): void {
@@ -47,6 +55,7 @@ export class ServerPingCheckAppComponent implements OnInit, OnDestroy {
       server.hostname.toLowerCase().includes(searchText.toLowerCase()) ||
       server.description.toLowerCase().includes(searchText.toLowerCase())
     );
+    this.categorizeServers();
   }
 
   sendPingNow(): void {

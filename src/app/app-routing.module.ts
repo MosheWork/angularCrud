@@ -32,6 +32,7 @@ import { ManageServersComponent } from './server-ping-check-app/manage-servers/m
 import { DepartmentLoadDashboardComponent } from './departmentLoad/department-load-dashboard/department-load-dashboard.component';
 import { DepartmentDetailDialogComponent } from './departmentLoad/department-detail/department-detail.component';
 import { CurrentPatientsComponent } from './departmentLoad/current-patients/current-patients.component';
+import { ContactsComponent } from './contacts/contacts.component';
 
 const routes: Routes = [
   { path: 'users', component: UsersComponent },
@@ -84,7 +85,10 @@ const routes: Routes = [
 
 { path: 'departmentLoadDashboard', component: DepartmentLoadDashboardComponent },
 { path: 'department-detail/:id', component: DepartmentDetailDialogComponent },
-{ path: 'current-patients', component: CurrentPatientsComponent }
+{ path: 'current-patients', component: CurrentPatientsComponent },
+
+//contactInfo
+{ path: 'contacts', component: ContactsComponent }
 
 
 

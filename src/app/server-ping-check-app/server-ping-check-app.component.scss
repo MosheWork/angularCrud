@@ -1,88 +1,112 @@
 /* Container for the entire page */
 .container {
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh;
-    width: 99%;
-  }
-  
-  /* Content section to grow and take up remaining space */
-  .content {
-    flex: 1;
-    padding: 8px;
-  }
-  
-  /* Server container styles */
-  .server-container {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 4px;
-    justify-content: space-around;
-  }
-  
-  /* Individual server card styles */
-  .server-card {
-    width: 200px;
-    padding: 8px;
-    color: rgb(0, 0, 0);
-    text-align: center;
-    border: 1px solid rgb(0, 0, 0); /* Adding a border */
-    border-radius: 8px; /* Adding rounded corners */
-    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1); /* Adding a subtle shadow */
-  }
-  
-  /* Toolbar styles for the header and footer */
-  mat-toolbar {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 10px;
-  }
-  
-  /* Additional button and card content styles */
-  button {
-    margin: 10px;
-  }
-  
-  mat-card-title {
-    font-size: 1.2em;
-    margin-bottom: 8px;
-  }
-  
-  mat-card-content p {
-    margin: 0;
-    font-size: 0.9em;
-  }
-  
-  mat-card-content {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-  
-  mat-card-content button {
-    margin-top: 16px;
-  }
-  
-  /* Status classes */
-  .status-online {
-    font-weight: bold;
-    color: green;
-  }
-  
-  .status-offline {
-    font-weight: bold;
-    color: red;
-  }
-  
-  /* Ensures the footer is at the bottom */
-  .footer {
-    flex-shrink: 0;
-  }
-  
-  /* Add styles for the search input */
-  mat-form-field {
-    width: 100%;
-    margin-bottom: 8px;
-  }
-  
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  width: 99%;
+}
+
+/* Content section to grow and take up remaining space */
+.content {
+  flex: 1;
+  padding: 8px;
+}
+
+/* Section container styles */
+.section-container {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 8px;
+  margin-bottom: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Adding a subtle shadow */
+  background-color: #f9f9f9; /* Light background color */
+}
+
+/* Title styles */
+.section-container h2 {
+  text-align: center;
+  margin-top: 0;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Icon styles */
+.section-container h2 mat-icon {
+  margin-right: 8px;
+}
+
+/* Server container styles */
+.server-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+}
+
+/* Individual server card styles */
+.server-card {
+  width: 200px;
+  padding: 8px;
+  color: rgb(0, 0, 0);
+  text-align: center;
+  border: 1px solid rgb(0, 0, 0); /* Adding a border */
+  border-radius: 8px; /* Adding rounded corners */
+  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1); /* Adding a subtle shadow */
+}
+
+/* Toolbar styles for the header and footer */
+mat-toolbar {
+  display: flex;
+  justify-content: space-between; /* Adjusting alignment */
+  align-items: center;
+  padding: 10px;
+}
+
+/* Additional button and card content styles */
+button {
+  margin: 4px;
+}
+
+mat-card-title {
+  font-size: 1.2em;
+  margin-bottom: 8px;
+}
+
+mat-card-content p {
+  margin: 0;
+  font-size: 0.9em;
+}
+
+mat-card-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+mat-card-content button {
+  margin-top: 4px;
+}
+
+/* Status classes */
+.status-online {
+  font-weight: bold;
+  color: green;
+}
+
+.status-offline {
+  font-weight: bold;
+  color: red;
+}
+
+/* Ensures the footer is at the bottom */
+.footer {
+  flex-shrink: 0;
+}
+
+/* Add styles for the search input */
+mat-form-field {
+  width: 100%;
+  margin-bottom: 4px;
+}
