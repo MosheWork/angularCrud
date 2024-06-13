@@ -12,10 +12,8 @@ import { AddEditContactDialogComponent } from '../contacts/add-edit-contact-dial
 })
 export class ContactsComponent implements OnInit {
   contacts: any[] = [];
-  displayedColumns: string[] = ['companyName', 'name', 'position', 'phone', 'email', 'description', 'actions'];
+  displayedColumns: string[] = ['deptInHospital','companyName', 'name', 'position', 'phone', 'email', 'description',  'actions'];
   filteredContacts = new MatTableDataSource<any>(this.contacts);
-
-  //private apiUrl = `${environment.apiUrl}/ContactsInfoAPI`;
 
   constructor(private http: HttpClient, public dialog: MatDialog) { }
 

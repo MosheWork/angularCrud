@@ -1,12 +1,12 @@
-<div class="container" >
-    <div class="content" >
-      <div class="header-bar">
-        <mat-form-field appearance="outline" style="flex: 1; margin-right: 16px;">
-          <mat-label>Search Contacts</mat-label>
-          <input matInput (input)="applyFilter($event)" placeholder="Search by company name or name">
-        </mat-form-field>
-     
-        <button
+<div class="container">
+  <div class="content">
+    <div class="header-bar">
+      <mat-form-field appearance="outline" class="search-field">
+        <mat-label>Search Contacts</mat-label>
+        <input matInput (input)="applyFilter($event)" placeholder="Search by company name or name">
+      </mat-form-field>
+
+      <button
         mat-fab
         color="primary"
         class="add-task-btn"
@@ -15,58 +15,64 @@
       >
         <mat-icon>add</mat-icon>
       </button>
-      </div>
-  
-      <table mat-table [dataSource]="filteredContacts" class="mat-elevation-z8" style="width: 100%;">
-        <!-- Company Name Column -->
-        <ng-container matColumnDef="companyName">
-          <th mat-header-cell *matHeaderCellDef> שם החברה </th>
-          <td mat-cell *matCellDef="let contact"> {{contact.companyName}} </td>
-        </ng-container>
-  
-        <!-- Name Column -->
-        <ng-container matColumnDef="name">
-          <th mat-header-cell *matHeaderCellDef> איש קשר </th>
-          <td mat-cell *matCellDef="let contact"> {{contact.name}} </td>
-        </ng-container>
-  
-        <!-- Position Column -->
-        <ng-container matColumnDef="position">
-          <th mat-header-cell *matHeaderCellDef> תפקיד </th>
-          <td mat-cell *matCellDef="let contact"> {{contact.position}} </td>
-        </ng-container>
-  
-        <!-- Phone Column -->
-        <ng-container matColumnDef="phone">
-          <th mat-header-cell *matHeaderCellDef> טלפון </th>
-          <td mat-cell *matCellDef="let contact"> {{contact.phone}} </td>
-        </ng-container>
-  
-        <!-- Email Column -->
-        <ng-container matColumnDef="email">
-          <th mat-header-cell *matHeaderCellDef> מייל </th>
-          <td mat-cell *matCellDef="let contact"> {{contact.email}} </td>
-        </ng-container>
-  
-        <!-- Description Column -->
-        <ng-container matColumnDef="description">
-          <th mat-header-cell *matHeaderCellDef> תיאור </th>
-          <td mat-cell *matCellDef="let contact"> {{contact.description}} </td>
-        </ng-container>
-  
-        <!-- Actions Column -->
-        <ng-container matColumnDef="actions">
-          <th mat-header-cell *matHeaderCellDef> עריכה </th>
-          <td mat-cell *matCellDef="let contact">
-            <button mat-icon-button color="primary" (click)="openEditDialog(contact)">
-              <mat-icon>edit</mat-icon>
-            </button>
-          </td>
-        </ng-container>
-  
-        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-      </table>
     </div>
+
+    <table mat-table [dataSource]="filteredContacts" class="mat-elevation-z8" style="width: 100%;">
+           <!-- DeptInHospital Column -->
+           <ng-container matColumnDef="deptInHospital">
+            <th mat-header-cell *matHeaderCellDef> מחלקה בבית חולים </th>
+            <td mat-cell *matCellDef="let contact"> {{contact.deptInHospital}} </td>
+          </ng-container>
+    
+      <!-- Company Name Column -->
+      <ng-container matColumnDef="companyName">
+        <th mat-header-cell *matHeaderCellDef> שם החברה </th>
+        <td mat-cell *matCellDef="let contact"> {{contact.companyName}} </td>
+      </ng-container>
+
+      <!-- Name Column -->
+      <ng-container matColumnDef="name">
+        <th mat-header-cell *matHeaderCellDef> איש קשר </th>
+        <td mat-cell *matCellDef="let contact"> {{contact.name}} </td>
+      </ng-container>
+
+      <!-- Position Column -->
+      <ng-container matColumnDef="position">
+        <th mat-header-cell *matHeaderCellDef> תפקיד </th>
+        <td mat-cell *matCellDef="let contact"> {{contact.position}} </td>
+      </ng-container>
+
+      <!-- Phone Column -->
+      <ng-container matColumnDef="phone">
+        <th mat-header-cell *matHeaderCellDef> טלפון </th>
+        <td mat-cell *matCellDef="let contact"> {{contact.phone}} </td>
+      </ng-container>
+
+      <!-- Email Column -->
+      <ng-container matColumnDef="email">
+        <th mat-header-cell *matHeaderCellDef> מייל </th>
+        <td mat-cell *matCellDef="let contact"> {{contact.email}} </td>
+      </ng-container>
+
+      <!-- Description Column -->
+      <ng-container matColumnDef="description">
+        <th mat-header-cell *matHeaderCellDef> תיאור </th>
+        <td mat-cell *matCellDef="let contact"> {{contact.description}} </td>
+      </ng-container>
+
+ 
+      <!-- Actions Column -->
+      <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef> עריכה </th>
+        <td mat-cell *matCellDef="let contact">
+          <button mat-icon-button color="primary" (click)="openEditDialog(contact)">
+            <mat-icon>edit</mat-icon>
+          </button>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    </table>
   </div>
-  
+</div>

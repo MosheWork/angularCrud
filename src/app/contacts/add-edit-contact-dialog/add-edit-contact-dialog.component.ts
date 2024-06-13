@@ -20,8 +20,9 @@ export class AddEditContactDialogComponent implements OnInit {
       name: [this.data.contact?.name || '', Validators.required],
       position: [this.data.contact?.position || ''],
       phone: [this.data.contact?.phone || ''],
-      email: [this.data.contact?.email || '', [Validators.required, Validators.email]],
+      email: [this.data.contact?.email || ''],
       description: [this.data.contact?.description || ''],
+      deptInHospital: [this.data.contact?.deptInHospital || ''], // New field
       active: [this.data.contact?.active !== undefined ? this.data.contact.active : true]
     });
   }
