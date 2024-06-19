@@ -18,17 +18,17 @@ interface FormControls {
 }
 
 @Component({
-  selector: 'app-dynamic-tables',
-  templateUrl: './dynamic-tables.component.html',
-  styleUrls: ['./dynamic-tables.component.scss']
+  selector: 'app-components-list-in-units',
+  templateUrl: './components-list-in-units.component.html',
+  styleUrls: ['./components-list-in-units.component.scss']
 })
-export class DynamicTablesComponent implements OnInit {
+export class ComponentsListInUnitsComponent implements OnInit {
 
   filteredResponsibilities: Observable<string[]> | undefined;
   showGraph: boolean = false;
-  Title1: string = ' רשימת טבלאות דינמיות - ';
+  Title1: string = ' רשימת רכיבים ביחידות - ';
   Title2: string = 'סה"כ תוצאות ';
-  titleUnit: string = 'טבלאות ';
+  titleUnit: string = 'רכיבים ';
   totalResults: number = 0;
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
@@ -45,9 +45,12 @@ export class DynamicTablesComponent implements OnInit {
   matTableDataSource: MatTableDataSource<any>;
 
   columns: string[] = [
-    'code',
-    'description',
-    'tableName'
+    //'row_id',
+    'unit',
+    'heading',
+    'name',
+    'record_Name',
+    'answer_Text'
   ];
 
   parseDate(dateString: string | null): Date | null {
@@ -77,9 +80,12 @@ export class DynamicTablesComponent implements OnInit {
 
   getColumnLabel(column: string): string {
     const columnLabels: Record<string, string> = {
-      code: 'קוד',
-      description: 'תיאור',
-      tableName: 'שם טבלה'
+      //row_id: 'קוד שורה',
+      unit: 'קוד יחידה',
+      name: 'שם יחידה',
+      heading: 'שם הרכיב ',
+      record_Name: 'גיליון ',
+      answer_Text: ' חוצץ'
     };
     return columnLabels[column] || column;
   }
@@ -95,7 +101,7 @@ export class DynamicTablesComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.http.get<any[]>(environment.apiUrl + 'DynamicTablesAPI').subscribe((data) => {
+    this.http.get<any[]>(environment.apiUrl + 'ComponentsListInUnitsAPI').subscribe((data) => {
       this.dataSource = data;
       this.filteredData = [...data];
       this.matTableDataSource = new MatTableDataSource(this.filteredData);
@@ -194,20 +200,20 @@ export class DynamicTablesComponent implements OnInit {
   }
 
   fetchAnswerTextOptions() {
-    this.http.get<any[]>(environment.apiUrl + 'DynamicTablesAPI').subscribe((data) => {
-      this.answerTextOptions = [...new Set(data.map((item) => item.Description))];
+    this.http.get<any[]>(environment.apiUrl + 'ComponentsListInUnitsAPI').subscribe((data) => {
+      this.answerTextOptions = [...new Set(data.map((item) => item.answer_text))];
     });
   }
 
   fetchAnswerTextTypeOptions() {
-    this.http.get<any[]>(environment.apiUrl + 'DynamicTablesAPI').subscribe((data) => {
+    this.http.get<any[]>(environment.apiUrl + 'ComponentsListInUnitsAPI').subscribe((data) => {
       this.answerTextTypeOptions = [];
       data.forEach((item: any) => {
-        if (this.answerTextTypeOptions.indexOf(item.TableName) < 0 && item.TableName) {
-          this.answerTextTypeOptions.push(item.TableName);
+        if (this.answerTextTypeOptions.indexOf(item.record_name) < 0 && item.record_name) {
+          this.answerTextTypeOptions.push(item.record_name);
         }
       });
-      console.log('Table Name Options:', this.answerTextTypeOptions);
+      console.log('Record Name Options:', this.answerTextTypeOptions);
     });
   }
 

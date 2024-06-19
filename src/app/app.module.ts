@@ -86,6 +86,7 @@ import { ContactsComponent } from './contacts/contacts.component';
 import { AddEditContactDialogComponent } from './contacts/add-edit-contact-dialog/add-edit-contact-dialog.component';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { DynamicTablesComponent } from './chameleon-reports/dynamic-tables/dynamic-tables.component';
+import { ComponentsListInUnitsComponent } from './chameleon-reports/components-list-in-units/components-list-in-units.component';
 
 @NgModule({
   declarations: [
@@ -142,6 +143,7 @@ import { DynamicTablesComponent } from './chameleon-reports/dynamic-tables/dynam
     ContactsComponent,
     AddEditContactDialogComponent,
     DynamicTablesComponent,
+    ComponentsListInUnitsComponent,
   ],
   imports: [
     BrowserModule,
