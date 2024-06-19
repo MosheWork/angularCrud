@@ -33,6 +33,7 @@ import { DepartmentLoadDashboardComponent } from './departmentLoad/department-lo
 import { DepartmentDetailDialogComponent } from './departmentLoad/department-detail/department-detail.component';
 import { CurrentPatientsComponent } from './departmentLoad/current-patients/current-patients.component';
 import { ContactsComponent } from './contacts/contacts.component';
+import { DynamicTablesComponent } from './chameleon-reports/dynamic-tables/dynamic-tables.component';
 
 const routes: Routes = [
   { path: 'users', component: UsersComponent },
@@ -52,6 +53,8 @@ const routes: Routes = [
 
   // chameleon report
   { path: 'catheter', component: CatheterComponent },
+  { path: 'dynamicTable', component: DynamicTablesComponent },
+
 
   //moshe-reports
   { path: 'medicalDevices', component: MedicalDevicesComponent },

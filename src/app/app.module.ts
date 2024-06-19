@@ -85,6 +85,7 @@ import { DepartmentLoadByShiftComponent } from './departmentLoad/department-load
 import { ContactsComponent } from './contacts/contacts.component';
 import { AddEditContactDialogComponent } from './contacts/add-edit-contact-dialog/add-edit-contact-dialog.component';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { DynamicTablesComponent } from './chameleon-reports/dynamic-tables/dynamic-tables.component';
 
 @NgModule({
   declarations: [
@@ -140,6 +141,7 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
     DepartmentLoadByShiftComponent,
     ContactsComponent,
     AddEditContactDialogComponent,
+    DynamicTablesComponent,
   ],
   imports: [
     BrowserModule,
