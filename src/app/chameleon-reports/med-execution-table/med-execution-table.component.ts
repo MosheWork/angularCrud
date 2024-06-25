@@ -4,7 +4,7 @@ import { MatTableDataSource } from '@angular/material/table';
 import { MatSort } from '@angular/material/sort';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { FormControl, FormGroup, FormBuilder } from '@angular/forms';
-import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import { DatePipe } from '@angular/common'; // Import DatePipe
 import { environment } from '../../../environments/environment';
 import * as XLSX from 'xlsx';
 
@@ -23,7 +23,8 @@ interface MedExecutionModel {
 @Component({
   selector: 'app-med-execution-table',
   templateUrl: './med-execution-table.component.html',
-  styleUrls: ['./med-execution-table.component.scss']
+  styleUrls: ['./med-execution-table.component.scss'],
+  providers: [DatePipe] // Add DatePipe to providers
 })
 export class MedExecutionTableComponent implements OnInit, AfterViewInit {
   displayedColumns: string[] = [
@@ -51,7 +52,7 @@ export class MedExecutionTableComponent implements OnInit, AfterViewInit {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
-  constructor(private http: HttpClient, private fb: FormBuilder) {
+  constructor(private http: HttpClient, private fb: FormBuilder, private datePipe: DatePipe) { // Inject DatePipe
     this.filterForm = this.createFilterForm();
   }
 
@@ -77,10 +78,12 @@ export class MedExecutionTableComponent implements OnInit, AfterViewInit {
       params = params.append('drug', filters.drug);
     }
     if (filters.startDate) {
-      params = params.append('startDate', filters.startDate);
+      const formattedStartDate = this.datePipe.transform(filters.startDate, 'yyyy-MM-dd'); // Format the date
+      params = params.append('startDate', formattedStartDate!);
     }
     if (filters.endDate) {
-      params = params.append('endDate', filters.endDate);
+      const formattedEndDate = this.datePipe.transform(filters.endDate, 'yyyy-MM-dd'); // Format the date
+      params = params.append('endDate', formattedEndDate!);
     }
 
     this.http.get<MedExecutionModel[]>(`${environment.apiUrl}MedExecutionAPI`, { params })

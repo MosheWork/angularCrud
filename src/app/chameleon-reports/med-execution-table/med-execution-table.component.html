@@ -75,11 +75,16 @@
   <mat-table *ngIf="!loading && !showGraph" [dataSource]="dataSource" matSort dir="rtl" class="mat-elevation-z8">
     <ng-container *ngFor="let column of displayedColumns" [matColumnDef]="column">
       <mat-header-cell *matHeaderCellDef mat-sort-header> {{ getColumnLabel(column) }} </mat-header-cell>
-      <mat-cell *matCellDef="let element"> {{ element[column] }} </mat-cell>
+      <mat-cell *matCellDef="let element">
+        <ng-container [ngSwitch]="column">
+          <span *ngSwitchCase="'execution_Date'">{{ element[column] | date: 'dd-MM-yyyy HH:mm' }}</span>
+          <span *ngSwitchDefault>{{ element[column] }}</span>
+        </ng-container>
+      </mat-cell>
     </ng-container>
     <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
     <mat-row *matRowDef="let row; columns: displayedColumns" class="mat-row"></mat-row>
   </mat-table>
 
-  <!-- <mat-paginator [length]="totalResults" [pageIndex]="paginator.pageIndex" [pageSize]="paginator.pageSize" [pageSizeOptions]="[15, 50, 100]"></mat-paginator> -->
+  <mat-paginator [length]="totalResults" [pageIndex]="paginator?.pageIndex || 0" [pageSize]="paginator?.pageSize || 15" [pageSizeOptions]="[15, 50, 100]"></mat-paginator>
 </div>
