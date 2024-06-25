@@ -1,0 +1,85 @@
+<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
+<div class="body">
+  <div class="top-right-container">
+    <button mat-icon-button (click)="goToHome()" matTooltip="Go to Home">
+      <mat-icon>home</mat-icon>
+    </button>
+  </div>
+  <div class="nine">
+    <h1>
+      {{ titleUnit }}<span>{{ Title1 }}{{ Title2 }}{{ totalResults }}</span>
+    </h1>
+  </div>
+
+  <form [formGroup]="filterForm" dir="rtl" class="filter-form">
+    <div class="container-fluid mb-2">
+      <div class="row search-count">
+        <div class="col">
+          <div dir="rtl" class="card">
+            <div dir="rtl" class="card-body">
+              <mat-form-field class="filter-field">
+                <mat-label class="filters">Drug</mat-label>
+                <input matInput [formControl]="getFormControl('drug')" class="filter-input" />
+              </mat-form-field>
+              <mat-form-field class="filter-field">
+                <mat-label class="filters">Start Date</mat-label>
+                <input matInput [formControl]="getFormControl('startDate')" [matDatepicker]="startPicker" class="filter-input" />
+                <mat-datepicker-toggle matSuffix [for]="startPicker"></mat-datepicker-toggle>
+                <mat-datepicker #startPicker></mat-datepicker>
+              </mat-form-field>
+              <mat-form-field class="filter-field">
+                <mat-label class="filters">End Date</mat-label>
+                <input matInput [formControl]="getFormControl('endDate')" [matDatepicker]="endPicker" class="filter-input" />
+                <mat-datepicker-toggle matSuffix [for]="endPicker"></mat-datepicker-toggle>
+                <mat-datepicker #endPicker></mat-datepicker>
+              </mat-form-field>
+              <div class="search-button-container">
+                <button mat-button (click)="search()" mat-raised-button color="primary" class="custom-button" matTooltip="Search">
+                  <i class="material-icons">search</i>
+                </button>
+              </div>
+            </div>
+            <div class="reset-button-container">
+              <button mat-button (click)="resetFilters()" mat-raised-button color="primary" class="custom-button" matTooltip="Reset Filters">
+                <i class="material-icons">refresh</i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div dir="rtl" style="display: flex; justify-content: space-between; align-items: center">
+      <mat-form-field class="long-search-bar" style="flex: 1; padding-right: 10px">
+        <mat-label class="filters" style="color: blue">חיפוש</mat-label>
+        <input matInput [formControlName]="'globalFilter'" class="search-input" />
+      </mat-form-field>
+      <div class="graph-button-container">
+        <img (click)="navigateToGraphPage()" matTooltip="Move To Graph" src="../../../../assets/graphIcon.png" width="50px" />
+      </div>
+      <div class="icon" matTooltip="Download Excel">
+        <img src="../../assets/excel.png" alt="Download" (click)="exportToExcel()" class="download-icon" width="50px" />
+      </div>
+    </div>
+  </form>
+
+  <div *ngIf="loading" class="loading-container">
+    <mat-spinner></mat-spinner>
+    <div class="loading-text">מושך נתונים.... אנא המתן.</div>
+  </div>
+
+  <div *ngIf="!loading && showSuccessMessage" class="success-message">
+    הדוח נטען בהצלחה
+    <br>תודה למשה המלך
+  </div>
+
+  <mat-table *ngIf="!loading && !showGraph" [dataSource]="dataSource" matSort dir="rtl" class="mat-elevation-z8">
+    <ng-container *ngFor="let column of displayedColumns" [matColumnDef]="column">
+      <mat-header-cell *matHeaderCellDef mat-sort-header> {{ getColumnLabel(column) }} </mat-header-cell>
+      <mat-cell *matCellDef="let element"> {{ element[column] }} </mat-cell>
+    </ng-container>
+    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+    <mat-row *matRowDef="let row; columns: displayedColumns" class="mat-row"></mat-row>
+  </mat-table>
+
+  <!-- <mat-paginator [length]="totalResults" [pageIndex]="paginator.pageIndex" [pageSize]="paginator.pageSize" [pageSizeOptions]="[15, 50, 100]"></mat-paginator> -->
+</div>

@@ -35,6 +35,7 @@ import { CurrentPatientsComponent } from './departmentLoad/current-patients/curr
 import { ContactsComponent } from './contacts/contacts.component';
 import { DynamicTablesComponent } from './chameleon-reports/dynamic-tables/dynamic-tables.component';
 import { ComponentsListInUnitsComponent } from './chameleon-reports/components-list-in-units/components-list-in-units.component';
+import { MedExecutionTableComponent } from './chameleon-reports/med-execution-table/med-execution-table.component';
 
 const routes: Routes = [
   { path: 'users', component: UsersComponent },
@@ -56,6 +57,7 @@ const routes: Routes = [
   { path: 'catheter', component: CatheterComponent },
   { path: 'dynamicTable', component: DynamicTablesComponent },
   { path: 'ComponentsListInUnits', component: ComponentsListInUnitsComponent },
+  { path: 'med-execution-table', component: MedExecutionTableComponent },
 
 
 
