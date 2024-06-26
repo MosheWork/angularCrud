@@ -56,8 +56,8 @@ export class MedExecutionTableComponent implements OnInit, AfterViewInit {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
-  basicNamesControl = new FormControl([]);
-  genericNamesControl = new FormControl([]);
+  basicNamesControl = new FormControl('');
+  genericNamesControl = new FormControl('');
 
   constructor(private http: HttpClient, private fb: FormBuilder, private datePipe: DatePipe) {
     this.filterForm = this.createFilterForm();
@@ -68,11 +68,11 @@ export class MedExecutionTableComponent implements OnInit, AfterViewInit {
     this.fetchGenericNameOptions();
     this.filteredBasicNameOptions = this.basicNamesControl.valueChanges.pipe(
       startWith(''),
-      map(value => this._filterBasicNameOptions(value as string))
+      map(value => this._filterBasicNameOptions(value || ''))
     );
     this.filteredGenericNameOptions = this.genericNamesControl.valueChanges.pipe(
       startWith(''),
-      map(value => this._filterGenericNameOptions(value as string))
+      map(value => this._filterGenericNameOptions(value || ''))
     );
   }
   
@@ -103,16 +103,23 @@ export class MedExecutionTableComponent implements OnInit, AfterViewInit {
     );
   }
 
-  private _filterBasicNameOptions(value: string | null): string[] {
-    const filterValue = value ? value.toLowerCase() : '';
+  private _filterBasicNameOptions(value: string): string[] {
+    const filterValue = value.toLowerCase();
     return this.basicNameOptions.filter(option => option.toLowerCase().includes(filterValue));
   }
   
-  private _filterGenericNameOptions(value: string | null): string[] {
-    const filterValue = value ? value.toLowerCase() : '';
+  private _filterGenericNameOptions(value: string): string[] {
+    const filterValue = value.toLowerCase();
     return this.genericNameOptions.filter(option => option.toLowerCase().includes(filterValue));
   }
   
+  displayBasicName(basicName: string): string {
+    return basicName;
+  }
+
+  displayGenericName(genericName: string): string {
+    return genericName;
+  }
 
   search() {
     this.loadData();
@@ -123,36 +130,41 @@ export class MedExecutionTableComponent implements OnInit, AfterViewInit {
     this.showSuccessMessage = false;
     const filters = this.filterForm.value;
     let params = new HttpParams();
-    if (this.basicNamesControl.value && this.basicNamesControl.value.length > 0) {
-      this.basicNamesControl.value.forEach((basicName: string) => {
-        params = params.append('basic_Names', basicName);
-      });
+
+    if (this.basicNamesControl.value) {
+      params = params.append('basic_Names', this.basicNamesControl.value);
     }
+
     if (filters.drug) {
       params = params.append('drug', filters.drug);
     }
+
     if (filters.execution_Date) {
       const formattedExecutionDate = this.datePipe.transform(filters.execution_Date, 'yyyy-MM-dd');
       params = params.append('execution_Date', formattedExecutionDate!);
     }
+
     if (filters.category_Name) {
       params = params.append('category_Name', filters.category_Name);
     }
+
     if (filters.execution_UnitName) {
       params = params.append('execution_UnitName', filters.execution_UnitName);
     }
+
     if (filters.admission_No) {
       params = params.append('admission_No', filters.admission_No);
     }
-    if (this.genericNamesControl.value && this.genericNamesControl.value.length > 0) {
-      this.genericNamesControl.value.forEach((genericName: string) => {
-        params = params.append('generic_Names_ForDisplay', genericName);
-      });
+
+    if (this.genericNamesControl.value) {
+      params = params.append('generic_Names_ForDisplay', this.genericNamesControl.value);
     }
+
     if (filters.startDate) {
       const formattedStartDate = this.datePipe.transform(filters.startDate, 'yyyy-MM-dd');
       params = params.append('startDate', formattedStartDate!);
     }
+
     if (filters.endDate) {
       const formattedEndDate = this.datePipe.transform(filters.endDate, 'yyyy-MM-dd');
       params = params.append('endDate', formattedEndDate!);
