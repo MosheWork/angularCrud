@@ -49,15 +49,15 @@ export class MedExecutionTableComponent implements OnInit, AfterViewInit {
   loading: boolean = false;
   showSuccessMessage: boolean = false;
   basicNameOptions: string[] = [];
-
-
-
-
-
+  genericNameOptions: string[] = [];
   filteredBasicNameOptions!: Observable<string[]>;
+  filteredGenericNameOptions!: Observable<string[]>;
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
+
+  basicNamesControl = new FormControl([]);
+  genericNamesControl = new FormControl([]);
 
   constructor(private http: HttpClient, private fb: FormBuilder, private datePipe: DatePipe) {
     this.filterForm = this.createFilterForm();
@@ -65,12 +65,17 @@ export class MedExecutionTableComponent implements OnInit, AfterViewInit {
 
   ngOnInit() {
     this.fetchBasicNameOptions();
-    this.filteredBasicNameOptions = this.filterForm.controls['basic_Name'].valueChanges.pipe(
+    this.fetchGenericNameOptions();
+    this.filteredBasicNameOptions = this.basicNamesControl.valueChanges.pipe(
       startWith(''),
-      map(value => this._filterBasicNameOptions(value))
+      map(value => this._filterBasicNameOptions(value as string))
+    );
+    this.filteredGenericNameOptions = this.genericNamesControl.valueChanges.pipe(
+      startWith(''),
+      map(value => this._filterGenericNameOptions(value as string))
     );
   }
-
+  
   ngAfterViewInit() {
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
@@ -87,11 +92,27 @@ export class MedExecutionTableComponent implements OnInit, AfterViewInit {
     );
   }
   
+  fetchGenericNameOptions() {
+    this.http.get<string[]>(`${environment.apiUrl}MedExecutionAPI/GetGenericNameOptions`).subscribe(
+      data => {
+        this.genericNameOptions = data;
+      },
+      error => {
+        console.error('Error fetching generic name options:', error);
+      }
+    );
+  }
 
-  private _filterBasicNameOptions(value: string): string[] {
-    const filterValue = value.toLowerCase();
+  private _filterBasicNameOptions(value: string | null): string[] {
+    const filterValue = value ? value.toLowerCase() : '';
     return this.basicNameOptions.filter(option => option.toLowerCase().includes(filterValue));
   }
+  
+  private _filterGenericNameOptions(value: string | null): string[] {
+    const filterValue = value ? value.toLowerCase() : '';
+    return this.genericNameOptions.filter(option => option.toLowerCase().includes(filterValue));
+  }
+  
 
   search() {
     this.loadData();
@@ -102,8 +123,10 @@ export class MedExecutionTableComponent implements OnInit, AfterViewInit {
     this.showSuccessMessage = false;
     const filters = this.filterForm.value;
     let params = new HttpParams();
-    if (filters.basic_Name) {
-      params = params.append('basic_Name', filters.basic_Name);
+    if (this.basicNamesControl.value && this.basicNamesControl.value.length > 0) {
+      this.basicNamesControl.value.forEach((basicName: string) => {
+        params = params.append('basic_Names', basicName);
+      });
     }
     if (filters.drug) {
       params = params.append('drug', filters.drug);
@@ -121,8 +144,10 @@ export class MedExecutionTableComponent implements OnInit, AfterViewInit {
     if (filters.admission_No) {
       params = params.append('admission_No', filters.admission_No);
     }
-    if (filters.generic_Name_ForDisplay) {
-      params = params.append('generic_Name_ForDisplay', filters.generic_Name_ForDisplay);
+    if (this.genericNamesControl.value && this.genericNamesControl.value.length > 0) {
+      this.genericNamesControl.value.forEach((genericName: string) => {
+        params = params.append('generic_Names_ForDisplay', genericName);
+      });
     }
     if (filters.startDate) {
       const formattedStartDate = this.datePipe.transform(filters.startDate, 'yyyy-MM-dd');
@@ -149,13 +174,13 @@ export class MedExecutionTableComponent implements OnInit, AfterViewInit {
 
   createFilterForm(): FormGroup {
     return this.fb.group({
-      basic_Name: new FormControl(''),
+      basic_Names: this.basicNamesControl,
       drug: new FormControl(''),
       execution_Date: new FormControl(''),
       category_Name: new FormControl(''),
       execution_UnitName: new FormControl(''),
       admission_No: new FormControl(''),
-      generic_Name_ForDisplay: new FormControl(''),
+      generic_Names_ForDisplay: this.genericNamesControl,
       startDate: new FormControl(''),
       endDate: new FormControl('')
     });

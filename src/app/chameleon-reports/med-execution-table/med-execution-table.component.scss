@@ -162,18 +162,26 @@ a {
     text-align: right !important;
     direction: rtl !important;
 }
+.nine {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
 
 .nine h1 {
-    text-align: center;
     font-size: 50px;
     text-transform: uppercase;
     color: rgb(54, 10, 214);
     letter-spacing: 1px;
     font-family: "Playfair Display", serif;
     font-weight: 400;
+    margin: 0; /* Ensure there is no margin */
 }
 
 .nine h1 span {
+    display: block;
     margin-top: 5px;
     font-size: 15px;
     color: rgb(159, 52, 235);
@@ -183,11 +191,6 @@ a {
     text-transform: uppercase;
     font-family: "Raleway", sans-serif;
     font-weight: 500;
-    display: grid;
-    grid-template-columns: 1fr max-content 1fr;
-    grid-template-rows: 27px 0;
-    grid-gap: 20px;
-    align-items: center;
 }
 
 /* Adjust the position of the date picker icon */
