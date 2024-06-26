@@ -1,9 +1,9 @@
 <div class="body">
-    <div class="top-right-container">
+    <!-- <div class="top-right-container">
       <button mat-icon-button (click)="goToHome()" matTooltip="Go to Home">
         <mat-icon>home</mat-icon>
       </button>
-    </div>
+    </div> -->
     <div class="nine">
       <h1>
         {{ titleUnit }}<span>{{ Title1 }}{{ Title2 }}{{ totalResults }}</span>
@@ -18,10 +18,10 @@
               <div dir="rtl" class="card">
                 <div dir="rtl" class="card-body">
                   <div class="filter-container">
-                    <mat-form-field class="filter-field">
+                    <!-- <mat-form-field class="filter-field">
                       <mat-label>קוד התרופה</mat-label>
                       <input matInput [formControlName]="'drug'" />
-                    </mat-form-field>
+                    </mat-form-field> -->
                     <mat-form-field class="filter-field">
                       <mat-label>שם התרופה</mat-label>
                       <input type="text" matInput [formControl]="basicNamesControl" [matAutocomplete]="autoBasic">
@@ -31,18 +31,18 @@
                         </mat-option>
                       </mat-autocomplete>
                     </mat-form-field>
-                    <mat-form-field class="filter-field">
+                    <!-- <mat-form-field class="filter-field">
                       <mat-label>שם קטגוריה</mat-label>
                       <input matInput [formControlName]="'category_Name'" />
-                    </mat-form-field>
-                    <mat-form-field class="filter-field">
+                    </mat-form-field> -->
+                    <!-- <mat-form-field class="filter-field">
                       <mat-label>שם יחידת ביצוע</mat-label>
                       <input matInput [formControlName]="'execution_UnitName'" />
-                    </mat-form-field>
-                    <mat-form-field class="filter-field">
+                    </mat-form-field> -->
+                    <!-- <mat-form-field class="filter-field">
                       <mat-label>מספר כניסה</mat-label>
                       <input matInput [formControlName]="'admission_No'" />
-                    </mat-form-field>
+                    </mat-form-field> -->
                     <mat-form-field class="filter-field">
                       <mat-label>שם גנרי</mat-label>
                       <input type="text" matInput [formControl]="genericNamesControl" [matAutocomplete]="autoGeneric">
@@ -59,8 +59,8 @@
                       <mat-datepicker #startDatePicker></mat-datepicker>
                     </mat-form-field>
                     <mat-form-field class="filter-field">
-                      <mat-label>תאריך סיום</mat-label>
-                      <input matInput [formControlName]="'endDate'" [matDatepicker]="endDatePicker" />
+                        <mat-label>תאריך סיום</mat-label>
+                        <input matInput [formControlName]="'endDate'" [matDatepicker]="endDatePicker" />
                       <mat-datepicker-toggle matSuffix [for]="endDatePicker"></mat-datepicker-toggle>
                       <mat-datepicker #endDatePicker></mat-datepicker>
                     </mat-form-field>
@@ -91,7 +91,7 @@
   
     <mat-table *ngIf="!showGraph" [dataSource]="dataSource" matSort dir="rtl" class="mat-elevation-z8">
       <ng-container matColumnDef="basic_Name">
-        <mat-header-cell *matHeaderCellDef mat-sort-header>שם בסיסי</mat-header-cell>
+        <mat-header-cell *matHeaderCellDef mat-sort-header>שם תרופה</mat-header-cell>
         <mat-cell *matCellDef="let element"> {{ element.basic_Name }} </mat-cell>
       </ng-container>
       <ng-container matColumnDef="drug">
@@ -103,20 +103,40 @@
         <mat-cell *matCellDef="let element"> {{ element.execution_Date | date: 'dd-MM-yyyy' }} </mat-cell>
       </ng-container>
       <ng-container matColumnDef="category_Name">
-        <mat-header-cell *matHeaderCellDef mat-sort-header>שם קטגוריה</mat-header-cell>
+        <mat-header-cell *matHeaderCellDef mat-sort-header> קטגוריה</mat-header-cell>
         <mat-cell *matCellDef="let element"> {{ element.category_Name }} </mat-cell>
       </ng-container>
       <ng-container matColumnDef="execution_UnitName">
-        <mat-header-cell *matHeaderCellDef mat-sort-header>שם יחידת ביצוע</mat-header-cell>
+        <mat-header-cell *matHeaderCellDef mat-sort-header>מחלקה  </mat-header-cell>
         <mat-cell *matCellDef="let element"> {{ element.execution_UnitName }} </mat-cell>
       </ng-container>
       <ng-container matColumnDef="admission_No">
-        <mat-header-cell *matHeaderCellDef mat-sort-header>מספר כניסה</mat-header-cell>
+        <mat-header-cell *matHeaderCellDef mat-sort-header> מספר מקרה </mat-header-cell>
         <mat-cell *matCellDef="let element"> {{ element.admission_No }} </mat-cell>
       </ng-container>
       <ng-container matColumnDef="generic_Name_ForDisplay">
         <mat-header-cell *matHeaderCellDef mat-sort-header>שם גנרי</mat-header-cell>
         <mat-cell *matCellDef="let element"> {{ element.generic_Name_ForDisplay }} </mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="dosage_InOrder">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>מינון </mat-header-cell>
+        <mat-cell *matCellDef="let element"> {{ element.dosage_InOrder }} </mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="dosage_Unit_InOrder">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>יחידת מינון </mat-header-cell>
+        <mat-cell *matCellDef="let element"> {{ element.dosage_Unit_InOrder }} </mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="way_Of_Giving">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>דרך מתן</mat-header-cell>
+        <mat-cell *matCellDef="let element"> {{ element.way_Of_Giving }} </mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="id_Num">
+        <mat-header-cell *matHeaderCellDef mat-sort-header> תעודת זהות</mat-header-cell>
+        <mat-cell *matCellDef="let element"> {{ element.id_Num }} </mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="full_Name">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>שם מלא</mat-header-cell>
+        <mat-cell *matCellDef="let element"> {{ element.full_Name }} </mat-cell>
       </ng-container>
       <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
       <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>

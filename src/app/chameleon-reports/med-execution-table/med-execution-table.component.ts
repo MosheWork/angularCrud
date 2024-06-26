@@ -20,7 +20,13 @@ interface MedExecutionModel {
   execution_UnitName: string;
   admission_No: string;
   generic_Name_ForDisplay: string;
+  dosage_InOrder: number; // New property
+  dosage_Unit_InOrder: string; // New property
+  way_Of_Giving: string; // New property
+  id_Num: string; // New property
+  full_Name: string; // New property
 }
+
 
 @Component({
   selector: 'app-med-execution-table',
@@ -36,8 +42,15 @@ export class MedExecutionTableComponent implements OnInit, AfterViewInit {
     'category_Name', 
     'execution_UnitName', 
     'admission_No', 
-    'generic_Name_ForDisplay'
+    'generic_Name_ForDisplay',
+    'dosage_InOrder', // New column
+    'dosage_Unit_InOrder', // New column
+    'way_Of_Giving', // New column
+    'id_Num', // New column
+    'full_Name' // New column
   ];
+  
+  
   dataSource = new MatTableDataSource<MedExecutionModel>();
   searchValue: string = '';
   titleUnit: string = 'מעבדות ';
