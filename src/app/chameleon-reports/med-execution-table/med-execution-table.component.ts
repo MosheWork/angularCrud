@@ -4,13 +4,15 @@ import { MatTableDataSource } from '@angular/material/table';
 import { MatSort } from '@angular/material/sort';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { FormControl, FormGroup, FormBuilder } from '@angular/forms';
-import { DatePipe } from '@angular/common'; // Import DatePipe
+import { DatePipe } from '@angular/common';
 import { environment } from '../../../environments/environment';
+import { Observable } from 'rxjs';
+import { map, startWith } from 'rxjs/operators';
 import * as XLSX from 'xlsx';
 
 interface MedExecutionModel {
   basic_Name: string;
-  drug: number;
+  drug: string;
   exec_Status: number;
   exec_Status_Name: string;
   execution_Date: Date;
@@ -24,14 +26,12 @@ interface MedExecutionModel {
   selector: 'app-med-execution-table',
   templateUrl: './med-execution-table.component.html',
   styleUrls: ['./med-execution-table.component.scss'],
-  providers: [DatePipe] // Add DatePipe to providers
+  providers: [DatePipe]
 })
 export class MedExecutionTableComponent implements OnInit, AfterViewInit {
   displayedColumns: string[] = [
     'basic_Name', 
     'drug', 
-    'exec_Status', 
-    'exec_Status_Name', 
     'execution_Date', 
     'category_Name', 
     'execution_UnitName', 
@@ -40,29 +40,57 @@ export class MedExecutionTableComponent implements OnInit, AfterViewInit {
   ];
   dataSource = new MatTableDataSource<MedExecutionModel>();
   searchValue: string = '';
-  titleUnit: string = 'טבלאות ';
-  Title1: string = ' רשימת טבלאות דינמיות - ';
+  titleUnit: string = 'מעבדות ';
+  Title1: string = '   דוח תרופות - ';
   Title2: string = 'סה"כ תוצאות ';
   totalResults: number = 0;
   filterForm: FormGroup;
   showGraph: boolean = false;
   loading: boolean = false;
   showSuccessMessage: boolean = false;
+  basicNameOptions: string[] = [];
+
+
+
+
+
+  filteredBasicNameOptions!: Observable<string[]>;
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
-  constructor(private http: HttpClient, private fb: FormBuilder, private datePipe: DatePipe) { // Inject DatePipe
+  constructor(private http: HttpClient, private fb: FormBuilder, private datePipe: DatePipe) {
     this.filterForm = this.createFilterForm();
   }
 
   ngOnInit() {
-    this.loadData();
+    this.fetchBasicNameOptions();
+    this.filteredBasicNameOptions = this.filterForm.controls['basic_Name'].valueChanges.pipe(
+      startWith(''),
+      map(value => this._filterBasicNameOptions(value))
+    );
   }
 
   ngAfterViewInit() {
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
+  }
+
+  fetchBasicNameOptions() {
+    this.http.get<string[]>(`${environment.apiUrl}MedExecutionAPI/GetBasicNameOptions`).subscribe(
+      data => {
+        this.basicNameOptions = data;
+      },
+      error => {
+        console.error('Error fetching basic name options:', error);
+      }
+    );
+  }
+  
+
+  private _filterBasicNameOptions(value: string): string[] {
+    const filterValue = value.toLowerCase();
+    return this.basicNameOptions.filter(option => option.toLowerCase().includes(filterValue));
   }
 
   search() {
@@ -74,15 +102,34 @@ export class MedExecutionTableComponent implements OnInit, AfterViewInit {
     this.showSuccessMessage = false;
     const filters = this.filterForm.value;
     let params = new HttpParams();
+    if (filters.basic_Name) {
+      params = params.append('basic_Name', filters.basic_Name);
+    }
     if (filters.drug) {
       params = params.append('drug', filters.drug);
     }
+    if (filters.execution_Date) {
+      const formattedExecutionDate = this.datePipe.transform(filters.execution_Date, 'yyyy-MM-dd');
+      params = params.append('execution_Date', formattedExecutionDate!);
+    }
+    if (filters.category_Name) {
+      params = params.append('category_Name', filters.category_Name);
+    }
+    if (filters.execution_UnitName) {
+      params = params.append('execution_UnitName', filters.execution_UnitName);
+    }
+    if (filters.admission_No) {
+      params = params.append('admission_No', filters.admission_No);
+    }
+    if (filters.generic_Name_ForDisplay) {
+      params = params.append('generic_Name_ForDisplay', filters.generic_Name_ForDisplay);
+    }
     if (filters.startDate) {
-      const formattedStartDate = this.datePipe.transform(filters.startDate, 'yyyy-MM-dd'); // Format the date
+      const formattedStartDate = this.datePipe.transform(filters.startDate, 'yyyy-MM-dd');
       params = params.append('startDate', formattedStartDate!);
     }
     if (filters.endDate) {
-      const formattedEndDate = this.datePipe.transform(filters.endDate, 'yyyy-MM-dd'); // Format the date
+      const formattedEndDate = this.datePipe.transform(filters.endDate, 'yyyy-MM-dd');
       params = params.append('endDate', formattedEndDate!);
     }
 
@@ -94,7 +141,7 @@ export class MedExecutionTableComponent implements OnInit, AfterViewInit {
         this.showSuccessMessage = true;
         setTimeout(() => {
           this.showSuccessMessage = false;
-        }, 5000); // Hide success message after 5 seconds
+        }, 5000);
       }, () => {
         this.loading = false;
       });
@@ -102,10 +149,15 @@ export class MedExecutionTableComponent implements OnInit, AfterViewInit {
 
   createFilterForm(): FormGroup {
     return this.fb.group({
-      drug: [''],
-      startDate: [''],
-      endDate: [''],
-      globalFilter: ['']
+      basic_Name: new FormControl(''),
+      drug: new FormControl(''),
+      execution_Date: new FormControl(''),
+      category_Name: new FormControl(''),
+      execution_UnitName: new FormControl(''),
+      admission_No: new FormControl(''),
+      generic_Name_ForDisplay: new FormControl(''),
+      startDate: new FormControl(''),
+      endDate: new FormControl('')
     });
   }
 
@@ -117,8 +169,6 @@ export class MedExecutionTableComponent implements OnInit, AfterViewInit {
     const columnLabels: Record<string, string> = {
       basic_Name: 'Basic Name',
       drug: 'Drug',
-      exec_Status: 'Exec Status',
-      exec_Status_Name: 'Exec Status Name',
       execution_Date: 'Execution Date',
       category_Name: 'Category Name',
       execution_UnitName: 'Execution Unit Name',
@@ -131,7 +181,6 @@ export class MedExecutionTableComponent implements OnInit, AfterViewInit {
   resetFilters() {
     this.filterForm.reset();
     this.filterForm.get('globalFilter')?.setValue('');
-    this.loadData();
   }
 
   exportToExcel() {
@@ -160,5 +209,10 @@ export class MedExecutionTableComponent implements OnInit, AfterViewInit {
 
   goToHome() {
     // Implement navigation to the home page
+  }
+
+  applyFilter(event: Event, column: string) {
+    const filterValue = (event.target as HTMLInputElement).value;
+    this.filterForm.get(column)?.setValue(filterValue.trim().toLowerCase());
   }
 }
