@@ -31,10 +31,10 @@
                         </mat-option>
                       </mat-autocomplete>
                     </mat-form-field>
-                    <!-- <mat-form-field class="filter-field">
+                    <mat-form-field class="filter-field">
                       <mat-label>שם קטגוריה</mat-label>
                       <input matInput [formControlName]="'category_Name'" />
-                    </mat-form-field> -->
+                    </mat-form-field>
                     <!-- <mat-form-field class="filter-field">
                       <mat-label>שם יחידת ביצוע</mat-label>
                       <input matInput [formControlName]="'execution_UnitName'" />
@@ -110,10 +110,10 @@
         <mat-header-cell *matHeaderCellDef mat-sort-header>מחלקה  </mat-header-cell>
         <mat-cell *matCellDef="let element"> {{ element.execution_UnitName }} </mat-cell>
       </ng-container>
-      <ng-container matColumnDef="admission_No">
+      <!-- <ng-container matColumnDef="admission_No">
         <mat-header-cell *matHeaderCellDef mat-sort-header> מספר מקרה </mat-header-cell>
         <mat-cell *matCellDef="let element"> {{ element.admission_No }} </mat-cell>
-      </ng-container>
+      </ng-container> -->
       <ng-container matColumnDef="generic_Name_ForDisplay">
         <mat-header-cell *matHeaderCellDef mat-sort-header>שם גנרי</mat-header-cell>
         <mat-cell *matCellDef="let element"> {{ element.generic_Name_ForDisplay }} </mat-cell>

@@ -41,7 +41,7 @@ export class MedExecutionTableComponent implements OnInit, AfterViewInit {
     'execution_Date', 
     'category_Name', 
     'execution_UnitName', 
-    'admission_No', 
+    //'admission_No', 
     'generic_Name_ForDisplay',
     'dosage_InOrder', // New column
     'dosage_Unit_InOrder', // New column
