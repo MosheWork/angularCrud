@@ -39,22 +39,22 @@ import { MedExecutionTableComponent } from './chameleon-reports/med-execution-ta
 
 const routes: Routes = [
   { path: 'users', component: UsersComponent },
-  { path: 'home', component: AppComponent },
-  { path: 'HospitalizationsList', component: HospitalizationsListComponent },
-  { path: 'chart', component: MychartComponent },
-  { path: 'uploadPic', component: UploadPicComponent },
+  //{ path: 'home', component: AppComponent },
+  //{ path: 'HospitalizationsList', component: HospitalizationsListComponent },
+  //{ path: 'chart', component: MychartComponent },
+  //{ path: 'uploadPic', component: UploadPicComponent },
   { path: 'sql', component: SQLComponent },
 
-  { path: 'Consiliums', component: ConsiliumsComponent },
-  { path: 'Isolation', component: IsolationComponent },
-  { path: 'DevicesPerUnit', component: DevicesPerUnitComponent },
-  { path: 'MainPageReports', component: MainPageReportsComponent },
+  //{ path: 'Consiliums', component: ConsiliumsComponent },
+  //{ path: 'Isolation', component: IsolationComponent },
+  //{ path: 'DevicesPerUnit', component: DevicesPerUnitComponent },
+  { path: 'MainPageReports', component: MainPageReportsComponent },// מסך דוחות למשתמש
   { path: 'reports-permissions', component: ReportsPermissionsComponent },
   { path: 'UserDashboard', component: UserDashboardComponent },
   { path: 'AdminDashboard', component: AdminDashboardComponent },
 
   // chameleon report
-  { path: 'catheter', component: CatheterComponent },
+  //{ path: 'catheter', component: CatheterComponent },
   { path: 'dynamicTable', component: DynamicTablesComponent },
   { path: 'ComponentsListInUnits', component: ComponentsListInUnitsComponent },
   { path: 'med-execution-table', component: MedExecutionTableComponent },
