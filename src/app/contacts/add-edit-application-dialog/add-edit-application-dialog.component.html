@@ -1,0 +1,66 @@
+<h1 mat-dialog-title class="dialog-title">{{ isEdit ? 'Edit Application' : 'Add Application' }}</h1>
+<div mat-dialog-content class="contact-form">
+  <form [formGroup]="form">
+    <div class="form-row">
+      <mat-form-field appearance="outline" class="form-field">
+        <mat-label>Application Name</mat-label>
+        <input matInput formControlName="applicationName" required>
+        <mat-error *ngIf="form.get('applicationName')?.hasError('required')">
+          Application Name is required
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="form-field">
+        <mat-label>Application Description</mat-label>
+        <input matInput formControlName="applicationDescription" required>
+        <mat-error *ngIf="form.get('applicationDescription')?.hasError('required')">
+          Application Description is required
+        </mat-error>
+      </mat-form-field>
+    </div>
+
+    <div class="form-row">
+      <mat-form-field appearance="outline" class="form-field">
+        <mat-label>Company Name</mat-label>
+        <input matInput formControlName="companyName" required>
+        <mat-error *ngIf="form.get('companyName')?.hasError('required')">
+          Company Name is required
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="form-field">
+        <mat-label>Used By</mat-label>
+        <input matInput formControlName="usedBy" required>
+        <mat-error *ngIf="form.get('usedBy')?.hasError('required')">
+          Used By is required
+        </mat-error>
+      </mat-form-field>
+    </div>
+
+    <div class="form-row">
+      <mat-form-field appearance="outline" class="form-field">
+        <mat-label>User In Charge</mat-label>
+        <mat-select formControlName="userInChargeID" required>
+          <mat-option *ngFor="let user of usersInCharge" [value]="user.userInChargeID">
+            {{ user.userInChargeName }}
+          </mat-option>
+        </mat-select>
+        <mat-error *ngIf="form.get('userInChargeID')?.hasError('required')">
+          User In Charge is required
+        </mat-error>
+      </mat-form-field>
+    </div>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Application Name In English</mat-label>
+      <input matInput formControlName="applicationNameInEnglish" required>
+      <mat-error *ngIf="form.get('applicationNameInEnglish')?.hasError('required')">
+        Application Name In English is required
+      </mat-error>
+    </mat-form-field>
+  </form>
+</div>
+<div mat-dialog-actions class="dialog-actions">
+  <button mat-button color="warn" (click)="close()">Cancel</button>
+  <button mat-button color="primary" [disabled]="form.invalid" (click)="save()">Save</button>
+</div>

@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatDialog } from '@angular/material/dialog';
+import { ActivatedRoute } from '@angular/router';
 import { environment } from '../../environments/environment';
 import { AddEditContactDialogComponent } from '../contacts/add-edit-contact-dialog/add-edit-contact-dialog.component';
 
@@ -12,13 +13,19 @@ import { AddEditContactDialogComponent } from '../contacts/add-edit-contact-dial
 })
 export class ContactsComponent implements OnInit {
   contacts: any[] = [];
-  displayedColumns: string[] = ['deptInHospital','companyName', 'name', 'position', 'phone', 'email', 'description',  'actions'];
+  displayedColumns: string[] = ['deptInHospital', 'companyName', 'name', 'position', 'phone', 'email', 'description', 'actions'];
   filteredContacts = new MatTableDataSource<any>(this.contacts);
+  applicationID: number | null = null; // Provide a default value
 
-  constructor(private http: HttpClient, public dialog: MatDialog) { }
+  constructor(private http: HttpClient, public dialog: MatDialog, private route: ActivatedRoute) { }
 
   ngOnInit(): void {
-    this.fetchContacts();
+    this.applicationID = this.route.snapshot.params['applicationID'];
+    if (this.applicationID) {
+      this.fetchContactsByApplicationID(this.applicationID);
+    } else {
+      this.fetchContacts();
+    }
   }
 
   fetchContacts(): void {
@@ -27,6 +34,15 @@ export class ContactsComponent implements OnInit {
       this.filteredContacts.data = this.contacts;
     }, error => {
       console.error('Error fetching contacts:', error);
+    });
+  }
+
+  fetchContactsByApplicationID(applicationID: number): void {
+    this.http.get<any[]>(`${environment.apiUrl}ContactsInfoAPI/GetContactsByApplication/${applicationID}`).subscribe((data: any[]) => {
+      this.contacts = data;
+      this.filteredContacts.data = this.contacts;
+    }, error => {
+      console.error(`Error fetching contacts for application ID ${applicationID}:`, error);
     });
   }
 
@@ -50,7 +66,11 @@ export class ContactsComponent implements OnInit {
 
   updateContact(id: number, contact: any): void {
     this.http.put<any>(`${environment.apiUrl}ContactsInfoAPI/UpdateContact/${id}`, contact).subscribe(() => {
-      this.fetchContacts();
+      if (this.applicationID) {
+        this.fetchContactsByApplicationID(this.applicationID);
+      } else {
+        this.fetchContacts();
+      }
     }, error => {
       console.error('Error updating contact:', error);
     });
@@ -58,7 +78,11 @@ export class ContactsComponent implements OnInit {
 
   addContact(contact: any): void {
     this.http.post<any>(`${environment.apiUrl}ContactsInfoAPI/CreateContact`, contact).subscribe(() => {
-      this.fetchContacts();
+      if (this.applicationID) {
+        this.fetchContactsByApplicationID(this.applicationID);
+      } else {
+        this.fetchContacts();
+      }
     }, error => {
       console.error('Error adding contact:', error);
     });

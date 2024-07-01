@@ -1,25 +1,21 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { AppComponent } from './app.component';
-import { HosListComponent } from './old/hos-list/hos-list.component';
-import { MychartComponent } from './mychart/mychart.component';
 import { UsersComponent } from './users/users.component';
-import { UploadPicComponent } from './upload-pic/upload-pic.component';
 import { SQLComponent } from './sql/sql.component';
-import { ConsiliumsComponent } from './consiliums/consiliums.component';
-import { IsolationComponent } from './isolation/isolation.component';
-import { HospitalizationsListComponent } from './hospitalizations-list/hospitalizations-list.component';
-import { DevicesPerUnitComponent } from './devices-per-unit/devices-per-unit.component';
-import { MedicalDevicesComponent } from './chameleon-reports/moshe-reports/medical-devices/medical-devices.component';
-import { SysAidComponent } from './sys-aid/sys-aid.component';
 import { MainPageReportsComponent } from './main-page-reports/main-page-reports.component';
-import { SysGraphComponent } from './sys-aid/sys-graph/sys-graph.component';
 import { ReportsPermissionsComponent } from './reports-permissions/reports-permissions.component';
-import { CatheterComponent } from './chameleon-reports/catheter/catheter.component';
-import { StazerimComponent } from './chameleon-reports/moshe-reports/stazerim/stazerim.component';
 import { UserDashboardComponent } from './user-dashboard/user-dashboard.component';
 import { AdminDashboardComponent } from './admin-dashboard/admin-dashboard.component';
+import { ApplicationsListComponent } from './contacts/applications-list/applications-list.component';
+import { ContactsComponent } from './contacts/contacts.component';
+import { DynamicTablesComponent } from './chameleon-reports/dynamic-tables/dynamic-tables.component';
+import { ComponentsListInUnitsComponent } from './chameleon-reports/components-list-in-units/components-list-in-units.component';
+import { MedExecutionTableComponent } from './chameleon-reports/med-execution-table/med-execution-table.component';
+import { MedicalDevicesComponent } from './chameleon-reports/moshe-reports/medical-devices/medical-devices.component';
+import { StazerimComponent } from './chameleon-reports/moshe-reports/stazerim/stazerim.component';
+import { SysAidComponent } from './sys-aid/sys-aid.component';
+import { SysGraphComponent } from './sys-aid/sys-graph/sys-graph.component';
 import { MainServiceCallsScreenComponent } from './serviceCalls/main-service-calls-screen/main-service-calls-screen.component';
 import { ServiceCallsScreenITComponent } from './serviceCalls/service-calls-screen-it/service-calls-screen-it.component';
 import { AdminHomePageComponent } from './admin-home-page/admin-home-page.component';
@@ -32,74 +28,37 @@ import { ManageServersComponent } from './server-ping-check-app/manage-servers/m
 import { DepartmentLoadDashboardComponent } from './departmentLoad/department-load-dashboard/department-load-dashboard.component';
 import { DepartmentDetailDialogComponent } from './departmentLoad/department-detail/department-detail.component';
 import { CurrentPatientsComponent } from './departmentLoad/current-patients/current-patients.component';
-import { ContactsComponent } from './contacts/contacts.component';
-import { DynamicTablesComponent } from './chameleon-reports/dynamic-tables/dynamic-tables.component';
-import { ComponentsListInUnitsComponent } from './chameleon-reports/components-list-in-units/components-list-in-units.component';
-import { MedExecutionTableComponent } from './chameleon-reports/med-execution-table/med-execution-table.component';
 
 const routes: Routes = [
   { path: 'users', component: UsersComponent },
-  //{ path: 'home', component: AppComponent },
-  //{ path: 'HospitalizationsList', component: HospitalizationsListComponent },
-  //{ path: 'chart', component: MychartComponent },
-  //{ path: 'uploadPic', component: UploadPicComponent },
   { path: 'sql', component: SQLComponent },
-
-  //{ path: 'Consiliums', component: ConsiliumsComponent },
-  //{ path: 'Isolation', component: IsolationComponent },
-  //{ path: 'DevicesPerUnit', component: DevicesPerUnitComponent },
-  { path: 'MainPageReports', component: MainPageReportsComponent },// מסך דוחות למשתמש
+  { path: 'MainPageReports', component: MainPageReportsComponent },
   { path: 'reports-permissions', component: ReportsPermissionsComponent },
   { path: 'UserDashboard', component: UserDashboardComponent },
   { path: 'AdminDashboard', component: AdminDashboardComponent },
-
-  // chameleon report
-  //{ path: 'catheter', component: CatheterComponent },
+  { path: 'ApplicationList', component: ApplicationsListComponent },
+  { path: 'contacts', component: ContactsComponent },
+  { path: 'contacts/:applicationID', component: ContactsComponent }, // Add this line
   { path: 'dynamicTable', component: DynamicTablesComponent },
   { path: 'ComponentsListInUnits', component: ComponentsListInUnitsComponent },
   { path: 'med-execution-table', component: MedExecutionTableComponent },
-
-
-
-  //moshe-reports
   { path: 'medicalDevices', component: MedicalDevicesComponent },
   { path: 'stazerim', component: StazerimComponent },
-  //sysreports
   { path: 'SysAid', component: SysAidComponent },
   { path: 'sys-graph', component: SysGraphComponent },
-
-
-  //service calls
   { path: 'MainServiceCallsScreen', component: MainServiceCallsScreenComponent },
   { path: 'serviceCallsScreenIt', component: ServiceCallsScreenITComponent },
-
-
-  //AdminHomePage
   { path: 'AdminHomePage', component: AdminHomePageComponent },
-
-  
-  //guides
   { path: 'GuidesList', component: GuidesListComponent },
   { path: 'NewGuid', component: NewGuideFormComponent },
   { path: 'guide/:id', component: ViewGuideComponent },
   { path: 'Editguide/:id', component: EditGuideFormComponent },
-
-//serverping check
-{ path: 'ServersStatus', component: ServerPingCheckAppComponent },
-{ path: 'manage-servers', component: ManageServersComponent },
-
-
-//departmentLoad
-
-{ path: 'departmentLoadDashboard', component: DepartmentLoadDashboardComponent },
-{ path: 'department-detail/:id', component: DepartmentDetailDialogComponent },
-{ path: 'current-patients', component: CurrentPatientsComponent },
-
-//contactInfo
-{ path: 'contacts', component: ContactsComponent }
-
-
-
+  { path: 'ServersStatus', component: ServerPingCheckAppComponent },
+  { path: 'manage-servers', component: ManageServersComponent },
+  { path: 'departmentLoadDashboard', component: DepartmentLoadDashboardComponent },
+  { path: 'department-detail/:id', component: DepartmentDetailDialogComponent },
+  { path: 'current-patients', component: CurrentPatientsComponent },
+  { path: '', redirectTo: '/applications', pathMatch: 'full' }
 ];
 
 @NgModule({

@@ -88,6 +88,9 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { DynamicTablesComponent } from './chameleon-reports/dynamic-tables/dynamic-tables.component';
 import { ComponentsListInUnitsComponent } from './chameleon-reports/components-list-in-units/components-list-in-units.component';
 import { MedExecutionTableComponent } from './chameleon-reports/med-execution-table/med-execution-table.component';
+import { ApplicationsListComponent } from './contacts/applications-list/applications-list.component';
+import { AddEditApplicationDialogComponent } from './contacts/add-edit-application-dialog/add-edit-application-dialog.component';
+import { ContactsDialogComponent } from './contacts/contacts-dialog/contacts-dialog.component';
 
 @NgModule({
   declarations: [
@@ -146,6 +149,9 @@ import { MedExecutionTableComponent } from './chameleon-reports/med-execution-ta
     DynamicTablesComponent,
     ComponentsListInUnitsComponent,
     MedExecutionTableComponent,
+    ApplicationsListComponent,
+    AddEditApplicationDialogComponent,
+    ContactsDialogComponent,
   ],
   imports: [
     BrowserModule,

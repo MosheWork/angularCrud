@@ -1,0 +1,76 @@
+<div class="container">
+    <div class="content">
+      <div class="header-bar">
+        <mat-form-field appearance="outline" class="search-field">
+          <mat-label>Search Applications</mat-label>
+          <input matInput (input)="applyFilter($event)" placeholder="Search by application name or company name">
+        </mat-form-field>
+  
+        <button
+          mat-fab
+          color="primary"
+          class="add-task-btn"
+          matTooltip="הוספת רשומה חדשה "
+          (click)="openAddDialog()"
+        >
+          <mat-icon>add</mat-icon>
+        </button>
+      </div>
+  
+      <table mat-table [dataSource]="filteredApplications" class="mat-elevation-z8" style="width: 100%;">
+        <!-- ApplicationName Column -->
+        <ng-container matColumnDef="applicationName">
+          <th mat-header-cell *matHeaderCellDef> שם היישום </th>
+          <td mat-cell *matCellDef="let application"> {{application.applicationName}} </td>
+        </ng-container>
+  
+        <!-- ApplicationDescription Column -->
+        <ng-container matColumnDef="applicationDescription">
+          <th mat-header-cell *matHeaderCellDef> תיאור היישום </th>
+          <td mat-cell *matCellDef="let application"> {{application.applicationDescription}} </td>
+        </ng-container>
+  
+        <!-- CompanyName Column -->
+        <ng-container matColumnDef="companyName">
+          <th mat-header-cell *matHeaderCellDef> שם החברה </th>
+          <td mat-cell *matCellDef="let application"> {{application.companyName}} </td>
+        </ng-container>
+  
+        <!-- UsedBy Column -->
+        <ng-container matColumnDef="usedBy">
+          <th mat-header-cell *matHeaderCellDef> בשימוש על ידי </th>
+          <td mat-cell *matCellDef="let application"> {{application.usedBy}} </td>
+        </ng-container>
+  
+        <!-- ApplicationNameInEnglish Column -->
+        <ng-container matColumnDef="applicationNameInEnglish">
+          <th mat-header-cell *matHeaderCellDef> Application Name In English </th>
+          <td mat-cell *matCellDef="let application"> {{application.applicationNameInEnglish}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="userInCharge">
+          <th mat-header-cell *matHeaderCellDef> userInCharge </th>
+          <td mat-cell *matCellDef="let application"> {{application.userInChargeName}} </td>
+        </ng-container>
+  
+<!-- Actions Column -->
+<ng-container matColumnDef="actions">
+  <th mat-header-cell *matHeaderCellDef> עריכה </th>
+  <td mat-cell *matCellDef="let application">
+    <button mat-icon-button color="primary" (click)="openEditDialog(application)">
+      <mat-icon>edit</mat-icon>
+    </button>
+    <button mat-icon-button color="accent" (click)="openContactsDialog(application.applicationID)">
+      <mat-icon>contacts</mat-icon>
+    </button>
+  </td>
+</ng-container>
+
+
+  
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+      </table>
+    </div>
+  </div>
+  
