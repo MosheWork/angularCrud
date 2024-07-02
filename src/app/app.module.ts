@@ -91,6 +91,9 @@ import { MedExecutionTableComponent } from './chameleon-reports/med-execution-ta
 import { ApplicationsListComponent } from './contacts/applications-list/applications-list.component';
 import { AddEditApplicationDialogComponent } from './contacts/add-edit-application-dialog/add-edit-application-dialog.component';
 import { ContactsDialogComponent } from './contacts/contacts-dialog/contacts-dialog.component';
+import { ShiftManagementComponent } from './shift-management/shift-management/shift-management.component';
+import { DragDropModule } from '@angular/cdk/drag-drop';
+
 
 @NgModule({
   declarations: [
@@ -152,6 +155,7 @@ import { ContactsDialogComponent } from './contacts/contacts-dialog/contacts-dia
     ApplicationsListComponent,
     AddEditApplicationDialogComponent,
     ContactsDialogComponent,
+    ShiftManagementComponent,
   ],
   imports: [
     BrowserModule,
@@ -187,7 +191,8 @@ import { ContactsDialogComponent } from './contacts/contacts-dialog/contacts-dia
     AngularEditorModule,
     MatProgressSpinnerModule,
     NgxGaugeModule,
-    MatSlideToggleModule
+    MatSlideToggleModule,
+    DragDropModule
 
   ],
   providers: [DatePipe],

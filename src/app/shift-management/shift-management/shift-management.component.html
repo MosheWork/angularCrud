@@ -1,0 +1,34 @@
+<div class="shift-management">
+    <div class="calendar">
+      <div class="calendar-header">
+        <h2>Night Shifts Calendar</h2>
+      </div>
+      <div class="calendar-body">
+        <div class="calendar-weekdays">
+          <div class="calendar-day-header" *ngFor="let day of ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']">
+            {{ day }}
+          </div>
+        </div>
+        <div class="calendar-days">
+          <div class="calendar-day" *ngFor="let day of days">
+            <div class="date">{{ day.date.getDate() }}</div>
+            <div *ngFor="let shift of day.shifts">
+              <select [(ngModel)]="shift.employeeID" (change)="assignEmployee(shift)">
+                <option [ngValue]="null">Unassigned</option>
+                <option *ngFor="let employee of employees" [ngValue]="employee.id">
+                  {{ employee.name }}
+                </option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="shift-counter">
+      <h2>Total Shifts</h2>
+      <div *ngFor="let employee of employees">
+        {{ employee.name }}: {{ employee.totalShifts }}
+      </div>
+    </div>
+  </div>
+  

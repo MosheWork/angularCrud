@@ -1,0 +1,69 @@
+.shift-management {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+  }
+  
+  .calendar {
+    flex: 1;
+    margin-right: 20px;
+  }
+  
+  .calendar-header {
+    margin-bottom: 20px;
+    text-align: center;
+  }
+  
+  .calendar-body {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .calendar-weekdays {
+    display: flex;
+  }
+  
+  .calendar-day-header {
+    flex: 1;
+    padding: 10px;
+    text-align: center;
+    font-weight: bold;
+    background-color: #f1f1f1;
+    border: 1px solid #ccc;
+  }
+  
+  .calendar-days {
+    display: flex;
+    flex-wrap: wrap;
+  }
+  
+  .calendar-day {
+    width: calc(100% / 7);
+    padding: 10px;
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+    min-height: 100px;  // Ensures enough space for multiple shifts
+  }
+  
+  .date {
+    font-weight: bold;
+    margin-bottom: 5px;
+  }
+  
+  .shift {
+    margin: 5px 0;
+    padding: 5px;
+    background-color: #f1f1f1;
+    border: 1px solid #ccc;
+    cursor: move;
+  }
+  
+  .employee-list,
+  .shift-counter {
+    width: 200px;
+  }
+  
+  .employee-list {
+    margin-right: 20px;
+  }
+  
