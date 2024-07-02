@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
+import { Component, OnInit, ViewChild, AfterViewInit, HostListener } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatSort } from '@angular/material/sort';
@@ -20,11 +20,11 @@ interface MedExecutionModel {
   execution_UnitName: string;
   admission_No: string;
   generic_Name_ForDisplay: string;
-  dosage_InOrder: number; // New property
-  dosage_Unit_InOrder: string; // New property
-  way_Of_Giving: string; // New property
-  id_Num: string; // New property
-  full_Name: string; // New property
+  dosage_InOrder: number;
+  dosage_Unit_InOrder: string;
+  way_Of_Giving: string;
+  id_Num: string;
+  full_Name: string;
 }
 
 @Component({
@@ -40,15 +40,14 @@ export class MedExecutionTableComponent implements OnInit, AfterViewInit {
     'execution_Date', 
     'category_Name', 
     'execution_UnitName', 
-    //'admission_No', 
     'generic_Name_ForDisplay',
-    'dosage_InOrder', // New column
-    'dosage_Unit_InOrder', // New column
-    'way_Of_Giving', // New column
-    'id_Num', // New column
-    'full_Name' // New column
+    'dosage_InOrder',
+    'dosage_Unit_InOrder',
+    'way_Of_Giving',
+    'id_Num',
+    'full_Name'
   ];
-  
+
   dataSource = new MatTableDataSource<MedExecutionModel>();
   searchValue: string = '';
   titleUnit: string = 'מעבדות ';
@@ -59,19 +58,20 @@ export class MedExecutionTableComponent implements OnInit, AfterViewInit {
   showGraph: boolean = false;
   loading: boolean = false;
   showSuccessMessage: boolean = false;
+  showMessage: boolean = false;
   basicNameOptions: string[] = [];
   genericNameOptions: string[] = [];
-  unitNameOptions: string[] = []; // New property
+  unitNameOptions: string[] = [];
   filteredBasicNameOptions!: Observable<string[]>;
   filteredGenericNameOptions!: Observable<string[]>;
-  filteredUnitNameOptions!: Observable<string[]>; // New property
+  filteredUnitNameOptions!: Observable<string[]>;
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
   basicNamesControl = new FormControl('');
   genericNamesControl = new FormControl('');
-  unitNamesControl = new FormControl(''); // New control
+  unitNamesControl = new FormControl('');
 
   constructor(private http: HttpClient, private fb: FormBuilder, private datePipe: DatePipe) {
     this.filterForm = this.createFilterForm();
@@ -80,7 +80,7 @@ export class MedExecutionTableComponent implements OnInit, AfterViewInit {
   ngOnInit() {
     this.fetchBasicNameOptions();
     this.fetchGenericNameOptions();
-    this.fetchUnitNameOptions(); // Fetch unit names
+    this.fetchUnitNameOptions();
 
     this.filteredBasicNameOptions = this.basicNamesControl.valueChanges.pipe(
       startWith(''),
@@ -95,7 +95,7 @@ export class MedExecutionTableComponent implements OnInit, AfterViewInit {
       map(value => this._filterUnitNameOptions(value || ''))
     );
   }
-  
+
   ngAfterViewInit() {
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
@@ -111,7 +111,7 @@ export class MedExecutionTableComponent implements OnInit, AfterViewInit {
       }
     );
   }
-  
+
   fetchGenericNameOptions() {
     this.http.get<string[]>(`${environment.apiUrl}MedExecutionAPI/GetGenericNameOptions`).subscribe(
       data => {
@@ -138,17 +138,17 @@ export class MedExecutionTableComponent implements OnInit, AfterViewInit {
     const filterValue = value.toLowerCase();
     return this.basicNameOptions.filter(option => option.toLowerCase().includes(filterValue));
   }
-  
+
   private _filterGenericNameOptions(value: string): string[] {
     const filterValue = value.toLowerCase();
     return this.genericNameOptions.filter(option => option.toLowerCase().includes(filterValue));
   }
 
-  private _filterUnitNameOptions(value: string): string[] { // New filter method
+  private _filterUnitNameOptions(value: string): string[] {
     const filterValue = value.toLowerCase();
     return this.unitNameOptions.filter(option => option.toLowerCase().includes(filterValue));
   }
-  
+
   displayBasicName(basicName: string): string {
     return basicName;
   }
@@ -157,7 +157,7 @@ export class MedExecutionTableComponent implements OnInit, AfterViewInit {
     return genericName;
   }
 
-  displayUnitName(unitName: string): string { // New display method
+  displayUnitName(unitName: string): string {
     return unitName;
   }
 
@@ -188,7 +188,7 @@ export class MedExecutionTableComponent implements OnInit, AfterViewInit {
       params = params.append('category_Name', filters.category_Name);
     }
 
-    if (this.unitNamesControl.value) { // Update to send execution_UnitNames as a list
+    if (this.unitNamesControl.value) {
       params = params.append('execution_UnitNames', this.unitNamesControl.value);
     }
 
@@ -230,7 +230,7 @@ export class MedExecutionTableComponent implements OnInit, AfterViewInit {
       drug: new FormControl(''),
       execution_Date: new FormControl(''),
       category_Name: new FormControl(''),
-      execution_UnitNames: this.unitNamesControl, // Add control to form group
+      execution_UnitNames: this.unitNamesControl,
       admission_No: new FormControl(''),
       generic_Names_ForDisplay: this.genericNamesControl,
       startDate: new FormControl(''),
@@ -291,5 +291,15 @@ export class MedExecutionTableComponent implements OnInit, AfterViewInit {
   applyFilter(event: Event, column: string) {
     const filterValue = (event.target as HTMLInputElement).value;
     this.filterForm.get(column)?.setValue(filterValue.trim().toLowerCase());
+  }
+
+  @HostListener('mouseenter', ['$event'])
+  onMouseEnter() {
+    this.showMessage = true;
+  }
+
+  @HostListener('mouseleave', ['$event'])
+  onMouseLeave() {
+    this.showMessage = false;
   }
 }

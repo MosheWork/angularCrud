@@ -85,6 +85,12 @@
     <mat-spinner></mat-spinner>
   </div>
 
+  <!-- Add the hover area and message -->
+  <div class="hover-area"></div>
+  <div *ngIf="showMessage" class="creator-message">
+    הדוח נוצר על ידי משה ממן
+  </div>
+
   <mat-table *ngIf="!showGraph && !loading" [dataSource]="dataSource" matSort dir="rtl" class="mat-elevation-z8">
     <ng-container matColumnDef="basic_Name">
       <mat-header-cell *matHeaderCellDef mat-sort-header>שם תרופה</mat-header-cell>
