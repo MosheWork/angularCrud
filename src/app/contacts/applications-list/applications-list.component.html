@@ -44,18 +44,19 @@
   
         <!-- ApplicationNameInEnglish Column -->
         <ng-container matColumnDef="applicationNameInEnglish">
-          <th mat-header-cell *matHeaderCellDef> Application Name In English </th>
+          <th mat-header-cell *matHeaderCellDef> שם באנגלית </th>
           <td mat-cell *matCellDef="let application"> {{application.applicationNameInEnglish}} </td>
         </ng-container>
 
-        <ng-container matColumnDef="userInCharge">
-          <th mat-header-cell *matHeaderCellDef> userInCharge </th>
-          <td mat-cell *matCellDef="let application"> {{application.userInChargeName}} </td>
-        </ng-container>
+      <!-- User In Charge Names Column -->
+<ng-container matColumnDef="userInChargeNames">
+  <th mat-header-cell *matHeaderCellDef> רפרנט אחראי </th>
+  <td mat-cell *matCellDef="let application"> {{ application.userInChargeNames }} </td>
+</ng-container>
   
 <!-- Actions Column -->
 <ng-container matColumnDef="actions">
-  <th mat-header-cell *matHeaderCellDef> עריכה </th>
+  <th mat-header-cell *matHeaderCellDef> אנשי קשר/עריכה</th>
   <td mat-cell *matCellDef="let application">
     <button mat-icon-button color="primary" (click)="openEditDialog(application)">
       <mat-icon>edit</mat-icon>

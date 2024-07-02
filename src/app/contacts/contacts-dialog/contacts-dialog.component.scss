@@ -1,31 +1,32 @@
 .dialog-title {
     text-align: center;
     padding: 16px 0;
+    font-size: 1.5em;
+    font-weight: bold;
   }
   
-  .contact-form {
-    padding: 16px;
-  }
-  
-  .form-row {
+  .header-bar {
     display: flex;
-    gap: 16px;
-    margin-bottom: 16px;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
   }
   
-  .form-field {
-    flex: 1;
+  .search-field {
+    width: 100%;
   }
   
-  .toggle-container {
+  .contact-table {
     margin-top: 16px;
-    display: flex;
-    justify-content: center;
+  }
+  
+  .contact-table th.mat-header-cell, .contact-table td.mat-cell {
+    text-align: center;
   }
   
   .dialog-actions {
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-end;
     padding: 16px;
   }
   

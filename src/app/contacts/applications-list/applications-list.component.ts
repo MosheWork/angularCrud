@@ -13,7 +13,7 @@ import { ContactsDialogComponent } from '../contacts-dialog/contacts-dialog.comp
 })
 export class ApplicationsListComponent implements OnInit {
   applications: any[] = [];
-  displayedColumns: string[] = ['applicationName', 'applicationDescription', 'companyName', 'usedBy', 'applicationNameInEnglish','userInCharge', 'actions'];
+  displayedColumns: string[] = ['applicationName', 'applicationDescription', 'companyName', 'usedBy', 'applicationNameInEnglish','userInChargeNames', 'actions'];
   filteredApplications = new MatTableDataSource<any>(this.applications);
 
   constructor(private http: HttpClient, public dialog: MatDialog) { }
@@ -55,7 +55,8 @@ export class ApplicationsListComponent implements OnInit {
     }, error => {
       console.error('Error updating application:', error);
     });
-  }
+}
+
 
   addApplication(application: any): void {
     this.http.post<any>(`${environment.apiUrl}ContactsInfoAPI/CreateApplication`, application).subscribe(() => {

@@ -1,4 +1,4 @@
-<h1 mat-dialog-title class="dialog-title">{{ isEdit ? 'Edit Application' : 'Add Application' }}</h1>
+<h1 mat-dialog-title>{{ isEdit ? 'Edit Application' : 'Add Application' }}</h1>
 <div mat-dialog-content class="contact-form">
   <form [formGroup]="form">
     <div class="form-row">
@@ -40,12 +40,12 @@
     <div class="form-row">
       <mat-form-field appearance="outline" class="form-field">
         <mat-label>User In Charge</mat-label>
-        <mat-select formControlName="userInChargeID" required>
+        <mat-select formControlName="userInChargeIDs" multiple required>
           <mat-option *ngFor="let user of usersInCharge" [value]="user.userInChargeID">
             {{ user.userInChargeName }}
           </mat-option>
         </mat-select>
-        <mat-error *ngIf="form.get('userInChargeID')?.hasError('required')">
+        <mat-error *ngIf="form.get('userInChargeIDs')?.hasError('required')">
           User In Charge is required
         </mat-error>
       </mat-form-field>

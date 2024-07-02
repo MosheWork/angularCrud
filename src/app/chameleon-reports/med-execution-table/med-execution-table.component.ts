@@ -27,7 +27,6 @@ interface MedExecutionModel {
   full_Name: string; // New property
 }
 
-
 @Component({
   selector: 'app-med-execution-table',
   templateUrl: './med-execution-table.component.html',
@@ -50,7 +49,6 @@ export class MedExecutionTableComponent implements OnInit, AfterViewInit {
     'full_Name' // New column
   ];
   
-  
   dataSource = new MatTableDataSource<MedExecutionModel>();
   searchValue: string = '';
   titleUnit: string = 'מעבדות ';
@@ -63,14 +61,17 @@ export class MedExecutionTableComponent implements OnInit, AfterViewInit {
   showSuccessMessage: boolean = false;
   basicNameOptions: string[] = [];
   genericNameOptions: string[] = [];
+  unitNameOptions: string[] = []; // New property
   filteredBasicNameOptions!: Observable<string[]>;
   filteredGenericNameOptions!: Observable<string[]>;
+  filteredUnitNameOptions!: Observable<string[]>; // New property
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
   basicNamesControl = new FormControl('');
   genericNamesControl = new FormControl('');
+  unitNamesControl = new FormControl(''); // New control
 
   constructor(private http: HttpClient, private fb: FormBuilder, private datePipe: DatePipe) {
     this.filterForm = this.createFilterForm();
@@ -79,6 +80,8 @@ export class MedExecutionTableComponent implements OnInit, AfterViewInit {
   ngOnInit() {
     this.fetchBasicNameOptions();
     this.fetchGenericNameOptions();
+    this.fetchUnitNameOptions(); // Fetch unit names
+
     this.filteredBasicNameOptions = this.basicNamesControl.valueChanges.pipe(
       startWith(''),
       map(value => this._filterBasicNameOptions(value || ''))
@@ -86,6 +89,10 @@ export class MedExecutionTableComponent implements OnInit, AfterViewInit {
     this.filteredGenericNameOptions = this.genericNamesControl.valueChanges.pipe(
       startWith(''),
       map(value => this._filterGenericNameOptions(value || ''))
+    );
+    this.filteredUnitNameOptions = this.unitNamesControl.valueChanges.pipe(
+      startWith(''),
+      map(value => this._filterUnitNameOptions(value || ''))
     );
   }
   
@@ -116,6 +123,17 @@ export class MedExecutionTableComponent implements OnInit, AfterViewInit {
     );
   }
 
+  fetchUnitNameOptions() {
+    this.http.get<string[]>(`${environment.apiUrl}MedExecutionAPI/GetUnitNameOptions`).subscribe(
+      data => {
+        this.unitNameOptions = data;
+      },
+      error => {
+        console.error('Error fetching unit name options:', error);
+      }
+    );
+  }
+
   private _filterBasicNameOptions(value: string): string[] {
     const filterValue = value.toLowerCase();
     return this.basicNameOptions.filter(option => option.toLowerCase().includes(filterValue));
@@ -125,6 +143,11 @@ export class MedExecutionTableComponent implements OnInit, AfterViewInit {
     const filterValue = value.toLowerCase();
     return this.genericNameOptions.filter(option => option.toLowerCase().includes(filterValue));
   }
+
+  private _filterUnitNameOptions(value: string): string[] { // New filter method
+    const filterValue = value.toLowerCase();
+    return this.unitNameOptions.filter(option => option.toLowerCase().includes(filterValue));
+  }
   
   displayBasicName(basicName: string): string {
     return basicName;
@@ -132,6 +155,10 @@ export class MedExecutionTableComponent implements OnInit, AfterViewInit {
 
   displayGenericName(genericName: string): string {
     return genericName;
+  }
+
+  displayUnitName(unitName: string): string { // New display method
+    return unitName;
   }
 
   search() {
@@ -161,8 +188,8 @@ export class MedExecutionTableComponent implements OnInit, AfterViewInit {
       params = params.append('category_Name', filters.category_Name);
     }
 
-    if (filters.execution_UnitName) {
-      params = params.append('execution_UnitName', filters.execution_UnitName);
+    if (this.unitNamesControl.value) { // Update to send execution_UnitNames as a list
+      params = params.append('execution_UnitNames', this.unitNamesControl.value);
     }
 
     if (filters.admission_No) {
@@ -203,7 +230,7 @@ export class MedExecutionTableComponent implements OnInit, AfterViewInit {
       drug: new FormControl(''),
       execution_Date: new FormControl(''),
       category_Name: new FormControl(''),
-      execution_UnitName: new FormControl(''),
+      execution_UnitNames: this.unitNamesControl, // Add control to form group
       admission_No: new FormControl(''),
       generic_Names_ForDisplay: this.genericNamesControl,
       startDate: new FormControl(''),

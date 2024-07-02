@@ -26,7 +26,7 @@ export class AddEditApplicationDialogComponent implements OnInit {
       applicationDescription: [data.application?.applicationDescription || '', Validators.required],
       companyName: [data.application?.companyName || '', Validators.required],
       usedBy: [data.application?.usedBy || '', Validators.required],
-      userInChargeID: [data.application?.userInChargeID || '', Validators.required],
+      userInChargeIDs: [data.application?.userInChargeIDs || [], Validators.required],
       applicationNameInEnglish: [data.application?.applicationNameInEnglish || '', Validators.required]
     });
   }
