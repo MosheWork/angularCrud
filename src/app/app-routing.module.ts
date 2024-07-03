@@ -29,6 +29,8 @@ import { DepartmentLoadDashboardComponent } from './departmentLoad/department-lo
 import { DepartmentDetailDialogComponent } from './departmentLoad/department-detail/department-detail.component';
 import { CurrentPatientsComponent } from './departmentLoad/current-patients/current-patients.component';
 import { ShiftManagementComponent } from './shift-management/shift-management/shift-management.component';
+import { BoardsComponent } from './Monday/boards/boards.component';
+import { TasksComponent } from './Monday/tasks/tasks.component';
 
 const routes: Routes = [
   { path: 'users', component: UsersComponent },
@@ -63,7 +65,13 @@ const routes: Routes = [
 
 
   // shift
-  { path: 'shifts', component: ShiftManagementComponent  }
+  { path: 'shifts', component: ShiftManagementComponent  },
+
+  //monday
+  { path: 'boards', component: BoardsComponent },
+  { path: 'boards/:boardId/tasks', component: TasksComponent },
+  { path: '', redirectTo: '/boards', pathMatch: 'full' }
+
 
 ];
 

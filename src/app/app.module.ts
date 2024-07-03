@@ -93,6 +93,8 @@ import { AddEditApplicationDialogComponent } from './contacts/add-edit-applicati
 import { ContactsDialogComponent } from './contacts/contacts-dialog/contacts-dialog.component';
 import { ShiftManagementComponent } from './shift-management/shift-management/shift-management.component';
 import { DragDropModule } from '@angular/cdk/drag-drop';
+import { BoardsComponent } from './Monday/boards/boards.component';
+import { TasksComponent } from './Monday/tasks/tasks.component';
 
 
 @NgModule({
@@ -156,6 +158,8 @@ import { DragDropModule } from '@angular/cdk/drag-drop';
     AddEditApplicationDialogComponent,
     ContactsDialogComponent,
     ShiftManagementComponent,
+    BoardsComponent,
+    TasksComponent,
   ],
   imports: [
     BrowserModule,

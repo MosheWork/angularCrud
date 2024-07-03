@@ -1,0 +1,9 @@
+<div>
+    <h2>Boards</h2>
+    <mat-list>
+      <mat-list-item *ngFor="let board of boards">
+        <a [routerLink]="['/boards', board.id, 'tasks']">{{ board.name }}</a>
+      </mat-list-item>
+    </mat-list>
+  </div>
+  
