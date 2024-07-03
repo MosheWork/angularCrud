@@ -4,7 +4,7 @@ import { ActivatedRoute } from '@angular/router';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
-import { Observable } from 'rxjs';
+import { Observable, forkJoin } from 'rxjs';
 import { environment } from '../../../environments/environment';
 
 interface ColumnValue {
@@ -35,6 +35,12 @@ interface Board {
   groups: Group[];
 }
 
+interface Column {
+  id: string;
+  title: string;
+  type: string;
+}
+
 @Component({
   selector: 'app-tasks',
   templateUrl: './tasks.component.html',
@@ -46,6 +52,7 @@ export class TasksComponent implements OnInit, AfterViewInit {
   displayedColumns: string[] = ['name'];
   dynamicColumns: ColumnValue[] = [];
   groupDataSources: { [key: string]: MatTableDataSource<Task> } = {};
+  columnTitles: { [key: string]: string } = {};  // Store column titles here
 
   @ViewChildren(MatPaginator) paginators!: QueryList<MatPaginator>;
   @ViewChildren(MatSort) sorts!: QueryList<MatSort>;
@@ -55,16 +62,25 @@ export class TasksComponent implements OnInit, AfterViewInit {
   ngOnInit(): void {
     this.route.params.subscribe(params => {
       this.boardId = params['boardId'];
-      this.getTasks(this.boardId).subscribe(data => {
-        console.log('Response data:', data);  // Log the response data for debugging
-        const boardData = data?.data?.boards?.[0];
+      forkJoin([
+        this.getTasks(this.boardId),
+        this.getColumns(this.boardId)
+      ]).subscribe(([tasksData, columnsData]) => {
+        console.log('Tasks response:', tasksData);
+        console.log('Columns response:', columnsData);
+
+        const boardData = tasksData?.data?.boards?.[0];
         if (boardData) {
           this.board = boardData;
-          console.log('Board data:', this.board);  // Log the board data
+          this.columnTitles = columnsData?.data?.boards?.[0]?.columns.reduce((acc: { [key: string]: string }, column: Column) => {
+            acc[column.id] = column.title;
+            return acc;
+          }, {});
+
           this.extractDynamicColumns();
           this.setupDataSources();
         } else {
-          console.error('Invalid response structure:', data);
+          console.error('Invalid response structure:', tasksData);
         }
       }, error => {
         console.error('API call failed:', error);
@@ -73,7 +89,6 @@ export class TasksComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    // Ensure setupDataSources runs after view initialization
     setTimeout(() => {
       this.setupDataSources();
     });
@@ -83,6 +98,10 @@ export class TasksComponent implements OnInit, AfterViewInit {
     return this.http.get(`${environment.apiUrl}Monday/boards/${boardId}/tasks`);
   }
 
+  getColumns(boardId: string): Observable<any> {
+    return this.http.get(`${environment.apiUrl}Monday/boards/${boardId}/columns`);
+  }
+
   extractDynamicColumns(): void {
     if (this.board && this.board.groups.length > 0) {
       const firstGroup = this.board.groups[0];
@@ -90,10 +109,10 @@ export class TasksComponent implements OnInit, AfterViewInit {
         const firstTask = firstGroup.items_page.items[0];
         this.dynamicColumns = firstTask.column_values.map(col => ({
           ...col,
-          title: this.getColumnTitle(col.id)  // Extract the title based on the column ID
+          title: this.columnTitles[col.id] || col.id  // Use title from columnTitles
         }));
         this.displayedColumns = ['name', ...this.dynamicColumns.map(col => col.id)];
-        console.log('Dynamic columns:', this.dynamicColumns);  // Log dynamic columns
+        console.log('Dynamic columns:', this.dynamicColumns);
       }
     }
   }
@@ -111,8 +130,8 @@ export class TasksComponent implements OnInit, AfterViewInit {
           if (paginator && sort) {
             dataSource.paginator = paginator;
             dataSource.sort = sort;
-            paginator.length = group.items_page.items.length;  // Ensure paginator length is set
-            paginator.pageIndex = 0;  // Ensure the paginator starts from the first page
+            paginator.length = group.items_page.items.length;
+            paginator.pageIndex = 0;
             console.log(`Group: ${group.title}, Items: ${group.items_page.items.length}, Paginator length: ${paginator.length}`);
           } else {
             console.error(`Paginator or sort not found for group: ${group.title}`);
@@ -138,10 +157,5 @@ export class TasksComponent implements OnInit, AfterViewInit {
         this.groupDataSources[key].filter = filterValue;
       }
     }
-  }
-
-  getColumnTitle(columnId: string): string {
-    const column = this.dynamicColumns.find(col => col.id === columnId);
-    return column ? column.title : columnId;
   }
 }
