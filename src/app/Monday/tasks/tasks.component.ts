@@ -33,31 +33,14 @@ interface Board {
 
 @Component({
   selector: 'app-tasks',
-  template: `
-  <div *ngIf="board">
-    <h2>Tasks for Board ID: {{ board.id }}</h2>
-    <div *ngFor="let group of board.groups">
-      <h3>{{ group.title }}</h3>
-      <div *ngFor="let task of group.items_page.items">
-        <mat-card class="task-card">
-          <mat-card-title>{{ task.name }}</mat-card-title>
-          <mat-card-content>
-            <div *ngFor="let column of task.column_values">
-              <p>
-                <strong>{{ column.id }} ({{ column.type }}):</strong> {{ column.text || 'No text available' }}
-              </p>
-            </div>
-          </mat-card-content>
-        </mat-card>
-      </div>
-    </div>
-  </div>
-  `,
+  templateUrl: './tasks.component.html',
   styleUrls: ['./tasks.component.scss']
 })
 export class TasksComponent implements OnInit {
   board: Board | null = null;
   boardId: string = '';
+  displayedColumns: string[] = ['name'];
+  dynamicColumns: ColumnValue[] = [];
 
   constructor(private http: HttpClient, private route: ActivatedRoute) { }
 
@@ -69,6 +52,7 @@ export class TasksComponent implements OnInit {
         const boardData = data?.data?.boards?.[0];
         if (boardData) {
           this.board = boardData;
+          this.extractDynamicColumns();
         } else {
           console.error('Invalid response structure:', data);
         }
@@ -80,5 +64,21 @@ export class TasksComponent implements OnInit {
 
   getTasks(boardId: string): Observable<any> {
     return this.http.get(`${environment.apiUrl}Monday/boards/${boardId}/tasks`);
+  }
+
+  extractDynamicColumns(): void {
+    if (this.board && this.board.groups.length > 0) {
+      const firstGroup = this.board.groups[0];
+      if (firstGroup.items_page.items.length > 0) {
+        const firstTask = firstGroup.items_page.items[0];
+        this.dynamicColumns = firstTask.column_values;
+        this.displayedColumns = ['name', ...this.dynamicColumns.map(col => col.id)];
+      }
+    }
+  }
+
+  getColumnText(columnValues: ColumnValue[], columnId: string): string {
+    const column = columnValues.find(col => col.id === columnId);
+    return column ? (column.text || 'No text available') : '';
   }
 }
