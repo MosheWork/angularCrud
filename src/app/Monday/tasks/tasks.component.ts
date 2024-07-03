@@ -26,6 +26,7 @@ interface Group {
   items_page: {
     items: Task[];
   };
+  isCollapsed?: boolean;  // Add this property to track collapse state
 }
 
 interface Board {
@@ -68,7 +69,7 @@ export class TasksComponent implements OnInit, AfterViewInit {
       ]).subscribe(([tasksData, columnsData]) => {
         console.log('Tasks response:', tasksData);
         console.log('Columns response:', columnsData);
-
+  
         const boardData = tasksData?.data?.boards?.[0];
         if (boardData) {
           this.board = boardData;
@@ -76,9 +77,13 @@ export class TasksComponent implements OnInit, AfterViewInit {
             acc[column.id] = column.title;
             return acc;
           }, {});
-
+  
           this.extractDynamicColumns();
           this.setupDataSources();
+  
+          if (this.board && this.board.groups) {
+            this.board.groups.forEach(group => group.isCollapsed = true); // Initialize all groups as collapsed
+          }
         } else {
           console.error('Invalid response structure:', tasksData);
         }
@@ -87,7 +92,8 @@ export class TasksComponent implements OnInit, AfterViewInit {
       });
     });
   }
-
+  
+  
   ngAfterViewInit(): void {
     setTimeout(() => {
       this.setupDataSources();
@@ -157,5 +163,9 @@ export class TasksComponent implements OnInit, AfterViewInit {
         this.groupDataSources[key].filter = filterValue;
       }
     }
+  }
+
+  toggleGroupCollapse(group: Group): void {
+    group.isCollapsed = !group.isCollapsed;
   }
 }
