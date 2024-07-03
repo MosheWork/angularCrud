@@ -1,8 +1,6 @@
-import { Component, OnInit, AfterViewInit, ViewChildren, QueryList } from '@angular/core';
+import { Component, OnInit, ViewChildren, QueryList } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { ActivatedRoute } from '@angular/router';
-import { MatPaginator } from '@angular/material/paginator';
-import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { Observable, forkJoin } from 'rxjs';
 import { environment } from '../../../environments/environment';
@@ -26,7 +24,7 @@ interface Group {
   items_page: {
     items: Task[];
   };
-  isCollapsed?: boolean;  // Add this property to track collapse state
+  isCollapsed?: boolean;
 }
 
 interface Board {
@@ -47,56 +45,49 @@ interface Column {
   templateUrl: './tasks.component.html',
   styleUrls: ['./tasks.component.scss']
 })
-export class TasksComponent implements OnInit, AfterViewInit {
+export class TasksComponent implements OnInit {
   board: Board | null = null;
   boardId: string = '';
   displayedColumns: string[] = ['name'];
   dynamicColumns: ColumnValue[] = [];
+  columnTitles: { [key: string]: string } = {};
   groupDataSources: { [key: string]: MatTableDataSource<Task> } = {};
-  columnTitles: { [key: string]: string } = {};  // Store column titles here
 
-  @ViewChildren(MatPaginator) paginators!: QueryList<MatPaginator>;
-  @ViewChildren(MatSort) sorts!: QueryList<MatSort>;
-
-  constructor(private http: HttpClient, private route: ActivatedRoute) { }
+  constructor(private http: HttpClient, private route: ActivatedRoute) {}
 
   ngOnInit(): void {
-    this.route.params.subscribe(params => {
+    this.route.params.subscribe((params) => {
       this.boardId = params['boardId'];
-      forkJoin([
-        this.getTasks(this.boardId),
-        this.getColumns(this.boardId)
-      ]).subscribe(([tasksData, columnsData]) => {
-        console.log('Tasks response:', tasksData);
-        console.log('Columns response:', columnsData);
-  
-        const boardData = tasksData?.data?.boards?.[0];
-        if (boardData) {
-          this.board = boardData;
-          this.columnTitles = columnsData?.data?.boards?.[0]?.columns.reduce((acc: { [key: string]: string }, column: Column) => {
-            acc[column.id] = column.title;
-            return acc;
-          }, {});
-  
-          this.extractDynamicColumns();
-          this.setupDataSources();
-  
-          if (this.board && this.board.groups) {
-            this.board.groups.forEach(group => group.isCollapsed = true); // Initialize all groups as collapsed
+      forkJoin([this.getTasks(this.boardId), this.getColumns(this.boardId)]).subscribe(
+        ([tasksData, columnsData]) => {
+          console.log('Tasks response:', tasksData);
+          console.log('Columns response:', columnsData);
+
+          const boardData = tasksData?.data?.boards?.[0];
+          if (boardData) {
+            this.board = boardData;
+            this.columnTitles = columnsData?.data?.boards?.[0]?.columns.reduce(
+              (acc: { [key: string]: string }, column: Column) => {
+                acc[column.id] = column.title;
+                return acc;
+              },
+              {}
+            );
+
+            this.extractDynamicColumns();
+            this.setupDataSources();
+
+            if (this.board && this.board.groups) {
+              this.board.groups.forEach((group) => (group.isCollapsed = true));
+            }
+          } else {
+            console.error('Invalid response structure:', tasksData);
           }
-        } else {
-          console.error('Invalid response structure:', tasksData);
+        },
+        (error) => {
+          console.error('API call failed:', error);
         }
-      }, error => {
-        console.error('API call failed:', error);
-      });
-    });
-  }
-  
-  
-  ngAfterViewInit(): void {
-    setTimeout(() => {
-      this.setupDataSources();
+      );
     });
   }
 
@@ -113,36 +104,22 @@ export class TasksComponent implements OnInit, AfterViewInit {
       const firstGroup = this.board.groups[0];
       if (firstGroup.items_page.items.length > 0) {
         const firstTask = firstGroup.items_page.items[0];
-        this.dynamicColumns = firstTask.column_values.map(col => ({
+        this.dynamicColumns = firstTask.column_values.map((col) => ({
           ...col,
-          title: this.columnTitles[col.id] || col.id  // Use title from columnTitles
+          title: this.getColumnTitle(col.id),
         }));
-        this.displayedColumns = ['name', ...this.dynamicColumns.map(col => col.id)];
-        console.log('Dynamic columns:', this.dynamicColumns);
+        this.displayedColumns = ['name', ...this.dynamicColumns.map((col) => col.id)];
       }
     }
   }
 
   setupDataSources(): void {
     if (this.board) {
-      this.board.groups.forEach((group, index) => {
+      this.board.groups.forEach((group) => {
         console.log(`Setting up data source for group: ${group.title}`);
         const dataSource = new MatTableDataSource(group.items_page.items);
         console.log(`Data source items for group ${group.title}:`, group.items_page.items);
         this.groupDataSources[group.id] = dataSource;
-        setTimeout(() => {
-          const paginator = this.paginators.toArray()[index];
-          const sort = this.sorts.toArray()[index];
-          if (paginator && sort) {
-            dataSource.paginator = paginator;
-            dataSource.sort = sort;
-            paginator.length = group.items_page.items.length;
-            paginator.pageIndex = 0;
-            console.log(`Group: ${group.title}, Items: ${group.items_page.items.length}, Paginator length: ${paginator.length}`);
-          } else {
-            console.error(`Paginator or sort not found for group: ${group.title}`);
-          }
-        }, 0);
       });
     }
   }
@@ -152,20 +129,31 @@ export class TasksComponent implements OnInit, AfterViewInit {
   }
 
   getColumnText(columnValues: ColumnValue[], columnId: string): string {
-    const column = columnValues.find(col => col.id === columnId);
-    return column ? (column.text || '') : '';
+    const column = columnValues.find((col) => col.id === columnId);
+    return column ? column.text || '' : '';
   }
 
-  applyFilter(event: Event): void {
+  applyColumnFilter(event: Event, columnId: string, groupId: string): void {
     const filterValue = (event.target as HTMLInputElement).value.trim().toLowerCase();
-    for (const key in this.groupDataSources) {
-      if (this.groupDataSources.hasOwnProperty(key)) {
-        this.groupDataSources[key].filter = filterValue;
+    if (this.groupDataSources.hasOwnProperty(groupId)) {
+      this.groupDataSources[groupId].filterPredicate = (data: Task, filter: string) => {
+        const columnText = this.getColumnText(data.column_values, columnId).toLowerCase();
+        return columnText.includes(filter);
+      };
+      this.groupDataSources[groupId].filter = filterValue;
+      if (filterValue === '') {
+        this.groupDataSources[groupId].filterPredicate = (data: Task, filter: string) => {
+          return true; // reset to default behavior
+        };
       }
     }
   }
 
-  toggleGroupCollapse(group: Group): void {
+  getColumnTitle(columnId: string): string {
+    return this.columnTitles[columnId] || columnId;
+  }
+
+  toggleGroup(group: Group): void {
     group.isCollapsed = !group.isCollapsed;
   }
 }

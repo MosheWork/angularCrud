@@ -1,22 +1,20 @@
 <div *ngIf="board">
-    <h2>Tasks for Board ID: {{ board.id }}</h2>
-    <div *ngFor="let group of board.groups">
-      <h3 (click)="toggleGroupCollapse(group)" style="cursor: pointer;">
-        {{ group.title }} {{ group.isCollapsed ? '+' : '-' }}
-      </h3>
-      <div *ngIf="!group.isCollapsed">
-        <table mat-table [dataSource]="group.items_page.items" class="mat-elevation-z8">
-          <!-- Task Name Column -->
-          <ng-container matColumnDef="name">
-            <th mat-header-cell *matHeaderCellDef> Task Name </th>
-            <td mat-cell *matCellDef="let task"> {{ task.name }} </td>
-          </ng-container>
+    <h1>Tasks for Board ID: {{ boardId }}</h1>
   
-          <!-- Dynamic Columns -->
-          <ng-container *ngFor="let column of dynamicColumns" [matColumnDef]="column.id">
-            <th mat-header-cell *matHeaderCellDef> {{ column.title }} ({{ column.type }}) </th>
+    <div *ngFor="let group of board.groups">
+      <h2 (click)="toggleGroup(group)">
+        {{ group.title }}
+      </h2>
+      <div *ngIf="!group.isCollapsed">
+        <table mat-table [dataSource]="getGroupDataSource(group)" class="mat-elevation-z8">
+          <!-- Dynamic columns -->
+          <ng-container *ngFor="let column of displayedColumns" [matColumnDef]="column">
+            <th mat-header-cell *matHeaderCellDef>
+              {{ getColumnTitle(column) }}
+              <input matInput (keyup)="applyColumnFilter($event, column, group.id)" placeholder="Filter">
+            </th>
             <td mat-cell *matCellDef="let task">
-              {{ getColumnText(task.column_values, column.id) }}
+              {{ getColumnText(task.column_values, column) }}
             </td>
           </ng-container>
   
