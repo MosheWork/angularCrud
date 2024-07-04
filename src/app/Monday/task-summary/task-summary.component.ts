@@ -120,17 +120,16 @@ export class TaskSummaryComponent implements OnInit, OnChanges {
   updateDisplayedColumns(): void {
     this.statusKeys = Array.from(
       new Set(
-        Object.values(this.groupSummary).reduce(
-          (acc, summary: GroupSummary) =>
-            acc.concat(Object.keys(summary.statuses)),
-          [] as string[]
-        )
+        Object.values(this.groupSummary)
+          .reduce((acc, summary: GroupSummary) => acc.concat(Object.keys(summary.statuses)), [] as string[])
       )
     );
-    this.displayedColumns = ['group', 'total', ...this.statusKeys];
+    // Define the new order of the columns here
+    this.displayedColumns = ['group', 'total', 'טופל', 'בעבודה',  'לא ניתן לטפל', 'בהמתנה'];
   }
 
   get groupSummaryKeys(): string[] {
     return Object.keys(this.groupSummary);
   }
+  
 }
