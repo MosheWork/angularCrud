@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChildren, QueryList } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { ActivatedRoute } from '@angular/router';
 import { MatTableDataSource } from '@angular/material/table';
@@ -48,7 +48,7 @@ interface Column {
 export class TasksComponent implements OnInit {
   board: Board | null = null;
   boardId: string = '';
-  displayedColumns: string[] = ['name'];
+  displayedColumns: string[] = ['task_name', 'subitems', 'assigned', 'unique_name', 'requester_name', 'status', 'priority', 'due_date', 'expected_end_date', 'reading'];
   dynamicColumns: ColumnValue[] = [];
   columnTitles: { [key: string]: string } = {};
   groupDataSources: { [key: string]: MatTableDataSource<Task> } = {};
@@ -149,8 +149,13 @@ export class TasksComponent implements OnInit {
     }
   }
 
-  getColumnTitle(columnId: string): string {
-    return this.columnTitles[columnId] || columnId;
+  getColumnTitle(column: string): string {
+    switch (column) {
+      case 'task_name': return 'Task Name';
+      case 'subitems': return 'Subitems (subtasks)';
+      // Add other column mappings here
+      default: return this.columnTitles[column] || column;
+    }
   }
 
   toggleGroup(group: Group): void {

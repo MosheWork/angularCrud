@@ -1,32 +1,38 @@
-.task-card {
-    margin-bottom: 20px;
-  }
-  
-  .column-value {
-    margin-bottom: 10px;
-  }
-  
-  .mat-elevation-z8 {
-    margin: 20px 0;
-  }
-  
-  .mat-header-cell, .mat-cell {
-    padding: 8px 16px;
-  }
-  
-  .mat-header-cell {
-    font-weight: bold;
-  }
-  
-  .mat-form-field {
-    margin-right: 16px;
-  }
-  
-  mat-form-field {
-    width: 100%;
+:host {
+    display: block;
   }
   
   table {
-    width: 100%;
+    width: auto;
+    table-layout: auto;
+  
+    th.mat-header-cell {
+      white-space: nowrap;
+      padding: 4px 8px;
+    }
+  
+    td.mat-cell {
+      white-space: nowrap;
+      padding: 4px 8px;
+    }
+  
+    th.mat-header-cell input {
+      width: 100%;
+      box-sizing: border-box;
+      font-size: 0.8em;
+      padding: 2px 4px;
+    }
+  
+    tr:nth-child(odd) {
+      background-color: #f9f9f9;
+    }
+  
+    tr:nth-child(even) {
+      background-color: #ffffff;
+    }
+  }
+  
+  .mat-elevation-z8 {
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   }
   
