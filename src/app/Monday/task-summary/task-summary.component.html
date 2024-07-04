@@ -1,18 +1,18 @@
-<table mat-table [dataSource]="groupSummary | keyvalue" class="mat-elevation-z8">
+<table mat-table [dataSource]="groupSummaryKeys" class="mat-elevation-z8">
     <ng-container matColumnDef="group">
       <th mat-header-cell *matHeaderCellDef>קטגוריה</th>
-      <td mat-cell *matCellDef="let group"> {{ group.key }} </td>
+      <td mat-cell *matCellDef="let group"> {{ group }} </td>
     </ng-container>
   
     <ng-container matColumnDef="total">
       <th mat-header-cell *matHeaderCellDef>סה"כ</th>
-      <td mat-cell *matCellDef="let group"> {{ group.value.total }} </td>
+      <td mat-cell *matCellDef="let group"> {{ groupSummary[group].total }} </td>
     </ng-container>
   
     <ng-container *ngFor="let status of statusKeys" [matColumnDef]="status">
       <th mat-header-cell *matHeaderCellDef> {{ status }} </th>
       <td mat-cell *matCellDef="let group">
-        {{ group.value.statuses[status] || 0 }}
+        {{ groupSummary[group].statuses[status] || 0 }}
       </td>
     </ng-container>
   

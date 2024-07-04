@@ -36,6 +36,7 @@ interface Task {
 })
 export class AdminDashboardComponent implements OnInit,AfterViewInit  {
  
+  boardId: string = '';
 
   activeTabIndex: number = 0; // Default to the first tab
 
