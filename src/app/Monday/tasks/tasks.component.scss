@@ -1,14 +1,51 @@
 :host {
     display: block;
+    padding: 16px;
+  }
+  
+  h1 {
+    margin-bottom: 16px;
+    font-size: 24px;
+    color: #3f51b5;
+  }
+  
+  .group-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  
+  .group-card {
+    cursor: pointer;
+    transition: box-shadow 0.3s ease-in-out;
+    
+    &:hover {
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    }
+  }
+  
+  mat-card-header {
+    background-color: #3f51b5;
+    color: white;
+    padding: 16px;
+  }
+  
+  mat-card-title {
+    font-size: 18px;
+  }
+  
+  mat-card-content {
+    padding: 16px;
   }
   
   table {
-    width: auto;
+    width: 100%;
     table-layout: auto;
   
     th.mat-header-cell {
       white-space: nowrap;
       padding: 4px 8px;
+      background-color: #f1f1f1;
     }
   
     td.mat-cell {

@@ -1,27 +1,30 @@
+
 <div *ngIf="board">
     <h1>Tasks for Board ID: {{ boardId }}</h1>
+    
+    <div class="group-list">
+      <mat-card *ngFor="let group of board.groups" class="group-card">
+        <mat-card-header (click)="toggleGroup(group)">
+          <mat-card-title>{{ group.title }}</mat-card-title>
+        </mat-card-header>
+        <mat-card-content *ngIf="!group.isCollapsed">
+          <table mat-table [dataSource]="getGroupDataSource(group)" class="mat-elevation-z8">
+            <!-- Dynamic columns -->
+            <ng-container *ngFor="let column of displayedColumns" [matColumnDef]="column">
+              <th mat-header-cell *matHeaderCellDef>
+                {{ getColumnTitle(column) }}
+                <input matInput (keyup)="applyColumnFilter($event, column, group.id)" placeholder="Filter">
+              </th>
+              <td mat-cell *matCellDef="let task">
+                {{ column === 'name' ? task.name : getColumnText(task.column_values, column) }}
+              </td>
+            </ng-container>
   
-    <div *ngFor="let group of board.groups">
-      <h2 (click)="toggleGroup(group)">
-        {{ group.title }}
-      </h2>
-      <div *ngIf="!group.isCollapsed">
-        <table mat-table [dataSource]="getGroupDataSource(group)" class="mat-elevation-z8">
-          <!-- Dynamic columns -->
-          <ng-container *ngFor="let column of displayedColumns" [matColumnDef]="column">
-            <th mat-header-cell *matHeaderCellDef>
-              {{ getColumnTitle(column) }}
-              <input matInput (keyup)="applyColumnFilter($event, column, group.id)" placeholder="Filter">
-            </th>
-            <td mat-cell *matCellDef="let task">
-              {{ column === 'name' ? task.name : getColumnText(task.column_values, column) }}
-            </td>
-          </ng-container>
-  
-          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-          <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-        </table>
-      </div>
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+          </table>
+        </mat-card-content>
+      </mat-card>
     </div>
   </div>
   
