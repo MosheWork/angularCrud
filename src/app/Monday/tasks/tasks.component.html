@@ -1,7 +1,6 @@
 <div *ngIf="board">
     <h1>Tasks for Board ID: {{ boardId }}</h1>
   
-    <app-task-summary [groupSummary]="groupSummary"></app-task-summary>
   
     <div class="group-list">
       <mat-card *ngFor="let group of board.groups" class="group-card">
