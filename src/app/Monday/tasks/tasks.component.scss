@@ -1,84 +1,83 @@
 :host {
-    display: block;
-    padding: 16px;
-    direction: rtl;
+  display: block;
+  padding: 16px;
+  direction: rtl;
+}
+
+h1 {
+  margin-bottom: 16px;
+  font-size: 24px;
+  color: #3f51b5;
+  text-align: right;
+}
+
+.group-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.group-card {
+  cursor: pointer;
+  transition: box-shadow 0.3s ease-in-out;
+
+  &:hover {
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
   }
-  
-  h1 {
-    margin-bottom: 16px;
-    font-size: 24px;
-    color: #3f51b5;
+}
+
+mat-card-header {
+  background-color: #3f51b5;
+  color: white;
+  padding: 16px;
+}
+
+mat-card-title {
+  font-size: 18px;
+  text-align: right;
+}
+
+mat-card-content {
+  padding: 16px;
+  overflow-x: auto; /* Ensure horizontal scrollbar is visible */
+  direction: rtl; /* Ensure the scrollbar is on the left side */
+  text-align: left;
+}
+
+table {
+  width: 100%;
+  table-layout: auto;
+  direction: rtl; /* Ensure table content is in RTL */
+
+  th.mat-header-cell {
+    white-space: nowrap;
+    padding: 4px 8px;
+    background-color: #f1f1f1;
     text-align: right;
   }
-  
-  .group-list {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-  }
-  
-  .group-card {
-    cursor: pointer;
-    transition: box-shadow 0.3s ease-in-out;
-  
-    &:hover {
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
-    }
-  }
-  
-  mat-card-header {
-    background-color: #3f51b5;
-    color: white;
-    padding: 16px;
-  }
-  
-  mat-card-title {
-    font-size: 18px;
+
+  td.mat-cell {
+    white-space: nowrap;
+    padding: 4px 8px;
     text-align: right;
   }
-  
-  mat-card-content {
-    padding: 16px;
-    overflow-x: auto; /* Ensure horizontal scrollbar is visible */
-    direction: rtl; /* Ensure the scrollbar is on the left side */
-    text-align: left;
-  }
-  
-  table {
+
+  th.mat-header-cell input, th.mat-header-cell mat-select {
     width: 100%;
-    table-layout: auto;
-    direction: rtl; /* Ensure table content is in RTL */
-  
-    th.mat-header-cell {
-      white-space: nowrap;
-      padding: 4px 8px;
-      background-color: #f1f1f1;
-      text-align: right;
-    }
-  
-    td.mat-cell {
-      white-space: nowrap;
-      padding: 4px 8px;
-      text-align: right;
-    }
-  
-    th.mat-header-cell input {
-      width: 100%;
-      box-sizing: border-box;
-      font-size: 0.8em;
-      padding: 2px 4px;
-    }
-  
-    tr:nth-child(odd) {
-      background-color: #f9f9f9;
-    }
-  
-    tr:nth-child(even) {
-      background-color: #ffffff;
-    }
+    box-sizing: border-box;
+    font-size: 0.8em;
+    padding: 2px 4px;
   }
-  
-  .mat-elevation-z8 {
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+
+  tr:nth-child(odd) {
+    background-color: #f9f9f9;
   }
-  
+
+  tr:nth-child(even) {
+    background-color: #ffffff;
+  }
+}
+
+.mat-elevation-z8 {
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}

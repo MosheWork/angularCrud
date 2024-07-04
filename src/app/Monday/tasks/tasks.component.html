@@ -12,7 +12,16 @@
             <ng-container *ngFor="let column of displayedColumns" [matColumnDef]="column">
               <th mat-header-cell *matHeaderCellDef>
                 {{ getColumnTitle(column) }}
-                <input matInput (keyup)="applyColumnFilter($event, column, group.id)" placeholder="Filter">
+                <ng-container *ngIf="column === 'status'; else filterInput">
+                  <mat-form-field>
+                    <mat-select multiple (selectionChange)="applyStatusFilter()" [(ngModel)]="selectedStatuses" placeholder="Filter">
+                      <mat-option *ngFor="let status of uniqueStatusValues" [value]="status">{{ status }}</mat-option>
+                    </mat-select>
+                  </mat-form-field>
+                </ng-container>
+                <ng-template #filterInput>
+                  <input matInput (keyup)="applyColumnFilter($event, column, group.id)" placeholder="Filter">
+                </ng-template>
               </th>
               <td mat-cell *matCellDef="let task">
                 {{ column === 'name' ? task.name : getColumnText(task.column_values, column) }}

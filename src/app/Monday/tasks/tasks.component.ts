@@ -52,6 +52,8 @@ export class TasksComponent implements OnInit {
   dynamicColumns: ColumnValue[] = [];
   columnTitles: { [key: string]: string } = {};
   groupDataSources: { [key: string]: MatTableDataSource<Task> } = {};
+  uniqueStatusValues: string[] = [];
+  selectedStatuses: string[] = [];
 
   constructor(private http: HttpClient, private route: ActivatedRoute) {}
 
@@ -76,6 +78,7 @@ export class TasksComponent implements OnInit {
 
             this.extractDynamicColumns();
             this.setupDataSources();
+            this.extractUniqueStatusValues();
 
             if (this.board && this.board.groups) {
               this.board.groups.forEach((group) => (group.isCollapsed = true));
@@ -160,5 +163,30 @@ export class TasksComponent implements OnInit {
 
   toggleGroup(group: Group): void {
     group.isCollapsed = !group.isCollapsed;
+  }
+
+  extractUniqueStatusValues(): void {
+    const statuses = new Set<string>();
+    this.board?.groups.forEach(group => {
+      group.items_page.items.forEach(task => {
+        const status = task.column_values.find(col => col.id === 'status');
+        if (status && status.text) {
+          statuses.add(status.text);
+        }
+      });
+    });
+    this.uniqueStatusValues = Array.from(statuses);
+  }
+
+  applyStatusFilter(): void {
+    this.board?.groups.forEach(group => {
+      if (this.groupDataSources.hasOwnProperty(group.id)) {
+        this.groupDataSources[group.id].filterPredicate = (data: Task, filter: string) => {
+          const columnText = this.getColumnText(data.column_values, 'status').toLowerCase();
+          return this.selectedStatuses.length === 0 || this.selectedStatuses.includes(columnText);
+        };
+        this.groupDataSources[group.id].filter = this.selectedStatuses.join(',');
+      }
+    });
   }
 }
