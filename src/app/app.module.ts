@@ -95,6 +95,7 @@ import { ShiftManagementComponent } from './shift-management/shift-management/sh
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { BoardsComponent } from './Monday/boards/boards.component';
 import { TasksComponent } from './Monday/tasks/tasks.component';
+import { TaskSummaryComponent } from './Monday/task-summary/task-summary.component';
 
 
 @NgModule({
@@ -160,6 +161,7 @@ import { TasksComponent } from './Monday/tasks/tasks.component';
     ShiftManagementComponent,
     BoardsComponent,
     TasksComponent,
+    TaskSummaryComponent,
   ],
   imports: [
     BrowserModule,

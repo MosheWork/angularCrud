@@ -31,6 +31,7 @@ import { CurrentPatientsComponent } from './departmentLoad/current-patients/curr
 import { ShiftManagementComponent } from './shift-management/shift-management/shift-management.component';
 import { BoardsComponent } from './Monday/boards/boards.component';
 import { TasksComponent } from './Monday/tasks/tasks.component';
+import { TaskSummaryComponent } from './Monday/task-summary/task-summary.component';
 
 const routes: Routes = [
   { path: 'users', component: UsersComponent },
@@ -70,7 +71,9 @@ const routes: Routes = [
   //monday
   { path: 'boards', component: BoardsComponent },
   { path: 'boards/:boardId/tasks', component: TasksComponent },
-  { path: '', redirectTo: '/boards', pathMatch: 'full' }
+  { path: '', redirectTo: '/boards', pathMatch: 'full' },
+  { path: 'taskSummary', component: TaskSummaryComponent },
+
 
 
 ];

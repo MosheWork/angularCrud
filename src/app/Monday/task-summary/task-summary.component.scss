@@ -1,0 +1,33 @@
+:host {
+    display: block;
+    padding: 16px;
+    direction: rtl;
+  }
+  
+  table {
+    width: 100%;
+    table-layout: auto;
+    direction: rtl; /* Ensure table content is in RTL */
+  
+    th.mat-header-cell {
+      white-space: nowrap;
+      padding: 4px 8px;
+      background-color: #f1f1f1;
+      text-align: right;
+    }
+  
+    td.mat-cell {
+      white-space: nowrap;
+      padding: 4px 8px;
+      text-align: right;
+    }
+  
+    tr:nth-child(odd) {
+      background-color: #f9f9f9;
+    }
+  
+    tr:nth-child(even) {
+      background-color: #ffffff;
+    }
+  }
+  

@@ -40,6 +40,11 @@ interface Column {
   type: string;
 }
 
+interface GroupSummary {
+  total: number;
+  statuses: { [key: string]: number };
+}
+
 @Component({
   selector: 'app-tasks',
   templateUrl: './tasks.component.html',
@@ -54,6 +59,7 @@ export class TasksComponent implements OnInit {
   groupDataSources: { [key: string]: MatTableDataSource<Task> } = {};
   uniqueStatusValues: string[] = [];
   selectedStatuses: string[] = [];
+  groupSummary: { [key: string]: GroupSummary } = {};
 
   constructor(private http: HttpClient, private route: ActivatedRoute) {}
 
@@ -62,9 +68,6 @@ export class TasksComponent implements OnInit {
       this.boardId = params['boardId'];
       forkJoin([this.getTasks(this.boardId), this.getColumns(this.boardId)]).subscribe(
         ([tasksData, columnsData]) => {
-          console.log('Tasks response:', tasksData);
-          console.log('Columns response:', columnsData);
-
           const boardData = tasksData?.data?.boards?.[0];
           if (boardData) {
             this.board = boardData;
@@ -79,6 +82,7 @@ export class TasksComponent implements OnInit {
             this.extractDynamicColumns();
             this.setupDataSources();
             this.extractUniqueStatusValues();
+            this.calculateGroupSummary();
 
             if (this.board && this.board.groups) {
               this.board.groups.forEach((group) => (group.isCollapsed = true));
@@ -119,9 +123,7 @@ export class TasksComponent implements OnInit {
   setupDataSources(): void {
     if (this.board) {
       this.board.groups.forEach((group) => {
-        console.log(`Setting up data source for group: ${group.title}`);
         const dataSource = new MatTableDataSource(group.items_page.items);
-        console.log(`Data source items for group ${group.title}:`, group.items_page.items);
         this.groupDataSources[group.id] = dataSource;
       });
     }
@@ -187,6 +189,27 @@ export class TasksComponent implements OnInit {
         };
         this.groupDataSources[group.id].filter = this.selectedStatuses.join(',');
       }
+    });
+  }
+
+  calculateGroupSummary(): void {
+    this.groupSummary = {};
+    this.board?.groups.forEach(group => {
+      const summary: GroupSummary = {
+        total: 0,
+        statuses: {}
+      };
+      group.items_page.items.forEach(task => {
+        summary.total++;
+        const status = task.column_values.find(col => col.id === 'status');
+        if (status && status.text) {
+          if (!summary.statuses[status.text]) {
+            summary.statuses[status.text] = 0;
+          }
+          summary.statuses[status.text]++;
+        }
+      });
+      this.groupSummary[group.title] = summary;
     });
   }
 }
