@@ -92,49 +92,49 @@
   </div>
 
   <mat-table *ngIf="!showGraph && !loading" [dataSource]="dataSource" matSort dir="rtl" class="mat-elevation-z8">
-    <ng-container matColumnDef="basic_Name">
+    <ng-container matColumnDef="Basic_Name">
       <mat-header-cell *matHeaderCellDef mat-sort-header>שם תרופה</mat-header-cell>
-      <mat-cell *matCellDef="let element"> {{ element.basic_Name }} </mat-cell>
+      <mat-cell *matCellDef="let element"> {{ element.Basic_Name }} </mat-cell>
     </ng-container>
-    <ng-container matColumnDef="drug">
+    <ng-container matColumnDef="Drug">
       <mat-header-cell *matHeaderCellDef mat-sort-header>קוד התרופה</mat-header-cell>
-      <mat-cell *matCellDef="let element"> {{ element.drug }} </mat-cell>
+      <mat-cell *matCellDef="let element"> {{ element.Drug }} </mat-cell>
     </ng-container>
-    <ng-container matColumnDef="execution_Date">
+    <ng-container matColumnDef="Execution_Date">
       <mat-header-cell *matHeaderCellDef mat-sort-header>תאריך ביצוע</mat-header-cell>
-      <mat-cell *matCellDef="let element"> {{ element.execution_Date | date: 'dd-MM-yyyy' }} </mat-cell>
+      <mat-cell *matCellDef="let element"> {{ element.Execution_Date | date: 'dd-MM-yyyy' }} </mat-cell>
     </ng-container>
-    <ng-container matColumnDef="category_Name">
+    <ng-container matColumnDef="Category_Name">
       <mat-header-cell *matHeaderCellDef mat-sort-header> קטגוריה</mat-header-cell>
-      <mat-cell *matCellDef="let element"> {{ element.category_Name }} </mat-cell>
+      <mat-cell *matCellDef="let element"> {{ element.Category_Name }} </mat-cell>
     </ng-container>
-    <ng-container matColumnDef="execution_UnitName">
+    <ng-container matColumnDef="Execution_UnitName">
       <mat-header-cell *matHeaderCellDef mat-sort-header>מחלקה  </mat-header-cell>
-      <mat-cell *matCellDef="let element"> {{ element.execution_UnitName }} </mat-cell>
+      <mat-cell *matCellDef="let element"> {{ element.Execution_UnitName }} </mat-cell>
     </ng-container>
-    <ng-container matColumnDef="generic_Name_ForDisplay">
+    <ng-container matColumnDef="Generic_Name_ForDisplay">
       <mat-header-cell *matHeaderCellDef mat-sort-header>שם גנרי</mat-header-cell>
-      <mat-cell *matCellDef="let element"> {{ element.generic_Name_ForDisplay }} </mat-cell>
+      <mat-cell *matCellDef="let element"> {{ element.Generic_Name_ForDisplay }} </mat-cell>
     </ng-container>
-    <ng-container matColumnDef="dosage_InOrder">
+    <ng-container matColumnDef="Dosage_InOrder">
       <mat-header-cell *matHeaderCellDef mat-sort-header>מינון </mat-header-cell>
-      <mat-cell *matCellDef="let element"> {{ element.dosage_InOrder }} </mat-cell>
+      <mat-cell *matCellDef="let element"> {{ element.Dosage_InOrder }} </mat-cell>
     </ng-container>
-    <ng-container matColumnDef="dosage_Unit_InOrder">
+    <ng-container matColumnDef="Dosage_Unit_InOrder">
       <mat-header-cell *matHeaderCellDef mat-sort-header>יחידת מינון </mat-header-cell>
-      <mat-cell *matCellDef="let element"> {{ element.dosage_Unit_InOrder }} </mat-cell>
+      <mat-cell *matCellDef="let element"> {{ element.Dosage_Unit_InOrder }} </mat-cell>
     </ng-container>
-    <ng-container matColumnDef="way_Of_Giving">
+    <ng-container matColumnDef="Way_Of_Giving">
       <mat-header-cell *matHeaderCellDef mat-sort-header>דרך מתן</mat-header-cell>
-      <mat-cell *matCellDef="let element"> {{ element.way_Of_Giving }} </mat-cell>
+      <mat-cell *matCellDef="let element"> {{ element.Way_Of_Giving }} </mat-cell>
     </ng-container>
-    <ng-container matColumnDef="id_Num">
+    <ng-container matColumnDef="Id_Num">
       <mat-header-cell *matHeaderCellDef mat-sort-header> תעודת זהות</mat-header-cell>
-      <mat-cell *matCellDef="let element"> {{ element.id_Num }} </mat-cell>
+      <mat-cell *matCellDef="let element"> {{ element.Id_Num }} </mat-cell>
     </ng-container>
-    <ng-container matColumnDef="full_Name">
+    <ng-container matColumnDef="Full_Name">
       <mat-header-cell *matHeaderCellDef mat-sort-header>שם מלא</mat-header-cell>
-      <mat-cell *matCellDef="let element"> {{ element.full_Name }} </mat-cell>
+      <mat-cell *matCellDef="let element"> {{ element.Full_Name }} </mat-cell>
     </ng-container>
     <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
     <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>

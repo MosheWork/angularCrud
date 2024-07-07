@@ -45,9 +45,9 @@ export class DynamicTablesComponent implements OnInit {
   matTableDataSource: MatTableDataSource<any>;
 
   columns: string[] = [
-    'code',
-    'description',
-    'tableName'
+    'Code',
+    'Description',
+    'TableName'
   ];
 
   parseDate(dateString: string | null): Date | null {
@@ -95,35 +95,44 @@ export class DynamicTablesComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.http.get<any[]>(environment.apiUrl + 'DynamicTablesAPI').subscribe((data) => {
-      this.dataSource = data;
-      this.filteredData = [...data];
-      this.matTableDataSource = new MatTableDataSource(this.filteredData);
-      this.matTableDataSource.paginator = this.paginator;
-      this.matTableDataSource.sort = this.sort;
-      
-      this.columns.forEach((column) => {
-        this.filterForm.get(column)?.valueChanges.pipe(debounceTime(300), distinctUntilChanged()).subscribe(() => this.applyFilters());
-      });
-
-      this.fetchAnswerTextOptions();
-      this.fetchAnswerTextTypeOptions();
-
-      this.filterForm.valueChanges.subscribe(() => {
+    this.http.get<any[]>(environment.apiUrl + 'DynamicTablesAPI').subscribe(
+      (data) => {
+        console.log('Data from API:', data);
+        this.dataSource = data;
+        this.filteredData = [...data];
+        this.matTableDataSource = new MatTableDataSource(this.filteredData);
+        this.matTableDataSource.paginator = this.paginator;
+        this.matTableDataSource.sort = this.sort;
+        
+        this.columns.forEach((column) => {
+          this.filterForm.get(column)?.valueChanges.pipe(debounceTime(300), distinctUntilChanged()).subscribe(() => this.applyFilters());
+        });
+  
+        this.fetchAnswerTextOptions();
+        this.fetchAnswerTextTypeOptions();
+  
+        this.filterForm.valueChanges.subscribe(() => {
+          this.applyFilters();
+          this.paginator.firstPage();
+        });
+  
         this.applyFilters();
-        this.paginator.firstPage();
-      });
-
-      this.applyFilters();
-    });
-
+      },
+      (error) => {
+        console.error('There was an error!', error);
+      }
+    );
+  
     this.filteredResponsibilities = this.getFormControl('departName').valueChanges.pipe(
       startWith(''),
       map((value) => this._filter(value)),
       tap((filteredValues) => console.log('Filtered Values:', filteredValues))
     );
   }
-
+  
+  
+  
+  
   private _filter(value: string): string[] {
     const filterValue = value.toLowerCase();
     const filteredOptions = this.answerTextTypeOptions.filter((option) => option.toLowerCase().includes(filterValue));

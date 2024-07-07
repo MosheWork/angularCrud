@@ -46,11 +46,11 @@ export class ComponentsListInUnitsComponent implements OnInit {
 
   columns: string[] = [
     //'row_id',
-    'unit',
-    'heading',
-    'name',
-    'record_Name',
-    'answer_Text'
+    'Unit',
+    'Heading',
+    'Name',
+    'Record_Name',
+    'Answer_Text'
   ];
 
   parseDate(dateString: string | null): Date | null {

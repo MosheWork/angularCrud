@@ -37,7 +37,7 @@ export class MainPageReportsComponent implements OnInit {
     'ReportName',
     'LinkDescription',
     'LinkAdress',
-    'btn', //,'Rowid','LinkStatus',
+    'Btn', //,'Rowid','LinkStatus',
   ];
 
   // This is where we keep all the reports we want to show on the page.

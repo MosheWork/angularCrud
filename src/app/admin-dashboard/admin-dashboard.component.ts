@@ -257,7 +257,7 @@ export class AdminDashboardComponent implements OnInit,AfterViewInit  {
   }
 
   fetchUserData(): Observable<any> {
-    const url = environment.apiUrl + 'AdminDashboardAPI/GetTotalSysAid';
+    const url = environment.apiUrl + 'GetTotalSysAid';
     return this.http.get<any>(url);
   }
 
@@ -386,7 +386,7 @@ export class AdminDashboardComponent implements OnInit,AfterViewInit  {
   }
   openAddTaskDialog(): void {
     this.http
-      .get<any[]>(environment.apiUrl + 'AdminDashboardAPI/GetAllUsers')
+      .get<any[]>(environment.apiUrl + 'GetAllUsers')
       .subscribe(
         (users) => {
           const dialogRef = this.dialog.open(AddTaskDialogComponentComponent, {
@@ -405,23 +405,23 @@ export class AdminDashboardComponent implements OnInit,AfterViewInit  {
       );
   }
   fetchDashboardData(): Observable<any> {
-    const url = environment.apiUrl + 'AdminDashboardAPI/GetDashboardData';
+    const url = environment.apiUrl + 'GetDashboardData';
     return this.http.get(url);
   }
 
   fetchTodoListData(): Observable<Task[]> {
-    const url = environment.apiUrl + 'AdminDashboardAPI/GetTaskListForAdmin';
+    const url = environment.apiUrl + 'GetTaskListForAdmin';
     return this.http.get<Task[]>(url);
   }
 
   fetchTaskSummery(): Observable<any[]> {
-    const url = environment.apiUrl + 'AdminDashboardAPI/TaskSummary';
+    const url = environment.apiUrl + 'TaskSummary';
     return this.http.get<any[]>(url); // Return Observable<any[]>
   }
 
 
   private fetchSysAidData(apiEndpoint: string, chartData: ChartData<'bar'>, chartCanvas: ElementRef<HTMLCanvasElement>, callback: (newChart: Chart) => void): void {
-    this.http.get<any[]>(`${environment.apiUrl}AdminDashboardAPI/${apiEndpoint}`).subscribe({
+    this.http.get<any[]>(`${environment.apiUrl}${apiEndpoint}`).subscribe({
       next: (response) => {
         chartData.labels = response.map(item => item.problem_sub_type);
         chartData.datasets[0].data = response.map(item => item.count);

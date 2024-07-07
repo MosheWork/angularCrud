@@ -35,17 +35,17 @@ interface MedExecutionModel {
 })
 export class MedExecutionTableComponent implements OnInit, AfterViewInit {
   displayedColumns: string[] = [
-    'basic_Name', 
-    'drug', 
-    'execution_Date', 
-    'category_Name', 
-    'execution_UnitName', 
-    'generic_Name_ForDisplay',
-    'dosage_InOrder',
-    'dosage_Unit_InOrder',
-    'way_Of_Giving',
-    'id_Num',
-    'full_Name'
+    'Basic_Name', 
+    'Drug', 
+    'Execution_Date', 
+    'Category_Name', 
+    'Execution_UnitName', 
+    'Generic_Name_ForDisplay',
+    'Dosage_InOrder',
+    'Dosage_Unit_InOrder',
+    'Way_Of_Giving',
+    'Id_Num',
+    'Full_Name'
   ];
 
   dataSource = new MatTableDataSource<MedExecutionModel>();
@@ -172,42 +172,42 @@ export class MedExecutionTableComponent implements OnInit, AfterViewInit {
     let params = new HttpParams();
 
     if (this.basicNamesControl.value) {
-      params = params.append('basic_Names', this.basicNamesControl.value);
+      params = params.append('Basic_Names', this.basicNamesControl.value);
     }
 
     if (filters.drug) {
-      params = params.append('drug', filters.drug);
+      params = params.append('Drug', filters.drug);
     }
 
     if (filters.execution_Date) {
       const formattedExecutionDate = this.datePipe.transform(filters.execution_Date, 'yyyy-MM-dd');
-      params = params.append('execution_Date', formattedExecutionDate!);
+      params = params.append('Execution_Date', formattedExecutionDate!);
     }
 
     if (filters.category_Name) {
-      params = params.append('category_Name', filters.category_Name);
+      params = params.append('Category_Name', filters.category_Name);
     }
 
     if (this.unitNamesControl.value) {
-      params = params.append('execution_UnitNames', this.unitNamesControl.value);
+      params = params.append('Execution_UnitNames', this.unitNamesControl.value);
     }
 
     if (filters.admission_No) {
-      params = params.append('admission_No', filters.admission_No);
+      params = params.append('Admission_No', filters.admission_No);
     }
 
     if (this.genericNamesControl.value) {
-      params = params.append('generic_Names_ForDisplay', this.genericNamesControl.value);
+      params = params.append('Generic_Names_ForDisplay', this.genericNamesControl.value);
     }
 
     if (filters.startDate) {
       const formattedStartDate = this.datePipe.transform(filters.startDate, 'yyyy-MM-dd');
-      params = params.append('startDate', formattedStartDate!);
+      params = params.append('StartDate', formattedStartDate!);
     }
 
     if (filters.endDate) {
       const formattedEndDate = this.datePipe.transform(filters.endDate, 'yyyy-MM-dd');
-      params = params.append('endDate', formattedEndDate!);
+      params = params.append('EndDate', formattedEndDate!);
     }
 
     this.http.get<MedExecutionModel[]>(`${environment.apiUrl}MedExecutionAPI`, { params })
