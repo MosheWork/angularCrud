@@ -24,22 +24,22 @@
   </div>
   <table mat-table [dataSource]="dataSource" matSort>
     <!-- ID Column -->
-    <ng-container matColumnDef="rowid">
+    <ng-container matColumnDef="Rowid">
       <th mat-header-cell *matHeaderCellDef>מספר דוח</th>
-      <td mat-cell *matCellDef="let element">{{ element.rowid }}</td>
+      <td mat-cell *matCellDef="let element">{{ element.Rowid }}</td>
     </ng-container>
-    <ng-container matColumnDef="reportName">
+    <ng-container matColumnDef="ReportName">
       <th mat-header-cell *matHeaderCellDef>שם הדוח</th>
-      <td mat-cell *matCellDef="let element">{{ element.reportName }}</td>
+      <td mat-cell *matCellDef="let element">{{ element.ReportName }}</td>
     </ng-container>
 
-    <ng-container matColumnDef="linkDescription">
+    <ng-container matColumnDef="LinkDescription">
       <th mat-header-cell *matHeaderCellDef>פירוט</th>
-      <td mat-cell *matCellDef="let element">{{ element.linkDescription }}</td>
+      <td mat-cell *matCellDef="let element">{{ element.LinkDescription }}</td>
     </ng-container>
-    <ng-container matColumnDef="linkAdress">
+    <ng-container matColumnDef="LinkAdress">
       <th mat-header-cell *matHeaderCellDef>נתיב </th>
-      <td mat-cell *matCellDef="let element">{{ element.linkAdress }}</td>
+      <td mat-cell *matCellDef="let element">{{ element.LinkAdress }}</td>
     </ng-container>
     <!-- <ng-container matColumnDef="linkToPage">
         <th mat-header-cell *matHeaderCellDef>קישור לדף</th>
@@ -56,7 +56,7 @@
           mat-raised-button
           color="primary"
           class="reports-button"
-          (click)="navigate(element.linkAdress)"
+          (click)="navigate(element.LinkAdress)"
         >
           <mat-icon>assessment</mat-icon>
           צפייה בדוח
@@ -70,7 +70,7 @@
             mat-raised-button
             color="primary"
             class="permissions-button"
-            (click)="openPermissionsDialog(element.linkAdress)"
+            (click)="openPermissionsDialog(element.LinkAdress)"
           >
             <mat-icon>lock_open</mat-icon>
             <!-- This is a Material icon for permissions -->

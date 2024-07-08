@@ -16,14 +16,12 @@
       <mat-label class="filters" style="color: blue">חיפוש</mat-label>
       <input matInput (keyup)="applyFilter($event)" placeholder="חיפוש" />
     </mat-form-field>
-
-  
   </div>
-  <table mat-table [dataSource]="dataSource" matSort >
+  <table mat-table [dataSource]="dataSource" matSort>
     <!-- ID Column -->
-    <ng-container matColumnDef="Rowid" >
+    <ng-container matColumnDef="Rowid">
       <th mat-header-cell *matHeaderCellDef class="bold-header">מספר דוח </th>
-      <td mat-cell *matCellDef="let element">{{ element.rowid }}</td>
+      <td mat-cell *matCellDef="let element">{{ element.Rowid }}</td>
     </ng-container>
     <ng-container matColumnDef="ReportName">
       <th mat-header-cell *matHeaderCellDef class="bold-header">שם הדוח</th>
@@ -41,37 +39,22 @@
       <th mat-header-cell *matHeaderCellDef>דוח פעיל ? </th>
       <td mat-cell *matCellDef="let element">{{ element.LinkStatus }}</td>
     </ng-container>
-    
-    <!-- <ng-container matColumnDef="linkToPage">
-      <th mat-header-cell *matHeaderCellDef>קישור לדף</th>
-      <td mat-cell *matCellDef="let element">{{ element.linkToPage }}</td>
-    </ng-container> -->
-    <!-- <ng-container matColumnDef="permissions">
-      <th mat-header-cell *matHeaderCellDef>הרשאות</th>
-      <td mat-cell *matCellDef="let element">{{ element.permissions }}</td>
-    </ng-container> -->
-    <ng-container matColumnDef="Btn">
+    <ng-container matColumnDef="btn">
       <th mat-header-cell *matHeaderCellDef class="bold-header">מעבר לדוחות</th>
       <td mat-cell *matCellDef="let element">
         <button
           mat-raised-button
           color="primary"
           class="reports-button"
-          (click)="navigate(element.linkAdress)"
+          (click)="navigate(element.LinkAdress)"
         >
           <mat-icon>assessment</mat-icon>
           צפייה בדוח
         </button>
       </td>
     </ng-container>
-
     <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
     <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
   </table>
-
-  <mat-paginator
-    [pageSizeOptions]="[15, 50, 100]"
-    showFirstLastButtons
-  ></mat-paginator>
+  <mat-paginator [pageSizeOptions]="[15, 50, 100]" showFirstLastButtons></mat-paginator>
 </div>
-

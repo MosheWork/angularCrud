@@ -12,11 +12,11 @@ import { UpdateReportComponent } from './update-report/update-report.component';
 import { environment } from '../../environments/environment'
 
 export interface Reports {
-  rowid: string;
-  linkDescription: string;
-  linkStatus: string;
-  reportName: string;
-  linkAdress: string;
+  Rowid: string;
+  LinkDescription: string;
+  LinkStatus: string;
+  ReportName: string;
+  LinkAdress: string;
   //permissions: string;
 }
 export interface Users {
@@ -37,10 +37,10 @@ export class ReportsPermissionsComponent implements OnInit {
   totalResults: number = 0;
 
   displayedColumns: string[] = [
-    'rowid',
-    'reportName',
-    'linkDescription',
-    'linkAdress',
+    'Rowid',
+    'ReportName',
+    'LinkDescription',
+    'LinkAdress',
     'btn',
     'permissions',
     'edit',
@@ -79,11 +79,11 @@ export class ReportsPermissionsComponent implements OnInit {
         (data: Reports[]) => {
           // Map the API response to the new property names
           const mappedData = data.map((report) => ({
-            rowid: report.rowid,
-            linkDescription: report.linkDescription,
-            linkStatus: report.linkStatus,
-            reportName: report.reportName,
-            linkAdress: report.linkAdress,
+            Rowid: report.Rowid,
+            LinkDescription: report.LinkDescription,
+            LinkStatus: report.LinkStatus,
+            ReportName: report.ReportName,
+            LinkAdress: report.LinkAdress,
           }));
           this.dataSource.data = mappedData;
         },
@@ -93,17 +93,17 @@ export class ReportsPermissionsComponent implements OnInit {
       );
   }
 
-  navigate(linkAdress: string) {
-    this.router.navigate([linkAdress]); // Use the passed link address for navigation
+  navigate(LinkAdress: string) {
+    this.router.navigate([LinkAdress]); // Use the passed link address for navigation
   }
 
-  openPermissionsDialog(linkAdress: string): void {
+  openPermissionsDialog(LinkAdress: string): void {
     this.http.get<Users[]>(environment.apiUrl + 'Users').subscribe(
       (users: Users[]) => {
         const dialogRef = this.dialog.open(PermissionsDialogNewComponent, {
           width: '800px', // Set your desired width
           height: 'auto', // Set your desired height
-          data: { users: users, linkAdress: linkAdress }, // Pass both users and linkAdress to the dialog
+          data: { users: users, LinkAdress: LinkAdress }, // Pass both users and LinkAdress to the dialog
         });
 
         dialogRef.afterClosed().subscribe((result) => {

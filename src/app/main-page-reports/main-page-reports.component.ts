@@ -3,17 +3,16 @@ import { HttpClient } from '@angular/common/http';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatSort } from '@angular/material/sort';
-import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { environment } from '../../environments/environment'
 
 // This is a list of things each report needs to have.
 export interface Reports {
-  rowid: number; // This is like the report's special number.
-  linkDescription: string; // This tells us what the report is about.
-  linkStatus: string; // This shows if the report is okay or not.
-  reportName: string; // The name of the report.
-  linkAdress: string; // Where to find the report.
+  Rowid: number; // This is like the report's special number.
+  LinkDescription: string; // This tells us what the report is about.
+  LinkStatus: string; // This shows if the report is okay or not.
+  ReportName: string; // The name of the report.
+  LinkAdress: string; // Where to find the report.
 }
 
 // This is the main part of our code where we make everything work!
@@ -37,7 +36,7 @@ export class MainPageReportsComponent implements OnInit {
     'ReportName',
     'LinkDescription',
     'LinkAdress',
-    'Btn', //,'Rowid','LinkStatus',
+    'btn', //,'Rowid','LinkStatus',
   ];
 
   // This is where we keep all the reports we want to show on the page.
@@ -52,7 +51,7 @@ export class MainPageReportsComponent implements OnInit {
   ngOnInit(): void {
     // We check who is using our app and remember them.
     this.loginUserName = localStorage.getItem('loginUserName') || '';
-    console.log(this.loginUserName);
+    console.log('Logged in user:', this.loginUserName);
 
     // These lines make sure our list of reports works nicely (like sorting and moving through pages).
     this.dataSource.paginator = this.paginator;
@@ -69,10 +68,12 @@ export class MainPageReportsComponent implements OnInit {
   // This is where we go and get the reports to show on our page.
   fetchReportsData() {
     this.http
-      .get<{ userId: string; linkRowId: string }[]>(
+      .get<{ UserId: string; LinkRowId: string }[]>(
         environment.apiUrl + 'ChameleonOnlineReportsAPI/allPermissions'
       )
       .subscribe((permissions) => {
+        console.log('Fetched permissions:', permissions);
+
         if (!this.loginUserName) {
           console.error('loginUserName is undefined or empty');
           return; // Exit the function if loginUserName is not set.
@@ -82,7 +83,7 @@ export class MainPageReportsComponent implements OnInit {
 
         // Transform userId to uppercase in the comparison to ensure case-insensitive matching.
         const userPermissions = permissions.filter(
-          (permission) => permission.userId.toUpperCase() === upperLoginUserName
+          (permission) => permission.UserId && permission.UserId.toUpperCase() === upperLoginUserName
         );
 
         console.log(
@@ -98,13 +99,17 @@ export class MainPageReportsComponent implements OnInit {
         this.http
           .get<Reports[]>(environment.apiUrl + 'ChameleonOnlineReportsAPI')
           .subscribe((reports) => {
+            console.log('Fetched reports:', reports);
+
             const accessibleReports = reports.filter((report) =>
               userPermissions.some(
                 (permission) =>
-                  permission.linkRowId.toUpperCase() ===
-                  report.linkAdress.toUpperCase()
+                  permission.LinkRowId &&
+                  permission.LinkRowId.toUpperCase() === report.LinkAdress.toUpperCase()
               )
             );
+
+            console.log('Accessible reports:', accessibleReports);
 
             if (accessibleReports.length === 0) {
               console.log(
@@ -118,16 +123,21 @@ export class MainPageReportsComponent implements OnInit {
             }
 
             const mappedData = accessibleReports.map((report) => ({
-              rowid: report.rowid,
-              linkDescription: report.linkDescription,
-              linkStatus: report.linkStatus,
-              reportName: report.reportName,
-              linkAdress: report.linkAdress,
+              Rowid: report.Rowid,
+              LinkDescription: report.LinkDescription,
+              LinkStatus: report.LinkStatus,
+              ReportName: report.ReportName,
+              LinkAdress: report.LinkAdress,
             }));
 
             this.dataSource.data = mappedData;
             this.totalResults = mappedData.length;
+            console.log('Mapped data:', mappedData);
+          }, error => {
+            console.error('Error fetching reports:', error);
           });
+      }, error => {
+        console.error('Error fetching permissions:', error);
       });
   }
 
