@@ -115,7 +115,7 @@ export class PermissionsDialogNewComponent implements OnInit {
 
   updateUsers(): void {
     // Remove the parameter
-    const apiUrl = environment.apiUrl + 'Users'; // Adjust this to your actual endpoint
+    const apiUrl = environment.apiUrl + 'Users/UpsertReportLinkPermissions'; // Adjust this to your actual endpoint
 
     // Use this.LinkAdress directly
     const permissions = this.selectedUsers.map((user) => ({
