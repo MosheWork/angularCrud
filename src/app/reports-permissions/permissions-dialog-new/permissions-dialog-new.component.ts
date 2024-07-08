@@ -4,15 +4,15 @@ import { HttpClient } from '@angular/common/http';
 import { ChangeDetectorRef } from '@angular/core';
 import { environment } from '../../../environments/environment'
 export interface Users {
-  employeeID: string;
-  firstName: string;
-  lastName: string;
-  adUserName: string;
+  EmployeeID: string;
+  FirstName: string;
+  LastName: string;
+  ADUserName: string;
   display: string;
 }
 interface DialogData {
   users: Users[];
-  linkAdress: string;
+  LinkAdress: string;
 }
 
 @Component({
@@ -31,7 +31,7 @@ export class PermissionsDialogNewComponent implements OnInit {
     locale: undefined,
   };
 
-  linkAdress: string;
+  LinkAdress: string;
 
   users: Users[]; // Assuming you want to pass an array of Users
   filteredUsers: Users[] = []; // Add this line to hold the filtered list
@@ -47,13 +47,13 @@ export class PermissionsDialogNewComponent implements OnInit {
     private cdr: ChangeDetectorRef
   ) {
     this.users = data.users; // Correctly access users
-    this.linkAdress = data.linkAdress; // Correctly access linkAdress
+    this.LinkAdress = data.LinkAdress; // Correctly access LinkAdress
   }
 
   ngOnInit(): void {
-    // Assuming the data passed to the dialog includes both users and linkAdress
+    // Assuming the data passed to the dialog includes both users and LinkAdress
     this.users = this.data.users;
-    this.linkAdress = this.data.linkAdress;
+    this.LinkAdress = this.data.LinkAdress;
     this.filteredSelectedUsers = this.selectedUsers;
     this.filteredSelectedUsers = [...this.selectedUsers];
     this.filteredUsers = [...this.users];
@@ -68,7 +68,7 @@ export class PermissionsDialogNewComponent implements OnInit {
   loadInitialData(): void {
     // Fetch the permissions for the report
     this.http
-      .get<{ userId: string; linkRowId: string }[]>(
+      .get<{ UserId: string; LinkRowId: string }[]>(
         environment.apiUrl + 'ChameleonOnlineReportsAPI/allPermissions'
       )
       .subscribe(
@@ -82,17 +82,17 @@ export class PermissionsDialogNewComponent implements OnInit {
   }
 
   processPermissionsData(
-    permissions: { userId: string; linkRowId: string }[]
+    permissions: { UserId: string; LinkRowId: string }[]
   ): void {
     // Determine which users should be in the selectedUsers list
     const usersWithPermission = permissions
-      .filter((p) => p.linkRowId === this.linkAdress)
-      .map((p) => p.userId);
+      .filter((p) => p.LinkRowId === this.LinkAdress)
+      .map((p) => p.UserId);
 
     // Update selectedUsers and filteredUsers by creating new arrays
     // This helps Angular detect the changes and update the view accordingly.
     this.selectedUsers = this.users.filter((user) =>
-      usersWithPermission.includes(user.adUserName)
+      usersWithPermission.includes(user.ADUserName)
     );
 
     console.log(this.selectedUsers); // To check if users are being set correctly
@@ -117,10 +117,10 @@ export class PermissionsDialogNewComponent implements OnInit {
     // Remove the parameter
     const apiUrl = environment.apiUrl + 'Users'; // Adjust this to your actual endpoint
 
-    // Use this.linkAdress directly
+    // Use this.LinkAdress directly
     const permissions = this.selectedUsers.map((user) => ({
-      UserId: user.adUserName,
-      LinkRowId: this.linkAdress,
+      UserId: user.ADUserName,
+      LinkRowId: this.LinkAdress,
     }));
 
     // Make the API call
