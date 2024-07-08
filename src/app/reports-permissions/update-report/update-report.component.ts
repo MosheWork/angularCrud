@@ -2,14 +2,14 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { environment } from '../../../environments/environment'
+import { environment } from '../../../environments/environment';
 
 export interface Reports {
-  rowid: string;
-  linkDescription: string;
-  linkStatus: string;
-  reportName: string;
-  linkAdress: string;
+  Rowid: string;
+  LinkDescription: string;
+  LinkStatus: string;
+  ReportName: string;
+  LinkAdress: string;
 }
 
 @Component({
@@ -25,40 +25,35 @@ export class UpdateReportComponent implements OnInit {
     { label: 'Not Active', value: '0' },
   ];
 
-  ngOnInit(): void {
-    this.initializeForm();
-  }
   constructor(
     private dialogRef: MatDialogRef<UpdateReportComponent>,
     @Inject(MAT_DIALOG_DATA) public data: Reports,
-    private formBuilder: FormBuilder, // Assuming you're using FormBuilder
-    private http: HttpClient // If you're making an HTTP request directly from the component
-  ) {
-    // Initialize your form here, using data to populate the fields
+    private formBuilder: FormBuilder,
+    private http: HttpClient
+  ) {}
+
+  ngOnInit(): void {
     this.initializeForm();
   }
 
   initializeForm(): void {
     this.updateForm = this.formBuilder.group({
-      rowid: [this.data.rowid, Validators.required],
-      linkDescription: [this.data.linkDescription, Validators.required],
-      linkStatus: [this.data.linkStatus, Validators.required],
-      reportName: [this.data.reportName, Validators.required],
-      linkAdress: [this.data.linkAdress, Validators.required],
+      Rowid: [this.data.Rowid, Validators.required],
+      LinkDescription: [this.data.LinkDescription, Validators.required],
+      LinkStatus: [this.data.LinkStatus, Validators.required],
+      ReportName: [this.data.ReportName, Validators.required],
+      LinkAdress: [this.data.LinkAdress, Validators.required],
     });
 
-    // Add the subscription to linkStatus value changes here
-    this.updateForm.get('linkStatus')!.valueChanges.subscribe((value) => {
+    this.updateForm.get('LinkStatus')!.valueChanges.subscribe((value) => {
       if (value === '0') {
-        // Assuming '0' represents "Not Active"
         const confirmed = confirm(
           'Are you sure you want to change the status to Not Active?'
         );
         if (!confirmed) {
-          // User did not confirm, revert the value
           this.updateForm
-            .get('linkStatus')!
-            .setValue(this.data.linkStatus, { emitEvent: false });
+            .get('LinkStatus')!
+            .setValue(this.data.LinkStatus, { emitEvent: false });
         }
       }
     });
@@ -70,12 +65,12 @@ export class UpdateReportComponent implements OnInit {
         .put(
           environment.apiUrl +
             'ChameleonOnlineReportsAPI/' +
-            this.updateForm.value.rowid,
+            this.updateForm.value.Rowid,
           this.updateForm.value
         )
         .subscribe(
           (response) => {
-            this.dialogRef.close(true); // Indicate success
+            this.dialogRef.close(true);
           },
           (error) => {
             console.error('Error updating report:', error);
@@ -84,6 +79,7 @@ export class UpdateReportComponent implements OnInit {
       console.log(this.updateForm.value);
     }
   }
+
   onNoClick(): void {
     this.dialogRef.close();
   }

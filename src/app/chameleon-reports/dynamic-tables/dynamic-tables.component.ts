@@ -77,9 +77,9 @@ export class DynamicTablesComponent implements OnInit {
 
   getColumnLabel(column: string): string {
     const columnLabels: Record<string, string> = {
-      code: 'קוד',
-      description: 'תיאור',
-      tableName: 'שם טבלה'
+      Code: 'קוד',
+      Description: 'תיאור',
+      TableName: 'שם טבלה'
     };
     return columnLabels[column] || column;
   }
