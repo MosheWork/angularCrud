@@ -1,4 +1,5 @@
 import { CommonModule } from '@angular/common';
+import { HashLocationStrategy, LocationStrategy } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { UsersComponent } from './users/users.component';
@@ -50,7 +51,10 @@ const routes: Routes = [
   { path: 'stazerim', component: StazerimComponent },
   { path: 'SysAid', component: SysAidComponent },
   { path: 'sys-graph', component: SysGraphComponent },
-  { path: 'MainServiceCallsScreen', component: MainServiceCallsScreenComponent },
+  {
+    path: 'MainServiceCallsScreen',
+    component: MainServiceCallsScreenComponent,
+  },
   { path: 'serviceCallsScreenIt', component: ServiceCallsScreenITComponent },
   { path: 'AdminHomePage', component: AdminHomePageComponent },
   { path: 'GuidesList', component: GuidesListComponent },
@@ -59,27 +63,27 @@ const routes: Routes = [
   { path: 'Editguide/:id', component: EditGuideFormComponent },
   { path: 'ServersStatus', component: ServerPingCheckAppComponent },
   { path: 'manage-servers', component: ManageServersComponent },
-  { path: 'departmentLoadDashboard', component: DepartmentLoadDashboardComponent },
+  {
+    path: 'departmentLoadDashboard',
+    component: DepartmentLoadDashboardComponent,
+  },
   { path: 'department-detail/:id', component: DepartmentDetailDialogComponent },
   { path: 'current-patients', component: CurrentPatientsComponent },
   { path: '', redirectTo: '/applications', pathMatch: 'full' },
 
-
   // shift
-  { path: 'shifts', component: ShiftManagementComponent  },
+  { path: 'shifts', component: ShiftManagementComponent },
 
   //monday
   { path: 'boards', component: BoardsComponent },
   { path: 'boards/:boardId/tasks', component: TasksComponent },
   { path: '', redirectTo: '/boards', pathMatch: 'full' },
   { path: 'taskSummary', component: TaskSummaryComponent },
-
-
-
 ];
 
 @NgModule({
   imports: [CommonModule, RouterModule.forRoot(routes)],
   exports: [RouterModule],
+  providers: [{ provide: LocationStrategy, useClass: HashLocationStrategy }],
 })
 export class AppRoutingModule {}

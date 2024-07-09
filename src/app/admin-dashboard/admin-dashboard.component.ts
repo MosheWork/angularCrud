@@ -257,7 +257,7 @@ export class AdminDashboardComponent implements OnInit,AfterViewInit  {
   }
 
   fetchUserData(): Observable<any> {
-    const url = environment.apiUrl + 'GetTotalSysAid';
+    const url = environment.apiUrl + 'AdminDashboardAPI/GetTotalSysAid';
     return this.http.get<any>(url);
   }
 
@@ -386,7 +386,7 @@ export class AdminDashboardComponent implements OnInit,AfterViewInit  {
   }
   openAddTaskDialog(): void {
     this.http
-      .get<any[]>(environment.apiUrl + 'GetAllUsers')
+      .get<any[]>(environment.apiUrl + 'AdminDashboardAPI/GetAllUsers')
       .subscribe(
         (users) => {
           const dialogRef = this.dialog.open(AddTaskDialogComponentComponent, {
@@ -405,17 +405,17 @@ export class AdminDashboardComponent implements OnInit,AfterViewInit  {
       );
   }
   fetchDashboardData(): Observable<any> {
-    const url = environment.apiUrl + 'GetDashboardData';
+    const url = environment.apiUrl + 'AdminDashboardAPI/GetDashboardData';
     return this.http.get(url);
   }
 
   fetchTodoListData(): Observable<Task[]> {
-    const url = environment.apiUrl + 'GetTaskListForAdmin';
+    const url = environment.apiUrl + 'AdminDashboardAPI/GetTaskListForAdmin';
     return this.http.get<Task[]>(url);
   }
 
   fetchTaskSummery(): Observable<any[]> {
-    const url = environment.apiUrl + 'TaskSummary';
+    const url = environment.apiUrl + 'AdminDashboardAPI/TaskSummary';
     return this.http.get<any[]>(url); // Return Observable<any[]>
   }
 
