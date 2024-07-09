@@ -457,7 +457,7 @@ export class AdminDashboardComponent implements OnInit,AfterViewInit  {
       if (this.yearlyChartInstance) {
         this.yearlyChartInstance.destroy();
       }
-      this.fetchSysAidData('GetSysAidDataGraphYear', this.barChartData, this.yearlyChartCanvas, (newChart) => {
+      this.fetchSysAidData('AdminDashboardAPI/GetSysAidDataGraphYear', this.barChartData, this.yearlyChartCanvas, (newChart) => {
         this.yearlyChartInstance = newChart;
       });
     }
@@ -468,7 +468,7 @@ export class AdminDashboardComponent implements OnInit,AfterViewInit  {
       if (this.dailyChartInstance) {
         this.dailyChartInstance.destroy();
       }
-      this.fetchSysAidData('GetSysAidDataGraphDay', this.dailyChartData, this.dailyChartCanvas, (newChart) => {
+      this.fetchSysAidData('AdminDashboardAPI/GetSysAidDataGraphDay', this.dailyChartData, this.dailyChartCanvas, (newChart) => {
         this.dailyChartInstance = newChart;
       });
     }
@@ -479,7 +479,7 @@ export class AdminDashboardComponent implements OnInit,AfterViewInit  {
       if (this.monthlyChartInstance) {
         this.monthlyChartInstance.destroy();
       }
-      this.fetchSysAidData('GetSysAidDataGraphMonth', this.monthlyChartData, this.monthlyChartCanvas, (newChart) => {
+      this.fetchSysAidData('AdminDashboardAPI/GetSysAidDataGraphMonth', this.monthlyChartData, this.monthlyChartCanvas, (newChart) => {
         this.monthlyChartInstance = newChart;
       });
     }

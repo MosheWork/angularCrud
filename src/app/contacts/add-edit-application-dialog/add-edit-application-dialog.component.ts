@@ -22,12 +22,12 @@ export class AddEditApplicationDialogComponent implements OnInit {
   ) {
     this.isEdit = data.isEdit;
     this.form = this.fb.group({
-      applicationName: [data.application?.applicationName || '', Validators.required],
-      applicationDescription: [data.application?.applicationDescription || '', Validators.required],
-      companyName: [data.application?.companyName || '', Validators.required],
-      usedBy: [data.application?.usedBy || '', Validators.required],
-      userInChargeIDs: [data.application?.userInChargeIDs || [], Validators.required],
-      applicationNameInEnglish: [data.application?.applicationNameInEnglish || '', Validators.required]
+      ApplicationName: [data.application?.ApplicationName || '', Validators.required],
+      ApplicationDescription: [data.application?.ApplicationDescription || '', Validators.required],
+      CompanyName: [data.application?.CompanyName || '', Validators.required],
+      UsedBy: [data.application?.UsedBy || '', Validators.required],
+      UserInChargeIDs: [data.application?.UserInChargeIDs || [], Validators.required],
+      ApplicationNameInEnglish: [data.application?.ApplicationNameInEnglish || '', Validators.required]
     });
   }
 

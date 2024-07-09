@@ -16,14 +16,15 @@ export class AddEditContactDialogComponent implements OnInit {
     private fb: FormBuilder
   ) {
     this.contactForm = this.fb.group({
-      companyName: [this.data.contact?.companyName || '', Validators.required],
-      name: [this.data.contact?.name || '', Validators.required],
-      position: [this.data.contact?.position || ''],
-      phone: [this.data.contact?.phone || ''],
-      email: [this.data.contact?.email || ''],
-      description: [this.data.contact?.description || ''],
-      deptInHospital: [this.data.contact?.deptInHospital || ''], // New field
-      active: [this.data.contact?.active !== undefined ? this.data.contact.active : true]
+      id: [this.data.contact?.Id || this.data.contact?.id || null], // Ensure ID is properly set
+      CompanyName: [this.data.contact?.CompanyName || '', Validators.required],
+      Name: [this.data.contact?.Name || '', Validators.required],
+      Position: [this.data.contact?.Position || ''],
+      Phone: [this.data.contact?.Phone || ''],
+      Email: [this.data.contact?.Email || ''],
+      Description: [this.data.contact?.Description || ''],
+      DeptInHospital: [this.data.contact?.DeptInHospital || ''], // New field
+      Active: [this.data.contact?.Active !== undefined ? this.data.contact.Active : true]
     });
   }
 

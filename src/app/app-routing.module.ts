@@ -42,6 +42,7 @@ const routes: Routes = [
   { path: 'UserDashboard', component: UserDashboardComponent },
   { path: 'AdminDashboard', component: AdminDashboardComponent },
   { path: 'ApplicationList', component: ApplicationsListComponent },
+  { path: 'applications', component: ApplicationsListComponent },
   { path: 'contacts', component: ContactsComponent },
   { path: 'contacts/:applicationID', component: ContactsComponent }, // Add this line
   { path: 'dynamicTable', component: DynamicTablesComponent },

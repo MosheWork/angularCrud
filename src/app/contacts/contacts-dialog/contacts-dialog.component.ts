@@ -12,9 +12,9 @@ import { AddEditContactDialogComponent } from '../add-edit-contact-dialog/add-ed
 })
 export class ContactsDialogComponent implements OnInit {
   contacts: any[] = [];
-  displayedColumns: string[] = ['deptInHospital', 'companyName', 'name', 'position', 'phone', 'email', 'description', 'actions'];
+  displayedColumns: string[] = ['DeptInHospital', 'CompanyName', 'Name', 'Position', 'Phone', 'Email', 'Description', 'actions'];
   filteredContacts = new MatTableDataSource<any>(this.contacts);
-  applicationID: number;
+  ApplicationID: number;
 
   constructor(
     public dialogRef: MatDialogRef<ContactsDialogComponent>,
@@ -22,19 +22,19 @@ export class ContactsDialogComponent implements OnInit {
     private http: HttpClient,
     public dialog: MatDialog
   ) {
-    this.applicationID = data.applicationID;
+    this.ApplicationID = data.ApplicationID;
   }
 
   ngOnInit(): void {
-    this.fetchContactsByApplicationID(this.applicationID);
+    this.fetchContactsByApplicationID(this.ApplicationID);
   }
 
-  fetchContactsByApplicationID(applicationID: number): void {
-    this.http.get<any[]>(`${environment.apiUrl}ContactsInfoAPI/GetContactsByApplication/${applicationID}`).subscribe((data: any[]) => {
+  fetchContactsByApplicationID(ApplicationID: number): void {
+    this.http.get<any[]>(`${environment.apiUrl}ContactsInfoAPI/GetContactsByApplication/${ApplicationID}`).subscribe((data: any[]) => {
       this.contacts = data;
       this.filteredContacts.data = this.contacts;
     }, error => {
-      console.error(`Error fetching contacts for application ID ${applicationID}:`, error);
+      console.error(`Error fetching contacts for application ID ${ApplicationID}:`, error);
     });
   }
 
@@ -51,14 +51,22 @@ export class ContactsDialogComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe((result: any) => {
       if (result) {
-        this.updateContact(contact.id, { ...result, applicationID: this.applicationID });
+        console.log('Contact to update:', contact); // Log the contact being updated
+        console.log('Result:', result); // Log the result from the dialog
+        if (result && result.id !== null) {
+          this.updateContact(result.id, { ...result, ApplicationID: this.ApplicationID });
+        } else {
+          console.error('Contact ID is undefined');
+        }
       }
     });
   }
 
   updateContact(id: number, contact: any): void {
+    console.log('Updating contact with ID:', id); // Log the ID being passed
+    console.log('Updating contact with data:', contact); // Log the contact data being sent
     this.http.put<any>(`${environment.apiUrl}ContactsInfoAPI/UpdateContact/${id}`, contact).subscribe(() => {
-      this.fetchContactsByApplicationID(this.applicationID);
+      this.fetchContactsByApplicationID(this.ApplicationID);
     }, error => {
       console.error('Error updating contact:', error);
     });
@@ -67,19 +75,19 @@ export class ContactsDialogComponent implements OnInit {
   openAddDialog(): void {
     const dialogRef = this.dialog.open(AddEditContactDialogComponent, {
       width: '600px',
-      data: { isEdit: false, applicationID: this.applicationID }
+      data: { isEdit: false, ApplicationID: this.ApplicationID }
     });
 
     dialogRef.afterClosed().subscribe((result: any) => {
       if (result) {
-        this.addContact({ ...result, applicationID: this.applicationID });
+        this.addContact({ ...result, ApplicationID: this.ApplicationID });
       }
     });
   }
 
   addContact(contact: any): void {
     this.http.post<any>(`${environment.apiUrl}ContactsInfoAPI/CreateContact`, contact).subscribe(() => {
-      this.fetchContactsByApplicationID(this.applicationID);
+      this.fetchContactsByApplicationID(this.ApplicationID);
     }, error => {
       console.error('Error adding contact:', error);
     });

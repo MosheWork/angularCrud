@@ -13,17 +13,19 @@ import { ContactsDialogComponent } from '../contacts-dialog/contacts-dialog.comp
 })
 export class ApplicationsListComponent implements OnInit {
   applications: any[] = [];
-  displayedColumns: string[] = ['applicationName', 'applicationDescription', 'companyName', 'usedBy', 'applicationNameInEnglish','userInChargeNames', 'actions'];
+  displayedColumns: string[] = ['ApplicationName', 'ApplicationDescription', 'CompanyName', 'UsedBy', 'ApplicationNameInEnglish','UserInChargeNames', 'actions'];
   filteredApplications = new MatTableDataSource<any>(this.applications);
 
   constructor(private http: HttpClient, public dialog: MatDialog) { }
 
   ngOnInit(): void {
     this.fetchApplications();
+    
   }
 
   fetchApplications(): void {
     this.http.get<any[]>(`${environment.apiUrl}ContactsInfoAPI/GetApplicationUserInCharge`).subscribe((data: any[]) => {
+      console.log('Data received:', data); // Log the received data
       this.applications = data;
       this.filteredApplications.data = this.applications;
     }, error => {
@@ -44,7 +46,7 @@ export class ApplicationsListComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe((result: any) => {
       if (result) {
-        this.updateApplication(application.applicationID, result);
+        this.updateApplication(application.ApplicationID, result);
       }
     });
   }
@@ -79,10 +81,10 @@ export class ApplicationsListComponent implements OnInit {
     });
   }
 
-  openContactsDialog(applicationID: number): void {
+  openContactsDialog(ApplicationID: number): void {
     const dialogRef = this.dialog.open(ContactsDialogComponent, {
       width: '1200px',
-      data: { applicationID }
+      data: { ApplicationID }
     });
 
     dialogRef.afterClosed().subscribe(result => {

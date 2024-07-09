@@ -19,39 +19,39 @@
   
       <table mat-table [dataSource]="filteredApplications" class="mat-elevation-z8" style="width: 100%;">
         <!-- ApplicationName Column -->
-        <ng-container matColumnDef="applicationName">
+        <ng-container matColumnDef="ApplicationName">
           <th mat-header-cell *matHeaderCellDef> שם היישום </th>
-          <td mat-cell *matCellDef="let application"> {{application.applicationName}} </td>
+          <td mat-cell *matCellDef="let application"> {{application.ApplicationName}} </td>
         </ng-container>
   
         <!-- ApplicationDescription Column -->
-        <ng-container matColumnDef="applicationDescription">
+        <ng-container matColumnDef="ApplicationDescription">
           <th mat-header-cell *matHeaderCellDef> תיאור היישום </th>
-          <td mat-cell *matCellDef="let application"> {{application.applicationDescription}} </td>
+          <td mat-cell *matCellDef="let application"> {{application.ApplicationDescription}} </td>
         </ng-container>
   
         <!-- CompanyName Column -->
-        <ng-container matColumnDef="companyName">
+        <ng-container matColumnDef="CompanyName">
           <th mat-header-cell *matHeaderCellDef> שם החברה </th>
-          <td mat-cell *matCellDef="let application"> {{application.companyName}} </td>
+          <td mat-cell *matCellDef="let application"> {{application.CompanyName}} </td>
         </ng-container>
   
         <!-- UsedBy Column -->
-        <ng-container matColumnDef="usedBy">
+        <ng-container matColumnDef="UsedBy">
           <th mat-header-cell *matHeaderCellDef> בשימוש על ידי </th>
-          <td mat-cell *matCellDef="let application"> {{application.usedBy}} </td>
+          <td mat-cell *matCellDef="let application"> {{application.UsedBy}} </td>
         </ng-container>
   
         <!-- ApplicationNameInEnglish Column -->
-        <ng-container matColumnDef="applicationNameInEnglish">
+        <ng-container matColumnDef="ApplicationNameInEnglish">
           <th mat-header-cell *matHeaderCellDef> שם באנגלית </th>
-          <td mat-cell *matCellDef="let application"> {{application.applicationNameInEnglish}} </td>
+          <td mat-cell *matCellDef="let application"> {{application.ApplicationNameInEnglish}} </td>
         </ng-container>
 
       <!-- User In Charge Names Column -->
-<ng-container matColumnDef="userInChargeNames">
+<ng-container matColumnDef="UserInChargeNames">
   <th mat-header-cell *matHeaderCellDef> רפרנט אחראי </th>
-  <td mat-cell *matCellDef="let application"> {{ application.userInChargeNames }} </td>
+  <td mat-cell *matCellDef="let application"> {{ application.UserInChargeNames }} </td>
 </ng-container>
   
 <!-- Actions Column -->
@@ -61,7 +61,7 @@
     <button mat-icon-button color="primary" (click)="openEditDialog(application)">
       <mat-icon>edit</mat-icon>
     </button>
-    <button mat-icon-button color="accent" (click)="openContactsDialog(application.applicationID)">
+    <button mat-icon-button color="accent" (click)="openContactsDialog(application.ApplicationID)">
       <mat-icon>contacts</mat-icon>
     </button>
   </td>

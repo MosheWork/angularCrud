@@ -4,16 +4,16 @@
     <div class="form-row">
       <mat-form-field appearance="outline" class="form-field">
         <mat-label>Application Name</mat-label>
-        <input matInput formControlName="applicationName" required>
-        <mat-error *ngIf="form.get('applicationName')?.hasError('required')">
+        <input matInput formControlName="ApplicationName" required>
+        <mat-error *ngIf="form.get('ApplicationName')?.hasError('required')">
           Application Name is required
         </mat-error>
       </mat-form-field>
 
       <mat-form-field appearance="outline" class="form-field">
         <mat-label>Application Description</mat-label>
-        <input matInput formControlName="applicationDescription" required>
-        <mat-error *ngIf="form.get('applicationDescription')?.hasError('required')">
+        <input matInput formControlName="ApplicationDescription" required>
+        <mat-error *ngIf="form.get('ApplicationDescription')?.hasError('required')">
           Application Description is required
         </mat-error>
       </mat-form-field>
@@ -22,16 +22,16 @@
     <div class="form-row">
       <mat-form-field appearance="outline" class="form-field">
         <mat-label>Company Name</mat-label>
-        <input matInput formControlName="companyName" required>
-        <mat-error *ngIf="form.get('companyName')?.hasError('required')">
+        <input matInput formControlName="CompanyName" required>
+        <mat-error *ngIf="form.get('CompanyName')?.hasError('required')">
           Company Name is required
         </mat-error>
       </mat-form-field>
 
       <mat-form-field appearance="outline" class="form-field">
         <mat-label>Used By</mat-label>
-        <input matInput formControlName="usedBy" required>
-        <mat-error *ngIf="form.get('usedBy')?.hasError('required')">
+        <input matInput formControlName="UsedBy" required>
+        <mat-error *ngIf="form.get('UsedBy')?.hasError('required')">
           Used By is required
         </mat-error>
       </mat-form-field>
@@ -40,9 +40,9 @@
     <div class="form-row">
       <mat-form-field appearance="outline" class="form-field">
         <mat-label>User In Charge</mat-label>
-        <mat-select formControlName="userInChargeIDs" multiple required>
-          <mat-option *ngFor="let user of usersInCharge" [value]="user.userInChargeID">
-            {{ user.userInChargeName }}
+        <mat-select formControlName="UserInChargeIDs" multiple required>
+          <mat-option *ngFor="let user of usersInCharge" [value]="user.UserInChargeID">
+            {{ user.UserInChargeName }}
           </mat-option>
         </mat-select>
         <mat-error *ngIf="form.get('userInChargeIDs')?.hasError('required')">
@@ -53,8 +53,8 @@
 
     <mat-form-field appearance="outline" class="full-width">
       <mat-label>Application Name In English</mat-label>
-      <input matInput formControlName="applicationNameInEnglish" required>
-      <mat-error *ngIf="form.get('applicationNameInEnglish')?.hasError('required')">
+      <input matInput formControlName="ApplicationNameInEnglish" required>
+      <mat-error *ngIf="form.get('ApplicationNameInEnglish')?.hasError('required')">
         Application Name In English is required
       </mat-error>
     </mat-form-field>

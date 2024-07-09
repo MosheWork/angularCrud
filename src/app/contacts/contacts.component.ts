@@ -13,16 +13,16 @@ import { AddEditContactDialogComponent } from '../contacts/add-edit-contact-dial
 })
 export class ContactsComponent implements OnInit {
   contacts: any[] = [];
-  displayedColumns: string[] = ['deptInHospital', 'companyName', 'name', 'position', 'phone', 'email', 'description', 'actions'];
+  displayedColumns: string[] = ['DeptInHospital', 'CompanyName', 'Name', 'Position', 'Phone', 'Email', 'Description', 'actions'];
   filteredContacts = new MatTableDataSource<any>(this.contacts);
-  applicationID: number | null = null; // Provide a default value
+  ApplicationID: number | null = null; // Provide a default value
 
   constructor(private http: HttpClient, public dialog: MatDialog, private route: ActivatedRoute) { }
 
   ngOnInit(): void {
-    this.applicationID = this.route.snapshot.params['applicationID'];
-    if (this.applicationID) {
-      this.fetchContactsByApplicationID(this.applicationID);
+    this.ApplicationID = this.route.snapshot.params['ApplicationID'];
+    if (this.ApplicationID) {
+      this.fetchContactsByApplicationID(this.ApplicationID);
     } else {
       this.fetchContacts();
     }
@@ -37,12 +37,12 @@ export class ContactsComponent implements OnInit {
     });
   }
 
-  fetchContactsByApplicationID(applicationID: number): void {
-    this.http.get<any[]>(`${environment.apiUrl}ContactsInfoAPI/GetContactsByApplication/${applicationID}`).subscribe((data: any[]) => {
+  fetchContactsByApplicationID(ApplicationID: number): void {
+    this.http.get<any[]>(`${environment.apiUrl}ContactsInfoAPI/GetContactsByApplication/${ApplicationID}`).subscribe((data: any[]) => {
       this.contacts = data;
       this.filteredContacts.data = this.contacts;
     }, error => {
-      console.error(`Error fetching contacts for application ID ${applicationID}:`, error);
+      console.error(`Error fetching contacts for application ID ${ApplicationID}:`, error);
     });
   }
 
@@ -66,8 +66,8 @@ export class ContactsComponent implements OnInit {
 
   updateContact(id: number, contact: any): void {
     this.http.put<any>(`${environment.apiUrl}ContactsInfoAPI/UpdateContact/${id}`, contact).subscribe(() => {
-      if (this.applicationID) {
-        this.fetchContactsByApplicationID(this.applicationID);
+      if (this.ApplicationID) {
+        this.fetchContactsByApplicationID(this.ApplicationID);
       } else {
         this.fetchContacts();
       }
@@ -78,8 +78,8 @@ export class ContactsComponent implements OnInit {
 
   addContact(contact: any): void {
     this.http.post<any>(`${environment.apiUrl}ContactsInfoAPI/CreateContact`, contact).subscribe(() => {
-      if (this.applicationID) {
-        this.fetchContactsByApplicationID(this.applicationID);
+      if (this.ApplicationID) {
+        this.fetchContactsByApplicationID(this.ApplicationID);
       } else {
         this.fetchContacts();
       }
