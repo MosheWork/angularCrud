@@ -1,0 +1,45 @@
+<mat-toolbar color="primary">Add New Task</mat-toolbar>
+<div class="container">
+  <form [formGroup]="taskForm" (ngSubmit)="onSubmit()">
+    <mat-form-field appearance="fill">
+      <mat-label>Task Name</mat-label>
+      <input matInput formControlName="taskName">
+    </mat-form-field>
+
+    <mat-form-field appearance="fill">
+      <mat-label>Task Description</mat-label>
+      <input matInput formControlName="taskDescription">
+    </mat-form-field>
+
+    <mat-form-field appearance="fill">
+      <mat-label>Status</mat-label>
+      <input matInput formControlName="status">
+    </mat-form-field>
+
+    <mat-form-field appearance="fill">
+      <mat-label>Start Date</mat-label>
+      <input matInput [matDatepicker]="picker1" formControlName="startDate">
+      <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
+      <mat-datepicker #picker1></mat-datepicker>
+    </mat-form-field>
+
+    <mat-form-field appearance="fill">
+      <mat-label>End Date</mat-label>
+      <input matInput [matDatepicker]="picker2" formControlName="endDate">
+      <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
+      <mat-datepicker #picker2></mat-datepicker>
+    </mat-form-field>
+
+    <mat-form-field appearance="fill">
+      <mat-label>Due Date</mat-label>
+      <input matInput [matDatepicker]="picker3" formControlName="dueDate">
+      <mat-datepicker-toggle matSuffix [for]="picker3"></mat-datepicker-toggle>
+      <mat-datepicker #picker3></mat-datepicker>
+    </mat-form-field>
+
+    <!-- <mat-checkbox formControlName="isRecurring">Is Recurring</mat-checkbox> -->
+
+    <button mat-raised-button color="primary" type="submit">Add Task</button>
+    <button mat-button type="button" (click)="dialogRef.close()">Cancel</button>
+  </form>
+</div>

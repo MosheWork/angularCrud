@@ -96,6 +96,9 @@ import { DragDropModule } from '@angular/cdk/drag-drop';
 import { BoardsComponent } from './Monday/boards/boards.component';
 import { TasksComponent } from './Monday/tasks/tasks.component';
 import { TaskSummaryComponent } from './Monday/task-summary/task-summary.component';
+import { TaskListComponent } from './Ilana/task-list/task-list.component';
+import { AddTaskComponent } from './Ilana/add-task/add-task.component';
+import { EditTaskComponent } from './Ilana/edit-task/edit-task.component';
 
 
 @NgModule({
@@ -162,6 +165,9 @@ import { TaskSummaryComponent } from './Monday/task-summary/task-summary.compone
     BoardsComponent,
     TasksComponent,
     TaskSummaryComponent,
+    TaskListComponent,
+    AddTaskComponent,
+    EditTaskComponent,
   ],
   imports: [
     BrowserModule,

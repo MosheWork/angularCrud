@@ -33,6 +33,8 @@ import { ShiftManagementComponent } from './shift-management/shift-management/sh
 import { BoardsComponent } from './Monday/boards/boards.component';
 import { TasksComponent } from './Monday/tasks/tasks.component';
 import { TaskSummaryComponent } from './Monday/task-summary/task-summary.component';
+import { TaskListComponent } from './Ilana/task-list/task-list.component';
+import { AddTaskComponent } from './Ilana/add-task/add-task.component';
 
 const routes: Routes = [
   { path: 'users', component: UsersComponent },
@@ -80,6 +82,10 @@ const routes: Routes = [
   { path: 'boards/:boardId/tasks', component: TasksComponent },
   { path: '', redirectTo: '/boards', pathMatch: 'full' },
   { path: 'taskSummary', component: TaskSummaryComponent },
+
+  //ilana
+  { path: 'Ilanatasks', component: TaskListComponent },
+  { path: 'Ilanatasks-add-task', component: AddTaskComponent }
 ];
 
 @NgModule({

@@ -1,0 +1,21 @@
+.container {
+  margin: 20px;
+}
+
+table {
+  width: 100%;
+}
+
+mat-progress-bar {
+  &.mat-progress-bar-green {
+    --mdc-linear-progress-active-indicator-color: green;
+  }
+
+  &.mat-progress-bar-orange {
+    --mdc-linear-progress-active-indicator-color: orange;
+  }
+
+  &.mat-progress-bar-red {
+    --mdc-linear-progress-active-indicator-color: red;
+  }
+}

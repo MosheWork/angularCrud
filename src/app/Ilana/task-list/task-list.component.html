@@ -1,0 +1,79 @@
+<mat-toolbar color="primary">Task Manager</mat-toolbar>
+<div class="container">
+  <button mat-raised-button color="primary" (click)="openAddDialog()">Add Task</button>
+  <table mat-table [dataSource]="tasks" class="mat-elevation-z8">
+
+    <!-- Task ID Column -->
+    <ng-container matColumnDef="TaskId">
+      <th mat-header-cell *matHeaderCellDef> ID </th>
+      <td mat-cell *matCellDef="let element"> {{element.TaskId}} </td>
+    </ng-container>
+
+    <!-- Task Name Column -->
+    <ng-container matColumnDef="TaskName">
+      <th mat-header-cell *matHeaderCellDef> Name </th>
+      <td mat-cell *matCellDef="let element"> {{element.TaskName}} </td>
+    </ng-container>
+
+    <!-- Status Column -->
+    <ng-container matColumnDef="Status">
+      <th mat-header-cell *matHeaderCellDef> Status </th>
+      <td mat-cell *matCellDef="let element"> {{element.Status}} </td>
+    </ng-container>
+
+    <!-- Start Date Column -->
+    <ng-container matColumnDef="StartDate">
+      <th mat-header-cell *matHeaderCellDef> Start Date </th>
+      <td mat-cell *matCellDef="let element"> {{element.StartDate | date}} </td>
+    </ng-container>
+
+    <!-- End Date Column -->
+    <ng-container matColumnDef="EndDate">
+      <th mat-header-cell *matHeaderCellDef> End Date </th>
+      <td mat-cell *matCellDef="let element"> {{element.EndDate | date}} </td>
+    </ng-container>
+
+    <!-- Due Date Column -->
+    <ng-container matColumnDef="DueDate">
+      <th mat-header-cell *matHeaderCellDef> Due Date </th>
+      <td mat-cell *matCellDef="let element"> {{element.DueDate | date}} </td>
+    </ng-container>
+
+    <!-- Is Recurring Column -->
+    <ng-container matColumnDef="IsRecurring">
+      <th mat-header-cell *matHeaderCellDef> Recurring </th>
+      <td mat-cell *matCellDef="let element"> {{element.IsRecurring ? 'Yes' : 'No'}} </td>
+    </ng-container>
+
+    <!-- Progress Column -->
+    <ng-container matColumnDef="Progress">
+      <th mat-header-cell *matHeaderCellDef> Progress </th>
+      <td mat-cell *matCellDef="let element">
+        <mat-progress-bar mode="determinate" [value]="element.progress" [class]="element.progressColor"></mat-progress-bar>
+      </td>
+    </ng-container>
+
+    <!-- Created By Column -->
+    <ng-container matColumnDef="CreatedBy">
+      <th mat-header-cell *matHeaderCellDef> Created By </th>
+      <td mat-cell *matCellDef="let element"> {{element.CreatedBy}} </td>
+    </ng-container>
+
+    <!-- Assigned Users Column -->
+    <ng-container matColumnDef="AssignedUsers">
+      <th mat-header-cell *matHeaderCellDef> Assigned Users </th>
+      <td mat-cell *matCellDef="let element"> {{element.assignedUsers}} </td>
+    </ng-container>
+
+    <!-- Actions Column -->
+    <ng-container matColumnDef="Actions">
+      <th mat-header-cell *matHeaderCellDef> Actions </th>
+      <td mat-cell *matCellDef="let element">
+        <button mat-button (click)="openEditDialog(element)">Edit</button>
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+  </table>
+</div>
