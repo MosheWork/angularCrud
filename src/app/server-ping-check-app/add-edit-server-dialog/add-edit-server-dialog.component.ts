@@ -16,10 +16,10 @@ export class AddEditServerDialogComponent {
     private fb: FormBuilder
   ) {
     this.serverForm = this.fb.group({
-      hostname: [data.server ? data.server.hostname : '', Validators.required],
-      description: [data.server ? data.server.description : ''],
-      type: [data.server ? data.server.type : '', Validators.required], // New field
-      createdBy: [data.server ? data.server.createdBy : '', Validators.required]
+      Hostname: [data.server ? data.server.Hostname : '', Validators.required],
+      Description: [data.server ? data.server.Description : ''],
+      Type: [data.server ? data.server.Type : '', Validators.required], // New field
+      CreatedBy: [data.server ? data.server.CreatedBy : '', Validators.required]
     });
   }
 

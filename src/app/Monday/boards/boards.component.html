@@ -2,7 +2,7 @@
     <h2>Boards</h2>
     <mat-list>
       <mat-list-item *ngFor="let board of boards">
-        <a [routerLink]="['/boards', board.id, 'tasks']">{{ board.name }}</a>
+        <a [routerLink]="['/boards', board.Id, 'tasks']">{{ board.Name }}</a>
       </mat-list-item>
     </mat-list>
   </div>

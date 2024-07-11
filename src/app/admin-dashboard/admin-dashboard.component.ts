@@ -177,11 +177,11 @@ export class AdminDashboardComponent implements OnInit,AfterViewInit  {
       return data.status.trim().toLowerCase().includes(filter);
     };
   
-    // Fetching important messages
-    this.fetchImportantMessages().subscribe((messages) => {
-      this.importantMessages = messages;
-      console.log('Important Messages:', this.importantMessages);
-    });
+    // // Fetching important messages
+    // this.fetchImportantMessages().subscribe((messages) => {
+    //   this.importantMessages = messages;
+    //   console.log('Important Messages:', this.importantMessages);
+    // });
   
     // Fetch dashboard data and initialize moveDescription from local storage using fullName as the unique identifier
     this.fetchDashboardData().subscribe((dashboardData: any[]) => {
@@ -219,28 +219,28 @@ export class AdminDashboardComponent implements OnInit,AfterViewInit  {
       });
   
     // Refresh todo list data every 60 seconds
-    interval(60000)
-      .pipe(
-        startWith(0),
-        switchMap(() => this.fetchTodoListData())
-      )
-      .subscribe((todoListData) => {
-        this.todoListDataSource.data = todoListData;
-        this.todoListDataSource.paginator = this.todoListPaginator;
-        this.todoListDataSource.sort = this.todoListSort;
-      });
+    // interval(60000)
+    //   .pipe(
+    //     startWith(0),
+    //     switchMap(() => this.fetchTodoListData())
+    //   )
+    //   .subscribe((todoListData) => {
+    //     this.todoListDataSource.data = todoListData;
+    //     this.todoListDataSource.paginator = this.todoListPaginator;
+    //     this.todoListDataSource.sort = this.todoListSort;
+    //   });
   
     // Refresh task summary data every 60 seconds
-    interval(60000)
-      .pipe(
-        startWith(0),
-        switchMap(() => this.fetchTaskSummery())
-      )
-      .subscribe((taskSummeryData) => {
-        this.TaskSummeryDataSource.data = taskSummeryData;
-        this.TaskSummeryDataSource.paginator = this.taskSummeryDataPaginator;
-        this.TaskSummeryDataSource.sort = this.taskSummeryDataSort;
-      });
+    // interval(60000)
+    //   .pipe(
+    //     startWith(0),
+    //     switchMap(() => this.fetchTaskSummery())
+    //   )
+    //   .subscribe((taskSummeryData) => {
+    //     this.TaskSummeryDataSource.data = taskSummeryData;
+    //     this.TaskSummeryDataSource.paginator = this.taskSummeryDataPaginator;
+    //     this.TaskSummeryDataSource.sort = this.taskSummeryDataSort;
+    //   });
   }
   
   
@@ -286,10 +286,10 @@ export class AdminDashboardComponent implements OnInit,AfterViewInit  {
     return columnLabels[column] || column;
   }
 
-  fetchImportantMessages(): Observable<any> {
-    const url = environment.apiUrl + 'importantMessagesAPI';
-    return this.http.get(url);
-  }
+  // fetchImportantMessages(): Observable<any> {
+  //   const url = environment.apiUrl + 'importantMessagesAPI';
+  //   return this.http.get(url);
+  // }
   // Method to format dates
   formatDate(date: string): string | null {
     return this.datePipe.transform(date, 'dd/MM/yyyy HH:mm');
@@ -409,15 +409,15 @@ export class AdminDashboardComponent implements OnInit,AfterViewInit  {
     return this.http.get(url);
   }
 
-  fetchTodoListData(): Observable<Task[]> {
-    const url = environment.apiUrl + 'AdminDashboardAPI/GetTaskListForAdmin';
-    return this.http.get<Task[]>(url);
-  }
+  // fetchTodoListData(): Observable<Task[]> {
+  //   const url = environment.apiUrl + 'AdminDashboardAPI/GetTaskListForAdmin';
+  //   return this.http.get<Task[]>(url);
+  // }
 
-  fetchTaskSummery(): Observable<any[]> {
-    const url = environment.apiUrl + 'AdminDashboardAPI/TaskSummary';
-    return this.http.get<any[]>(url); // Return Observable<any[]>
-  }
+  // fetchTaskSummery(): Observable<any[]> {
+  //   const url = environment.apiUrl + 'AdminDashboardAPI/TaskSummary';
+  //   return this.http.get<any[]>(url); // Return Observable<any[]>
+  // }
 
 
   private fetchSysAidData(apiEndpoint: string, chartData: ChartData<'bar'>, chartCanvas: ElementRef<HTMLCanvasElement>, callback: (newChart: Chart) => void): void {

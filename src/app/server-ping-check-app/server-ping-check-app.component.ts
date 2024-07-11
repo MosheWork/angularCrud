@@ -14,7 +14,7 @@ export class ServerPingCheckAppComponent implements OnInit, OnDestroy {
   filteredServers: any[] = [];
   serverTypeServers: any[] = [];
   otherTypeServers: any[] = [];
-  pingResults: { [key: number]: any } = {};
+  PingResults: { [key: number]: any } = {};
   searchControl = new FormControl('');
   private pingInterval: Subscription | null = null;
 
@@ -22,7 +22,7 @@ export class ServerPingCheckAppComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.loadServers();
-    this.pingInterval = interval(60000).subscribe(() => this.autoPingServers());
+    this.pingInterval = interval(600000).subscribe(() => this.autoPingServers());
     this.searchControl.valueChanges.subscribe(searchText => {
       this.filterServers(searchText || '');
     });
@@ -36,6 +36,7 @@ export class ServerPingCheckAppComponent implements OnInit, OnDestroy {
 
   loadServers(): void {
     this.http.get<any[]>(`${environment.apiUrl}ServerPingCheckAPI/GetServers`).subscribe(servers => {
+      console.log('Servers loaded:', servers); // Log servers
       this.servers = servers;
       this.filteredServers = servers;
       this.autoPingServers();
@@ -46,14 +47,14 @@ export class ServerPingCheckAppComponent implements OnInit, OnDestroy {
   }
 
   categorizeServers(): void {
-    this.serverTypeServers = this.filteredServers.filter(server => server.type === 'Server');
-    this.otherTypeServers = this.filteredServers.filter(server => server.type !== 'Server');
+    this.serverTypeServers = this.filteredServers.filter(server => server.Type === 'Server');
+    this.otherTypeServers = this.filteredServers.filter(server => server.Type !== 'Server');
   }
 
   filterServers(searchText: string): void {
     this.filteredServers = this.servers.filter(server => 
-      server.hostname.toLowerCase().includes(searchText.toLowerCase()) ||
-      server.description.toLowerCase().includes(searchText.toLowerCase())
+      server.Hostname.toLowerCase().includes(searchText.toLowerCase()) ||
+      server.Description.toLowerCase().includes(searchText.toLowerCase())
     );
     this.categorizeServers();
   }
@@ -62,11 +63,12 @@ export class ServerPingCheckAppComponent implements OnInit, OnDestroy {
     this.autoPingServers();
   }
 
-  pingServer(serverId: number): void {
-    this.http.post<any>(`${environment.apiUrl}ServerPingCheckAPI/PingServer?serverId=${serverId}`, {}).subscribe(response => {
-      this.pingResults[serverId] = {
+  pingServer(ServerId: number): void {
+    this.http.post<any>(`${environment.apiUrl}ServerPingCheckAPI/PingServer?serverId=${ServerId}`, {}).subscribe(response => {
+      console.log('Ping response for server:', ServerId, response); // Log response
+      this.PingResults[ServerId] = {
         ...response,
-        lastCheck: new Date()
+        LastCheck: new Date()
       };
     }, error => {
       console.error('Error pinging server:', error);
@@ -74,10 +76,10 @@ export class ServerPingCheckAppComponent implements OnInit, OnDestroy {
   }
 
   autoPingServers(): void {
-    this.servers.forEach(server => this.pingServer(server.serverId));
+    this.servers.forEach(server => this.pingServer(server.ServerId));
   }
 
-  getStatusColor(status: string): string {
-    return status === 'Online' ? 'lightgreen' : 'lightcoral';
+  getStatusColor(Status: string): string {
+    return Status === 'Online' ? 'lightgreen' : 'lightcoral';
   }
 }

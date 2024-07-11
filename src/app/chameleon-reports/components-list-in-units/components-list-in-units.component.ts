@@ -81,11 +81,11 @@ export class ComponentsListInUnitsComponent implements OnInit {
   getColumnLabel(column: string): string {
     const columnLabels: Record<string, string> = {
       //row_id: 'קוד שורה',
-      unit: 'קוד יחידה',
-      name: 'שם יחידה',
-      heading: 'שם הרכיב ',
-      record_Name: 'גיליון ',
-      answer_Text: ' חוצץ'
+      Unit: 'קוד יחידה',
+      Name: 'שם יחידה',
+      Heading: 'שם הרכיב ',
+      Record_Name: 'גיליון ',
+      Answer_Text: ' חוצץ'
     };
     return columnLabels[column] || column;
   }

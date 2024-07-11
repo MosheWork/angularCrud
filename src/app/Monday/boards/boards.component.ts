@@ -10,7 +10,7 @@ import { environment } from '../../../environments/environment';
   templateUrl: './boards.component.html',
   styleUrls: ['./boards.component.scss']
 })
-export class BoardsComponent implements OnInit {
+export class BoardsComponent  {
   boards: any[] = [];
   tasks: any[] = [];
   selectedBoardId: string = '';
@@ -18,26 +18,26 @@ export class BoardsComponent implements OnInit {
 
   constructor(private http: HttpClient, private route: ActivatedRoute) { }
 
-  ngOnInit(): void {
-    this.getBoards().subscribe(data => {
-      this.boards = data.data.boards;
-    });
+  // ngOnInit(): void {
+  //   this.getBoards().subscribe(data => {
+  //     this.boards = data.data.boards;
+  //   });
 
-    this.route.params.subscribe(params => {
-      if (params['boardId']) {
-        this.selectedBoardId = params['boardId'];
-        this.getTasks(this.selectedBoardId).subscribe(data => {
-          this.tasks = data.data.boards[0].items_page.items;
-        });
-      }
-    });
-  }
+  //   this.route.params.subscribe(params => {
+  //     if (params['boardId']) {
+  //       this.selectedBoardId = params['boardId'];
+  //       this.getTasks(this.selectedBoardId).subscribe(data => {
+  //         this.tasks = data.data.boards[0].items_page.items;
+  //       });
+  //     }
+  //   });
+  // }
 
-  getBoards(): Observable<any> {
-    return this.http.get(`${environment.apiUrl}Monday/boards`);
-  }
+  // getBoards(): Observable<any> {
+  //   return this.http.get(`${environment.apiUrl}Monday/boards`);
+  // }
 
-  getTasks(boardId: string): Observable<any> {
-    return this.http.get(`${environment.apiUrl}Monday/boards/${boardId}/tasks`);
-  }
+  // getTasks(boardId: string): Observable<any> {
+  //   return this.http.get(`${environment.apiUrl}Monday/boards/${boardId}/tasks`);
+  // }
 }

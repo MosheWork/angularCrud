@@ -1,19 +1,17 @@
 <div class="container">
   <!-- Header Section -->
-  <mat-toolbar color="primary">
-    <span>Server Management Dashboard</span>
-    <button mat-icon-button [routerLink]="['/manage-servers']" style="margin-left: auto;">
-      <mat-icon>settings</mat-icon>
-    </button>
-  </mat-toolbar>
 
   <div class="content">
-    <mat-form-field appearance="outline">
-      <mat-label>Search Servers</mat-label>
-      <input matInput [formControl]="searchControl" placeholder="Search by hostname or description">
-    </mat-form-field>
-
-    <button mat-raised-button color="primary" (click)="sendPingNow()">Send Ping Now</button>
+    <div class="flex-container">
+      <mat-form-field appearance="outline" class="flex-item">
+        <mat-label>Search Servers</mat-label>
+        <input matInput [formControl]="searchControl" placeholder="Search by hostname or description">
+      </mat-form-field>
+      <button mat-icon-button [routerLink]="['/manage-servers']" class="flex-item">
+        <mat-icon>settings</mat-icon>
+      </button>
+      <button mat-raised-button color="primary" (click)="sendPingNow()" class="flex-item">Send Ping Now</button>
+    </div>
 
     <!-- Server Section -->
     <div class="section-container">
@@ -21,17 +19,17 @@
         <mat-icon>dns</mat-icon> Servers
       </h2>
       <div class="server-container" *ngIf="serverTypeServers.length > 0">
-        <mat-card *ngFor="let server of serverTypeServers" class="server-card" [ngStyle]="{ 'background-color': getStatusColor(pingResults[server.serverId]?.status) }">
-          <mat-card-title>Server: {{ server.hostname }}</mat-card-title>
+        <mat-card *ngFor="let server of serverTypeServers" class="server-card" [ngStyle]="{ 'background-color': getStatusColor(PingResults[server.ServerId]?.Status) }">
+          <mat-card-title>Server: {{ server.Hostname }}</mat-card-title>
           <mat-card-content>
-            <p>{{ server.description }}</p>
+            <p>{{ server.Description }}</p>
             <p [ngClass]="{
-                  'status-online': pingResults[server.serverId]?.status === 'Online',
-                  'status-offline': pingResults[server.serverId]?.status === 'Offline'
+                  'status-online': PingResults[server.ServerId]?.Status === 'Online',
+                  'status-offline': PingResults[server.ServerId]?.Status === 'Offline'
                 }">
-              Status: {{ pingResults[server.serverId]?.status || 'Unknown' }}
+              Status: {{ PingResults[server.ServerId]?.Status || 'Unknown' }}
             </p>
-            <p>Last Check: {{ pingResults[server.serverId]?.lastCheck | date:'short' }}</p>
+            <p>Last Check: {{ PingResults[server.ServerId]?.LastCheck | date:'short' }}</p>
           </mat-card-content>
         </mat-card>
       </div>
@@ -43,25 +41,22 @@
         <mat-icon>computer</mat-icon> Other Types
       </h2>
       <div class="server-container" *ngIf="otherTypeServers.length > 0">
-        <mat-card *ngFor="let server of otherTypeServers" class="server-card" [ngStyle]="{ 'background-color': getStatusColor(pingResults[server.serverId]?.status) }">
-          <mat-card-title>{{ server.type }}: {{ server.hostname }}</mat-card-title>
+        <mat-card *ngFor="let server of otherTypeServers" class="server-card" [ngStyle]="{ 'background-color': getStatusColor(PingResults[server.ServerId]?.Status) }">
+          <mat-card-title>{{ server.Type }}: {{ server.Hostname }}</mat-card-title>
           <mat-card-content>
-            <p>{{ server.description }}</p>
+            <p>{{ server.Description }}</p>
             <p [ngClass]="{
-                  'status-online': pingResults[server.serverId]?.status === 'Online',
-                  'status-offline': pingResults[server.serverId]?.status === 'Offline'
+                  'status-online': PingResults[server.ServerId]?.Status === 'Online',
+                  'status-offline': PingResults[server.ServerId]?.Status === 'Offline'
                 }">
-              Status: {{ pingResults[server.serverId]?.status || 'Unknown' }}
+              Status: {{ PingResults[server.ServerId]?.Status || 'Unknown' }}
             </p>
-            <p>Last Check: {{ pingResults[server.serverId]?.lastCheck | date:'short' }}</p>
+            <p>Last Check: {{ PingResults[server.ServerId]?.LastCheck | date:'short' }}</p>
           </mat-card-content>
         </mat-card>
       </div>
     </div>
   </div>
 
-  <!-- Footer Section -->
-  <mat-toolbar color="primary">
-    <span>&copy; 2024 Your Company. All rights reserved.</span>
-  </mat-toolbar>
+
 </div>

@@ -69,7 +69,7 @@ export class ManageServersComponent implements OnInit {
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
         console.log('Dialog result:', result); // Add this line
-        this.http.put(`${environment.apiUrl}ServerPingCheckAPI/UpdateServer/${server.serverId}`, result).subscribe(() => {
+        this.http.put(`${environment.apiUrl}ServerPingCheckAPI/UpdateServer/${server.ServerId}`, result).subscribe(() => {
           this.loadServers();
         }, error => {
           console.error('Error updating server:', error);

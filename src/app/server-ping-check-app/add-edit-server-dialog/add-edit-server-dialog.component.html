@@ -1,24 +1,24 @@
-<h1 mat-dialog-title>{{ data.server ? 'Edit Server' : 'Add Server' }}</h1>
+<h1 mat-dialog-title>{{ data.Server ? 'Edit Server' : 'Add Server' }}</h1>
 <div mat-dialog-content>
   <form [formGroup]="serverForm">
     <mat-form-field appearance="fill">
       <mat-label>Hostname</mat-label>
-      <input matInput formControlName="hostname">
+      <input matInput formControlName="Hostname">
     </mat-form-field>
 
     <mat-form-field appearance="fill">
       <mat-label>Description</mat-label>
-      <input matInput formControlName="description">
+      <input matInput formControlName="Description">
     </mat-form-field>
 
     <mat-form-field appearance="fill">
       <mat-label>Type</mat-label>
-      <input matInput formControlName="type">
+      <input matInput formControlName="Type">
     </mat-form-field>
 
     <mat-form-field appearance="fill">
       <mat-label>Created By</mat-label>
-      <input matInput formControlName="createdBy">
+      <input matInput formControlName="CreatedBy">
     </mat-form-field>
   </form>
 </div>
