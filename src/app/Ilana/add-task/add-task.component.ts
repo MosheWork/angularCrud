@@ -1,7 +1,7 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MatDialogRef } from '@angular/material/dialog';
 import { environment } from '../../../environments/environment';
 
 @Component({
@@ -15,16 +15,21 @@ export class AddTaskComponent implements OnInit {
   statusOptions: string[] = ['Not Started', 'In Progress', 'Completed'];
 
   constructor(
-    private fb: FormBuilder,
+    private fb: FormBuilder, 
     private http: HttpClient,
-    public dialogRef: MatDialogRef<AddTaskComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: any
+    public dialogRef: MatDialogRef<AddTaskComponent>
   ) {
     this.taskForm = this.fb.group({
       taskName: [''],
       taskDescription: [''],
       startDate: [''],
-      assignedUsers: [[]]
+      employeeName: [''],
+      employeeID: [''],
+      assignedUsers: [[]],
+      checklistItem1: [false],
+      checklistItem2: [false],
+      checklistItem3: [false],
+      checklistItem4: [false]
     });
   }
 

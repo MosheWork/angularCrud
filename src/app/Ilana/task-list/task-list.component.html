@@ -11,23 +11,31 @@
 
     <!-- Task Name Column -->
     <ng-container matColumnDef="TaskName">
-      <th mat-header-cell *matHeaderCellDef> Name </th>
+      <th mat-header-cell *matHeaderCellDef> משימה </th>
       <td mat-cell *matCellDef="let element"> {{element.TaskName}} </td>
     </ng-container>
 
-    <!-- Status Column -->
-    <ng-container matColumnDef="Status">
-      <th mat-header-cell *matHeaderCellDef> Status </th>
-      <td mat-cell *matCellDef="let element">
-        <mat-select [(ngModel)]="element.Status" (selectionChange)="updateTask(element)">
-          <mat-option *ngFor="let status of statusOptions" [value]="status">{{ status }}</mat-option>
-        </mat-select>
-      </td>
+    <!-- Start Date Column -->
+    <ng-container matColumnDef="StartDate">
+      <th mat-header-cell *matHeaderCellDef> תאריך התחלה </th>
+      <td mat-cell *matCellDef="let element"> {{element.StartDate | date}} </td>
+    </ng-container>
+
+    <!-- Employee Name Column -->
+    <ng-container matColumnDef="EmployeeName">
+      <th mat-header-cell *matHeaderCellDef> שם העובד </th>
+      <td mat-cell *matCellDef="let element"> {{element.EmployeeName}} </td>
+    </ng-container>
+
+    <!-- Employee ID Column -->
+    <ng-container matColumnDef="EmployeeID">
+      <th mat-header-cell *matHeaderCellDef> ת.ז העבוד </th>
+      <td mat-cell *matCellDef="let element"> {{element.EmployeeID}} </td>
     </ng-container>
 
     <!-- Checklist Item 1 Column -->
     <ng-container matColumnDef="ChecklistItem1">
-      <th mat-header-cell *matHeaderCellDef> Checklist 1 </th>
+      <th mat-header-cell *matHeaderCellDef> שיחת תיאום ציפיות </th>
       <td mat-cell *matCellDef="let element">
         <div class="checklist-container">
           <mat-checkbox [(ngModel)]="element.ChecklistItem1" (change)="onCheckboxChange(element, 'ChecklistItem1', $event.checked)"></mat-checkbox>
@@ -38,7 +46,7 @@
 
     <!-- Checklist Item 2 Column -->
     <ng-container matColumnDef="ChecklistItem2">
-      <th mat-header-cell *matHeaderCellDef> Checklist 2 </th>
+      <th mat-header-cell *matHeaderCellDef> ⁠רשימת תיוג </th>
       <td mat-cell *matCellDef="let element">
         <div class="checklist-container">
           <mat-checkbox [(ngModel)]="element.ChecklistItem2" (change)="onCheckboxChange(element, 'ChecklistItem2', $event.checked)"></mat-checkbox>
@@ -49,7 +57,7 @@
 
     <!-- Checklist Item 3 Column -->
     <ng-container matColumnDef="ChecklistItem3">
-      <th mat-header-cell *matHeaderCellDef> Checklist 3 </th>
+      <th mat-header-cell *matHeaderCellDef> הרשאות לביצוע פעולות </th>
       <td mat-cell *matCellDef="let element">
         <div class="checklist-container">
           <mat-checkbox [(ngModel)]="element.ChecklistItem3" (change)="onCheckboxChange(element, 'ChecklistItem3', $event.checked)"></mat-checkbox>
@@ -60,7 +68,7 @@
 
     <!-- Checklist Item 4 Column -->
     <ng-container matColumnDef="ChecklistItem4">
-      <th mat-header-cell *matHeaderCellDef> Checklist 4 </th>
+      <th mat-header-cell *matHeaderCellDef> הקמת עובד במלמ ועדכון אירועים </th>
       <td mat-cell *matCellDef="let element">
         <div class="checklist-container">
           <mat-checkbox [(ngModel)]="element.ChecklistItem4" (change)="onCheckboxChange(element, 'ChecklistItem4', $event.checked)"></mat-checkbox>
@@ -69,33 +77,9 @@
       </td>
     </ng-container>
 
-    <!-- Start Date Column -->
-    <ng-container matColumnDef="StartDate">
-      <th mat-header-cell *matHeaderCellDef> Start Date </th>
-      <td mat-cell *matCellDef="let element"> {{element.StartDate | date}} </td>
-    </ng-container>
-
-    <!-- Is Recurring Column -->
-    <ng-container matColumnDef="IsRecurring">
-      <th mat-header-cell *matHeaderCellDef> Recurring </th>
-      <td mat-cell *matCellDef="let element"> {{element.IsRecurring ? 'Yes' : 'No'}} </td>
-    </ng-container>
-
-    <!-- Created By Column -->
-    <ng-container matColumnDef="CreatedBy">
-      <th mat-header-cell *matHeaderCellDef> Created By </th>
-      <td mat-cell *matCellDef="let element"> {{element.CreatedBy}} </td>
-    </ng-container>
-
-    <!-- Assigned Users Column -->
-    <ng-container matColumnDef="AssignedUsers">
-      <th mat-header-cell *matHeaderCellDef> Assigned Users </th>
-      <td mat-cell *matCellDef="let element"> {{element.assignedUsersNames}} </td>
-    </ng-container>
-
     <!-- Actions Column -->
     <ng-container matColumnDef="Actions">
-      <th mat-header-cell *matHeaderCellDef> Actions </th>
+      <th mat-header-cell *matHeaderCellDef> עריכה </th>
       <td mat-cell *matCellDef="let element">
         <button mat-button (click)="openEditDialog(element)">Edit</button>
       </td>

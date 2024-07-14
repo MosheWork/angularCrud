@@ -1,43 +1,56 @@
 <mat-toolbar color="primary">Add New Task</mat-toolbar>
 <div class="container">
   <form [formGroup]="taskForm" (ngSubmit)="onSubmit()">
-    <div class="form-row">
-      <div class="form-column">
-        <mat-form-field appearance="fill" class="full-width">
+    <div class="row">
+      <div class="col">
+        <mat-form-field appearance="fill">
           <mat-label>Task Name</mat-label>
           <input matInput formControlName="taskName">
         </mat-form-field>
       </div>
-      <div class="form-column">
-        <mat-form-field appearance="fill" class="full-width">
+      <div class="col">
+        <mat-form-field appearance="fill">
           <mat-label>Task Description</mat-label>
           <input matInput formControlName="taskDescription">
         </mat-form-field>
       </div>
-    </div>
-    <div class="form-row">
-      <div class="form-column">
-        <mat-form-field appearance="fill" class="full-width">
+      <div class="col">
+        <mat-form-field appearance="fill">
           <mat-label>Start Date</mat-label>
           <input matInput [matDatepicker]="picker1" formControlName="startDate">
           <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
           <mat-datepicker #picker1></mat-datepicker>
         </mat-form-field>
       </div>
-      <div class="form-column">
-        <mat-form-field appearance="fill" class="full-width">
-          <mat-label>Assign Users</mat-label>
-          <mat-select formControlName="assignedUsers" multiple>
-            <mat-option *ngFor="let user of users" [value]="user.EmployeeID">
-              {{ user.Name }}
-            </mat-option>
-          </mat-select>
+    </div>
+    <div class="row">
+      <div class="col">
+        <mat-form-field appearance="fill">
+          <mat-label>Employee Name</mat-label>
+          <input matInput formControlName="employeeName">
+        </mat-form-field>
+      </div>
+      <div class="col">
+        <mat-form-field appearance="fill">
+          <mat-label>Employee ID</mat-label>
+          <input matInput formControlName="employeeID" type="number">
         </mat-form-field>
       </div>
     </div>
-    <div class="form-actions">
-      <button mat-button type="button" (click)="dialogRef.close()">Cancel</button>
-      <button mat-raised-button color="primary" type="submit">Add Task</button>
+    <div class="row">
+      <div class="col">
+        <mat-label>Checklist Items</mat-label>
+        <mat-checkbox formControlName="checklistItem1">Item 1</mat-checkbox>
+        <mat-checkbox formControlName="checklistItem2">Item 2</mat-checkbox>
+        <mat-checkbox formControlName="checklistItem3">Item 3</mat-checkbox>
+        <mat-checkbox formControlName="checklistItem4">Item 4</mat-checkbox>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col">
+        <button mat-raised-button color="primary" type="submit">Add Task</button>
+        <button mat-button type="button" (click)="dialogRef.close()">Cancel</button>
+      </div>
     </div>
   </form>
 </div>

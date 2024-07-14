@@ -12,6 +12,7 @@ import { environment } from '../../../environments/environment';
 export class EditTaskComponent implements OnInit {
   taskForm: FormGroup;
   users: any[] = [];
+  statusOptions: string[] = ['Not Started', 'In Progress', 'Completed'];
 
   constructor(
     private fb: FormBuilder,
@@ -23,7 +24,12 @@ export class EditTaskComponent implements OnInit {
       taskName: [data.TaskName],
       taskDescription: [data.TaskDescription],
       startDate: [data.StartDate],
-      assignedUsers: [data.AssignedUsers.map((user: any) => user.EmployeeID)] // Map to IDs if needed
+      employeeName: [data.EmployeeName],
+      employeeID: [data.EmployeeID],
+      checklistItem1: [data.ChecklistItem1],
+      checklistItem2: [data.ChecklistItem2],
+      checklistItem3: [data.ChecklistItem3],
+      checklistItem4: [data.ChecklistItem4]
     });
   }
 
@@ -40,8 +46,7 @@ export class EditTaskComponent implements OnInit {
   onSubmit(): void {
     const updatedTask = {
       ...this.taskForm.value,
-      TaskId: this.data.TaskId,
-      AssignedUsers: this.taskForm.value.assignedUsers.filter((user: any) => user !== null)
+      TaskId: this.data.TaskId
     };
     this.http.put(environment.apiUrl + 'IlanaTaskManager/tasks/' + this.data.TaskId, updatedTask).subscribe(response => {
       console.log('Task updated', response);
