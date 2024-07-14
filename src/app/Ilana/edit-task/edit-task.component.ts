@@ -12,7 +12,6 @@ import { environment } from '../../../environments/environment';
 export class EditTaskComponent implements OnInit {
   taskForm: FormGroup;
   users: any[] = [];
-  statusOptions: string[] = ['Not Started', 'In Progress', 'Completed'];
 
   constructor(
     private fb: FormBuilder,
@@ -23,15 +22,8 @@ export class EditTaskComponent implements OnInit {
     this.taskForm = this.fb.group({
       taskName: [data.TaskName],
       taskDescription: [data.TaskDescription],
-      status: [data.Status],
       startDate: [data.StartDate],
-      isRecurring: [data.IsRecurring],
-      createdBy: [data.CreatedBy],
-      assignedUsers: [data.AssignedUsers],
-      checklistItem1: [data.ChecklistItem1],
-      checklistItem2: [data.ChecklistItem2],
-      checklistItem3: [data.ChecklistItem3],
-      checklistItem4: [data.ChecklistItem4]
+      assignedUsers: [data.AssignedUsers.map((user: any) => user.EmployeeID)] // Map to IDs if needed
     });
   }
 
@@ -49,7 +41,7 @@ export class EditTaskComponent implements OnInit {
     const updatedTask = {
       ...this.taskForm.value,
       TaskId: this.data.TaskId,
-      AssignedUsers: this.taskForm.value.assignedUsers.filter((user: any) => user !== null).map((user: any) => typeof user === 'number' ? user : user.EmployeeID)
+      AssignedUsers: this.taskForm.value.assignedUsers.filter((user: any) => user !== null)
     };
     this.http.put(environment.apiUrl + 'IlanaTaskManager/tasks/' + this.data.TaskId, updatedTask).subscribe(response => {
       console.log('Task updated', response);

@@ -73,8 +73,10 @@ export class TaskListComponent implements OnInit {
   updateTask(task: any): void {
     const updatedTask = {
       ...task,
-      AssignedUsers: Array.isArray(task.assignedUsers) ? task.assignedUsers.map((user: any) => user.EmployeeID) : []
+      AssignedUsers: Array.isArray(task.AssignedUsers) ? task.AssignedUsers : []
     };
+    delete updatedTask.assignedUsers; // Ensure there is no duplicate key in the payload
+    delete updatedTask.assignedUsersNames; // Ensure there is no duplicate key in the payload
     this.http.put(environment.apiUrl + 'IlanaTaskManager/tasks/' + task.TaskId, updatedTask).subscribe(response => {
       console.log('Task updated', response);
       this.loadTasks();

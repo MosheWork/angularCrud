@@ -19,3 +19,41 @@ mat-progress-bar {
     --mdc-linear-progress-active-indicator-color: red;
   }
 }
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1em;
+}
+
+.form-row {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  margin-bottom: 1em;
+}
+
+.form-column {
+  flex: 1;
+  margin: 0 0.5em;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  margin-top: 1em;
+}
+
+.check-green .mat-checkbox-background {
+  background-color: green !important;
+}
+
+.checklist-container {
+  display: flex;
+  align-items: center;
+}

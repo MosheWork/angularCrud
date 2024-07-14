@@ -1,31 +1,30 @@
 .container {
-    margin: 20px;
-  }
-  
-  .row {
     display: flex;
-    flex-wrap: wrap;
-    margin-bottom: 10px;
+    flex-direction: column;
+    align-items: center;
+    padding: 1em;
   }
   
-  .col {
+  .form-row {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    margin-bottom: 1em;
+  }
+  
+  .form-column {
     flex: 1;
-    min-width: calc(33.33% - 10px); /* Three columns per row with some gap */
-    margin-right: 10px;
+    margin: 0 0.5em;
   }
   
-  .col:last-child {
-    margin-right: 0;
-  }
-  
-  mat-form-field, mat-checkbox, button {
+  .full-width {
     width: 100%;
   }
   
-  @media (max-width: 768px) {
-    .col {
-      min-width: 100%; /* Full width for smaller screens */
-      margin-right: 0;
-    }
+  .form-actions {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    margin-top: 1em;
   }
   

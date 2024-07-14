@@ -15,7 +15,7 @@ export class AddTaskComponent implements OnInit {
   statusOptions: string[] = ['Not Started', 'In Progress', 'Completed'];
 
   constructor(
-    private fb: FormBuilder, 
+    private fb: FormBuilder,
     private http: HttpClient,
     public dialogRef: MatDialogRef<AddTaskComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any
@@ -23,15 +23,8 @@ export class AddTaskComponent implements OnInit {
     this.taskForm = this.fb.group({
       taskName: [''],
       taskDescription: [''],
-      status: [''],
       startDate: [''],
-      isRecurring: [false],
-      createdBy: [''],
-      assignedUsers: [[]],
-      checklistItem1: [false],
-      checklistItem2: [false],
-      checklistItem3: [false],
-      checklistItem4: [false]
+      assignedUsers: [[]]
     });
   }
 

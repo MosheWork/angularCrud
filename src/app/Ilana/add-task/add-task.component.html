@@ -1,52 +1,31 @@
 <mat-toolbar color="primary">Add New Task</mat-toolbar>
 <div class="container">
   <form [formGroup]="taskForm" (ngSubmit)="onSubmit()">
-    <div class="row">
-      <div class="col">
-        <mat-form-field appearance="fill">
+    <div class="form-row">
+      <div class="form-column">
+        <mat-form-field appearance="fill" class="full-width">
           <mat-label>Task Name</mat-label>
           <input matInput formControlName="taskName">
         </mat-form-field>
       </div>
-      <div class="col">
-        <mat-form-field appearance="fill">
+      <div class="form-column">
+        <mat-form-field appearance="fill" class="full-width">
           <mat-label>Task Description</mat-label>
           <input matInput formControlName="taskDescription">
         </mat-form-field>
       </div>
-      <div class="col">
-        <mat-form-field appearance="fill">
-          <mat-label>Status</mat-label>
-          <mat-select formControlName="status">
-            <mat-option *ngFor="let status of statusOptions" [value]="status">{{ status }}</mat-option>
-          </mat-select>
-        </mat-form-field>
-      </div>
     </div>
-
-    <div class="row">
-      <div class="col">
-        <mat-form-field appearance="fill">
+    <div class="form-row">
+      <div class="form-column">
+        <mat-form-field appearance="fill" class="full-width">
           <mat-label>Start Date</mat-label>
           <input matInput [matDatepicker]="picker1" formControlName="startDate">
           <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
           <mat-datepicker #picker1></mat-datepicker>
         </mat-form-field>
       </div>
-      <div class="col">
-        <mat-form-field appearance="fill">
-          <mat-label>Created By</mat-label>
-          <input matInput formControlName="createdBy">
-        </mat-form-field>
-      </div>
-      <div class="col">
-        <mat-checkbox formControlName="isRecurring">Is Recurring</mat-checkbox>
-      </div>
-    </div>
-
-    <div class="row">
-      <div class="col">
-        <mat-form-field appearance="fill">
+      <div class="form-column">
+        <mat-form-field appearance="fill" class="full-width">
           <mat-label>Assign Users</mat-label>
           <mat-select formControlName="assignedUsers" multiple>
             <mat-option *ngFor="let user of users" [value]="user.EmployeeID">
@@ -56,22 +35,9 @@
         </mat-form-field>
       </div>
     </div>
-
-    <div class="row">
-      <div class="col">
-        <mat-label>Checklist Items</mat-label>
-        <mat-checkbox formControlName="checklistItem1">Item 1</mat-checkbox>
-        <mat-checkbox formControlName="checklistItem2">Item 2</mat-checkbox>
-        <mat-checkbox formControlName="checklistItem3">Item 3</mat-checkbox>
-        <mat-checkbox formControlName="checklistItem4">Item 4</mat-checkbox>
-      </div>
-    </div>
-
-    <div class="row">
-      <div class="col">
-        <button mat-raised-button color="primary" type="submit">Add Task</button>
-        <button mat-button type="button" (click)="dialogRef.close()">Cancel</button>
-      </div>
+    <div class="form-actions">
+      <button mat-button type="button" (click)="dialogRef.close()">Cancel</button>
+      <button mat-raised-button color="primary" type="submit">Add Task</button>
     </div>
   </form>
 </div>
