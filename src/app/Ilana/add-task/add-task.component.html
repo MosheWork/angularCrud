@@ -1,45 +1,77 @@
 <mat-toolbar color="primary">Add New Task</mat-toolbar>
 <div class="container">
   <form [formGroup]="taskForm" (ngSubmit)="onSubmit()">
-    <mat-form-field appearance="fill">
-      <mat-label>Task Name</mat-label>
-      <input matInput formControlName="taskName">
-    </mat-form-field>
+    <div class="row">
+      <div class="col">
+        <mat-form-field appearance="fill">
+          <mat-label>Task Name</mat-label>
+          <input matInput formControlName="taskName">
+        </mat-form-field>
+      </div>
+      <div class="col">
+        <mat-form-field appearance="fill">
+          <mat-label>Task Description</mat-label>
+          <input matInput formControlName="taskDescription">
+        </mat-form-field>
+      </div>
+      <div class="col">
+        <mat-form-field appearance="fill">
+          <mat-label>Status</mat-label>
+          <mat-select formControlName="status">
+            <mat-option *ngFor="let status of statusOptions" [value]="status">{{ status }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+    </div>
 
-    <mat-form-field appearance="fill">
-      <mat-label>Task Description</mat-label>
-      <input matInput formControlName="taskDescription">
-    </mat-form-field>
+    <div class="row">
+      <div class="col">
+        <mat-form-field appearance="fill">
+          <mat-label>Start Date</mat-label>
+          <input matInput [matDatepicker]="picker1" formControlName="startDate">
+          <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
+          <mat-datepicker #picker1></mat-datepicker>
+        </mat-form-field>
+      </div>
+      <div class="col">
+        <mat-form-field appearance="fill">
+          <mat-label>Created By</mat-label>
+          <input matInput formControlName="createdBy">
+        </mat-form-field>
+      </div>
+      <div class="col">
+        <mat-checkbox formControlName="isRecurring">Is Recurring</mat-checkbox>
+      </div>
+    </div>
 
-    <mat-form-field appearance="fill">
-      <mat-label>Status</mat-label>
-      <input matInput formControlName="status">
-    </mat-form-field>
+    <div class="row">
+      <div class="col">
+        <mat-form-field appearance="fill">
+          <mat-label>Assign Users</mat-label>
+          <mat-select formControlName="assignedUsers" multiple>
+            <mat-option *ngFor="let user of users" [value]="user.EmployeeID">
+              {{ user.Name }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+    </div>
 
-    <mat-form-field appearance="fill">
-      <mat-label>Start Date</mat-label>
-      <input matInput [matDatepicker]="picker1" formControlName="startDate">
-      <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
-      <mat-datepicker #picker1></mat-datepicker>
-    </mat-form-field>
+    <div class="row">
+      <div class="col">
+        <mat-label>Checklist Items</mat-label>
+        <mat-checkbox formControlName="checklistItem1">Item 1</mat-checkbox>
+        <mat-checkbox formControlName="checklistItem2">Item 2</mat-checkbox>
+        <mat-checkbox formControlName="checklistItem3">Item 3</mat-checkbox>
+        <mat-checkbox formControlName="checklistItem4">Item 4</mat-checkbox>
+      </div>
+    </div>
 
-    <mat-form-field appearance="fill">
-      <mat-label>End Date</mat-label>
-      <input matInput [matDatepicker]="picker2" formControlName="endDate">
-      <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
-      <mat-datepicker #picker2></mat-datepicker>
-    </mat-form-field>
-
-    <mat-form-field appearance="fill">
-      <mat-label>Due Date</mat-label>
-      <input matInput [matDatepicker]="picker3" formControlName="dueDate">
-      <mat-datepicker-toggle matSuffix [for]="picker3"></mat-datepicker-toggle>
-      <mat-datepicker #picker3></mat-datepicker>
-    </mat-form-field>
-
-    <!-- <mat-checkbox formControlName="isRecurring">Is Recurring</mat-checkbox> -->
-
-    <button mat-raised-button color="primary" type="submit">Add Task</button>
-    <button mat-button type="button" (click)="dialogRef.close()">Cancel</button>
+    <div class="row">
+      <div class="col">
+        <button mat-raised-button color="primary" type="submit">Add Task</button>
+        <button mat-button type="button" (click)="dialogRef.close()">Cancel</button>
+      </div>
+    </div>
   </form>
 </div>

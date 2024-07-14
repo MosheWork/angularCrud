@@ -11,54 +11,76 @@ import { EditTaskComponent } from '../edit-task/edit-task.component';
   styleUrls: ['./task-list.component.scss']
 })
 export class TaskListComponent implements OnInit {
-  displayedColumns: string[] = ['TaskId', 'TaskName', 'Status', 'StartDate', 'EndDate', 'DueDate', 'IsRecurring', 'Progress', 'Actions'];
+  displayedColumns: string[] = ['TaskId', 'TaskName', 'Status', 'Checklist1', 'Checklist2', 'Checklist3', 'Checklist4', 'StartDate', 'IsRecurring', 'CreatedBy', 'AssignedUsers', 'Actions'];
   tasks: any[] = [];
+  users: any[] = [];
+  statusOptions: string[] = ['Not Started', 'In Progress', 'Completed'];
 
   constructor(private http: HttpClient, public dialog: MatDialog) { }
 
   ngOnInit(): void {
+    this.loadUsers();
     this.loadTasks();
+  }
+
+  loadUsers(): void {
+    this.http.get<any[]>(environment.apiUrl + 'IlanaTaskManager/employees').subscribe(data => {
+      this.users = data;
+    });
   }
 
   loadTasks(): void {
     this.http.get<any[]>(environment.apiUrl + 'IlanaTaskManager/tasks').subscribe(data => {
       this.tasks = data.map(task => {
-        const progress = this.calculateProgress(task.StartDate, task.DueDate, task.EndDate);
+        task.ChecklistItem1Counter = this.calculateCounter(task.StartDate, task.ChecklistItem1DueDate);
+        task.ChecklistItem2Counter = this.calculateCounter(task.StartDate, task.ChecklistItem2DueDate);
+        task.ChecklistItem3Counter = this.calculateCounter(task.StartDate, task.ChecklistItem3DueDate);
+        task.ChecklistItem4Counter = this.calculateCounter(task.StartDate, task.ChecklistItem4DueDate);
         return {
           ...task,
-          progress: progress,
-          progressColor: this.getProgressColor(progress)
+          assignedUsers: this.getAssignedUsersNames(task.AssignedUsers)
         };
       });
     });
   }
-
-  calculateProgress(startDate: string, dueDate: string, endDate: string): number {
+  
+  calculateCounter(startDate: string, dueDate: string): string {
+    if (!dueDate) {
+      return 'N/A';
+    }
     const start = new Date(startDate).getTime();
     const due = new Date(dueDate).getTime();
-    const now = endDate ? new Date(endDate).getTime() : new Date().getTime();
-    if (now >= due) {
-      return 100;
+    const now = new Date().getTime();
+    const timeLeft = due - now;
+    const daysLeft = Math.ceil(timeLeft / (1000 * 3600 * 24));
+    return daysLeft > 0 ? `${daysLeft} days left` : 'Due';
+  }
+  
+  getAssignedUsersNames(assignedUsers: number[]): string {
+    if (!assignedUsers || assignedUsers.length === 0) {
+      return 'No users assigned';
     }
-    if (now <= start) {
-      return 0;
-    }
-    return ((now - start) / (due - start)) * 100;
+    const userNames = assignedUsers.map(userId => {
+      const user = this.users.find(user => user.EmployeeID === userId);
+      return user ? user.Name : 'Unknown';
+    });
+    return userNames.join(', ');
   }
 
-  getProgressColor(progress: number): string {
-    if (progress < 80) {
-      return 'mat-progress-bar-green';
-    } else if (progress < 100) {
-      return 'mat-progress-bar-orange';
-    } else {
-      return 'mat-progress-bar-red';
-    }
+  updateTask(task: any): void {
+    const updatedTask = {
+      ...task,
+      AssignedUsers: task.AssignedUsers.filter((user: any) => user !== null).map((user: any) => typeof user === 'number' ? user : user.EmployeeID)
+    };
+    this.http.put(environment.apiUrl + 'IlanaTaskManager/tasks/' + task.TaskId, updatedTask).subscribe(response => {
+      console.log('Task updated', response);
+      this.loadTasks();
+    });
   }
 
   openAddDialog(): void {
     const dialogRef = this.dialog.open(AddTaskComponent, {
-      width: '400px'
+      width: '800px'
     });
 
     dialogRef.afterClosed().subscribe(result => {
@@ -70,7 +92,7 @@ export class TaskListComponent implements OnInit {
 
   openEditDialog(task: any): void {
     const dialogRef = this.dialog.open(EditTaskComponent, {
-      width: '400px',
+      width: '800px',
       data: task
     });
 

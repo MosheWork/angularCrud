@@ -1,14 +1,31 @@
 .container {
-    padding: 20px;
+    margin: 20px;
   }
   
-  mat-form-field {
-    width: 100%;
-    margin-bottom: 15px;
+  .row {
+    display: flex;
+    flex-wrap: wrap;
+    margin-bottom: 10px;
   }
   
-  button {
-    margin-top: 20px;
+  .col {
+    flex: 1;
+    min-width: calc(33.33% - 10px); /* Three columns per row with some gap */
     margin-right: 10px;
+  }
+  
+  .col:last-child {
+    margin-right: 0;
+  }
+  
+  mat-form-field, mat-checkbox, button {
+    width: 100%;
+  }
+  
+  @media (max-width: 768px) {
+    .col {
+      min-width: 100%; /* Full width for smaller screens */
+      margin-right: 0;
+    }
   }
   

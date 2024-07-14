@@ -1,14 +1,23 @@
 .container {
-    padding: 20px;
+    margin: 20px;
   }
   
-  mat-form-field {
-    width: 100%;
-    margin-bottom: 15px;
+  .form-row {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
   }
   
-  button {
+  .form-column {
+    flex: 1 1 calc(33% - 10px);
+    margin: 5px;
+    min-width: 200px;
+  }
+  
+  .form-actions {
+    display: flex;
+    justify-content: flex-end;
     margin-top: 20px;
-    margin-right: 10px;
+    gap: 10px;
   }
   
