@@ -18,7 +18,7 @@
     <!-- Status Column -->
     <ng-container matColumnDef="Status">
       <th mat-header-cell *matHeaderCellDef> Status </th>
-      <td mat-cell *matCellDef="let element"> 
+      <td mat-cell *matCellDef="let element">
         <mat-select [(ngModel)]="element.Status" (selectionChange)="updateTask(element)">
           <mat-option *ngFor="let status of statusOptions" [value]="status">{{ status }}</mat-option>
         </mat-select>
@@ -26,38 +26,46 @@
     </ng-container>
 
     <!-- Checklist Item 1 Column -->
-    <ng-container matColumnDef="Checklist1">
+    <ng-container matColumnDef="ChecklistItem1">
       <th mat-header-cell *matHeaderCellDef> Checklist 1 </th>
-      <td mat-cell *matCellDef="let element"> 
-        <mat-checkbox [(ngModel)]="element.ChecklistItem1" (change)="updateTask(element)"></mat-checkbox>
-        <span>{{element.ChecklistItem1Counter}}</span>
+      <td mat-cell *matCellDef="let element">
+        <div class="checklist-container">
+          <mat-checkbox [(ngModel)]="element.ChecklistItem1" (change)="onCheckboxChange(element, 'ChecklistItem1', $event.checked)"></mat-checkbox>
+          <span>{{ element.ChecklistItem1Counter }}</span>
+        </div>
       </td>
     </ng-container>
 
     <!-- Checklist Item 2 Column -->
-    <ng-container matColumnDef="Checklist2">
+    <ng-container matColumnDef="ChecklistItem2">
       <th mat-header-cell *matHeaderCellDef> Checklist 2 </th>
-      <td mat-cell *matCellDef="let element"> 
-        <mat-checkbox [(ngModel)]="element.ChecklistItem2" (change)="updateTask(element)"></mat-checkbox>
-        <span>{{element.ChecklistItem2Counter}}</span>
+      <td mat-cell *matCellDef="let element">
+        <div class="checklist-container">
+          <mat-checkbox [(ngModel)]="element.ChecklistItem2" (change)="onCheckboxChange(element, 'ChecklistItem2', $event.checked)"></mat-checkbox>
+          <span>{{ element.ChecklistItem2Counter }}</span>
+        </div>
       </td>
     </ng-container>
 
     <!-- Checklist Item 3 Column -->
-    <ng-container matColumnDef="Checklist3">
+    <ng-container matColumnDef="ChecklistItem3">
       <th mat-header-cell *matHeaderCellDef> Checklist 3 </th>
-      <td mat-cell *matCellDef="let element"> 
-        <mat-checkbox [(ngModel)]="element.ChecklistItem3" (change)="updateTask(element)"></mat-checkbox>
-        <span>{{element.ChecklistItem3Counter}}</span>
+      <td mat-cell *matCellDef="let element">
+        <div class="checklist-container">
+          <mat-checkbox [(ngModel)]="element.ChecklistItem3" (change)="onCheckboxChange(element, 'ChecklistItem3', $event.checked)"></mat-checkbox>
+          <span>{{ element.ChecklistItem3Counter }}</span>
+        </div>
       </td>
     </ng-container>
 
     <!-- Checklist Item 4 Column -->
-    <ng-container matColumnDef="Checklist4">
+    <ng-container matColumnDef="ChecklistItem4">
       <th mat-header-cell *matHeaderCellDef> Checklist 4 </th>
-      <td mat-cell *matCellDef="let element"> 
-        <mat-checkbox [(ngModel)]="element.ChecklistItem4" (change)="updateTask(element)"></mat-checkbox>
-        <span>{{element.ChecklistItem4Counter}}</span>
+      <td mat-cell *matCellDef="let element">
+        <div class="checklist-container">
+          <mat-checkbox [(ngModel)]="element.ChecklistItem4" (change)="onCheckboxChange(element, 'ChecklistItem4', $event.checked)"></mat-checkbox>
+          <span>{{ element.ChecklistItem4Counter }}</span>
+        </div>
       </td>
     </ng-container>
 
@@ -82,7 +90,7 @@
     <!-- Assigned Users Column -->
     <ng-container matColumnDef="AssignedUsers">
       <th mat-header-cell *matHeaderCellDef> Assigned Users </th>
-      <td mat-cell *matCellDef="let element"> {{element.assignedUsers}} </td>
+      <td mat-cell *matCellDef="let element"> {{element.assignedUsersNames}} </td>
     </ng-container>
 
     <!-- Actions Column -->

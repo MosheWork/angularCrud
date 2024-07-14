@@ -11,7 +11,11 @@ import { EditTaskComponent } from '../edit-task/edit-task.component';
   styleUrls: ['./task-list.component.scss']
 })
 export class TaskListComponent implements OnInit {
-  displayedColumns: string[] = ['TaskId', 'TaskName', 'Status', 'Checklist1', 'Checklist2', 'Checklist3', 'Checklist4', 'StartDate', 'IsRecurring', 'CreatedBy', 'AssignedUsers', 'Actions'];
+  displayedColumns: string[] = [
+    'TaskId', 'TaskName', 'Status', 'ChecklistItem1', 'ChecklistItem2', 
+    'ChecklistItem3', 'ChecklistItem4', 'StartDate',  'CreatedBy', 
+    'AssignedUsers', 'Actions'
+  ];
   tasks: any[] = [];
   users: any[] = [];
   statusOptions: string[] = ['Not Started', 'In Progress', 'Completed'];
@@ -32,30 +36,29 @@ export class TaskListComponent implements OnInit {
   loadTasks(): void {
     this.http.get<any[]>(environment.apiUrl + 'IlanaTaskManager/tasks').subscribe(data => {
       this.tasks = data.map(task => {
-        task.ChecklistItem1Counter = this.calculateCounter(task.StartDate, task.ChecklistItem1DueDate);
-        task.ChecklistItem2Counter = this.calculateCounter(task.StartDate, task.ChecklistItem2DueDate);
-        task.ChecklistItem3Counter = this.calculateCounter(task.StartDate, task.ChecklistItem3DueDate);
-        task.ChecklistItem4Counter = this.calculateCounter(task.StartDate, task.ChecklistItem4DueDate);
+        const assignedUsersNames = this.getAssignedUsersNames(task.AssignedUsers);
         return {
           ...task,
-          assignedUsers: this.getAssignedUsersNames(task.AssignedUsers)
+          assignedUsersNames: assignedUsersNames,
+          ChecklistItem1Counter: this.calculateCounter(task.ChecklistItem1DueDate, task.ChecklistItem1),
+          ChecklistItem2Counter: this.calculateCounter(task.ChecklistItem2DueDate, task.ChecklistItem2),
+          ChecklistItem3Counter: this.calculateCounter(task.ChecklistItem3DueDate, task.ChecklistItem3),
+          ChecklistItem4Counter: this.calculateCounter(task.ChecklistItem4DueDate, task.ChecklistItem4),
         };
       });
     });
   }
-  
-  calculateCounter(startDate: string, dueDate: string): string {
-    if (!dueDate) {
-      return 'N/A';
+
+  calculateCounter(dueDate: string, checked: boolean): string {
+    if (checked) {
+      return 'Completed';
     }
-    const start = new Date(startDate).getTime();
     const due = new Date(dueDate).getTime();
     const now = new Date().getTime();
-    const timeLeft = due - now;
-    const daysLeft = Math.ceil(timeLeft / (1000 * 3600 * 24));
-    return daysLeft > 0 ? `${daysLeft} days left` : 'Due';
+    const timeLeft = Math.ceil((due - now) / (1000 * 60 * 60 * 24)); // days left
+    return timeLeft > 0 ? `${timeLeft} days left` : 'Overdue';
   }
-  
+
   getAssignedUsersNames(assignedUsers: number[]): string {
     if (!assignedUsers || assignedUsers.length === 0) {
       return 'No users assigned';
@@ -70,12 +73,18 @@ export class TaskListComponent implements OnInit {
   updateTask(task: any): void {
     const updatedTask = {
       ...task,
-      AssignedUsers: task.AssignedUsers.filter((user: any) => user !== null).map((user: any) => typeof user === 'number' ? user : user.EmployeeID)
+      AssignedUsers: Array.isArray(task.assignedUsers) ? task.assignedUsers.map((user: any) => user.EmployeeID) : []
     };
     this.http.put(environment.apiUrl + 'IlanaTaskManager/tasks/' + task.TaskId, updatedTask).subscribe(response => {
       console.log('Task updated', response);
       this.loadTasks();
     });
+  }
+
+  onCheckboxChange(task: any, checklistItem: string, checked: boolean): void {
+    task[checklistItem] = checked;
+    task[`${checklistItem}Counter`] = this.calculateCounter(task[`${checklistItem}DueDate`], checked);
+    this.updateTask(task);
   }
 
   openAddDialog(): void {
