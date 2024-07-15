@@ -33,7 +33,13 @@ export class TaskListComponent implements OnInit {
 
   loadTasks(): void {
     this.http.get<any[]>(environment.apiUrl + 'IlanaTaskManager/tasks').subscribe(data => {
-      this.tasks = data;
+      this.tasks = data.map(task => ({
+        ...task,
+        ChecklistItem1Counter: this.calculateCounter(task.ChecklistItem1DueDate, task.ChecklistItem1),
+        ChecklistItem2Counter: this.calculateCounter(task.ChecklistItem2DueDate, task.ChecklistItem2),
+        ChecklistItem3Counter: this.calculateCounter(task.ChecklistItem3DueDate, task.ChecklistItem3),
+        ChecklistItem4Counter: this.calculateCounter(task.ChecklistItem4DueDate, task.ChecklistItem4)
+      }));
     });
   }
 
@@ -50,7 +56,7 @@ export class TaskListComponent implements OnInit {
     const due = new Date(dueDate).getTime();
     const now = new Date().getTime();
     const timeLeft = Math.ceil((due - now) / (1000 * 60 * 60 * 24)); // days left
-    return timeLeft > 0 ? `${timeLeft} days left` : 'Overdue';
+    return timeLeft > 0 ? `${timeLeft} ימים נותרו` : 'עבר הזמן';
   }
 
   updateTask(task: any): void {

@@ -1,22 +1,22 @@
-<mat-toolbar color="primary">Add New Task</mat-toolbar>
+<mat-toolbar color="primary">הוספת משימה חדשה</mat-toolbar>
 <div class="container">
   <form [formGroup]="taskForm" (ngSubmit)="onSubmit()">
     <div class="row">
       <div class="col">
         <mat-form-field appearance="fill">
-          <mat-label>Task Name</mat-label>
+          <mat-label>שם המשימה</mat-label>
           <input matInput formControlName="taskName">
         </mat-form-field>
       </div>
-      <div class="col">
+      <!-- <div class="col">
         <mat-form-field appearance="fill">
           <mat-label>Task Description</mat-label>
           <input matInput formControlName="taskDescription">
         </mat-form-field>
-      </div>
+      </div> -->
       <div class="col">
         <mat-form-field appearance="fill">
-          <mat-label>Start Date</mat-label>
+          <mat-label>תאריך התחלה</mat-label>
           <input matInput [matDatepicker]="picker1" formControlName="startDate">
           <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
           <mat-datepicker #picker1></mat-datepicker>
@@ -26,18 +26,18 @@
     <div class="row">
       <div class="col">
         <mat-form-field appearance="fill">
-          <mat-label>Employee Name</mat-label>
+          <mat-label>שם העובד</mat-label>
           <input matInput formControlName="employeeName">
         </mat-form-field>
       </div>
       <div class="col">
         <mat-form-field appearance="fill">
-          <mat-label>Employee ID</mat-label>
+          <mat-label>ת.ז העובד</mat-label>
           <input matInput formControlName="employeeID" type="number">
         </mat-form-field>
       </div>
     </div>
-    <div class="row">
+    <!-- <div class="row">
       <div class="col">
         <mat-label>Checklist Items</mat-label>
         <mat-checkbox formControlName="checklistItem1">Item 1</mat-checkbox>
@@ -45,11 +45,11 @@
         <mat-checkbox formControlName="checklistItem3">Item 3</mat-checkbox>
         <mat-checkbox formControlName="checklistItem4">Item 4</mat-checkbox>
       </div>
-    </div>
+    </div> -->
     <div class="row">
       <div class="col">
-        <button mat-raised-button color="primary" type="submit">Add Task</button>
-        <button mat-button type="button" (click)="dialogRef.close()">Cancel</button>
+        <button mat-raised-button color="primary" type="submit">הוספה</button>
+        <button mat-button type="button" (click)="dialogRef.close()">ביטול</button>
       </div>
     </div>
   </form>

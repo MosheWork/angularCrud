@@ -1,8 +1,18 @@
-.container {
-  margin: 20px;
+.center-title {
+  display: flex;
+  justify-content: center;
+  width: 100%;
 }
 
-table {
+.container {
+  margin: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1em;
+}
+
+.table {
   width: 100%;
 }
 
@@ -18,12 +28,6 @@ mat-progress-bar {
   &.mat-progress-bar-red {
     --mdc-linear-progress-active-indicator-color: red;
   }
-}
-.container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 1em;
 }
 
 .form-row {
@@ -49,11 +53,25 @@ mat-progress-bar {
   margin-top: 1em;
 }
 
-.check-green .mat-checkbox-background {
-  background-color: green !important;
+.check-green .mat-mdc-checkbox.mat-accent {
+  --mdc-checkbox-selected-icon-color: green;
 }
 
 .checklist-container {
   display: flex;
   align-items: center;
+}
+
+.mat-mdc-checkbox.mat-accent {
+  --mdc-checkbox-selected-checkmark-color: #000;
+  --mdc-checkbox-selected-focus-icon-color: #ffd740;
+  --mdc-checkbox-selected-hover-icon-color: #15cc4f;
+  --mdc-checkbox-selected-icon-color: #15cc4f;
+  --mdc-checkbox-selected-pressed-icon-color: #2d30b5;
+  --mdc-checkbox-unselected-focus-icon-color: #0c1f9e;
+  --mdc-checkbox-unselected-hover-icon-color: #212121;
+  --mdc-checkbox-disabled-selected-icon-color: rgba(0, 0, 0, 0.38);
+  --mdc-checkbox-disabled-unselected-icon-color: rgba(0, 0, 0, 0.38);
+  --mdc-checkbox-unselected-icon-color: rgba(0, 0, 0, 0.54);
+  --mdc-checkbox-unselected-pressed-icon-color: rgba(0, 0, 0, 0.54);
 }
