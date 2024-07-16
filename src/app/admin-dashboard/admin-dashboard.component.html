@@ -28,7 +28,7 @@
                 class="mat-elevation-z8"
               >
               <ng-container matColumnDef="fullName">
-                <th mat-header-cell *matHeaderCellDef>Full Name</th>
+                <th mat-header-cell *matHeaderCellDef>רפרנט</th>
                 <td mat-cell *matCellDef="let element">
                   <mat-icon
                     class="status-icon"
@@ -55,7 +55,7 @@
             
                 <!-- Open Calls Column -->
                 <ng-container matColumnDef="open_calls">
-                  <th mat-header-cell *matHeaderCellDef>open Calls</th>
+                  <th mat-header-cell *matHeaderCellDef>קריאות חדשות</th>
                   <td
                     mat-cell
                     *matCellDef="let element"
@@ -71,7 +71,7 @@
 
                 <!-- Follow Up Calls Column -->
                 <ng-container matColumnDef="followUp_calls">
-                  <th mat-header-cell *matHeaderCellDef>Follow Up Calls</th>
+                  <th mat-header-cell *matHeaderCellDef>בטיפול</th>
                   <td
                     mat-cell
                     *matCellDef="let element"
@@ -85,13 +85,13 @@
                   </td>
                 </ng-container>
                 <ng-container matColumnDef="closed_today">
-                  <th mat-header-cell *matHeaderCellDef>closed_today</th>
+                  <th mat-header-cell *matHeaderCellDef>נסגרו היום</th>
                   <td mat-cell *matCellDef="let element">
                     {{ element.closed_today }}
                   </td>
                 </ng-container>
                 <ng-container matColumnDef="closed_this_month">
-                  <th mat-header-cell *matHeaderCellDef>closed_this_month</th>
+                  <th mat-header-cell *matHeaderCellDef>נסגרו החודש</th>
                   <td mat-cell *matCellDef="let element">
                     {{ element.closed_this_month }}
                   </td>
@@ -99,7 +99,7 @@
                 <!-- Waiting For User Response Column -->
                 <ng-container matColumnDef="waiting_for_user_response">
                   <th mat-header-cell *matHeaderCellDef>
-                    Waiting For User Response
+                    בהמתנה לתגובת המשתמש
                   </th>
                   <td
                     mat-cell
@@ -116,7 +116,7 @@
 
                 <!-- On Hold Column -->
                 <ng-container matColumnDef="on_hold">
-                  <th mat-header-cell *matHeaderCellDef>On Hold</th>
+                  <th mat-header-cell *matHeaderCellDef>בהמתנה</th>
                   <td
                     mat-cell
                     *matCellDef="let element"
@@ -127,6 +127,20 @@
                     {{ element.on_hold }}
                   </td>
                 </ng-container>
+
+                    <!-- OutsideCare Column -->
+                    <ng-container matColumnDef="OutsideCare">
+                      <th mat-header-cell *matHeaderCellDef>בטיפול גורם חיצוני </th>
+                      <td
+                        mat-cell
+                        *matCellDef="let element"
+                        [ngClass]="
+                          element.on_hold > 0 ? 'bold-font-red' : 'bold-font-blue'
+                        "
+                      >
+                        {{ element.OutsideCare }}
+                      </td>
+                    </ng-container>
                 <!-- Add other columns based on dashboardColumns -->
 
                 <tr mat-header-row *matHeaderRowDef="dashboardColumns"></tr>

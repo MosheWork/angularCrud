@@ -130,6 +130,7 @@ export class AdminDashboardComponent implements OnInit,AfterViewInit  {
     'followUp_calls',
     'waiting_for_user_response',
     'on_hold',
+    'OutsideCare',
     'closed_today',
     'closed_this_month',
   ];
