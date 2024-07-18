@@ -1,0 +1,18 @@
+<div class="container">
+  <h2>Upload Guide</h2>
+  <form (ngSubmit)="onSubmit()" #guideForm="ngForm">
+    <mat-form-field appearance="fill">
+      <mat-label>Title</mat-label>
+      <input matInput placeholder="Guide Title" required [(ngModel)]="guide.Title" name="title">
+    </mat-form-field>
+    <mat-form-field appearance="fill">
+      <mat-label>Description</mat-label>
+      <textarea matInput placeholder="Guide Description" required [(ngModel)]="guide.Description" name="description"></textarea>
+    </mat-form-field>
+    <div>
+      <label for="fileInput">File</label>
+      <input id="fileInput" type="file" (change)="onFileChange($event)" required>
+    </div>
+    <button mat-raised-button color="primary" type="submit">Upload</button>
+  </form>
+</div>

@@ -35,6 +35,8 @@ import { TasksComponent } from './Monday/tasks/tasks.component';
 import { TaskSummaryComponent } from './Monday/task-summary/task-summary.component';
 import { TaskListComponent } from './Ilana/task-list/task-list.component';
 import { AddTaskComponent } from './Ilana/add-task/add-task.component';
+import { GuideListComponent } from './GuidesNew/guide-list/guide-list.component';
+import { UploadGuideComponent } from './GuidesNew/upload-guide/upload-guide.component';
 
 const routes: Routes = [
   { path: 'users', component: UsersComponent },
@@ -85,7 +87,13 @@ const routes: Routes = [
 
   //ilana
   { path: 'Ilanatasks', component: TaskListComponent },
-  { path: 'Ilanatasks-add-task', component: AddTaskComponent }
+  { path: 'Ilanatasks-add-task', component: AddTaskComponent },
+
+  //guide new
+  { path: 'guideList', component: GuideListComponent },
+  { path: 'NewGuide', component: UploadGuideComponent }
+
+
 ];
 
 @NgModule({

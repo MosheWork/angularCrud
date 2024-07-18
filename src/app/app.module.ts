@@ -99,6 +99,8 @@ import { TaskSummaryComponent } from './Monday/task-summary/task-summary.compone
 import { TaskListComponent } from './Ilana/task-list/task-list.component';
 import { AddTaskComponent } from './Ilana/add-task/add-task.component';
 import { EditTaskComponent } from './Ilana/edit-task/edit-task.component';
+import { UploadGuideComponent } from './GuidesNew/upload-guide/upload-guide.component';
+import { GuideListComponent } from './GuidesNew/guide-list/guide-list.component';
 
 
 @NgModule({
@@ -168,6 +170,8 @@ import { EditTaskComponent } from './Ilana/edit-task/edit-task.component';
     TaskListComponent,
     AddTaskComponent,
     EditTaskComponent,
+    UploadGuideComponent,
+    GuideListComponent,
   ],
   imports: [
     BrowserModule,

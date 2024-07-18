@@ -25,6 +25,7 @@ interface MedExecutionModel {
   way_Of_Giving: string;
   id_Num: string;
   full_Name: string;
+  depart_Name: string; // New field
 }
 
 @Component({
@@ -45,7 +46,8 @@ export class MedExecutionTableComponent implements OnInit, AfterViewInit {
     'Dosage_Unit_InOrder',
     'Way_Of_Giving',
     'Id_Num',
-    'Full_Name'
+    'Full_Name',
+    'Depart_Name' // New column
   ];
 
   dataSource = new MatTableDataSource<MedExecutionModel>();

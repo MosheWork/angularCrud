@@ -1,0 +1,42 @@
+<div class="container">
+    <h2>Guide List</h2>
+    <mat-table [dataSource]="guides" class="mat-elevation-z8">
+      <ng-container matColumnDef="Title">
+        <mat-header-cell *matHeaderCellDef> Title </mat-header-cell>
+        <mat-cell *matCellDef="let guide"> {{ guide.Title }} </mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="Description">
+        <mat-header-cell *matHeaderCellDef> Description </mat-header-cell>
+        <mat-cell *matCellDef="let guide"> {{ guide.Description }} </mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="CreatedDate">
+        <mat-header-cell *matHeaderCellDef> Created Date </mat-header-cell>
+        <mat-cell *matCellDef="let guide"> {{ guide.CreatedDate | date }} </mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="actions">
+        <mat-header-cell *matHeaderCellDef> Actions </mat-header-cell>
+        <mat-cell *matCellDef="let guide">
+          <ng-container *ngIf="guide.WordFilePath">
+            <a [href]="environment.apiUrl + 'GuideManager/guides/view/' + (guide.WordFilePath.split('/').pop() || '')" target="_blank">
+              <button mat-button>Download Word</button>
+            </a>
+            <button mat-button (click)="viewGuide(guide.WordFilePath)">View Word</button>
+          </ng-container>
+          <ng-container *ngIf="guide.PdfFilePath">
+            <a [href]="environment.apiUrl + 'GuideManager/guides/view/' + (guide.PdfFilePath.split('/').pop() || '')" target="_blank">
+              <button mat-button>Download PDF</button>
+            </a>
+            <button mat-button (click)="viewGuide(guide.PdfFilePath)">View PDF</button>
+          </ng-container>
+        </mat-cell>
+      </ng-container>
+      <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+      <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+    </mat-table>
+  
+    <!-- Modal for displaying file -->
+    <div *ngIf="selectedFilePath" class="viewer">
+      <iframe [src]="selectedFilePath" width="100%" height="600px"></iframe>
+    </div>
+  </div>
+  

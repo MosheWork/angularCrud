@@ -24,7 +24,7 @@
                   </mat-form-field>
                   <mat-form-field class="filter-field">
                     <mat-label>שם קטגוריה</mat-label>
-                    <input matInput [formControlName]="'category_Name'" />
+                    <input matInput [formControlName]="'Category_Name'" />
                   </mat-form-field>
                   <mat-form-field class="filter-field">
                     <mat-label>שם יחידת ביצוע</mat-label>
@@ -46,13 +46,13 @@
                   </mat-form-field>
                   <mat-form-field class="filter-field">
                     <mat-label>תאריך התחלה</mat-label>
-                    <input matInput [formControlName]="'startDate'" [matDatepicker]="startDatePicker" />
+                    <input matInput [formControlName]="'StartDate'" [matDatepicker]="startDatePicker" />
                     <mat-datepicker-toggle matSuffix [for]="startDatePicker"></mat-datepicker-toggle>
                     <mat-datepicker #startDatePicker></mat-datepicker>
                   </mat-form-field>
                   <mat-form-field class="filter-field">
                     <mat-label>תאריך סיום</mat-label>
-                    <input matInput [formControlName]="'endDate'" [matDatepicker]="endDatePicker" />
+                    <input matInput [formControlName]="'EndDate'" [matDatepicker]="endDatePicker" />
                     <mat-datepicker-toggle matSuffix [for]="endDatePicker"></mat-datepicker-toggle>
                     <mat-datepicker #endDatePicker></mat-datepicker>
                   </mat-form-field>
@@ -135,6 +135,10 @@
     <ng-container matColumnDef="Full_Name">
       <mat-header-cell *matHeaderCellDef mat-sort-header>שם מלא</mat-header-cell>
       <mat-cell *matCellDef="let element"> {{ element.Full_Name }} </mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="Depart_Name">
+      <mat-header-cell *matHeaderCellDef mat-sort-header>מחלקה סיעודית </mat-header-cell>
+      <mat-cell *matCellDef="let element"> {{ element.Depart_Name }} </mat-cell>
     </ng-container>
     <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
     <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
