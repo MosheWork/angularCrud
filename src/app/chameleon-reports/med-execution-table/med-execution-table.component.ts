@@ -11,21 +11,21 @@ import { map, startWith } from 'rxjs/operators';
 import * as XLSX from 'xlsx';
 
 interface MedExecutionModel {
-  basic_Name: string;
-  drug: string;
-  exec_Status: number;
-  exec_Status_Name: string;
-  execution_Date: Date;
-  category_Name: string;
-  execution_UnitName: string;
-  admission_No: string;
-  generic_Name_ForDisplay: string;
-  dosage_InOrder: number;
-  dosage_Unit_InOrder: string;
-  way_Of_Giving: string;
-  id_Num: string;
-  full_Name: string;
-  depart_Name: string; // New field
+  Basic_Name: string;
+  Drug: string;
+  Exec_Status: number;
+  Exec_Status_Name: string;
+  Execution_Date: Date;
+  Category_Name: string;
+  Execution_UnitName: string;
+  Admission_No: string;
+  Generic_Name_ForDisplay: string;
+  Dosage_InOrder: number;
+  Dosage_Unit_InOrder: string;
+  Way_Of_Giving: string;
+  Id_Num: string;
+  Full_Name: string;
+  Depart_Name: string;
 }
 
 @Component({
@@ -47,7 +47,7 @@ export class MedExecutionTableComponent implements OnInit, AfterViewInit {
     'Way_Of_Giving',
     'Id_Num',
     'Full_Name',
-    'Depart_Name' // New column
+    'Depart_Name'
   ];
 
   dataSource = new MatTableDataSource<MedExecutionModel>();
@@ -177,38 +177,38 @@ export class MedExecutionTableComponent implements OnInit, AfterViewInit {
       params = params.append('Basic_Names', this.basicNamesControl.value);
     }
 
-    if (filters.drug) {
-      params = params.append('Drug', filters.drug);
+    if (filters.Drug) {
+      params = params.append('Drug', filters.Drug);
     }
 
-    if (filters.execution_Date) {
-      const formattedExecutionDate = this.datePipe.transform(filters.execution_Date, 'yyyy-MM-dd');
+    if (filters.Execution_Date) {
+      const formattedExecutionDate = this.datePipe.transform(filters.Execution_Date, 'yyyy-MM-dd');
       params = params.append('Execution_Date', formattedExecutionDate!);
     }
 
-    if (filters.category_Name) {
-      params = params.append('Category_Name', filters.category_Name);
+    if (filters.Category_Name) {
+      params = params.append('Category_Name', filters.Category_Name);
     }
 
     if (this.unitNamesControl.value) {
       params = params.append('Execution_UnitNames', this.unitNamesControl.value);
     }
 
-    if (filters.admission_No) {
-      params = params.append('Admission_No', filters.admission_No);
+    if (filters.Admission_No) {
+      params = params.append('Admission_No', filters.Admission_No);
     }
 
     if (this.genericNamesControl.value) {
       params = params.append('Generic_Names_ForDisplay', this.genericNamesControl.value);
     }
 
-    if (filters.startDate) {
-      const formattedStartDate = this.datePipe.transform(filters.startDate, 'yyyy-MM-dd');
+    if (filters.StartDate) {
+      const formattedStartDate = this.datePipe.transform(filters.StartDate, 'yyyy-MM-dd');
       params = params.append('StartDate', formattedStartDate!);
     }
 
-    if (filters.endDate) {
-      const formattedEndDate = this.datePipe.transform(filters.endDate, 'yyyy-MM-dd');
+    if (filters.EndDate) {
+      const formattedEndDate = this.datePipe.transform(filters.EndDate, 'yyyy-MM-dd');
       params = params.append('EndDate', formattedEndDate!);
     }
 
@@ -228,15 +228,15 @@ export class MedExecutionTableComponent implements OnInit, AfterViewInit {
 
   createFilterForm(): FormGroup {
     return this.fb.group({
-      basic_Names: this.basicNamesControl,
-      drug: new FormControl(''),
-      execution_Date: new FormControl(''),
-      category_Name: new FormControl(''),
-      execution_UnitNames: this.unitNamesControl,
-      admission_No: new FormControl(''),
-      generic_Names_ForDisplay: this.genericNamesControl,
-      startDate: new FormControl(''),
-      endDate: new FormControl('')
+      Basic_Names: this.basicNamesControl,
+      Drug: new FormControl(''),
+      Execution_Date: new FormControl(''),
+      Category_Name: new FormControl(''),
+      Execution_UnitNames: this.unitNamesControl,
+      Admission_No: new FormControl(''),
+      Generic_Names_ForDisplay: this.genericNamesControl,
+      StartDate: new FormControl(''),
+      EndDate: new FormControl('')
     });
   }
 
@@ -246,13 +246,13 @@ export class MedExecutionTableComponent implements OnInit, AfterViewInit {
 
   getColumnLabel(column: string): string {
     const columnLabels: Record<string, string> = {
-      basic_Name: 'Basic Name',
-      drug: 'Drug',
-      execution_Date: 'Execution Date',
-      category_Name: 'Category Name',
-      execution_UnitName: 'Execution Unit Name',
-      admission_No: 'Admission No',
-      generic_Name_ForDisplay: 'Generic Name'
+      Basic_Name: 'Basic Name',
+      Drug: 'Drug',
+      Execution_Date: 'Execution Date',
+      Category_Name: 'Category Name',
+      Execution_UnitName: 'Execution Unit Name',
+      Admission_No: 'Admission No',
+      Generic_Name_ForDisplay: 'Generic Name'
     };
     return columnLabels[column] || column;
   }
