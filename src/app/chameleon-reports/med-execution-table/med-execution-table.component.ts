@@ -36,11 +36,11 @@ interface MedExecutionModel {
 })
 export class MedExecutionTableComponent implements OnInit, AfterViewInit {
   displayedColumns: string[] = [
-    'Basic_Name', 
-    'Drug', 
-    'Execution_Date', 
-    'Category_Name', 
-    'Execution_UnitName', 
+    'Basic_Name',
+    'Drug',
+    'Execution_Date',
+    'Category_Name',
+    'Execution_UnitName',
     'Generic_Name_ForDisplay',
     'Dosage_InOrder',
     'Dosage_Unit_InOrder',
@@ -67,13 +67,14 @@ export class MedExecutionTableComponent implements OnInit, AfterViewInit {
   filteredBasicNameOptions!: Observable<string[]>;
   filteredGenericNameOptions!: Observable<string[]>;
   filteredUnitNameOptions!: Observable<string[]>;
+  unitNameFilter: string = ''; // Property to hold the filter input
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
   basicNamesControl = new FormControl('');
   genericNamesControl = new FormControl('');
-  unitNamesControl = new FormControl('');
+  unitNamesControl = new FormControl<string[]>([]); // Initialize as an array
 
   constructor(private http: HttpClient, private fb: FormBuilder, private datePipe: DatePipe) {
     this.filterForm = this.createFilterForm();
@@ -82,7 +83,7 @@ export class MedExecutionTableComponent implements OnInit, AfterViewInit {
   ngOnInit() {
     this.fetchBasicNameOptions();
     this.fetchGenericNameOptions();
-    this.fetchUnitNameOptions();
+    this.fetchUnitNameOptions(); // Fetch execution units here
 
     this.filteredBasicNameOptions = this.basicNamesControl.valueChanges.pipe(
       startWith(''),
@@ -93,9 +94,11 @@ export class MedExecutionTableComponent implements OnInit, AfterViewInit {
       map(value => this._filterGenericNameOptions(value || ''))
     );
     this.filteredUnitNameOptions = this.unitNamesControl.valueChanges.pipe(
-      startWith(''),
-      map(value => this._filterUnitNameOptions(value || ''))
+      startWith([] as string[]), // Start with an empty array
+      map(value => this._filterUnitNameOptions(value ?? [])) // Use nullish coalescing operator
     );
+
+    
   }
 
   ngAfterViewInit() {
@@ -129,6 +132,7 @@ export class MedExecutionTableComponent implements OnInit, AfterViewInit {
     this.http.get<string[]>(`${environment.apiUrl}MedExecutionAPI/GetUnitNameOptions`).subscribe(
       data => {
         this.unitNameOptions = data;
+        console.log('Unit names fetched:', this.unitNameOptions); // Log to verify data
       },
       error => {
         console.error('Error fetching unit name options:', error);
@@ -146,8 +150,9 @@ export class MedExecutionTableComponent implements OnInit, AfterViewInit {
     return this.genericNameOptions.filter(option => option.toLowerCase().includes(filterValue));
   }
 
-  private _filterUnitNameOptions(value: string): string[] {
-    const filterValue = value.toLowerCase();
+  private _filterUnitNameOptions(values: string[]): string[] {
+    // Concatenate array values into a single string for filtering
+    const filterValue = values.join(' ').toLowerCase();
     return this.unitNameOptions.filter(option => option.toLowerCase().includes(filterValue));
   }
 
@@ -190,8 +195,12 @@ export class MedExecutionTableComponent implements OnInit, AfterViewInit {
       params = params.append('Category_Name', filters.Category_Name);
     }
 
-    if (this.unitNamesControl.value) {
-      params = params.append('Execution_UnitNames', this.unitNamesControl.value);
+    // Ensure this handles the value as an array
+    const selectedUnitNames: string[] = this.unitNamesControl.value ?? [];
+    if (selectedUnitNames.length > 0) {
+      selectedUnitNames.forEach((unitName: string) => {
+        params = params.append('Execution_UnitNames', unitName);
+      });
     }
 
     if (filters.Admission_No) {

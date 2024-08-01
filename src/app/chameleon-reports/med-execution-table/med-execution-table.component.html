@@ -28,13 +28,14 @@
                   </mat-form-field>
                   <mat-form-field class="filter-field">
                     <mat-label>שם יחידת ביצוע</mat-label>
-                    <input type="text" matInput [formControl]="unitNamesControl" [matAutocomplete]="autoUnit">
-                    <mat-autocomplete #autoUnit="matAutocomplete" [displayWith]="displayUnitName">
-                      <mat-option *ngFor="let option of filteredUnitNameOptions | async" [value]="option">
+                    <mat-select [formControl]="unitNamesControl" multiple>
+                      <mat-option *ngFor="let option of unitNameOptions" [value]="option">
                         {{ option }}
                       </mat-option>
-                    </mat-autocomplete>
+                    </mat-select>
                   </mat-form-field>
+                  
+                  
                   <mat-form-field class="filter-field">
                     <mat-label>שם גנרי</mat-label>
                     <input type="text" matInput [formControl]="genericNamesControl" [matAutocomplete]="autoGeneric">
@@ -109,7 +110,7 @@
       <mat-cell *matCellDef="let element"> {{ element.Category_Name }} </mat-cell>
     </ng-container>
     <ng-container matColumnDef="Execution_UnitName">
-      <mat-header-cell *matHeaderCellDef mat-sort-header>מחלקה  </mat-header-cell>
+      <mat-header-cell *matHeaderCellDef mat-sort-header>שם יחידת ביצוע</mat-header-cell>
       <mat-cell *matCellDef="let element"> {{ element.Execution_UnitName }} </mat-cell>
     </ng-container>
     <ng-container matColumnDef="Generic_Name_ForDisplay">
