@@ -28,12 +28,18 @@
                   </mat-form-field>
                   <mat-form-field class="filter-field">
                     <mat-label>שם יחידת ביצוע</mat-label>
+                    <input matInput placeholder="חיפוש" [(ngModel)]="unitNameFilter" (ngModelChange)="filterUnitNames()" />
                     <mat-select [formControl]="unitNamesControl" multiple>
-                      <mat-option *ngFor="let option of unitNameOptions" [value]="option">
+                      <mat-select-trigger>
+                        {{ unitNamesControl.value && unitNamesControl.value.length ? unitNamesControl.value.join(', ') : 'בחר' }}
+                      </mat-select-trigger>
+                      <mat-option *ngFor="let option of filteredUnitNameOptions" [value]="option">
                         {{ option }}
                       </mat-option>
                     </mat-select>
                   </mat-form-field>
+                  
+                  
                   
                   
                   <mat-form-field class="filter-field">

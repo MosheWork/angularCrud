@@ -66,7 +66,7 @@ export class MedExecutionTableComponent implements OnInit, AfterViewInit {
   unitNameOptions: string[] = [];
   filteredBasicNameOptions!: Observable<string[]>;
   filteredGenericNameOptions!: Observable<string[]>;
-  filteredUnitNameOptions!: Observable<string[]>;
+  filteredUnitNameOptions: string[] = [];
   unitNameFilter: string = ''; // Property to hold the filter input
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
@@ -93,12 +93,9 @@ export class MedExecutionTableComponent implements OnInit, AfterViewInit {
       startWith(''),
       map(value => this._filterGenericNameOptions(value || ''))
     );
-    this.filteredUnitNameOptions = this.unitNamesControl.valueChanges.pipe(
-      startWith([] as string[]), // Start with an empty array
-      map(value => this._filterUnitNameOptions(value ?? [])) // Use nullish coalescing operator
-    );
 
-    
+    // Initially, show all unit names
+    this.filteredUnitNameOptions = this.unitNameOptions;
   }
 
   ngAfterViewInit() {
@@ -132,6 +129,7 @@ export class MedExecutionTableComponent implements OnInit, AfterViewInit {
     this.http.get<string[]>(`${environment.apiUrl}MedExecutionAPI/GetUnitNameOptions`).subscribe(
       data => {
         this.unitNameOptions = data;
+        this.filteredUnitNameOptions = this.unitNameOptions; // Initialize filtered options
         console.log('Unit names fetched:', this.unitNameOptions); // Log to verify data
       },
       error => {
@@ -150,10 +148,11 @@ export class MedExecutionTableComponent implements OnInit, AfterViewInit {
     return this.genericNameOptions.filter(option => option.toLowerCase().includes(filterValue));
   }
 
-  private _filterUnitNameOptions(values: string[]): string[] {
-    // Concatenate array values into a single string for filtering
-    const filterValue = values.join(' ').toLowerCase();
-    return this.unitNameOptions.filter(option => option.toLowerCase().includes(filterValue));
+  filterUnitNames() {
+    const filterValue = this.unitNameFilter.toLowerCase();
+    this.filteredUnitNameOptions = this.unitNameOptions.filter(option =>
+      option.toLowerCase().includes(filterValue)
+    );
   }
 
   displayBasicName(basicName: string): string {
