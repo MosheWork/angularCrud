@@ -28,16 +28,16 @@
                   </mat-form-field>
                   <mat-form-field class="filter-field">
                     <mat-label>שם יחידת ביצוע</mat-label>
-                    <input matInput placeholder="חיפוש" [(ngModel)]="unitNameFilter" (ngModelChange)="filterUnitNames()" />
-                    <mat-select [formControl]="unitNamesControl" multiple>
-                      <mat-select-trigger>
-                        {{ unitNamesControl.value && unitNamesControl.value.length ? unitNamesControl.value.join(', ') : 'בחר' }}
-                      </mat-select-trigger>
+                    <mat-select formControlName="Execution_UnitNames" multiple>
+                      <mat-select-header>
+                        <input matInput placeholder="חפש..." [(ngModel)]="unitNameFilter" (ngModelChange)="filterUnitNames()" [ngModelOptions]="{standalone: true}" />
+                      </mat-select-header>
                       <mat-option *ngFor="let option of filteredUnitNameOptions" [value]="option">
                         {{ option }}
                       </mat-option>
                     </mat-select>
                   </mat-form-field>
+                  
                   
                   
                   
@@ -92,7 +92,6 @@
     <mat-spinner></mat-spinner>
   </div>
 
-  <!-- Add the hover area and message -->
   <div class="hover-area"></div>
   <div *ngIf="showMessage" class="creator-message">
     הדוח נוצר על ידי משה ממן
