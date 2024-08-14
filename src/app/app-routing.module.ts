@@ -37,6 +37,7 @@ import { TaskListComponent } from './Ilana/task-list/task-list.component';
 import { AddTaskComponent } from './Ilana/add-task/add-task.component';
 import { GuideListComponent } from './GuidesNew/guide-list/guide-list.component';
 import { UploadGuideComponent } from './GuidesNew/upload-guide/upload-guide.component';
+import { PalliativePatientsComponent } from './chameleon-reports/palliative-patients/palliative-patients.component';
 
 const routes: Routes = [
   { path: 'users', component: UsersComponent },
@@ -91,7 +92,10 @@ const routes: Routes = [
 
   //guide new
   { path: 'guideList', component: GuideListComponent },
-  { path: 'NewGuide', component: UploadGuideComponent }
+  { path: 'NewGuide', component: UploadGuideComponent },
+
+   //chameleon report
+   { path: 'PalliativePatients', component: PalliativePatientsComponent },
 
 
 ];
