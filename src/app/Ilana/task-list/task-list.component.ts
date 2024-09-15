@@ -11,59 +11,58 @@ import { EditTaskComponent } from '../edit-task/edit-task.component';
   styleUrls: ['./task-list.component.scss']
 })
 export class TaskListComponent implements OnInit {
-  displayedColumns: string[] = [
-    'TaskId', 'TaskName', 'StartDate', 'EmployeeName', 'EmployeeID', 
-    'ChecklistItem1', 'ChecklistItem2', 'ChecklistItem3', 'ChecklistItem4', 'Actions'
-  ];
-  tasks: any[] = [];
-  users: any[] = [];
+  displayedColumns: string[] = [];  // For dynamic columns
+  staticColumns: string[] = ['EmployeeID', 'EmployeeSektorID'];  // Add 'EmployeeSektorID' as a static column
+  tasksByEmployee: any = {};  // Store tasks grouped by EmployeeID
+  sektorIDs: string[] = [];
+  selectedSektorID: string = '';  // Optional if you want to select a specific sector
 
   constructor(private http: HttpClient, public dialog: MatDialog) { }
 
   ngOnInit(): void {
-    this.loadUsers();
-    this.loadTasks();
+    this.loadSektorIDs();
+    this.loadTasks();  // Load tasks on initialization without filtering by sector
   }
 
-  loadUsers(): void {
-    this.http.get<any[]>(environment.apiUrl + 'IlanaTaskManager/employees').subscribe(data => {
-      this.users = data;
+  loadSektorIDs(): void {
+    this.http.get<string[]>(environment.apiUrl + 'IlanaTaskManager/groupedSektorIDs').subscribe(data => {
+      this.sektorIDs = data;
     });
   }
 
   loadTasks(): void {
-    this.http.get<any[]>(environment.apiUrl + 'IlanaTaskManager/tasks').subscribe(data => {
-      this.tasks = data.map(task => ({
-        ...task,
-        ChecklistItem1Counter: this.calculateCounter(task.ChecklistItem1DueDate, task.ChecklistItem1),
-        ChecklistItem2Counter: this.calculateCounter(task.ChecklistItem2DueDate, task.ChecklistItem2),
-        ChecklistItem3Counter: this.calculateCounter(task.ChecklistItem3DueDate, task.ChecklistItem3),
-        ChecklistItem4Counter: this.calculateCounter(task.ChecklistItem4DueDate, task.ChecklistItem4)
-      }));
+    this.http.get<any[]>(environment.apiUrl + `IlanaTaskManager/recordsBySektor`).subscribe(data => {
+      this.processTaskData(data);
     });
   }
 
-  onCheckboxChange(task: any, checklistItem: string, checked: boolean): void {
-    task[checklistItem] = checked;
-    task[`${checklistItem}Counter`] = this.calculateCounter(task[`${checklistItem}DueDate`], checked);
-    this.updateTask(task);
+  processTaskData(tasks: any[]): void {
+    // Reset dynamic columns and tasks
+    this.displayedColumns = [];
+    this.tasksByEmployee = {};
+
+    // Process tasks
+    tasks.forEach(task => {
+      if (!this.tasksByEmployee[task.EmployeeID]) {
+        this.tasksByEmployee[task.EmployeeID] = { EmployeeSektorID: task.EmployeeSektorID };
+      }
+      this.tasksByEmployee[task.EmployeeID][task.TaskDesc] = task;
+
+      if (!this.displayedColumns.includes(task.TaskDesc)) {
+        this.displayedColumns.push(task.TaskDesc);
+      }
+    });
+
+    // Include static columns at the beginning
+    this.displayedColumns = this.staticColumns.concat(this.displayedColumns);
   }
 
-  calculateCounter(dueDate: string, checked: boolean): string {
-    if (checked) {
-      return 'Completed';
-    }
-    const due = new Date(dueDate).getTime();
-    const now = new Date().getTime();
-    const timeLeft = Math.ceil((due - now) / (1000 * 60 * 60 * 24)); // days left
-    return timeLeft > 0 ? `${timeLeft} ימים נותרו` : 'עבר הזמן';
+  getEmployeeIDs(): string[] {
+    return Object.keys(this.tasksByEmployee);
   }
 
   updateTask(task: any): void {
-    this.http.put(environment.apiUrl + 'IlanaTaskManager/tasks/' + task.TaskId, task).subscribe(response => {
-      console.log('Task updated', response);
-      this.loadTasks();
-    });
+    // Implement the task update logic here
   }
 
   openAddDialog(): void {

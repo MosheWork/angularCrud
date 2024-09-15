@@ -38,6 +38,7 @@ import { AddTaskComponent } from './Ilana/add-task/add-task.component';
 import { GuideListComponent } from './GuidesNew/guide-list/guide-list.component';
 import { UploadGuideComponent } from './GuidesNew/upload-guide/upload-guide.component';
 import { PalliativePatientsComponent } from './chameleon-reports/palliative-patients/palliative-patients.component';
+import { SkinIntegrityReportComponent } from './chameleon-reports/skin-integrity-report/skin-integrity-report.component';
 
 const routes: Routes = [
   { path: 'users', component: UsersComponent },
@@ -96,7 +97,7 @@ const routes: Routes = [
 
    //chameleon report
    { path: 'PalliativePatients', component: PalliativePatientsComponent },
-
+   { path: 'SkinIntegrityReport', component:SkinIntegrityReportComponent }
 
 ];
 

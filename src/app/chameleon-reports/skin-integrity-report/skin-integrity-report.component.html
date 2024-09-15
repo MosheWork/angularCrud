@@ -1,0 +1,158 @@
+<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
+
+<div class="body">
+  <!-- Page Title with Dynamic Results Count -->
+  <div class="nine">
+    <h1>{{ titleUnit }}<span>{{ Title1 }}{{ Title2 }}{{ totalResults }}</span></h1>
+  </div>
+
+  <!-- Filter Form for Table -->
+  <form [formGroup]="filterForm" dir="rtl" class="filter-form">
+    <!-- Global Search Input -->
+    <mat-form-field class="long-search-bar">
+      <mat-label class="filters" style="color: blue">חיפוש</mat-label>
+      <input matInput formControlName="globalFilter" class="search-input" />
+    </mat-form-field>
+  
+    <!-- Date Pickers -->
+    <mat-form-field>
+      <mat-label>בחר תאריך קבלה</mat-label>
+      <input matInput [matDatepicker]="recordDatePicker" formControlName="Record_Date">
+      <mat-datepicker-toggle matSuffix [for]="recordDatePicker"></mat-datepicker-toggle>
+      <mat-datepicker #recordDatePicker></mat-datepicker>
+    </mat-form-field>
+  
+    <mat-form-field>
+      <mat-label>בחר תאריך דיווח</mat-label>
+      <input matInput [matDatepicker]="entryDatePicker" formControlName="Entry_Date">
+      <mat-datepicker-toggle matSuffix [for]="entryDatePicker"></mat-datepicker-toggle>
+      <mat-datepicker #entryDatePicker></mat-datepicker>
+    </mat-form-field>
+    <!-- Form Footer with Search, Reset, and Export Options -->
+    <div dir="rtl" class="form-footer" style="display: flex; justify-content: space-between;">
+      <!-- Global Search Input with Full Width -->
+      <mat-form-field class="long-search-bar" style="flex: 1; margin-right: 10px;">
+        <mat-label class="filters" style="color: blue">חיפוש</mat-label>
+        <input matInput [formControlName]="'globalFilter'" class="search-input" />
+      </mat-form-field>
+
+      <!-- Buttons on the Right Side -->
+      <div class="button-container" style="display: flex; align-items: center;">
+        <!-- Reset Button -->
+        <button mat-button (click)="resetFilters()" mat-raised-button color="primary" class="custom-button" matTooltip="Reset Filters">
+          <i class="material-icons">refresh</i>
+        </button>
+
+        <!-- Graph Navigation Button -->
+        <img (click)="navigateToGraphPage()" matTooltip="Move To Graph" src="../../../../assets/graphIcon.png" width="50px" style="margin-right: 10px;" />
+
+        <!-- Export to Excel Button -->
+        <img src="../../assets/excel.png" alt="Download" (click)="exportToExcel()" class="download-icon icon" width="50px" style="margin-right: 10px;" />
+      </div>
+    </div>
+  </form>
+
+  <!-- Graph Component (Conditionally Displayed) -->
+  <app-sys-graph *ngIf="showGraph" [graphData]="graphData"></app-sys-graph>
+
+  <!-- Data Table (Conditionally Displayed) -->
+  <mat-table *ngIf="!showGraph" [dataSource]="matTableDataSource" matSort dir="rtl" class="mat-elevation-z8">
+    <!-- Name Column -->
+    <ng-container matColumnDef="Name">
+        <mat-header-cell *matHeaderCellDef mat-sort-header> שם </mat-header-cell>
+        <mat-cell *matCellDef="let element"> {{ element.Name }} </mat-cell>
+    </ng-container>
+    
+    <!-- Id_Num Column -->
+    <ng-container matColumnDef="Id_Num">
+      <mat-header-cell *matHeaderCellDef mat-sort-header> ת.ז. </mat-header-cell>
+      <mat-cell *matCellDef="let element"> {{ element.Id_Num }} </mat-cell>
+    </ng-container>
+
+    <!-- Admission_No Column -->
+    <ng-container matColumnDef="Admission_No">
+      <mat-header-cell *matHeaderCellDef mat-sort-header> מספר אשפוז </mat-header-cell>
+      <mat-cell *matCellDef="let element"> {{ element.Admission_No }} </mat-cell>
+    </ng-container>
+
+    <!-- First_Name Column -->
+    <ng-container matColumnDef="First_Name">
+      <mat-header-cell *matHeaderCellDef mat-sort-header> שם פרטי </mat-header-cell>
+      <mat-cell *matCellDef="let element"> {{ element.First_Name }} </mat-cell>
+    </ng-container>
+
+    <!-- Last_Name Column -->
+    <ng-container matColumnDef="Last_Name">
+      <mat-header-cell *matHeaderCellDef mat-sort-header> שם משפחה </mat-header-cell>
+      <mat-cell *matCellDef="let element"> {{ element.Last_Name }} </mat-cell>
+    </ng-container>
+
+    <!-- Age_Years Column -->
+    <ng-container matColumnDef="Age_Years">
+      <mat-header-cell *matHeaderCellDef mat-sort-header> גיל </mat-header-cell>
+      <mat-cell *matCellDef="let element"> {{ element.Age_Years }} </mat-cell>
+    </ng-container>
+
+    <!-- Record_Date Column (Formatted Date) -->
+    <ng-container matColumnDef="Record_Date">
+      <mat-header-cell *matHeaderCellDef mat-sort-header> תאריך רשומה </mat-header-cell>
+      <mat-cell *matCellDef="let element"> {{ element.Record_Date | date: 'dd/MM/yyyy' }} </mat-cell>
+    </ng-container>
+
+    <!-- Entry_Date Column (Formatted Date) -->
+    <ng-container matColumnDef="Entry_Date">
+      <mat-header-cell *matHeaderCellDef mat-sort-header> תאריך כניסה </mat-header-cell>
+      <mat-cell *matCellDef="let element"> {{ element.Entry_Date | date: 'dd/MM/yyyy' }} </mat-cell>
+    </ng-container>
+
+    <!-- Pain Column -->
+    <ng-container matColumnDef="Pain">
+      <mat-header-cell *matHeaderCellDef mat-sort-header> כאב </mat-header-cell>
+      <mat-cell *matCellDef="let element"> {{ element.Pain }} </mat-cell>
+    </ng-container>
+
+    <!-- Description_Text Column -->
+    <ng-container matColumnDef="Description_Text">
+      <mat-header-cell *matHeaderCellDef mat-sort-header> תיאור </mat-header-cell>
+      <mat-cell *matCellDef="let element"> {{ element.Description_Text }} </mat-cell>
+    </ng-container>
+
+    <!-- Degree_Text Column -->
+    <ng-container matColumnDef="Degree_Text">
+      <mat-header-cell *matHeaderCellDef mat-sort-header> דרגה </mat-header-cell>
+      <mat-cell *matCellDef="let element"> {{ element.Degree_Text }} </mat-cell>
+    </ng-container>
+
+    <!-- Location_Text Column -->
+    <ng-container matColumnDef="Location_Text">
+      <mat-header-cell *matHeaderCellDef mat-sort-header> מיקום </mat-header-cell>
+      <mat-cell *matCellDef="let element"> {{ element.Location_Text }} </mat-cell>
+    </ng-container>
+
+    <!-- Made_In_Text Column -->
+    <ng-container matColumnDef="Made_In_Text">
+      <mat-header-cell *matHeaderCellDef mat-sort-header> נוצר ב </mat-header-cell>
+      <mat-cell *matCellDef="let element"> {{ element.Made_In_Text }} </mat-cell>
+    </ng-container>
+
+    <!-- Support_Device_Text Column -->
+    <ng-container matColumnDef="Support_Device_Text">
+      <mat-header-cell *matHeaderCellDef mat-sort-header> התקן תמיכה </mat-header-cell>
+      <mat-cell *matCellDef="let element"> {{ element.Support_Device_Text }} </mat-cell>
+    </ng-container>
+
+    <!-- Table Header Row Definition -->
+    <mat-header-row *matHeaderRowDef="columns"></mat-header-row>
+
+    <!-- Table Data Row Definition -->
+    <mat-row *matRowDef="let row; columns: columns" class="mat-row"></mat-row>
+  </mat-table>
+
+  <!-- Paginator Component -->
+  <mat-paginator 
+    [length]="matTableDataSource.paginator?.length || 0"
+    [pageIndex]="matTableDataSource.paginator?.pageIndex"
+    [pageSize]="matTableDataSource.paginator?.pageSize"
+    [pageSizeOptions]="[15, 50, 100]">
+  </mat-paginator>
+</div>

@@ -102,6 +102,7 @@ import { EditTaskComponent } from './Ilana/edit-task/edit-task.component';
 import { UploadGuideComponent } from './GuidesNew/upload-guide/upload-guide.component';
 import { GuideListComponent } from './GuidesNew/guide-list/guide-list.component';
 import { PalliativePatientsComponent } from './chameleon-reports/palliative-patients/palliative-patients.component';
+import { SkinIntegrityReportComponent } from './chameleon-reports/skin-integrity-report/skin-integrity-report.component';
 
 
 @NgModule({
@@ -174,6 +175,7 @@ import { PalliativePatientsComponent } from './chameleon-reports/palliative-pati
     UploadGuideComponent,
     GuideListComponent,
     PalliativePatientsComponent,
+    SkinIntegrityReportComponent,
   ],
   imports: [
     BrowserModule,

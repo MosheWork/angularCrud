@@ -1,91 +1,40 @@
-<mat-toolbar color="primary" class="center-title">עובד חדש</mat-toolbar>
+<!-- <mat-toolbar color="primary" class="center-title">משימות עובדים</mat-toolbar>
 <div class="container" dir="rtl">
+  <mat-form-field>
+    <mat-label>בחר מגזר</mat-label>
+    <mat-select [(value)]="selectedSektorID" (selectionChange)="loadTasks()">
+      <mat-option *ngFor="let sektorID of sektorIDs" [value]="sektorID">
+        {{sektorID}}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+
   <button mat-raised-button color="primary" (click)="openAddDialog()">הוספת משימה חדשה</button>
-  <table mat-table [dataSource]="tasks" class="mat-elevation-z8">
 
-    <!-- Task ID Column -->
-    <ng-container matColumnDef="TaskId">
-      <th mat-header-cell *matHeaderCellDef> ID </th>
-      <td mat-cell *matCellDef="let element"> {{element.TaskId}} </td>
-    </ng-container>
-
-    <!-- Task Name Column -->
-    <ng-container matColumnDef="TaskName">
-      <th mat-header-cell *matHeaderCellDef> משימה </th>
-      <td mat-cell *matCellDef="let element"> {{element.TaskName}} </td>
-    </ng-container>
-
-    <!-- Start Date Column -->
-    <ng-container matColumnDef="StartDate">
-      <th mat-header-cell *matHeaderCellDef> תאריך התחלה </th>
-      <td mat-cell *matCellDef="let element"> {{element.StartDate | date}} </td>
-    </ng-container>
-
-    <!-- Employee Name Column -->
-    <ng-container matColumnDef="EmployeeName">
-      <th mat-header-cell *matHeaderCellDef> שם העובד </th>
-      <td mat-cell *matCellDef="let element"> {{element.EmployeeName}} </td>
-    </ng-container>
-
-    <!-- Employee ID Column -->
+  <table mat-table [dataSource]="getEmployeeIDs()" class="mat-elevation-z8">
+    
+    <!-- A
     <ng-container matColumnDef="EmployeeID">
-      <th mat-header-cell *matHeaderCellDef> ת.ז העבוד </th>
-      <td mat-cell *matCellDef="let element"> {{element.EmployeeID}} </td>
+      <th mat-header-cell *matHeaderCellDef> ת.ז העובד </th>
+      <td mat-cell *matCellDef="let employeeID"> {{employeeID}} </td>
     </ng-container>
 
-    <!-- Checklist Item 1 Column -->
-    <ng-container matColumnDef="ChecklistItem1">
-      <th mat-header-cell *matHeaderCellDef> שיחת תיאום ציפיות </th>
-      <td mat-cell *matCellDef="let element">
-        <div class="checklist-container">
-          <mat-checkbox class="check-green" [(ngModel)]="element.ChecklistItem1" (change)="onCheckboxChange(element, 'ChecklistItem1', $event.checked)"></mat-checkbox>
-          <span>{{ element.ChecklistItem1Counter }}</span>
-        </div>
-      </td>
+    Static Employee SektorID Column
+    <ng-container matColumnDef="EmployeeSektorID">
+      <th mat-header-cell *matHeaderCellDef> מגזר העובד </th>
+      <td mat-cell *matCellDef="let employeeID"> {{tasksByEmployee[employeeID].EmployeeSektorID}} </td>
     </ng-container>
 
-    <!-- Checklist Item 2 Column -->
-    <ng-container matColumnDef="ChecklistItem2">
-      <th mat-header-cell *matHeaderCellDef> ⁠רשימת תיוג </th>
-      <td mat-cell *matCellDef="let element">
-        <div class="checklist-container">
-          <mat-checkbox class="check-green" [(ngModel)]="element.ChecklistItem2" (change)="onCheckboxChange(element, 'ChecklistItem2', $event.checked)"></mat-checkbox>
-          <span>{{ element.ChecklistItem2Counter }}</span>
-        </div>
-      </td>
-    </ng-container>
-
-    <!-- Checklist Item 3 Column -->
-    <ng-container matColumnDef="ChecklistItem3">
-      <th mat-header-cell *matHeaderCellDef> הרשאות לביצוע פעולות </th>
-      <td mat-cell *matCellDef="let element">
-        <div class="checklist-container">
-          <mat-checkbox class="check-green" [(ngModel)]="element.ChecklistItem3" (change)="onCheckboxChange(element, 'ChecklistItem3', $event.checked)"></mat-checkbox>
-          <span>{{ element.ChecklistItem3Counter }}</span>
-        </div>
-      </td>
-    </ng-container>
-
-    <!-- Checklist Item 4 Column -->
-    <ng-container matColumnDef="ChecklistItem4">
-      <th mat-header-cell *matHeaderCellDef> הקמת עובד במלמ ועדכון אירועים </th>
-      <td mat-cell *matCellDef="let element">
-        <div class="checklist-container">
-          <mat-checkbox class="check-green" [(ngModel)]="element.ChecklistItem4" (change)="onCheckboxChange(element, 'ChecklistItem4', $event.checked)"></mat-checkbox>
-          <span>{{ element.ChecklistItem4Counter }}</span>
-        </div>
-      </td>
-    </ng-container>
-
-    <!-- Actions Column -->
-    <ng-container matColumnDef="Actions">
-      <th mat-header-cell *matHeaderCellDef> עריכה </th>
-      <td mat-cell *matCellDef="let element">
-        <button mat-button (click)="openEditDialog(element)"><mat-icon>edit</mat-icon> Edit</button>
+    <!-- Dynamic TaskDesc Columns -->
+    <!-- <ng-container *ngFor="let column of displayedColumns.slice(2)" [matColumnDef]="column">
+      <th mat-header-cell *matHeaderCellDef> {{ column }} </th>
+      <td mat-cell *matCellDef="let employeeID">
+        <mat-checkbox [(ngModel)]="tasksByEmployee[employeeID][column].DoneDate"> סיים </mat-checkbox>
+        <input matInput type="number" [(ngModel)]="tasksByEmployee[employeeID][column].DayToComplete" placeholder="ימים להשלמה">
       </td>
     </ng-container>
 
     <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
     <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
   </table>
-</div>
+</div> --> -->
