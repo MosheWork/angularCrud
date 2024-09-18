@@ -39,6 +39,8 @@ import { GuideListComponent } from './GuidesNew/guide-list/guide-list.component'
 import { UploadGuideComponent } from './GuidesNew/upload-guide/upload-guide.component';
 import { PalliativePatientsComponent } from './chameleon-reports/palliative-patients/palliative-patients.component';
 import { SkinIntegrityReportComponent } from './chameleon-reports/skin-integrity-report/skin-integrity-report.component';
+import { PatientGuidanceReportComponent } from './chameleon-reports/patient-guidance-report/patient-guidance-report.component';
+import { UsersReportComponent } from './chameleon-reports/users-report/users-report.component';
 
 const routes: Routes = [
   { path: 'users', component: UsersComponent },
@@ -97,7 +99,10 @@ const routes: Routes = [
 
    //chameleon report
    { path: 'PalliativePatients', component: PalliativePatientsComponent },
-   { path: 'SkinIntegrityReport', component:SkinIntegrityReportComponent }
+   { path: 'SkinIntegrityReport', component:SkinIntegrityReportComponent },
+   { path: 'patient-guidance-report', component: PatientGuidanceReportComponent },
+   { path: 'user-report', component: UsersReportComponent }
+
 
 ];
 

@@ -103,6 +103,8 @@ import { UploadGuideComponent } from './GuidesNew/upload-guide/upload-guide.comp
 import { GuideListComponent } from './GuidesNew/guide-list/guide-list.component';
 import { PalliativePatientsComponent } from './chameleon-reports/palliative-patients/palliative-patients.component';
 import { SkinIntegrityReportComponent } from './chameleon-reports/skin-integrity-report/skin-integrity-report.component';
+import { PatientGuidanceReportComponent } from './chameleon-reports/patient-guidance-report/patient-guidance-report.component';
+import { UsersReportComponent } from './chameleon-reports/users-report/users-report.component';
 
 
 @NgModule({
@@ -176,6 +178,8 @@ import { SkinIntegrityReportComponent } from './chameleon-reports/skin-integrity
     GuideListComponent,
     PalliativePatientsComponent,
     SkinIntegrityReportComponent,
+    PatientGuidanceReportComponent,
+    UsersReportComponent,
   ],
   imports: [
     BrowserModule,
