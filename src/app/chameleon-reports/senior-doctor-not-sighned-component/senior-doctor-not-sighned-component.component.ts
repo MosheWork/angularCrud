@@ -23,6 +23,7 @@ export class SeniorDoctorNotSighnedComponent implements OnInit, AfterViewInit {
   Title2: string = '';
 
   showGraph: boolean = false; // Toggle between table and graph
+  isGraphVisible: boolean = false; // Flag to toggle the graph icon
 
   columns: string[] = [
     'FirstName',
@@ -166,6 +167,7 @@ export class SeniorDoctorNotSighnedComponent implements OnInit, AfterViewInit {
   }
 
   navigateToGraphPage() {
+    this.isGraphVisible = !this.isGraphVisible; // Toggle the flag
     this.showGraph = !this.showGraph;
   
     if (this.showGraph) {
@@ -184,34 +186,30 @@ export class SeniorDoctorNotSighnedComponent implements OnInit, AfterViewInit {
   
   
 
-  updateChartData(selectedRange: 'monthly' | 'quarterly' | 'yearly' | 'all') {
+  updateChartData(selectedRange: 'monthly' |  'yearly' | 'all') {
     const systemUnitCounts: { [key: string]: number } = {};
-
+  
     // Get the current date
     const now = new Date();
-
+  
     // Filter the data based on the selected range (monthly, quarterly, yearly, all)
     const filteredByTimeData = this.filteredData.filter(item => {
         const entryDate = new Date(item.EntryDate);
-
+  
         switch (selectedRange) {
             case 'monthly':
-                // Return true if the date is within the last month
                 return entryDate.getMonth() === now.getMonth() && entryDate.getFullYear() === now.getFullYear();
-            case 'quarterly':
-                // Calculate the current quarter (0: Q1, 1: Q2, 2: Q3, 3: Q4)
-                const currentQuarter = Math.floor(now.getMonth() / 3);
-                const itemQuarter = Math.floor(entryDate.getMonth() / 3);
-                return itemQuarter === currentQuarter && entryDate.getFullYear() === now.getFullYear();
+            // case 'quarterly':
+            //     const currentQuarter = Math.floor(now.getMonth() / 3);
+            //     const itemQuarter = Math.floor(entryDate.getMonth() / 3);
+            //     return itemQuarter === currentQuarter && entryDate.getFullYear() === now.getFullYear();
             case 'yearly':
-                // Return true if the date is within the current year
                 return entryDate.getFullYear() === now.getFullYear();
             case 'all':
-                // Return all data (no date filtering)
                 return true;
         }
     });
-
+  
     // Count occurrences of each SystemUnitName
     filteredByTimeData.forEach(item => {
         const systemUnitName = item.SystemUnitName;
@@ -221,17 +219,88 @@ export class SeniorDoctorNotSighnedComponent implements OnInit, AfterViewInit {
             systemUnitCounts[systemUnitName] = 1;
         }
     });
+  
+    // Prepare color arrays with distinct colors for each bar
+    const colors = [
+      'rgba(255, 99, 132, 0.2)',   // Red
+      'rgba(54, 162, 235, 0.2)',   // Blue
+      'rgba(255, 206, 86, 0.2)',   // Yellow
+      'rgba(75, 192, 192, 0.2)',   // Green
+      'rgba(153, 102, 255, 0.2)',  // Purple
+      'rgba(255, 159, 64, 0.2)',   // Orange
+      'rgba(255, 99, 132, 0.2)',   // Pink
+      'rgba(54, 162, 235, 0.2)',   // Light Blue
+      'rgba(255, 206, 86, 0.2)',   // Light Yellow
+      'rgba(75, 192, 192, 0.2)',   // Light Green
+      'rgba(192, 75, 75, 0.2)',    // Dark Red
+      'rgba(162, 54, 235, 0.2)',   // Violet
+      'rgba(86, 255, 99, 0.2)',    // Neon Green
+      'rgba(192, 192, 75, 0.2)',   // Olive Green
+      'rgba(102, 255, 255, 0.2)',  // Aqua
+      'rgba(159, 255, 64, 0.2)',   // Lime
+      'rgba(132, 99, 255, 0.2)',   // Lavender
+      'rgba(99, 255, 235, 0.2)',   // Turquoise
+      'rgba(206, 255, 132, 0.2)',  // Pastel Yellow
+      'rgba(192, 255, 75, 0.2)',   // Light Olive
+      'rgba(255, 102, 192, 0.2)',  // Light Pink
+      'rgba(255, 230, 99, 0.2)',   // Pale Yellow
+      'rgba(255, 255, 99, 0.2)',   // Soft Yellow
+      'rgba(255, 128, 0, 0.2)',    // Deep Orange
+      'rgba(64, 255, 255, 0.2)',   // Sky Blue
+      'rgba(192, 64, 255, 0.2)',   // Light Purple
+      'rgba(64, 128, 255, 0.2)',   // Bright Blue
+      'rgba(255, 192, 64, 0.2)',   // Creamy Orange
+      'rgba(99, 206, 255, 0.2)',   // Light Blue Sky
+      'rgba(128, 192, 255, 0.2)'   // Cool Blue
+    ];
 
-    // Update chart labels and data
-    this.chartData.labels = Object.keys(systemUnitCounts);
-    this.chartData.datasets[0].data = Object.values(systemUnitCounts);
-
+    const borderColors = [
+      'rgba(255, 99, 132, 1)',   // Red
+      'rgba(54, 162, 235, 1)',   // Blue
+      'rgba(255, 206, 86, 1)',   // Yellow
+      'rgba(75, 192, 192, 1)',   // Green
+      'rgba(153, 102, 255, 1)',  // Purple
+      'rgba(255, 159, 64, 1)',   // Orange
+      'rgba(255, 99, 132, 1)',   // Pink
+      'rgba(54, 162, 235, 1)',   // Light Blue
+      'rgba(255, 206, 86, 1)',   // Light Yellow
+      'rgba(75, 192, 192, 1)',   // Light Green
+      'rgba(192, 75, 75, 1)',    // Dark Red
+      'rgba(162, 54, 235, 1)',   // Violet
+      'rgba(86, 255, 99, 1)',    // Neon Green
+      'rgba(192, 192, 75, 1)',   // Olive Green
+      'rgba(102, 255, 255, 1)',  // Aqua
+      'rgba(159, 255, 64, 1)',   // Lime
+      'rgba(132, 99, 255, 1)',   // Lavender
+      'rgba(99, 255, 235, 1)',   // Turquoise
+      'rgba(206, 255, 132, 1)',  // Pastel Yellow
+      'rgba(192, 255, 75, 1)',   // Light Olive
+      'rgba(255, 102, 192, 1)',  // Light Pink
+      'rgba(255, 230, 99, 1)',   // Pale Yellow
+      'rgba(255, 255, 99, 1)',   // Soft Yellow
+      'rgba(255, 128, 0, 1)',    // Deep Orange
+      'rgba(64, 255, 255, 1)',   // Sky Blue
+      'rgba(192, 64, 255, 1)',   // Light Purple
+      'rgba(64, 128, 255, 1)',   // Bright Blue
+      'rgba(255, 192, 64, 1)',   // Creamy Orange
+      'rgba(99, 206, 255, 1)',   // Light Blue Sky
+      'rgba(128, 192, 255, 1)'   // Cool Blue
+    ];
+    const labels = Object.keys(systemUnitCounts);
+    const data = Object.values(systemUnitCounts);
+  
+    // Update chart labels and data with different colors
+    this.chartData.labels = labels;
+    this.chartData.datasets[0].data = data;
+    this.chartData.datasets[0].backgroundColor = colors.slice(0, labels.length); // Assign colors based on the number of bars
+    this.chartData.datasets[0].borderColor = borderColors.slice(0, labels.length); // Assign border colors
+    
     // Update the chart if it's already initialized
     if (this.chart) {
         this.chart.update();
     }
-}
-
+  }
+  
 
 onTabChanged(event: MatTabChangeEvent): void {
   let canvas: HTMLCanvasElement | undefined;
@@ -245,11 +314,11 @@ onTabChanged(event: MatTabChangeEvent): void {
           canvas = this.yearlyChartCanvas.nativeElement;
           this.updateChartData('yearly');
           break;
-      case 2: // Quarterly
-          canvas = this.quarterlyChartCanvas.nativeElement;
-          this.updateChartData('quarterly');
-          break;
-      case 3: // Monthly
+      // case 2: // Quarterly
+      //     canvas = this.quarterlyChartCanvas.nativeElement;
+      //     this.updateChartData('quarterly');
+      //     break;
+      case 2: // Monthly
           canvas = this.monthlyChartCanvas.nativeElement;
           this.updateChartData('monthly');
           break;

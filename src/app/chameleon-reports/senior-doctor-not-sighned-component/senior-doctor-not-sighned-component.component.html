@@ -81,12 +81,40 @@
 
     <!-- Icons: Excel Export and Graph Navigation -->
     <div dir="rtl" class="icon-container" style="display: flex; align-items: center;">
+      <!-- Excel Export Icon -->
       <img src="../../assets/excel.png" alt="Download" (click)="exportToExcel()" class="download-icon icon" width="50px" style="margin-left: 10px;" />
-      <img (click)="navigateToGraphPage()" matTooltip="Move To Graph" src="../../../../assets/graphIcon.png" width="50px" style="margin-left: 10px;" />
-      <button mat-button (click)="resetFilters()" mat-raised-button color="primary" class="custom-button" matTooltip="Reset Filters" style="margin-left: 10px;">
+      
+      <!-- Toggle between two different graph icons based on isGraphVisible -->
+      <img 
+        *ngIf="!isGraphVisible" 
+        (click)="navigateToGraphPage()" 
+        matTooltip="Move To Graph" 
+        src="../../../../assets/graphIcon.png" 
+        width="50px" 
+        style="margin-left: 10px;" 
+      />
+      <img 
+        *ngIf="isGraphVisible" 
+        (click)="navigateToGraphPage()" 
+        matTooltip="Move To Table" 
+        src="../../../../assets/TableIcon.png" 
+        width="50px" 
+        style="margin-left: 10px;" 
+      />
+    
+      <!-- Reset Filters Button -->
+      <button 
+        mat-button 
+        (click)="resetFilters()" 
+        mat-raised-button 
+        color="primary" 
+        class="custom-button" 
+        matTooltip="Reset Filters" 
+        style="margin-left: 10px;">
         <i class="material-icons">refresh</i>
       </button>
     </div>
+    
   </form>
 
   <!-- Tabs for Graph Options -->
@@ -101,11 +129,11 @@
       <canvas #yearlyChartCanvas></canvas>
     </mat-tab>
   
-    <!-- Quarterly Tab -->
+    <!-- Quarterly Tab
     <mat-tab label="רבעוני">
       <canvas #quarterlyChartCanvas></canvas>
     </mat-tab>
-  
+   -->
     <!-- Monthly Tab -->
     <mat-tab label="חודש נוכחי">
       <canvas #monthlyChartCanvas></canvas>
