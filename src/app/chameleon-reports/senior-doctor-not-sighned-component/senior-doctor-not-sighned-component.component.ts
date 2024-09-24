@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { FormControl, FormGroup, FormBuilder } from '@angular/forms';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
@@ -6,8 +6,9 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatSort } from '@angular/material/sort';
 import { Router } from '@angular/router';
-import * as XLSX from 'xlsx';
-
+import * as XLSX from 'xlsx';  // For Excel export
+import { Chart, ChartData, ChartType, registerables } from 'chart.js'; // For Charts
+import { MatTabChangeEvent } from '@angular/material/tabs';  // Import for tab change event
 import { environment } from '../../../environments/environment';
 
 @Component({
@@ -15,92 +16,141 @@ import { environment } from '../../../environments/environment';
   templateUrl: './senior-doctor-not-sighned-component.component.html',
   styleUrls: ['./senior-doctor-not-sighned-component.component.scss']
 })
-export class SeniorDoctorNotSighnedComponent implements OnInit {
+export class SeniorDoctorNotSighnedComponent implements OnInit, AfterViewInit {
   totalResults: number = 0;
   titleUnit: string = 'דוח רופאים בכירים שלא חתמו ';
   Title1: string = ' סה"כ תוצאות: ';
   Title2: string = '';
 
-  showGraph: boolean = false;
-  graphData: any[] = [];
+  showGraph: boolean = false; // Toggle between table and graph
 
   columns: string[] = [
-    'First_Name',
-    'Last_Name',
-    'Medical_Record',
-    'SystemUnitName'
+    'FirstName',
+    'LastName',
+    'MedicalRecord',
+    'SystemUnitName',
+    'Duty',
+    'Field',
+    'EntryDate',
+    'EntryUser',
+    'AdmissionNo',
+    'FunctionID',
+    'FunctionDescription',
+    'IsInFunctionList'
   ];
 
   dataSource: any[] = [];
   filteredData: any[] = [];
   matTableDataSource: MatTableDataSource<any>;
-
   filterForm: FormGroup;
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
+  // Reference to each chart's canvas
+  @ViewChild('monthlyChartCanvas') monthlyChartCanvas!: ElementRef<HTMLCanvasElement>;
+  @ViewChild('quarterlyChartCanvas') quarterlyChartCanvas!: ElementRef<HTMLCanvasElement>;
+  @ViewChild('yearlyChartCanvas') yearlyChartCanvas!: ElementRef<HTMLCanvasElement>;
+  @ViewChild('allTimeChartCanvas') allTimeChartCanvas!: ElementRef<HTMLCanvasElement>;
+
+  // Chart variables
+  public chart: Chart | null = null;
+  public chartData: ChartData<'bar'> = {
+    labels: [],
+    datasets: [{
+      label: 'System Unit Count',
+      data: [],
+      backgroundColor: 'rgba(54, 162, 235, 0.2)',
+      borderColor: 'rgba(54, 162, 235, 1)',
+      borderWidth: 1,
+    }]
+  };
+  public chartType: ChartType = 'bar';
+  public chartOptions = {
+    responsive: true
+  };
+
   constructor(private http: HttpClient, private fb: FormBuilder, private router: Router) {
     this.filterForm = this.createFilterForm();
     this.matTableDataSource = new MatTableDataSource<any>([]);
+    Chart.register(...registerables); // Register Chart.js components
   }
 
   ngOnInit() {
     this.http.get<any[]>(environment.apiUrl + 'seniorDoctorNotSighned').subscribe((data) => {
-      this.dataSource = data;
-      this.filteredData = [...data];
-      this.matTableDataSource = new MatTableDataSource(this.filteredData);
-      this.matTableDataSource.paginator = this.paginator;
-      this.matTableDataSource.sort = this.sort;
+        this.dataSource = data;
+        this.filteredData = [...data];
+        this.matTableDataSource = new MatTableDataSource(this.filteredData);
+        this.matTableDataSource.paginator = this.paginator;
+        this.matTableDataSource.sort = this.sort;
 
-      this.columns.forEach((column) => {
-        this.filterForm.get(column)?.valueChanges.pipe(debounceTime(300), distinctUntilChanged()).subscribe(() => this.applyFilters());
-      });
+        this.columns.forEach((column) => {
+            this.filterForm.get(column)?.valueChanges.pipe(debounceTime(300), distinctUntilChanged()).subscribe(() => this.applyFilters());
+        });
 
-      this.filterForm.valueChanges.subscribe(() => {
+        this.filterForm.valueChanges.subscribe(() => {
+            this.applyFilters();
+            this.paginator.firstPage();
+        });
+
         this.applyFilters();
-        this.paginator.firstPage();
-      });
-
-      this.applyFilters();
+        this.updateChartData('all'); // Initialize chart data with the 'all' range
     });
+}
+
+  ngAfterViewInit() {
+    // This will ensure that all the canvas elements are available before initializing any charts
+    if (this.showGraph) {
+      this.initializeChart(this.monthlyChartCanvas.nativeElement);
+    }
   }
 
   private createFilterForm(): FormGroup {
-    const formControls: any = {};
-    this.columns.forEach((column) => {
-      formControls[column] = new FormControl('');
+    return this.fb.group({
+      FirstName: new FormControl(''),
+      LastName: new FormControl(''),
+      MedicalRecord: new FormControl(''),
+      SystemUnitName: new FormControl(''),
+      Duty: new FormControl(''),
+      Field: new FormControl(''),
+      EntryDateStart: new FormControl(''),
+      EntryDateEnd: new FormControl(''),
+      globalFilter: new FormControl('') // Add globalFilter here
     });
-    formControls['globalFilter'] = new FormControl('');
-    return this.fb.group(formControls);
   }
 
   applyFilters() {
     const filters = this.filterForm.value;
-    const globalFilter = (filters['globalFilter'] || '').toLowerCase();
-
-    this.filteredData = this.dataSource.filter((item) =>
-      this.columns.every((column) => {
-        const value = item[column];
-        const filterValue = filters[column];
-
-        const stringValue = typeof value === 'string' ? value.toLowerCase() : String(value).toLowerCase();
-        const filterString = typeof filterValue === 'string' ? filterValue.toLowerCase() : filterValue;
-
-        return (!filterString || stringValue.includes(filterString)) &&
-               (!globalFilter || this.columns.some((col) => String(item[col]).toLowerCase().includes(globalFilter)));
-      })
-    );
-
+    const globalFilterValue = filters.globalFilter ? filters.globalFilter.toLowerCase() : '';
+  
+    this.filteredData = this.dataSource.filter((item) => {
+      const matchesFirstName = !filters.FirstName || item.FirstName.toLowerCase().includes(filters.FirstName.toLowerCase());
+      const matchesLastName = !filters.LastName || item.LastName.toLowerCase().includes(filters.LastName.toLowerCase());
+      const matchesMedicalRecord = !filters.MedicalRecord || item.MedicalRecord.includes(filters.MedicalRecord);
+      const matchesSystemUnitName = !filters.SystemUnitName || item.SystemUnitName.toLowerCase().includes(filters.SystemUnitName.toLowerCase());
+      const matchesDuty = !filters.Duty || item.Duty.toLowerCase().includes(filters.Duty.toLowerCase());
+      const matchesField = !filters.Field || item.Field.toString().includes(filters.Field);
+  
+      const entryDate = new Date(item.EntryDate);
+      const matchesEntryDateStart = !filters.EntryDateStart || entryDate >= new Date(filters.EntryDateStart);
+      const entryDateEnd = filters.EntryDateEnd ? new Date(filters.EntryDateEnd) : null;
+      if (entryDateEnd) {
+        entryDateEnd.setHours(23, 59, 59, 999);
+      }
+      const matchesEntryDateEnd = !filters.EntryDateEnd || (entryDateEnd && entryDate <= entryDateEnd);
+      const matchesGlobalFilter = !globalFilterValue || 
+        Object.values(item).some(val => val && val.toString().toLowerCase().includes(globalFilterValue));
+  
+      return matchesFirstName && matchesLastName && matchesMedicalRecord && matchesSystemUnitName && matchesDuty && matchesField && matchesEntryDateStart && matchesEntryDateEnd && matchesGlobalFilter;
+    });
+  
     this.totalResults = this.filteredData.length;
     this.matTableDataSource.data = this.filteredData;
     this.matTableDataSource.paginator = this.paginator;
-    this.graphData = this.filteredData;
   }
 
   resetFilters() {
     this.filterForm.reset();
-    this.filterForm.get('globalFilter')?.setValue('');
     this.applyFilters();
   }
 
@@ -109,7 +159,6 @@ export class SeniorDoctorNotSighnedComponent implements OnInit {
     const workbook: XLSX.WorkBook = { Sheets: { data: worksheet }, SheetNames: ['data'] };
     const excelBuffer: any = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
     const blob: Blob = new Blob([excelBuffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-
     const link = document.createElement('a');
     link.href = window.URL.createObjectURL(blob);
     link.download = 'senior_doctor_not_sighned.xlsx';
@@ -118,7 +167,118 @@ export class SeniorDoctorNotSighnedComponent implements OnInit {
 
   navigateToGraphPage() {
     this.showGraph = !this.showGraph;
+  
+    if (this.showGraph) {
+      // Update chart data based on the default range (or you can track the currently selected range)
+      this.updateChartData('all'); // Adjust 'all' if you need a different default range
+  
+      // Wait for Angular to fully render the view before trying to initialize the chart
+      setTimeout(() => {
+        if (this.monthlyChartCanvas) {
+          this.initializeChart(this.monthlyChartCanvas.nativeElement); // Initialize the chart with the selected canvas
+        }
+      });
+    }
   }
+  
+  
+
+  updateChartData(selectedRange: 'monthly' | 'quarterly' | 'yearly' | 'all') {
+    const systemUnitCounts: { [key: string]: number } = {};
+
+    // Get the current date
+    const now = new Date();
+
+    // Filter the data based on the selected range (monthly, quarterly, yearly, all)
+    const filteredByTimeData = this.filteredData.filter(item => {
+        const entryDate = new Date(item.EntryDate);
+
+        switch (selectedRange) {
+            case 'monthly':
+                // Return true if the date is within the last month
+                return entryDate.getMonth() === now.getMonth() && entryDate.getFullYear() === now.getFullYear();
+            case 'quarterly':
+                // Calculate the current quarter (0: Q1, 1: Q2, 2: Q3, 3: Q4)
+                const currentQuarter = Math.floor(now.getMonth() / 3);
+                const itemQuarter = Math.floor(entryDate.getMonth() / 3);
+                return itemQuarter === currentQuarter && entryDate.getFullYear() === now.getFullYear();
+            case 'yearly':
+                // Return true if the date is within the current year
+                return entryDate.getFullYear() === now.getFullYear();
+            case 'all':
+                // Return all data (no date filtering)
+                return true;
+        }
+    });
+
+    // Count occurrences of each SystemUnitName
+    filteredByTimeData.forEach(item => {
+        const systemUnitName = item.SystemUnitName;
+        if (systemUnitCounts[systemUnitName]) {
+            systemUnitCounts[systemUnitName]++;
+        } else {
+            systemUnitCounts[systemUnitName] = 1;
+        }
+    });
+
+    // Update chart labels and data
+    this.chartData.labels = Object.keys(systemUnitCounts);
+    this.chartData.datasets[0].data = Object.values(systemUnitCounts);
+
+    // Update the chart if it's already initialized
+    if (this.chart) {
+        this.chart.update();
+    }
+}
+
+
+onTabChanged(event: MatTabChangeEvent): void {
+  let canvas: HTMLCanvasElement | undefined;
+
+  switch (event.index) {
+      case 0: // All Time
+          canvas = this.allTimeChartCanvas.nativeElement;
+          this.updateChartData('all');
+          break;
+      case 1: // Yearly
+          canvas = this.yearlyChartCanvas.nativeElement;
+          this.updateChartData('yearly');
+          break;
+      case 2: // Quarterly
+          canvas = this.quarterlyChartCanvas.nativeElement;
+          this.updateChartData('quarterly');
+          break;
+      case 3: // Monthly
+          canvas = this.monthlyChartCanvas.nativeElement;
+          this.updateChartData('monthly');
+          break;
+      default:
+          canvas = this.allTimeChartCanvas.nativeElement;
+          this.updateChartData('all');
+  }
+
+  if (canvas) {
+      this.initializeChart(canvas); // Re-initialize the chart with the selected canvas
+  }
+}
+
+
+initializeChart(canvas: HTMLCanvasElement) {  // Initialize the Chart.js chart with the provided canvas
+  if (this.chart) {
+      this.chart.destroy(); // Destroy existing chart before creating a new one
+  }
+
+  const ctx = canvas.getContext('2d');
+
+  if (ctx) {
+      this.chart = new Chart(ctx, {
+          type: this.chartType,
+          data: this.chartData,
+          options: this.chartOptions
+      });
+  }
+}
+
 
   goToHome() {
     this.router.navigate(['/MainPageReports']);

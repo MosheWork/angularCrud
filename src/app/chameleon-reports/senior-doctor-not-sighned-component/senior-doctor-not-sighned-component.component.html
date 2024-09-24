@@ -1,59 +1,189 @@
 <div class="body">
-    <div class="nine">
-      <h1>{{ titleUnit }}<span>{{ Title1 }}{{ Title2 }}{{ totalResults }}</span></h1>
-    </div>
-
-    <form [formGroup]="filterForm" dir="rtl" class="filter-form" style="display: flex; justify-content: space-between; align-items: center;">
-        <!-- Search Bar: Full Width with Icons Aligned Right -->
-        <mat-form-field class="long-search-bar" style="flex-grow: 1; margin-right: 10px; width: 70%;">
-          <mat-label class="filters" style="color: blue">חיפוש</mat-label>
-          <input matInput [formControlName]="'globalFilter'" class="search-input" />
-        </mat-form-field>
-
-        <!-- Icons: Aligned on the Same Line -->
-        <div dir="rtl" class="icon-container" style="display: flex; align-items: center;">
-          <!-- Excel Export Icon -->
-          <img src="../../assets/excel.png" alt="Download" (click)="exportToExcel()" class="download-icon icon" width="50px" style="margin-left: 10px;" />
-          <!-- Graph Navigation Icon -->
-          <img (click)="navigateToGraphPage()" matTooltip="Move To Graph" src="../../../../assets/graphIcon.png" width="50px" style="margin-left: 10px;" />
-          <!-- Reset Filters Button -->
-          <button mat-button (click)="resetFilters()" mat-raised-button color="primary" class="custom-button" matTooltip="Reset Filters" style="margin-left: 10px;">
-            <i class="material-icons">refresh</i>
-          </button>
-        </div>
-      </form>
-
-    <!-- Data Table -->
-    <mat-table *ngIf="!showGraph" [dataSource]="matTableDataSource" matSort dir="rtl" class="mat-elevation-z8">
-      <ng-container matColumnDef="First_Name">
-        <mat-header-cell *matHeaderCellDef mat-sort-header> שם פרטי </mat-header-cell>
-        <mat-cell *matCellDef="let element"> {{ element.First_Name }} </mat-cell>
-      </ng-container>
-
-      <ng-container matColumnDef="Last_Name">
-        <mat-header-cell *matHeaderCellDef mat-sort-header> שם משפחה </mat-header-cell>
-        <mat-cell *matCellDef="let element"> {{ element.Last_Name }} </mat-cell>
-      </ng-container>
-
-      <ng-container matColumnDef="Medical_Record">
-        <mat-header-cell *matHeaderCellDef mat-sort-header> מספר רשומה רפואית </mat-header-cell>
-        <mat-cell *matCellDef="let element"> {{ element.Medical_Record }} </mat-cell>
-      </ng-container>
-
-      <ng-container matColumnDef="SystemUnitName">
-        <mat-header-cell *matHeaderCellDef mat-sort-header> יחידה רפואית </mat-header-cell>
-        <mat-cell *matCellDef="let element"> {{ element.SystemUnitName }} </mat-cell>
-      </ng-container>
-
-      <mat-header-row *matHeaderRowDef="columns"></mat-header-row>
-      <mat-row *matRowDef="let row; columns: columns"></mat-row>
-    </mat-table>
-
-    <!-- Paginator Component -->
-    <mat-paginator 
-      [length]="matTableDataSource.paginator?.length || 0"
-      [pageIndex]="matTableDataSource.paginator?.pageIndex"
-      [pageSize]="matTableDataSource.paginator?.pageSize"
-      [pageSizeOptions]="[15, 50, 100]">
-    </mat-paginator>
+  <div class="nine">
+    <h1>{{ titleUnit }}<span>{{ Title1 }}{{ Title2 }}{{ totalResults }}</span></h1>
   </div>
+
+  <!-- Filters Form -->
+  <div class="filter-card">
+    <form [formGroup]="filterForm" dir="rtl" class="filter-form">
+      <div class="container-fluid mb-2">
+        <div class="row search-count">
+          <div class="col">
+            <div dir="rtl" class="card">
+              <div dir="rtl" class="card-body">
+                <div class="filter-container">
+                  <!-- Filter for FirstName -->
+                  <mat-form-field class="filter-field">
+                    <mat-label>שם פרטי</mat-label>
+                    <input type="text" matInput [formControlName]="'FirstName'" />
+                  </mat-form-field>
+
+                  <!-- Filter for LastName -->
+                  <mat-form-field class="filter-field">
+                    <mat-label>שם משפחה</mat-label>
+                    <input type="text" matInput [formControlName]="'LastName'" />
+                  </mat-form-field>
+
+                  <!-- Filter for MedicalRecord -->
+                  <mat-form-field class="filter-field">
+                    <mat-label>מספר רשומה רפואית</mat-label>
+                    <input type="text" matInput [formControlName]="'MedicalRecord'" />
+                  </mat-form-field>
+
+                  <!-- Filter for SystemUnitName -->
+                  <mat-form-field class="filter-field">
+                    <mat-label>יחידה רפואית</mat-label>
+                    <input type="text" matInput [formControlName]="'SystemUnitName'" />
+                  </mat-form-field>
+
+                  <!-- Filter for Duty -->
+                  <mat-form-field class="filter-field">
+                    <mat-label>תפקיד</mat-label>
+                    <input type="text" matInput [formControlName]="'Duty'" />
+                  </mat-form-field>
+
+                  <!-- Filter for Field -->
+                  <mat-form-field class="filter-field">
+                    <mat-label>שדה</mat-label>
+                    <input type="text" matInput [formControlName]="'Field'" />
+                  </mat-form-field>
+
+                  <!-- Filter for EntryDate with DatePicker -->
+                  <mat-form-field class="filter-field">
+                    <mat-label>תאריך התחלה</mat-label>
+                    <input matInput [formControlName]="'EntryDateStart'" [matDatepicker]="startDatePicker" />
+                    <mat-datepicker-toggle matSuffix [for]="startDatePicker"></mat-datepicker-toggle>
+                    <mat-datepicker #startDatePicker></mat-datepicker>
+                  </mat-form-field>
+
+                  <!-- Filter for EntryDate End with DatePicker -->
+                  <mat-form-field class="filter-field">
+                    <mat-label>תאריך סיום</mat-label>
+                    <input matInput [formControlName]="'EntryDateEnd'" [matDatepicker]="endDatePicker" />
+                    <mat-datepicker-toggle matSuffix [for]="endDatePicker"></mat-datepicker-toggle>
+                    <mat-datepicker #endDatePicker></mat-datepicker>
+                  </mat-form-field>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <!-- Search Bar and Icons -->
+  <form [formGroup]="filterForm" dir="rtl" class="filter-form" style="display: flex; justify-content: space-between; align-items: center;">
+    <mat-form-field class="long-search-bar" style="flex-grow: 1; margin-right: 10px; width: 70%;">
+      <mat-label class="filters" style="color: blue">חיפוש</mat-label>
+      <input matInput [formControlName]="'globalFilter'" class="search-input" />
+    </mat-form-field>
+
+    <!-- Icons: Excel Export and Graph Navigation -->
+    <div dir="rtl" class="icon-container" style="display: flex; align-items: center;">
+      <img src="../../assets/excel.png" alt="Download" (click)="exportToExcel()" class="download-icon icon" width="50px" style="margin-left: 10px;" />
+      <img (click)="navigateToGraphPage()" matTooltip="Move To Graph" src="../../../../assets/graphIcon.png" width="50px" style="margin-left: 10px;" />
+      <button mat-button (click)="resetFilters()" mat-raised-button color="primary" class="custom-button" matTooltip="Reset Filters" style="margin-left: 10px;">
+        <i class="material-icons">refresh</i>
+      </button>
+    </div>
+  </form>
+
+  <!-- Tabs for Graph Options -->
+  <mat-tab-group *ngIf="showGraph" (selectedTabChange)="onTabChanged($event)" dir="rtl">
+    <!-- All Time Tab -->
+    <mat-tab label="כל הזמן">
+      <canvas #allTimeChartCanvas></canvas>
+    </mat-tab>
+  
+    <!-- Yearly Tab -->
+    <mat-tab label="שנתי">
+      <canvas #yearlyChartCanvas></canvas>
+    </mat-tab>
+  
+    <!-- Quarterly Tab -->
+    <mat-tab label="רבעוני">
+      <canvas #quarterlyChartCanvas></canvas>
+    </mat-tab>
+  
+    <!-- Monthly Tab -->
+    <mat-tab label="חודש נוכחי">
+      <canvas #monthlyChartCanvas></canvas>
+    </mat-tab>
+  </mat-tab-group>
+  
+
+  <!-- Data Table -->
+  <mat-table *ngIf="!showGraph" [dataSource]="matTableDataSource" matSort dir="rtl" class="mat-elevation-z8">
+    <ng-container matColumnDef="FirstName">
+      <mat-header-cell *matHeaderCellDef mat-sort-header> שם פרטי </mat-header-cell>
+      <mat-cell *matCellDef="let element"> {{ element.FirstName }} </mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="LastName">
+      <mat-header-cell *matHeaderCellDef mat-sort-header> שם משפחה </mat-header-cell>
+      <mat-cell *matCellDef="let element"> {{ element.LastName }} </mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="MedicalRecord">
+      <mat-header-cell *matHeaderCellDef mat-sort-header> מספר רשומה רפואית </mat-header-cell>
+      <mat-cell *matCellDef="let element"> {{ element.MedicalRecord }} </mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="SystemUnitName">
+      <mat-header-cell *matHeaderCellDef mat-sort-header> יחידה רפואית </mat-header-cell>
+      <mat-cell *matCellDef="let element"> {{ element.SystemUnitName }} </mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="Duty">
+      <mat-header-cell *matHeaderCellDef mat-sort-header> תפקיד </mat-header-cell>
+      <mat-cell *matCellDef="let element"> {{ element.Duty }} </mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="Field">
+      <mat-header-cell *matHeaderCellDef mat-sort-header> שדה </mat-header-cell>
+      <mat-cell *matCellDef="let element"> {{ element.Field }} </mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="EntryDate">
+      <mat-header-cell *matHeaderCellDef mat-sort-header> תאריך כניסה </mat-header-cell>
+      <mat-cell *matCellDef="let element"> {{ element.EntryDate | date:'short' }} </mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="EntryUser">
+      <mat-header-cell *matHeaderCellDef mat-sort-header> משתמש נכנס </mat-header-cell>
+      <mat-cell *matCellDef="let element"> {{ element.EntryUser }} </mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="AdmissionNo">
+      <mat-header-cell *matHeaderCellDef mat-sort-header> מספר קבלה </mat-header-cell>
+      <mat-cell *matCellDef="let element"> {{ element.AdmissionNo }} </mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="FunctionID">
+      <mat-header-cell *matHeaderCellDef mat-sort-header> מזהה פונקציה </mat-header-cell>
+      <mat-cell *matCellDef="let element"> {{ element.FunctionID }} </mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="FunctionDescription">
+      <mat-header-cell *matHeaderCellDef mat-sort-header> תיאור פונקציה </mat-header-cell>
+      <mat-cell *matCellDef="let element"> {{ element.FunctionDescription }} </mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="IsInFunctionList">
+      <mat-header-cell *matHeaderCellDef mat-sort-header> רשימת פונקציות </mat-header-cell>
+      <mat-cell *matCellDef="let element"> {{ element.IsInFunctionList }} </mat-cell>
+    </ng-container>
+
+    <mat-header-row *matHeaderRowDef="columns"></mat-header-row>
+    <mat-row *matRowDef="let row; columns: columns"></mat-row>
+  </mat-table>
+
+  <!-- Paginator Component -->
+  <mat-paginator 
+    [length]="matTableDataSource.paginator?.length || 0"
+    [pageIndex]="matTableDataSource.paginator?.pageIndex"
+    [pageSize]="matTableDataSource.paginator?.pageSize"
+    [pageSizeOptions]="[15, 50, 100]">
+  </mat-paginator>
+</div>
