@@ -174,12 +174,13 @@ export class SeniorDoctorNotSighnedComponent implements OnInit, AfterViewInit {
   
       // Wait for Angular to fully render the view before trying to initialize the chart
       setTimeout(() => {
-        if (this.monthlyChartCanvas) {
-          this.initializeChart(this.monthlyChartCanvas.nativeElement); // Initialize the chart with the selected canvas
+        if (this.allTimeChartCanvas) {
+          this.initializeChart(this.allTimeChartCanvas.nativeElement); // Initialize the chart with the default canvas (allTime)
         }
       });
     }
   }
+  
   
   
 
