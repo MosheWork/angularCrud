@@ -1,0 +1,59 @@
+<div class="body">
+    <div class="nine">
+      <h1>{{ titleUnit }}<span>{{ Title1 }}{{ Title2 }}{{ totalResults }}</span></h1>
+    </div>
+
+    <form [formGroup]="filterForm" dir="rtl" class="filter-form" style="display: flex; justify-content: space-between; align-items: center;">
+        <!-- Search Bar: Full Width with Icons Aligned Right -->
+        <mat-form-field class="long-search-bar" style="flex-grow: 1; margin-right: 10px; width: 70%;">
+          <mat-label class="filters" style="color: blue">חיפוש</mat-label>
+          <input matInput [formControlName]="'globalFilter'" class="search-input" />
+        </mat-form-field>
+
+        <!-- Icons: Aligned on the Same Line -->
+        <div dir="rtl" class="icon-container" style="display: flex; align-items: center;">
+          <!-- Excel Export Icon -->
+          <img src="../../assets/excel.png" alt="Download" (click)="exportToExcel()" class="download-icon icon" width="50px" style="margin-left: 10px;" />
+          <!-- Graph Navigation Icon -->
+          <img (click)="navigateToGraphPage()" matTooltip="Move To Graph" src="../../../../assets/graphIcon.png" width="50px" style="margin-left: 10px;" />
+          <!-- Reset Filters Button -->
+          <button mat-button (click)="resetFilters()" mat-raised-button color="primary" class="custom-button" matTooltip="Reset Filters" style="margin-left: 10px;">
+            <i class="material-icons">refresh</i>
+          </button>
+        </div>
+      </form>
+
+    <!-- Data Table -->
+    <mat-table *ngIf="!showGraph" [dataSource]="matTableDataSource" matSort dir="rtl" class="mat-elevation-z8">
+      <ng-container matColumnDef="First_Name">
+        <mat-header-cell *matHeaderCellDef mat-sort-header> שם פרטי </mat-header-cell>
+        <mat-cell *matCellDef="let element"> {{ element.First_Name }} </mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="Last_Name">
+        <mat-header-cell *matHeaderCellDef mat-sort-header> שם משפחה </mat-header-cell>
+        <mat-cell *matCellDef="let element"> {{ element.Last_Name }} </mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="Medical_Record">
+        <mat-header-cell *matHeaderCellDef mat-sort-header> מספר רשומה רפואית </mat-header-cell>
+        <mat-cell *matCellDef="let element"> {{ element.Medical_Record }} </mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="SystemUnitName">
+        <mat-header-cell *matHeaderCellDef mat-sort-header> יחידה רפואית </mat-header-cell>
+        <mat-cell *matCellDef="let element"> {{ element.SystemUnitName }} </mat-cell>
+      </ng-container>
+
+      <mat-header-row *matHeaderRowDef="columns"></mat-header-row>
+      <mat-row *matRowDef="let row; columns: columns"></mat-row>
+    </mat-table>
+
+    <!-- Paginator Component -->
+    <mat-paginator 
+      [length]="matTableDataSource.paginator?.length || 0"
+      [pageIndex]="matTableDataSource.paginator?.pageIndex"
+      [pageSize]="matTableDataSource.paginator?.pageSize"
+      [pageSizeOptions]="[15, 50, 100]">
+    </mat-paginator>
+  </div>

@@ -41,6 +41,7 @@ import { PalliativePatientsComponent } from './chameleon-reports/palliative-pati
 import { SkinIntegrityReportComponent } from './chameleon-reports/skin-integrity-report/skin-integrity-report.component';
 import { PatientGuidanceReportComponent } from './chameleon-reports/patient-guidance-report/patient-guidance-report.component';
 import { UsersReportComponent } from './chameleon-reports/users-report/users-report.component';
+import { SeniorDoctorNotSighnedComponent } from './chameleon-reports/senior-doctor-not-sighned-component/senior-doctor-not-sighned-component.component';
 
 const routes: Routes = [
   { path: 'users', component: UsersComponent },
@@ -101,7 +102,8 @@ const routes: Routes = [
    { path: 'PalliativePatients', component: PalliativePatientsComponent },
    { path: 'SkinIntegrityReport', component:SkinIntegrityReportComponent },
    { path: 'patient-guidance-report', component: PatientGuidanceReportComponent },
-   { path: 'user-report', component: UsersReportComponent }
+   { path: 'user-report', component: UsersReportComponent },
+   { path: 'SeniorDoctorNotSighned', component: SeniorDoctorNotSighnedComponent }
 
 
 ];

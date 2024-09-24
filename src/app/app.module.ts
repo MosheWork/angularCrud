@@ -105,6 +105,7 @@ import { PalliativePatientsComponent } from './chameleon-reports/palliative-pati
 import { SkinIntegrityReportComponent } from './chameleon-reports/skin-integrity-report/skin-integrity-report.component';
 import { PatientGuidanceReportComponent } from './chameleon-reports/patient-guidance-report/patient-guidance-report.component';
 import { UsersReportComponent } from './chameleon-reports/users-report/users-report.component';
+import { SeniorDoctorNotSighnedComponent } from './chameleon-reports/senior-doctor-not-sighned-component/senior-doctor-not-sighned-component.component';
 
 
 @NgModule({
@@ -180,6 +181,7 @@ import { UsersReportComponent } from './chameleon-reports/users-report/users-rep
     SkinIntegrityReportComponent,
     PatientGuidanceReportComponent,
     UsersReportComponent,
+    SeniorDoctorNotSighnedComponent,
   ],
   imports: [
     BrowserModule,
