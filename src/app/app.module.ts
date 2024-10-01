@@ -106,6 +106,7 @@ import { SkinIntegrityReportComponent } from './chameleon-reports/skin-integrity
 import { PatientGuidanceReportComponent } from './chameleon-reports/patient-guidance-report/patient-guidance-report.component';
 import { UsersReportComponent } from './chameleon-reports/users-report/users-report.component';
 import { SeniorDoctorNotSighnedComponent } from './chameleon-reports/senior-doctor-not-sighned-component/senior-doctor-not-sighned-component.component';
+import { UserLogPerCaseNumberReportComponent } from './chameleon-reports/user-log-per-case-number-report/user-log-per-case-number-report.component';
 
 
 @NgModule({
@@ -182,6 +183,7 @@ import { SeniorDoctorNotSighnedComponent } from './chameleon-reports/senior-doct
     PatientGuidanceReportComponent,
     UsersReportComponent,
     SeniorDoctorNotSighnedComponent,
+    UserLogPerCaseNumberReportComponent,
   ],
   imports: [
     BrowserModule,

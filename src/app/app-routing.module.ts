@@ -42,6 +42,7 @@ import { SkinIntegrityReportComponent } from './chameleon-reports/skin-integrity
 import { PatientGuidanceReportComponent } from './chameleon-reports/patient-guidance-report/patient-guidance-report.component';
 import { UsersReportComponent } from './chameleon-reports/users-report/users-report.component';
 import { SeniorDoctorNotSighnedComponent } from './chameleon-reports/senior-doctor-not-sighned-component/senior-doctor-not-sighned-component.component';
+import { UserLogPerCaseNumberReportComponent } from './chameleon-reports/user-log-per-case-number-report/user-log-per-case-number-report.component';
 
 const routes: Routes = [
   { path: 'users', component: UsersComponent },
@@ -103,7 +104,9 @@ const routes: Routes = [
    { path: 'SkinIntegrityReport', component:SkinIntegrityReportComponent },
    { path: 'patient-guidance-report', component: PatientGuidanceReportComponent },
    { path: 'user-report', component: UsersReportComponent },
-   { path: 'SeniorDoctorNotSighned', component: SeniorDoctorNotSighnedComponent }
+   { path: 'SeniorDoctorNotSighned', component: SeniorDoctorNotSighnedComponent },
+   { path: 'UserLogPerCaseNumberReport', component: UserLogPerCaseNumberReportComponent }
+
 
 
 ];
