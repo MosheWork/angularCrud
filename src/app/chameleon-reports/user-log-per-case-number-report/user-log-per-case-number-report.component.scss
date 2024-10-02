@@ -118,7 +118,7 @@
   .filter-field {
     flex-grow: 1;
     margin-right: 20px;
-    width: calc(25% - 20px); /* 25% to fit four filters in a row with spacing */
+    width: calc(20% - 20px); /* 25% to fit four filters in a row with spacing */
   }
   
   /* Add this CSS to ensure proper alignment of name-select */

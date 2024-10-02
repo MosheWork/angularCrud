@@ -6,50 +6,92 @@
     <h1>{{ titleUnit }}<span>{{ Title1 }}{{ totalResults }}</span></h1>
   </div>
 
-  <form [formGroup]="searchForm" dir="rtl" class="filter-form" style="display: flex; align-items: center; justify-content: flex-start;">
-    <!-- AdmissionNo Input Field -->
-    <mat-form-field style="margin-right: 10px; width: 20%;">
-      <mat-label>מספר מקרה</mat-label>
-      <input matInput formControlName="AdmissionNo" placeholder="הזן מספר מקרה" />
-    </mat-form-field>
-  
-    <!-- IDNo Input Field -->
-    <mat-form-field style="margin-right: 10px; width: 20%;">
-      <mat-label>מספר תעודת זהות</mat-label>
-      <input matInput formControlName="IDNo" placeholder="הזן מספר תעודת זהות" />
-    </mat-form-field>
-  
-    <!-- UserCode Input Field -->
-    <mat-form-field style="margin-right: 10px; width: 20%;">
-      <mat-label>קוד משתמש</mat-label>
-      <input matInput formControlName="UserCode" placeholder="הזן קוד משתמש" />
-    </mat-form-field>
-  
-    <!-- Fetch Data Button (Search Icon) -->
-    <button mat-button (click)="fetchData()" mat-raised-button color="primary" class="custom-button" style="margin-right: 10px;">
-      <i class="material-icons">search</i>
-    </button>
-  
-    <!-- Global Filter Field -->
-    <mat-form-field class="long-search-bar" style="flex-grow: 1; margin-right: 10px;">
-      <mat-label class="filters" style="color: blue">חיפוש</mat-label>
-      <input matInput formControlName="globalFilter" class="search-input" />
-    </mat-form-field>
-  
-    <!-- Icons for Excel Export and Reset Filters -->
-    <img src="../../assets/excel.png" alt="Download" (click)="exportToExcel()" class="download-icon icon" width="50px" style="margin-left: 10px;" />
-  
-    <button 
-      mat-button 
-      (click)="resetFilters()" 
-      mat-raised-button 
-      color="primary" 
-      class="custom-button" 
-      matTooltip="איפוס סינונים" 
-      style="margin-left: 10px;">
-      <i class="material-icons">refresh</i>
-    </button>
+
+ <!-- Filter Card -->
+ <div class="filter-card">
+  <form [formGroup]="searchForm" dir="rtl" class="filter-form">
+    <div class="container-fluid mb-2">
+      <div class="row search-count">
+        <div class="col">
+          <div dir="rtl" class="card">
+            <div dir="rtl" class="card-body">
+              <div class="filter-container">
+                <!-- AdmissionNo Input Field -->
+                <mat-form-field class="filter-field">
+                  <mat-label>מספר מקרה</mat-label>
+                  <input matInput formControlName="AdmissionNo" placeholder="הזן מספר מקרה" />
+                </mat-form-field>
+
+                <!-- IDNo Input Field -->
+                <mat-form-field class="filter-field">
+                  <mat-label>מספר תעודת זהות</mat-label>
+                  <input matInput formControlName="IDNo" placeholder="הזן מספר תעודת זהות" />
+                </mat-form-field>
+
+
+<!-- UserCode Autocomplete Field -->
+<mat-form-field class="filter-field">
+  <mat-label>קוד משתמש</mat-label>
+  <input type="text" matInput [formControl]="userCodeControl" [matAutocomplete]="autoUser">
+  <mat-autocomplete #autoUser="matAutocomplete" [displayWith]="displayUser">
+    <mat-option *ngFor="let option of filteredUserOptions" [value]="option">
+      {{ option.DisplayName }}
+    </mat-option>
+  </mat-autocomplete>
+</mat-form-field>
+
+
+
+                <!-- Start Date Picker for RecordOpenDate -->
+                <mat-form-field class="filter-field">
+                  <mat-label>תאריך התחלה</mat-label>
+                  <input matInput [matDatepicker]="startDatePicker" formControlName="StartDate" placeholder="בחר תאריך התחלה" />
+                  <mat-datepicker-toggle matSuffix [for]="startDatePicker"></mat-datepicker-toggle>
+                  <mat-datepicker #startDatePicker></mat-datepicker>
+                </mat-form-field>
+
+                <!-- End Date Picker for RecordOpenDate -->
+                <mat-form-field class="filter-field">
+                  <mat-label>תאריך סיום</mat-label>
+                  <input matInput [matDatepicker]="endDatePicker" formControlName="EndDate" placeholder="בחר תאריך סיום" />
+                  <mat-datepicker-toggle matSuffix [for]="endDatePicker"></mat-datepicker-toggle>
+                  <mat-datepicker #endDatePicker></mat-datepicker>
+                </mat-form-field>
+
+                <!-- Fetch Data Button (Search Icon) -->
+                <button mat-button (click)="fetchData()" mat-raised-button color="primary" class="custom-button" style="margin-right: 10px;">
+                  <i class="material-icons">search</i>
+                </button>
+
+                <!-- Global Filter Field -->
+                <mat-form-field class="long-search-bar" style="flex-grow: 1; margin-right: 10px;">
+                  <mat-label class="filters" style="color: blue">חיפוש</mat-label>
+                  <input matInput formControlName="globalFilter" class="search-input" />
+                </mat-form-field>
+
+                <!-- Icons for Excel Export and Reset Filters -->
+                <img src="../../assets/excel.png" alt="Download" (click)="exportToExcel()" class="download-icon icon" width="50px" style="margin-left: 10px;" />
+
+                <button 
+                  mat-button 
+                  (click)="resetFilters()" 
+                  mat-raised-button 
+                  color="primary" 
+                  class="custom-button" 
+                  matTooltip="איפוס סינונים" 
+                  style="margin-left: 10px;">
+                  <i class="material-icons">refresh</i>
+                </button>
+
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div> <!-- End of container-fluid -->
   </form>
+</div> <!-- End of filter-card -->
+
   
   <!-- Data Table (Conditionally Displayed) -->
   <mat-table *ngIf="matTableDataSource.data.length > 0" [dataSource]="matTableDataSource" matSort dir="rtl" class="mat-elevation-z8">

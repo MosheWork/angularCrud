@@ -8,6 +8,12 @@ import { MatSort } from '@angular/material/sort';
 import { Router } from '@angular/router';
 import * as XLSX from 'xlsx';
 import { environment } from '../../../environments/environment';
+import { Observable, of } from 'rxjs';
+
+interface UserAutocompleteModel {
+  Code: number;
+  DisplayName: string;
+}
 
 @Component({
   selector: 'app-user-log-per-case-number-report',
@@ -40,6 +46,9 @@ export class UserLogPerCaseNumberReportComponent implements OnInit {
   matTableDataSource: MatTableDataSource<any>;
 
   searchForm: FormGroup;
+  userCodeControl = new FormControl();
+  allUsers: UserAutocompleteModel[] = [];
+  filteredUserOptions: UserAutocompleteModel[] = [];
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
@@ -57,13 +66,51 @@ export class UserLogPerCaseNumberReportComponent implements OnInit {
     ).subscribe(() => {
       this.applyFilters();
     });
+
+    // Apply date range filter when the date pickers value changes
+    this.searchForm.get('StartDate')?.valueChanges.subscribe(() => {
+      this.applyFilters();
+    });
+
+    this.searchForm.get('EndDate')?.valueChanges.subscribe(() => {
+      this.applyFilters();
+    });
+
+    // Fetch all users for the autocomplete
+    this.fetchAllUsers();
+
+    // Initialize autocomplete options for UserCode
+    this.userCodeControl.valueChanges.pipe(
+      debounceTime(300),
+      distinctUntilChanged()
+    ).subscribe(value => {
+      if (typeof value === 'string') {
+        const filterValue = value.toLowerCase();
+        this.filteredUserOptions = this.allUsers.filter(option =>
+          option.DisplayName.toLowerCase().includes(filterValue)
+        );
+      } else {
+        this.filteredUserOptions = this.allUsers;
+      }
+    });
+  }
+
+  private fetchAllUsers() {
+    this.http.get<UserAutocompleteModel[]>(`${environment.apiUrl}UserLogPerCaseNumber/GetAllUsers`).subscribe(users => {
+      this.allUsers = users;
+      this.filteredUserOptions = this.allUsers;
+    }, error => {
+      console.error('Error fetching users:', error);
+    });
   }
 
   private createSearchForm(): FormGroup {
     return this.fb.group({
       AdmissionNo: new FormControl(''),
       IDNo: new FormControl(''),
-      UserCode: new FormControl(''),
+      // Removed 'UserCode' from the form group
+      StartDate: new FormControl(null),
+      EndDate: new FormControl(null),
       globalFilter: new FormControl('')
     });
   }
@@ -71,7 +118,16 @@ export class UserLogPerCaseNumberReportComponent implements OnInit {
   fetchData() {
     const admissionNo = this.searchForm.get('AdmissionNo')?.value;
     const idNo = this.searchForm.get('IDNo')?.value;
-    const userCode = this.searchForm.get('UserCode')?.value;
+    let userCode = null;
+    const selectedUser = this.userCodeControl.value;
+
+    if (selectedUser && typeof selectedUser === 'object' && selectedUser.Code) {
+      userCode = selectedUser.Code;
+    } else if (selectedUser && typeof selectedUser === 'string') {
+      // The user typed something manually; prompt them to select from the list
+      alert('אנא בחר משתמש מהרשימה');
+      return;
+    }
 
     if (!admissionNo && !idNo && !userCode) {
       alert('אנא הזן לפחות אחד מהשדות לחיפוש');
@@ -90,7 +146,7 @@ export class UserLogPerCaseNumberReportComponent implements OnInit {
     }
 
     if (userCode) {
-      params.append('userCode', userCode);
+      params.append('userCode', userCode.toString());
     }
 
     this.http.get<any[]>(`${environment.apiUrl}UserLogPerCaseNumber?${params.toString()}`).subscribe(data => {
@@ -101,11 +157,16 @@ export class UserLogPerCaseNumberReportComponent implements OnInit {
     });
   }
 
+  displayUser(user: UserAutocompleteModel): string {
+    return user && user.DisplayName ? user.DisplayName : '';
+  }
+
   private handleResponseData(data: any[]) {
     this.dataSource = data.map(item => ({
       ...item,
       MedicalLicense: item.MedicalLicense ? item.MedicalLicense : '', // Handle null MedicalLicense
-      RecordOpenTime: item.RecordOpenTime ? new Date(`1970-01-01T${item.RecordOpenTime}`) : null // Convert RecordOpenTime to date
+      RecordOpenTime: item.RecordOpenTime ? new Date(`1970-01-01T${item.RecordOpenTime}`) : null, // Convert RecordOpenTime to Date object
+      RecordOpenDate: item.RecordOpenDate ? new Date(item.RecordOpenDate) : null // Ensure RecordOpenDate is a Date object
     }));
 
     this.filteredData = [...this.dataSource];
@@ -118,17 +179,39 @@ export class UserLogPerCaseNumberReportComponent implements OnInit {
 
   applyFilters() {
     const globalFilter = (this.searchForm.get('globalFilter')?.value || '').toLowerCase();
+    const startDate: Date | null = this.searchForm.get('StartDate')?.value;
+    const endDate: Date | null = this.searchForm.get('EndDate')?.value;
 
-    if (globalFilter) {
-      this.filteredData = this.dataSource.filter((item) => {
-        return this.columns.some((column) => {
+    this.filteredData = this.dataSource.filter((item) => {
+      let matchesGlobalFilter = true;
+      let matchesDateRangeFilter = true;
+
+      // Apply global text filter
+      if (globalFilter) {
+        matchesGlobalFilter = this.columns.some((column) => {
           const value = item[column];
           return value && String(value).toLowerCase().includes(globalFilter);
         });
-      });
-    } else {
-      this.filteredData = [...this.dataSource];
-    }
+      }
+
+      // Apply date range filter
+      if (startDate || endDate) {
+        const itemDate = item.RecordOpenDate;
+        if (itemDate) {
+          if (startDate && endDate) {
+            matchesDateRangeFilter = itemDate >= startDate && itemDate <= endDate;
+          } else if (startDate) {
+            matchesDateRangeFilter = itemDate >= startDate;
+          } else if (endDate) {
+            matchesDateRangeFilter = itemDate <= endDate;
+          }
+        } else {
+          matchesDateRangeFilter = false;
+        }
+      }
+
+      return matchesGlobalFilter && matchesDateRangeFilter;
+    });
 
     this.totalResults = this.filteredData.length;
     this.matTableDataSource.data = this.filteredData;
@@ -136,6 +219,7 @@ export class UserLogPerCaseNumberReportComponent implements OnInit {
 
   resetFilters() {
     this.searchForm.reset();
+    this.userCodeControl.reset(); // Reset the userCodeControl as well
     this.filteredData = [...this.dataSource];
     this.matTableDataSource.data = this.filteredData;
     this.totalResults = this.filteredData.length;
