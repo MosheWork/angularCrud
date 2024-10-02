@@ -18,9 +18,10 @@ export class UserLogPerCaseNumberReportComponent implements OnInit {
   totalResults: number = 0;
   titleUnit: string = 'דוח לוגים על פי מספר מקרה';
   Title1: string = 'סה"כ תוצאות: ';
-  Title2: string = '';
   showGraph: boolean = false;
   graphData: any[] = [];
+
+  selectedFilter: string = 'admissionNo'; // Default filter option
 
   columns: string[] = [
     'AdmissionNo',
@@ -46,72 +47,87 @@ export class UserLogPerCaseNumberReportComponent implements OnInit {
   @ViewChild(MatSort) sort!: MatSort;
 
   constructor(private http: HttpClient, private fb: FormBuilder, private router: Router) {
-    // Initialize the form group in the constructor
     this.filterForm = this.createFilterForm();
     this.matTableDataSource = new MatTableDataSource<any>([]);
   }
 
   ngOnInit() {
-    // Fetch data on initialization
-    this.http.get<any[]>(`${environment.apiUrl}UserLogPerCaseNumber`).subscribe((data) => {
-      this.dataSource = data;
-      this.filteredData = [...data];
-      this.matTableDataSource = new MatTableDataSource(this.filteredData);
-      this.matTableDataSource.paginator = this.paginator;
-      this.matTableDataSource.sort = this.sort;
-
-      // Set up filters for each column
-      this.columns.forEach((column) => {
-        this.filterForm.get(column)?.valueChanges.pipe(debounceTime(300), distinctUntilChanged()).subscribe(() => this.applyFilters());
-      });
-
-      // Watch for global filter changes
-      this.filterForm.valueChanges.subscribe(() => {
-        this.applyFilters();
-        this.paginator.firstPage();
-      });
+    this.filterForm.valueChanges.pipe(debounceTime(300), distinctUntilChanged()).subscribe(() => {
+      this.applyFilters(); // Apply filters when form values change
     });
   }
 
   private createFilterForm(): FormGroup {
-    const formControls: { [key: string]: FormControl } = {};
-    this.columns.forEach((column) => {
-      formControls[column] = new FormControl('');
+    return this.fb.group({
+      AdmissionNo: new FormControl(''),
+      IDNo: new FormControl(''), // Add IDNo field for filtering
+      globalFilter: new FormControl('') // Global search field
     });
-    formControls['AdmissionNo'] = new FormControl(''); // Ensure AdmissionNo exists in form controls
-    formControls['globalFilter'] = new FormControl('');
-    return this.fb.group(formControls);
+  }
+
+  fetchData() {
+    const admissionNo = this.filterForm.get('AdmissionNo')?.value;
+    const idNo = this.filterForm.get('IDNo')?.value;
+
+    if (this.selectedFilter === 'admissionNo' && admissionNo) {
+      this.http.get<any[]>(`${environment.apiUrl}UserLogPerCaseNumber?admissionNo=${admissionNo}`).subscribe(data => {
+        this.handleResponseData(data);
+      });
+    } else if (this.selectedFilter === 'idNo' && idNo) {
+      this.http.get<any[]>(`${environment.apiUrl}UserLogPerCaseNumber?idNo=${idNo}`).subscribe(data => {
+        this.handleResponseData(data);
+      });
+    } else {
+      alert('Please enter a value for the selected filter');
+    }
+  }
+
+  private handleResponseData(data: any[]) {
+    this.dataSource = data.map(item => ({
+      ...item,
+      MedicalLicense: item.MedicalLicense ? item.MedicalLicense : '', // Handle null MedicalLicense
+      RecordOpenTime: new Date(`1970-01-01T${item.RecordOpenTime}`) // Convert RecordOpenTime to date
+    }));
+
+    this.filteredData = [...this.dataSource];
+    this.matTableDataSource.data = this.filteredData;
+    this.totalResults = this.filteredData.length;
+    this.matTableDataSource.paginator = this.paginator;
+    this.matTableDataSource.sort = this.sort;
+    this.applyFilters();
   }
 
   applyFilters() {
     const filters = this.filterForm.value;
     const globalFilter = (filters['globalFilter'] || '').toLowerCase();
 
-    this.filteredData = this.dataSource.filter((item) =>
-      this.columns.every((column) => {
+    this.filteredData = this.dataSource.filter((item) => {
+      return this.columns.some((column) => {
         const value = item[column];
-        const filterValue = filters[column];
-
-        const stringValue = typeof value === 'string' ? value.toLowerCase() : String(value).toLowerCase();
-        const filterString = typeof filterValue === 'string' ? filterValue.toLowerCase() : filterValue;
-
-        return (!filterString || stringValue.includes(filterString)) &&
-          (!globalFilter || this.columns.some((col) => String(item[col]).toLowerCase().includes(globalFilter)));
-      })
-    );
+        return String(value).toLowerCase().includes(globalFilter);
+      });
+    });
 
     this.totalResults = this.filteredData.length;
     this.matTableDataSource.data = this.filteredData;
-    this.graphData = this.filteredData;
   }
 
   resetFilters() {
     this.filterForm.reset();
-    this.applyFilters();
+    this.filteredData = [...this.dataSource];
+    this.matTableDataSource.data = this.filteredData;
+    this.totalResults = this.filteredData.length;
   }
 
   exportToExcel() {
-    const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(this.filteredData);
+    const dataToExport = this.filteredData.length ? this.filteredData : this.dataSource;
+
+    if (dataToExport.length === 0) {
+      alert('No data available for export');
+      return;
+    }
+
+    const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(dataToExport);
     const workbook: XLSX.WorkBook = { Sheets: { data: worksheet }, SheetNames: ['data'] };
     const excelBuffer: any = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
     const blob: Blob = new Blob([excelBuffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
@@ -120,29 +136,5 @@ export class UserLogPerCaseNumberReportComponent implements OnInit {
     link.href = window.URL.createObjectURL(blob);
     link.download = 'user_log_per_case_number.xlsx';
     link.click();
-  }
-
-  navigateToGraphPage() {
-    this.showGraph = !this.showGraph;
-  }
-
-  goToHome() {
-    this.router.navigate(['/MainPageReports']);
-  }
-
-  fetchData() {
-    const admissionNo = this.filterForm.get('AdmissionNo')?.value;
-
-    if (admissionNo) {
-      this.http.get<any[]>(`${environment.apiUrl}UserLogPerCaseNumber/${admissionNo}`).subscribe((data) => {
-        this.dataSource = data;
-        this.matTableDataSource.data = data;
-        this.totalResults = data.length;
-      }, (error) => {
-        console.error('Error fetching data:', error);
-      });
-    } else {
-      alert('Please enter an Admission Number');
-    }
   }
 }

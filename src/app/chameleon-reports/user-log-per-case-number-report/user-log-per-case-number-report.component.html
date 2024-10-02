@@ -6,16 +6,37 @@
     <h1>{{ titleUnit }}<span>{{ Title1 }}{{ totalResults }}</span></h1>
   </div>
 
-  <form [formGroup]="filterForm" dir="rtl" class="filter-form">
+   <!-- Flex container for all input fields and buttons -->
+   <form [formGroup]="filterForm" dir="rtl" class="filter-form" style="display: flex; align-items: center; justify-content: flex-start;">
     <!-- AdmissionNo Input Field -->
-    <mat-form-field>
+    <mat-form-field style="margin-right: 10px; width: 20%;">
       <mat-label>מספר אשפוז</mat-label>
       <input matInput formControlName="AdmissionNo" placeholder="הזן מספר מקרה" />
     </mat-form-field>
 
-    <!-- Fetch Data Button -->
-    <button mat-button (click)="fetchData()" mat-raised-button color="primary" class="custom-button">
-      <i class="material-icons">search</i> חפש
+    <!-- Fetch Data Button (Search Icon) -->
+    <button mat-button (click)="fetchData()" mat-raised-button color="primary" class="custom-button" style="margin-right: 10px;">
+      <i class="material-icons">search</i>
+    </button>
+
+    <!-- Global Filter Field -->
+    <mat-form-field class="long-search-bar" style="flex-grow: 1; margin-right: 10px;">
+      <mat-label class="filters" style="color: blue">חיפוש</mat-label>
+      <input matInput [formControlName]="'globalFilter'" class="search-input" />
+    </mat-form-field>
+
+    <!-- Icons for Excel Export and Reset Filters -->
+    <img src="../../assets/excel.png" alt="Download" (click)="exportToExcel()" class="download-icon icon" width="50px" style="margin-left: 10px;" />
+
+    <button 
+      mat-button 
+      (click)="resetFilters()" 
+      mat-raised-button 
+      color="primary" 
+      class="custom-button" 
+      matTooltip="Reset Filters" 
+      style="margin-left: 10px;">
+      <i class="material-icons">refresh</i>
     </button>
   </form>
 
@@ -35,7 +56,7 @@
 
     <!-- AnswerText398 Column -->
     <ng-container matColumnDef="AnswerText398">
-      <mat-header-cell *matHeaderCellDef mat-sort-header> גיליון</mat-header-cell>
+      <mat-header-cell *matHeaderCellDef mat-sort-header> סקטור</mat-header-cell>
       <mat-cell *matCellDef="let element"> {{ element.AnswerText398 }} </mat-cell>
     </ng-container>
 
@@ -60,7 +81,7 @@
     <!-- MedicalLicense Column -->
     <ng-container matColumnDef="MedicalLicense">
       <mat-header-cell *matHeaderCellDef mat-sort-header> רישיון רפואי </mat-header-cell>
-      <mat-cell *matCellDef="let element"> {{ element.MedicalLicense || 'N/A' }} </mat-cell>
+      <mat-cell *matCellDef="let element"> {{ element.MedicalLicense || '' }} </mat-cell>
     </ng-container>
 
     <!-- RecordName Column -->
@@ -78,7 +99,7 @@
     <!-- RecordOpenTime Column -->
     <ng-container matColumnDef="RecordOpenTime">
       <mat-header-cell *matHeaderCellDef mat-sort-header> זמן כניסה לרשומה </mat-header-cell>
-      <mat-cell *matCellDef="let element"> {{ element.RecordOpenTime }} </mat-cell>
+      <mat-cell *matCellDef="let element"> {{ element.RecordOpenTime | date: 'HH:mm' }} </mat-cell>
     </ng-container>
 
     <!-- UnitName Column -->
