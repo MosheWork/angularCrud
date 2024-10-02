@@ -21,8 +21,6 @@ export class UserLogPerCaseNumberReportComponent implements OnInit {
   showGraph: boolean = false;
   graphData: any[] = [];
 
-  selectedFilter: string = 'admissionNo'; // Default filter option
-
   columns: string[] = [
     'AdmissionNo',
     'AnswerText10',
@@ -41,52 +39,73 @@ export class UserLogPerCaseNumberReportComponent implements OnInit {
   filteredData: any[] = [];
   matTableDataSource: MatTableDataSource<any>;
 
-  filterForm: FormGroup;
+  searchForm: FormGroup;
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
   constructor(private http: HttpClient, private fb: FormBuilder, private router: Router) {
-    this.filterForm = this.createFilterForm();
+    this.searchForm = this.createSearchForm();
     this.matTableDataSource = new MatTableDataSource<any>([]);
   }
 
   ngOnInit() {
-    this.filterForm.valueChanges.pipe(debounceTime(300), distinctUntilChanged()).subscribe(() => {
-      this.applyFilters(); // Apply filters when form values change
+    // Apply global filter when the filter input changes
+    this.searchForm.get('globalFilter')?.valueChanges.pipe(
+      debounceTime(300),
+      distinctUntilChanged()
+    ).subscribe(() => {
+      this.applyFilters();
     });
   }
 
-  private createFilterForm(): FormGroup {
+  private createSearchForm(): FormGroup {
     return this.fb.group({
       AdmissionNo: new FormControl(''),
-      IDNo: new FormControl(''), // Add IDNo field for filtering
-      globalFilter: new FormControl('') // Global search field
+      IDNo: new FormControl(''),
+      UserCode: new FormControl(''),
+      globalFilter: new FormControl('')
     });
   }
 
   fetchData() {
-    const admissionNo = this.filterForm.get('AdmissionNo')?.value;
-    const idNo = this.filterForm.get('IDNo')?.value;
+    const admissionNo = this.searchForm.get('AdmissionNo')?.value;
+    const idNo = this.searchForm.get('IDNo')?.value;
+    const userCode = this.searchForm.get('UserCode')?.value;
 
-    if (this.selectedFilter === 'admissionNo' && admissionNo) {
-      this.http.get<any[]>(`${environment.apiUrl}UserLogPerCaseNumber?admissionNo=${admissionNo}`).subscribe(data => {
-        this.handleResponseData(data);
-      });
-    } else if (this.selectedFilter === 'idNo' && idNo) {
-      this.http.get<any[]>(`${environment.apiUrl}UserLogPerCaseNumber?idNo=${idNo}`).subscribe(data => {
-        this.handleResponseData(data);
-      });
-    } else {
-      alert('Please enter a value for the selected filter');
+    if (!admissionNo && !idNo && !userCode) {
+      alert('אנא הזן לפחות אחד מהשדות לחיפוש');
+      return;
     }
+
+    // Build query parameters
+    let params = new URLSearchParams();
+
+    if (admissionNo) {
+      params.append('admissionNo', admissionNo);
+    }
+
+    if (idNo) {
+      params.append('idNo', idNo);
+    }
+
+    if (userCode) {
+      params.append('userCode', userCode);
+    }
+
+    this.http.get<any[]>(`${environment.apiUrl}UserLogPerCaseNumber?${params.toString()}`).subscribe(data => {
+      this.handleResponseData(data);
+    }, error => {
+      // Handle error
+      console.error('Error fetching data:', error);
+    });
   }
 
   private handleResponseData(data: any[]) {
     this.dataSource = data.map(item => ({
       ...item,
       MedicalLicense: item.MedicalLicense ? item.MedicalLicense : '', // Handle null MedicalLicense
-      RecordOpenTime: new Date(`1970-01-01T${item.RecordOpenTime}`) // Convert RecordOpenTime to date
+      RecordOpenTime: item.RecordOpenTime ? new Date(`1970-01-01T${item.RecordOpenTime}`) : null // Convert RecordOpenTime to date
     }));
 
     this.filteredData = [...this.dataSource];
@@ -98,22 +117,25 @@ export class UserLogPerCaseNumberReportComponent implements OnInit {
   }
 
   applyFilters() {
-    const filters = this.filterForm.value;
-    const globalFilter = (filters['globalFilter'] || '').toLowerCase();
+    const globalFilter = (this.searchForm.get('globalFilter')?.value || '').toLowerCase();
 
-    this.filteredData = this.dataSource.filter((item) => {
-      return this.columns.some((column) => {
-        const value = item[column];
-        return String(value).toLowerCase().includes(globalFilter);
+    if (globalFilter) {
+      this.filteredData = this.dataSource.filter((item) => {
+        return this.columns.some((column) => {
+          const value = item[column];
+          return value && String(value).toLowerCase().includes(globalFilter);
+        });
       });
-    });
+    } else {
+      this.filteredData = [...this.dataSource];
+    }
 
     this.totalResults = this.filteredData.length;
     this.matTableDataSource.data = this.filteredData;
   }
 
   resetFilters() {
-    this.filterForm.reset();
+    this.searchForm.reset();
     this.filteredData = [...this.dataSource];
     this.matTableDataSource.data = this.filteredData;
     this.totalResults = this.filteredData.length;
@@ -123,7 +145,7 @@ export class UserLogPerCaseNumberReportComponent implements OnInit {
     const dataToExport = this.filteredData.length ? this.filteredData : this.dataSource;
 
     if (dataToExport.length === 0) {
-      alert('No data available for export');
+      alert('אין נתונים לייצוא');
       return;
     }
 

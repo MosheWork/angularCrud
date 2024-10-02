@@ -6,40 +6,51 @@
     <h1>{{ titleUnit }}<span>{{ Title1 }}{{ totalResults }}</span></h1>
   </div>
 
-   <!-- Flex container for all input fields and buttons -->
-   <form [formGroup]="filterForm" dir="rtl" class="filter-form" style="display: flex; align-items: center; justify-content: flex-start;">
+  <form [formGroup]="searchForm" dir="rtl" class="filter-form" style="display: flex; align-items: center; justify-content: flex-start;">
     <!-- AdmissionNo Input Field -->
     <mat-form-field style="margin-right: 10px; width: 20%;">
-      <mat-label>מספר אשפוז</mat-label>
+      <mat-label>מספר מקרה</mat-label>
       <input matInput formControlName="AdmissionNo" placeholder="הזן מספר מקרה" />
     </mat-form-field>
-
+  
+    <!-- IDNo Input Field -->
+    <mat-form-field style="margin-right: 10px; width: 20%;">
+      <mat-label>מספר תעודת זהות</mat-label>
+      <input matInput formControlName="IDNo" placeholder="הזן מספר תעודת זהות" />
+    </mat-form-field>
+  
+    <!-- UserCode Input Field -->
+    <mat-form-field style="margin-right: 10px; width: 20%;">
+      <mat-label>קוד משתמש</mat-label>
+      <input matInput formControlName="UserCode" placeholder="הזן קוד משתמש" />
+    </mat-form-field>
+  
     <!-- Fetch Data Button (Search Icon) -->
     <button mat-button (click)="fetchData()" mat-raised-button color="primary" class="custom-button" style="margin-right: 10px;">
       <i class="material-icons">search</i>
     </button>
-
+  
     <!-- Global Filter Field -->
     <mat-form-field class="long-search-bar" style="flex-grow: 1; margin-right: 10px;">
       <mat-label class="filters" style="color: blue">חיפוש</mat-label>
-      <input matInput [formControlName]="'globalFilter'" class="search-input" />
+      <input matInput formControlName="globalFilter" class="search-input" />
     </mat-form-field>
-
+  
     <!-- Icons for Excel Export and Reset Filters -->
     <img src="../../assets/excel.png" alt="Download" (click)="exportToExcel()" class="download-icon icon" width="50px" style="margin-left: 10px;" />
-
+  
     <button 
       mat-button 
       (click)="resetFilters()" 
       mat-raised-button 
       color="primary" 
       class="custom-button" 
-      matTooltip="Reset Filters" 
+      matTooltip="איפוס סינונים" 
       style="margin-left: 10px;">
       <i class="material-icons">refresh</i>
     </button>
   </form>
-
+  
   <!-- Data Table (Conditionally Displayed) -->
   <mat-table *ngIf="matTableDataSource.data.length > 0" [dataSource]="matTableDataSource" matSort dir="rtl" class="mat-elevation-z8">
     <!-- AdmissionNo Column -->
