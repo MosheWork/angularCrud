@@ -31,7 +31,7 @@
 
 <!-- UserCode Autocomplete Field -->
 <mat-form-field class="filter-field">
-  <mat-label>קוד משתמש</mat-label>
+  <mat-label>חיפוש עובד </mat-label>
   <input type="text" matInput [formControl]="userCodeControl" [matAutocomplete]="autoUser">
   <mat-autocomplete #autoUser="matAutocomplete" [displayWith]="displayUser">
     <mat-option *ngFor="let option of filteredUserOptions" [value]="option">
@@ -127,7 +127,7 @@
 
     <!-- IDNo Column -->
     <ng-container matColumnDef="IDNo">
-      <mat-header-cell *matHeaderCellDef mat-sort-header> (עובד)מספר זהות </mat-header-cell>
+      <mat-header-cell *matHeaderCellDef mat-sort-header> מספר זהות </mat-header-cell>
       <mat-cell *matCellDef="let element"> {{ element.IDNo }} </mat-cell>
     </ng-container>
 

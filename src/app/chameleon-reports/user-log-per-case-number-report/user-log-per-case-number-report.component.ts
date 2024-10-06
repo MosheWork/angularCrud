@@ -22,7 +22,7 @@ interface UserAutocompleteModel {
 })
 export class UserLogPerCaseNumberReportComponent implements OnInit {
   totalResults: number = 0;
-  titleUnit: string = 'דוח לוגים על פי מספר מקרה';
+  titleUnit: string = 'בטיחות הטיפול - לוגים קמיליון ';
   Title1: string = 'סה"כ תוצאות: ';
   showGraph: boolean = false;
   graphData: any[] = [];
