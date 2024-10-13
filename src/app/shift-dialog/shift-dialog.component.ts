@@ -4,9 +4,8 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 
 @Component({
   selector: 'app-shift-dialog',
-  templateUrl: './shift-dialog.component.html',  // Reference to the new HTML file
+  templateUrl: './shift-dialog.component.html',
   styleUrls: ['./shift-dialog.component.scss']
-
 })
 export class ShiftDialogComponent {
   shiftForm: FormGroup;
@@ -18,7 +17,7 @@ export class ShiftDialogComponent {
   ) {
     this.shiftForm = this.fb.group({
       employeeName: [''],
-      shiftTime: [''],
+      shiftTime: ['']
     });
   }
 
@@ -28,6 +27,6 @@ export class ShiftDialogComponent {
 
   onSave(): void {
     const shift = this.shiftForm.value;
-    this.dialogRef.close(shift); // Return the shift data
+    this.dialogRef.close(shift);  // Return the shift data
   }
 }
