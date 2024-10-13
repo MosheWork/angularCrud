@@ -1,4 +1,4 @@
-<!-- <mat-toolbar color="primary" class="center-title">משימות עובדים</mat-toolbar>
+<mat-toolbar color="primary" class="center-title">משימות עובדים</mat-toolbar>
 <div class="container" dir="rtl">
   <mat-form-field>
     <mat-label>בחר מגזר</mat-label>
@@ -13,7 +13,7 @@
 
   <table mat-table [dataSource]="getEmployeeIDs()" class="mat-elevation-z8">
     
-    <!-- A
+    A
     <ng-container matColumnDef="EmployeeID">
       <th mat-header-cell *matHeaderCellDef> ת.ז העובד </th>
       <td mat-cell *matCellDef="let employeeID"> {{employeeID}} </td>
@@ -26,7 +26,7 @@
     </ng-container>
 
     <!-- Dynamic TaskDesc Columns -->
-    <!-- <ng-container *ngFor="let column of displayedColumns.slice(2)" [matColumnDef]="column">
+     <ng-container *ngFor="let column of displayedColumns.slice(2)" [matColumnDef]="column">
       <th mat-header-cell *matHeaderCellDef> {{ column }} </th>
       <td mat-cell *matCellDef="let employeeID">
         <mat-checkbox [(ngModel)]="tasksByEmployee[employeeID][column].DoneDate"> סיים </mat-checkbox>
@@ -37,4 +37,4 @@
     <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
     <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
   </table>
-</div> --> -->
+</div> 

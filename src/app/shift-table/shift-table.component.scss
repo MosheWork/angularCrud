@@ -1,0 +1,31 @@
+table {
+    width: 100%;
+  }
+  
+  .mat-header-cell, .mat-cell {
+    text-align: center;
+  }
+  .yes-option {
+    color: blue;
+    font-weight: bold;
+  }
+  
+  .no-option {
+    color: red;
+    font-weight: bold;
+  }
+
+ /* Add this to your component's SCSS file */
+.noCount-two {
+  color: blue;
+  font-weight: bold;
+
+}
+
+.noCount-one-or-zero {
+  color: red;
+  font-weight: bold;
+
+}
+
+  

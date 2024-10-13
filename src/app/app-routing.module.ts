@@ -43,6 +43,7 @@ import { PatientGuidanceReportComponent } from './chameleon-reports/patient-guid
 import { UsersReportComponent } from './chameleon-reports/users-report/users-report.component';
 import { SeniorDoctorNotSighnedComponent } from './chameleon-reports/senior-doctor-not-sighned-component/senior-doctor-not-sighned-component.component';
 import { UserLogPerCaseNumberReportComponent } from './chameleon-reports/user-log-per-case-number-report/user-log-per-case-number-report.component';
+import { ShiftTableComponent } from './shift-table/shift-table.component';
 
 const routes: Routes = [
   { path: 'users', component: UsersComponent },
@@ -105,8 +106,10 @@ const routes: Routes = [
    { path: 'patient-guidance-report', component: PatientGuidanceReportComponent },
    { path: 'user-report', component: UsersReportComponent },
    { path: 'SeniorDoctorNotSighned', component: SeniorDoctorNotSighnedComponent },
-   { path: 'UserLogPerCaseNumberReport', component: UserLogPerCaseNumberReportComponent }
+   { path: 'UserLogPerCaseNumberReport', component: UserLogPerCaseNumberReportComponent },
 
+//shift-table
+   { path: 'shift-table', component: ShiftTableComponent },
 
 
 ];

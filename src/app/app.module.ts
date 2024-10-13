@@ -107,6 +107,7 @@ import { PatientGuidanceReportComponent } from './chameleon-reports/patient-guid
 import { UsersReportComponent } from './chameleon-reports/users-report/users-report.component';
 import { SeniorDoctorNotSighnedComponent } from './chameleon-reports/senior-doctor-not-sighned-component/senior-doctor-not-sighned-component.component';
 import { UserLogPerCaseNumberReportComponent } from './chameleon-reports/user-log-per-case-number-report/user-log-per-case-number-report.component';
+import { ShiftTableComponent } from './shift-table/shift-table.component';
 
 
 @NgModule({
@@ -184,6 +185,7 @@ import { UserLogPerCaseNumberReportComponent } from './chameleon-reports/user-lo
     UsersReportComponent,
     SeniorDoctorNotSighnedComponent,
     UserLogPerCaseNumberReportComponent,
+    ShiftTableComponent,
   ],
   imports: [
     BrowserModule,

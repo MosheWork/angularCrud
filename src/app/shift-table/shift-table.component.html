@@ -1,0 +1,61 @@
+<div class="mat-elevation-z8">
+    <table mat-table [dataSource]="dataSource" class="mat-table" matSort>
+  
+      <!-- Employee Name Column -->
+      <ng-container matColumnDef="employeeName">
+        <th mat-header-cell *matHeaderCellDef> Employee Name </th>
+        <td mat-cell *matCellDef="let element"> {{element.employeeName}} </td>
+      </ng-container>
+  
+      <!-- Dynamic Month Columns -->
+      <ng-container *ngFor="let month of months" [matColumnDef]="month">
+        <th mat-header-cell *matHeaderCellDef> {{month}} </th>
+        <td mat-cell *matCellDef="let element">
+          <!-- Apply 'yes-option' for 'כן', 'no-option' for 'לא' -->
+          <span [ngClass]="{
+            'yes-option': element[month] === 'כן',
+            'no-option': element[month] === 'לא'
+          }">
+            {{ element[month] || '' }} <!-- Show empty if no data -->
+          </span>
+        </td>
+      </ng-container>
+  
+      <!-- New Column for No Count in the Last Two Months -->
+      <ng-container matColumnDef="noCountLastTwoMonths">
+        <th mat-header-cell *matHeaderCellDef> כמה שבתות עבד בחודשיים האחרונים </th>
+        <td mat-cell *matCellDef="let element">
+          <span [ngClass]="{
+            'noCount-two': element.noCountLastTwoMonths === 2,
+            'noCount-one-or-zero': element.noCountLastTwoMonths === 0 || element.noCountLastTwoMonths === 1
+          }">
+            {{ element.noCountLastTwoMonths || 0 }} <!-- Display the count, or 0 if undefined -->
+          </span>
+        </td>
+      </ng-container>
+  
+      <!-- Input Field for Next Month -->
+      <ng-container matColumnDef="nextMonth">
+        <th mat-header-cell *matHeaderCellDef> {{nextMonth}} </th>
+        <td mat-cell *matCellDef="let element">
+          <mat-form-field>
+            <mat-select [(ngModel)]="element.nextMonthStatus" (selectionChange)="onStatusChange(element)">
+              <mat-option [value]="null">----</mat-option>
+              <mat-option [value]="true" [ngClass]="{'yes-option': element.nextMonthStatus === true}">כן</mat-option>
+              <mat-option [value]="false" [ngClass]="{'no-option': element.nextMonthStatus === false}">לא</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </td>
+      </ng-container>
+  
+      <!-- Header and Row Definitions -->
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    </table>
+  
+    <!-- Save Button -->
+    <div class="save-button">
+      <button mat-raised-button color="primary" (click)="saveAllShifts()">Save Shifts</button>
+    </div>
+  </div>
+  
