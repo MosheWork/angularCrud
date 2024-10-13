@@ -1,17 +1,47 @@
-<mat-card>
-    <mat-card-title>Shift Calendar</mat-card-title>
-    <mat-calendar [(selected)]="selectedDate" (selectedChange)="onDateSelected($event)">
-    </mat-calendar>
+<div class="container">
+    <!-- Calendar Card -->
+    <mat-card class="calendar-card">
+      <mat-card-title>Shift Calendar</mat-card-title>
+    
+      <mat-calendar [(selected)]="selectedDate" (selectedChange)="onDateSelected($event)">
+      </mat-calendar>
+    </mat-card>
   
-    <div *ngIf="selectedShifts">
-      <h3>Shifts on {{ selectedDate | date }}</h3>
-      <ul>
-        <li *ngFor="let shift of selectedShifts">
-          {{ shift.employeeName }}: {{ shift.shiftTime }}
-        </li>
-      </ul>
-    </div>
+    <!-- Shift List Table -->
+    <mat-card class="shift-list-card">
+      <mat-card-title>Shifts</mat-card-title>
   
-    <!-- <button mat-raised-button (click)="openShiftDialog()">Add Shift</button> -->
-  </mat-card>
+      <mat-card-content>
+        <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+          <!-- Date Column -->
+          <ng-container matColumnDef="date">
+            <th mat-header-cell *matHeaderCellDef> Day of Month </th>
+            <td mat-cell *matCellDef="let shift"> {{shift.date | date: 'd'}} </td>
+          </ng-container>
+  
+          <!-- Days Column -->
+          <ng-container matColumnDef="days">
+            <th mat-header-cell *matHeaderCellDef> Days </th>
+            <td mat-cell *matCellDef="let shift"> {{shift.days}} </td>
+          </ng-container>
+  
+          <!-- Employee Name Column -->
+          <ng-container matColumnDef="employeeName">
+            <th mat-header-cell *matHeaderCellDef> Employee Name </th>
+            <td mat-cell *matCellDef="let shift"> {{shift.employeeName}} </td>
+          </ng-container>
+  
+          <!-- Holiday Column -->
+          <ng-container matColumnDef="holiday">
+            <th mat-header-cell *matHeaderCellDef> Holiday </th>
+            <td mat-cell *matCellDef="let shift"> {{shift.holiday}} </td>
+          </ng-container>
+  
+          <!-- Table Header and Row Definitions -->
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+        </table>
+      </mat-card-content>
+    </mat-card>
+  </div>
   

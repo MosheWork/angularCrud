@@ -1,0 +1,17 @@
+<h1 mat-dialog-title>Add Shift for {{ data.date | date }}</h1>
+<div mat-dialog-content>
+  <form [formGroup]="shiftForm">
+    <mat-form-field>
+      <mat-label>Employee Name</mat-label>
+      <input matInput formControlName="employeeName" />
+    </mat-form-field>
+    <mat-form-field>
+      <mat-label>Shift Time</mat-label>
+      <input matInput formControlName="shiftTime" />
+    </mat-form-field>
+  </form>
+</div>
+<div mat-dialog-actions>
+  <button mat-button (click)="onCancel()">Cancel</button>
+  <button mat-button (click)="onSave()">Save</button>
+</div>

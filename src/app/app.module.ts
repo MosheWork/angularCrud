@@ -109,6 +109,7 @@ import { SeniorDoctorNotSighnedComponent } from './chameleon-reports/senior-doct
 import { UserLogPerCaseNumberReportComponent } from './chameleon-reports/user-log-per-case-number-report/user-log-per-case-number-report.component';
 import { ShiftTableComponent } from './shift-table/shift-table.component';
 import { ShiftCalendarComponent } from './shift-calendar/shift-calendar.component';
+import { ShiftDialogComponent } from './shift-dialog/shift-dialog.component';
 
 
 @NgModule({
@@ -188,6 +189,7 @@ import { ShiftCalendarComponent } from './shift-calendar/shift-calendar.componen
     UserLogPerCaseNumberReportComponent,
     ShiftTableComponent,
     ShiftCalendarComponent,
+    ShiftDialogComponent,
  
   ],
   imports: [

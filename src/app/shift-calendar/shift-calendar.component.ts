@@ -1,9 +1,13 @@
 import { Component } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
+import { ShiftDialogComponent } from '../shift-dialog/shift-dialog.component';
 
 interface Shift {
   employeeName: string;
   shiftTime: string;
+  date: Date;
+  days: string;
+  holiday?: string;  // Optional
 }
 
 @Component({
@@ -13,51 +17,46 @@ interface Shift {
 })
 export class ShiftCalendarComponent {
   selectedDate: Date | null = new Date(); // Allow null
-  selectedShifts: Shift[] = [];
-  shifts: { [key: string]: Shift[] } = {};
-  shiftForm: FormGroup;
+  shifts: Shift[] = [];  // Store shifts with employeeName, shiftTime, days, and optional holiday
 
-  constructor(private fb: FormBuilder) {
-    this.shiftForm = this.fb.group({
-      employeeName: [''],
-      shiftTime: ['']
+  displayedColumns: string[] = ['date', 'days', 'employeeName', 'holiday'];  // Columns for the table
+  dataSource: Shift[] = [];  // Data source for the table
+
+  constructor(public dialog: MatDialog) {}
+
+  // Open the dialog to add a shift
+  openShiftDialog(date: Date): void {
+    const dialogRef = this.dialog.open(ShiftDialogComponent, {
+      width: '300px',
+      data: { employeeName: '', shiftTime: '', days: '', holiday: '' }
+    });
+
+    dialogRef.afterClosed().subscribe((result: Shift | undefined) => {
+      if (result) {
+        this.addShiftToDate(result, date);
+      }
     });
   }
 
   // Add a shift for the selected date
-  addShiftToDate() {
-    const employeeName = this.shiftForm.get('employeeName')?.value;
-    const shiftTime = this.shiftForm.get('shiftTime')?.value;
-
-    if (employeeName && shiftTime && this.selectedDate) {
-      const shift: Shift = {
-        employeeName,
-        shiftTime
-      };
-      const dateKey = this.selectedDate.toDateString();
-      if (!this.shifts[dateKey]) {
-        this.shifts[dateKey] = [];
-      }
-      this.shifts[dateKey].push(shift);
+  addShiftToDate(shift: Shift, date: Date) {
+    if (date) {
+      shift.date = date;  // Assign the date to the shift
+      this.shifts.push(shift);  // Add the shift to the list
+      this.updateTableData();  // Update the table data
     }
   }
 
-  // Get shifts for a specific date
-  getShiftsForDate(date: Date): Shift[] {
-    return this.shifts[date.toDateString()] || [];
+  // Update the table data source
+  updateTableData() {
+    this.dataSource = [...this.shifts];  // Refresh the data source for the table
   }
 
   // When a date is selected
   onDateSelected(date: Date | null) {
     if (date) {
       this.selectedDate = date;
-      this.selectedShifts = this.getShiftsForDate(date);
+      this.openShiftDialog(date);  // Open dialog when a date is selected
     }
   }
-
-  // Highlight dates with shifts
-  dateClass = (date: Date): string => {
-    const dateKey = date.toDateString();
-    return this.shifts[dateKey] ? 'has-shift' : '';
-  };
 }
