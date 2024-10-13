@@ -44,6 +44,7 @@ import { UsersReportComponent } from './chameleon-reports/users-report/users-rep
 import { SeniorDoctorNotSighnedComponent } from './chameleon-reports/senior-doctor-not-sighned-component/senior-doctor-not-sighned-component.component';
 import { UserLogPerCaseNumberReportComponent } from './chameleon-reports/user-log-per-case-number-report/user-log-per-case-number-report.component';
 import { ShiftTableComponent } from './shift-table/shift-table.component';
+import { ShiftCalendarComponent } from './shift-calendar/shift-calendar.component';
 
 const routes: Routes = [
   { path: 'users', component: UsersComponent },
@@ -110,6 +111,8 @@ const routes: Routes = [
 
 //shift-table
    { path: 'shift-table', component: ShiftTableComponent },
+   { path: 'shift-calendar', component: ShiftCalendarComponent }
+
 
 
 ];

@@ -188,6 +188,7 @@ import { ShiftCalendarComponent } from './shift-calendar/shift-calendar.componen
     UserLogPerCaseNumberReportComponent,
     ShiftTableComponent,
     ShiftCalendarComponent,
+ 
   ],
   imports: [
     BrowserModule,

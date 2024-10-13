@@ -1,1 +1,17 @@
-<p>shift-calendar works!</p>
+<mat-card>
+    <mat-card-title>Shift Calendar</mat-card-title>
+    <mat-calendar [(selected)]="selectedDate" (selectedChange)="onDateSelected($event)">
+    </mat-calendar>
+  
+    <div *ngIf="selectedShifts">
+      <h3>Shifts on {{ selectedDate | date }}</h3>
+      <ul>
+        <li *ngFor="let shift of selectedShifts">
+          {{ shift.employeeName }}: {{ shift.shiftTime }}
+        </li>
+      </ul>
+    </div>
+  
+    <!-- <button mat-raised-button (click)="openShiftDialog()">Add Shift</button> -->
+  </mat-card>
+  
