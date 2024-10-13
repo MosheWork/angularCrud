@@ -19,7 +19,15 @@ export class ShiftTableComponent implements OnInit {
     this.loadShifts();  // Load shifts from API
   }
 
-// Load shifts from the backend API and prepopulate the next month if available
+// Add a method to calculate the recommendation based on the 'No in Last 2 Months' count
+calculateRecommendation(): void {
+  this.dataSource.forEach(employee => {
+    // If the count in 'No in Last 2 Months' is 2, recommend 'לא', otherwise 'כן'
+    employee.recommendation = employee.noCountLastTwoMonths === 2 ? 'לא' : 'כן';
+  });
+}
+
+// Make sure this is called after calculating the "No in Last 2 Months"
 loadShifts(): void {
   this.http.get<any[]>(environment.apiUrl + 'shifts').subscribe(
     (data) => {
@@ -37,14 +45,18 @@ loadShifts(): void {
       // Recalculate the "לא" count in the last two months
       this.calculateNoCount();
 
-      // Ensure the 'noCountLastTwoMonths' column is part of displayed columns
-      this.displayedColumns = ['employeeName', ...this.months, 'noCountLastTwoMonths', 'nextMonth'];
+      // Calculate recommendation based on 'No in Last 2 Months'
+      this.calculateRecommendation();
+
+      // Ensure the columns are updated to include the new recommendation column
+      this.displayedColumns = ['employeeName', ...this.months, 'noCountLastTwoMonths', 'recommendation', 'nextMonth'];
     },
     (error) => {
       console.error('Error fetching shift data:', error);
     }
   );
 }
+
 
 
 

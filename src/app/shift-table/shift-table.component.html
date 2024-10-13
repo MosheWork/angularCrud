@@ -34,6 +34,20 @@
         </td>
       </ng-container>
   
+      <!-- Recommendation Column: המלצה האם לתת שבת -->
+      <ng-container matColumnDef="recommendation">
+        <th mat-header-cell *matHeaderCellDef> המלצה האם לתת שבת </th>
+        <td mat-cell *matCellDef="let element">
+          <!-- Apply color based on recommendation: blue for "כן", red for "לא" -->
+          <span [ngClass]="{
+            'recommend-yes': element.recommendation === 'כן',
+            'recommend-no': element.recommendation === 'לא'
+          }">
+            {{ element.recommendation }} <!-- Display the recommendation -->
+          </span>
+        </td>
+      </ng-container>
+  
       <!-- Input Field for Next Month -->
       <ng-container matColumnDef="nextMonth">
         <th mat-header-cell *matHeaderCellDef> {{nextMonth}} </th>
@@ -55,7 +69,7 @@
   
     <!-- Save Button -->
     <div class="save-button">
-      <button mat-raised-button color="primary" (click)="saveAllShifts()">Save Shifts</button>
+      <button mat-raised-button color="primary" (click)="saveAllShifts()">שמור</button>
     </div>
   </div>
   
