@@ -14,8 +14,14 @@ interface Shift {
   employeeId: number;
   employeeName: string;
   comment: string;
-  date: Date;
+  date: string;  // If you still want to use the formatted date
+  Year: number;  // Make Year optional
+  Month: number; // Make Month optional
+  Day: number;   // Make Day optional
 }
+
+
+
 
 @Component({
   selector: 'app-shift-calendar',
@@ -40,17 +46,32 @@ export class ShiftCalendarComponent implements OnInit {
 
   // Method to get shifts from the backend
   getShifts() {
-    this.http.get<Shift[]>( environment.apiUrl+'oncallshifts').subscribe((data: Shift[]) => {
+    this.http.get<Shift[]>(environment.apiUrl + 'oncallshifts').subscribe((data: Shift[]) => {
       console.log(data);  // Log the fetched data for debugging
-      this.shifts = data.map(shift => ({
-        ...shift,
-        // If you want to keep using the separate fields, you can,
-        // or you can switch to using the combined date field.
-        date: new Date(shift.date) // Use the combined Date field
-      }));
+      
+      this.shifts = data.map(shift => {
+        // Construct a valid Date object from Year, Month, and Day
+        const validDate = new Date(shift.Year, shift.Month - 1, shift.Day);  // Month is zero-indexed
+        
+        if (isNaN(validDate.getTime())) {
+          console.error(`Invalid date detected for shift:`, shift);
+          return { ...shift, date: 'Invalid Date' };  // Handle invalid date
+        }
+  
+        // Convert valid Date to 'YYYY-MM-DD' string format
+        return {
+          ...shift,
+          date: validDate.toISOString().split('T')[0]  // Format date as 'YYYY-MM-DD'
+        };
+      });
+      
       this.updateTableData();  // Update the table with fetched data
+    }, error => {
+      console.error('Error fetching shifts:', error);  // Log any errors that occur during the request
     });
   }
+  
+  
   
   
   loadEmployees() {
@@ -74,20 +95,18 @@ export class ShiftCalendarComponent implements OnInit {
       if (result && result.employeeId && result.comment) {
         console.log('Dialog result:', result);  // Log result for debugging
   
-        // Find the employeeName by employeeId
-        const selectedEmployee = this.employees.find(emp => emp.EmployeeID === Number(result.employeeId));
-  
-        console.log('Selected employee:', selectedEmployee);  // Log selected employee
-  
-        // Create shift object with employeeName
+        // Create shift object with employeeName and other necessary properties
         const shift: Shift = {
           employeeId: Number(result.employeeId),  // Ensure employeeId is a number
-          employeeName: result.employeeName,
+          employeeName: result.employeeName,  // Use employeeName passed from the dialog
           comment: result.comment,
-          date: date
+          date: `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')}`,  // Format date as 'YYYY-MM-DD'
+          Year: date.getFullYear(),  // Add Year
+          Month: date.getMonth() + 1,  // Add Month (0-indexed)
+          Day: date.getDate()  // Add Day
         };
   
-        console.log('Shift object with employeeName:', shift);  // Verify employeeName is included
+        console.log('Shift object with employeeName and formatted date:', shift);  // Verify employeeName is included
   
         this.addShiftToDate(shift, date);  // Add shift and send to the backend
       } else {
@@ -95,6 +114,8 @@ export class ShiftCalendarComponent implements OnInit {
       }
     });
   }
+  
+  
   
   
   
@@ -108,16 +129,24 @@ export class ShiftCalendarComponent implements OnInit {
 
   // Add a shift for the selected date
   addShiftToDate(shift: Shift, date: Date) {
-    if (date) {
-      shift.date = date;  // Assign the selected date to the shift
-      this.shifts.push(shift);  // Add the shift to the array
+    // Format the date to 'YYYY-MM-DD' to remove time and timezone issues
+    const formattedDate = `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')}`;
+    
+    // Update the shift date to the formatted date (without time)
+    shift.date = formattedDate;
+
   
-      // Optionally make a POST request to the backend to save the shift
-      this.http.post<Shift>( environment.apiUrl+ 'oncallshifts', shift).subscribe(() => {
-        this.updateTableData();  // Refresh the table after saving
-      });
-    }
+    console.log('Corrected Shift Date (Formatted) being sent to backend:', shift.date);
+  
+    // Make a POST request to the backend to save the shift
+    this.http.post<Shift>(environment.apiUrl + 'oncallshifts', shift).subscribe(() => {
+      this.updateTableData();  // Refresh the table after saving
+    }, error => {
+      console.error('Error saving shift:', error);  // Log any errors that occur during the request
+    });
   }
+  
+  
   
 
   // Update the table data source
