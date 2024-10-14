@@ -1,166 +1,108 @@
-// src/app/shift-calendar/shift-calendar.component.scss
-
 :host {
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  height: 100vh; // Full window height
-  width: 100vw; // Full window width
-  padding: 1rem;
+  height: 100vh; /* Full window height */
+  width: 100vw; /* Full window width */
+  padding: 0;
+  margin: 0;
   box-sizing: border-box;
-  overflow: hidden; // Prevents any overflow
+  //overflow: hidden; /* Prevents any overflow */
+}
+
+.container {
+  display: flex;
+  flex-direction: row; /* Ensure cards stay in a row */
+  justify-content: space-between;
+  align-items: flex-start;
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  padding: 1rem; /* Small padding around */
+  gap: 20px; /* Space between cards */
+}
+
+.employee-shift-count-card, .calendar-card, .shift-list-card {
+  box-sizing: border-box;
+  height: 100%; /* Ensure cards take full height */
+}
+
+.employee-shift-count-card {
+  flex: 0 1 15%; /* Employee shift card takes 15% width */
+}
+
+.calendar-card {
+  flex: 0 1 35%; /* Calendar card takes 35% width */
+}
+
+.shift-list-card {
+  flex: 1 1 50%; /* Shift list card takes the remaining space (50%) */
 }
 
 mat-card {
-  width: 80%; // Make it smaller to reduce the size of the card
-  max-width: 600px; // Reduce the max width to make the calendar fit better
-  padding: 1rem;
-  box-sizing: border-box;
-
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-
-  mat-card-title {
-    text-align: center;
-    font-size: 1.2rem;
-    margin-bottom: 1rem;
-  }
+  padding: 2px;
+  box-shadow: 0px 2px 4px -1px rgba(0, 0, 0, 0.2), 0px 4px 5px 0px rgba(0, 0, 0, 0.14), 0px 1px 10px 0px rgba(0, 0, 0, 0.12);
+  height: 100%; /* Cards should take full height */
 }
 
-mat-calendar {
-  width: 100%; // Keep the calendar width full within the mat-card
-  height: auto;
-  transform: scale(1); // Reduce size to 65% of the original
-  transform-origin: top center;
+mat-card-title {
+  text-align: center;
+  font-size: 1.5rem;
   margin-bottom: 1rem;
-  max-height: 600px; // Limit the maximum height to ensure it doesn't exceed the window
+}
+
+/* Style for the Employee Shift Count Table */
+.employee-shift-count-card table {
+  width: 100%; /* Make the table take full width of its container */
+  border-collapse: collapse; /* Ensure borders are collapsed */
+}
+
+.employee-shift-count-card th, .employee-shift-count-card td {
+  padding: 2px 6px; /* Add padding for table cells */
+  text-align: left; /* Align text to the left */
+  border-bottom: 1px solid #ddd; /* Add bottom border for rows */
+}
+
+.employee-shift-count-card th {
+  background-color: #f5f5f5; /* Light background for table headers */
+  font-weight: bold;
+}
+
+.employee-shift-count-card td {
+  font-size: 1rem; /* Set font size for table cells */
+}
+
+.shift-list-card table {
+  overflow-x: auto;
+  table-layout: auto;
+}
+
+th, td {
+  text-align: left;
+}
+
+@media (max-width: 850px) {
+  .container {
+    flex-direction: column; /* Stack cards vertically on small screens */
+    align-items: center;
+    height: auto;
+  }
+
+  .employee-shift-count-card, .calendar-card, .shift-list-card {
+    width: 100%; /* Full width on smaller screens */
+    height: auto; /* Auto height on smaller screens */
+  }
 }
 
 ul {
   list-style-type: none;
   padding: 0;
-  li {
-    font-size: 0.9rem;
-    margin-bottom: 0.5rem;
-    padding: 0.5rem;
-    background-color: #f5f5f5;
-    border-radius: 4px;
-  }
 }
 
-button {
-  margin-top: 1rem;
-  padding: 0.5rem 1rem;
+li {
   font-size: 1rem;
+  margin-bottom: 0.1rem;
+  padding: 0.1rem;
+  background-color: #f5f5f5;
+  border-radius: 4px;
 }
-.container {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    gap: 20px; /* Add some space between the cards */
-  }
-  
-  .calendar-card, .shift-list-card {
-    width: 45%; /* Each card takes 45% of the container width */
-    box-sizing: border-box;
-  }
-  
-  mat-card-title {
-    text-align: center;
-    font-size: 1.2rem;
-    margin-bottom: 1rem;
-  }
-  
-  ul {
-    list-style-type: none;
-    padding: 0;
-  }
-  
-  li {
-    font-size: 0.9rem;
-    margin-bottom: 0.5rem;
-    padding: 0.5rem;
-    background-color: #f5f5f5;
-    border-radius: 4px;
-  }
-  
-  .shift-list-card {
-    background-color: #f8f8f8;
-  }
-  @media (max-width: 768px) {
-    .container {
-      flex-direction: column;
-      align-items: center;
-    }
-  
-    .calendar-card, .shift-list-card {
-      width: 100%; /* Full width on small screens */
-    }
-  }
-  .container {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    gap: 20px; /* Space between the cards */
-  }
-  
-  .calendar-card, .shift-list-card {
-    width: 45%; /* Each card takes 45% of the container width */
-    box-sizing: border-box;
-  }
-  
-  mat-card-title {
-    text-align: center;
-    font-size: 1.2rem;
-    margin-bottom: 1rem;
-  }
-  
-  ul {
-    list-style-type: none;
-    padding: 0;
-  }
-  
-  li {
-    font-size: 0.9rem;
-    margin-bottom: 0.5rem;
-    padding: 0.5rem;
-    background-color: #f5f5f5;
-    border-radius: 4px;
-  }
-  
-  .shift-list-card {
-    background-color: #f8f8f8;
-  }
-  .container {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    gap: 20px; /* Space between the cards */
-  }
-  
-  .calendar-card, .shift-list-card {
-    width: 45%; /* Each card takes 45% of the container width */
-    box-sizing: border-box;
-  }
-  
-  mat-card-title {
-    text-align: center;
-    font-size: 1.2rem;
-    margin-bottom: 1rem;
-  }
-  
-  table {
-    width: 100%; /* Make the table take full width */
-  }
-  
-  th, td {
-    padding: 8px 16px;
-  }
-  
-  .mat-elevation-z8 {
-    box-shadow: 0px 2px 4px -1px rgba(0,0,0,0.2), 0px 4px 5px 0px rgba(0,0,0,0.14), 0px 1px 10px 0px rgba(0,0,0,0.12);
-  }
-  
