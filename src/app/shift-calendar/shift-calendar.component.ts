@@ -115,7 +115,7 @@ export class ShiftCalendarComponent implements OnInit {
   updateTableData() {
     const currentMonth = this.selectedDate ? this.selectedDate.getMonth() + 1 : new Date().getMonth() + 1;
     const currentYear = this.selectedDate ? this.selectedDate.getFullYear() : new Date().getFullYear();
-
+   
     // Filter shifts by current month and year
     this.dataSource = this.shifts.filter(shift => shift.Month === currentMonth && shift.Year === currentYear);  // Refresh the data source for the table
   }
@@ -124,6 +124,7 @@ export class ShiftCalendarComponent implements OnInit {
   onDateSelected(date: Date | null) {
     if (date) {
       this.selectedDate = date;
+     
       this.calculateEmployeeShiftCounts(); // Recalculate employee shift counts for the selected month
       this.updateTableData();  // Recalculate table data for the selected month
       this.openShiftDialog(date);  // Open dialog when a date is selected
