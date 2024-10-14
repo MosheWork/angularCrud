@@ -127,6 +127,7 @@ export class ShiftCalendarComponent implements OnInit {
       this.calculateEmployeeShiftCounts(); // Recalculate employee shift counts for the selected month
       this.updateTableData();  // Recalculate table data for the selected month
       this.openShiftDialog(date);  // Open dialog when a date is selected
+      this.loadShiftCounts();
     }
   }
 
@@ -135,6 +136,7 @@ export class ShiftCalendarComponent implements OnInit {
     this.selectedDate = event;  // Update the selected date when the user changes the month
     this.calculateEmployeeShiftCounts();  // Recalculate counts for the selected month
     this.updateTableData();  // Update the shift table for the selected month
+    this.loadShiftCounts();
   }
 
   openShiftDialog(date: Date): void {
