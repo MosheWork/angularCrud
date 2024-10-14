@@ -4,11 +4,17 @@ import { MatDialog } from '@angular/material/dialog';
 import { ShiftDialogComponent } from '../shift-dialog/shift-dialog.component';
 import { environment } from '../../environments/environment';  // Import environment
 
+interface Employee {
+  EmployeeID: number;
+  FirstName: string;
+  LastName: string;
+}
+
 interface Shift {
+  employeeId: number;
   employeeName: string;
-  shiftTime: string;
+  comment: string;
   date: Date;
-  holiday?: string;  // Optional
 }
 
 @Component({
@@ -21,18 +27,20 @@ export class ShiftCalendarComponent implements OnInit {
   shifts: Shift[] = [];
   displayedColumns: string[] = ['year', 'month', 'day', 'dayOfTheWeek', 'employeeId', 'employeeName', 'comment'];
   dataSource: Shift[] = [];  // Data source for the table
+  employees: Employee[] = [];  // Declare the employees property here
 
-  private apiUrl = environment.apiUrl + 'oncallshifts';  // Backend API URL
+  // Backend API URL
 
   constructor(public dialog: MatDialog, private http: HttpClient) {}
 
   ngOnInit() {
     this.getShifts();  // Fetch shifts on initialization
+    this.loadEmployees();  // Fetch employees on initialization
   }
 
   // Method to get shifts from the backend
   getShifts() {
-    this.http.get<Shift[]>(this.apiUrl).subscribe((data: Shift[]) => {
+    this.http.get<Shift[]>( environment.apiUrl+'oncallshifts').subscribe((data: Shift[]) => {
       console.log(data);  // Log the fetched data for debugging
       this.shifts = data.map(shift => ({
         ...shift,
@@ -45,33 +53,72 @@ export class ShiftCalendarComponent implements OnInit {
   }
   
   
-
-  // Open the dialog to add a shift
-  openShiftDialog(date: Date): void {
-    const dialogRef = this.dialog.open(ShiftDialogComponent, {
-      width: '300px',
-      data: { employeeName: '', shiftTime: '' }
-    });
-
-    dialogRef.afterClosed().subscribe((result: Shift | undefined) => {
-      if (result) {
-        this.addShiftToDate(result, date);
+  loadEmployees() {
+    this.http.get<Employee[]>( environment.apiUrl + 'oncallshifts/employees').subscribe({
+      next: (data) => {
+        this.employees = data;
+      },
+      error: (error) => {
+        console.error('Error loading employees:', error);
       }
     });
   }
 
+  openShiftDialog(date: Date): void {
+    const dialogRef = this.dialog.open(ShiftDialogComponent, {
+      width: '300px',
+      data: { comment: '' }  // Initialize with an empty comment
+    });
+  
+    dialogRef.afterClosed().subscribe((result: any | undefined) => {
+      if (result && result.employeeId && result.comment) {
+        console.log('Dialog result:', result);  // Log result for debugging
+  
+        // Find the employeeName by employeeId
+        const selectedEmployee = this.employees.find(emp => emp.EmployeeID === Number(result.employeeId));
+  
+        console.log('Selected employee:', selectedEmployee);  // Log selected employee
+  
+        // Create shift object with employeeName
+        const shift: Shift = {
+          employeeId: Number(result.employeeId),  // Ensure employeeId is a number
+          employeeName: result.employeeName,
+          comment: result.comment,
+          date: date
+        };
+  
+        console.log('Shift object with employeeName:', shift);  // Verify employeeName is included
+  
+        this.addShiftToDate(shift, date);  // Add shift and send to the backend
+      } else {
+        console.log('No valid data returned or dialog was closed');
+      }
+    });
+  }
+  
+  
+  
+  
+  
+
+  
+  
+  
+  
+
   // Add a shift for the selected date
   addShiftToDate(shift: Shift, date: Date) {
     if (date) {
-      shift.date = date;  // Assign the date to the shift
-      this.shifts.push(shift);  // Add the shift to the local array
-
-      // Make POST request to save the shift
-      this.http.post<Shift>(this.apiUrl, shift).subscribe(() => {
-        this.updateTableData();  // Update the table after saving
+      shift.date = date;  // Assign the selected date to the shift
+      this.shifts.push(shift);  // Add the shift to the array
+  
+      // Optionally make a POST request to the backend to save the shift
+      this.http.post<Shift>( environment.apiUrl+ 'oncallshifts', shift).subscribe(() => {
+        this.updateTableData();  // Refresh the table after saving
       });
     }
   }
+  
 
   // Update the table data source
   updateTableData() {
