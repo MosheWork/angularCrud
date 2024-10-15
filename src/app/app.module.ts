@@ -110,6 +110,7 @@ import { UserLogPerCaseNumberReportComponent } from './chameleon-reports/user-lo
 import { ShiftTableComponent } from './shift-table/shift-table.component';
 import { ShiftCalendarComponent } from './shift-calendar/shift-calendar.component';
 import { ShiftDialogComponent } from './shift-dialog/shift-dialog.component';
+import { Icd9ReportComponent } from './chameleon-reports/icd9-report/icd9-report.component';
 
 
 @NgModule({
@@ -190,6 +191,7 @@ import { ShiftDialogComponent } from './shift-dialog/shift-dialog.component';
     ShiftTableComponent,
     ShiftCalendarComponent,
     ShiftDialogComponent,
+    Icd9ReportComponent,
  
   ],
   imports: [

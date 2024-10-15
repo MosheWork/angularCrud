@@ -45,6 +45,7 @@ import { SeniorDoctorNotSighnedComponent } from './chameleon-reports/senior-doct
 import { UserLogPerCaseNumberReportComponent } from './chameleon-reports/user-log-per-case-number-report/user-log-per-case-number-report.component';
 import { ShiftTableComponent } from './shift-table/shift-table.component';
 import { ShiftCalendarComponent } from './shift-calendar/shift-calendar.component';
+import { Icd9ReportComponent } from './chameleon-reports/icd9-report/icd9-report.component';
 
 const routes: Routes = [
   { path: 'users', component: UsersComponent },
@@ -108,6 +109,7 @@ const routes: Routes = [
    { path: 'user-report', component: UsersReportComponent },
    { path: 'SeniorDoctorNotSighned', component: SeniorDoctorNotSighnedComponent },
    { path: 'UserLogPerCaseNumberReport', component: UserLogPerCaseNumberReportComponent },
+   { path: 'icd9-report', component: Icd9ReportComponent },
 
 //shift-table
    { path: 'shift-table', component: ShiftTableComponent },
