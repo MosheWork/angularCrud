@@ -3,6 +3,8 @@ import { HttpClient } from '@angular/common/http';
 import { MatDialog } from '@angular/material/dialog';
 import { ShiftDialogComponent } from '../shift-dialog/shift-dialog.component';
 import { environment } from '../../environments/environment';  // Import environment
+import { MatSnackBar } from '@angular/material/snack-bar';
+
 
 interface Employee {
   EmployeeID: number;
@@ -42,8 +44,11 @@ export class ShiftCalendarComponent implements OnInit {
 
   formattedMonth: string;  // For displaying the month name
   selectedYear: number;    // For displaying the selected year
-
-  constructor(public dialog: MatDialog, private http: HttpClient) {
+  constructor(
+    public dialog: MatDialog,
+    private http: HttpClient,
+    private snackBar: MatSnackBar // Inject MatSnackBar in the constructor
+  ) {
     this.formattedMonth = this.formatMonth(new Date().getMonth() + 1);  // Initialize with current month
     this.selectedYear = new Date().getFullYear();  // Initialize with current year
   }
@@ -115,12 +120,15 @@ export class ShiftCalendarComponent implements OnInit {
 
   // Update the table data source
   updateTableData() {
-    const currentMonth = this.selectedDate ? this.selectedDate.getMonth() + 1 : new Date().getMonth() + 1;
-    const currentYear = this.selectedDate ? this.selectedDate.getFullYear() : new Date().getFullYear();
-   
-    // Filter shifts by current month and year
-    this.dataSource = this.shifts.filter(shift => shift.Month === currentMonth && shift.Year === currentYear);  // Refresh the data source for the table
+    const selectedMonth = this.selectedDate ? this.selectedDate.getMonth() + 1 : new Date().getMonth() + 1;
+    const selectedYear = this.selectedDate ? this.selectedDate.getFullYear() : new Date().getFullYear();
+  
+    // Filter shifts by selected month and year
+    this.dataSource = this.shifts.filter(shift => shift.Month === selectedMonth && shift.Year === selectedYear);
+  
+    console.log('Filtered shifts for table:', this.dataSource);  // Debugging
   }
+  
 
   // When a date is selected
   onDateSelected(date: Date | null) {
@@ -167,22 +175,43 @@ export class ShiftCalendarComponent implements OnInit {
   }
 
   addShiftToDate(shift: Shift, date: Date) {
-    this.http.post<Shift>(environment.apiUrl + 'oncallshifts', shift).subscribe(() => {
-      this.getShifts();  // Refresh the shifts table after saving
+    this.http.post<Shift>(environment.apiUrl + 'oncallshifts', shift).subscribe({
+      next: () => {
+        this.getShifts();  // Refresh the shifts table after saving
+        this.loadShiftCounts();
+      },
+      error: (error) => {
+        // Check if the error contains a specific message about primary key violation (or any specific server message)
+        const errorMessage = error.error.ExceptionMessage;
+  
+        // Display custom error message for the specific case
+        if (errorMessage && errorMessage.includes('Violation of PRIMARY KEY')) {
+          this.snackBar.open('אין אפשרות לעדכן 2 עובדים על אותו יום בכוננות', 'Close', {
+            duration: 5000,
+          });
+        } else {
+          // For other errors, display a generic message
+          this.snackBar.open('אין אפשרות לעדכן 2 עובדים על אותו יום בכוננות', 'Close', {
+            duration: 5000,
+          });
+        }
+  
+        console.error('Error adding shift:', error);  // Log error for debugging purposes
+      }
     });
-
-    this.loadShiftCounts();
-
   }
+  
+  
 
   loadShiftCounts() {
-    const selectedMonth = this.selectedDate?.getMonth()! + 1;
-    const selectedYear = this.selectedDate?.getFullYear();
-  
+    const selectedMonth = this.selectedDate?.getMonth()! + 1;  // Get month of the selected date
+    const selectedYear = this.selectedDate?.getFullYear();     // Get year of the selected date
+    
     this.http.get<EmployeeShiftCountModel[]>(`${environment.apiUrl}oncallshifts/countShifts?year=${selectedYear}&month=${selectedMonth}`)
       .subscribe({
         next: (data) => {
-          console.log('Shift count data from API:', data);  // Log the data received from the API
+          console.log('Shift count data from API:', data);  // Debugging
+  
           this.employeeShiftCounts = data.map(shift => ({
             employeeName: shift.EmployeeName,
             shiftCount: shift.ShiftCount
@@ -193,21 +222,26 @@ export class ShiftCalendarComponent implements OnInit {
         }
       });
   }
+  
    // Listen for changes when the visible month or year changes
-   onViewChange(event: { start: Date, end: Date }) {
+   onViewChange(event: any) {
     if (event && event.start) {
-      const newMonth = event.start.getMonth() + 1;  // Get the visible month (0-indexed in JS, so we add 1)
-      const newYear = event.start.getFullYear();    // Get the visible year
-
-      console.log("Month changed to:", newMonth, "Year:", newYear);
-
-      // Update the formatted month and year for display
+      const newMonth = event.start.getMonth() + 1;  // Get the new visible month (add 1 since months are zero-indexed)
+      const newYear = event.start.getFullYear();    // Get the new visible year
+      
+      console.log(`Month changed to: ${newMonth}, Year: ${newYear}`);  // Debugging
+      
+      // Update the displayed month and year
       this.formattedMonth = this.formatMonth(newMonth);
       this.selectedYear = newYear;
-
-      // Optionally, load data based on the new month and year
+  
+      // Update the shift data based on the new month and year
+      this.updateTableData();    // Re-filter shifts for the selected month and year
+      this.loadShiftCounts();    // Load shift counts for the new month
     }
   }
+  
+  
 
 
   
