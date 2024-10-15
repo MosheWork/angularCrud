@@ -3,47 +3,49 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  height: 100%; /* Full window height */
-  width: 100%; /* Full window width */
-  min-width: 100%;
-  padding: 0;
+  width: 100vw;
+  height: 100vh;
   margin: 0;
+  padding: 0;
   box-sizing: border-box;
-  //overflow: hidden; /* Prevents any overflow */
 }
 
 .container {
   display: flex;
-  flex-direction: row; /* Ensure cards stay in a row */
+  flex-direction: row;
   justify-content: space-between;
   align-items: flex-start;
-  width: 100%; /* Full width */
-  height: 100%; /* Full height */
-  padding: 1rem; /* Small padding around */
-  gap: 20px; /* Space between cards */
+  width: 100vw; /* Full screen width */
+  max-width: 100vw; /* Ensure no max-width is limiting the container */
+  padding: 0;
+  margin: 0; /* Remove all margin */
+  gap: 10px; /* Space between the cards */
+  box-sizing: border-box;
 }
 
 .employee-shift-count-card, .calendar-card, .shift-list-card {
   box-sizing: border-box;
-  height: 100%; /* Ensure cards take full height */
+  height: 100%; /* Make cards take full height */
+  width: 100%; /* Make sure each card takes the correct width */
 }
 
 .employee-shift-count-card {
-  flex: 0 1 15%; /* Employee shift card takes 15% width */
+  flex: 0 1 20%; /* Adjust width as per your design */
 }
 
 .calendar-card {
-  flex: 0 1 35%; /* Calendar card takes 35% width */
+  flex: 0 1 40%; /* Adjust width as per your design */
 }
 
 .shift-list-card {
-  flex: 1 1 50%; /* Shift list card takes the remaining space (50%) */
+  flex: 1 1 40%; /* Shift list card takes the remaining space */
 }
 
 mat-card {
-  padding: 2px;
+  padding: 10px;
+  width: 100%;
+  height: 100%;
   box-shadow: 0px 2px 4px -1px rgba(0, 0, 0, 0.2), 0px 4px 5px 0px rgba(0, 0, 0, 0.14), 0px 1px 10px 0px rgba(0, 0, 0, 0.12);
-  height: 100%; /* Cards should take full height */
 }
 
 mat-card-title {
@@ -52,39 +54,9 @@ mat-card-title {
   margin-bottom: 1rem;
 }
 
-/* Style for the Employee Shift Count Table */
-.employee-shift-count-card table {
-  width: 100%; /* Make the table take full width of its container */
-  border-collapse: collapse; /* Ensure borders are collapsed */
-}
-
-.employee-shift-count-card th, .employee-shift-count-card td {
-  padding: 2px 6px; /* Add padding for table cells */
-  text-align: left; /* Align text to the left */
-  border-bottom: 1px solid #ddd; /* Add bottom border for rows */
-}
-
-.employee-shift-count-card th {
-  background-color: #f5f5f5; /* Light background for table headers */
-  font-weight: bold;
-}
-
-.employee-shift-count-card td {
-  font-size: 1rem; /* Set font size for table cells */
-}
-
-.shift-list-card table {
-  overflow-x: auto;
-  table-layout: auto;
-}
-
-th, td {
-  text-align: left;
-}
-
 @media (max-width: 850px) {
   .container {
-    flex-direction: column; /* Stack cards vertically on small screens */
+    flex-direction: column; /* Stack cards vertically on smaller screens */
     align-items: center;
     height: auto;
   }
@@ -93,17 +65,4 @@ th, td {
     width: 100%; /* Full width on smaller screens */
     height: auto; /* Auto height on smaller screens */
   }
-}
-
-ul {
-  list-style-type: none;
-  padding: 0;
-}
-
-li {
-  font-size: 1rem;
-  margin-bottom: 0.1rem;
-  padding: 0.1rem;
-  background-color: #f5f5f5;
-  border-radius: 4px;
 }
