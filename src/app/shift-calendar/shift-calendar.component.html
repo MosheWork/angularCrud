@@ -25,8 +25,13 @@
     <!-- Calendar Card -->
     <mat-card class="calendar-card">
       <mat-card-title>Shift Calendar</mat-card-title>
-      <mat-calendar [(selected)]="selectedDate" (selectedChange)="onDateSelected($event)">
-      </mat-calendar>
+      <mat-calendar
+      [(selected)]="selectedDate"
+      (selectedChange)="onDateSelected($event)"
+      (monthSelected)="onMonthSelected($event)">
+    </mat-calendar>
+    
+    
     </mat-card>
   
     <!-- Shift List Table -->

@@ -32,6 +32,8 @@ interface EmployeeShiftCountModel {
 })
 export class ShiftCalendarComponent implements OnInit {
   selectedDate: Date | null = new Date();
+
+
   shifts: Shift[] = [];
   employees: Employee[] = [];
   employeeShiftCounts: { employeeName: string, shiftCount: number }[] = []; // List to store employee shift counts
@@ -122,6 +124,7 @@ export class ShiftCalendarComponent implements OnInit {
 
   // When a date is selected
   onDateSelected(date: Date | null) {
+    console.log('moshe:'+date)
     if (date) {
       this.selectedDate = date;
      
@@ -190,6 +193,22 @@ export class ShiftCalendarComponent implements OnInit {
         }
       });
   }
-  
+   // Listen for changes when the visible month or year changes
+   onViewChange(event: { start: Date, end: Date }) {
+    if (event && event.start) {
+      const newMonth = event.start.getMonth() + 1;  // Get the visible month (0-indexed in JS, so we add 1)
+      const newYear = event.start.getFullYear();    // Get the visible year
+
+      console.log("Month changed to:", newMonth, "Year:", newYear);
+
+      // Update the formatted month and year for display
+      this.formattedMonth = this.formatMonth(newMonth);
+      this.selectedYear = newYear;
+
+      // Optionally, load data based on the new month and year
+    }
+  }
+
+
   
 }
