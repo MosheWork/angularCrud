@@ -3,83 +3,108 @@
     <mat-card class="employee-shift-count-card">
         <mat-card-title>Employee Shift Counts</mat-card-title>
         <mat-card-content>
-          <table>
-            <thead>
-              <tr>
-                <th>Employee Name</th>
-                <th>Total Shifts</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr *ngFor="let employee of employeeShiftCounts">
-                <td>{{ employee.employeeName }}</td>
-                <td>{{ employee.shiftCount }}</td>
-              </tr>
-            </tbody>
-          </table>
+            <table mat-table [dataSource]="employeeShiftCounts" class="mat-elevation-z8">
+                <ng-container matColumnDef="employeeName">
+                  <th mat-header-cell *matHeaderCellDef> Employee Name </th>
+                  <td mat-cell *matCellDef="let employee"> {{ employee.EmployeeName }} </td>
+                </ng-container>
+              
+                <ng-container matColumnDef="shiftsPreviousMonth2">
+                  <th mat-header-cell *matHeaderCellDef> Shifts (Previous Month 2) </th>
+                  <td mat-cell *matCellDef="let employee"> {{ employee.ShiftsPreviousMonth2 }} </td>
+                </ng-container>
+              
+                <ng-container matColumnDef="shiftsPreviousMonth1">
+                  <th mat-header-cell *matHeaderCellDef> Shifts (Previous Month 1) </th>
+                  <td mat-cell *matCellDef="let employee"> {{ employee.ShiftsPreviousMonth1 }} </td>
+                </ng-container>
+              
+                <ng-container matColumnDef="shiftsCurrentMonth">
+                  <th mat-header-cell *matHeaderCellDef> Shifts (Current Month) </th>
+                  <td mat-cell *matCellDef="let employee"> {{ employee.ShiftsCurrentMonth }} </td>
+                </ng-container>
+              
+                <ng-container matColumnDef="shiftCount">
+                  <th mat-header-cell *matHeaderCellDef> Total Shifts </th>
+                  <td mat-cell *matCellDef="let employee"> {{ employee.ShiftCount }} </td>
+                </ng-container>
+              
+                <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+              </table>
+              
+              
+              
         </mat-card-content>
       </mat-card>
       
-      
-  
+
     <!-- Calendar Card -->
     <mat-card class="calendar-card">
-      <mat-card-title>Shift Calendar</mat-card-title>
-      <mat-calendar
-      [(selected)]="selectedDate"
-      (selectedChange)="onDateSelected($event)"
-      (monthSelected)="onMonthSelected($event)">
-      (viewChange)="onViewChange($event)">
-
-    </mat-calendar>
-    
-    
+        <mat-card-header>
+            <mat-card-title>Shift Calendar</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+            <mat-calendar [(selected)]="selectedDate"
+                (selectedChange)="onDateSelected($event)"
+                (monthSelected)="onMonthSelected($event)"
+                (viewChange)="onViewChange($event)">
+            </mat-calendar>
+        </mat-card-content>
     </mat-card>
-  
+
     <!-- Shift List Table -->
     <mat-card class="shift-list-card">
-        <mat-card-title>Shifts for {{ formattedMonth }} {{ selectedYear }}</mat-card-title>
+        <mat-card-header>
+            <mat-card-title>Shifts for {{ formattedMonth }} {{ selectedYear }}</mat-card-title>
+        </mat-card-header>
         <mat-card-content>
-        <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
-          <ng-container matColumnDef="year">
-            <th mat-header-cell *matHeaderCellDef> Year </th>
-            <td mat-cell *matCellDef="let shift"> {{shift.Year}} </td>
-          </ng-container>
-  
-          <ng-container matColumnDef="month">
-            <th mat-header-cell *matHeaderCellDef> Month </th>
-            <td mat-cell *matCellDef="let shift"> {{shift.Month}} </td>
-          </ng-container>
-  
-          <ng-container matColumnDef="day">
-            <th mat-header-cell *matHeaderCellDef> Day </th>
-            <td mat-cell *matCellDef="let shift"> {{shift.Day}} </td>
-          </ng-container>
-  
-          <ng-container matColumnDef="dayOfTheWeek">
-            <th mat-header-cell *matHeaderCellDef> Day of the Week </th>
-            <td mat-cell *matCellDef="let shift"> {{shift.DayOfTheWeek}} </td>
-          </ng-container>
-  
-          <ng-container matColumnDef="employeeId">
-            <th mat-header-cell *matHeaderCellDef> Employee ID </th>
-            <td mat-cell *matCellDef="let shift"> {{shift.EmployeeId}} </td>
-          </ng-container>
-  
-          <ng-container matColumnDef="employeeName">
-            <th mat-header-cell *matHeaderCellDef> Employee Name </th>
-            <td mat-cell *matCellDef="let shift"> {{shift.EmployeeName}} </td>
-          </ng-container>
-  
-          <ng-container matColumnDef="comment">
-            <th mat-header-cell *matHeaderCellDef> Comment </th>
-            <td mat-cell *matCellDef="let shift"> {{shift.Comment}} </td>
-          </ng-container>
-  
-          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-          <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-        </table>
-      </mat-card-content>
+            <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+                <!-- Year Column -->
+                <ng-container matColumnDef="year">
+                    <th mat-header-cell *matHeaderCellDef> Year </th>
+                    <td mat-cell *matCellDef="let shift">{{ shift.Year }}</td>
+                </ng-container>
+
+                <!-- Month Column -->
+                <ng-container matColumnDef="month">
+                    <th mat-header-cell *matHeaderCellDef> Month </th>
+                    <td mat-cell *matCellDef="let shift">{{ shift.Month }}</td>
+                </ng-container>
+
+                <!-- Day Column -->
+                <ng-container matColumnDef="day">
+                    <th mat-header-cell *matHeaderCellDef> Day </th>
+                    <td mat-cell *matCellDef="let shift">{{ shift.Day }}</td>
+                </ng-container>
+
+                <!-- Day of the Week Column -->
+                <ng-container matColumnDef="dayOfTheWeek">
+                    <th mat-header-cell *matHeaderCellDef> Day of the Week </th>
+                    <td mat-cell *matCellDef="let shift">{{ shift.DayOfTheWeek }}</td>
+                </ng-container>
+
+                <!-- Employee ID Column -->
+                <ng-container matColumnDef="employeeId">
+                    <th mat-header-cell *matHeaderCellDef> Employee ID </th>
+                    <td mat-cell *matCellDef="let shift">{{ shift.EmployeeId }}</td>
+                </ng-container>
+
+                <!-- Employee Name Column -->
+                <ng-container matColumnDef="employeeName">
+                    <th mat-header-cell *matHeaderCellDef> Employee Name </th>
+                    <td mat-cell *matCellDef="let shift">{{ shift.EmployeeName }}</td>
+                </ng-container>
+
+                <!-- Comment Column -->
+                <ng-container matColumnDef="comment">
+                    <th mat-header-cell *matHeaderCellDef> Comment </th>
+                    <td mat-cell *matCellDef="let shift">{{ shift.Comment }}</td>
+                </ng-container>
+
+                <tr mat-header-row *matHeaderRowDef="['year', 'month', 'day', 'dayOfTheWeek', 'employeeId', 'employeeName', 'comment']"></tr>
+                <tr mat-row *matRowDef="let row; columns: ['year', 'month', 'day', 'dayOfTheWeek', 'employeeId', 'employeeName', 'comment'];"></tr>
+            </table>
+        </mat-card-content>
     </mat-card>
-  </div>
-  
+</div>
