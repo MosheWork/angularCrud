@@ -17,28 +17,33 @@
       </mat-form-field>
     
       <!-- Button to fetch data -->
-      <button mat-raised-button color="primary" (click)="fetchIcd9Data()">Fetch Data</button>
-    <!-- Date Pickers -->
-    <mat-form-field>
-      <mat-label>בחר תאריך קבלה</mat-label>
-      <input matInput [matDatepicker]="recordDatePicker" formControlName="Record_Date">
-      <mat-datepicker-toggle matSuffix [for]="recordDatePicker"></mat-datepicker-toggle>
-      <mat-datepicker #recordDatePicker></mat-datepicker>
-    </mat-form-field>
+      <button mat-raised-button color="primary" (click)="fetchIcd9Data()">הפעל</button>
+<!-- Date Pickers for Entry Date Range -->
+  <!-- Date Pickers for Entry Date Range -->
+  <mat-form-field>
+    <mat-label>תאריך התחלה</mat-label>
+    <input matInput [matDatepicker]="startDatePicker" formControlName="startEntryDate">
+    <mat-datepicker-toggle matSuffix [for]="startDatePicker"></mat-datepicker-toggle>
+    <mat-datepicker #startDatePicker></mat-datepicker>
+  </mat-form-field>
   
-    <mat-form-field>
-      <mat-label>בחר תאריך דיווח</mat-label>
-      <input matInput [matDatepicker]="entryDatePicker" formControlName="Entry_Date">
-      <mat-datepicker-toggle matSuffix [for]="entryDatePicker"></mat-datepicker-toggle>
-      <mat-datepicker #entryDatePicker></mat-datepicker>
-    </mat-form-field>
+  <mat-form-field>
+    <mat-label>תאריך סיום</mat-label>
+    <input matInput [matDatepicker]="endDatePicker" formControlName="endEntryDate">
+    <mat-datepicker-toggle matSuffix [for]="endDatePicker"></mat-datepicker-toggle>
+    <mat-datepicker #endDatePicker></mat-datepicker>
+  </mat-form-field>
 
+  <!-- Form Footer with Global Filter -->
+  
+  <!-- Button to fetch and filter data -->
+  <!-- <button mat-raised-button color="primary" (click)="applyFilters()">Filter</button> -->
     <!-- Form Footer with Search, Reset, and Export Options -->
     <div dir="rtl" class="form-footer" style="display: flex; justify-content: space-between;">
       <!-- Global Search Input with Full Width -->
       <mat-form-field class="long-search-bar" style="flex: 1; margin-right: 10px;">
         <mat-label class="filters" style="color: blue">חיפוש</mat-label>
-        <input matInput [formControlName]="'globalFilter'" class="search-input" />
+      <input matInput formControlName="globalFilter" placeholder="Search...">
       </mat-form-field>
 
       <!-- Buttons on the Right Side -->
@@ -75,31 +80,31 @@
     </ng-container>
 
     <!-- Admission_No Column -->
-    <ng-container matColumnDef="Admission_No">
+    <ng-container matColumnDef="AdmissionNo">
       <mat-header-cell *matHeaderCellDef mat-sort-header> מספר אשפוז </mat-header-cell>
       <mat-cell *matCellDef="let element"> {{ element.AdmissionNo }} </mat-cell>
     </ng-container>
 
     <!-- First_Name Column -->
-    <ng-container matColumnDef="First_Name">
+    <ng-container matColumnDef="FirstName">
       <mat-header-cell *matHeaderCellDef mat-sort-header> שם פרטי </mat-header-cell>
       <mat-cell *matCellDef="let element"> {{ element.FirstName }} </mat-cell>
     </ng-container>
 
     <!-- Last_Name Column -->
-    <ng-container matColumnDef="Last_Name">
+    <ng-container matColumnDef="LastName">
       <mat-header-cell *matHeaderCellDef mat-sort-header> שם משפחה </mat-header-cell>
       <mat-cell *matCellDef="let element"> {{ element.LastName }} </mat-cell>
     </ng-container>
 
     <!-- Id_Num Column -->
-    <ng-container matColumnDef="Id_Num">
+    <ng-container matColumnDef="IdNum">
       <mat-header-cell *matHeaderCellDef mat-sort-header> ת.ז. </mat-header-cell>
       <mat-cell *matCellDef="let element"> {{ element.IdNum }} </mat-cell>
     </ng-container>
 
     <!-- Entry_Date Column (Formatted Date) -->
-    <ng-container matColumnDef="Entry_Date">
+    <ng-container matColumnDef="EntryDate">
       <mat-header-cell *matHeaderCellDef mat-sort-header> תאריך כניסה </mat-header-cell>
       <mat-cell *matCellDef="let element"> {{ element.EntryDate | date: 'dd/MM/yyyy' }} </mat-cell>
     </ng-container>
