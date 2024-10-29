@@ -1,0 +1,93 @@
+<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
+
+<div class="body">
+  <!-- Page Title with Dynamic Results Count -->
+  <div class="nine">
+    <h1>{{ titleUnit }}<span>{{ Title1 }}{{ Title2 }}{{ totalResults }}</span></h1>
+  </div>
+
+  <!-- Filter Form for Table -->
+  <form [formGroup]="filterForm" dir="rtl" class="filter-form">
+    <!-- Button to fetch data -->
+    <button mat-raised-button color="primary" (click)="fetchSSRIProtocolData()">הפעל</button>
+
+    <!-- Date Pickers for Order Start Date Range -->
+    <mat-form-field>
+      <mat-label>תאריך התחלה</mat-label>
+      <input matInput [matDatepicker]="startDatePicker" formControlName="startEntryDate">
+      <mat-datepicker-toggle matSuffix [for]="startDatePicker"></mat-datepicker-toggle>
+      <mat-datepicker #startDatePicker></mat-datepicker>
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>תאריך סיום</mat-label>
+      <input matInput [matDatepicker]="endDatePicker" formControlName="endEntryDate">
+      <mat-datepicker-toggle matSuffix [for]="endDatePicker"></mat-datepicker-toggle>
+      <mat-datepicker #endDatePicker></mat-datepicker>
+    </mat-form-field>
+
+    <!-- Form Footer with Global Filter -->
+    <div dir="rtl" class="form-footer" style="display: flex; justify-content: space-between;">
+      <mat-form-field class="long-search-bar" style="flex: 1; margin-right: 10px;">
+        <mat-label class="filters" style="color: blue">חיפוש</mat-label>
+        <input matInput formControlName="globalFilter" placeholder="Search...">
+      </mat-form-field>
+
+      <!-- Buttons on the Right Side -->
+      <div class="button-container" style="display: flex; align-items: center;">
+        <button mat-button (click)="resetFilters()" mat-raised-button color="primary" class="custom-button" matTooltip="Reset Filters">
+          <i class="material-icons">refresh</i>
+        </button>
+
+        <img src="../../assets/excel.png" alt="Download" (click)="exportToExcel()" class="download-icon icon" width="50px" style="margin-right: 10px;" />
+      </div>
+    </div>
+  </form>
+
+  <!-- Data Table -->
+  <mat-table [dataSource]="matTableDataSource" matSort dir="rtl" class="mat-elevation-z8">
+    <!-- IdNum Column -->
+    <ng-container matColumnDef="IdNum">
+      <mat-header-cell *matHeaderCellDef mat-sort-header> ת.ז. </mat-header-cell>
+      <mat-cell *matCellDef="let element"> {{ element.IdNum }} </mat-cell>
+    </ng-container>
+
+    <!-- AdmissionNo Column -->
+    <ng-container matColumnDef="AdmissionNo">
+      <mat-header-cell *matHeaderCellDef mat-sort-header> מספר אשפוז </mat-header-cell>
+      <mat-cell *matCellDef="let element"> {{ element.AdmissionNo }} </mat-cell>
+    </ng-container>
+
+    <!-- FirstName Column -->
+    <ng-container matColumnDef="FirstName">
+      <mat-header-cell *matHeaderCellDef mat-sort-header> שם פרטי </mat-header-cell>
+      <mat-cell *matCellDef="let element"> {{ element.FirstName }} </mat-cell>
+    </ng-container>
+
+    <!-- LastName Column -->
+    <ng-container matColumnDef="LastName">
+      <mat-header-cell *matHeaderCellDef mat-sort-header> שם משפחה </mat-header-cell>
+      <mat-cell *matCellDef="let element"> {{ element.LastName }} </mat-cell>
+    </ng-container>
+
+    <!-- OrderStartDate Column (Formatted Date) -->
+    <ng-container matColumnDef="OrderStartDate">
+      <mat-header-cell *matHeaderCellDef mat-sort-header> תאריך התחלה </mat-header-cell>
+      <mat-cell *matCellDef="let element"> {{ element.OrderStartDate | date: 'dd/MM/yyyy' }} </mat-cell>
+    </ng-container>
+
+    <!-- Table Header Row Definition -->
+    <mat-header-row *matHeaderRowDef="columns"></mat-header-row>
+
+    <!-- Table Data Row Definition -->
+    <mat-row *matRowDef="let row; columns: columns" class="mat-row"></mat-row>
+  </mat-table>
+
+  <!-- Paginator Component -->
+  <mat-paginator 
+    [length]="matTableDataSource.paginator?.length || 0"
+    [pageIndex]="matTableDataSource.paginator?.pageIndex"
+    [pageSize]="matTableDataSource.paginator?.pageSize"
+    [pageSizeOptions]="[15, 50, 100]">
+  </mat-paginator>
+</div>
