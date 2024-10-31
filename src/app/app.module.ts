@@ -112,6 +112,7 @@ import { ShiftCalendarComponent } from './shift-calendar/shift-calendar.componen
 import { ShiftDialogComponent } from './shift-dialog/shift-dialog.component';
 import { Icd9ReportComponent } from './chameleon-reports/icd9-report/icd9-report.component';
 import { SSRIProtocolComponent } from './chameleon-reports/ssriprotocol/ssriprotocol.component';
+import { HemoDialysisReportComponent } from './chameleon-reports/hemo-dialysis-report/hemo-dialysis-report.component';
 
 
 @NgModule({
@@ -193,7 +194,8 @@ import { SSRIProtocolComponent } from './chameleon-reports/ssriprotocol/ssriprot
     ShiftCalendarComponent,
     ShiftDialogComponent,
     Icd9ReportComponent,
-    SSRIProtocolComponent
+    SSRIProtocolComponent,
+    HemoDialysisReportComponent
   
   ],
   imports: [

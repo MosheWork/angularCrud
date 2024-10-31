@@ -47,6 +47,7 @@ import { ShiftTableComponent } from './shift-table/shift-table.component';
 import { ShiftCalendarComponent } from './shift-calendar/shift-calendar.component';
 import { Icd9ReportComponent } from './chameleon-reports/icd9-report/icd9-report.component';
 import { SSRIProtocolComponent } from './chameleon-reports/ssriprotocol/ssriprotocol.component';
+import { HemoDialysisReportComponent } from './chameleon-reports/hemo-dialysis-report/hemo-dialysis-report.component';
 
 const routes: Routes = [
   { path: 'users', component: UsersComponent },
@@ -112,12 +113,11 @@ const routes: Routes = [
    { path: 'UserLogPerCaseNumberReport', component: UserLogPerCaseNumberReportComponent },
    { path: 'icd9-report', component: Icd9ReportComponent },
    { path: 'ssri-protocol', component: SSRIProtocolComponent },
+   { path: 'hemo-dialysis', component: HemoDialysisReportComponent },
 
 //shift-table
    { path: 'shift-table', component: ShiftTableComponent },
    { path: 'shift-calendar', component: ShiftCalendarComponent }
-
-
 ];
 
 @NgModule({
