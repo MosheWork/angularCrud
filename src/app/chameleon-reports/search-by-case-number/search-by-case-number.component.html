@@ -1,0 +1,87 @@
+<div class="body">
+    <!-- Page Title with Dynamic Results Count -->
+    <div class="nine">
+      <h1>{{ titleUnit }}<span>{{ Title1 }}{{ Title2 }}{{ totalResults }}</span></h1>
+    </div>
+  
+    <!-- Filter Form for Table -->
+    <form [formGroup]="filterForm" dir="rtl" class="filter-form">
+      <!-- Input for Case Number(s) -->
+      <mat-form-field>
+        <mat-label>הכנס מספר מקרה</mat-label>
+        <input matInput [formControl]="caseNumbersControl" placeholder="e.g. 10470580, 10470581">
+      </mat-form-field>
+      
+      <!-- Button to fetch data -->
+      <button mat-raised-button color="primary" (click)="fetchCaseNumberData()">חפש</button>
+  
+      <!-- Date Pickers for Discharge Date Range -->
+      <mat-form-field>
+        <mat-label> מ-תאריך שחרור</mat-label>
+        <input matInput [matDatepicker]="startDatePicker" formControlName="startDischargeDate">
+        <mat-datepicker-toggle matSuffix [for]="startDatePicker"></mat-datepicker-toggle>
+        <mat-datepicker #startDatePicker></mat-datepicker>
+      </mat-form-field>
+  
+      <mat-form-field>
+        <mat-label> עד- תאריך שחרור </mat-label>
+        <input matInput [matDatepicker]="endDatePicker" formControlName="endDischargeDate">
+        <mat-datepicker-toggle matSuffix [for]="endDatePicker"></mat-datepicker-toggle>
+        <mat-datepicker #endDatePicker></mat-datepicker>
+      </mat-form-field>
+  
+      <!-- Form Footer with Global Filter and Reset/Export Buttons -->
+      <div class="form-footer" style="display: flex; justify-content: space-between;">
+        <mat-form-field class="long-search-bar" style="flex: 1; margin-right: 10px;">
+          <mat-label class="filters">חיפוש</mat-label>
+          <input matInput formControlName="globalFilter" placeholder="Search...">
+        </mat-form-field>
+  
+        <button mat-button (click)="resetFilters()" mat-raised-button color="primary">
+          <i class="material-icons">refresh</i>
+        </button>
+  
+        <img src="../../assets/excel.png" alt="Download" (click)="exportToExcel()" class="download-icon icon" width="50px" style="margin-right: 10px;" />
+      </div>
+    </form>
+  
+    <!-- Data Table -->
+    <mat-table [dataSource]="matTableDataSource" matSort dir="rtl" class="mat-elevation-z8">
+      <!-- Case Number Column -->
+      <ng-container matColumnDef="PMCaseNumber">
+        <mat-header-cell *matHeaderCellDef mat-sort-header> מספר מקרה </mat-header-cell>
+        <mat-cell *matCellDef="let element"> {{ element.PMCaseNumber }} </mat-cell>
+      </ng-container>
+  
+      <!-- Discharge Date Column -->
+      <ng-container matColumnDef="PMDischargeDate">
+        <mat-header-cell *matHeaderCellDef mat-sort-header> תאריך שחרור </mat-header-cell>
+        <mat-cell *matCellDef="let element"> {{ element.PMDischargeDate | date: 'dd/MM/yyyy' }} </mat-cell>
+      </ng-container>
+  
+      <!-- Discharge Time Column
+      <ng-container matColumnDef="PMDischargeTime">
+        <mat-header-cell *matHeaderCellDef mat-sort-header> שעת שחרור </mat-header-cell>
+        <mat-cell *matCellDef="let element"> {{ element.PMDischargeTime }} </mat-cell>
+      </ng-container> -->
+  
+      <!-- Department Name Column -->
+      <ng-container matColumnDef="DepartName">
+        <mat-header-cell *matHeaderCellDef mat-sort-header> מחלקה משחררת </mat-header-cell>
+        <mat-cell *matCellDef="let element"> {{ element.DepartName }} </mat-cell>
+      </ng-container>
+  
+      <!-- Table Header and Row Definitions -->
+      <mat-header-row *matHeaderRowDef="columns"></mat-header-row>
+      <mat-row *matRowDef="let row; columns: columns" class="mat-row"></mat-row>
+    </mat-table>
+  
+    <!-- Paginator Component -->
+    <mat-paginator 
+      [length]="matTableDataSource.paginator?.length || 0"
+      [pageIndex]="matTableDataSource.paginator?.pageIndex"
+      [pageSize]="matTableDataSource.paginator?.pageSize"
+      [pageSizeOptions]="[15, 50, 100]">
+    </mat-paginator>
+  </div>
+  

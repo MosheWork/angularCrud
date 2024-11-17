@@ -48,6 +48,7 @@ import { ShiftCalendarComponent } from './shift-calendar/shift-calendar.componen
 import { Icd9ReportComponent } from './chameleon-reports/icd9-report/icd9-report.component';
 import { SSRIProtocolComponent } from './chameleon-reports/ssriprotocol/ssriprotocol.component';
 import { HemoDialysisReportComponent } from './chameleon-reports/hemo-dialysis-report/hemo-dialysis-report.component';
+import { SearchByCaseNumberComponent } from './chameleon-reports/search-by-case-number/search-by-case-number.component';
 
 const routes: Routes = [
   { path: 'users', component: UsersComponent },
@@ -114,6 +115,8 @@ const routes: Routes = [
    { path: 'icd9-report', component: Icd9ReportComponent },
    { path: 'ssri-protocol', component: SSRIProtocolComponent },
    { path: 'hemo-dialysis', component: HemoDialysisReportComponent },
+   { path: 'SearchByCaseNumber', component: SearchByCaseNumberComponent },
+
 
 //shift-table
    { path: 'shift-table', component: ShiftTableComponent },
