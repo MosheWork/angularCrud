@@ -13,7 +13,7 @@ interface PalliativePatientsReportModel {
   LastName: string;
   IdNum: string;
   AdmissionNo: string;
-  MedicalRecord: string;
+ // MedicalRecord: string;
  // EntryDate: Date | null;
   ResultComboText: string;
   SystemUnitName: string;
@@ -36,7 +36,7 @@ export class PalliativePatientsReportComponent implements OnInit, AfterViewInit 
     'LastName',
     'IdNum',
     'AdmissionNo',
-    'MedicalRecord',
+    //'MedicalRecord',
     //'EntryDate',
     'ResultComboText',
     'SystemUnitName',
@@ -46,13 +46,27 @@ export class PalliativePatientsReportComponent implements OnInit, AfterViewInit 
     //'DescriptionMatchFound',
     'PatientDied'
   ];
+  columnHeaders: { [key: string]: string } = {
+    FirstName: 'שם פרטי',
+    LastName: 'שם משפחה',
+    IdNum: 'תעודת זהות',
+    AdmissionNo: 'מספר מקרה',
+    //MedicalRecord: '',
+    ResultComboText: 'מצב החולה',
+    SystemUnitName: 'מחלקה',
+    AdmissionDate: 'תאריך קבלה',
+    HospitalizationStatus: 'סטטוס אשפוז',
+    DiagnosisFound: 'אבחנה נמצאה',
+    PatientDied: 'מטופל נפטר'
+  };
+
   dataSource = new MatTableDataSource<PalliativePatientsReportModel>();
   totalResults: number = 0;
   filterForm: FormGroup;
   loading: boolean = false;
   globalFilter: string = '';
-  hospitalizationStatusOptions: string[] = ['Not Found', 'עדיין מאושפז', 'Released'];
-  yesNoOptions: string[] = ['Yes', 'No'];
+  hospitalizationStatusOptions: string[] = ['','Not Found', 'עדיין מאושפז', 'Released'];
+  yesNoOptions: string[] = ['','Yes', 'No'];
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
@@ -207,7 +221,7 @@ export class PalliativePatientsReportComponent implements OnInit, AfterViewInit 
       AdmissionNo: new FormControl(''),
       //EntryDate: new FormControl(''),
       AdmissionDate: new FormControl(''),
-      HospitalizationStatus: new FormControl(''),
+      HospitalizationStatus: new FormControl('עדיין מאושפז'),
       DiagnosisFound: new FormControl(''),
       PatientDied: new FormControl(''),
     });
