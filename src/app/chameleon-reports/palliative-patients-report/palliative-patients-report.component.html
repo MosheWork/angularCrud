@@ -1,0 +1,126 @@
+<div class="body">
+    <div class="nine">
+      <h1>
+        דוח מטופלים
+        <span>סה"כ תוצאות: {{ totalResults }}</span>
+      </h1>
+    </div>
+  
+    <div *ngIf="loading" class="spinner-container">
+      <mat-spinner></mat-spinner>
+    </div>
+  
+    <form [formGroup]="filterForm" dir="rtl" class="filter-form">
+        <div class="container-fluid mb-2">
+          <div class="row search-count">
+            <div class="col">
+              <div dir="rtl" class="card">
+                <div dir="rtl" class="card-body">
+                  <!-- Hospitalization Status Filter -->
+                  <mat-form-field class="filter-field">
+                    <mat-label>סטטוס אשפוז</mat-label>
+                    <mat-select formControlName="HospitalizationStatus" (selectionChange)="onFilterChange('HospitalizationStatus', $event.value)">
+                      <mat-option *ngFor="let status of hospitalizationStatusOptions" [value]="status">
+                        {{ status }}
+                      </mat-option>
+                    </mat-select>
+                  </mat-form-field>
+                  
+      
+                  <!-- Diagnosis Found Filter -->
+                  <mat-form-field class="filter-field">
+                    <mat-label>אבחנה נמצאה</mat-label>
+                    <mat-select formControlName="DiagnosisFound" (selectionChange)="onFilterChange('DiagnosisFound', $event.value)">
+                      <mat-option *ngFor="let option of yesNoOptions" [value]="option">
+                        {{ option }}
+                      </mat-option>
+                    </mat-select>
+                  </mat-form-field>
+                  
+      
+                  <!-- Patient Died Filter -->
+                  <mat-form-field class="filter-field">
+                    <mat-label>מטופל נפטר</mat-label>
+                    <mat-select
+                      formControlName="PatientDied"
+                      (selectionChange)="onFilterChange('PatientDied', $event.value)"
+                    >
+                      <mat-option *ngFor="let option of yesNoOptions" [value]="option">
+                        {{ option }}
+                      </mat-option>
+                    </mat-select>
+                  </mat-form-field>
+                  
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div
+        dir="rtl"
+        style="display: flex; justify-content: space-between; align-items: center"
+      >
+      <mat-form-field class="long-search-bar" style="flex: 1; padding-right: 10px">
+        <mat-label class="filters" style="color: blue"> חיפוש</mat-label>
+        <input matInput (input)="applyGlobalFilter($event)" class="search-input" />
+      </mat-form-field>
+        <div class="button-card">
+            <div class="button-container">
+              <button
+                mat-button
+                (click)="resetFilters()"
+                mat-raised-button
+                color="primary"
+                class="custom-button"
+                matTooltip="איפוס מסננים"
+              >
+                <i class="material-icons">refresh</i>
+              </button>
+            </div>
+          </div>
+        <div class="icon" matTooltip="Download Excel">
+          <img
+            src="../../assets/excel.png"
+            alt="Download"
+            (click)="exportToExcel()"
+            class="download-icon"
+            width="50px"
+          />
+        </div>
+      </div>
+      </form>
+      
+      
+    
+      
+   
+
+  
+    <!-- Data Table -->
+    <mat-table
+      [dataSource]="dataSource"
+      matSort
+      dir="rtl"
+      class="mat-elevation-z8"
+    >
+      <!-- Loop through displayed columns to define table columns -->
+      <ng-container *ngFor="let column of displayedColumns" [matColumnDef]="column">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>
+          {{ column }}
+        </mat-header-cell>
+        <mat-cell *matCellDef="let element"> {{ element[column] }} </mat-cell>
+      </ng-container>
+  
+      <!-- Define header and data rows -->
+      <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+      <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+    </mat-table>
+  
+    <!-- Paginator -->
+    <mat-paginator
+      [length]="totalResults"
+      [pageSize]="10"
+      [pageSizeOptions]="[10, 25, 50]"
+    ></mat-paginator>
+  </div>
+  

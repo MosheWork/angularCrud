@@ -114,6 +114,7 @@ import { Icd9ReportComponent } from './chameleon-reports/icd9-report/icd9-report
 import { SSRIProtocolComponent } from './chameleon-reports/ssriprotocol/ssriprotocol.component';
 import { HemoDialysisReportComponent } from './chameleon-reports/hemo-dialysis-report/hemo-dialysis-report.component';
 import { SearchByCaseNumberComponent } from './chameleon-reports/search-by-case-number/search-by-case-number.component';
+import { PalliativePatientsReportComponent } from './chameleon-reports/palliative-patients-report/palliative-patients-report.component';
 
 
 @NgModule({
@@ -197,7 +198,8 @@ import { SearchByCaseNumberComponent } from './chameleon-reports/search-by-case-
     Icd9ReportComponent,
     SSRIProtocolComponent,
     HemoDialysisReportComponent,
-    SearchByCaseNumberComponent
+    SearchByCaseNumberComponent,
+    PalliativePatientsReportComponent
   
   ],
   imports: [
