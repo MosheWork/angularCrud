@@ -197,7 +197,11 @@ export class PalliativePatientsReportComponent implements OnInit, AfterViewInit 
   
     // Apply the combined filter
     this.dataSource.filter = JSON.stringify(combinedFilters);
+  
+    // Update totalResults after filtering
+    this.totalResults = this.dataSource.filteredData.length;
   }
+  
   
   
   
