@@ -108,6 +108,7 @@ const routes: Routes = [
 
    //chameleon report
    { path: 'PalliativePatients', component: PalliativePatientsComponent },
+   { path: 'med-execution-table', component: MedExecutionTableComponent },
    { path: 'SkinIntegrityReport', component:SkinIntegrityReportComponent },
    { path: 'patient-guidance-report', component: PatientGuidanceReportComponent },
    { path: 'user-report', component: UsersReportComponent },
