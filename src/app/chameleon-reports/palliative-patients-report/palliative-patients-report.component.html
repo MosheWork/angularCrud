@@ -1,134 +1,151 @@
 <div class="body">
-    <div class="nine">
-      <h1>
-        דוח מטופלים
-        <span>סה"כ תוצאות: {{ totalResults }}</span>
-      </h1>
-    </div>
-  
-    <div *ngIf="loading" class="spinner-container">
-      <mat-spinner></mat-spinner>
-    </div>
-  
-    <form [formGroup]="filterForm" dir="rtl" class="filter-form">
-      <div class="container-fluid mb-2">
-        <div class="row search-count">
-          <div class="col">
-            <div dir="rtl" class="card">
-              <div dir="rtl" class="card-body">
-                <!-- Hospitalization Status Filter -->
-                <mat-form-field class="filter-field">
-                  <mat-label>סטטוס אשפוז</mat-label>
-                  <mat-select
-                    formControlName="HospitalizationStatus"
-                    (selectionChange)="onFilterChange('HospitalizationStatus', $event.value)"
+  <div class="nine">
+    <h1>
+      דוח מטופלים
+      <span>סה"כ תוצאות: {{ totalResults }}</span>
+    </h1>
+  </div>
+
+  <div *ngIf="loading" class="spinner-container">
+    <mat-spinner></mat-spinner>
+  </div>
+
+  <form [formGroup]="filterForm" dir="rtl" class="filter-form">
+    <div class="container-fluid mb-2">
+      <div class="row search-count">
+        <div class="col">
+          <div dir="rtl" class="card">
+            <div dir="rtl" class="card-body">
+              <!-- Hospitalization Status Filter -->
+              <mat-form-field class="filter-field">
+                <mat-label>סטטוס אשפוז</mat-label>
+                <mat-select
+                  formControlName="HospitalizationStatus"
+                  (selectionChange)="onFilterChange('HospitalizationStatus', $event.value)"
+                >
+                  <mat-option
+                    *ngFor="let status of hospitalizationStatusOptions"
+                    [value]="status"
                   >
-                    <mat-option
-                      *ngFor="let status of hospitalizationStatusOptions"
-                      [value]="status"
-                    >
-                      {{ status }}
-                    </mat-option>
-                  </mat-select>
-                </mat-form-field>
-  
-                <!-- Diagnosis Found Filter -->
-                <mat-form-field class="filter-field">
-                  <mat-label>אבחנה נמצאה</mat-label>
-                  <mat-select
-                    formControlName="DiagnosisFound"
-                    (selectionChange)="onFilterChange('DiagnosisFound', $event.value)"
-                  >
-                    <mat-option *ngFor="let option of yesNoOptions" [value]="option">
-                      {{ option }}
-                    </mat-option>
-                  </mat-select>
-                </mat-form-field>
-  
-                <!-- Patient Died Filter -->
-                <mat-form-field class="filter-field">
-                  <mat-label>מטופל נפטר</mat-label>
-                  <mat-select
-                    formControlName="PatientDied"
-                    (selectionChange)="onFilterChange('PatientDied', $event.value)"
-                  >
-                    <mat-option *ngFor="let option of yesNoOptions" [value]="option">
-                      {{ option }}
-                    </mat-option>
-                  </mat-select>
-                </mat-form-field>
-              </div>
+                    {{ status }}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+
+              <!-- Diagnosis Found Filter -->
+              <mat-form-field class="filter-field">
+                <mat-label>אבחנה נמצאה</mat-label>
+                <mat-select
+                  formControlName="DiagnosisFound"
+                  (selectionChange)="onFilterChange('DiagnosisFound', $event.value)"
+                >
+                  <mat-option *ngFor="let option of yesNoOptions" [value]="option">
+                    {{ option }}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+
+              <!-- Patient Died Filter -->
+              <mat-form-field class="filter-field">
+                <mat-label>מטופל נפטר</mat-label>
+                <mat-select
+                  formControlName="PatientDied"
+                  (selectionChange)="onFilterChange('PatientDied', $event.value)"
+                >
+                  <mat-option *ngFor="let option of yesNoOptions" [value]="option">
+                    {{ option }}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+
+              <!-- Record Count Filter -->
+              <mat-form-field class="filter-field">
+                <mat-label>מספר הרשומות</mat-label>
+                <mat-select
+                  formControlName="RecordCount"
+                  (selectionChange)="onFilterChange('RecordCount', $event.value)"
+                >
+                  <mat-option *ngFor="let option of recordCountOptions" [value]="option.value">
+                    {{ option.label }}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+              
+              
+              
             </div>
           </div>
         </div>
       </div>
-      <div
-        dir="rtl"
-        style="display: flex; justify-content: space-between; align-items: center"
-      >
-        <mat-form-field class="long-search-bar" style="flex: 1; padding-right: 10px">
-          <mat-label class="filters" style="color: blue"> חיפוש</mat-label>
-          <input matInput (input)="applyGlobalFilter($event)" class="search-input" />
-        </mat-form-field>
-        <div class="button-card">
-          <!-- Excel Button -->
-          <button
-            mat-raised-button
-            class="button excel-button"
-            matTooltip="Download Excel"
-            (click)="exportToExcel()"
-          >
-            <img
-              src="../../assets/excel.png"
-              alt="Download Excel"
-              class="download-icon"
-            />
-          </button>
-  
-          <!-- Reset Button -->
-          <button
-            mat-raised-button
-            class="button reset-button"
-            matTooltip="אפס סנן"
-            (click)="resetFilters()"
-          >
-            <i class="material-icons">refresh</i>
-          </button>
-        </div>
+    </div>
+    <div
+      dir="rtl"
+      style="display: flex; justify-content: space-between; align-items: center"
+    >
+      <mat-form-field class="long-search-bar" style="flex: 1; padding-right: 10px">
+        <mat-label class="filters" style="color: blue"> חיפוש</mat-label>
+        <input matInput (input)="applyGlobalFilter($event)" class="search-input" />
+      </mat-form-field>
+      <div class="button-card">
+        <!-- Excel Button -->
+        <button
+          mat-raised-button
+          class="button excel-button"
+          matTooltip="Download Excel"
+          (click)="exportToExcel()"
+        >
+          <img
+            src="../../assets/excel.png"
+            alt="Download Excel"
+            class="download-icon"
+          />
+        </button>
+
+        <!-- Reset Button -->
+        <button
+          mat-raised-button
+          class="button reset-button"
+          matTooltip="אפס סנן"
+          (click)="resetFilters()"
+        >
+          <i class="material-icons">refresh</i>
+        </button>
       </div>
-    </form>
-  
-    <!-- Data Table -->
-    <mat-table [dataSource]="dataSource" matSort dir="rtl" class="mat-elevation-z8">
-        <!-- Loop through displayed columns to define table columns -->
-        <ng-container *ngFor="let column of displayedColumns" [matColumnDef]="column">
-          <!-- Use columnHeaders mapping for the header -->
-          <mat-header-cell *matHeaderCellDef mat-sort-header>
-            {{ columnHeaders[column] }}
-          </mat-header-cell>
-          <!-- Cell content -->
-          <mat-cell *matCellDef="let element">
-            <!-- Use date pipe for AdmissionDate -->
-            <ng-container *ngIf="column === 'AdmissionDate'; else defaultCell">
-              {{ element[column] | date: 'dd/MM/yyyy HH:mm' }}
-            </ng-container>
-            <ng-template #defaultCell>
-              {{ element[column] }}
-            </ng-template>
-          </mat-cell>
+    </div>
+  </form>
+
+  <!-- Data Table -->
+  <mat-table [dataSource]="dataSource" matSort dir="rtl" class="mat-elevation-z8">
+    <!-- Loop through displayed columns to define table columns -->
+    <ng-container *ngFor="let column of displayedColumns" [matColumnDef]="column">
+      <!-- Use columnHeaders mapping for the header -->
+      <mat-header-cell *matHeaderCellDef mat-sort-header>
+        {{ columnHeaders[column] }}
+      </mat-header-cell>
+      <!-- Cell content -->
+      <mat-cell *matCellDef="let element">
+        <!-- Use date pipe for AdmissionDate -->
+        <ng-container *ngIf="column === 'AdmissionDate'; else defaultCell">
+          {{ element[column] | date: 'dd/MM/yyyy HH:mm' }}
         </ng-container>
-      
-        <!-- Define header and data rows -->
-        <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-        <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
-      </mat-table>
-      
-  
-    <!-- Paginator -->
-    <mat-paginator
-      [length]="totalResults"
-      [pageSize]="10"
-      [pageSizeOptions]="[10, 25, 50]"
-    ></mat-paginator>
-  </div>
-  
+        <!-- <ng-container *ngIf="column === 'RecordCount'; else defaultCell">
+          {{ element[column] }}
+        </ng-container> -->
+        <ng-template #defaultCell>
+          {{ element[column] }}
+        </ng-template>
+      </mat-cell>
+    </ng-container>
+
+    <!-- Define header and data rows -->
+    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+    <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+  </mat-table>
+
+  <!-- Paginator -->
+  <mat-paginator
+    [length]="totalResults"
+    [pageSize]="10"
+    [pageSizeOptions]="[10, 25, 50]"
+  ></mat-paginator>
+</div>

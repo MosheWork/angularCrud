@@ -22,6 +22,8 @@ interface PalliativePatientsReportModel {
   DiagnosisFound: string;
   //DescriptionMatchFound: string;
   PatientDied: string;
+  RecordCount: number; // New column
+
 }
 
 @Component({
@@ -44,7 +46,9 @@ export class PalliativePatientsReportComponent implements OnInit, AfterViewInit 
     'HospitalizationStatus',
     'DiagnosisFound',
     //'DescriptionMatchFound',
-    'PatientDied'
+    'PatientDied',
+    'RecordCount' // New column
+
   ];
   columnHeaders: { [key: string]: string } = {
     FirstName: 'שם פרטי',
@@ -57,7 +61,9 @@ export class PalliativePatientsReportComponent implements OnInit, AfterViewInit 
     AdmissionDate: 'תאריך קבלה',
     HospitalizationStatus: 'סטטוס אשפוז',
     DiagnosisFound: 'אבחנה נמצאה',
-    PatientDied: 'מטופל נפטר'
+    PatientDied: 'מטופל נפטר',
+    RecordCount: 'כמות אשפוזים בחצי שנה אחרונה ' // New column
+
   };
 
   dataSource = new MatTableDataSource<PalliativePatientsReportModel>();
@@ -67,6 +73,10 @@ export class PalliativePatientsReportComponent implements OnInit, AfterViewInit 
   globalFilter: string = '';
   hospitalizationStatusOptions: string[] = ['','Not Found', 'עדיין מאושפז', 'Released'];
   yesNoOptions: string[] = ['','Yes', 'No'];
+  recordCountOptions: { value: string, label: string }[] = [
+    { value: '', label: 'כל הערכים' }, // All values
+    { value: '>=3', label: '3 או יותר' } // 3 or more
+  ];
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
@@ -85,11 +95,13 @@ export class PalliativePatientsReportComponent implements OnInit, AfterViewInit 
     this.dataSource.sort = this.sort;
   }
   
-  onFilterChange(controlName: string, selectedValue: string): void {
-    console.log(`Filter '${controlName}' changed to:`, selectedValue);
+  onFilterChange(controlName: string, selectedValue: string | null): void {
+    const value = selectedValue?.trim() || ''; // Fallback to an empty string if null
+    console.log(`Filter '${controlName}' changed to:`, value);
     console.log('Current filter form values:', this.filterForm.value);
     this.applyFilters();
   }
+  
   
   loadData(): void {
     this.loading = true;
@@ -166,12 +178,27 @@ export class PalliativePatientsReportComponent implements OnInit, AfterViewInit 
         ? data.PatientDied === searchTerms.PatientDied
         : true;
   
-      return matchesGlobalFilter && matchesHospitalizationStatus && matchesDiagnosisFound && matchesPatientDied;
+      // RecordCount filter logic
+      const matchesRecordCount =
+        searchTerms.RecordCount === '>=3'
+          ? data.RecordCount >= 3 // Only allow records with RecordCount >= 3
+          : true; // If "All" is selected, show all rows
+  
+      // Combine all filters
+      return (
+        matchesGlobalFilter &&
+        matchesHospitalizationStatus &&
+        matchesDiagnosisFound &&
+        matchesPatientDied &&
+        matchesRecordCount
+      );
     };
   
     // Apply the combined filter
     this.dataSource.filter = JSON.stringify(combinedFilters);
   }
+  
+  
   
   
   
@@ -224,6 +251,7 @@ export class PalliativePatientsReportComponent implements OnInit, AfterViewInit 
       HospitalizationStatus: new FormControl('עדיין מאושפז'),
       DiagnosisFound: new FormControl(''),
       PatientDied: new FormControl(''),
+      RecordCount: new FormControl('') // New filter
     });
   }
   

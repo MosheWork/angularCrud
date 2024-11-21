@@ -11,18 +11,19 @@ table {
     margin: 20px 23px 1px 0px;
 }
 
-.mat-row:nth-child(odd) {
+::ng-deep .mat-row:nth-child(odd) {
     background-color: white;
-}
-
-.mat-row:nth-child(even) {
+  }
+  
+  ::ng-deep .mat-row:nth-child(even) {
     background-color: aliceblue;
-}
-
-.mat-row:hover {
+  }
+  
+  ::ng-deep .mat-row:hover {
     background-color: darkgray;
     cursor: pointer;
-}
+  }
+  
 
 /* Spinner styles */
 .spinner {
