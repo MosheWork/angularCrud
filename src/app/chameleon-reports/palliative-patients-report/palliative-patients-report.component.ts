@@ -141,6 +141,7 @@ export class PalliativePatientsReportComponent implements OnInit, AfterViewInit 
     const filterValue = (event.target as HTMLInputElement).value.trim().toLowerCase();
     this.globalFilter = filterValue;
     this.applyFilters();
+    
   }
 
   applyFilters(): void {

@@ -70,9 +70,6 @@
                   </mat-option>
                 </mat-select>
               </mat-form-field>
-              
-              
-              
             </div>
           </div>
         </div>
@@ -115,16 +112,19 @@
   </form>
 
   <!-- Data Table -->
-  <mat-table [dataSource]="dataSource" matSort dir="rtl" class="mat-elevation-z8">
-    <!-- Loop through displayed columns to define table columns -->
+  <mat-table
+    [dataSource]="dataSource"
+    matSort
+    dir="rtl"
+    class="mat-elevation-z8"
+  >
+    <!-- Define table columns -->
     <ng-container *ngFor="let column of displayedColumns" [matColumnDef]="column">
-      <!-- Use columnHeaders mapping for the header -->
       <mat-header-cell *matHeaderCellDef mat-sort-header>
         {{ columnHeaders[column] }}
       </mat-header-cell>
-      <!-- Cell content -->
       <mat-cell *matCellDef="let element">
-        <!-- Use date pipe for AdmissionDate -->
+        <!-- Render data for specific columns -->
         <ng-container *ngIf="column === 'AdmissionDate'; else defaultCell">
           {{ element[column] | date: 'dd/MM/yyyy HH:mm' }}
         </ng-container>
@@ -139,7 +139,7 @@
 
     <!-- Define header and data rows -->
     <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-    <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+    <mat-row *matRowDef="let row; columns: displayedColumns;" class="mat-row"></mat-row>
   </mat-table>
 
   <!-- Paginator -->
