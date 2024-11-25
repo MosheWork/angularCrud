@@ -43,38 +43,56 @@ export class DrugDetailsDialogComponent implements OnInit {
       drug.TimingString || '',
     ]);
   
+    // Calculate dynamic column widths based on page width
+    const pageWidth = doc.internal.pageSize.getWidth();
+    const columnWidths = {
+      wayOfGiving: pageWidth * 0.2, // 20% of page width
+      drugName: pageWidth * 0.5,   // 60% of page width
+      timing: pageWidth * 0.2,     // 20% of page width
+    };
+  
     // Add table to PDF
     autoTable(doc, {
       head: [['Way of Giving', 'Drug Name', 'Timing']],
       body: tableData,
-      startY: 30,
+      startY: 30, // Start 30 units from the top
       styles: {
         fontSize: 10,
         cellPadding: 5, // Add padding for better spacing
-        overflow: 'linebreak', // Wrap text to fit columns
-        valign: 'middle', // Center text vertically
+        overflow: 'linebreak', // Ensure text wraps to fit the cell
+        valign: 'middle', // Vertically center the text
+        halign: 'left', // Default horizontal alignment to left
       },
       headStyles: {
-        fillColor: [46, 125, 50], // Green header
-        textColor: [255, 255, 255], // White text
+        fillColor: [46, 125, 50], // Green header background
+        textColor: [255, 255, 255], // White header text
         fontStyle: 'bold',
       },
       columnStyles: {
-        0: { cellWidth: 30, halign: 'right' }, // Right-align "Way of Giving"
-        1: { cellWidth: 130, halign: 'left' }, // Left-align "Drug Name"
-        2: { cellWidth: 40, halign: 'center' }, // Center-align "Timing"
+        0: { cellWidth: 30, halign: 'right' }, // Fixed width for "Way of Giving", right-aligned
+        1: { cellWidth: 100, halign: 'left' }, // Wider width for "Drug Name", left-aligned
+        2: { cellWidth: 50, halign: 'center' }, // Fixed width for "Timing", center-aligned
       },
-      margin: { top: 30, bottom: 20, left: 10, right: 10 }, // Adjust margins
+      margin: { top: 30, bottom: 20, left: 20, right: 20 }, // Increase left/right margins for better layout
+      tableWidth: 'wrap', // Adjust the table to fit the page width
       didDrawPage: (data) => {
         const pageHeight = doc.internal.pageSize.height;
         doc.setFontSize(10);
-        doc.text(`Page ${doc.getNumberOfPages()}`, data.settings.margin.left, pageHeight - 10);
+        doc.text(
+          `Page ${doc.getNumberOfPages()}`, // Footer text
+          data.settings.margin.left,
+          pageHeight - 10 // Position 10 units from the bottom
+        );
       },
     });
+    
+    
+    
   
     // Save PDF
     doc.save('ActiveDrugsList.pdf');
   }
+  
   
   
   
