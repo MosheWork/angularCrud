@@ -39,7 +39,6 @@ export class GeriatricsDrugsOnVacationComponent implements OnInit {
   }
 
   ngOnInit() {
-    // Fetch data from API
     this.http.get<any[]>(`${environment.apiUrl}GeriatricsDrugsOnVacation/GetAllPatients`).subscribe(
       (data) => {
         this.dataSource = data;
@@ -48,14 +47,12 @@ export class GeriatricsDrugsOnVacationComponent implements OnInit {
         this.matTableDataSource.paginator = this.paginator;
         this.matTableDataSource.sort = this.sort;
 
-        // Add listeners for each column's filter
         this.columns.forEach((column) => {
           this.getFormControl(column).valueChanges
             .pipe(debounceTime(300), distinctUntilChanged())
             .subscribe(() => this.applyFilters());
         });
 
-        // Global filter
         this.filterForm.get('globalFilter')?.valueChanges
           .pipe(debounceTime(300), distinctUntilChanged())
           .subscribe(() => this.applyFilters());
