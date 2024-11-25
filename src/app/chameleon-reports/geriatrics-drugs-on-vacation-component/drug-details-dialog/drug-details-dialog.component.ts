@@ -53,7 +53,6 @@ export class DrugDetailsDialogComponent implements OnInit {
         cellPadding: 5, // Add padding for better spacing
         overflow: 'linebreak', // Wrap text to fit columns
         valign: 'middle', // Center text vertically
-        halign: 'center', // Center text horizontally
       },
       headStyles: {
         fillColor: [46, 125, 50], // Green header
@@ -61,9 +60,9 @@ export class DrugDetailsDialogComponent implements OnInit {
         fontStyle: 'bold',
       },
       columnStyles: {
-        0: { cellWidth: 30 }, // Adjust "Way of Giving" column width
-        1: { cellWidth: 130 }, // Increase width for "Drug Name"
-        2: { cellWidth: 40 }, // Allocate remaining space for "Timing"
+        0: { cellWidth: 30, halign: 'right' }, // Right-align "Way of Giving"
+        1: { cellWidth: 130, halign: 'left' }, // Left-align "Drug Name"
+        2: { cellWidth: 40, halign: 'center' }, // Center-align "Timing"
       },
       margin: { top: 30, bottom: 20, left: 10, right: 10 }, // Adjust margins
       didDrawPage: (data) => {
@@ -76,6 +75,8 @@ export class DrugDetailsDialogComponent implements OnInit {
     // Save PDF
     doc.save('ActiveDrugsList.pdf');
   }
+  
+  
   
  
 }
