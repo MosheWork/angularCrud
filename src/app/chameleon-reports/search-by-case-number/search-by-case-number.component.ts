@@ -22,7 +22,7 @@ export class SearchByCaseNumberComponent implements OnInit {
   Title1: string = 'סה"כ תוצאות: ';
   Title2: string = '';
 
-  columns: string[] = ['PMCaseNumber', 'PMDischargeDate',  'DepartName'];
+  columns: string[] = ['PMCaseNumber', 'PMMoveDate',  'DepartName'];
   dataSource: any[] = [];
   filteredData: any[] = [];
   matTableDataSource: MatTableDataSource<any>;

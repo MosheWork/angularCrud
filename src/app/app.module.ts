@@ -116,6 +116,7 @@ import { HemoDialysisReportComponent } from './chameleon-reports/hemo-dialysis-r
 import { SearchByCaseNumberComponent } from './chameleon-reports/search-by-case-number/search-by-case-number.component';
 import { PalliativePatientsReportComponent } from './chameleon-reports/palliative-patients-report/palliative-patients-report.component';
 import { GeriatricsDrugsOnVacationComponent } from './chameleon-reports/geriatrics-drugs-on-vacation-component/geriatrics-drugs-on-vacation-component.component';
+import { DrugDetailsDialogComponent } from './chameleon-reports/geriatrics-drugs-on-vacation-component/drug-details-dialog/drug-details-dialog.component';
 
 
 @NgModule({
@@ -201,7 +202,8 @@ import { GeriatricsDrugsOnVacationComponent } from './chameleon-reports/geriatri
     HemoDialysisReportComponent,
     SearchByCaseNumberComponent,
     PalliativePatientsReportComponent,
-    GeriatricsDrugsOnVacationComponent
+    GeriatricsDrugsOnVacationComponent,
+    DrugDetailsDialogComponent
   
   ],
   imports: [
