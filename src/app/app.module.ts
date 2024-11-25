@@ -115,6 +115,7 @@ import { SSRIProtocolComponent } from './chameleon-reports/ssriprotocol/ssriprot
 import { HemoDialysisReportComponent } from './chameleon-reports/hemo-dialysis-report/hemo-dialysis-report.component';
 import { SearchByCaseNumberComponent } from './chameleon-reports/search-by-case-number/search-by-case-number.component';
 import { PalliativePatientsReportComponent } from './chameleon-reports/palliative-patients-report/palliative-patients-report.component';
+import { GeriatricsDrugsOnVacationComponent } from './chameleon-reports/geriatrics-drugs-on-vacation-component/geriatrics-drugs-on-vacation-component.component';
 
 
 @NgModule({
@@ -199,7 +200,8 @@ import { PalliativePatientsReportComponent } from './chameleon-reports/palliativ
     SSRIProtocolComponent,
     HemoDialysisReportComponent,
     SearchByCaseNumberComponent,
-    PalliativePatientsReportComponent
+    PalliativePatientsReportComponent,
+    GeriatricsDrugsOnVacationComponent
   
   ],
   imports: [

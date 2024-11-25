@@ -50,6 +50,7 @@ import { SSRIProtocolComponent } from './chameleon-reports/ssriprotocol/ssriprot
 import { HemoDialysisReportComponent } from './chameleon-reports/hemo-dialysis-report/hemo-dialysis-report.component';
 import { SearchByCaseNumberComponent } from './chameleon-reports/search-by-case-number/search-by-case-number.component';
 import { PalliativePatientsReportComponent } from './chameleon-reports/palliative-patients-report/palliative-patients-report.component';
+import { GeriatricsDrugsOnVacationComponent } from './chameleon-reports/geriatrics-drugs-on-vacation-component/geriatrics-drugs-on-vacation-component.component';
 
 const routes: Routes = [
   { path: 'users', component: UsersComponent },
@@ -119,6 +120,7 @@ const routes: Routes = [
    { path: 'hemo-dialysis', component: HemoDialysisReportComponent },
    { path: 'SearchByCaseNumber', component: SearchByCaseNumberComponent },
    { path: 'palliative-patients-report', component: PalliativePatientsReportComponent },
+   { path: 'GeriatricsDrugsOnVacation', component: GeriatricsDrugsOnVacationComponent },
 
 
 //shift-table

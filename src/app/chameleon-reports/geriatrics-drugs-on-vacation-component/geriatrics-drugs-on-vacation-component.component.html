@@ -1,0 +1,79 @@
+<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
+<div class="body">
+  <div class="top-right-container">
+    <button mat-icon-button (click)="goToHome()" matTooltip="Go to Home">
+      <mat-icon>home</mat-icon>
+    </button>
+  </div>
+  <div class="nine">
+    <h1>
+      {{ titleUnit }}<span>{{ Title1 }}{{ Title2 }}{{ totalResults }}</span>
+    </h1>
+  </div>
+
+  <form [formGroup]="filterForm" dir="rtl" class="filter-form">
+    <div class="container-fluid mb-2">
+      <div class="row search-count">
+        <div class="col">
+          <div dir="rtl" class="card">
+            <div dir="rtl" class="card-body">
+              <ng-container *ngFor="let column of columns">
+                <mat-form-field class="filter-field">
+                  <mat-label class="filters">{{ getColumnLabel(column) }}</mat-label>
+                  <input matInput [formControl]="getFormControl(column)" class="filter-input" />
+                </mat-form-field>
+              </ng-container>
+            </div>
+            <div class="reset-button-container">
+              <button
+                mat-button
+                (click)="resetFilters()"
+                mat-raised-button
+                color="primary"
+                class="custom-button"
+                matTooltip="Reset Filters"
+              >
+                <i class="material-icons">refresh</i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div dir="rtl" style="display: flex; justify-content: space-between; align-items: center">
+      <mat-form-field class="long-search-bar">
+        <mat-label class="filters" style="color: blue">חיפוש</mat-label>
+        <input matInput [formControlName]="'globalFilter'" class="search-input" />
+      </mat-form-field>
+      <div class="icon" matTooltip="Download Excel">
+        <img
+          src="../../assets/excel.png"
+          alt="Download"
+          (click)="exportToExcel()"
+          class="download-icon"
+          width="50px"
+        />
+      </div>
+    </div>
+  </form>
+
+  <mat-table [dataSource]="matTableDataSource" matSort dir="rtl" class="mat-elevation-z8">
+    <ng-container *ngFor="let column of columns" [matColumnDef]="column">
+      <mat-header-cell *matHeaderCellDef mat-sort-header>
+        {{ getColumnLabel(column) }}
+      </mat-header-cell>
+      <mat-cell *matCellDef="let element">{{ element[column] }}</mat-cell>
+    </ng-container>
+
+    <mat-header-row *matHeaderRowDef="columns"></mat-header-row>
+    <mat-row *matRowDef="let row; columns: columns"></mat-row>
+  </mat-table>
+
+  <mat-paginator
+    [length]="matTableDataSource.paginator?.length || 0"
+    [pageIndex]="matTableDataSource.paginator?.pageIndex"
+    [pageSize]="matTableDataSource.paginator?.pageSize"
+    [pageSizeOptions]="[15, 50, 100]"
+    dir="rtl"
+  ></mat-paginator>
+</div>
