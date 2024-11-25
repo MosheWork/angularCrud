@@ -5,9 +5,11 @@ import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatSort } from '@angular/material/sort';
+import { MatDialog } from '@angular/material/dialog'; // Import MatDialog
 import { Router } from '@angular/router';
 import * as XLSX from 'xlsx';
 import { environment } from '../../../environments/environment';
+import { DrugDetailsDialogComponent } from './drug-details-dialog/drug-details-dialog.component'; // Import dialog component
 
 @Component({
   selector: 'app-geriatrics-drugs-on-vacation',
@@ -32,7 +34,8 @@ export class GeriatricsDrugsOnVacationComponent implements OnInit {
   constructor(
     private http: HttpClient,
     private fb: FormBuilder,
-    private router: Router
+    private router: Router,
+    private dialog: MatDialog // Inject MatDialog
   ) {
     this.filterForm = this.createFilterForm();
     this.matTableDataSource = new MatTableDataSource<any>([]);
@@ -128,6 +131,33 @@ export class GeriatricsDrugsOnVacationComponent implements OnInit {
     link.download = 'GeriatricsDrugsOnVacation.xlsx';
     link.click();
   }
+
+  openDrugDetails(row: any): void {
+    const idNum = row.Id_Num;
+    const apiUrl = `${environment.apiUrl}GeriatricsDrugsOnVacation/GetPatientDetails/${idNum}`;
+    
+    this.http.get<any[]>(apiUrl).subscribe(
+      (data) => {
+        console.log('Fetched drug details:', data); // Log API response
+        this.dialog.open(DrugDetailsDialogComponent, {
+          width: '600px',
+          data: data, // Pass the data array directly
+        });
+      },
+      (error) => {
+        console.error('Error fetching active drugs:', error);
+      }
+    );
+  }
+  
+  
+  
+  // showDrugDetailsDialog(drugDetails: any[]): void {
+  //   this.dialog.open(DrugDetailsDialogComponent, {
+  //     width: '600px',
+  //     data: drugDetails, // Pass the data to the dialog
+  //   });
+  // }
 
   goToHome() {
     this.router.navigate(['/MainPageReports']);

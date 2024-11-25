@@ -56,8 +56,7 @@
       </div>
     </div>
   </form>
-
-  <mat-table  [dataSource]="matTableDataSource" matSort dir="rtl" class="mat-elevation-z8">
+  <mat-table [dataSource]="matTableDataSource" matSort dir="rtl" class="mat-elevation-z8">
     <!-- Loop through columns to define each column in the table -->
     <ng-container *ngFor="let column of columns" [matColumnDef]="column">
       <mat-header-cell *matHeaderCellDef mat-sort-header>
@@ -65,13 +64,14 @@
       </mat-header-cell>
       <mat-cell *matCellDef="let element">{{ element[column] }}</mat-cell>
     </ng-container>
-
+  
     <!-- Define the header row -->
     <mat-header-row *matHeaderRowDef="columns"></mat-header-row>
-    <!-- Define the data row -->
-    <mat-row *matRowDef="let row; columns: columns" class="mat-row"></mat-row>
+    
+    <!-- Define the data row with click event -->
+    <mat-row *matRowDef="let row; columns: columns" (click)="openDrugDetails(row)"></mat-row>
   </mat-table>
-
+  
   <mat-paginator
     [length]="matTableDataSource.paginator?.length || 0"
     [pageIndex]="matTableDataSource.paginator?.pageIndex"
