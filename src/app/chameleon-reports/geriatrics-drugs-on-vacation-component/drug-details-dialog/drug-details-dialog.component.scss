@@ -48,4 +48,14 @@
     color: #3f51b5;
     font-weight: bold;
   }
+  .mat-cell, .mat-header-cell {
+    white-space: normal; /* Allows text wrapping */
+    word-wrap: break-word; /* Breaks long words */
+    line-height: 1.5; /* Improves readability for wrapped text */
+    padding: 8px; /* Adds padding for better spacing */
+  }
+  
+  .mat-row, .mat-header-row {
+    height: auto; /* Allow rows to adjust height based on content */
+  }
   

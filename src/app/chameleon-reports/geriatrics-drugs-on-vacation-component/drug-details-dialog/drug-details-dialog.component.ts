@@ -37,19 +37,11 @@ export class DrugDetailsDialogComponent implements OnInit {
     doc.text('Active Drugs List', 14, 20);
   
     // Convert data to table format
-    const tableData = this.dataSource.map(drug => [
+    const tableData = this.dataSource.map((drug) => [
       drug.Way_Of_Giving || '',
       drug.Drugs_Text || '',
       drug.TimingString || '',
     ]);
-  
-    // Calculate dynamic column widths based on page width
-    const pageWidth = doc.internal.pageSize.getWidth();
-    const columnWidths = {
-      wayOfGiving: pageWidth * 0.2, // 20% of page width
-      drugName: pageWidth * 0.5,   // 60% of page width
-      timing: pageWidth * 0.2,     // 20% of page width
-    };
   
     // Add table to PDF
     autoTable(doc, {
@@ -61,20 +53,19 @@ export class DrugDetailsDialogComponent implements OnInit {
         cellPadding: 5, // Add padding for better spacing
         overflow: 'linebreak', // Ensure text wraps to fit the cell
         valign: 'middle', // Vertically center the text
-        halign: 'left', // Default horizontal alignment to left
+        halign: 'left', // Default horizontal alignment
+      },
+      columnStyles: {
+        0: { cellWidth: 40 }, // Fixed width for "Way of Giving"
+        1: { cellWidth: 80 }, // Wider width for "Drug Name"
+        2: { cellWidth: 40 }, // Fixed width for "Timing"
       },
       headStyles: {
         fillColor: [46, 125, 50], // Green header background
         textColor: [255, 255, 255], // White header text
         fontStyle: 'bold',
       },
-      columnStyles: {
-        0: { cellWidth: 30, halign: 'right' }, // Fixed width for "Way of Giving", right-aligned
-        1: { cellWidth: 100, halign: 'left' }, // Wider width for "Drug Name", left-aligned
-        2: { cellWidth: 50, halign: 'center' }, // Fixed width for "Timing", center-aligned
-      },
-      margin: { top: 30, bottom: 20, left: 20, right: 20 }, // Increase left/right margins for better layout
-      tableWidth: 'wrap', // Adjust the table to fit the page width
+      margin: { top: 30, left: 10, right: 10 }, // Adjust margins for better layout
       didDrawPage: (data) => {
         const pageHeight = doc.internal.pageSize.height;
         doc.setFontSize(10);
@@ -85,16 +76,8 @@ export class DrugDetailsDialogComponent implements OnInit {
         );
       },
     });
-    
-    
-    
   
     // Save PDF
     doc.save('ActiveDrugsList.pdf');
   }
-  
-  
-  
-  
- 
 }
