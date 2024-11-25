@@ -1,0 +1,51 @@
+/* drug-details-dialog.component.scss */
+
+/* Style the dialog container */
+::ng-deep .mat-dialog-container {
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.25);
+  }
+  
+  /* Header styling */
+  h1[mat-dialog-title] {
+    font-size: 24px;
+    font-weight: bold;
+    color: #3f51b5; /* Material primary color */
+    margin-bottom: 16px;
+    text-align: center;
+  }
+  
+  /* Table styling */
+  table.mat-elevation-z8 {
+    width: 100%;
+    margin-top: 16px;
+  }
+  
+  th.mat-header-cell, td.mat-cell {
+    text-align: center;
+    font-size: 14px;
+    padding: 12px;
+  }
+  
+  th.mat-header-cell {
+    color: #757575;
+    font-weight: bold;
+    border-bottom: 1px solid #e0e0e0;
+  }
+  
+  td.mat-cell {
+    color: #424242;
+  }
+  
+  /* Actions styling */
+  div[mat-dialog-actions] {
+    justify-content: flex-end;
+    margin-top: 16px;
+  }
+  
+  button[mat-button] {
+    color: #3f51b5;
+    font-weight: bold;
+  }
+  

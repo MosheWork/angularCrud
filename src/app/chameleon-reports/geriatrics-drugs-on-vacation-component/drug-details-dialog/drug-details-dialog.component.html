@@ -1,29 +1,26 @@
 <h1 mat-dialog-title>Active Drugs</h1>
 <div mat-dialog-content>
   <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
-    <!-- Way of Giving Column -->
     <ng-container matColumnDef="Way_Of_Giving">
       <th mat-header-cell *matHeaderCellDef> Way of Giving </th>
       <td mat-cell *matCellDef="let element"> {{ element.Way_Of_Giving }} </td>
     </ng-container>
 
-    <!-- Drug Name Column -->
     <ng-container matColumnDef="Drugs_Text">
       <th mat-header-cell *matHeaderCellDef> Drug Name </th>
       <td mat-cell *matCellDef="let element"> {{ element.Drugs_Text }} </td>
     </ng-container>
 
-    <!-- Timing Column -->
     <ng-container matColumnDef="TimingString">
       <th mat-header-cell *matHeaderCellDef> Timing </th>
       <td mat-cell *matCellDef="let element"> {{ element.TimingString }} </td>
     </ng-container>
 
-    <!-- Header and Row Definitions -->
     <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
     <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
   </table>
 </div>
 <div mat-dialog-actions align="end">
+  <button mat-button (click)="generatePDF()">Export to PDF</button>
   <button mat-button (click)="closeDialog()">Close</button>
 </div>

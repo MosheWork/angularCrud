@@ -1,5 +1,7 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { jsPDF } from 'jspdf';
+import autoTable from 'jspdf-autotable';
 
 @Component({
   selector: 'app-drug-details-dialog',
@@ -27,4 +29,53 @@ export class DrugDetailsDialogComponent implements OnInit {
   closeDialog(): void {
     this.dialogRef.close();
   }
+  generatePDF(): void {
+    const doc = new jsPDF();
+  
+    // Add title
+    doc.setFontSize(18);
+    doc.text('Active Drugs List', 14, 20);
+  
+    // Convert data to table format
+    const tableData = this.dataSource.map(drug => [
+      drug.Way_Of_Giving || '',
+      drug.Drugs_Text || '',
+      drug.TimingString || '',
+    ]);
+  
+    // Add table to PDF
+    autoTable(doc, {
+      head: [['Way of Giving', 'Drug Name', 'Timing']],
+      body: tableData,
+      startY: 30,
+      styles: {
+        fontSize: 10,
+        cellPadding: 5, // Add padding for better spacing
+        overflow: 'linebreak', // Wrap text to fit columns
+        valign: 'middle', // Center text vertically
+        halign: 'center', // Center text horizontally
+      },
+      headStyles: {
+        fillColor: [46, 125, 50], // Green header
+        textColor: [255, 255, 255], // White text
+        fontStyle: 'bold',
+      },
+      columnStyles: {
+        0: { cellWidth: 30 }, // Adjust "Way of Giving" column width
+        1: { cellWidth: 130 }, // Increase width for "Drug Name"
+        2: { cellWidth: 40 }, // Allocate remaining space for "Timing"
+      },
+      margin: { top: 30, bottom: 20, left: 10, right: 10 }, // Adjust margins
+      didDrawPage: (data) => {
+        const pageHeight = doc.internal.pageSize.height;
+        doc.setFontSize(10);
+        doc.text(`Page ${doc.getNumberOfPages()}`, data.settings.margin.left, pageHeight - 10);
+      },
+    });
+  
+    // Save PDF
+    doc.save('ActiveDrugsList.pdf');
+  }
+  
+ 
 }
