@@ -1,10 +1,10 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
 <div class="body">
-  <div class="top-right-container">
+  <!-- <div class="top-right-container">
     <button mat-icon-button (click)="goToHome()" matTooltip="Go to Home">
       <mat-icon>home</mat-icon>
     </button>
-  </div>
+  </div> -->
   <div class="nine">
     <h1>
       {{ titleUnit }}<span>{{ Title1 }}{{ Title2 }}{{ totalResults }}</span>
@@ -69,7 +69,7 @@
     <mat-header-row *matHeaderRowDef="columns"></mat-header-row>
     
     <!-- Define the data row with click event -->
-    <mat-row *matRowDef="let row; columns: columns" (click)="openDrugDetails(row)"></mat-row>
+    <mat-row *matRowDef="let row; columns: columns" (click)="openDrugDetails(row)" class="mat-row"></mat-row>
   </mat-table>
   
   <mat-paginator

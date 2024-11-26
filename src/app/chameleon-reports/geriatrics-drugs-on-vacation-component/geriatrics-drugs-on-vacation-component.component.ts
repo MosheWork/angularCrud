@@ -140,8 +140,10 @@ export class GeriatricsDrugsOnVacationComponent implements OnInit {
       (data) => {
         console.log('Fetched drug details:', data); // Log API response
         this.dialog.open(DrugDetailsDialogComponent, {
-          width: '800px',
-          data: data, // Pass the data array directly
+          width: '60vw', // Make dialog wider
+          maxWidth: '100vw', // Prevent it from shrinking below screen width
+          height: 'auto', // Allow height to adjust dynamically
+          data: data,
         });
       },
       (error) => {

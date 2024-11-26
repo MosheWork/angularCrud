@@ -1,27 +1,47 @@
-<h1 mat-dialog-title>Active Drugs</h1>
-<div mat-dialog-content>
-    <mat-table [dataSource]="dataSource" class="mat-elevation-z8 full-width-table">
-        <ng-container matColumnDef="Way_Of_Giving">
-          <mat-header-cell *matHeaderCellDef> Way of Giving </mat-header-cell>
-          <mat-cell *matCellDef="let element"> {{ element.Way_Of_Giving }} </mat-cell>
-        </ng-container>
-      
-        <ng-container matColumnDef="Drugs_Text">
-          <mat-header-cell *matHeaderCellDef> Drug Name </mat-header-cell>
-          <mat-cell *matCellDef="let element"> {{ element.Drugs_Text }} </mat-cell>
-        </ng-container>
-      
-        <ng-container matColumnDef="TimingString">
-          <mat-header-cell *matHeaderCellDef> Timing </mat-header-cell>
-          <mat-cell *matCellDef="let element"> {{ element.TimingString }} </mat-cell>
-        </ng-container>
-      
-        <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-        <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
-      </mat-table>
-      
-</div>
-<div mat-dialog-actions align="end">
-  <button mat-button (click)="generatePDF()">Export to PDF</button>
-  <button mat-button (click)="closeDialog()">Close</button>
-</div>
+<mat-dialog-content class="dialog-content">
+  <div class="title-container">
+    <h1>תרופות פעילות</h1>
+  </div>
+  <table mat-table [dataSource]="dataSource" class="mat-elevation-z8 full-width-table styled-table">
+    <!-- Select Column -->
+    <ng-container matColumnDef="select">
+      <th mat-header-cell *matHeaderCellDef>
+        <mat-checkbox
+          [checked]="isAllSelected()"
+          [indeterminate]="hasPartialSelection()"
+          (change)="toggleAllRows($event)"
+        ></mat-checkbox>
+      </th>
+      <td mat-cell *matCellDef="let row">
+        <mat-checkbox [(ngModel)]="row.selected"></mat-checkbox>
+      </td>
+    </ng-container>
+
+    <!-- Way of Giving Column -->
+    <ng-container matColumnDef="Way_Of_Giving">
+      <th mat-header-cell *matHeaderCellDef> Way of Giving </th>
+      <td mat-cell *matCellDef="let row">{{ row.Way_Of_Giving }}</td>
+    </ng-container>
+
+    <!-- Drug Name Column -->
+    <ng-container matColumnDef="Drugs_Text">
+      <th mat-header-cell *matHeaderCellDef> Drug Name </th>
+      <td mat-cell *matCellDef="let row">{{ row.Drugs_Text }}</td>
+    </ng-container>
+
+    <!-- Timing Column -->
+    <ng-container matColumnDef="TimingString">
+      <th mat-header-cell *matHeaderCellDef> Timing </th>
+      <td mat-cell *matCellDef="let row">{{ row.TimingString }}</td>
+    </ng-container>
+
+    <!-- Header and Rows -->
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+  </table>
+</mat-dialog-content>
+
+<mat-dialog-actions class="dialog-actions">
+  <button mat-button mat-raised-button color="primary" (click)="closeDialog()">Close</button>
+  <button mat-button mat-raised-button color="accent" (click)="exportAsPDF()">Export PDF</button>
+</mat-dialog-actions>

@@ -1,61 +1,126 @@
-/* drug-details-dialog.component.scss */
-
-/* Style the dialog container */
+/* Dialog container styling */
 ::ng-deep .mat-dialog-container {
-    border-radius: 8px;
-    padding: 20px;
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.25);
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.25);
+  overflow: auto; /* Ensure long content is scrollable */
+  max-height: 90vh; /* Limit height for better responsiveness */
+}
+
+/* Dialog header styling */
+h1[mat-dialog-title] {
+  font-size: 24px;
+  font-weight: bold;
+  color: #3f51b5; /* Material primary color */
+  margin-bottom: 16px;
+  text-align: center;
+}
+
+/* Title styling */
+.title-container {
+  text-align: center;
+  margin-bottom: 16px;
+}
+
+.title-container h1 {
+  font-size: 24px;
+  font-weight: bold;
+  color: #3f51b5; /* Match the color of the "Close" button */
+}
+
+/* Table styling */
+table.mat-elevation-z8 {
+  width: 100%;
+  margin-top: 16px;
+  border-spacing: 0;
+  border-collapse: collapse; /* Ensure proper border handling */
+  table-layout: auto; /* Allow table to dynamically adjust based on content */
+}
+
+/* Styling for table headers and cells */
+th.mat-header-cell, td.mat-cell {
+  text-align: left; /* Align text to the left for better readability */
+  font-size: 14px;
+  padding: 12px;
+  vertical-align: top; /* Align text to the top */
+  word-wrap: break-word; /* Break long words */
+  white-space: normal; /* Enable text wrapping */
+  overflow-wrap: break-word; /* Ensure long unbroken words are wrapped */
+  border: 1px solid #ccc; /* Add borders to table cells */
+}
+
+th.mat-header-cell {
+  color: white; /* White header text */
+  background-color: #2e7d32; /* Green header background */
+  font-weight: bold;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+td.mat-cell {
+  color: #424242; /* Darker text for table content */
+}
+
+/* Responsive row height */
+.mat-row, .mat-header-row {
+  height: auto; /* Allow rows to expand based on content */
+}
+
+/* Styling for odd and even rows */
+.mat-row:nth-child(odd) {
+  background-color: white; /* Background for odd rows */
+}
+
+.mat-row:nth-child(even) {
+  background-color: aliceblue; /* Background for even rows */
+}
+
+/* Hover effect for all rows */
+.mat-row:hover {
+  background-color: darkgray; /* Highlight row on hover */
+  cursor: pointer;
+}
+
+/* Column-specific widths */
+.mat-column-select {
+  width: 5%; /* Checkbox column */
+  text-align: center;
+}
+
+.mat-column-Way_Of_Giving {
+  width: 20%; /* Fixed width for "Way of Giving" column */
+}
+
+.mat-column-Drugs_Text {
+  width: 50%; /* Fixed width for "Drug Name" column */
+}
+
+.mat-column-TimingString {
+  width: 30%; /* Fixed width for "Timing" column */
+}
+
+/* Dialog actions styling */
+.dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+button[mat-button] mat-icon {
+  margin-right: 5px; /* Add spacing between the icon and text */
+}
+
+/* Responsive design adjustments for smaller screens */
+@media (max-width: 768px) {
+  .mat-column-select,
+  .mat-column-Way_Of_Giving,
+  .mat-column-Drugs_Text,
+  .mat-column-TimingString {
+    width: auto; /* Allow dynamic resizing */
   }
-  
-  /* Header styling */
-  h1[mat-dialog-title] {
-    font-size: 24px;
-    font-weight: bold;
-    color: #3f51b5; /* Material primary color */
-    margin-bottom: 16px;
-    text-align: center;
-  }
-  
-  /* Table styling */
-  table.mat-elevation-z8 {
-    width: 100%;
-    margin-top: 16px;
-  }
-  
+
   th.mat-header-cell, td.mat-cell {
-    text-align: center;
-    font-size: 14px;
-    padding: 12px;
+    font-size: 12px; /* Reduce font size for smaller screens */
+    padding: 8px; /* Reduce padding for smaller screens */
   }
-  
-  th.mat-header-cell {
-    color: #757575;
-    font-weight: bold;
-    border-bottom: 1px solid #e0e0e0;
-  }
-  
-  td.mat-cell {
-    color: #424242;
-  }
-  
-  /* Actions styling */
-  div[mat-dialog-actions] {
-    justify-content: flex-end;
-    margin-top: 16px;
-  }
-  
-  button[mat-button] {
-    color: #3f51b5;
-    font-weight: bold;
-  }
-  .mat-cell, .mat-header-cell {
-    white-space: normal; /* Allows text wrapping */
-    word-wrap: break-word; /* Breaks long words */
-    line-height: 1.5; /* Improves readability for wrapped text */
-    padding: 8px; /* Adds padding for better spacing */
-  }
-  
-  .mat-row, .mat-header-row {
-    height: auto; /* Allow rows to adjust height based on content */
-  }
-  
+}
