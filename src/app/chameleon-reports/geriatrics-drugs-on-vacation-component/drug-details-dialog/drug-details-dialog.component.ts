@@ -53,55 +53,59 @@ export class DrugDetailsDialogComponent implements AfterViewInit {
   
     // Generate the table
     const tempTable = document.createElement('div');
-tempTable.innerHTML = `
-  <style>
-    table {
-      width: 100%;
-      border-collapse: collapse;
-    }
-    th, td {
-      border: 1px solid #ddd;
-      padding: 8px;
-      text-align: left;
-      word-wrap: break-word; /* Ensure text wraps inside cells */
-      white-space: normal; /* Allow multiline wrapping */
-      line-height: 1.5; /* Add spacing between wrapped lines */
-    }
-    th {
-      background-color: blue;
-      color: white;
-    }
-    tr:nth-child(even) {
-      background-color: #f9f9f9;
-    }
-    tr:hover {
-      background-color: #f1f1f1;
-    }
-  </style>
-  <table>
-    <thead>
-      <tr>
-        <th>צורת מתן</th>
-        <th>שם התרופה</th>
-        <th>תזמון</th>
-      </tr>
-    </thead>
-    <tbody>
-      ${selectedRows
-        .map(
-          (row) => `
-        <tr>
-          <td>${row.Way_Of_Giving}</td>
-          <td>${row.Drugs_Text}</td>
-          <td>${row.TimingString}</td>
-        </tr>
-      `
-        )
-        .join('')}
-    </tbody>
-  </table>
-`;
-
+    tempTable.innerHTML = `
+      <style>
+        .table-container {
+          padding: 20px; /* Add padding around the table */
+        }
+        table {
+          width: 100%;
+          border-collapse: collapse;
+        }
+        th, td {
+          border: 1px solid #ddd;
+          padding: 8px;
+          text-align: left;
+          word-wrap: break-word; /* Ensure text wraps inside cells */
+          white-space: normal; /* Allow multiline wrapping */
+          line-height: 1.5; /* Add spacing between wrapped lines */
+        }
+        th {
+          background-color: blue;
+          color: white;
+        }
+        tr:nth-child(even) {
+          background-color: #f9f9f9;
+        }
+        tr:hover {
+          background-color: #f1f1f1;
+        }
+      </style>
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>צורת מתן</th>
+              <th>שם התרופה</th>
+              <th>תזמון</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${selectedRows
+              .map(
+                (row) => `
+              <tr>
+                <td>${row.Way_Of_Giving}</td>
+                <td>${row.Drugs_Text}</td>
+                <td>${row.TimingString}</td>
+              </tr>
+            `
+              )
+              .join('')}
+          </tbody>
+        </table>
+      </div>
+    `;
   
     // Append the tempTable to the body and hide it
     tempTable.style.position = 'absolute';
@@ -125,7 +129,7 @@ tempTable.innerHTML = `
   
         // Add title to the PDF
         pdf.setFontSize(18);
-        pdf.text('תרופות פעילות', pageWidth / 2, 20, { align: 'center' });
+        pdf.text('Active Drugs', pageWidth / 2, 20, { align: 'center' });
   
         // Add the table image to the PDF
         pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
@@ -140,6 +144,7 @@ tempTable.innerHTML = `
         tempTable.remove(); // Ensure cleanup even on error
       });
   }
+  
   
   
   
