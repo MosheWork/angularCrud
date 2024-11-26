@@ -2,7 +2,7 @@
   <div class="title-container">
     <h1>תרופות פעילות</h1>
   </div>
-  <table mat-table [dataSource]="dataSource" class="mat-elevation-z8 full-width-table styled-table">
+  <table mat-table [dataSource]="dataSource" class="mat-elevation-z8 full-width-table styled-table" dir="rtl">
     <!-- Select Column -->
     <ng-container matColumnDef="select">
       <th mat-header-cell *matHeaderCellDef>
@@ -19,19 +19,19 @@
 
     <!-- Way of Giving Column -->
     <ng-container matColumnDef="Way_Of_Giving">
-      <th mat-header-cell *matHeaderCellDef> Way of Giving </th>
+      <th mat-header-cell *matHeaderCellDef> צורת מתן </th>
       <td mat-cell *matCellDef="let row">{{ row.Way_Of_Giving }}</td>
     </ng-container>
 
     <!-- Drug Name Column -->
     <ng-container matColumnDef="Drugs_Text">
-      <th mat-header-cell *matHeaderCellDef> Drug Name </th>
+      <th mat-header-cell *matHeaderCellDef> שם תרופה </th>
       <td mat-cell *matCellDef="let row">{{ row.Drugs_Text }}</td>
     </ng-container>
 
     <!-- Timing Column -->
     <ng-container matColumnDef="TimingString">
-      <th mat-header-cell *matHeaderCellDef> Timing </th>
+      <th mat-header-cell *matHeaderCellDef> תזמון </th>
       <td mat-cell *matCellDef="let row">{{ row.TimingString }}</td>
     </ng-container>
 

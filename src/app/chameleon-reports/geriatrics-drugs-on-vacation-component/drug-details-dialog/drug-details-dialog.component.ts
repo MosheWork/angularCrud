@@ -65,7 +65,7 @@ export class DrugDetailsDialogComponent implements AfterViewInit {
         th, td {
           border: 1px solid #ddd;
           padding: 8px;
-          text-align: left;
+          text-align: right; /* Align text to the right */
           word-wrap: break-word; /* Ensure text wraps inside cells */
           white-space: normal; /* Allow multiline wrapping */
           line-height: 1.5; /* Add spacing between wrapped lines */
@@ -86,7 +86,7 @@ export class DrugDetailsDialogComponent implements AfterViewInit {
           <thead>
             <tr>
               <th>צורת מתן</th>
-              <th>שם התרופה</th>
+              <th>שם תרופה</th>
               <th>תזמון</th>
             </tr>
           </thead>
@@ -95,9 +95,9 @@ export class DrugDetailsDialogComponent implements AfterViewInit {
               .map(
                 (row) => `
               <tr>
-                <td>${row.Way_Of_Giving}</td>
-                <td>${row.Drugs_Text}</td>
                 <td>${row.TimingString}</td>
+                <td>${row.Drugs_Text}</td>
+                <td>${row.Way_Of_Giving}</td>
               </tr>
             `
               )
@@ -144,6 +144,8 @@ export class DrugDetailsDialogComponent implements AfterViewInit {
         tempTable.remove(); // Ensure cleanup even on error
       });
   }
+  
+  
   
   
   
