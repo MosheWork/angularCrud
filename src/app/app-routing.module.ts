@@ -105,24 +105,23 @@ const routes: Routes = [
   { path: 'NewGuide', component: UploadGuideComponent },
 
    //Reports report
-   { path: 'PalliativePatients', component: PalliativePatientsComponent },
-   { path: 'med-execution-table', component: MedExecutionTableComponent },
-   { path: 'SkinIntegrityReport', component:SkinIntegrityReportComponent },
-   { path: 'patient-guidance-report', component: PatientGuidanceReportComponent },
-   { path: 'user-report', component: UsersReportComponent },
-   { path: 'SeniorDoctorNotSighned', component: SeniorDoctorNotSighnedComponent },
-   { path: 'UserLogPerCaseNumberReport', component: UserLogPerCaseNumberReportComponent },
-   { path: 'icd9-report', component: Icd9ReportComponent },
-   { path: 'ssri-protocol', component: SSRIProtocolComponent },
-   { path: 'hemo-dialysis', component: HemoDialysisReportComponent },
-   { path: 'SearchByCaseNumber', component: SearchByCaseNumberComponent },
-   { path: 'palliative-patients-report', component: PalliativePatientsReportComponent },
-   { path: 'GeriatricsDrugsOnVacation', component: GeriatricsDrugsOnVacationComponent },
-   { path: 'med-execution-table', component: MedExecutionTableComponent },
-   { path: 'stazerim', component: StazerimComponent },
-   { path: 'dynamicTable', component: DynamicTablesComponent },
-   { path: 'medicalDevices', component: MedicalDevicesComponent },
-   { path: 'ComponentsListInUnits', component: ComponentsListInUnitsComponent },
+   { path: 'PalliativePatients', component: PalliativePatientsComponent },// לא בשימוש
+   { path: 'med-execution-table', component: MedExecutionTableComponent },// דוח ביצוע תרופות לבית מרקחת
+   { path: 'SkinIntegrityReport', component:SkinIntegrityReportComponent },//אומדן שלמות העור
+   { path: 'patient-guidance-report', component: PatientGuidanceReportComponent },//דוח הנחיות למטופלים
+   { path: 'user-report', component: UsersReportComponent },//רשימת עובדים עם תאריך התחברות אחרונה
+   { path: 'SeniorDoctorNotSighned', component: SeniorDoctorNotSighnedComponent },// לא בשימוש -  דוח רופאים בכירים שלא חתמו
+   { path: 'UserLogPerCaseNumberReport', component: UserLogPerCaseNumberReportComponent },//בטיחות הטיפול - לוגים קמיליון
+   { path: 'icd9-report', component: Icd9ReportComponent },// חיפוש מטופלים על פי קוד ICD 9
+   { path: 'ssri-protocol', component: SSRIProtocolComponent },// צטופלים שהופעלה להם הוראה קלינית SSRI
+   { path: 'hemo-dialysis', component: HemoDialysisReportComponent },// דוח לדיאליזה
+   { path: 'SearchByCaseNumber', component: SearchByCaseNumberComponent },//חיפוש על פי מספרי מקרה-מחלקה משחררת
+   { path: 'palliative-patients-report', component: PalliativePatientsReportComponent },// מטופלים פליאטים לרווטיל
+   { path: 'GeriatricsDrugsOnVacation', component: GeriatricsDrugsOnVacationComponent },//דוח תרופות לחולים גריאטרים שיוצאים לחופשה - עוד לא אושר
+   { path: 'stazerim', component: StazerimComponent },//דוח הרשאות לסטזארים
+   { path: 'dynamicTable', component: DynamicTablesComponent },//רשימת טבלאות דינמאיות של הקמיליון
+   { path: 'medicalDevices', component: MedicalDevicesComponent },//רשימת מכשירים בקמיליון
+   { path: 'ComponentsListInUnits', component: ComponentsListInUnitsComponent },//רכיבים בקמיליון
 
 //shift-table
    { path: 'shift-table', component: ShiftTableComponent },
