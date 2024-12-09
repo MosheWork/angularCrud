@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { FormControl, FormGroup, FormBuilder } from '@angular/forms';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { MatPaginator } from '@angular/material/paginator';
@@ -20,10 +20,9 @@ interface FormControls {
 @Component({
   selector: 'app-palliative-patients-table',
   templateUrl: './palliative-patients.component.html',
-  styleUrls: ['./palliative-patients.component.scss']
+  styleUrls: ['./palliative-patients.component.scss'],
 })
 export class PalliativePatientsComponent implements OnInit {
-
   filteredResponsibilities: Observable<string[]> | undefined;
   showGraph: boolean = false;
   Title1: string = 'Palliative Care - Patient Report - ';
@@ -50,7 +49,7 @@ export class PalliativePatientsComponent implements OnInit {
     'ResultComboText',
     'SystemUnitName',
     'FieldRadioButton3Text',
-    'FieldTextArea1'
+    'FieldTextArea1',
   ];
 
   resetFilters() {
@@ -72,7 +71,7 @@ export class PalliativePatientsComponent implements OnInit {
       ResultComboText: 'הגדרת חולה ',
       SystemUnitName: 'יחידה',
       FieldRadioButton3Text: 'הנחיות מוקדמות',
-      FieldTextArea1: 'פירוט הנחיות מוקדמות'
+      FieldTextArea1: 'פירוט הנחיות מוקדמות',
     };
     return columnLabels[column] || column;
   }
@@ -88,35 +87,59 @@ export class PalliativePatientsComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.http.get<any[]>(environment.apiUrl + 'palliativePatients').subscribe((data) => {
-      this.dataSource = data;
-      this.filteredData = [...data];
-      this.matTableDataSource = new MatTableDataSource(this.filteredData);
-      this.matTableDataSource.paginator = this.paginator;
-      this.matTableDataSource.sort = this.sort;
-      
-      this.columns.forEach((column) => {
-        this.filterForm.get(column)?.valueChanges.pipe(debounceTime(300), distinctUntilChanged()).subscribe(() => this.applyFilters());
-      });
+    this.autoLogin();
+    this.http
+      .get<any[]>(environment.apiUrl + 'palliativePatients')
+      .subscribe((data) => {
+        this.dataSource = data;
+        this.filteredData = [...data];
+        this.matTableDataSource = new MatTableDataSource(this.filteredData);
+        this.matTableDataSource.paginator = this.paginator;
+        this.matTableDataSource.sort = this.sort;
 
-      this.filterForm.valueChanges.subscribe(() => {
+        this.columns.forEach((column) => {
+          this.filterForm
+            .get(column)
+            ?.valueChanges.pipe(debounceTime(300), distinctUntilChanged())
+            .subscribe(() => this.applyFilters());
+        });
+
+        this.filterForm.valueChanges.subscribe(() => {
+          this.applyFilters();
+          this.paginator.firstPage();
+        });
+
         this.applyFilters();
-        this.paginator.firstPage();
       });
 
-      this.applyFilters();
-    });
-
-    this.filteredResponsibilities = this.getFormControl('field_radio_button3_text').valueChanges.pipe(
+    this.filteredResponsibilities = this.getFormControl(
+      'field_radio_button3_text'
+    ).valueChanges.pipe(
       startWith(''),
       map((value) => this._filter(value)),
       tap((filteredValues) => console.log('Filtered Values:', filteredValues))
     );
   }
 
+  autoLogin() {
+    const headers = new HttpHeaders().set('Content-Type', 'application/json');
+    const url = environment.apiUrl + 'User/current';
+
+    this.http.get(url, { headers, withCredentials: true }).subscribe(
+      (response: any) => {
+        let user_details = response;
+        console.log(response);
+      },
+      (error) => {
+        console.error('Error:', error);
+      }
+    );
+  }
   private _filter(value: string): string[] {
     const filterValue = value.toLowerCase();
-    const filteredOptions = this.filteredData.filter((option) => option.field_radio_button3_text.toLowerCase().includes(filterValue));
+    const filteredOptions = this.filteredData.filter((option) =>
+      option.field_radio_button3_text.toLowerCase().includes(filterValue)
+    );
     console.log('Filtered Options:', filteredOptions);
     return filteredOptions;
   }
@@ -145,7 +168,10 @@ export class PalliativePatientsComponent implements OnInit {
 
           return !filters[column] || value.includes(filters[column]);
         }) &&
-        (globalFilter === '' || this.columns.some((column) => String(item[column]).toLowerCase().includes(globalFilter)))
+        (globalFilter === '' ||
+          this.columns.some((column) =>
+            String(item[column]).toLowerCase().includes(globalFilter)
+          ))
     );
 
     this.totalResults = this.filteredData.length;

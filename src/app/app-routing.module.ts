@@ -63,11 +63,8 @@ const routes: Routes = [
   { path: 'applications', component: ApplicationsListComponent },
   { path: 'contacts', component: ContactsComponent },
   { path: 'contacts/:applicationID', component: ContactsComponent }, // Add this line
-  { path: 'dynamicTable', component: DynamicTablesComponent },
-  { path: 'ComponentsListInUnits', component: ComponentsListInUnitsComponent },
-  { path: 'med-execution-table', component: MedExecutionTableComponent },
-  { path: 'medicalDevices', component: MedicalDevicesComponent },
-  { path: 'stazerim', component: StazerimComponent },
+  
+
   { path: 'SysAid', component: SysAidComponent },
   { path: 'sys-graph', component: SysGraphComponent },
   {
@@ -107,7 +104,7 @@ const routes: Routes = [
   { path: 'guideList', component: GuideListComponent },
   { path: 'NewGuide', component: UploadGuideComponent },
 
-   //chameleon report
+   //Reports report
    { path: 'PalliativePatients', component: PalliativePatientsComponent },
    { path: 'med-execution-table', component: MedExecutionTableComponent },
    { path: 'SkinIntegrityReport', component:SkinIntegrityReportComponent },
@@ -121,7 +118,11 @@ const routes: Routes = [
    { path: 'SearchByCaseNumber', component: SearchByCaseNumberComponent },
    { path: 'palliative-patients-report', component: PalliativePatientsReportComponent },
    { path: 'GeriatricsDrugsOnVacation', component: GeriatricsDrugsOnVacationComponent },
-
+   { path: 'med-execution-table', component: MedExecutionTableComponent },
+   { path: 'stazerim', component: StazerimComponent },
+   { path: 'dynamicTable', component: DynamicTablesComponent },
+   { path: 'medicalDevices', component: MedicalDevicesComponent },
+   { path: 'ComponentsListInUnits', component: ComponentsListInUnitsComponent },
 
 //shift-table
    { path: 'shift-table', component: ShiftTableComponent },
