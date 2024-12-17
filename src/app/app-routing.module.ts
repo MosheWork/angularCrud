@@ -51,6 +51,7 @@ import { HemoDialysisReportComponent } from './chameleon-reports/hemo-dialysis-r
 import { SearchByCaseNumberComponent } from './chameleon-reports/search-by-case-number/search-by-case-number.component';
 import { PalliativePatientsReportComponent } from './chameleon-reports/palliative-patients-report/palliative-patients-report.component';
 import { GeriatricsDrugsOnVacationComponent } from './chameleon-reports/geriatrics-drugs-on-vacation-component/geriatrics-drugs-on-vacation-component.component';
+import { DrugsReportComponent } from './chameleon-reports/drugs-report-component/drugs-report-component.component';
 
 const routes: Routes = [
   { path: 'users', component: UsersComponent },
@@ -122,6 +123,8 @@ const routes: Routes = [
    { path: 'dynamicTable', component: DynamicTablesComponent },//רשימת טבלאות דינמאיות של הקמיליון
    { path: 'medicalDevices', component: MedicalDevicesComponent },//רשימת מכשירים בקמיליון
    { path: 'ComponentsListInUnits', component: ComponentsListInUnitsComponent },//רכיבים בקמיליון
+   { path: 'DrugsReport', component: DrugsReportComponent },//לורדית דוח של מטופלות עם תרופות קבועות או פעילות על פי קודים של יולדות
+
 
 //shift-table
    { path: 'shift-table', component: ShiftTableComponent },
