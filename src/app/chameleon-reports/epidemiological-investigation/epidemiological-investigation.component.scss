@@ -227,76 +227,50 @@
     justify-content: flex-end; /* Aligns horizontally to the right */
     padding: 10px; /* Add some padding */
   }
-  .timeline-container {
-    margin: 20px;
-    text-align: center;
-  }
-  
-  .timeline {
+
+
+
+  .custom-timeline {
+    display: flex;
+    flex-direction: column;
     position: relative;
-    margin: 20px auto;
-    padding: 20px 0;
-    max-width: 600px;
-  }
-  
-  .timeline::after {
-    content: '';
-    position: absolute;
-    width: 4px;
-    background-color: #3f51b5;
-    top: 0;
-    bottom: 0;
-    left: 50%;
-    margin-left: -2px;
+    padding-left: 40px;
   }
   
   .timeline-event {
     display: flex;
-    margin: 20px 0;
+    align-items: center;
+    margin-bottom: 20px;
     position: relative;
   }
   
-  .timeline-event:nth-child(odd) {
-    flex-direction: row-reverse;
-  }
-  
-  .timeline-event .timeline-badge {
-    background-color: #3f51b5;
-    border: 3px solid #ffffff;
-    border-radius: 50%;
+  .timeline-badge {
     width: 20px;
     height: 20px;
+    background-color: #3f51b5;
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     position: absolute;
-    top: 0;
-    left: 50%;
-    margin-left: -10px;
-    z-index: 1;
+    left: 0;
   }
   
-  .timeline-event .timeline-content {
+  .timeline-line {
+    width: 2px;
+    background-color: #3f51b5;
+    position: absolute;
+    left: 10px;
+    top: 20px;
+    bottom: 0;
+  }
+  
+  .timeline-content {
+    background: #f5f5f5;
     padding: 10px;
-    background-color: white;
-    border-radius: 8px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-    width: 300px;
-    position: relative;
-  }
-  
-  .timeline-event:nth-child(odd) .timeline-content {
-    margin-right: 20px;
-  }
-  
-  .timeline-event:nth-child(even) .timeline-content {
-    margin-left: 20px;
-  }
-  
-  .event-date {
-    font-size: 14px;
-    color: #757575;
-  }
-  
-  .event-details {
-    font-size: 16px;
-    color: #424242;
+    border-radius: 4px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-left: 40px;
   }
   

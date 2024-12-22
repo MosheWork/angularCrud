@@ -23,6 +23,7 @@
     "@angular/router": "^15.1.0",
     "@coreui/angular": "^4.7.16",
     "@fortawesome/fontawesome-free": "^6.5.2",
+    "@frxjs/ngx-timeline": "^19.0.2",
     "@kolkov/angular-editor": "^3.0.0-beta.0",
     "@schematics/angular": "^17.2.3",
     "angular-dual-listbox": "^7.0.0",

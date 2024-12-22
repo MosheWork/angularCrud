@@ -9,18 +9,18 @@ import { Router } from '@angular/router';
 import * as XLSX from 'xlsx';
 import { environment } from '../../../environments/environment';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { Chart, registerables } from 'chart.js';
+
 
 
 @Component({
   selector: 'app-epidemiological-investigation',
   templateUrl: './epidemiological-investigation.component.html',
-  styleUrls: ['./epidemiological-investigation.component.scss']
+  styleUrls: ['./epidemiological-investigation.component.scss'],
 })
 export class EpidemiologicalInvestigationComponent implements OnInit {
-  totalResults: number = 0;
   titleUnit: string = 'חקירה אפידמיולוגית';
-  titleResults: string = 'סה"כ תוצאות: ';
+  totalResults: number = 0;
+  timelineEvents: any[] = []; // For the timeline display
 
   columns: string[] = ['MedicalRecord', 'EntryDate', 'EntryUserName', 'Heading', 'UnitName', 'Source'];
   dataSource: any[] = [];
@@ -29,7 +29,6 @@ export class EpidemiologicalInvestigationComponent implements OnInit {
 
   filterForm: FormGroup;
   idNumControl: FormControl;
-  timelineData: any[] = []; // Timeline data array
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
@@ -37,7 +36,6 @@ export class EpidemiologicalInvestigationComponent implements OnInit {
   constructor(
     private http: HttpClient,
     private fb: FormBuilder,
-    private router: Router,
     private snackBar: MatSnackBar
   ) {
     this.filterForm = this.createFilterForm();
@@ -49,7 +47,7 @@ export class EpidemiologicalInvestigationComponent implements OnInit {
     this.setupFormValueChanges();
   }
 
-  // Fetch data based on the entered Id_Num
+  // Fetch table and timeline data
   fetchData() {
     const idNum = this.idNumControl.value?.trim();
 
@@ -58,38 +56,37 @@ export class EpidemiologicalInvestigationComponent implements OnInit {
       return;
     }
 
-    // API call to fetch data
-    this.http.get<any[]>(`${environment.apiUrl}EpidemiologicalInvestigation/investigate`, {
-      params: { idNum }
-    }).subscribe((data) => {
-      this.dataSource = data;
-      this.filteredData = [...this.dataSource];
-      this.matTableDataSource = new MatTableDataSource(this.filteredData);
-      this.matTableDataSource.paginator = this.paginator;
-      this.matTableDataSource.sort = this.sort;
-      this.applyFilters();
-      this.totalResults = this.dataSource.length;
-    }, error => {
-      console.error('Error fetching data:', error);
-      this.snackBar.open('שגיאה בטעינת נתונים', 'סגור', { duration: 3000 });
-    });
+    this.http
+      .get<any[]>(`${environment.apiUrl}EpidemiologicalInvestigation/investigate`, { params: { idNum } })
+      .subscribe(
+        (data) => {
+          // Update table data
+          this.dataSource = data;
+          this.filteredData = [...this.dataSource];
+          this.matTableDataSource = new MatTableDataSource(this.filteredData);
+          this.matTableDataSource.paginator = this.paginator;
+          this.matTableDataSource.sort = this.sort;
+          this.applyFilters();
+          this.totalResults = this.dataSource.length;
+
+          // Populate timeline events
+          this.populateTimeline(data);
+        },
+        (error) => {
+          console.error('Error fetching data:', error);
+          this.snackBar.open('שגיאה בטעינת נתונים', 'סגור', { duration: 3000 });
+        }
+      );
   }
 
-  // Create form for global filter
   createFilterForm(): FormGroup {
-    const formControls: { [key: string]: FormControl } = {};
-    this.columns.forEach((column) => {
-      formControls[column] = new FormControl('');
-    });
-    formControls['globalFilter'] = new FormControl('');
     return this.fb.group({
       globalFilter: [''],
-      startDate: [''], // Define start date filter
-      endDate: [''],   // Define end date filter
+      startDate: [''],
+      endDate: [''],
     });
   }
 
-  // Set up global filter
   setupFormValueChanges() {
     this.filterForm.valueChanges
       .pipe(debounceTime(300), distinctUntilChanged())
@@ -99,21 +96,20 @@ export class EpidemiologicalInvestigationComponent implements OnInit {
       });
   }
 
-  // Apply global filters to the table
   applyFilters() {
     const filters = this.filterForm.value;
     const globalFilter = (filters.globalFilter || '').toLowerCase();
     const startDate = filters.startDate ? new Date(filters.startDate) : null;
     const endDate = filters.endDate ? new Date(filters.endDate) : null;
-  
+
     this.filteredData = this.dataSource.filter((item) => {
-      // Global filter
+      // Apply global filter
       const globalMatch = this.columns.some((column) => {
         const value = (item[column] || '').toString().toLowerCase();
         return value.includes(globalFilter);
       });
-  
-      // Date filter: Check if EntryDate falls within the selected range
+
+      // Apply date filter
       let dateMatch = true;
       if (startDate || endDate) {
         const entryDate = new Date(item.EntryDate);
@@ -124,14 +120,13 @@ export class EpidemiologicalInvestigationComponent implements OnInit {
           dateMatch = false;
         }
       }
-  
+
       return (globalFilter === '' || globalMatch) && dateMatch;
     });
-  
+
     this.totalResults = this.filteredData.length;
     this.matTableDataSource.data = this.filteredData;
   }
-  
 
   resetFilters() {
     this.filterForm.reset();
@@ -153,84 +148,20 @@ export class EpidemiologicalInvestigationComponent implements OnInit {
     link.click();
   }
 
-  goToHome() {
-    this.router.navigate(['/MainPageReports']);
+  // Populate timeline events
+  populateTimeline(data: any[]) {
+    this.timelineEvents = data.map((item) => ({
+      timestamp: item.EntryDate,
+      title: item.EntryUserName,
+      description: item.Heading || 'No details available',
+    }));
   }
 
-  fetchTimelineData() {
-    const idNum = this.idNumControl.value?.trim();
-  
-    if (!idNum) {
-      this.snackBar.open('יש להזין מספר מזהה', 'סגור', { duration: 3000 });
-      return;
-    }
-  
-    this.http.get<any[]>(`${environment.apiUrl}EpidemiologicalInvestigation/investigate`, {
-      params: { idNum }
-    }).subscribe((data) => {
-      // Transform API data into timeline format
-      this.timelineData = data.map((item) => ({
-        timestamp: item.EntryDate, // Replace with your API's date field
-        user: item.EntryUserName, // Replace with your API's user field
-        details: item.Heading || 'No details available' // Replace with your API's details field
-      }));
-    }, error => {
-      console.error('Error fetching timeline data:', error);
-      this.snackBar.open('שגיאה בטעינת נתונים', 'סגור', { duration: 3000 });
-    });
-  }
-  
-  
-  createTimelineChart() {
-    const ctx = document.getElementById('timelineChart') as HTMLCanvasElement;
-  
-    // Use the transformed timelineData
-    const labels = this.timelineData.map((item) => item.timestamp);
-    const data = this.timelineData.map((item) => item.user);
-  
-    new Chart(ctx, {
-      type: 'line',
-      data: {
-        labels,
-        datasets: [
-          {
-            label: 'User Activity Over Time',
-            data,
-            borderColor: '#3f51b5',
-            backgroundColor: 'rgba(63, 81, 181, 0.3)',
-            fill: true,
-          },
-        ],
-      },
-      options: {
-        responsive: true,
-        plugins: {
-          legend: {
-            position: 'top',
-          },
-        },
-        scales: {
-          x: {
-            title: {
-              display: true,
-              text: 'Timestamp',
-            },
-          },
-          y: {
-            title: {
-              display: true,
-              text: 'User',
-            },
-          },
-        },
-      },
-    });
-  }
-  
-  
+  // Handle tab change
   onTabChange(index: number) {
-    if (index === 1) { // Timeline tab index
-      this.fetchTimelineData();
+    if (index === 1) {
+      // Reload timeline data when switching to the timeline tab
+      console.log('Timeline tab selected. Events:', this.timelineEvents);
     }
   }
 }
