@@ -227,50 +227,79 @@
     justify-content: flex-end; /* Aligns horizontally to the right */
     padding: 10px; /* Add some padding */
   }
-
-
-
-  .custom-timeline {
-    display: flex;
-    flex-direction: column;
+  .timeline-container {
+    margin: 0 auto;
+    max-width: 800px;
+    font-family: Arial, sans-serif;
+  }
+  
+  .timeline {
     position: relative;
-    padding-left: 40px;
-  }
+    margin: 20px 0;
+    padding-left: 50px;
+    border-left: 2px solid #ddd;
   
-  .timeline-event {
-    display: flex;
-    align-items: center;
-    margin-bottom: 20px;
-    position: relative;
-  }
+    .timeline-item {
+      display: flex;
+      align-items: flex-start;
+      margin-bottom: 40px;
+      position: relative;
   
-  .timeline-badge {
-    width: 20px;
-    height: 20px;
-    background-color: #3f51b5;
-    color: white;
-    border-radius: 50%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    position: absolute;
-    left: 0;
-  }
+      .timeline-dot {
+        width: 10px;
+        height: 10px;
+        background-color: #4CAF50;
+        border-radius: 50%;
+        position: absolute;
+        left: -6px;
+      }
   
-  .timeline-line {
-    width: 2px;
-    background-color: #3f51b5;
-    position: absolute;
-    left: 10px;
-    top: 20px;
-    bottom: 0;
-  }
+      .timeline-year {
+        position: absolute;
+        left: -60px;
+        font-size: 14px;
+        color: #777;
+      }
   
-  .timeline-content {
-    background: #f5f5f5;
-    padding: 10px;
-    border-radius: 4px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    margin-left: 40px;
+      .timeline-content {
+        position: relative;
+        margin-left: 30px;
+        display: flex;
+        flex-direction: column;
+  
+        &.left {
+          align-items: flex-start;
+        }
+  
+        &.right {
+          align-items: flex-end;
+        }
+  
+        .timeline-card {
+          background-color: #f5faff;
+          padding: 15px;
+          border-radius: 8px;
+          box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.1);
+          max-width: 300px;
+  
+          h3 {
+            margin: 0 0 10px;
+            font-size: 16px;
+            font-weight: bold;
+          }
+  
+          p {
+            margin: 0 0 5px;
+            font-size: 14px;
+            color: #555;
+          }
+  
+          .timeline-date {
+            font-size: 12px;
+            color: #999;
+          }
+        }
+      }
+    }
   }
   

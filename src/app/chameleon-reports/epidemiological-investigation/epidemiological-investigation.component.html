@@ -56,7 +56,7 @@
           <!-- Entry Date Column -->
           <ng-container matColumnDef="EntryDate">
             <mat-header-cell *matHeaderCellDef mat-sort-header> תאריך </mat-header-cell>
-            <mat-cell *matCellDef="let element"> {{ element.EntryDate | date: 'dd/MM/yyyy' }} </mat-cell>
+            <mat-cell *matCellDef="let element"> {{ element.EntryDate | date: 'dd/MM/yyyy  MM:ss' }} </mat-cell>
           </ng-container>
   
           <!-- Entry User Name Column -->
@@ -99,19 +99,27 @@
   
       <!-- Tab 2: Timeline View -->
       <mat-tab label="ציר זמן">
-        <div class="custom-timeline">
-            <div *ngFor="let event of timelineEvents; let i = index" class="timeline-event">
-              <div class="timeline-badge">{{ i + 1 }}</div>
-              <div class="timeline-line"></div>
-              <div class="timeline-content">
-                <h3>{{ event.title }}</h3>
-                <p>{{ event.timestamp | date: 'dd/MM/yyyy HH:mm' }}</p>
-                <p>{{ event.description }}</p>
+        <div class="timeline-container">
+            <h1>{{ titleUnit }}</h1>
+            <div *ngIf="timelineEvents.length > 0" class="timeline">
+              <div *ngFor="let event of timelineEvents; let i = index" class="timeline-item">
+                <div class="timeline-year">{{ event.timestamp.split(' ')[0] }}</div>
+                <div class="timeline-content" [class.left]="i % 2 === 0" [class.right]="i % 2 !== 0">
+                  <div class="timeline-dot"></div>
+                  <div class="timeline-card">
+                    <h3>{{ event.title }}</h3>
+                    <p>{{ event.description }}</p>
+                    <span class="timeline-date">{{ event.timestamp }}</span>
+                  </div>
+                </div>
               </div>
             </div>
+            <p *ngIf="timelineEvents.length === 0">No timeline events available.</p>
           </div>
           
       </mat-tab>
+          
+  
     </mat-tab-group>
   </div>
   
