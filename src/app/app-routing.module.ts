@@ -52,6 +52,7 @@ import { SearchByCaseNumberComponent } from './chameleon-reports/search-by-case-
 import { PalliativePatientsReportComponent } from './chameleon-reports/palliative-patients-report/palliative-patients-report.component';
 import { GeriatricsDrugsOnVacationComponent } from './chameleon-reports/geriatrics-drugs-on-vacation-component/geriatrics-drugs-on-vacation-component.component';
 import { DrugsReportComponent } from './chameleon-reports/drugs-report-component/drugs-report-component.component';
+import { EpidemiologicalInvestigationComponent } from './chameleon-reports/epidemiological-investigation/epidemiological-investigation.component';
 
 const routes: Routes = [
   { path: 'users', component: UsersComponent },
@@ -124,6 +125,7 @@ const routes: Routes = [
    { path: 'medicalDevices', component: MedicalDevicesComponent },//רשימת מכשירים בקמיליון
    { path: 'ComponentsListInUnits', component: ComponentsListInUnitsComponent },//רכיבים בקמיליון
    { path: 'DrugsReport', component: DrugsReportComponent },//לורדית דוח של מטופלות עם תרופות קבועות או פעילות על פי קודים של יולדות
+   { path: 'epidemiological-investigation', component: EpidemiologicalInvestigationComponent },//חקירה אפידמיולוגית ליחידה למניעת זיהומים
 
 
 //shift-table

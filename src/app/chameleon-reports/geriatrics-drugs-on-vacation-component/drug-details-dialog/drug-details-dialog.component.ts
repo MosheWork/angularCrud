@@ -9,7 +9,7 @@ import html2canvas from 'html2canvas';
   styleUrls: ['./drug-details-dialog.component.scss'],
 })
 export class DrugDetailsDialogComponent implements AfterViewInit {
-  displayedColumns: string[] = ['select', 'Way_Of_Giving', 'Drugs_Text', 'TimingString'];
+  displayedColumns: string[] = ['select', 'Way_Of_Giving', 'Drugs_Text','FrequencyText','SpecificTime'];
   dataSource: any[] = [];
 
   @ViewChild('pdfTable', { static: false }) pdfTable!: ElementRef;
@@ -87,7 +87,8 @@ export class DrugDetailsDialogComponent implements AfterViewInit {
             <tr>
               <th>צורת מתן</th>
               <th>שם תרופה</th>
-              <th>תזמון</th>
+              <th>הנחיות</th>
+              <th>שעות מתן</th>
             </tr>
           </thead>
           <tbody>
@@ -95,9 +96,10 @@ export class DrugDetailsDialogComponent implements AfterViewInit {
               .map(
                 (row) => `
               <tr>
-                <td>${row.TimingString}</td>
-                <td>${row.Drugs_Text}</td>
-                <td>${row.Way_Of_Giving}</td>
+              <td>${row.Way_Of_Giving}</td>
+              <td>${row.Drugs_Text}</td>
+                <td>${row.FrequencyText}</td>
+                <td>${row.SpecificTime}</td>
               </tr>
             `
               )

@@ -1,0 +1,16 @@
+<div class="timeline-container">
+    <h1>ציר זמן עבור מזהה: {{ idNum }}</h1>
+  
+    <div class="timeline">
+      <div *ngFor="let event of timelineData" class="timeline-event">
+        <div class="timeline-content">
+          <mat-card>
+            <h3>{{ event.user }}</h3>
+            <p>{{ event.timestamp | date: 'dd/MM/yyyy HH:mm' }}</p>
+            <p>{{ event.details }}</p>
+          </mat-card>
+        </div>
+      </div>
+    </div>
+  </div>
+  

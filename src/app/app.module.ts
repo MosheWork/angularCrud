@@ -118,6 +118,8 @@ import { PalliativePatientsReportComponent } from './chameleon-reports/palliativ
 import { GeriatricsDrugsOnVacationComponent } from './chameleon-reports/geriatrics-drugs-on-vacation-component/geriatrics-drugs-on-vacation-component.component';
 import { DrugDetailsDialogComponent } from './chameleon-reports/geriatrics-drugs-on-vacation-component/drug-details-dialog/drug-details-dialog.component';
 import { DrugsReportComponent } from './chameleon-reports/drugs-report-component/drugs-report-component.component';
+import { EpidemiologicalInvestigationComponent } from './chameleon-reports/epidemiological-investigation/epidemiological-investigation.component';
+import { TimelineComponent } from './chameleon-reports/epidemiological-investigation/timeline/timeline.component';
 
 
 @NgModule({
@@ -205,7 +207,9 @@ import { DrugsReportComponent } from './chameleon-reports/drugs-report-component
     PalliativePatientsReportComponent,
     GeriatricsDrugsOnVacationComponent,
     DrugDetailsDialogComponent,
-    DrugsReportComponent
+    DrugsReportComponent,
+    EpidemiologicalInvestigationComponent,
+    TimelineComponent
   
   ],
   imports: [
