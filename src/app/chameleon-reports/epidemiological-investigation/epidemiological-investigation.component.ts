@@ -20,6 +20,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 export class EpidemiologicalInvestigationComponent implements OnInit {
   titleUnit: string = 'חקירה אפידמיולוגית';
   totalResults: number = 0;
+  
   timelineEvents: any[] = []; // For the timeline display
 
   columns: string[] = ['MedicalRecord', 'EntryDate', 'EntryUserName', 'Heading', 'UnitName', 'Source'];
