@@ -154,6 +154,7 @@ export class EpidemiologicalInvestigationComponent implements OnInit {
     this.timelineEvents = data.map((item) => ({
       timestamp: item.EntryDate,
       title: item.EntryUserName,
+      UnitName: item.UnitName,
       description: item.Heading || 'No details available',
     }));
   }
