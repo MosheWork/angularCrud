@@ -109,10 +109,11 @@
   }
   /* CSS */
   .filter-container {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-    align-items: center;
+    border: 2px solid #ddd; /* Add border around the filter form */
+    padding: 20px; /* Add padding inside the border */
+    margin-bottom: 20px; /* Add spacing between the filter form and data sections */
+    border-radius: 8px; /* Optional: rounded corners */
+   // background-color: #f9f9f9; /* Optional: background color */
   }
   
   .filter-field {
@@ -227,6 +228,31 @@
     justify-content: flex-end; /* Aligns horizontally to the right */
     padding: 10px; /* Add some padding */
   }
+  .form-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .long-search-bar {
+    flex-grow: 1;
+    margin-left: 10px;
+  }
+  .action-button {
+    height: 50px; /* Ensure consistent size with the icon */
+    width: 50px; /* Match the height for square appearance */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: 10px;
+  }
+  
+  .action-icon {
+    width: 50px; /* Adjust icon size */
+    margin-right: 20px; /* Increase margin to add more space between the Excel icon and Reset button */
+  }
+  
+
   .timeline-container {
     display: flex;
     flex-direction: column; /* Keep the timeline vertical */

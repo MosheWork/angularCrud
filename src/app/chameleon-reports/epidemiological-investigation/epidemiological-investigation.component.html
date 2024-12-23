@@ -1,49 +1,53 @@
 <div class="body">
     <div class="nine">
-        <h1>{{ titleUnit }}<span>סה"כ תוצאות:{{ totalResults }}</span></h1>
-      </div>
-    
+      <h1>{{ titleUnit }}<span>סה"כ תוצאות:{{ totalResults }}</span></h1>
+    </div>
   
-    <!-- Filter Form -->
-    <form [formGroup]="filterForm" dir="rtl" class="filter-form">
-      <!-- ID Number Input -->
-      <mat-form-field>
-        <mat-label>הכנס מזהה</mat-label>
-        <input matInput [formControl]="idNumControl" placeholder="e.g. 12345678">
-      </mat-form-field>
-  
-      <!-- Search Button -->
-      <button mat-raised-button color="primary" (click)="fetchData()">חפש</button>
-  
-      <!-- Date Range Inputs -->
-      <mat-form-field>
-        <mat-label>מתאריך</mat-label>
-        <input matInput [matDatepicker]="startPicker" formControlName="startDate">
-        <mat-datepicker-toggle matSuffix [for]="startPicker"></mat-datepicker-toggle>
-        <mat-datepicker #startPicker></mat-datepicker>
-      </mat-form-field>
-  
-      <mat-form-field>
-        <mat-label>עד תאריך</mat-label>
-        <input matInput [matDatepicker]="endPicker" formControlName="endDate">
-        <mat-datepicker-toggle matSuffix [for]="endPicker"></mat-datepicker-toggle>
-        <mat-datepicker #endPicker></mat-datepicker>
-      </mat-form-field>
-  
-      <!-- Form Footer -->
-      <div class="form-footer" style="display: flex; justify-content: space-between;">
-        <mat-form-field class="long-search-bar" style="flex: 1; margin-right: 10px;">
-          <mat-label class="filters">חיפוש</mat-label>
-          <input matInput formControlName="globalFilter" placeholder="Search...">
+    <!-- Filter Form with Border -->
+    <div class="filter-container">
+      <form [formGroup]="filterForm" dir="rtl" class="filter-form">
+        <!-- ID Number Input -->
+        <mat-form-field>
+          <mat-label>הכנס מזהה</mat-label>
+          <input matInput [formControl]="idNumControl" placeholder="e.g. 12345678">
         </mat-form-field>
   
-        <button mat-button (click)="resetFilters()" mat-raised-button color="primary">
-          <i class="material-icons">refresh</i>
-        </button>
+        <!-- Search Button -->
+        <button mat-raised-button color="primary" (click)="fetchData()">חפש</button>
   
-        <img src="../../assets/excel.png" alt="Download" (click)="exportToExcel()" class="download-icon icon" width="50px" style="margin-right: 10px;" />
-      </div>
-    </form>
+        <!-- Date Range Inputs -->
+        <mat-form-field>
+          <mat-label>מתאריך</mat-label>
+          <input matInput [matDatepicker]="startPicker" formControlName="startDate">
+          <mat-datepicker-toggle matSuffix [for]="startPicker"></mat-datepicker-toggle>
+          <mat-datepicker #startPicker></mat-datepicker>
+        </mat-form-field>
+  
+        <mat-form-field>
+          <mat-label>עד תאריך</mat-label>
+          <input matInput [matDatepicker]="endPicker" formControlName="endDate">
+          <mat-datepicker-toggle matSuffix [for]="endPicker"></mat-datepicker-toggle>
+          <mat-datepicker #endPicker></mat-datepicker>
+        </mat-form-field>
+  
+        <!-- Form Footer -->
+        <div class="form-footer">
+            <!-- Search Bar -->
+            <mat-form-field class="long-search-bar">
+              <mat-label class="filters">חיפוש</mat-label>
+              <input matInput formControlName="globalFilter" placeholder="Search...">
+            </mat-form-field>
+          
+            <!-- Reset Button -->
+            <button mat-button (click)="resetFilters()" mat-raised-button color="primary" class="action-button">
+              <i class="material-icons">refresh</i>
+            </button>
+          
+            <!-- Excel Icon -->
+            <img src="../../assets/excel.png" alt="Download" (click)="exportToExcel()" class="action-icon" />
+          </div>
+      </form>
+    </div>
   
     <!-- Tab Group -->
     <mat-tab-group (selectedIndexChange)="onTabChange($event)">
@@ -121,9 +125,6 @@
           <p *ngIf="timelineEvents.length === 0">No timeline events available.</p>
         </div>
       </mat-tab>
-      
-          
-  
     </mat-tab-group>
   </div>
   

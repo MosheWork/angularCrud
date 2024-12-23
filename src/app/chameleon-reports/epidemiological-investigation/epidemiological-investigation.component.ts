@@ -102,14 +102,15 @@ export class EpidemiologicalInvestigationComponent implements OnInit {
     const globalFilter = (filters.globalFilter || '').toLowerCase();
     const startDate = filters.startDate ? new Date(filters.startDate) : null;
     const endDate = filters.endDate ? new Date(filters.endDate) : null;
-
+  
+    // Filter logic for both table and timeline
     this.filteredData = this.dataSource.filter((item) => {
       // Apply global filter
       const globalMatch = this.columns.some((column) => {
         const value = (item[column] || '').toString().toLowerCase();
         return value.includes(globalFilter);
       });
-
+  
       // Apply date filter
       let dateMatch = true;
       if (startDate || endDate) {
@@ -121,13 +122,16 @@ export class EpidemiologicalInvestigationComponent implements OnInit {
           dateMatch = false;
         }
       }
-
+  
       return (globalFilter === '' || globalMatch) && dateMatch;
     });
-
+  
+    // Update table and timeline with filtered data
     this.totalResults = this.filteredData.length;
     this.matTableDataSource.data = this.filteredData;
+    this.populateTimeline(this.filteredData); // Update timeline data
   }
+  
 
   resetFilters() {
     this.filterForm.reset();
@@ -150,14 +154,15 @@ export class EpidemiologicalInvestigationComponent implements OnInit {
   }
 
   // Populate timeline events
-  populateTimeline(data: any[]) {
-    this.timelineEvents = data.map((item) => ({
+  populateTimeline(filteredData: any[]) {
+    this.timelineEvents = filteredData.map((item) => ({
       timestamp: item.EntryDate,
       title: item.EntryUserName,
       UnitName: item.UnitName,
       description: item.Heading || 'No details available',
     }));
   }
+  
 
   // Handle tab change
   onTabChange(index: number) {
