@@ -1,130 +1,218 @@
 <div class="body">
-    <div class="nine">
-      <h1>{{ titleUnit }}<span>סה"כ תוצאות:{{ totalResults }}</span></h1>
-    </div>
-  
-    <!-- Filter Form with Border -->
-    <div class="filter-container">
-      <form [formGroup]="filterForm" dir="rtl" class="filter-form">
-        <!-- ID Number Input -->
-        <mat-form-field>
-          <mat-label>הכנס מזהה</mat-label>
-          <input matInput [formControl]="idNumControl" placeholder="e.g. 12345678">
+  <div class="nine">
+    <h1>{{ titleUnit }}<span>סה"כ תוצאות:{{ totalResults }}</span></h1>
+  </div>
+
+  <!-- Left Card -->
+   <!-- Left Card -->
+   <div class="left-container">
+    <form [formGroup]="detailsForm" dir="rtl" class="details-form">
+      <mat-form-field>
+        <mat-label>שם פרטי</mat-label>
+        <input matInput formControlName="FirstName">
+      </mat-form-field>
+    
+      <mat-form-field>
+        <mat-label>שם משפחה</mat-label>
+        <input matInput formControlName="LastName">
+      </mat-form-field>
+    
+      <mat-form-field>
+        <mat-label>גיל</mat-label>
+        <input matInput formControlName="Age">
+      </mat-form-field>
+    
+      <mat-form-field>
+        <mat-label>מין</mat-label>
+        <input matInput formControlName="GenderText">
+      </mat-form-field>
+    
+      <mat-form-field>
+        <mat-label>טלפון</mat-label>
+        <input matInput formControlName="Phone">
+      </mat-form-field>
+    
+      <mat-form-field>
+        <mat-label>טלפון נייד</mat-label>
+        <input matInput formControlName="PhoneCell">
+      </mat-form-field>
+    
+      <mat-form-field>
+        <mat-label>עיר</mat-label>
+        <input matInput formControlName="City">
+      </mat-form-field>
+    
+      <mat-form-field>
+        <mat-label>רחוב</mat-label>
+        <input matInput formControlName="Street">
+      </mat-form-field>
+    
+      <mat-form-field *ngIf="detailsForm.get('Apartment')?.value">
+        <mat-label>דירה</mat-label>
+        <input matInput formControlName="Apartment">
+      </mat-form-field>
+    
+      <mat-form-field *ngIf="detailsForm.get('HouseNo')?.value">
+        <mat-label>מספר בית</mat-label>
+        <input matInput formControlName="HouseNo">
+      </mat-form-field>
+    </form>
+    
+  </div>
+
+  <!-- Filter Form with Border -->
+  <div class="filter-container">
+    <form [formGroup]="filterForm" dir="rtl" class="filter-form">
+      <!-- ID Number Input -->
+      <mat-form-field>
+        <mat-label>הכנס מזהה</mat-label>
+        <input matInput [formControl]="idNumControl" placeholder="e.g. 12345678">
+      </mat-form-field>
+
+      <!-- Search Button -->
+      <button mat-raised-button color="primary" (click)="fetchData()">חפש</button>
+
+      <!-- Date Range Inputs -->
+      <mat-form-field>
+        <mat-label>מתאריך</mat-label>
+        <input matInput [matDatepicker]="startPicker" formControlName="startDate">
+        <mat-datepicker-toggle matSuffix [for]="startPicker"></mat-datepicker-toggle>
+        <mat-datepicker #startPicker></mat-datepicker>
+      </mat-form-field>
+
+      <mat-form-field>
+        <mat-label>עד תאריך</mat-label>
+        <input matInput [matDatepicker]="endPicker" formControlName="endDate">
+        <mat-datepicker-toggle matSuffix [for]="endPicker"></mat-datepicker-toggle>
+        <mat-datepicker #endPicker></mat-datepicker>
+      </mat-form-field>
+
+      <!-- Form Footer -->
+      <div class="form-footer">
+        <!-- Search Bar -->
+        <mat-form-field class="long-search-bar">
+          <mat-label class="filters">חיפוש</mat-label>
+          <input matInput formControlName="globalFilter" placeholder="Search...">
         </mat-form-field>
-  
-        <!-- Search Button -->
-        <button mat-raised-button color="primary" (click)="fetchData()">חפש</button>
-  
-        <!-- Date Range Inputs -->
-        <mat-form-field>
-          <mat-label>מתאריך</mat-label>
-          <input matInput [matDatepicker]="startPicker" formControlName="startDate">
-          <mat-datepicker-toggle matSuffix [for]="startPicker"></mat-datepicker-toggle>
-          <mat-datepicker #startPicker></mat-datepicker>
-        </mat-form-field>
-  
-        <mat-form-field>
-          <mat-label>עד תאריך</mat-label>
-          <input matInput [matDatepicker]="endPicker" formControlName="endDate">
-          <mat-datepicker-toggle matSuffix [for]="endPicker"></mat-datepicker-toggle>
-          <mat-datepicker #endPicker></mat-datepicker>
-        </mat-form-field>
-  
-        <!-- Form Footer -->
-        <div class="form-footer">
-            <!-- Search Bar -->
-            <mat-form-field class="long-search-bar">
-              <mat-label class="filters">חיפוש</mat-label>
-              <input matInput formControlName="globalFilter" placeholder="Search...">
-            </mat-form-field>
-          
-            <!-- Reset Button -->
-            <button mat-button (click)="resetFilters()" mat-raised-button color="primary" class="action-button">
-              <i class="material-icons">refresh</i>
-            </button>
-          
-            <!-- Excel Icon -->
-            <img src="../../assets/excel.png" alt="Download" (click)="exportToExcel()" class="action-icon" />
-          </div>
-      </form>
-    </div>
-  
-    <!-- Tab Group -->
-    <mat-tab-group (selectedIndexChange)="onTabChange($event)">
-      <!-- Tab 1: Main Table View -->
-      <mat-tab label="תצוגת נתונים">
-        <mat-table [dataSource]="matTableDataSource" matSort dir="rtl" class="mat-elevation-z8">
-          <!-- Medical Record Column -->
-          <ng-container matColumnDef="MedicalRecord">
-            <mat-header-cell *matHeaderCellDef mat-sort-header> Medical Record </mat-header-cell>
-            <mat-cell *matCellDef="let element"> {{ element.MedicalRecord }} </mat-cell>
-          </ng-container>
-  
-          <!-- Entry Date Column -->
-          <ng-container matColumnDef="EntryDate">
-            <mat-header-cell *matHeaderCellDef mat-sort-header> תאריך </mat-header-cell>
-            <mat-cell *matCellDef="let element"> {{ element.EntryDate | date: 'dd/MM/yyyy  MM:ss' }} </mat-cell>
-          </ng-container>
-  
-          <!-- Entry User Name Column -->
-          <ng-container matColumnDef="EntryUserName">
-            <mat-header-cell *matHeaderCellDef mat-sort-header> שם משתמש </mat-header-cell>
-            <mat-cell *matCellDef="let element"> {{ element.EntryUserName }} </mat-cell>
-          </ng-container>
-  
-          <!-- Heading Column -->
-          <ng-container matColumnDef="Heading">
-            <mat-header-cell *matHeaderCellDef mat-sort-header> כותרת </mat-header-cell>
-            <mat-cell *matCellDef="let element"> {{ element.Heading }} </mat-cell>
-          </ng-container>
-  
-          <!-- Unit Name Column -->
-          <ng-container matColumnDef="UnitName">
-            <mat-header-cell *matHeaderCellDef mat-sort-header> מחלקה </mat-header-cell>
-            <mat-cell *matCellDef="let element"> {{ element.UnitName }} </mat-cell>
-          </ng-container>
-  
-          <!-- Source Column -->
-          <ng-container matColumnDef="Source">
-            <mat-header-cell *matHeaderCellDef mat-sort-header> מקור </mat-header-cell>
-            <mat-cell *matCellDef="let element"> {{ element.Source }} </mat-cell>
-          </ng-container>
-  
-          <!-- Header Row -->
-          <mat-header-row *matHeaderRowDef="columns"></mat-header-row>
-          <!-- Data Rows -->
-          <mat-row *matRowDef="let row; columns: columns" class="mat-row"></mat-row>
-        </mat-table>
-  
-        <!-- Paginator -->
-        <mat-paginator
-          [length]="matTableDataSource.paginator?.length || 0"
-          [pageSize]="15"
-          [pageSizeOptions]="[15, 50, 100]">
-        </mat-paginator>
-      </mat-tab>
-  
-      <!-- Tab 2: Timeline View -->
-      <mat-tab label="ציר זמן">
-        <div class="timeline-container">
-          <h1>{{ titleUnit }}</h1>
-          <div *ngIf="timelineEvents.length > 0" class="timeline">
-            <div *ngFor="let event of timelineEvents; let i = index" class="timeline-item">
-              <div class="timeline-year">{{ event.timestamp | date: 'dd/MM/yyyy' }}</div>
-              <div class="timeline-content" [class.left]="i % 2 === 0" [class.right]="i % 2 !== 0">
-                <div class="timeline-dot"></div>
-                <div class="timeline-card">
-                  <h3>{{ event.title }}</h3>
-                  <p>שם רכיב: {{ event.description }}</p>
-                  <p>מחלקה: {{ event.UnitName }}</p> <!-- Added UnitName -->
-                  <span class="timeline-date">{{ event.timestamp | date: ' HH:mm:ss ' }}</span>
-                </div>
+
+        <!-- Reset Button -->
+        <button mat-button (click)="resetFilters()" mat-raised-button color="primary" class="action-button">
+          <i class="material-icons">refresh</i>
+        </button>
+
+        <!-- Excel Icon -->
+        <img src="../../assets/excel.png" alt="Download" (click)="exportToExcel()" class="action-icon" />
+      </div>
+    </form>
+  </div>
+
+  <!-- Tab Group -->
+  <mat-tab-group (selectedIndexChange)="onTabChange($event) " dir="rtl">
+    <!-- Tab 1: Main Table View -->
+    <mat-tab label="תצוגת נתונים">
+      <mat-table [dataSource]="matTableDataSource" matSort dir="rtl" class="mat-elevation-z8">
+        <!-- Medical Record Column -->
+        <ng-container matColumnDef="MedicalRecord">
+          <mat-header-cell *matHeaderCellDef mat-sort-header> Medical Record </mat-header-cell>
+          <mat-cell *matCellDef="let element"> {{ element.MedicalRecord }} </mat-cell>
+        </ng-container>
+      
+        <!-- Entry Date Column -->
+        <ng-container matColumnDef="EntryDate">
+          <mat-header-cell *matHeaderCellDef mat-sort-header> תאריך </mat-header-cell>
+          <mat-cell *matCellDef="let element"> {{ element.EntryDate | date: 'dd/MM/yyyy' }} </mat-cell>
+        </ng-container>
+      
+        <!-- Entry User Name Column -->
+        <ng-container matColumnDef="EntryUserName">
+          <mat-header-cell *matHeaderCellDef mat-sort-header> שם משתמש </mat-header-cell>
+          <mat-cell *matCellDef="let element"> {{ element.EntryUserName }} </mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="Heading">
+          <mat-header-cell *matHeaderCellDef mat-sort-header> שם רכיב </mat-header-cell>
+          <mat-cell *matCellDef="let element"> {{ element.Heading }} </mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="UnitName">
+          <mat-header-cell *matHeaderCellDef mat-sort-header> מחלקה</mat-header-cell>
+          <mat-cell *matCellDef="let element"> {{ element.UnitName }} </mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="Source">
+          <mat-header-cell *matHeaderCellDef mat-sort-header> מקור</mat-header-cell>
+          <mat-cell *matCellDef="let element"> {{ element.Source }} </mat-cell>
+        </ng-container>
+      
+      
+        <!-- Header Row -->
+        <mat-header-row *matHeaderRowDef="columns"></mat-header-row>
+        <!-- Data Rows -->
+        <mat-row *matRowDef="let row; columns: columns" class="mat-row"></mat-row>
+      </mat-table>
+      
+
+      <!-- Paginator -->
+      <mat-paginator
+        [length]="matTableDataSource.paginator?.length || 0"
+        [pageSize]="15"
+        [pageSizeOptions]="[15, 50, 100]">
+      </mat-paginator>
+    </mat-tab>
+
+    <!-- Tab 2: Timeline View -->
+    <mat-tab label="ציר זמן">
+      <div class="timeline-container">
+        <h1>{{ titleUnit }}</h1>
+        <div *ngIf="timelineEvents.length > 0" class="timeline">
+          <div *ngFor="let event of timelineEvents; let i = index" class="timeline-item">
+            <div class="timeline-year">{{ event.timestamp | date: 'dd/MM/yyyy' }}</div>
+            <div class="timeline-content" [class.left]="i % 2 === 0" [class.right]="i % 2 !== 0">
+              <div class="timeline-dot"></div>
+              <div class="timeline-card">
+                <h3>{{ event.title }}</h3>
+                <p>שם רכיב: {{ event.description }}</p>
+                <p>מחלקה: {{ event.UnitName }}</p> <!-- Added UnitName -->
+                <span class="timeline-date">{{ event.timestamp | date: ' HH:mm:ss ' }}</span>
               </div>
             </div>
           </div>
-          <p *ngIf="timelineEvents.length === 0">No timeline events available.</p>
         </div>
-      </mat-tab>
-    </mat-tab-group>
-  </div>
+        <p *ngIf="timelineEvents.length === 0">No timeline events available.</p>
+      </div>
+    </mat-tab>
+      <!-- Tab 3: Employees -->
+  <mat-tab label="עובדים">
+    
+      <mat-table [dataSource]="employeeDataSource" matSort dir="rtl" class="mat-elevation-z8">
+         <!-- FullName Column -->
+         <ng-container matColumnDef="FullName">
+          <mat-header-cell *matHeaderCellDef mat-sort-header> שם העובד  </mat-header-cell>
+          <mat-cell *matCellDef="let element"> {{ element.FullName }} </mat-cell>
+        </ng-container>
+        <!-- Employee ID Column -->
+        <ng-container matColumnDef="EmployeeID">
+          <mat-header-cell *matHeaderCellDef mat-sort-header> מזהה עובד </mat-header-cell>
+          <mat-cell *matCellDef="let element"> {{ element.EmployeeID }} </mat-cell>
+        </ng-container>
+
+        <!-- Department Description Column -->
+        <ng-container matColumnDef="DepartnentDescripton">
+          <mat-header-cell *matHeaderCellDef mat-sort-header> תיאור מחלקה </mat-header-cell>
+          <mat-cell *matCellDef="let element"> {{ element.DepartnentDescripton }} </mat-cell>
+        </ng-container>
+
+        <!-- Cell Number Column -->
+        <ng-container matColumnDef="CellNumber">
+          <mat-header-cell *matHeaderCellDef mat-sort-header> מספר טלפון </mat-header-cell>
+          <mat-cell *matCellDef="let element"> {{ element.CellNumber }} </mat-cell>
+        </ng-container>
+        
+
+        <!-- Header Row -->
+        <mat-header-row *matHeaderRowDef="employeeColumns"></mat-header-row>
+        <!-- Data Rows -->
+        <mat-row *matRowDef="let row; columns: employeeColumns"></mat-row>
+      </mat-table>
+    
+  </mat-tab>
+</mat-tab-group>
   
+</div>
