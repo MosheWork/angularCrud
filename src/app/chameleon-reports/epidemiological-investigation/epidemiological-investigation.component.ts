@@ -21,16 +21,18 @@ export class EpidemiologicalInvestigationComponent implements OnInit {
   timelineEvents: any[] = [];
   personalDetails: any | null = null;
   employees: any[] = []; // Store employees data
-
+  loadingMainTab: boolean = false; // For the main tab
+  loadingTimelineTab: boolean = false; // For the timeline tab
+  loadingEmployeeTab: boolean = false; // For the new tab
   columns: string[] = [
-    'MedicalRecord',
+    //'MedicalRecord',
     'EntryDate',
     'EntryUserName',
     'Heading',
     'UnitName',
     'Source',
   ];
-  employeeColumns: string[] = ['EmployeeID', 'DepartnentDescripton', 'CellNumber','FullName'];
+  employeeColumns: string[] = ['FullName','EmployeeID', 'DepartnentDescripton', 'CellNumber'];
 
   dataSource: any[] = [];
   filteredData: any[] = [];

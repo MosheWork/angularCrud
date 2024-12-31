@@ -322,3 +322,10 @@
     }
   }
 
+  .loading-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100px; /* Adjust height as needed */
+  }
+  
