@@ -53,6 +53,8 @@ import { PalliativePatientsReportComponent } from './chameleon-reports/palliativ
 import { GeriatricsDrugsOnVacationComponent } from './chameleon-reports/geriatrics-drugs-on-vacation-component/geriatrics-drugs-on-vacation-component.component';
 import { DrugsReportComponent } from './chameleon-reports/drugs-report-component/drugs-report-component.component';
 import { EpidemiologicalInvestigationComponent } from './chameleon-reports/epidemiological-investigation/epidemiological-investigation.component';
+import { DepartmentCapacityComponent } from './chameleonDashboard/department-capacity/department-capacity.component';
+import { Drug2hReviewComponent } from './chameleon-reports/drug2h-review/drug2h-review.component';
 
 const routes: Routes = [
   { path: 'users', component: UsersComponent },
@@ -126,8 +128,10 @@ const routes: Routes = [
    { path: 'ComponentsListInUnits', component: ComponentsListInUnitsComponent },//רכיבים בקמיליון
    { path: 'DrugsReport', component: DrugsReportComponent },//לורדית דוח של מטופלות עם תרופות קבועות או פעילות על פי קודים של יולדות
    { path: 'epidemiological-investigation', component: EpidemiologicalInvestigationComponent },//חקירה אפידמיולוגית ליחידה למניעת זיהומים
+   { path: 'drug2h-review', component: Drug2hReviewComponent },//דוח לקרן בדיקה אם כל שעתיים אחות עשתה בקרה על תרופה ברת סיכון
 
-
+//chemelondashboard
+{ path: 'DepartmentCapacity', component: DepartmentCapacityComponent },
 //shift-table
    { path: 'shift-table', component: ShiftTableComponent },
    { path: 'shift-calendar', component: ShiftCalendarComponent }

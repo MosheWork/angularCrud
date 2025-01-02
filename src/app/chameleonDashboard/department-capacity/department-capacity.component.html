@@ -1,0 +1,114 @@
+<div class="body">
+    <div class="nine">
+      <h1>{{ titleUnit }}<span>{{ Title1 }}{{ Title2 }}{{ totalResults }}</span></h1>
+    </div>
+  
+    <!-- Dashboard Card with Gauge -->
+    <div class="dashboard-card" >
+        <mat-card class="gauge-card">
+          <mat-card-header>
+            <mat-card-title>מדד עומס כולל</mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <ngx-gauge
+              [size]="200"
+              [value]="gaugeValue"
+              [min]="0"
+              [max]="100"
+              [type]="'full'"
+              [cap]="'round'"
+              [thick]="25"
+              [label]="'מדד עומס כולל'"
+              [foregroundColor]="getGaugeColor(gaugeValue)"
+              [backgroundColor]="'#e0e0e0'"
+              [append]="'%'"
+              [duration]="1500">
+            </ngx-gauge>
+            <div class="total-patients">
+              <span>סה"כ מטופלים: {{ totalPatients }}</span>
+              <span>סה"כ מונשמים: {{ totalOnLifeSupport }}</span>
+              <span>סה"כ הועברו לחדר ניתוח: XX</span>
+              <span>סה"כ הבידוד הגנתי: {{ totalQuarantineDef }}</span>
+              <span>סה"כ בידוד מגע ואויר: {{ totalQuarantineAirAndTouch }}</span>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </div>
+    <form [formGroup]="filterForm" dir="rtl" class="filter-form" style="display: flex; justify-content: space-between; align-items: center;">
+        <!-- Search Bar: Full Width with Icons Aligned Right -->
+        <mat-form-field class="long-search-bar" style="flex-grow: 1; margin-right: 10px; width: 70%;">
+          <mat-label class="filters" style="color: blue">חיפוש</mat-label>
+          <input matInput [formControlName]="'globalFilter'" class="search-input" />
+        </mat-form-field>
+    
+        <!-- Icons: Aligned on the Same Line -->
+        <div dir="rtl" class="icon-container" style="display: flex; align-items: center;">
+          <!-- Excel Export Icon -->
+          <img src="../../assets/excel.png" alt="Download" (click)="exportToExcel()" class="download-icon icon" width="50px" style="margin-left: 10px;" />
+          <!-- Graph Navigation Icon -->
+         
+          <!-- Reset Filters Button -->
+          <button mat-button (click)="resetFilters()" mat-raised-button color="primary" class="custom-button" matTooltip="Reset Filters" style="margin-left: 10px;">
+            <i class="material-icons">refresh</i>
+          </button>
+        </div>
+      </form>
+  
+    <!-- Data Table -->
+    <mat-table *ngIf="!showGraph" [dataSource]="matTableDataSource" matSort dir="rtl" class="mat-elevation-z8">
+      <ng-container matColumnDef="First_Name">
+        <mat-header-cell *matHeaderCellDef mat-sort-header> שם פרטי </mat-header-cell>
+        <mat-cell *matCellDef="let element"> {{ element.First_Name }} </mat-cell>
+      </ng-container>
+  
+      <ng-container matColumnDef="Last_Name">
+        <mat-header-cell *matHeaderCellDef mat-sort-header> שם משפחה </mat-header-cell>
+        <mat-cell *matCellDef="let element"> {{ element.Last_Name }} </mat-cell>
+      </ng-container>
+  
+      <ng-container matColumnDef="Id_Num">
+        <mat-header-cell *matHeaderCellDef mat-sort-header> ת.ז. </mat-header-cell>
+        <mat-cell *matCellDef="let element"> {{ element.Id_Num }} </mat-cell>
+      </ng-container>
+  
+      <ng-container matColumnDef="Admission_No">
+        <mat-header-cell *matHeaderCellDef mat-sort-header> מספר אשפוז </mat-header-cell>
+        <mat-cell *matCellDef="let element"> {{ element.Admission_No }} </mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="Admission_Date">
+        <mat-header-cell *matHeaderCellDef mat-sort-header> Admission_Date</mat-header-cell>
+        <mat-cell *matCellDef="let element"> {{ element.Admission_Date }} </mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="Hospitalization_Status">
+        <mat-header-cell *matHeaderCellDef mat-sort-header> Hospitalization_Status</mat-header-cell>
+        <mat-cell *matCellDef="let element"> {{ element.Hospitalization_Status }} </mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="Medical_Department">
+        <mat-header-cell *matHeaderCellDef mat-sort-header> Medical_Department</mat-header-cell>
+        <mat-cell *matCellDef="let element"> {{ element.Medical_Department }} </mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="Nursing_Department">
+        <mat-header-cell *matHeaderCellDef mat-sort-header> Nursing_Department</mat-header-cell>
+        <mat-cell *matCellDef="let element"> {{ element.Nursing_Department }} </mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="Status">
+        <mat-header-cell *matHeaderCellDef mat-sort-header> Status</mat-header-cell>
+        <mat-cell *matCellDef="let element"> {{ element.Status }} </mat-cell>
+      </ng-container>
+  
+  
+  
+  
+
+      <mat-header-row *matHeaderRowDef="columns"></mat-header-row>
+      <mat-row *matRowDef="let row; columns: columns"></mat-row>
+    </mat-table>
+  
+    <!-- Paginator Component -->
+    <mat-paginator 
+      [length]="matTableDataSource.paginator?.length || 0"
+      [pageIndex]="matTableDataSource.paginator?.pageIndex"
+      [pageSize]="matTableDataSource.paginator?.pageSize"
+      [pageSizeOptions]="[15, 50, 100]">
+    </mat-paginator>
+  </div>
