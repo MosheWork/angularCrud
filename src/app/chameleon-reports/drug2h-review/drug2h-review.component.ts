@@ -5,6 +5,8 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatSort } from '@angular/material/sort';
 import * as XLSX from 'xlsx';
+import { Drug2hDetailsComponent } from './drug2h-details/drug2h-details.component';
+import { MatDialog } from '@angular/material/dialog';
 
 import { environment } from '../../../environments/environment';
 
@@ -49,7 +51,7 @@ export class Drug2hReviewComponent implements OnInit {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
-  constructor(private http: HttpClient, private fb: FormBuilder) {
+  constructor(private http: HttpClient, private fb: FormBuilder, private dialog: MatDialog) {
     this.filterForm = this.createFilterForm();
     this.matTableDataSource = new MatTableDataSource<any>([]);
     this.filterForm = this.fb.group({
@@ -196,4 +198,16 @@ export class Drug2hReviewComponent implements OnInit {
     this.availableYears = Array.from({ length: 5 }, (_, i) => currentYear - i);
   }
 
+  openDrugDetailsDialog(unitName: string): void {
+    console.log('Unit passed to dialog:', unitName); // Debug log
+    const dialogRef = this.dialog.open(Drug2hDetailsComponent, {
+      width: '80%',
+      data: { Unit_Name: unitName }, // Pass the correct Unit_Name
+    });
+  
+    dialogRef.afterClosed().subscribe(() => {
+      console.log('Dialog closed');
+    });
+  }
+  
 }
