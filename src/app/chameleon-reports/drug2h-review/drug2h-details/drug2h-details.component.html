@@ -1,4 +1,4 @@
-<h2 mat-dialog-title>פרטי תרופות עבור יחידה: {{ data.Unit_Name }}</h2>
+<h2 mat-dialog-title class="table-title">פרטי תרופות עבור יחידה: {{ data.Unit_Name }}</h2>
 <mat-dialog-content>
   <mat-table [dataSource]="dataSource" class="mat-elevation-z8" dir="rtl">
     <!-- Unit Name -->
@@ -70,7 +70,7 @@
     <!-- Order Stop Date -->
     <ng-container matColumnDef="Order_Stop_Date">
       <mat-header-cell *matHeaderCellDef> תאריך הפסקת הזמנה </mat-header-cell>
-      <mat-cell *matCellDef="let element"> {{ element.Order_Stop_Date | date: 'dd/MM/yyyy' }} </mat-cell>
+      <mat-cell *matCellDef="let element"> {{ element.Order_Stop_Date | date: 'dd/MM/yyyy hh:mm' }} </mat-cell>
     </ng-container>
 
     <!-- Patient -->
@@ -100,7 +100,7 @@
     <!-- Execution Date -->
     <ng-container matColumnDef="Execution_Date">
       <mat-header-cell *matHeaderCellDef> תאריך ביצוע </mat-header-cell>
-      <mat-cell *matCellDef="let element"> {{ element.Execution_Date | date: 'dd/MM/yyyy' }} </mat-cell>
+      <mat-cell *matCellDef="let element"> {{ element.Execution_Date | date: 'dd/MM/yyyy HH:mm' }} </mat-cell>
     </ng-container>
 
     <!-- Next Execution Date -->

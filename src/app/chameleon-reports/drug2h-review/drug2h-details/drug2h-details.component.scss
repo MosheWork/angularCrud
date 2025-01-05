@@ -48,13 +48,79 @@
       font-weight: bold;
     }
   }
-  .mat-dialog-title h3 {
+ /* Title Style */
+.table-title {
     text-align: center;
-    font-size: 30px; /* Smaller than h1 */
+    font-size: 30px;
     text-transform: uppercase;
-    color: rgb(54, 10, 214); /* Same color as h1 */
+    color: rgb(54, 10, 214);
     letter-spacing: 1px;
-    font-family: "Playfair Display", serif; /* Match the font family */
+    font-family: "Playfair Display", serif;
     font-weight: 400;
-    margin-bottom: 5px; /* Space below the title */
+    margin-bottom: 5px;
   }
+  
+  /* Table Style */
+  .styled-table {
+    width: 100%;
+    border-spacing: 0;
+    background-color: #f9f9f9;
+  
+    .header-cell {
+      font-weight: bold; /* Bold headers */
+      background-color: #3f51b5; /* Optional for header background color */
+      color: white;
+      text-align: center;
+      padding: 10px;
+      border: 1px solid #ddd;
+    }
+  
+    .data-cell {
+      text-align: center;
+      padding: 10px;
+      border: 1px solid #ddd;
+      font-size: 14px;
+    }
+  
+    .mat-row:hover {
+      background-color: #f1f1f1;
+    }
+  }
+  
+  mat-dialog-content {
+    padding: 20px;
+    max-height: 400px;
+    overflow-y: auto;
+  }
+  
+  mat-dialog-actions {
+    display: flex;
+    justify-content: space-between;
+    padding: 15px;
+    background-color: #f4f4f4;
+  
+    button {
+      font-weight: bold;
+    }
+  }
+  /* Ensure table cells and headers do not cut text */
+::ng-deep .mat-header-cell, 
+::ng-deep .mat-cell, 
+::ng-deep .mat-footer-cell {
+  white-space: normal !important; /* Allow text wrapping */
+  word-wrap: break-word; /* Break long words */
+  text-align: center; /* Center-align the text */
+  padding: 10px; /* Add some padding for better readability */
+}
+
+/* Adjust table column width for better spacing */
+::ng-deep .mat-column-Unit_Name,
+::ng-deep .mat-column-Remarks,
+::ng-deep .mat-column-Drugs_Text {
+  width: 200px; /* Example: Adjust width as needed */
+}
+
+/* Optional: Ensure the table container has scrollable overflow */
+.table-container {
+  overflow-x: auto; /* Horizontal scrolling if content overflows */
+}

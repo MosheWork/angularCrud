@@ -51,6 +51,7 @@ export class Drug2hReviewComponent implements OnInit {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
+
   constructor(private http: HttpClient, private fb: FormBuilder, private dialog: MatDialog) {
     this.filterForm = this.createFilterForm();
     this.matTableDataSource = new MatTableDataSource<any>([]);
@@ -62,6 +63,8 @@ export class Drug2hReviewComponent implements OnInit {
 
   }
   ngOnInit(): void {
+    this.matTableDataSource.sort = this.sort;
+
     this.matTableDataSource.filterPredicate = (data: any, filter: string) => {
       const formattedFilter = filter.trim().toLowerCase();
       return this.columns.some((column) => {
@@ -146,6 +149,7 @@ export class Drug2hReviewComponent implements OnInit {
         console.log('Response from backend:', data); // Debug backend response
         this.dataSource = data;
         this.matTableDataSource.data = [...this.dataSource];
+        this.matTableDataSource.sort = this.sort;
   
         // Update best and worst performers
         this.bestPerformers = [...this.dataSource]
@@ -209,5 +213,9 @@ export class Drug2hReviewComponent implements OnInit {
       console.log('Dialog closed');
     });
   }
-  
+  ngAfterViewInit(): void {
+  console.log(this.sort); // Ensure MatSort is initialized
+  this.matTableDataSource.sort = this.sort;
+}
+
 }

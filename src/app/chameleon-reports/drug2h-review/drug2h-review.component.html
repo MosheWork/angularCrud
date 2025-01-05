@@ -138,8 +138,13 @@
       </form>
   
       <!-- Data Table -->
-      <mat-table *ngIf="!showGraph" [dataSource]="matTableDataSource" matSort dir="rtl" class="mat-elevation-z8">
-        <ng-container matColumnDef="Unit_Name">
+      <mat-table
+      *ngIf="!showGraph"
+      [dataSource]="matTableDataSource"
+      [matSort]
+      dir="rtl"
+      class="mat-elevation-z8"
+    >        <ng-container matColumnDef="Unit_Name">
           <mat-header-cell *matHeaderCellDef mat-sort-header> יחידה </mat-header-cell>
           <mat-cell *matCellDef="let element"> {{ element.Unit_Name }} </mat-cell>
         </ng-container>
