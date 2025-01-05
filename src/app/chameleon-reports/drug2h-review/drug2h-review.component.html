@@ -89,23 +89,24 @@
         </ngx-gauge>
   
         <div class="info-container">
-          <div class="stat-row">
-            <span class="stat-label">סה"כ יחידות:</span>
-            <span class="stat-value">{{ totalUnits }}</span>
+            <div class="stat-row">
+              <span class="stat-value">{{ totalUnits }}</span>
+              <span class="stat-label">:סה"כ יחידות</span>
+            </div>
+            <div class="stat-row">
+              <span class="stat-value">{{ totalAbove210 }}</span>
+              <span class="stat-label">:סה"כ ביצועים מעל 2 שעות</span>
+            </div>
+            <div class="stat-row">
+              <span class="stat-value">{{ totalBelow210 }}</span>
+              <span class="stat-label">:סה"כ ביצועים מתחת ל-2 שעות</span>
+            </div>
+            <div class="stat-row">
+              <span class="stat-value">{{ percentBelow210 | number: '1.2-2' }}%</span>
+              <span class="stat-label">:אחוז ביצועים מתחת ל-2 שעות</span>
+            </div>
           </div>
-          <div class="stat-row">
-            <span class="stat-label">סה"כ ביצועים מעל 2 שעות:</span>
-            <span class="stat-value">{{ totalAbove210 }}</span>
-          </div>
-          <div class="stat-row">
-            <span class="stat-label">סה"כ ביצועים מתחת ל-2 שעות:</span>
-            <span class="stat-value">{{ totalBelow210 }}</span>
-          </div>
-          <div class="stat-row">
-            <span class="stat-label">אחוז ביצועים מתחת ל-2 שעות:</span>
-            <span class="stat-value">{{ percentBelow210 | number: '1.2-2' }}%</span>
-          </div>
-        </div>
+          
       </mat-card>
     </div>
   </div>

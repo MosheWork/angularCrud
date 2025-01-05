@@ -367,7 +367,7 @@
   flex: 7;
   border-radius: 10px;
   box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-  padding: 20px;
+  padding: 5px;
   background-color: #fff; /* Match the background of the gauge-card */
   display: flex;
   flex-direction: column;
@@ -385,21 +385,21 @@
 
 .table-container h3 {
   text-align: center;
-  margin-bottom: 10px;
+  margin-bottom: 5px;
   border: 1px solid #ccc; /* Add a light gray border */
 
 }
 
 .dashboard-container {
   display: flex;
-  gap: 10px;
+  gap: 5px;
 }
 
 .gauge-card {
   flex: 3;
   border-radius: 10px;
   box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-  padding: 10px;
+  padding: 5px;
   background-color: #fff; /* Same background color */
   border: 1px solid #ccc; /* Add a light gray border */
 
@@ -439,7 +439,7 @@ html, body {
 }
 .filter-card-container {
   width: 100%; /* Ensure it spans the full width of the page */
-  margin-bottom: 20px; /* Add spacing below the card */
+  margin-bottom: 5px; /* Add spacing below the card */
   display: flex;
   justify-content: center; /* Center the card horizontally */
   
@@ -448,7 +448,7 @@ html, body {
 .filter-card {
   width: 100%; /* Match the width of other cards */
   max-width: 1200px; /* Set a max width for better responsiveness */
-  padding: 20px; /* Add internal padding */
+  padding: 5px; /* Add internal padding */
   box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* Card shadow */
   border-radius: 10px; /* Rounded corners */
   border: 1px solid #ccc; /* Add a light gray border */
@@ -460,7 +460,7 @@ html, body {
   display: flex; /* Arrange items in a row */
   justify-content: space-between; /* Add space between filters */
   align-items: center; /* Align filters vertically */
-  gap: 15px; /* Add spacing between filter elements */
+  gap: 5px; /* Add spacing between filter elements */
   width: 100%;
 }
 
@@ -477,7 +477,7 @@ button {
   border: 1px solid #ccc; /* Light gray border */
   border-radius: 10px; /* Rounded corners */
   overflow: hidden; /* Prevent content from spilling out */
-  margin-top: 15px; /* Add space above the table */
+  margin-top: 5px; /* Add space above the table */
   background-color: #fff; /* White background */
   box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow */
 }
@@ -491,8 +491,8 @@ button {
 .data-card-container {
   width: 100%; /* Full-width card */
   max-width: 100%; /* Maximum width for responsiveness */
-  margin: 20px auto; /* Center the card and add spacing */
-  padding: 20px; /* Internal padding for content */
+  margin: 5px auto; /* Center the card and add spacing */
+  padding: 5px; /* Internal padding for content */
   border: 1px solid #ccc; /* Light gray border */
   border-radius: 10px; /* Rounded corners */
   box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow */
@@ -503,14 +503,14 @@ button {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 20px; /* Space between filter and table */
-  gap: 10px; /* Space between filter and icons */
+  margin-bottom: 5px; /* Space between filter and table */
+  gap: 5px; /* Space between filter and icons */
 }
 
 .mat-table {
-  margin-top: 20px; /* Space between table and search */
+  margin-top: 5px; /* Space between table and search */
   border: 1px solid #ccc; /* Add border to the table */
-  border-radius: 10px; /* Add rounded corners */
+  border-radius: 5px; /* Add rounded corners */
   background-color: #fff; /* Match the card background */
   overflow: hidden; /* Prevent overflow */
 }
@@ -521,27 +521,27 @@ button {
 }
 
 .mat-paginator {
-  margin-top: 15px; /* Space between table and paginator */
+  margin-top: 5px; /* Space between table and paginator */
 }
 .dashboard-wrapper {
-  width: 100%; /* Full width for the dashboard */
-  max-width: 1200px; /* Restrict max width for responsiveness */
+  width:auto; /* Full width for the dashboard */
+  max-width: 100%; /* Restrict max width for responsiveness */
   margin: 0 auto; /* Center align */
-  padding: 0 20px; /* Add padding for spacing */
+  padding: 0 5px; /* Add padding for spacing */
 }
 
 .dashboard-container {
   display: flex; /* Flexbox for alignment */
   justify-content: space-between; /* Space between each card */
   align-items: stretch; /* Ensure all cards have the same height */
-  gap: 20px; /* Add spacing between cards */
+  gap: 5px; /* Add spacing between cards */
 }
 
 .dashboard-card {
   flex: 1; /* Ensure all cards take the same width */
   border-radius: 10px;
   box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow */
-  padding: 20px; /* Padding inside cards */
+  padding: 5px; /* Padding inside cards */
   background-color: #fff; /* White background for cards */
   border: 1px solid #ccc; /* Light gray border */
   display: flex; /* Ensure proper layout for card content */
@@ -551,7 +551,7 @@ button {
 
 h3 {
   text-align: center;
-  margin-bottom: 20px; /* Add space below the title */
+  margin-bottom: 5px; /* Add space below the title */
 }
 
 .mat-table {
@@ -563,7 +563,7 @@ ngx-gauge {
 }
 
 .info-container {
-  margin-top: 20px; /* Add spacing above the info container */
+  margin-top: 5px; /* Add spacing above the info container */
   display: flex;
   flex-direction: column; /* Stack rows vertically */
   gap: 10px; /* Add spacing between rows */
@@ -581,5 +581,34 @@ ngx-gauge {
   letter-spacing: 1px;
   font-family: "Playfair Display", serif; /* Match the font family */
   font-weight: 400;
-  margin-bottom: 15px; /* Space below the title */
+  margin-bottom: 5px; /* Space below the title */
+}
+
+.info-container {
+  text-align: right; /* Right-to-left alignment for Hebrew */
+  font-family: 'Arial', sans-serif; /* Use a clean, modern font */
+  margin: 10px 0; /* Add some spacing around the container */
+  padding: 10px; /* Add padding for better spacing */
+  border: 1px solid #ccc; /* Optional: add a border */
+  border-radius: 5px; /* Optional: round corners */
+  background-color: #f9f9f9; /* Optional: light background */
+}
+
+.stat-row {
+  display: flex;
+  justify-content: flex-end; /* Align items to the right */
+  gap: 10px; /* Add space between value and label */
+  margin-bottom: 5px; /* Add spacing between rows */
+}
+
+.stat-label {
+  font-size: 14px;
+  font-weight: 500;
+  color: rgba(0, 0, 0, 0.7); /* Subtle text color for labels */
+}
+
+.stat-value {
+  font-size: 16px;
+  font-weight: bold;
+  color: rgba(0, 0, 0, 0.9); /* Slightly darker color for values */
 }
