@@ -62,15 +62,15 @@ export class Drug2hReviewComponent implements OnInit {
   ngOnInit(): void {
     this.matTableDataSource.filterPredicate = (data: any, filter: string) => {
       const formattedFilter = filter.trim().toLowerCase();
-      // Check if any column value matches the global filter
       return this.columns.some((column) => {
         const columnValue = data[column] ? data[column].toString().toLowerCase() : '';
         return columnValue.includes(formattedFilter);
       });
     };
   
-    this.fetchData(); // Fetch initial data
+    this.fetchData();
   }
+  
 
   private createFilterForm(): FormGroup {
     return this.fb.group({
@@ -81,26 +81,39 @@ export class Drug2hReviewComponent implements OnInit {
   }
 
   applyFilters(): void {
-    const filters = this.filterForm.value; // Get filter form values
-    const globalFilter = filters.globalFilter ? filters.globalFilter.trim().toLowerCase() : ''; // Normalize the search term
-    const year = filters.year; // Get year filter
-    const quarter = filters.quarter; // Get quarter filter
-  
-    // Apply global filtering logic
+    const filters = this.filterForm.value;
+    const globalFilter = filters.globalFilter ? filters.globalFilter.trim().toLowerCase() : '';
+    const year = filters.year;
+    const quarter = filters.quarter;
+    console.log('Apply Filters button clicked');
+  this.fetchData(filters.year, filters.quarter);
+    // Apply global filtering
     this.matTableDataSource.filter = globalFilter;
   
-    // Apply additional filtering (if any logic needs to be added for year and quarter)
+    // Filter by year and quarter if specified
+    let filteredData = this.dataSource;
     if (year || quarter) {
-      // Optionally refine data based on year and quarter
-      const filteredData = this.dataSource.filter((item) => {
+      filteredData = this.dataSource.filter((item) => {
         const matchesYear = year ? item.year === year : true;
         const matchesQuarter = quarter ? item.quarter === quarter : true;
         return matchesYear && matchesQuarter;
       });
-  
-      // Update MatTableDataSource with filtered data
-      this.matTableDataSource.data = filteredData;
     }
+  
+    // Update the table data
+    this.matTableDataSource.data = filteredData;
+  
+    // Update best and worst performers
+    this.bestPerformers = [...filteredData]
+      .sort((a, b) => b.Percent_Below_2_10H - a.Percent_Below_2_10H)
+      .slice(0, 5);
+  
+    this.worstPerformers = [...filteredData]
+      .sort((a, b) => a.Percent_Below_2_10H - b.Percent_Below_2_10H)
+      .slice(0, 5);
+  
+    // Recalculate metrics
+    this.calculateMetrics();
   }
   
   resetFilters() {
@@ -124,10 +137,13 @@ export class Drug2hReviewComponent implements OnInit {
     if (year) params.year = year;
     if (quarter) params.quarter = quarter;
   
+    console.log('Sending request with params:', params); // Debug request params
+  
     this.http.get<any[]>(`${environment.apiUrl}Drug2hReview`, { params }).subscribe(
       (data) => {
-        this.dataSource = data; // Update the original data source
-        this.matTableDataSource.data = this.dataSource; // Update MatTableDataSource
+        console.log('Response from backend:', data); // Debug backend response
+        this.dataSource = data;
+        this.matTableDataSource.data = [...this.dataSource];
   
         // Update best and worst performers
         this.bestPerformers = [...this.dataSource]
@@ -140,10 +156,6 @@ export class Drug2hReviewComponent implements OnInit {
   
         // Recalculate metrics
         this.calculateMetrics();
-  
-        // Trigger Angular's change detection
-        this.matTableDataSource.paginator = this.paginator;
-        this.matTableDataSource.sort = this.sort;
       },
       (error) => {
         console.error('Error fetching data:', error);
@@ -152,18 +164,22 @@ export class Drug2hReviewComponent implements OnInit {
   }
   
   
+  
 
 
   calculateMetrics(): void {
-    this.totalUnits = this.dataSource.length;
-    this.totalAbove210 = this.dataSource.reduce((sum, item) => sum + (item.Count_Above_2_10H || 0), 0);
-    this.totalBelow210 = this.dataSource.reduce((sum, item) => sum + (item.Count_Below_2_10H || 0), 0);
-
+    const filteredData = this.matTableDataSource.data;
+  
+    this.totalUnits = filteredData.length;
+    this.totalAbove210 = filteredData.reduce((sum, item) => sum + (item.Count_Above_2_10H || 0), 0);
+    this.totalBelow210 = filteredData.reduce((sum, item) => sum + (item.Count_Below_2_10H || 0), 0);
+  
     const totalExecutions = this.totalAbove210 + this.totalBelow210;
     this.percentBelow210 = totalExecutions > 0 ? (this.totalBelow210 / totalExecutions) * 100 : 0;
-
+  
     this.gaugeValue = this.percentBelow210;
   }
+  
 
   getGaugeColor(value: number): string {
     if (value > 100) {
