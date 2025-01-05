@@ -573,3 +573,13 @@ ngx-gauge {
   display: flex;
   justify-content: space-between; /* Align label and value */
 }
+.card-title h3 {
+  text-align: center;
+  font-size: 30px; /* Smaller than h1 */
+  text-transform: uppercase;
+  color: rgb(54, 10, 214); /* Same color as h1 */
+  letter-spacing: 1px;
+  font-family: "Playfair Display", serif; /* Match the font family */
+  font-weight: 400;
+  margin-bottom: 15px; /* Space below the title */
+}
