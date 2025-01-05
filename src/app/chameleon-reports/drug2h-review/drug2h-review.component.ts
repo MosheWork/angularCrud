@@ -59,9 +59,17 @@ export class Drug2hReviewComponent implements OnInit {
     });
 
   }
-
-  ngOnInit() {
-    this.fetchData();
+  ngOnInit(): void {
+    this.matTableDataSource.filterPredicate = (data: any, filter: string) => {
+      const formattedFilter = filter.trim().toLowerCase();
+      // Check if any column value matches the global filter
+      return this.columns.some((column) => {
+        const columnValue = data[column] ? data[column].toString().toLowerCase() : '';
+        return columnValue.includes(formattedFilter);
+      });
+    };
+  
+    this.fetchData(); // Fetch initial data
   }
 
   private createFilterForm(): FormGroup {
@@ -73,12 +81,26 @@ export class Drug2hReviewComponent implements OnInit {
   }
 
   applyFilters(): void {
-    const filters = this.filterForm.value; // Get the filter form values
-    const year = filters.year; // Get year from form
-    const quarter = filters.quarter; // Get quarter from form
+    const filters = this.filterForm.value; // Get filter form values
+    const globalFilter = filters.globalFilter ? filters.globalFilter.trim().toLowerCase() : ''; // Normalize the search term
+    const year = filters.year; // Get year filter
+    const quarter = filters.quarter; // Get quarter filter
   
-    // Fetch the filtered data
-    this.fetchData(year, quarter);
+    // Apply global filtering logic
+    this.matTableDataSource.filter = globalFilter;
+  
+    // Apply additional filtering (if any logic needs to be added for year and quarter)
+    if (year || quarter) {
+      // Optionally refine data based on year and quarter
+      const filteredData = this.dataSource.filter((item) => {
+        const matchesYear = year ? item.year === year : true;
+        const matchesQuarter = quarter ? item.quarter === quarter : true;
+        return matchesYear && matchesQuarter;
+      });
+  
+      // Update MatTableDataSource with filtered data
+      this.matTableDataSource.data = filteredData;
+    }
   }
   
   resetFilters() {

@@ -2,175 +2,173 @@
     <div class="nine">
       <h1>{{ titleUnit }}<span></span></h1>
     </div>
-<!-- Filter Card -->
-<div class="filter-card-container">
-    <mat-card class="filter-card">
-      <mat-card-content>
-        <form [formGroup]="filterForm">
-          <div class="filter-row">
-            <!-- Year Filter -->
-            <mat-form-field appearance="outline" class="filter-field">
-              <mat-label>שנה</mat-label>
-              <mat-select formControlName="year">
-                <mat-option *ngFor="let year of availableYears" [value]="year">{{ year }}</mat-option>
-              </mat-select>
-            </mat-form-field>
-  
-            <!-- Quarter Filter -->
-            <mat-form-field appearance="outline" class="filter-field">
-              <mat-label>רבעון</mat-label>
-              <mat-select formControlName="quarter">
-                <mat-option *ngFor="let quarter of availableQuarters" [value]="quarter">רבעון {{ quarter }}</mat-option>
-              </mat-select>
-            </mat-form-field>
-  
-            <!-- Apply Filters Button -->
-            <button mat-raised-button color="primary" (click)="applyFilters()">
-              החל סינון
-            </button>
-          </div>
-        </form>
-      </mat-card-content>
-    </mat-card>
-  </div>
-  
-    <div class="dashboard-container">
-        <!-- Best and Worst Performers Card -->
-        <mat-card class="best-worst-card">
-          <div class="side-by-side-tables" style="display: flex; justify-content: space-between; gap: 5px;">
-            <!-- Best Performers Table -->
-            <div class="table-container">
-              <h3>5 Best Performers</h3>
-              <mat-table [dataSource]="bestPerformers" matSort class="mat-elevation-z8">
-                <ng-container matColumnDef="Unit_Name">
-                  <mat-header-cell *matHeaderCellDef mat-sort-header> יחידה </mat-header-cell>
-                  <mat-cell *matCellDef="let element"> {{ element.Unit_Name }} </mat-cell>
-                </ng-container>
-                <ng-container matColumnDef="Percent_Below_2_10H">
-                  <mat-header-cell *matHeaderCellDef mat-sort-header> אחוז מתחת ל-2 שעות </mat-header-cell>
-                  <mat-cell *matCellDef="let element"> {{ element.Percent_Below_2_10H }}%</mat-cell>
-                </ng-container>
-                <mat-header-row *matHeaderRowDef="['Unit_Name', 'Percent_Below_2_10H']"></mat-header-row>
-                <mat-row *matRowDef="let row; columns: ['Unit_Name', 'Percent_Below_2_10H']"></mat-row>
-              </mat-table>
-            </div>
-      
-            <!-- Worst Performers Table -->
-            <div class="table-container">
-              <h3>5 Worst Performers</h3>
-              <mat-table [dataSource]="worstPerformers" matSort class="mat-elevation-z8">
-                <ng-container matColumnDef="Unit_Name">
-                  <mat-header-cell *matHeaderCellDef mat-sort-header> יחידה </mat-header-cell>
-                  <mat-cell *matCellDef="let element"> {{ element.Unit_Name }} </mat-cell>
-                </ng-container>
-                <ng-container matColumnDef="Percent_Below_2_10H">
-                  <mat-header-cell *matHeaderCellDef mat-sort-header> אחוז מתחת ל-2 שעות </mat-header-cell>
-                  <mat-cell *matCellDef="let element"> {{ element.Percent_Below_2_10H }}%</mat-cell>
-                </ng-container>
-                <mat-header-row *matHeaderRowDef="['Unit_Name', 'Percent_Below_2_10H']"></mat-header-row>
-                <mat-row *matRowDef="let row; columns: ['Unit_Name', 'Percent_Below_2_10H']"></mat-row>
-              </mat-table>
-            </div>
-          </div>
-        </mat-card>
-      
-        <!-- Gauge Card -->
-        <mat-card class="gauge-card">
+    <div class="filter-card-container">
+        <mat-card class="filter-card">
           <mat-card-content>
-            <div class="gauge-container">
-              <ngx-gauge
-                [size]="200"
-                [value]="gaugeValue"
-                [min]="0"
-                [max]="100"
-                [type]="'full'"
-                [cap]="'round'"
-                [thick]="25"
-                [label]="'אחוז תקין'"
-                [foregroundColor]="getGaugeColor(gaugeValue)"
-                [backgroundColor]="'#e0e0e0'"
-                [append]="'%'"
-                [duration]="1500">
-              </ngx-gauge>
+            <form [formGroup]="filterForm">
+              <div class="filter-row">
+                <!-- Year Filter -->
+                <mat-form-field appearance="outline" class="filter-field">
+                  <mat-label>שנה</mat-label>
+                  <mat-select formControlName="year">
+                    <mat-option *ngFor="let year of availableYears" [value]="year">{{ year }}</mat-option>
+                  </mat-select>
+                </mat-form-field>
       
-              <div class="info-container">
-                <div class="stat-row">
-                  <span class="stat-label">סה"כ יחידות:</span>
-                  <span class="stat-value">{{ totalUnits }}</span>
-                </div>
-                <div class="stat-row">
-                  <span class="stat-label">סה"כ ביצועים מעל 2 שעות:</span>
-                  <span class="stat-value">{{ totalAbove210 }}</span>
-                </div>
-                <div class="stat-row">
-                  <span class="stat-label">סה"כ ביצועים מתחת ל-2 שעות:</span>
-                  <span class="stat-value">{{ totalBelow210 }}</span>
-                </div>
-                <div class="stat-row">
-                  <span class="stat-label">אחוז ביצועים מתחת ל-2 שעות:</span>
-                  <span class="stat-value">{{ percentBelow210 | number:'1.2-2' }}%</span>
-                </div>
+                <!-- Quarter Filter -->
+                <mat-form-field appearance="outline" class="filter-field">
+                  <mat-label>רבעון</mat-label>
+                  <mat-select formControlName="quarter">
+                    <mat-option *ngFor="let quarter of availableQuarters" [value]="quarter">רבעון {{ quarter }}</mat-option>
+                  </mat-select>
+                </mat-form-field>
+      
+                <!-- Apply Filters Button -->
+                <button mat-raised-button color="primary" (click)="applyFilters()">
+                  החל סינון
+                </button>
               </div>
-            </div>
+            </form>
           </mat-card-content>
         </mat-card>
       </div>
-      
-    <form [formGroup]="filterForm" dir="rtl" class="filter-form" style="display: flex; justify-content: space-between; align-items: center;">
-      <!-- Search Bar -->
-      <mat-form-field class="long-search-bar" style="flex-grow: 1; margin-right: 10px; width: 70%;">
-        <mat-label class="filters" style="color: blue">חיפוש</mat-label>
-        <input matInput [formControlName]="'globalFilter'" class="search-input" />
-      </mat-form-field>
+<!-- Filter Card -->
+<div class="dashboard-wrapper">
+    <div class="dashboard-container">
+      <!-- Best Performers Card -->
+      <mat-card class="dashboard-card">
+        <h3>5 Best Performers</h3>
+        <mat-table [dataSource]="bestPerformers" matSort class="mat-elevation-z8">
+          <ng-container matColumnDef="Unit_Name">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> יחידה </mat-header-cell>
+            <mat-cell *matCellDef="let element"> {{ element.Unit_Name }} </mat-cell>
+          </ng-container>
+          <ng-container matColumnDef="Percent_Below_2_10H">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> אחוז מתחת ל-2 שעות </mat-header-cell>
+            <mat-cell *matCellDef="let element"> {{ element.Percent_Below_2_10H }}%</mat-cell>
+          </ng-container>
+          <mat-header-row *matHeaderRowDef="['Unit_Name', 'Percent_Below_2_10H']"></mat-header-row>
+          <mat-row *matRowDef="let row; columns: ['Unit_Name', 'Percent_Below_2_10H']"></mat-row>
+        </mat-table>
+      </mat-card>
   
-      <!-- Icons and Actions -->
-      <div dir="rtl" class="icon-container" style="display: flex; align-items: center;">
-        <!-- Excel Export Icon -->
-        <img src="../../assets/excel.png" alt="Download" (click)="exportToExcel()" class="download-icon icon" width="50px" style="margin-left: 10px;" />
+      <!-- Worst Performers Card -->
+      <mat-card class="dashboard-card">
+        <h3>5 Worst Performers</h3>
+        <mat-table [dataSource]="worstPerformers" matSort class="mat-elevation-z8">
+          <ng-container matColumnDef="Unit_Name">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> יחידה </mat-header-cell>
+            <mat-cell *matCellDef="let element"> {{ element.Unit_Name }} </mat-cell>
+          </ng-container>
+          <ng-container matColumnDef="Percent_Below_2_10H">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> אחוז מתחת ל-2 שעות </mat-header-cell>
+            <mat-cell *matCellDef="let element"> {{ element.Percent_Below_2_10H }}%</mat-cell>
+          </ng-container>
+          <mat-header-row *matHeaderRowDef="['Unit_Name', 'Percent_Below_2_10H']"></mat-header-row>
+          <mat-row *matRowDef="let row; columns: ['Unit_Name', 'Percent_Below_2_10H']"></mat-row>
+        </mat-table>
+      </mat-card>
   
-        <!-- Reset Filters Button -->
-        <button mat-button (click)="resetFilters()" mat-raised-button color="primary" class="custom-button" matTooltip="Reset Filters" style="margin-left: 10px;">
-          <i class="material-icons">refresh</i>
-        </button>
-      </div>
-    </form>
+      <!-- Gauge Card -->
+      <mat-card class="dashboard-card">
+        <ngx-gauge
+          [size]="200"
+          [value]="gaugeValue"
+          [min]="0"
+          [max]="100"
+          [type]="'full'"
+          [cap]="'round'"
+          [thick]="25"
+          [label]="'אחוז תקין'"
+          [foregroundColor]="getGaugeColor(gaugeValue)"
+          [backgroundColor]="'#e0e0e0'"
+          [append]="'%'"
+          [duration]="1500">
+        </ngx-gauge>
   
-    <!-- Data Table -->
-    <mat-table *ngIf="!showGraph" [dataSource]="matTableDataSource" matSort dir="rtl" class="mat-elevation-z8">
-      <ng-container matColumnDef="Unit_Name">
-        <mat-header-cell *matHeaderCellDef mat-sort-header> יחידה </mat-header-cell>
-        <mat-cell *matCellDef="let element"> {{ element.Unit_Name }} </mat-cell>
-      </ng-container>
-  
-      <ng-container matColumnDef="Next_Execution_Not_Null">
-        <mat-header-cell *matHeaderCellDef mat-sort-header> ביצוע הבא </mat-header-cell>
-        <mat-cell *matCellDef="let element"> {{ element.Next_Execution_Not_Null }} </mat-cell>
-      </ng-container>
-  
-      <ng-container matColumnDef="Count_Above_2_10H">
-        <mat-header-cell *matHeaderCellDef mat-sort-header> מעל 2 שעות </mat-header-cell>
-        <mat-cell *matCellDef="let element"> {{ element.Count_Above_2_10H }} </mat-cell>
-      </ng-container>
-  
-      <ng-container matColumnDef="Count_Below_2_10H">
-        <mat-header-cell *matHeaderCellDef mat-sort-header> מתחת ל-2 שעות </mat-header-cell>
-        <mat-cell *matCellDef="let element"> {{ element.Count_Below_2_10H }} </mat-cell>
-      </ng-container>
-  
-      <ng-container matColumnDef="Percent_Below_2_10H">
-        <mat-header-cell *matHeaderCellDef mat-sort-header> אחוז מתחת ל-2 שעות </mat-header-cell>
-        <mat-cell *matCellDef="let element"> {{ element.Percent_Below_2_10H }}%</mat-cell>
-      </ng-container>
-  
-      <mat-header-row *matHeaderRowDef="columns"></mat-header-row>
-      <mat-row *matRowDef="let row; columns: columns"></mat-row>
-    </mat-table>
-  
-    <!-- Paginator -->
-    <mat-paginator
-      [length]="matTableDataSource.paginator?.length || 0"
-      [pageIndex]="matTableDataSource.paginator?.pageIndex"
-      [pageSize]="matTableDataSource.paginator?.pageSize"
-      [pageSizeOptions]="[15, 50, 100]">
-    </mat-paginator>
+        <div class="info-container">
+          <div class="stat-row">
+            <span class="stat-label">סה"כ יחידות:</span>
+            <span class="stat-value">{{ totalUnits }}</span>
+          </div>
+          <div class="stat-row">
+            <span class="stat-label">סה"כ ביצועים מעל 2 שעות:</span>
+            <span class="stat-value">{{ totalAbove210 }}</span>
+          </div>
+          <div class="stat-row">
+            <span class="stat-label">סה"כ ביצועים מתחת ל-2 שעות:</span>
+            <span class="stat-value">{{ totalBelow210 }}</span>
+          </div>
+          <div class="stat-row">
+            <span class="stat-label">אחוז ביצועים מתחת ל-2 שעות:</span>
+            <span class="stat-value">{{ percentBelow210 | number: '1.2-2' }}%</span>
+          </div>
+        </div>
+      </mat-card>
+    </div>
   </div>
+  
+      
+<!-- Global Search and Table Card -->
+<mat-card class="data-card-container">
+    <mat-card-content>
+      <!-- Global Search -->
+      <form [formGroup]="filterForm" class="filter-form" dir="rtl">
+        <mat-form-field class="long-search-bar" appearance="outline" style="flex-grow: 1; margin-right: 10px; width: 70%;">
+          <mat-label class="filters" style="color: blue">חיפוש</mat-label>
+          <input matInput formControlName="globalFilter" class="search-input" (input)="applyFilters()" />
+        </mat-form-field>
+  
+        <!-- Icons and Actions -->
+        <div dir="rtl" class="icon-container" style="display: flex; align-items: center;">
+          <!-- Excel Export Icon -->
+          <img src="../../assets/excel.png" alt="Download" (click)="exportToExcel()" class="download-icon icon" width="50px" style="margin-left: 10px;" />
+  
+          <!-- Reset Filters Button -->
+          <button mat-button (click)="resetFilters()" mat-raised-button color="primary" class="custom-button" matTooltip="Reset Filters" style="margin-left: 10px;">
+            <i class="material-icons">refresh</i>
+          </button>
+        </div>
+      </form>
+  
+      <!-- Data Table -->
+      <mat-table *ngIf="!showGraph" [dataSource]="matTableDataSource" matSort dir="rtl" class="mat-elevation-z8">
+        <ng-container matColumnDef="Unit_Name">
+          <mat-header-cell *matHeaderCellDef mat-sort-header> יחידה </mat-header-cell>
+          <mat-cell *matCellDef="let element"> {{ element.Unit_Name }} </mat-cell>
+        </ng-container>
+  
+        <ng-container matColumnDef="Next_Execution_Not_Null">
+          <mat-header-cell *matHeaderCellDef mat-sort-header> ביצוע הבא </mat-header-cell>
+          <mat-cell *matCellDef="let element"> {{ element.Next_Execution_Not_Null }} </mat-cell>
+        </ng-container>
+  
+        <ng-container matColumnDef="Count_Above_2_10H">
+          <mat-header-cell *matHeaderCellDef mat-sort-header> מעל 2 שעות </mat-header-cell>
+          <mat-cell *matCellDef="let element"> {{ element.Count_Above_2_10H }} </mat-cell>
+        </ng-container>
+  
+        <ng-container matColumnDef="Count_Below_2_10H">
+          <mat-header-cell *matHeaderCellDef mat-sort-header> מתחת ל-2 שעות </mat-header-cell>
+          <mat-cell *matCellDef="let element"> {{ element.Count_Below_2_10H }} </mat-cell>
+        </ng-container>
+  
+        <ng-container matColumnDef="Percent_Below_2_10H">
+          <mat-header-cell *matHeaderCellDef mat-sort-header> אחוז מתחת ל-2 שעות </mat-header-cell>
+          <mat-cell *matCellDef="let element"> {{ element.Percent_Below_2_10H }}%</mat-cell>
+        </ng-container>
+  
+        <mat-header-row *matHeaderRowDef="columns"></mat-header-row>
+        <mat-row *matRowDef="let row; columns: columns"></mat-row>
+      </mat-table>
+  
+      <!-- Paginator -->
+      <mat-paginator
+        [length]="matTableDataSource.paginator?.length || 0"
+        [pageIndex]="matTableDataSource.paginator?.pageIndex"
+        [pageSize]="matTableDataSource.paginator?.pageSize"
+        [pageSizeOptions]="[15, 50, 100]">
+      </mat-paginator>
+    </mat-card-content>
+  </mat-card>
+  

@@ -7,6 +7,7 @@
   table {
     width: 95%;
     margin: 20px 23px 1px 0px;
+
   }
   .mat-row:nth-child(odd) {
     background-color: white;
@@ -44,9 +45,12 @@
   }
   
   .filter-form {
-    width: 100%; /* Set the width to 100% to match the table's width */
-    padding: 10px; /* Add padding for spacing */
-    box-sizing: border-box; /* Include padding in the width calculation */
+    border: 1px solid #ccc; /* Light gray border */
+    border-radius: 10px; /* Rounded corners */
+    padding: 15px; /* Padding inside the form */
+    margin-bottom: 20px; /* Space below the form */
+    background-color: #fff; /* White background */
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow */
   }
   
   /* Style the 'name' select box */
@@ -305,6 +309,8 @@
     display: flex;
     flex-direction: column;
     gap: 10px; /* Adds spacing between rows */
+    border: 1px solid #ccc; /* Add a light gray border */
+
   }
   
   .stat-row {
@@ -332,6 +338,8 @@
     box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
     padding: 20px;
     background-color: transparent; /* Set to transparent to remove the background */
+    border: 1px solid #ccc; /* Add a light gray border */
+
   }
   .dashboard-container {
     display: flex;
@@ -347,6 +355,8 @@
 .table-container {
   flex: 1;
   max-width: 30%; /* Restrict width to 30% of the page */
+  border: 1px solid #ccc; /* Add a light gray border */
+
 }
 
 .best-worst-card h3 {
@@ -362,16 +372,22 @@
   display: flex;
   flex-direction: column;
   gap: 10px;
+  border: 1px solid #ccc; /* Add a light gray border */
+
 }
 
 .table-container {
   flex: 1;
   max-width: 48%; /* Adjust to fit nicely side by side */
+  border: 1px solid #ccc; /* Add a light gray border */
+
 }
 
 .table-container h3 {
   text-align: center;
   margin-bottom: 10px;
+  border: 1px solid #ccc; /* Add a light gray border */
+
 }
 
 .dashboard-container {
@@ -385,6 +401,8 @@
   box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
   padding: 10px;
   background-color: #fff; /* Same background color */
+  border: 1px solid #ccc; /* Add a light gray border */
+
 }
 /* Adjust the margin of the title */
 h1 {
@@ -417,17 +435,141 @@ html, body {
 .dashboard-container {
   margin: 0;
   padding: 0;
+  width: 100%;
+}
+.filter-card-container {
+  width: 100%; /* Ensure it spans the full width of the page */
+  margin-bottom: 20px; /* Add spacing below the card */
+  display: flex;
+  justify-content: center; /* Center the card horizontally */
+  
 }
 
 .filter-card {
-  width: 100%; /* Full width */
-  height: 10vh; /* Occupy 10% of the viewport height */
-  display: flex;
-  justify-content: space-between; /* Align content within the card */
-  align-items: center;
-  padding: 20px; /* Consistent padding */
+  width: 100%; /* Match the width of other cards */
+  max-width: 1200px; /* Set a max width for better responsiveness */
+  padding: 20px; /* Add internal padding */
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* Card shadow */
+  border-radius: 10px; /* Rounded corners */
+  border: 1px solid #ccc; /* Add a light gray border */
+  background-color: #fff; /* White background for consistency */
+}
+
+
+.filter-row {
+  display: flex; /* Arrange items in a row */
+  justify-content: space-between; /* Add space between filters */
+  align-items: center; /* Align filters vertically */
+  gap: 15px; /* Add spacing between filter elements */
+  width: 100%;
+}
+
+.filter-field {
+  width: 30%; /* Adjust field width for consistency */
+  min-width: 200px; /* Ensure a minimum width for small screens */
+}
+
+button {
+  align-self: center; /* Center-align the button with the fields */
+  padding: 10px 20px; /* Adjust button padding for consistency */
+}
+.mat-elevation-z8 {
+  border: 1px solid #ccc; /* Light gray border */
+  border-radius: 10px; /* Rounded corners */
+  overflow: hidden; /* Prevent content from spilling out */
+  margin-top: 15px; /* Add space above the table */
+  background-color: #fff; /* White background */
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+}
+.mat-row {
+  border-bottom: 1px solid #e0e0e0; /* Light border between rows */
+}
+
+.mat-header-row {
+  border-bottom: 2px solid #ccc; /* Slightly thicker border for the header row */
+}
+.data-card-container {
+  width: 100%; /* Full-width card */
+  max-width: 100%; /* Maximum width for responsiveness */
+  margin: 20px auto; /* Center the card and add spacing */
+  padding: 20px; /* Internal padding for content */
+  border: 1px solid #ccc; /* Light gray border */
   border-radius: 10px; /* Rounded corners */
   box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow */
-  background-color: #fff; /* White background */
+  background-color: #fff; /* White background for consistency */
+}
 
+.filter-form {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px; /* Space between filter and table */
+  gap: 10px; /* Space between filter and icons */
+}
+
+.mat-table {
+  margin-top: 20px; /* Space between table and search */
+  border: 1px solid #ccc; /* Add border to the table */
+  border-radius: 10px; /* Add rounded corners */
+  background-color: #fff; /* Match the card background */
+  overflow: hidden; /* Prevent overflow */
+}
+
+.mat-elevation-z8 {
+  border: none; /* Remove the double border */
+  box-shadow: none; /* Remove elevation shadow */
+}
+
+.mat-paginator {
+  margin-top: 15px; /* Space between table and paginator */
+}
+.dashboard-wrapper {
+  width: 100%; /* Full width for the dashboard */
+  max-width: 1200px; /* Restrict max width for responsiveness */
+  margin: 0 auto; /* Center align */
+  padding: 0 20px; /* Add padding for spacing */
+}
+
+.dashboard-container {
+  display: flex; /* Flexbox for alignment */
+  justify-content: space-between; /* Space between each card */
+  align-items: stretch; /* Ensure all cards have the same height */
+  gap: 20px; /* Add spacing between cards */
+}
+
+.dashboard-card {
+  flex: 1; /* Ensure all cards take the same width */
+  border-radius: 10px;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+  padding: 20px; /* Padding inside cards */
+  background-color: #fff; /* White background for cards */
+  border: 1px solid #ccc; /* Light gray border */
+  display: flex; /* Ensure proper layout for card content */
+  flex-direction: column; /* Stack card content vertically */
+  justify-content: space-between; /* Evenly distribute content */
+}
+
+h3 {
+  text-align: center;
+  margin-bottom: 20px; /* Add space below the title */
+}
+
+.mat-table {
+  width: 100%; /* Ensure table takes full width of the card */
+}
+
+ngx-gauge {
+  margin: auto; /* Center the gauge inside the card */
+}
+
+.info-container {
+  margin-top: 20px; /* Add spacing above the info container */
+  display: flex;
+  flex-direction: column; /* Stack rows vertically */
+  gap: 10px; /* Add spacing between rows */
+}
+
+.stat-row {
+  display: flex;
+  justify-content: space-between; /* Align label and value */
 }
