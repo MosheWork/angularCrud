@@ -1,6 +1,6 @@
-<h2 mat-dialog-title>פרטי תרופות עבור יחידה: {{ data.unit_Name }}</h2>
+<h2 mat-dialog-title>פרטי תרופות עבור יחידה: {{ data.Unit_Name }}</h2>
 <mat-dialog-content>
-  <mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+  <mat-table [dataSource]="dataSource" class="mat-elevation-z8" dir="rtl">
     <!-- Unit Name -->
     <ng-container matColumnDef="Unit_Name">
       <mat-header-cell *matHeaderCellDef> שם יחידה </mat-header-cell>
@@ -122,5 +122,15 @@
 </mat-dialog-content>
 
 <mat-dialog-actions align="end">
-  <button mat-raised-button color="primary" mat-dialog-close>סגור</button>
-</mat-dialog-actions>
+    <img
+    src="../../assets/excel.png"
+    alt="Download"
+    (click)="exportToExcel()"
+    class="download-icon icon"
+    width="50px"
+    style="margin-left: 10px; cursor: pointer;"
+  />
+    <button mat-raised-button color="primary" mat-dialog-close>
+      סגור
+    </button>
+  </mat-dialog-actions>

@@ -1,0 +1,60 @@
+.styled-table {
+    width: 100%;
+    border-spacing: 0;
+    background-color: #f9f9f9;
+  
+    .mat-header-cell {
+      background-color: #3f51b5;
+      color: white;
+      font-weight: bold;
+      text-align: center;
+      border: 1px solid #ddd;
+      padding: 10px;
+    }
+  
+    .mat-cell {
+      text-align: center;
+      border: 1px solid #ddd;
+      padding: 10px;
+      font-size: 14px;
+    }
+  
+    .mat-row:hover {
+      background-color: #f1f1f1;
+    }
+  }
+  
+  mat-dialog-title {
+    font-size: 20px;
+    font-weight: bold;
+    text-align: center;
+    color: #3f51b5;
+    margin-bottom: 10px;
+  }
+  
+  mat-dialog-content {
+    padding: 20px;
+    max-height: 400px;
+    overflow-y: auto;
+  }
+  
+  mat-dialog-actions {
+    display: flex;
+    justify-content: space-between;
+    padding: 15px;
+    background-color: #f4f4f4;
+  
+    button {
+      font-weight: bold;
+    }
+  }
+  .mat-dialog-title h3 {
+    text-align: center;
+    font-size: 30px; /* Smaller than h1 */
+    text-transform: uppercase;
+    color: rgb(54, 10, 214); /* Same color as h1 */
+    letter-spacing: 1px;
+    font-family: "Playfair Display", serif; /* Match the font family */
+    font-weight: 400;
+    margin-bottom: 5px; /* Space below the title */
+  }

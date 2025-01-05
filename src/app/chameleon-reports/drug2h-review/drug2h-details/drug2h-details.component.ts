@@ -4,6 +4,8 @@ import { MatTableDataSource } from '@angular/material/table';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { environment } from '../../../../environments/environment';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
+import * as XLSX from 'xlsx';
+
 
 @Component({
   selector: 'app-drug2h-details',
@@ -14,13 +16,13 @@ export class Drug2hDetailsComponent implements OnInit {
   displayedColumns: string[] = [
     'Unit_Name',
     'Order_ID',
-    'Drug',
+    //'Drug',
     'Drugs_Text',
     'Basic_Name',
     'Remarks',
     'Exec_Status',
     'Exec_Status_Name',
-    'IV_State',
+   // 'IV_State',
     'IV_State_Desc',
     'Way_Of_Giving',
     'Order_Stop_Date',
@@ -29,7 +31,7 @@ export class Drug2hDetailsComponent implements OnInit {
     'Last_Name',
     'Id_Num',
     'Execution_Date',
-    'Next_Execution_Date',
+    //'Next_Execution_Date',
     'Time_Difference_HHMM',
   ];
   dataSource: MatTableDataSource<any> = new MatTableDataSource<any>([]); // Updated to MatTableDataSource for proper integration
@@ -77,4 +79,36 @@ export class Drug2hDetailsComponent implements OnInit {
     const unit = this.filterForm.get('unit')?.value;
     this.fetchDrugDetails(unit); // Fetch details when the filter form is submitted
   }
+  exportToExcel(): void {
+    // Extract the actual data array from MatTableDataSource
+    const data = this.dataSource.data;
+  
+    // Check if the data array exists and is not empty
+    if (!data || data.length === 0) {
+      console.error('No data available to export');
+      return;
+    }
+  
+    // Convert the data array to a worksheet
+    const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(data);
+    const workbook: XLSX.WorkBook = {
+      Sheets: { data: worksheet },
+      SheetNames: ['data'],
+    };
+  
+    // Write the workbook to a buffer
+    const excelBuffer: any = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
+  
+    // Create a Blob from the buffer
+    const blob: Blob = new Blob([excelBuffer], {
+      type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    });
+  
+    // Download the Excel file
+    const link = document.createElement('a');
+    link.href = window.URL.createObjectURL(blob);
+    link.download = 'drug2h_details.xlsx';
+    link.click();
+  }
+  
 }
