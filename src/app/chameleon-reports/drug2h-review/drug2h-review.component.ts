@@ -17,6 +17,9 @@ import { environment } from '../../../environments/environment';
   styleUrls: ['./drug2h-review.component.scss'],
 })
 export class Drug2hReviewComponent implements OnInit {
+  loading: boolean = false; // Spinner control
+  unitNames: string[] = []; // To store unit names
+
   totalResults: number = 0;
   titleUnit: string = ' דוח בקרת תרופות ברות סיכון';
   Title1: string = 'סה"כ רשומות: ';
@@ -95,42 +98,58 @@ export class Drug2hReviewComponent implements OnInit {
 
   private createFilterForm(): FormGroup {
     return this.fb.group({
-      year: new FormControl(null),
-      quarter: new FormControl(null),
-      globalFilter: new FormControl(''),
+      year: new FormControl(null), // Year filter
+      quarter: new FormControl(null), // Quarter filter
+      globalFilter: new FormControl(''), // Global filter
+      unitName: new FormControl(null), // Unit name filter
     });
   }
 
   applyFilters(): void {
+    this.loading = true; // Show loading spinner
+  
     const filters = this.filterForm.value;
     const globalFilter = filters.globalFilter ? filters.globalFilter.trim().toLowerCase() : '';
     const year = filters.year;
     const quarter = filters.quarter;
-
-    this.fetchData(filters.year, filters.quarter);
-
-    this.matTableDataSource.filter = globalFilter;
-
-    let filteredData = this.dataSource;
-    if (year || quarter) {
-      filteredData = this.dataSource.filter((item) => {
-        const matchesYear = year ? item.year === year : true;
-        const matchesQuarter = quarter ? item.quarter === quarter : true;
-        return matchesYear && matchesQuarter;
-      });
+    const unitName = filters.unitName;
+  
+    console.log('Applying filters:', { globalFilter, year, quarter, unitName }); // Debug log
+  
+    // If year or quarter filters are applied, fetch fresh data from the API
+    if (year || quarter || unitName ) {
+      this.fetchData(year, quarter, unitName);
+      return; // Return early because fetchData will handle updating the table
     }
-
+  
+    // Apply other filters on the already loaded data
+    let filteredData = this.dataSource;
+  
+    // Filter by unit name
+    if (unitName) {
+      filteredData = filteredData.filter((item) => item.Unit_Name === unitName);
+    }
+  
+    // Apply global search filter
+    if (globalFilter) {
+      filteredData = filteredData.filter((item) =>
+        Object.values(item).some((value) =>
+          value ? value.toString().toLowerCase().includes(globalFilter) : false
+        )
+      );
+    }
+  
+    // Update the data source for the table
     this.matTableDataSource.data = filteredData;
-    this.bestPerformers = [...filteredData]
-    .sort((a, b) => b.Percent_Below_2_10H - a.Percent_Below_2_10H)
-    .slice(0, 5);
-
-  this.worstPerformers = [...filteredData]
-    .sort((a, b) => a.Percent_Below_2_10H - b.Percent_Below_2_10H)
-    .slice(0, 5);
-
+  
+    // Recalculate metrics based on filtered data
     this.calculateMetrics();
+  
+    // Hide loading spinner
+    this.loading = false;
   }
+  
+  
 
   resetFilters() {
     this.filterForm.reset();
@@ -149,16 +168,20 @@ export class Drug2hReviewComponent implements OnInit {
     link.click();
   }
 
-  fetchData(year?: number, quarter?: number): void {
+  fetchData(year?: number, quarter?: number, unitName?: string): void {
+    this.loading = true;
     const params: any = {};
     if (year) params.year = year;
     if (quarter) params.quarter = quarter;
+    if (unitName) params.unitName = unitName; // Add unit name filter
+
 
     this.http.get<any[]>(`${environment.apiUrl}Drug2hReview`, { params }).subscribe(
       (data) => {
         this.dataSource = data;
         this.matTableDataSource.data = [...this.dataSource];
         this.matTableDataSource.sort = this.sort;
+        this.unitNames = Array.from(new Set(data.map((item) => item.Unit_Name))).sort();
 
         this.updateChartData();
         this.bestPerformers = [...this.dataSource]
@@ -169,6 +192,7 @@ export class Drug2hReviewComponent implements OnInit {
         .sort((a, b) => a.Percent_Below_2_10H - b.Percent_Below_2_10H)
         .slice(0, 5);
         this.calculateMetrics();
+        this.loading = false;
       },
       (error) => {
         console.error('Error fetching data:', error);
@@ -189,10 +213,10 @@ export class Drug2hReviewComponent implements OnInit {
     this.gaugeValue = this.percentBelow210;
   }
 
-  getGaugeColor(value: number): string {
-    if (value > 100) {
+  getGaugeColor(gaugeValue: number): string {
+    if (gaugeValue > 100) {
       return '#f44336'; // Red
-    } else if (value >= 80) {
+    } else if (gaugeValue >= 80) {
       return '#ff9800'; // Orange
     } else {
       return '#4caf50'; // Green

@@ -1,4 +1,11 @@
-<div class="body">
+<!-- Spinner with Loading Message -->
+<div *ngIf="loading" class="loading-overlay">
+  <div class="spinner-container">
+    <mat-spinner [diameter]="150"></mat-spinner>
+    <p class="loading-text">...טוען נתונים</p>
+  </div>
+</div>
+<div class="body" *ngIf="!loading">
     <div class="nine">
       <h1>{{ titleUnit }}<span></span></h1>
     </div>
@@ -6,6 +13,12 @@
         <mat-card class="filter-card">
           <mat-card-content>
             <form [formGroup]="filterForm">
+              <mat-form-field appearance="outline" class="filter-field">
+                <mat-label>יחידה</mat-label>
+                <mat-select formControlName="unitName" >
+                  <mat-option *ngFor="let unit of unitNames" [value]="unit">{{ unit }}</mat-option>
+                </mat-select>
+              </mat-form-field>
                 <mat-form-field appearance="outline" class="filter-field">
                   <mat-label>שנה</mat-label>
                   <mat-select formControlName="year">
@@ -22,8 +35,12 @@
               
                 <button mat-raised-button color="primary" (click)="applyFilters()">
                     החל סינון
-                  </button>              </form>
-              
+                  </button>   
+                  <button mat-button (click)="resetFilters()" mat-raised-button color="primary" class="custom-button" matTooltip="Reset Filters" style="margin-left: 10px;">
+                    איפוס
+                  </button>
+                             </form>
+                 
           </mat-card-content>
         </mat-card>
       </div>
@@ -36,6 +53,7 @@
             <h3>top 5</h3>
           </div>        
         <mat-table [dataSource]="bestPerformers" matSort class="mat-elevation-z8">
+          
           <ng-container matColumnDef="Unit_Name">
             <mat-header-cell *matHeaderCellDef mat-sort-header> יחידה </mat-header-cell>
             <mat-cell *matCellDef="let element"> {{ element.Unit_Name }} </mat-cell>
@@ -110,7 +128,7 @@
       </mat-card>
     </div>
   </div>
-  
+ 
       
 <!-- Global Search and Table Card -->
 <mat-card class="data-card-container">
@@ -135,9 +153,22 @@
             <i class="material-icons">refresh</i>
           </button>
           <div style="text-align: right; margin-bottom: 20px;">
-            <button mat-raised-button color="accent" (click)="toggleView()">
-              {{ isGraphVisible ? 'הצג טבלה' : 'הצג גרף' }}
-            </button>
+             <img 
+        *ngIf="!isGraphVisible" 
+        (click)="toggleView()" 
+        matTooltip="Move To Graph" 
+        src="../../../../assets/graphIcon.png" 
+        width="50px" 
+        style="margin-left: 10px;" 
+      />
+      <img 
+        *ngIf="isGraphVisible" 
+        (click)="toggleView()" 
+        matTooltip="Move To Table" 
+        src="../../../../assets/TableIcon.png" 
+        width="50px" 
+        style="margin-left: 10px;" 
+      />
           </div>
         </div>
       </form>
