@@ -134,12 +134,19 @@
           <button mat-button (click)="resetFilters()" mat-raised-button color="primary" class="custom-button" matTooltip="Reset Filters" style="margin-left: 10px;">
             <i class="material-icons">refresh</i>
           </button>
+          <div style="text-align: right; margin-bottom: 20px;">
+            <button mat-raised-button color="accent" (click)="toggleView()">
+              {{ isGraphVisible ? 'הצג טבלה' : 'הצג גרף' }}
+            </button>
+          </div>
         </div>
       </form>
-  
+      <div *ngIf="isGraphVisible">
+        <canvas #allTimeChartCanvas></canvas>
+      </div>
       <!-- Data Table -->
       <mat-table
-      *ngIf="!showGraph"
+      *ngIf="!isGraphVisible"
       [dataSource]="matTableDataSource"
       [matSort]
       dir="rtl"
