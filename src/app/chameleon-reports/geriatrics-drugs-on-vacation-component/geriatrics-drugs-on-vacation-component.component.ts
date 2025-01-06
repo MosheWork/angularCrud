@@ -29,7 +29,13 @@ export class GeriatricsDrugsOnVacationComponent implements OnInit {
   dataSource: any[] = [];
   filteredData: any[] = [];
   matTableDataSource: MatTableDataSource<any>;
-  columns: string[] = ['Id_Num', 'First_Name', 'Last_Name'];
+  columns: string[] = [
+    'Id_Num',
+    'First_Name',
+    'Last_Name',
+    'Father_Name',
+    'Admission_No',
+  ];
 
   constructor(
     private http: HttpClient,
@@ -42,28 +48,33 @@ export class GeriatricsDrugsOnVacationComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.http.get<any[]>(`${environment.apiUrl}GeriatricsDrugsOnVacation/GetAllPatients`).subscribe(
-      (data) => {
-        this.dataSource = data;
-        this.filteredData = [...data];
-        this.matTableDataSource = new MatTableDataSource(this.filteredData);
-        this.matTableDataSource.paginator = this.paginator;
-        this.matTableDataSource.sort = this.sort;
+    this.http
+      .get<any[]>(
+        `${environment.apiUrl}GeriatricsDrugsOnVacation/GetAllPatients`
+      )
+      .subscribe(
+        (data) => {
+          this.dataSource = data;
+          this.filteredData = [...data];
+          this.matTableDataSource = new MatTableDataSource(this.filteredData);
+          this.matTableDataSource.paginator = this.paginator;
+          this.matTableDataSource.sort = this.sort;
 
-        this.columns.forEach((column) => {
-          this.getFormControl(column).valueChanges
-            .pipe(debounceTime(300), distinctUntilChanged())
+          this.columns.forEach((column) => {
+            this.getFormControl(column)
+              .valueChanges.pipe(debounceTime(300), distinctUntilChanged())
+              .subscribe(() => this.applyFilters());
+          });
+
+          this.filterForm
+            .get('globalFilter')
+            ?.valueChanges.pipe(debounceTime(300), distinctUntilChanged())
             .subscribe(() => this.applyFilters());
-        });
 
-        this.filterForm.get('globalFilter')?.valueChanges
-          .pipe(debounceTime(300), distinctUntilChanged())
-          .subscribe(() => this.applyFilters());
-
-        this.applyFilters();
-      },
-      (error) => console.error('Error fetching data:', error)
-    );
+          this.applyFilters();
+        },
+        (error) => console.error('Error fetching data:', error)
+      );
   }
 
   private createFilterForm(): FormGroup {
@@ -80,14 +91,19 @@ export class GeriatricsDrugsOnVacationComponent implements OnInit {
     const filters = this.filterForm.value;
     const globalFilter = filters['globalFilter']?.toLowerCase() || '';
 
-    this.filteredData = this.dataSource.filter((item) =>
-      this.columns.every((column) => {
-        const columnFilter = filters[column]?.toLowerCase() || '';
-        const value = String(item[column] || '').toLowerCase();
-        return !columnFilter || value.includes(columnFilter);
-      }) &&
-      (globalFilter === '' ||
-        this.columns.some((column) => String(item[column] || '').toLowerCase().includes(globalFilter)))
+    this.filteredData = this.dataSource.filter(
+      (item) =>
+        this.columns.every((column) => {
+          const columnFilter = filters[column]?.toLowerCase() || '';
+          const value = String(item[column] || '').toLowerCase();
+          return !columnFilter || value.includes(columnFilter);
+        }) &&
+        (globalFilter === '' ||
+          this.columns.some((column) =>
+            String(item[column] || '')
+              .toLowerCase()
+              .includes(globalFilter)
+          ))
     );
 
     this.totalResults = this.filteredData.length;
@@ -99,6 +115,8 @@ export class GeriatricsDrugsOnVacationComponent implements OnInit {
       Id_Num: 'תעודת זהות',
       First_Name: 'שם פרטי',
       Last_Name: 'שם משפחה',
+      Admission_No: 'מספר מקרה',
+      Father_Name: 'שם האב',
     };
     return columnLabels[column] || column;
   }
@@ -114,7 +132,9 @@ export class GeriatricsDrugsOnVacationComponent implements OnInit {
   }
 
   exportToExcel() {
-    const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(this.filteredData);
+    const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(
+      this.filteredData
+    );
     const workbook: XLSX.WorkBook = {
       Sheets: { data: worksheet },
       SheetNames: ['data'],
@@ -133,17 +153,29 @@ export class GeriatricsDrugsOnVacationComponent implements OnInit {
   }
 
   openDrugDetails(row: any): void {
-    const idNum = row.Id_Num;
+    const idNum = row.Id_Num; // Extract the ID number
     const apiUrl = `${environment.apiUrl}GeriatricsDrugsOnVacation/GetPatientDetails/${idNum}`;
-    
+
+    // Fetch the drug details from the API
     this.http.get<any[]>(apiUrl).subscribe(
       (data) => {
         console.log('Fetched drug details:', data); // Log API response
+
+        // Open the dialog and pass both patient details and drug details
         this.dialog.open(DrugDetailsDialogComponent, {
-          width: '60vw', // Make dialog wider
-          maxWidth: '100vw', // Prevent it from shrinking below screen width
-          height: 'auto', // Allow height to adjust dynamically
-          data: data,
+          width: '60vw', // Dialog width
+          maxWidth: '100vw', // Prevent shrinking
+          height: 'auto', // Adjust height
+          data: {
+            patientDetails: {
+              Id_Num: row.Id_Num,
+              First_Name: row.First_Name,
+              Last_Name: row.Last_Name,
+              Father_Name: row.Father_Name,
+              Admission_No: row.Admission_No,
+            },
+            drugDetails: Array.isArray(data) ? data : [], // Ensure drugDetails is an array
+          },
         });
       },
       (error) => {
@@ -151,9 +183,7 @@ export class GeriatricsDrugsOnVacationComponent implements OnInit {
       }
     );
   }
-  
-  
-  
+
   // showDrugDetailsDialog(drugDetails: any[]): void {
   //   this.dialog.open(DrugDetailsDialogComponent, {
   //     width: '600px',

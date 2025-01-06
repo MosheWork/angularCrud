@@ -9,7 +9,7 @@ import html2canvas from 'html2canvas';
   styleUrls: ['./drug-details-dialog.component.scss'],
 })
 export class DrugDetailsDialogComponent implements AfterViewInit {
-  displayedColumns: string[] = ['select', 'Way_Of_Giving', 'Drugs_Text','FrequencyText','SpecificTime'];
+  displayedColumns: string[] = ['select', 'Way_Of_Giving', 'Drugs_Text', 'FrequencyText', 'SpecificTime'];
   dataSource: any[] = [];
 
   @ViewChild('pdfTable', { static: false }) pdfTable!: ElementRef;
@@ -18,7 +18,11 @@ export class DrugDetailsDialogComponent implements AfterViewInit {
     public dialogRef: MatDialogRef<DrugDetailsDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any
   ) {
-    this.dataSource = data.map((item: any) => ({ ...item, selected: false })); // Add a `selected` property
+    console.log('Dialog data received:', data);
+
+    // Ensure data contains drugDetails array
+    const drugDetails = Array.isArray(data.drugDetails) ? data.drugDetails : [];
+    this.dataSource = drugDetails.map((item: any) => ({ ...item, selected: false }));
   }
 
   ngAfterViewInit() {
@@ -51,102 +55,95 @@ export class DrugDetailsDialogComponent implements AfterViewInit {
       return;
     }
   
-    // Generate the table
+    const { Id_Num, First_Name, Last_Name, Admission_No, Father_Name } = this.data.patientDetails;
+    const now = new Date();
+    const releaseDate = now.toLocaleDateString('he-IL');
+    const releaseTime = now.toLocaleTimeString('he-IL', { hour: '2-digit', minute: '2-digit' });
+  
     const tempTable = document.createElement('div');
     tempTable.innerHTML = `
-      <style>
-        .table-container {
-          padding: 20px; /* Add padding around the table */
-        }
-        table {
-          width: 100%;
-          border-collapse: collapse;
-        }
-        th, td {
-          border: 1px solid #ddd;
-          padding: 8px;
-          text-align: right; /* Align text to the right */
-          word-wrap: break-word; /* Ensure text wraps inside cells */
-          white-space: normal; /* Allow multiline wrapping */
-          line-height: 1.5; /* Add spacing between wrapped lines */
-        }
-        th {
-          background-color: blue;
-          color: white;
-        }
-        tr:nth-child(even) {
-          background-color: #f9f9f9;
-        }
-        tr:hover {
-          background-color: #f1f1f1;
-        }
-      </style>
-      <div class="table-container">
-        <table>
+      <div dir="rtl" style="font-family: Arial, sans-serif; padding: 30px; font-size: 16px; position: relative; min-height: 1120px;">
+        <!-- Header: Large Icon and Personal Details -->
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px;">
+      
+  
+          <!-- Personal Details -->
+          <div style="text-align: right; font-size: 18px;">
+            <p><strong>תעודת זהות:</strong> ${Id_Num}</p>
+            <p><strong>שם פרטי:</strong> ${First_Name}</p>
+            <p><strong>שם משפחה:</strong> ${Last_Name}</p>
+            <p><strong>שם האב:</strong> ${Father_Name}</p>
+            <p><strong>מספר מקרה:</strong> ${Admission_No}</p>
+          </div>
+          <!-- Large Icon -->
+          <img src="assets/poria icon.jpg" alt="Icon" style="width: 200px; height: 100px;">
+        </div>
+  
+        <!-- Title -->
+        <h1 style="text-align: center; color: blue; font-size: 22px; margin-bottom: 20px;">
+          הטיפול התרופתי לנטילה במהלך חופשה
+        </h1>
+  
+        <!-- Table -->
+        <table style="width: 100%; border-collapse: collapse; font-size: 14px;">
           <thead>
             <tr>
-              <th>צורת מתן</th>
-              <th>שם תרופה</th>
-              <th>הנחיות</th>
-              <th>שעות מתן</th>
+              <th style="background-color: blue; color: white; padding: 10px; border: 1px solid #ddd;">צורת מתן</th>
+              <th style="background-color: blue; color: white; padding: 10px; border: 1px solid #ddd;">שם תרופה</th>
+              <th style="background-color: blue; color: white; padding: 10px; border: 1px solid #ddd;">הנחיות</th>
+              <th style="background-color: blue; color: white; padding: 10px; border: 1px solid #ddd;">שעות מתן</th>
             </tr>
           </thead>
           <tbody>
             ${selectedRows
               .map(
                 (row) => `
-              <tr>
-              <td>${row.Way_Of_Giving}</td>
-              <td>${row.Drugs_Text}</td>
-                <td>${row.FrequencyText}</td>
-                <td>${row.SpecificTime}</td>
-              </tr>
-            `
+                <tr>
+                  <td style="padding: 8px; border: 1px solid #ddd;">${row.Way_Of_Giving}</td>
+                  <td style="padding: 8px; border: 1px solid #ddd;">${row.Drugs_Text}</td>
+                  <td style="padding: 8px; border: 1px solid #ddd;">${row.FrequencyText}</td>
+                  <td style="padding: 8px; border: 1px solid #ddd;">${row.SpecificTime}</td>
+                </tr>
+              `
               )
               .join('')}
           </tbody>
         </table>
+  
+        <!-- Footer -->
+        <div style="position: absolute; bottom: 30px; right: 30px; left: 30px; font-size: 18px;">
+          <p style="display: flex; justify-content: space-between; align-items: center;">
+            <span>תאריך שחרור: ${releaseDate} ${releaseTime}</span>
+            <span>אחות משחררת: ___________________</span>
+          </p>
+        </div>
       </div>
     `;
   
-    // Append the tempTable to the body and hide it
     tempTable.style.position = 'absolute';
     tempTable.style.top = '-9999px';
     document.body.appendChild(tempTable);
   
-    // Render the table to PDF
     html2canvas(tempTable, {
       scale: 2,
       useCORS: true,
       allowTaint: false,
     })
       .then((canvas) => {
-        const imgData = canvas.toDataURL('image/png');
         const pdf = new jsPDF('p', 'mm', 'a4');
-        const pageWidth = pdf.internal.pageSize.getWidth();
-        const imgWidth = pageWidth;
-        const imgHeight = (canvas.height * pageWidth) / canvas.width;
+        const imgWidth = pdf.internal.pageSize.getWidth();
+        const imgHeight = (canvas.height * imgWidth) / canvas.width;
   
-        let position = 30;
-  
-        // Add title to the PDF
-        pdf.setFontSize(18);
-        pdf.text('Active Drugs', pageWidth / 2, 20, { align: 'center' });
-  
-        // Add the table image to the PDF
-        pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
-  
+        pdf.addImage(canvas.toDataURL('image/png'), 'PNG', 0, 0, imgWidth, imgHeight);
         pdf.save('SelectedActiveDrugs.pdf');
   
-        // Remove the temporary table from the DOM
         tempTable.remove();
       })
       .catch((error) => {
         console.error('Error rendering table to canvas:', error);
-        tempTable.remove(); // Ensure cleanup even on error
+        tempTable.remove();
       });
   }
-  
   
   
   
