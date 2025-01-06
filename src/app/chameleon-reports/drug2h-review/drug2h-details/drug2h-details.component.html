@@ -1,5 +1,14 @@
 <h2 mat-dialog-title class="table-title">פרטי תרופות עבור יחידה: {{ data.Unit_Name }}</h2>
+
+<!-- Spinner -->
+<div *ngIf="loading" class="loading-container">
+  <mat-spinner></mat-spinner>
+  <p>מייבא נתונים...</p>
+</div>
+
 <mat-dialog-content>
+
+
   <mat-table [dataSource]="dataSource" class="mat-elevation-z8" dir="rtl">
     <!-- Unit Name -->
     <ng-container matColumnDef="Unit_Name">

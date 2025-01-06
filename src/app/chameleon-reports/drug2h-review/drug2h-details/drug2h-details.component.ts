@@ -36,6 +36,7 @@ export class Drug2hDetailsComponent implements OnInit {
   ];
   dataSource: MatTableDataSource<any> = new MatTableDataSource<any>([]); // Updated to MatTableDataSource for proper integration
   filterForm: FormGroup;
+  loading: boolean = false; // Add loading state
 
   constructor(
     private http: HttpClient,
@@ -57,10 +58,14 @@ export class Drug2hDetailsComponent implements OnInit {
   }
 
   fetchDrugDetails(unit: string): void {
+    this.loading = true; // Show spinner
+
     const params = new HttpParams().set('unit', unit);
   
     this.http.get<any[]>(`${environment.apiUrl}Drug2hReview/details`, { params }).subscribe(
       (data) => {
+        this.loading = false; // Hide spinner when data is successfully fetched
+
         if (data && Array.isArray(data)) {
           this.dataSource.data = data; // Update table data
           console.log('Drug details fetched successfully:', data);
@@ -69,6 +74,8 @@ export class Drug2hDetailsComponent implements OnInit {
         }
       },
       (error) => {
+        this.loading = false; // Hide spinner on error
+
         console.error('Failed to fetch drug details:', error);
       }
     );

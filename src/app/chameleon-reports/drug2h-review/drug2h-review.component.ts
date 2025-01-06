@@ -214,14 +214,15 @@ export class Drug2hReviewComponent implements OnInit {
   }
 
   getGaugeColor(gaugeValue: number): string {
-    if (gaugeValue > 100) {
-      return '#f44336'; // Red
-    } else if (gaugeValue >= 80) {
+    if (gaugeValue > 80) {
+      return '#4caf50'; // Green
+    } else if (gaugeValue >= 60) {
       return '#ff9800'; // Orange
     } else {
-      return '#4caf50'; // Green
+      return '#f44336'; // Red
     }
   }
+  
 
   openDrugDetailsDialog(unitName: string): void {
     const dialogRef = this.dialog.open(Drug2hDetailsComponent, {

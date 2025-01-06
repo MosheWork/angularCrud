@@ -124,3 +124,14 @@
 .table-container {
   overflow-x: auto; /* Horizontal scrolling if content overflows */
 }
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100px;
+}
+
+mat-spinner {
+  margin-bottom: 10px;
+}
