@@ -213,11 +213,12 @@
   
       <!-- Paginator -->
       <mat-paginator
-        [length]="matTableDataSource.paginator?.length || 0"
-        [pageIndex]="matTableDataSource.paginator?.pageIndex"
-        [pageSize]="matTableDataSource.paginator?.pageSize"
-        [pageSizeOptions]="[15, 50, 100]">
-      </mat-paginator>
+      [length]="matTableDataSource.data.length || 0"
+      [pageSize]="10"
+      [pageSizeOptions]="[10, 25, 50]"
+      showFirstLastButtons
+    >
+    </mat-paginator>
     </mat-card-content>
   </mat-card>
   

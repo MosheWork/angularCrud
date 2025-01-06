@@ -42,7 +42,6 @@ export class Drug2hReviewComponent implements OnInit {
     'Count_Below_2_10H',
     'Percent_Below_2_10H',
   ];
-
   dataSource: any[] = [];
   filteredData: any[] = [];
   matTableDataSource: MatTableDataSource<any>;
@@ -78,20 +77,23 @@ export class Drug2hReviewComponent implements OnInit {
 
   constructor(private http: HttpClient, private fb: FormBuilder, private dialog: MatDialog) {
     this.filterForm = this.createFilterForm();
-    this.matTableDataSource = new MatTableDataSource<any>([]);
+    this.matTableDataSource = new MatTableDataSource<any>([]); 
     Chart.register(...registerables); // Register Chart.js components
   }
 
   ngOnInit(): void {
-    this.matTableDataSource.sort = this.sort;
+    // Assign MatSort and MatPaginator to the MatTableDataSource
+  this.matTableDataSource.sort = this.sort;
+  this.matTableDataSource.paginator = this.paginator;
 
-    this.matTableDataSource.filterPredicate = (data: any, filter: string) => {
-      const formattedFilter = filter.trim().toLowerCase();
-      return this.columns.some((column) => {
-        const columnValue = data[column] ? data[column].toString().toLowerCase() : '';
-        return columnValue.includes(formattedFilter);
-      });
-    };
+    // Define filterPredicate
+  this.matTableDataSource.filterPredicate = (data: any, filter: string) => {
+    const formattedFilter = filter.trim().toLowerCase();
+    return this.columns.some((column) => {
+      const columnValue = data[column] ? data[column].toString().toLowerCase() : '';
+      return columnValue.includes(formattedFilter);
+    });
+  };
 
     this.fetchData();
   }
