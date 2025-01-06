@@ -117,5 +117,15 @@ export class Drug2hDetailsComponent implements OnInit {
     link.download = 'drug2h_details.xlsx';
     link.click();
   }
+  isTimeDifferenceAboveTwoHours(timeDifference: string): boolean {
+    if (!timeDifference) return false;
+  
+    // Parse the time difference string (e.g., "2:15")
+    const [hours, minutes] = timeDifference.split(':').map(Number);
+    const totalMinutes = hours * 60 + minutes;
+  
+    // Check if the total minutes exceed 2 hours (120 minutes)
+    return totalMinutes > 120;
+  }
   
 }

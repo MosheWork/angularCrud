@@ -118,11 +118,16 @@
       <mat-cell *matCellDef="let element"> {{ element.Next_Execution_Date | date: 'dd/MM/yyyy' }} </mat-cell>
     </ng-container>
 
-    <!-- Time Difference HH:MM -->
-    <ng-container matColumnDef="Time_Difference_HHMM">
-      <mat-header-cell *matHeaderCellDef> זמן בין ביצועים (שעות:דקות) </mat-header-cell>
-      <mat-cell *matCellDef="let element"> {{ element.Time_Difference_HHMM }} </mat-cell>
-    </ng-container>
+  <!-- Time Difference HH:MM -->
+<ng-container matColumnDef="Time_Difference_HHMM">
+  <mat-header-cell *matHeaderCellDef> זמן בין ביצועים (שעות:דקות) </mat-header-cell>
+  <mat-cell
+    *matCellDef="let element"
+    [ngStyle]="{'background-color': isTimeDifferenceAboveTwoHours(element.Time_Difference_HHMM) ? '#ffcccc' : 'transparent'}"
+  >
+    {{ element.Time_Difference_HHMM }}
+  </mat-cell>
+</ng-container>
 
     <!-- Header and Row Definitions -->
     <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
