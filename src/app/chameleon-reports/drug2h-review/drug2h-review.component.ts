@@ -22,7 +22,7 @@ export class Drug2hReviewComponent implements OnInit {
 
   totalResults: number = 0;
   titleUnit: string = ' דוח בקרת תרופות ברות סיכון';
-  Title1: string = 'סה\"כ רשומות: ';
+  Title1: string = 'סה"כ רשומות: ';
   Title2: string = '';
   public chartType: ChartType = 'bar';
   public chartOptions = {
@@ -82,12 +82,20 @@ export class Drug2hReviewComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    console.log('Initializing component');
-    this.fetchData();
-    this.filterForm.valueChanges.subscribe(() => {
-      this.applyFilters();
-      this.paginator.firstPage(); // Reset to first page after filtering
+    // Assign MatSort and MatPaginator to the MatTableDataSource
+  this.matTableDataSource.sort = this.sort;
+  this.matTableDataSource.paginator = this.paginator;
+
+    // Define filterPredicate
+  this.matTableDataSource.filterPredicate = (data: any, filter: string) => {
+    const formattedFilter = filter.trim().toLowerCase();
+    return this.columns.some((column) => {
+      const columnValue = data[column] ? data[column].toString().toLowerCase() : '';
+      return columnValue.includes(formattedFilter);
     });
+  };
+
+    this.fetchData();
   }
 
   private createFilterForm(): FormGroup {
@@ -100,47 +108,58 @@ export class Drug2hReviewComponent implements OnInit {
   }
 
   applyFilters(): void {
-    console.log('Applying filters');
+    this.loading = true; // Show loading spinner
+  
     const filters = this.filterForm.value;
-    console.log('Filter values:', filters);
-    const globalFilter = (filters.globalFilter || '').toLowerCase();
+    const globalFilter = filters.globalFilter ? filters.globalFilter.trim().toLowerCase() : '';
+    const year = filters.year;
+    const quarter = filters.quarter;
     const unitName = filters.unitName;
-
+  
+    console.log('Applying filters:', { globalFilter, year, quarter, unitName }); // Debug log
+  
+    // If year or quarter filters are applied, fetch fresh data from the API
+    if (year || quarter || unitName ) {
+      this.fetchData(year, quarter, unitName);
+      return; // Return early because fetchData will handle updating the table
+    }
+  
+    // Apply other filters on the already loaded data
     let filteredData = this.dataSource;
-
+  
     // Filter by unit name
     if (unitName) {
-      console.log('Filtering by unit name:', unitName);
       filteredData = filteredData.filter((item) => item.Unit_Name === unitName);
     }
-
+  
     // Apply global search filter
     if (globalFilter) {
-      console.log('Applying global filter:', globalFilter);
       filteredData = filteredData.filter((item) =>
         Object.values(item).some((value) =>
           value ? value.toString().toLowerCase().includes(globalFilter) : false
         )
       );
     }
-
+  
     // Update the data source for the table
-    console.log('Filtered data:', filteredData);
     this.matTableDataSource.data = filteredData;
-
+  
     // Recalculate metrics based on filtered data
     this.calculateMetrics();
+  
+    // Hide loading spinner
+    this.loading = false;
   }
+  
+  
 
-  resetFilters(): void {
-    console.log('Resetting filters');
+  resetFilters() {
     this.filterForm.reset();
-    this.applyFilters();
+    this.fetchData();
   }
 
-  exportToExcel(): void {
-    console.log('Exporting to Excel');
-    const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(this.matTableDataSource.data);
+  exportToExcel() {
+    const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(this.filteredData);
     const workbook: XLSX.WorkBook = { Sheets: { data: worksheet }, SheetNames: ['data'] };
     const excelBuffer: any = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
     const blob: Blob = new Blob([excelBuffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
@@ -151,42 +170,39 @@ export class Drug2hReviewComponent implements OnInit {
     link.click();
   }
 
-  fetchData(): void {
-    console.log('Fetching data');
+  fetchData(year?: number, quarter?: number, unitName?: string): void {
     this.loading = true;
-    this.http.get<any[]>(`${environment.apiUrl}Drug2hReview`).subscribe(
+    const params: any = {};
+    if (year) params.year = year;
+    if (quarter) params.quarter = quarter;
+    if (unitName) params.unitName = unitName; // Add unit name filter
+
+
+    this.http.get<any[]>(`${environment.apiUrl}Drug2hReview`, { params }).subscribe(
       (data) => {
-        console.log('Data fetched successfully:', data);
         this.dataSource = data;
-        this.matTableDataSource = new MatTableDataSource(this.dataSource);
-        this.matTableDataSource.paginator = this.paginator;
+        this.matTableDataSource.data = [...this.dataSource];
         this.matTableDataSource.sort = this.sort;
-
-        console.log('Paginator and sort assigned');
-
         this.unitNames = Array.from(new Set(data.map((item) => item.Unit_Name))).sort();
+
         this.updateChartData();
-
         this.bestPerformers = [...this.dataSource]
-          .sort((a, b) => b.Percent_Below_2_10H - a.Percent_Below_2_10H)
-          .slice(0, 5);
+        .sort((a, b) => b.Percent_Below_2_10H - a.Percent_Below_2_10H)
+        .slice(0, 5);
 
-        this.worstPerformers = [...this.dataSource]
-          .sort((a, b) => a.Percent_Below_2_10H - b.Percent_Below_2_10H)
-          .slice(0, 5);
-
+      this.worstPerformers = [...this.dataSource]
+        .sort((a, b) => a.Percent_Below_2_10H - b.Percent_Below_2_10H)
+        .slice(0, 5);
         this.calculateMetrics();
         this.loading = false;
       },
       (error) => {
         console.error('Error fetching data:', error);
-        this.loading = false;
       }
     );
   }
 
   calculateMetrics(): void {
-    console.log('Calculating metrics');
     const filteredData = this.matTableDataSource.data;
 
     this.totalUnits = filteredData.length;
@@ -197,17 +213,9 @@ export class Drug2hReviewComponent implements OnInit {
     this.percentBelow210 = totalExecutions > 0 ? (this.totalBelow210 / totalExecutions) * 100 : 0;
 
     this.gaugeValue = this.percentBelow210;
-    console.log('Metrics calculated:', {
-      totalUnits: this.totalUnits,
-      totalAbove210: this.totalAbove210,
-      totalBelow210: this.totalBelow210,
-      percentBelow210: this.percentBelow210,
-      gaugeValue: this.gaugeValue,
-    });
   }
 
   getGaugeColor(gaugeValue: number): string {
-    console.log('Getting gauge color for value:', gaugeValue);
     if (gaugeValue > 80) {
       return '#4caf50'; // Green
     } else if (gaugeValue >= 60) {
@@ -216,9 +224,9 @@ export class Drug2hReviewComponent implements OnInit {
       return '#f44336'; // Red
     }
   }
+  
 
   openDrugDetailsDialog(unitName: string): void {
-    console.log('Opening drug details dialog for unit:', unitName);
     const dialogRef = this.dialog.open(Drug2hDetailsComponent, {
       width: '80%',
       data: { Unit_Name: unitName },
@@ -230,7 +238,6 @@ export class Drug2hReviewComponent implements OnInit {
   }
 
   toggleView(): void {
-    console.log('Toggling view');
     this.isGraphVisible = !this.isGraphVisible;
     if (this.isGraphVisible) {
       setTimeout(() => {
@@ -240,30 +247,32 @@ export class Drug2hReviewComponent implements OnInit {
   }
 
   updateChartData(): void {
-    console.log('Updating chart data');
-    const labels = this.dataSource.map((item) => item.Unit_Name); // Unit names
-    const data = this.dataSource.map((item) => item.Percent_Below_2_10H); // Percent_Below_2_10H values
-
+    const labels = this.dataSource.map(item => item.Unit_Name); // Unit names
+    const data = this.dataSource.map(item => item.Percent_Below_2_10H); // Percent_Below_2_10H values
+  
+    // Generate unique colors for each department
     const colors = labels.map((_, index) => this.getColor(index));
     const borderColors = labels.map((_, index) => this.getBorderColor(index));
-
+  
+    // Update chart data
     this.chartData.labels = labels;
     this.chartData.datasets[0].data = data;
     this.chartData.datasets[0].backgroundColor = colors;
     this.chartData.datasets[0].borderColor = borderColors;
-
+  
+    // Refresh the chart if it exists
     if (this.chart) {
       this.chart.update();
     }
-    console.log('Chart data updated');
   }
+  
+  
 
   initializeChart(canvas: HTMLCanvasElement): void {
-    console.log('Initializing chart');
     if (this.chart) {
-      this.chart.destroy();
+      this.chart.destroy(); // Destroy existing chart
     }
-
+  
     const ctx = canvas.getContext('2d');
     if (ctx) {
       this.chart = new Chart(ctx, {
@@ -275,48 +284,47 @@ export class Drug2hReviewComponent implements OnInit {
             y: {
               beginAtZero: true,
               ticks: {
-                callback: (value) => `${value}%`,
+                callback: (value) => `${value}%`, // Show percentage on Y-axis
               },
             },
           },
           plugins: {
             tooltip: {
               callbacks: {
-                label: (context) => `${context.raw}%`,
+                label: (context) => `${context.raw}%`, // Show percentage in tooltips
               },
             },
           },
         },
       });
-      console.log('Chart initialized');
     }
   }
-
   getColor(index: number): string {
     const colors = [
-      'rgba(255, 99, 132, 0.2)', // Red
-      'rgba(54, 162, 235, 0.2)', // Blue
-      'rgba(255, 206, 86, 0.2)', // Yellow
-      'rgba(75, 192, 192, 0.2)', // Green
+      'rgba(255, 99, 132, 0.2)',  // Red
+      'rgba(54, 162, 235, 0.2)',  // Blue
+      'rgba(255, 206, 86, 0.2)',  // Yellow
+      'rgba(75, 192, 192, 0.2)',  // Green
       'rgba(153, 102, 255, 0.2)', // Purple
-      'rgba(255, 159, 64, 0.2)', // Orange
-      'rgba(99, 255, 132, 0.2)', // Pink
-      'rgba(132, 99, 255, 0.2)', // Violet
+      'rgba(255, 159, 64, 0.2)',  // Orange
+      'rgba(99, 255, 132, 0.2)',  // Pink
+      'rgba(132, 99, 255, 0.2)',  // Violet
     ];
-    return colors[index % colors.length];
+    return colors[index % colors.length]; // Cycle through colors
   }
-
+  
   getBorderColor(index: number): string {
     const borderColors = [
-      'rgba(255, 99, 132, 1)', // Red
-      'rgba(54, 162, 235, 1)', // Blue
-      'rgba(255, 206, 86, 1)', // Yellow
-      'rgba(75, 192, 192, 1)', // Green
+      'rgba(255, 99, 132, 1)',  // Red
+      'rgba(54, 162, 235, 1)',  // Blue
+      'rgba(255, 206, 86, 1)',  // Yellow
+      'rgba(75, 192, 192, 1)',  // Green
       'rgba(153, 102, 255, 1)', // Purple
-      'rgba(255, 159, 64, 1)', // Orange
-      'rgba(99, 255, 132, 1)', // Pink
-      'rgba(132, 99, 255, 1)', // Violet
+      'rgba(255, 159, 64, 1)',  // Orange
+      'rgba(99, 255, 132, 1)',  // Pink
+      'rgba(132, 99, 255, 1)',  // Violet
     ];
-    return borderColors[index % borderColors.length];
+    return borderColors[index % borderColors.length]; // Cycle through colors
   }
+  
 }

@@ -177,48 +177,49 @@
       </div>
       <!-- Data Table -->
       <mat-table
-      *ngIf="!isGraphVisible"
-      [dataSource]="matTableDataSource"
-      matSort
-      dir="rtl"
-      class="mat-elevation-z8"
-    >        <ng-container matColumnDef="Unit_Name">
-          <mat-header-cell *matHeaderCellDef mat-sort-header> יחידה </mat-header-cell>
-          <mat-cell *matCellDef="let element"> {{ element.Unit_Name }} </mat-cell>
-        </ng-container>
-  
-        <ng-container matColumnDef="Next_Execution_Not_Null">
-          <mat-header-cell *matHeaderCellDef mat-sort-header> ביצוע הבא </mat-header-cell>
-          <mat-cell *matCellDef="let element"> {{ element.Next_Execution_Not_Null }} </mat-cell>
-        </ng-container>
-  
-        <ng-container matColumnDef="Count_Above_2_10H">
-          <mat-header-cell *matHeaderCellDef mat-sort-header> מעל 2 שעות </mat-header-cell>
-          <mat-cell *matCellDef="let element"> {{ element.Count_Above_2_10H }} </mat-cell>
-        </ng-container>
-  
-        <ng-container matColumnDef="Count_Below_2_10H">
-          <mat-header-cell *matHeaderCellDef mat-sort-header> מתחת ל-2 שעות </mat-header-cell>
-          <mat-cell *matCellDef="let element"> {{ element.Count_Below_2_10H }} </mat-cell>
-        </ng-container>
-  
-        <ng-container matColumnDef="Percent_Below_2_10H">
-          <mat-header-cell *matHeaderCellDef mat-sort-header> אחוז מתחת ל-2 שעות </mat-header-cell>
-          <mat-cell *matCellDef="let element"> {{ element.Percent_Below_2_10H }}%</mat-cell>
-        </ng-container>
-  
-        <mat-header-row *matHeaderRowDef="columns"></mat-header-row>
-        <mat-row *matRowDef="let row; columns: columns"  (click)="openDrugDetailsDialog(row.Unit_Name)"></mat-row>
-      </mat-table>
-  
-      <!-- Paginator -->
-      <mat-paginator
-      [length]="matTableDataSource.data.length "
-      [pageSize]="10"
-      [pageSizeOptions]="[10, 25, 50]"
-      showFirstLastButtons
-    >
-    </mat-paginator>
+  [dataSource]="matTableDataSource"
+  matSort
+  dir="rtl"
+  class="mat-elevation-z8"
+>
+  <ng-container matColumnDef="Unit_Name">
+    <mat-header-cell *matHeaderCellDef mat-sort-header> יחידה </mat-header-cell>
+    <mat-cell *matCellDef="let element"> {{ element.Unit_Name }} </mat-cell>
+  </ng-container>
+
+  <ng-container matColumnDef="Next_Execution_Not_Null">
+    <mat-header-cell *matHeaderCellDef mat-sort-header> ביצוע הבא </mat-header-cell>
+    <mat-cell *matCellDef="let element"> {{ element.Next_Execution_Not_Null }} </mat-cell>
+  </ng-container>
+
+  <ng-container matColumnDef="Count_Above_2_10H">
+    <mat-header-cell *matHeaderCellDef mat-sort-header> מעל 2 שעות </mat-header-cell>
+    <mat-cell *matCellDef="let element"> {{ element.Count_Above_2_10H }} </mat-cell>
+  </ng-container>
+
+  <ng-container matColumnDef="Count_Below_2_10H">
+    <mat-header-cell *matHeaderCellDef mat-sort-header> מתחת ל-2 שעות </mat-header-cell>
+    <mat-cell *matCellDef="let element"> {{ element.Count_Below_2_10H }} </mat-cell>
+  </ng-container>
+
+  <ng-container matColumnDef="Percent_Below_2_10H">
+    <mat-header-cell *matHeaderCellDef mat-sort-header> אחוז מתחת ל-2 שעות </mat-header-cell>
+    <mat-cell *matCellDef="let element"> {{ element.Percent_Below_2_10H }}%</mat-cell>
+  </ng-container>
+
+  <mat-header-row *matHeaderRowDef="columns"></mat-header-row>
+  <mat-row *matRowDef="let row; columns: columns" (click)="openDrugDetailsDialog(row.Unit_Name)">
+  </mat-row>
+</mat-table>
+
+<mat-paginator
+  #paginator
+  [length]="matTableDataSource.data.length || 0"
+  [pageSize]="10"
+  [pageSizeOptions]="[10, 25, 50]"
+  showFirstLastButtons>
+</mat-paginator>
+
     </mat-card-content>
   </mat-card>
   

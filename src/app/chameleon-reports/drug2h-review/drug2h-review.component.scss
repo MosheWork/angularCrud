@@ -260,11 +260,13 @@
   }
   
   .mat-table {
-    width: 100%; /* Make the table stretch to the container's width */
+    width: 100%; /* Ensure table stretches to the container */
+    margin: 0 auto; /* Center the table horizontally */
   }
   
   .mat-paginator {
-    margin-top: 10px; /* Add spacing between table and paginator */
+    margin-top: 10px;
+    text-align: center; /* Center-align paginator controls */
   }
   
   /* Style for the ngx-gauge component */
@@ -518,6 +520,8 @@ button {
 .mat-elevation-z8 {
   border: none; /* Remove the double border */
   box-shadow: none; /* Remove elevation shadow */
+  overflow: auto; /* Allow table content to scroll if needed */
+
 }
 
 .mat-paginator {
@@ -629,4 +633,7 @@ ngx-gauge {
 .loading-text{
   font-size: x-large;
   font-weight: bolder;
+}
+.data-card-container {
+  height: auto; /* Ensure dynamic height for container */
 }
