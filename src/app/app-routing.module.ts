@@ -55,6 +55,7 @@ import { DrugsReportComponent } from './chameleon-reports/drugs-report-component
 import { EpidemiologicalInvestigationComponent } from './chameleon-reports/epidemiological-investigation/epidemiological-investigation.component';
 import { DepartmentCapacityComponent } from './chameleonDashboard/department-capacity/department-capacity.component';
 import { Drug2hReviewComponent } from './chameleon-reports/drug2h-review/drug2h-review.component';
+import { DiabetesConsultationComponent } from './chameleon-reports/diabetes-consultation/diabetes-consultation.component';
 
 const routes: Routes = [
   { path: 'users', component: UsersComponent },
@@ -129,7 +130,7 @@ const routes: Routes = [
    { path: 'DrugsReport', component: DrugsReportComponent },//לורדית דוח של מטופלות עם תרופות קבועות או פעילות על פי קודים של יולדות
    { path: 'epidemiological-investigation', component: EpidemiologicalInvestigationComponent },//חקירה אפידמיולוגית ליחידה למניעת זיהומים
    { path: 'drug2h-review', component: Drug2hReviewComponent },//דוח לקרן בדיקה אם כל שעתיים אחות עשתה בקרה על תרופה ברת סיכון
-
+   { path: 'diabetes-consultation', component: DiabetesConsultationComponent },//דוח סכרת לליך שביט
 //chemelondashboard
 { path: 'DepartmentCapacity', component: DepartmentCapacityComponent }, // פרוייקט אישי
 //shift-table

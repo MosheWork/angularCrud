@@ -123,6 +123,7 @@ import { TimelineComponent } from './chameleon-reports/epidemiological-investiga
 import { DepartmentCapacityComponent } from './chameleonDashboard/department-capacity/department-capacity.component';
 import { Drug2hReviewComponent } from './chameleon-reports/drug2h-review/drug2h-review.component';
 import { Drug2hDetailsComponent } from './chameleon-reports/drug2h-review/drug2h-details/drug2h-details.component';
+import { DiabetesConsultationComponent } from './chameleon-reports/diabetes-consultation/diabetes-consultation.component';
 
 
 @NgModule({
@@ -215,7 +216,8 @@ import { Drug2hDetailsComponent } from './chameleon-reports/drug2h-review/drug2h
     TimelineComponent,
     DepartmentCapacityComponent,
     Drug2hReviewComponent,
-    Drug2hDetailsComponent
+    Drug2hDetailsComponent,
+    DiabetesConsultationComponent
   
   ],
   imports: [
