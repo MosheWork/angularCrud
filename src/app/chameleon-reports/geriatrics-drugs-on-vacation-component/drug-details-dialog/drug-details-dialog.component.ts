@@ -62,11 +62,9 @@ export class DrugDetailsDialogComponent implements AfterViewInit {
   
     const tempTable = document.createElement('div');
     tempTable.innerHTML = `
-      <div dir="rtl" style="font-family: Arial, sans-serif; padding: 30px; font-size: 16px; position: relative; min-height: 1120px;">
+      <div dir="rtl" style="font-family: Arial, sans-serif; padding: 30px; font-size: 16px;">
         <!-- Header: Large Icon and Personal Details -->
         <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px;">
-      
-  
           <!-- Personal Details -->
           <div style="text-align: right; font-size: 18px;">
             <p><strong>תעודת זהות:</strong> ${Id_Num}</p>
@@ -110,8 +108,14 @@ export class DrugDetailsDialogComponent implements AfterViewInit {
           </tbody>
         </table>
   
+        <!-- Free Text Box -->
+        <div style="margin-top: 20px; page-break-before: always;">
+          <div style="border: 1px solid black; padding: 10px; min-height: 150px; font-size: 16px;">
+          </div>
+        </div>
+  
         <!-- Footer -->
-        <div style="position: absolute; bottom: 30px; right: 30px; left: 30px; font-size: 18px;">
+        <div style="position: relative; margin-top: 30px; font-size: 18px;">
           <p style="display: flex; justify-content: space-between; align-items: center;">
             <span>תאריך שחרור: ${releaseDate} ${releaseTime}</span>
             <span>אחות משחררת: ___________________</span>
@@ -144,6 +148,8 @@ export class DrugDetailsDialogComponent implements AfterViewInit {
         tempTable.remove();
       });
   }
+  
+  
   
   
   

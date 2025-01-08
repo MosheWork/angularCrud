@@ -1,14 +1,13 @@
-import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { FormControl, FormGroup, FormBuilder } from '@angular/forms';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
-import { MatSort } from '@angular/material/sort';
+import { MatSort, Sort } from '@angular/material/sort';
 import * as XLSX from 'xlsx';
 import { Drug2hDetailsComponent } from './drug2h-details/drug2h-details.component';
 import { MatDialog } from '@angular/material/dialog';
 import { Chart, ChartData, ChartType, registerables } from 'chart.js';
-
 import { environment } from '../../../environments/environment';
 
 @Component({
@@ -16,21 +15,18 @@ import { environment } from '../../../environments/environment';
   templateUrl: './drug2h-review.component.html',
   styleUrls: ['./drug2h-review.component.scss'],
 })
-export class Drug2hReviewComponent implements OnInit {
+export class Drug2hReviewComponent implements OnInit, AfterViewInit {
   loading: boolean = false; // Spinner control
   unitNames: string[] = []; // To store unit names
-
   totalResults: number = 0;
   titleUnit: string = ' דוח בקרת תרופות ברות סיכון';
-  Title1: string = 'סה"כ רשומות: ';
+  Title1: string = 'סה\"כ רשומות: ';
   Title2: string = '';
   public chartType: ChartType = 'bar';
   public chartOptions = {
     responsive: true,
     scales: {
-      y: {
-        beginAtZero: true,
-      },
+      y: { beginAtZero: true },
     },
   };
 
@@ -77,25 +73,29 @@ export class Drug2hReviewComponent implements OnInit {
 
   constructor(private http: HttpClient, private fb: FormBuilder, private dialog: MatDialog) {
     this.filterForm = this.createFilterForm();
-    this.matTableDataSource = new MatTableDataSource<any>([]); 
+    this.matTableDataSource = new MatTableDataSource<any>([]); // Initialize table data source
     Chart.register(...registerables); // Register Chart.js components
   }
 
   ngOnInit(): void {
-    // Assign MatSort and MatPaginator to the MatTableDataSource
-  this.matTableDataSource.sort = this.sort;
-  this.matTableDataSource.paginator = this.paginator;
-
-    // Define filterPredicate
-  this.matTableDataSource.filterPredicate = (data: any, filter: string) => {
-    const formattedFilter = filter.trim().toLowerCase();
-    return this.columns.some((column) => {
-      const columnValue = data[column] ? data[column].toString().toLowerCase() : '';
-      return columnValue.includes(formattedFilter);
-    });
-  };
+    this.matTableDataSource.filterPredicate = (data: any, filter: string) => {
+      const formattedFilter = filter.trim().toLowerCase();
+      return this.columns.some((column) => {
+        const columnValue = data[column] ? data[column].toString().toLowerCase() : '';
+        return columnValue.includes(formattedFilter);
+      });
+    };
 
     this.fetchData();
+  }
+
+  ngAfterViewInit(): void {
+    this.matTableDataSource.paginator = this.paginator;
+    this.matTableDataSource.sort = this.sort;
+
+    this.sort.sortChange.subscribe((sortChange: Sort) => {
+      console.log('Sort event triggered:', sortChange);
+    });
   }
 
   private createFilterForm(): FormGroup {
@@ -109,29 +109,29 @@ export class Drug2hReviewComponent implements OnInit {
 
   applyFilters(): void {
     this.loading = true; // Show loading spinner
-  
+
     const filters = this.filterForm.value;
     const globalFilter = filters.globalFilter ? filters.globalFilter.trim().toLowerCase() : '';
     const year = filters.year;
     const quarter = filters.quarter;
     const unitName = filters.unitName;
-  
+
     console.log('Applying filters:', { globalFilter, year, quarter, unitName }); // Debug log
-  
+
     // If year or quarter filters are applied, fetch fresh data from the API
-    if (year || quarter || unitName ) {
+    if (year || quarter || unitName) {
       this.fetchData(year, quarter, unitName);
       return; // Return early because fetchData will handle updating the table
     }
-  
+
     // Apply other filters on the already loaded data
     let filteredData = this.dataSource;
-  
+
     // Filter by unit name
     if (unitName) {
       filteredData = filteredData.filter((item) => item.Unit_Name === unitName);
     }
-  
+
     // Apply global search filter
     if (globalFilter) {
       filteredData = filteredData.filter((item) =>
@@ -140,18 +140,16 @@ export class Drug2hReviewComponent implements OnInit {
         )
       );
     }
-  
+
     // Update the data source for the table
     this.matTableDataSource.data = filteredData;
-  
+
     // Recalculate metrics based on filtered data
     this.calculateMetrics();
-  
+
     // Hide loading spinner
     this.loading = false;
   }
-  
-  
 
   resetFilters() {
     this.filterForm.reset();
@@ -177,22 +175,20 @@ export class Drug2hReviewComponent implements OnInit {
     if (quarter) params.quarter = quarter;
     if (unitName) params.unitName = unitName; // Add unit name filter
 
-
     this.http.get<any[]>(`${environment.apiUrl}Drug2hReview`, { params }).subscribe(
       (data) => {
         this.dataSource = data;
         this.matTableDataSource.data = [...this.dataSource];
-        this.matTableDataSource.sort = this.sort;
         this.unitNames = Array.from(new Set(data.map((item) => item.Unit_Name))).sort();
 
         this.updateChartData();
         this.bestPerformers = [...this.dataSource]
-        .sort((a, b) => b.Percent_Below_2_10H - a.Percent_Below_2_10H)
-        .slice(0, 5);
+          .sort((a, b) => b.Percent_Below_2_10H - a.Percent_Below_2_10H)
+          .slice(0, 5);
 
-      this.worstPerformers = [...this.dataSource]
-        .sort((a, b) => a.Percent_Below_2_10H - b.Percent_Below_2_10H)
-        .slice(0, 5);
+        this.worstPerformers = [...this.dataSource]
+          .sort((a, b) => a.Percent_Below_2_10H - b.Percent_Below_2_10H)
+          .slice(0, 5);
         this.calculateMetrics();
         this.loading = false;
       },
@@ -224,7 +220,6 @@ export class Drug2hReviewComponent implements OnInit {
       return '#f44336'; // Red
     }
   }
-  
 
   openDrugDetailsDialog(unitName: string): void {
     const dialogRef = this.dialog.open(Drug2hDetailsComponent, {
@@ -249,30 +244,28 @@ export class Drug2hReviewComponent implements OnInit {
   updateChartData(): void {
     const labels = this.dataSource.map(item => item.Unit_Name); // Unit names
     const data = this.dataSource.map(item => item.Percent_Below_2_10H); // Percent_Below_2_10H values
-  
+
     // Generate unique colors for each department
     const colors = labels.map((_, index) => this.getColor(index));
     const borderColors = labels.map((_, index) => this.getBorderColor(index));
-  
+
     // Update chart data
     this.chartData.labels = labels;
     this.chartData.datasets[0].data = data;
     this.chartData.datasets[0].backgroundColor = colors;
     this.chartData.datasets[0].borderColor = borderColors;
-  
+
     // Refresh the chart if it exists
     if (this.chart) {
       this.chart.update();
     }
   }
-  
-  
 
   initializeChart(canvas: HTMLCanvasElement): void {
     if (this.chart) {
       this.chart.destroy(); // Destroy existing chart
     }
-  
+
     const ctx = canvas.getContext('2d');
     if (ctx) {
       this.chart = new Chart(ctx, {
@@ -299,6 +292,7 @@ export class Drug2hReviewComponent implements OnInit {
       });
     }
   }
+
   getColor(index: number): string {
     const colors = [
       'rgba(255, 99, 132, 0.2)',  // Red
@@ -312,7 +306,7 @@ export class Drug2hReviewComponent implements OnInit {
     ];
     return colors[index % colors.length]; // Cycle through colors
   }
-  
+
   getBorderColor(index: number): string {
     const borderColors = [
       'rgba(255, 99, 132, 1)',  // Red
@@ -326,5 +320,4 @@ export class Drug2hReviewComponent implements OnInit {
     ];
     return borderColors[index % borderColors.length]; // Cycle through colors
   }
-  
 }

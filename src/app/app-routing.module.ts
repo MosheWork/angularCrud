@@ -131,7 +131,7 @@ const routes: Routes = [
    { path: 'drug2h-review', component: Drug2hReviewComponent },//דוח לקרן בדיקה אם כל שעתיים אחות עשתה בקרה על תרופה ברת סיכון
 
 //chemelondashboard
-{ path: 'DepartmentCapacity', component: DepartmentCapacityComponent },
+{ path: 'DepartmentCapacity', component: DepartmentCapacityComponent }, // פרוייקט אישי
 //shift-table
    { path: 'shift-table', component: ShiftTableComponent },
    { path: 'shift-calendar', component: ShiftCalendarComponent }
