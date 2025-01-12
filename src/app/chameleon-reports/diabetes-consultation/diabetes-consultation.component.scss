@@ -5,23 +5,25 @@
     z-index: 10;
   }
   table {
-    width: 95%;
-    margin: 20px 23px 1px 0px;
+    width: 95%; /* Keep the existing width */
+    margin: 0 auto; /* Center the table horizontally */
+    border: 2px solid #ccc; /* Add a visible border */
+    border-radius: 8px; /* Optional: Add rounded corners */
+    overflow: hidden; /* Remove potential scrollbars */
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* Optional: Add subtle shadow */
   }
-  .mat-row:nth-child(odd) {
-    background-color: white;
+  .mat-table-container {
+   
+        display: block;
+        overflow-x: hidden;
+        white-space: nowrap; /* Prevent text wrapping in cells */
+      
   }
   .spinner {
     left: 50%;
     display: unset;
   }
-  .mat-row:nth-child(even) {
-    background-color: aliceblue;
-  }
-  .mat-row:hover {
-    background-color: darkgray;
-    cursor: pointer;
-  }
+
   .container {
     min-width: 100%;
   }
@@ -158,7 +160,7 @@
   /* Add this CSS to your stylesheet */
   .name-select .mat-select-value {
     text-align: right; /* Align the selected text to the right */
-    direction: rtl; /* Set the text direction to right-to-left */
+    direction: rtl; /* Set the text direction to righninet-to-left */
   }
   /* Use ::ng-deep to override Angular's View Encapsulation */
   ::ng-deep .mat-select-trigger {
@@ -167,6 +169,8 @@
   }
   
   .nine h1 {
+    flex: 0 0 10%; /* 10% height */
+
     text-align: center;
     font-size: 50px;
     text-transform: uppercase;
@@ -228,17 +232,17 @@
     padding: 10px; /* Add some padding */
   }
 
-  .dashboard-card {
-    flex: 1; /* Ensure all cards take the same width */
-    border-radius: 10px;
-    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow */
-    padding: 5px; /* Padding inside cards */
-    background-color: #fff; /* White background for cards */
-    border: 1px solid #ccc; /* Light gray border */
-    display: flex; /* Ensure proper layout for card content */
-    flex-direction: column; /* Stack card content vertically */
-    justify-content: space-between; /* Evenly distribute content */
-  }
+//   .dashboard-card {
+//     flex: 1; /* Ensure all cards take the same width */
+//     border-radius: 10px;
+//     box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+//     padding: 5px; /* Padding inside cards */
+//     background-color: #fff; /* White background for cards */
+//     border: 1px solid #ccc; /* Light gray border */
+//     display: flex; /* Ensure proper layout for card content */
+//     flex-direction: column; /* Stack card content vertically */
+//     justify-content: space-between; /* Evenly distribute content */
+//   }
 
   ngx-gauge .value {
     position: absolute;
@@ -256,58 +260,126 @@
     transform: translateY(78px) !important;
     font-weight: 400;
     color: black !important;
+    margin-top: 0; /* Ensure no gap between the title and gauge */
+
   }
-  .gauge-row {
+
+  .gauge-card {
+    flex: 1;
+    width: 23%; /* Ensures 4 cards fit horizontally with spacing */
     display: flex;
-    justify-content: space-between; /* Space between each card */
-    align-items: center; /* Align items vertically in the center */
-    gap: 15px; /* Optional: Add spacing between cards */
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    border-radius: 10px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    padding: 5px;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    margin: 0; /* Remove margin to prevent extra spacing */
   }
   
-  .gauge-card {
-    flex: 1; /* Ensure all cards take the same width */
-    border-radius: 10px;
-    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow */
-    padding: 5px; /* Padding inside cards */
-    background-color: #fff; /* White background for cards */
-    border: 1px solid #ccc; /* Light gray border */
-    display: flex; /* Ensure proper layout for card content */
-    flex-direction: column; /* Stack card content vertically */
-    justify-content: space-between; /* Evenly distribute content */
-  }
  
   .gauge-title {
-    font-size: 1.2rem; /* Title font size */
-    font-weight: bold; /* Make the title bold */
-    color: #333; /* Title color */
-    margin-bottom: 5px; /* Space between title and gauge */
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #333;
+    margin: 5px 0; /* Adjust spacing between title and gauge */
   }
   ngx-gauge {
     flex: 2; /* Allow gauge to take up more space */
+    margin-top: 0; /* Ensure no gap between the title and gauge */
+
   }
-  .nine h1 {
-    text-align: center;
-    font-size: 50px;
-    text-transform: uppercase;
-    color: rgb(54, 10, 214);
-    letter-spacing: 1px;
-    font-family: "Playfair Display", serif;
-    font-weight: 400;
-  }
-  .nine h1 span {
-    margin-top: 5px;
-    font-size: 15px;
-    color: rgb(159, 52, 235);
-    word-spacing: 1px;
-    font-weight: normal;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    font-family: "Raleway", sans-serif;
-    font-weight: 500;
-  
-    display: grid;
-    grid-template-columns: 1fr max-content 1fr;
-    grid-template-rows: 27px 0;
-    grid-gap: 20px;
+
+  .gauge-content {
+    display: flex;
     align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    margin: 0; /* Remove any default margin */
   }
+  .body {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    
+  }
+  .gauge-section {
+    flex: 0 0 30%; /* 30% height */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0; /* Remove padding to align closer to the title */
+    margin: 0; /* Remove margin to align closer to the title */
+  }
+  .gauge-row {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    width: 95%; /* Match table width */
+  }
+  mat-tab-group {
+    width: 95%; /* Keep consistent width with the table */
+    margin: 0 auto; /* Center the tab group horizontally */
+    border: 2px solid #ccc; /* Add a border */
+    border-radius: 8px; /* Optional: Add rounded corners */
+    padding: 10px; /* Add padding inside the tab group */
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* Optional: Add subtle shadow */
+    background-color: #fff; /* Ensure tabs have a distinct background */
+  }
+  
+  table {
+    width: 90%;
+  }
+
+  .table-section {
+    flex: 0 0 60%; /* 60% height */
+    display: flex;
+    justify-content: center;
+    align-items: flex-start; /* Align table to the top of its section */
+    padding: 0;
+    margin: 0; /* Align closer to gauges */
+
+  }
+  ::ng-deep .mat-table .mat-row:nth-child(odd) {
+    background-color: white !important;
+}
+::ng-deep .mat-table .mat-row:nth-child(even) {
+    background-color: aliceblue !important;
+}
+::ng-deep .mat-table .mat-row:hover {
+    background-color: darkgray !important;
+    cursor: pointer;
+}
+
+  .mat-cell {
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap; /* Prevent text wrapping */
+  }
+  /* Default light mode styles */
+  body {
+    background-color: #ffffff;
+    color: #000000;
+    transition: background-color 0.3s, color 0.3s;
+  }
+  
+  body.dark-mode {
+    background-color: #121212; /* Dark background */
+    color: #ffffff; /* Light text */
+  }
+  
+  body.dark-mode ::ng-deep .mat-card {
+    background-color: #1e1e1e;
+    color: #ffffff;
+  }
+  
+  body.dark-mode ::ng-deep .mat-toolbar {
+    background-color: #333333;
+    color: #ffffff;
+  }
+  
+  
+  /* Add more overrides as needed */
+  
