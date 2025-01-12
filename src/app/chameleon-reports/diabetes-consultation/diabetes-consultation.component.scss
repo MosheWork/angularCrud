@@ -13,11 +13,10 @@
     box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* Optional: Add subtle shadow */
   }
   .mat-table-container {
-   
-        display: block;
-        overflow-x: hidden;
-        white-space: nowrap; /* Prevent text wrapping in cells */
-      
+    max-height: calc(100vh - 300px); /* Adjust based on your layout */
+    overflow-y: auto; /* Enable vertical scrolling */
+    overflow-x: hidden; /* Prevent horizontal scrolling unless necessary */
+    display: block;
   }
   .spinner {
     left: 50%;
@@ -303,6 +302,8 @@
     display: flex;
     flex-direction: column;
     height: 100vh;
+    overflow-y: auto; /* Enable vertical scrolling */
+    overflow-x: hidden; /* Disable horizontal scrolling */
     
   }
   .gauge-section {
@@ -327,6 +328,8 @@
     padding: 10px; /* Add padding inside the tab group */
     box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* Optional: Add subtle shadow */
     background-color: #fff; /* Ensure tabs have a distinct background */
+    overflow: hidden; /* Prevent overflow */
+
   }
   
   table {
@@ -334,14 +337,17 @@
   }
 
   .table-section {
-    flex: 0 0 60%; /* 60% height */
     display: flex;
-    justify-content: center;
-    align-items: flex-start; /* Align table to the top of its section */
-    padding: 0;
-    margin: 0; /* Align closer to gauges */
-
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start; /* Push the table to the top */
+    width: 100%;
   }
+  
+  .table-section .mat-paginator {
+    margin-top: 10px; /* Add space above the paginator */
+  }
+  
   ::ng-deep .mat-table .mat-row:nth-child(odd) {
     background-color: white !important;
 }
@@ -380,6 +386,20 @@
     color: #ffffff;
   }
   
-  
+  .mat-paginator {
+    position: sticky; /* Keeps paginator visible */
+    bottom: 0;
+    background: white; /* Ensure the background matches your layout */
+    z-index: 1; /* Ensures it's above the table content */
+    padding: 10px 0;
+  }
   /* Add more overrides as needed */
-  
+  ::ng-deep .mdc-tab__text-label {
+    font-family: Arial, sans-serif; /* Change font */
+    font-size: 16px; /* Increase font size */
+    font-weight: bold; /* Make text bold */
+    color: #4a90e2; /* Change text color */
+    text-transform: uppercase; /* Make the text uppercase */
+    padding: 5px; /* Add spacing around the text */
+}
+

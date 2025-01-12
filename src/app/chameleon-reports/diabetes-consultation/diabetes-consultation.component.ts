@@ -75,6 +75,22 @@ export class DiabetesConsultationComponent implements OnInit {
       'Last_Name'
   ];
   displayedColumns2: string[] = ['SomeColumn']; // Columns for the second table
+  dataSourceAllConsiliums = new MatTableDataSource<any>();
+  dataSourceConsiliumCounts: any = {}; // Holds the counts data
+  
+  displayedColumnsAllConsiliums: string[] = [
+    'Id_Num',
+    'First_Name',
+    'Last_Name',
+    'UnitName',
+    'Question',
+    'Diagnosis_Text',
+    'Consulted_Unit',
+    'Entry_Date',
+    'Answer_Text',
+    'Answer_Date',
+  ];
+
 
   dataSource: MatTableDataSource<any> = new MatTableDataSource<any>();
 
@@ -93,10 +109,14 @@ export class DiabetesConsultationComponent implements OnInit {
 
   @ViewChild(MatSort) sort1!: MatSort;
   @ViewChild(MatSort) sort2!: MatSort;
-  @ViewChild('paginator3', { static: true }) paginator3!: MatPaginator;
   @ViewChild('sort3', { static: true }) sort3!: MatSort;
-  @ViewChild('paginator4', { static: true }) paginator4!: MatPaginator;
-  @ViewChild('sort4', { static: true }) sort4!: MatSort;
+  @ViewChild('paginator3', { static: true }) paginator3!: MatPaginator;
+  @ViewChild('paginatorAllConsiliums') paginatorAllConsiliums!: MatPaginator;
+  @ViewChild('sortAllConsiliums') sortAllConsiliums!: MatSort;
+  
+  @ViewChild('paginator4') paginator4!: MatPaginator;
+  @ViewChild('sort4') sort4!: MatSort;
+
   @ViewChild('paginatorHemoglobin') paginatorHemoglobin!: MatPaginator;
   @ViewChild('sortHemoglobin') sortHemoglobin!: MatSort;
   constructor(private http: HttpClient, private renderer: Renderer2) {}
@@ -104,11 +124,26 @@ export class DiabetesConsultationComponent implements OnInit {
   ngOnInit(): void {
     this.fetchData();
     this.fetchTable1Data();
-    this.fetchTable2Data();
     this.fetchInsulinData(); // Fetch insulin data
     this.fetchDiagnosisData(); // Fetch diagnosis data
     this.fetchHemoglobinAbove8(); // Fetch hemoglobin data
+    this.fetchAllConsiliums(); // Fetch all consiliums
+    this.fetchConsiliumCounts(); // Fetch consilium counts
 
+    this.dataSource1.paginator = this.paginator1;
+    this.dataSource1.sort = this.sort1;
+  
+    this.dataSource3.paginator = this.paginator3;
+    this.dataSource3.sort = this.sort3;
+  
+    this.dataSource4.paginator = this.paginator4;
+    this.dataSource4.sort = this.sort4;
+  
+    this.dataSourceHemoglobin.paginator = this.paginatorHemoglobin;
+    this.dataSourceHemoglobin.sort = this.sortHemoglobin;
+  
+    this.dataSourceAllConsiliums.paginator = this.paginator1; // Adjust if using a separate paginator
+    this.dataSourceAllConsiliums.sort = this.sort1; // Adjust if using a separate sort
     const savedDarkMode = localStorage.getItem('darkMode') === 'true';
     this.isDarkMode = savedDarkMode;
 
@@ -161,20 +196,7 @@ export class DiabetesConsultationComponent implements OnInit {
       );
   }
 
-  fetchTable2Data(): void {
-    this.http
-      .get<any[]>(`${environment.apiUrl}/DiabetesConsultation/OtherData`)
-      .subscribe(
-        (data) => {
-          this.dataSource2 = new MatTableDataSource(data);
-          this.dataSource2.paginator = this.paginator2;
-          this.dataSource2.sort = this.sort2;
-        },
-        (error) => {
-          console.error('Error fetching Table 2 data:', error);
-        }
-      );
-  }
+
   // Apply filter to table data
   applyFilter(filterValue: string): void {
     this.dataSource.filter = filterValue.trim().toLowerCase();
@@ -218,6 +240,7 @@ export class DiabetesConsultationComponent implements OnInit {
           this.dataSource3 = new MatTableDataSource(data);
           this.dataSource3.paginator = this.paginator3;
           this.dataSource3.sort = this.sort3;
+         
         },
         (error) => {
           console.error('Error fetching insulin data:', error);
@@ -225,18 +248,16 @@ export class DiabetesConsultationComponent implements OnInit {
       );
   }
   fetchDiagnosisData(): void {
-    this.http
-      .get<any[]>(`${environment.apiUrl}/DiabetesConsultation/diagnosis`)
-      .subscribe(
-        (data) => {
-          this.dataSource4 = new MatTableDataSource(data);
-          this.dataSource4.paginator = this.paginator4;
-          this.dataSource4.sort = this.sort4;
-        },
-        (error) => {
-          console.error('Error fetching diagnosis data:', error);
-        }
-      );
+    this.http.get<any[]>(`${environment.apiUrl}/DiabetesConsultation/diagnosis`).subscribe(
+      (data) => {
+        this.dataSource4 = new MatTableDataSource(data);
+        this.dataSource4.paginator = this.paginator4; // Correct paginator
+        this.dataSource4.sort = this.sort4; // Correct sort
+      },
+      (error) => {
+        console.error('Error fetching Diagnosis data:', error);
+      }
+    );
   }
   fetchHemoglobinAbove8(): void {
     this.http.get<any[]>(`${environment.apiUrl}/DiabetesConsultation/HemoglobinAbove8`).subscribe(
@@ -249,6 +270,31 @@ export class DiabetesConsultationComponent implements OnInit {
         console.error('Error fetching Hemoglobin Above 8 data:', error);
       }
     );
+  }
+  fetchAllConsiliums(): void {
+    this.http.get<any[]>(`${environment.apiUrl}/DiabetesConsultation/AllConsiliums`).subscribe(
+      (data) => {
+        this.dataSourceAllConsiliums = new MatTableDataSource(data);
+        // Assign paginator and sort explicitly here
+        this.dataSourceAllConsiliums.paginator = this.paginatorAllConsiliums;
+        this.dataSourceAllConsiliums.sort = this.sortAllConsiliums;
+      },
+      (error) => {
+        console.error('Error fetching All Consiliums data:', error);
+      }
+    );
+  }
+  fetchConsiliumCounts(): void {
+    this.http
+      .get<any>(`${environment.apiUrl}/DiabetesConsultation/ConsiliumCounts`)
+      .subscribe(
+        (data) => {
+          this.dataSourceConsiliumCounts = data;
+        },
+        (error) => {
+          console.error('Error fetching Consilium Counts:', error);
+        }
+      );
   }
   toggleDarkMode(): void {
     this.isDarkMode = !this.isDarkMode;
@@ -264,4 +310,6 @@ export class DiabetesConsultationComponent implements OnInit {
     // Save to localStorage
     localStorage.setItem('darkMode', this.isDarkMode.toString());
   }
+ 
+  
 }
