@@ -163,9 +163,8 @@
             </table>
             <mat-paginator #paginator3 [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
           </mat-tab>
-          
-          <mat-tab label="Diagnosis Data">
-            <h3>Diagnosis Data</h3>
+                
+          <mat-tab label="מטופלים עם אבחנה ICD9">
             <table mat-table [dataSource]="dataSource4" class="mat-elevation-z8" matSort #sort4 style="table-layout: fixed; width: 100%;">
               <ng-container matColumnDef="Hospitalization_Patient">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header>Hospitalization_Patient</th>
