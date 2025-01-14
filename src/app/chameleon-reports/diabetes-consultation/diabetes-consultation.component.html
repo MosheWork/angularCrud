@@ -2,20 +2,70 @@
   <!-- Title Section -->
   <div class="nine">
     <h1>
-      {{ titleUnit }}<span>{{ Title1 }}{{ Title2 }}{{ totalResults }}</span>
+      {{ titleUnit }}<span>{{ Title1 }}{{ Title2 }}{{ totalResults }}   סה"כ תיקים רפואיים:    {{ medicalRecordsCount }}</span>
+
     </h1>
-  </div>
-  <div class="filter-container">
-    <mat-button-toggle-group
-      name="sourceTableFilter"
-      [(ngModel)]="sourceTableFilter"
-      (change)="onSourceTableToggleChange($event.value)"
-    >
-      <mat-button-toggle value="All">All</mat-button-toggle>
-      <mat-button-toggle value="Hospitalizations">Hospitalizations</mat-button-toggle>
-      <mat-button-toggle value="MedicalRecords">Medical Records</mat-button-toggle>
-    </mat-button-toggle-group>
-  </div>
+    
+      
+     
+    <div class="filter-card-container">
+        <div class="filter-card">
+          <div dir="rtl" class="card mat-elevation-z8">
+            <div dir="rtl" class="card-body">
+              <div class="filter-container">
+                <!-- Source Filter -->
+                <mat-button-toggle-group
+                  name="globalSourceTableFilter"
+                  [(ngModel)]="globalSourceTableFilter"
+                  (change)="onGlobalSourceTableToggleChange($event.value)"
+                  class="custom-toggle-group"
+                >
+                  <mat-button-toggle value="All">הכל</mat-button-toggle>
+                  <mat-button-toggle value="Hospitalizations">מאושפזים</mat-button-toggle>
+                  <mat-button-toggle value="MedicalRecords">מטופלי עבר</mat-button-toggle>
+                </mat-button-toggle-group>
+      
+                <!-- Date Filters -->
+                <mat-form-field class="filter-field">
+                  <mat-label>Start Date</mat-label>
+                  <input
+                    matInput
+                    [matDatepicker]="startDatePicker"
+                    [(ngModel)]="startDate"
+                  />
+                  <mat-datepicker-toggle matSuffix [for]="startDatePicker"></mat-datepicker-toggle>
+                  <mat-datepicker #startDatePicker></mat-datepicker>
+                </mat-form-field>
+      
+                <mat-form-field class="filter-field">
+                  <mat-label>End Date</mat-label>
+                  <input
+                    matInput
+                    [matDatepicker]="endDatePicker"
+                    [(ngModel)]="endDate"
+                  />
+                  <mat-datepicker-toggle matSuffix [for]="endDatePicker"></mat-datepicker-toggle>
+                  <mat-datepicker #endDatePicker></mat-datepicker>
+                </mat-form-field>
+      
+                <!-- Filter Buttons -->
+                <div class="filter-buttons" style="margin-top: 10px; text-align: right;">
+                  <button mat-raised-button color="primary" (click)="applyFilters()">
+                    התחל סינון
+                  </button>
+                  <button mat-raised-button color="warn" (click)="resetFilters()">
+                    אפס סינון
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      
+      
+      
 
   <!-- <button (click)="toggleDarkMode()">
             {{ isDarkMode ? 'Disable Dark Mode' : 'Enable Dark Mode' }}
@@ -84,15 +134,16 @@
             [value]="labResultOver180Percentage"
             [min]="0"
             [max]="100"
-            [label]=""
+            [label]="''"
             [append]="'%'"
             [foregroundColor]="'#dd4b39'"
           ></ngx-gauge>
           <div class="gauge-info">
-            סה"כ מטופלים : <strong>{{ TotalHosLabResultover180 }}</strong>
+            סה"כ מטופלים: <strong>{{ TotalHosLabResultover180 }}</strong> מתוך <strong>{{ medicalRecordsCount }}</strong>
           </div>
         </div>
       </mat-card>
+      
       <!-- ייעוצים -->
     </div>
   </div>
@@ -103,9 +154,9 @@
     dir="rtl"
     style="overflow-x: hidden; overflow-y: hidden; display: inline-grid"
   >
-    <mat-tab-group (selectedTabChange)="onTabChanged($event)">
+    <mat-tab-group >
       <!-- First Tab -->
-      <mat-tab class="tabtitle" label="בדיקות מעבדה">
+      <mat-tab class="tabtitle" label=" סוכר מעל 180">
         <table
           mat-table
           [dataSource]="dataSource1"
@@ -147,13 +198,17 @@
             <th mat-header-cell *matHeaderCellDef mat-sort-header>Last Name</th>
             <td mat-cell *matCellDef="let element">{{ element.Last_Name }}</td>
           </ng-container>
-          <ng-container matColumnDef="Count_Above_180_Less_8h">
+          <ng-container matColumnDef="Count_Above_180_Less_48h">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>
               Count > 180
             </th>
             <td mat-cell *matCellDef="let element">
-              {{ element.Count_Above_180_Less_8h }}
+              {{ element.Count_Above_180_Less_48h }}
             </td>
+          </ng-container>
+          <ng-container matColumnDef="Source_Table">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Source_Table</th>
+            <td mat-cell *matCellDef="let element">{{ element.Source_Table }}</td>
           </ng-container>
 
           <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
@@ -166,7 +221,64 @@
         ></mat-paginator>
       </mat-tab>
 
-      <!-- Second Tab -->
+      <mat-tab label="סוכר מתחת ל-70">
+        <table
+          mat-table
+          [dataSource]="dataSourceBelow70"
+          class="mat-elevation-z8"
+          matSort
+          style="table-layout: fixed; width: 100%"
+        >
+          <ng-container matColumnDef="Admission_No">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>
+              Admission No
+            </th>
+            <td mat-cell *matCellDef="let element">{{ element.Admission_No }}</td>
+          </ng-container>
+          <ng-container matColumnDef="Admission_Date">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>
+              Admission Date
+            </th>
+            <td mat-cell *matCellDef="let element">
+              {{ element.Admission_Date | date }}
+            </td>
+          </ng-container>
+          <ng-container matColumnDef="First_Name">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>
+              First Name
+            </th>
+            <td mat-cell *matCellDef="let element">{{ element.First_Name }}</td>
+          </ng-container>
+          <ng-container matColumnDef="Last_Name">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>
+              Last Name
+            </th>
+            <td mat-cell *matCellDef="let element">{{ element.Last_Name }}</td>
+          </ng-container>
+          <ng-container matColumnDef="Count_Less_70_Less_48h">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>
+              Count < 70 (48h)
+            </th>
+            <td mat-cell *matCellDef="let element">
+              {{ element.Count_Less_70_Less_48h }}
+            </td>
+          </ng-container>
+          <ng-container matColumnDef="Source_Table">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Source</th>
+            <td mat-cell *matCellDef="let element">{{ element.Source_Table }}</td>
+          </ng-container>
+      
+          <tr mat-header-row *matHeaderRowDef="displayedColumnsBelow70"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumnsBelow70"></tr>
+        </table>
+        <mat-paginator
+          #paginatorBelow70
+          [pageSizeOptions]="[5, 10, 20]"
+          showFirstLastButtons
+        ></mat-paginator>
+      </mat-tab>
+      
+      
       <mat-tab label="מקבל אינסולין">
         <table
           mat-table

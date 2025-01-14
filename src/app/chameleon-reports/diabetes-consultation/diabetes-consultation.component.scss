@@ -71,13 +71,13 @@
   }
   /* Add margin to the mat-form-field elements */
   .filter-field {
-    margin-right: 20px; /* Adjust the margin as needed */
+    margin-right: 5px; /* Adjust the margin as needed */
   }
   /* Set a fixed width and height for the mat-form-field elements */
   .filter-field {
     width: 315px; /* Adjust the width as needed */
     height: 80px; /* Adjust the height as needed */
-    width: calc(25% - 20px); /* 25% to fit four filters in a row with spacing */
+   // width: calc(25% - 20px); /* 25% to fit four filters in a row with spacing */
     padding-top: 5px; /* Adjust this value to control the vertical spacing */
     //padding-left: -15px;
     //padding-right: 0px;
@@ -108,18 +108,19 @@
     font-size: 16px;
     //padding-right: none;
   }
-  /* CSS */
+
   .filter-container {
     display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-    align-items: center;
+    justify-content: space-between; /* Horizontal distribution */
+    align-items: center; /* Vertically center elements */
+    flex-wrap: wrap; /* Allow wrapping for smaller screens */
+    gap: 3px; /* Reduce spacing between filters */
   }
   
   .filter-field {
-    flex-grow: 1;
-    margin-right: 20px;
-    width: calc(25% - 20px); /* 25% to fit four filters in a row with spacing */
+    //flex: 1 1 calc(33% - 16px); /* Allow three filters in a row */
+   // max-width: 300px; /* Prevent filters from becoming too wide */
+    margin-bottom: 0; /* Remove unnecessary bottom margin */
   }
   
   /* Add this CSS to ensure proper alignment of name-select */
@@ -144,8 +145,12 @@
   
   /* Adjust the padding of the card-body to make space for the reset button */
   .card-body {
-    position: relative;
-    padding-left: 40px; /* Adjust the padding-left to make space for the button */
+    padding: 8px; /* Minimal padding inside the card body */
+    display: flex;
+    flex-direction: row; /* Align elements horizontally */
+    justify-content: flex-start; /* Push all content to the right */
+    align-items: center; /* Vertically center elements */
+    gap: 8px; /* Small gap between elements */
   }
   /* Add space between the end of the search bar and the start of the Excel icon */
   .icon {
@@ -231,17 +236,6 @@
     padding: 10px; /* Add some padding */
   }
 
-//   .dashboard-card {
-//     flex: 1; /* Ensure all cards take the same width */
-//     border-radius: 10px;
-//     box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow */
-//     padding: 5px; /* Padding inside cards */
-//     background-color: #fff; /* White background for cards */
-//     border: 1px solid #ccc; /* Light gray border */
-//     display: flex; /* Ensure proper layout for card content */
-//     flex-direction: column; /* Stack card content vertically */
-//     justify-content: space-between; /* Evenly distribute content */
-//   }
 
   ngx-gauge .value {
     position: absolute;
@@ -403,3 +397,75 @@
     padding: 5px; /* Add spacing around the text */
 }
 
+.filter-card {
+    width: 100%; /* Ensure it spans the full width of the container */
+    max-width: 100%; /* Matches table width */
+    //padding: 10px;
+    margin: 0 auto; /* Center the tab group horizontally */
+
+    //border: 2px solid #ccc; /* Add a border */
+    border-radius: 8px; /* Optional: Add rounded corners */
+    //background-color: #fff;
+    margin: 0 auto; /* Center the tab group horizontally */
+    //box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+    padding: 0; /* Remove padding to align closer to the title */
+    margin: 0; /* Remove margin to align closer to the title */
+  }
+  
+  .card {
+    width: 100%;
+  }
+
+  .filter-card-container {
+    display: flex;
+    justify-content: flex-end; /* Align the entire card to the right */
+    align-items: flex-start;
+    width: 95%; /* Matches table and other card widths */
+    margin: 0 auto; /* Center horizontally */
+    margin-bottom: 20px; /* Space below the card */
+  }
+  .custom-toggle-group {
+    display: flex;
+    justify-content: flex-end; /* Align buttons to the right */
+    gap: 8px; /* Add spacing between buttons */
+  }
+  
+  .mat-button-toggle {
+    background-color: #f5f5f5; /* Light gray background */
+    border: 1px solid #ccc; /* Add a border */
+    border-radius: 8px; /* Rounded corners */
+    padding: 4px 14px; /* Padding for a better click area */
+    font-family: Arial, sans-serif; /* Change font */
+    font-size: 14px; /* Adjust font size */
+    font-weight: bold; /* Bold text */
+    color: #333; /* Dark text */
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+    transition: all 0.3s ease; /* Smooth transitions for hover/focus */
+  }
+  
+  .mat-button-toggle:hover {
+   // background-color: #e0e0e0; /* Slightly darker on hover */
+    border-color: #bdbdbd; /* Darker border on hover */
+    //box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2); /* Enhanced shadow on hover */
+  }
+  
+  .mat-button-toggle.mat-button-toggle-checked {
+    background-color: #4caf50; /* Green for the selected button */
+    color: #fff; /* White text */
+    border-color: #4caf50; /* Match border color */
+   // box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2); /* Enhanced shadow */
+  }
+  
+  .mat-button-toggle.mat-button-toggle-checked:hover {
+    background-color: #43a047; /* Slightly darker green on hover */
+  }
+  
+  .mat-button-toggle.mat-button-toggle-checked:focus {
+    outline: none;
+    box-shadow: 0px 0px 8px rgba(76, 175, 80, 0.6); /* Focus shadow effect */
+  }
+  
+  .mat-button-toggle .mat-button-toggle-label-content {
+    text-transform: none; /* Prevent uppercase text */
+  }
+  
