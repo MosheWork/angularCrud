@@ -1,0 +1,73 @@
+<div class="container">
+    <h1>Invoke Amazon Bedrock Model</h1>
+    <form [formGroup]="invokeForm" (ngSubmit)="invokeModel()">
+      <div class="form-group">
+        <label for="regionName">Region Name</label>
+        <input
+          id="regionName"
+          formControlName="Region_Name"
+          type="text"
+          class="form-control"
+          placeholder="e.g., us-east-1"
+        />
+      </div>
+      <div class="form-group">
+        <label for="accessKey">AWS Access Key</label>
+        <input
+          id="accessKey"
+          formControlName="AWS_Access_Key_ID"
+          type="text"
+          class="form-control"
+          placeholder="Enter AWS Access Key"
+        />
+      </div>
+      <div class="form-group">
+        <label for="secretKey">AWS Secret Access Key</label>
+        <input
+          id="secretKey"
+          formControlName="AWS_Secret_Access_Key"
+          type="password"
+          class="form-control"
+          placeholder="Enter AWS Secret Key"
+        />
+      </div>
+      <div class="form-group">
+        <label for="modelId">Model ID</label>
+        <input
+          id="modelId"
+          formControlName="ModelId"
+          type="text"
+          class="form-control"
+          placeholder="Enter Model ID"
+        />
+      </div>
+      <div class="form-group">
+        <label for="prompt">Prompt</label>
+        <textarea
+          id="prompt"
+          formControlName="Prompt"
+          class="form-control"
+          rows="4"
+          placeholder="Enter your prompt here"
+        ></textarea>
+      </div>
+      <div class="form-group">
+        <label for="maxTokens">Max Tokens</label>
+        <input
+          id="maxTokens"
+          formControlName="Max_Tokens"
+          type="number"
+          class="form-control"
+          placeholder="e.g., 1000"
+        />
+      </div>
+      <button type="submit" class="btn btn-primary" [disabled]="invokeForm.invalid">
+        Invoke Model
+      </button>
+    </form>
+    <div *ngIf="response" class="response-section">
+      <h2>Response</h2>
+      <pre>{{ response | json }}</pre>
+    </div>
+  </div>
+  

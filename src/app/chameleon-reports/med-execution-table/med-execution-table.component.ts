@@ -47,7 +47,7 @@ export class MedExecutionTableComponent implements OnInit, AfterViewInit {
     'Way_Of_Giving',
     'Id_Num',
     'Full_Name',
-    'Depart_Name'
+    'Unit_Satellite_Name'
   ];
 
   dataSource = new MatTableDataSource<MedExecutionModel>();

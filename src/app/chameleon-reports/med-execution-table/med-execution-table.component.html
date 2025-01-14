@@ -142,9 +142,9 @@
       <mat-header-cell *matHeaderCellDef mat-sort-header>שם מלא</mat-header-cell>
       <mat-cell *matCellDef="let element"> {{ element.Full_Name }} </mat-cell>
     </ng-container>
-    <ng-container matColumnDef="Depart_Name">
-      <mat-header-cell *matHeaderCellDef mat-sort-header>מחלקה סיעודית </mat-header-cell>
-      <mat-cell *matCellDef="let element"> {{ element.Depart_Name }} </mat-cell>
+    <ng-container matColumnDef="Unit_Satellite_Name">
+      <mat-header-cell *matHeaderCellDef mat-sort-header>מחלקת לווין </mat-header-cell>
+      <mat-cell *matCellDef="let element"> {{ element.Unit_Satellite_Name }} </mat-cell>
     </ng-container>
     <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
     <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>

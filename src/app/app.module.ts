@@ -124,6 +124,8 @@ import { DepartmentCapacityComponent } from './chameleonDashboard/department-cap
 import { Drug2hReviewComponent } from './chameleon-reports/drug2h-review/drug2h-review.component';
 import { Drug2hDetailsComponent } from './chameleon-reports/drug2h-review/drug2h-details/drug2h-details.component';
 import { DiabetesConsultationComponent } from './chameleon-reports/diabetes-consultation/diabetes-consultation.component';
+import { AwsClaudeInvocationComponent } from './aws-claude-invocation/aws-claude-invocation.component';
+import { MatButtonToggleModule } from '@angular/material/button-toggle';
 
 
 @NgModule({
@@ -217,7 +219,8 @@ import { DiabetesConsultationComponent } from './chameleon-reports/diabetes-cons
     DepartmentCapacityComponent,
     Drug2hReviewComponent,
     Drug2hDetailsComponent,
-    DiabetesConsultationComponent
+    DiabetesConsultationComponent,
+    AwsClaudeInvocationComponent
   
   ],
   imports: [
@@ -255,7 +258,8 @@ import { DiabetesConsultationComponent } from './chameleon-reports/diabetes-cons
     MatProgressSpinnerModule,
     NgxGaugeModule,
     MatSlideToggleModule,
-    DragDropModule
+    DragDropModule,
+    MatButtonToggleModule
 
   ],
   providers: [DatePipe],

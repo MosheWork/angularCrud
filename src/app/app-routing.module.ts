@@ -56,6 +56,7 @@ import { EpidemiologicalInvestigationComponent } from './chameleon-reports/epide
 import { DepartmentCapacityComponent } from './chameleonDashboard/department-capacity/department-capacity.component';
 import { Drug2hReviewComponent } from './chameleon-reports/drug2h-review/drug2h-review.component';
 import { DiabetesConsultationComponent } from './chameleon-reports/diabetes-consultation/diabetes-consultation.component';
+import { AwsClaudeInvocationComponent } from './aws-claude-invocation/aws-claude-invocation.component';
 
 const routes: Routes = [
   { path: 'users', component: UsersComponent },
@@ -135,7 +136,11 @@ const routes: Routes = [
 { path: 'DepartmentCapacity', component: DepartmentCapacityComponent }, // פרוייקט אישי
 //shift-table
    { path: 'shift-table', component: ShiftTableComponent },
-   { path: 'shift-calendar', component: ShiftCalendarComponent }
+   { path: 'shift-calendar', component: ShiftCalendarComponent },
+
+   //amin
+   { path: 'aws', component: AwsClaudeInvocationComponent },
+
 ];
 
 @NgModule({
