@@ -32,6 +32,8 @@ export class DiabetesConsultationComponent implements OnInit, AfterViewInit {
   Title2: string = 'מאושפים:';
   titleUnit: string = 'דאשבורד סכרת';
   totalResults: number = 0;
+  sourceTableFilter: string = 'All'; // Default to show all records
+  originalDataSource4: any[] = [];
 
   displayedColumns: string[] = [
     'Admission_No',
@@ -41,6 +43,7 @@ export class DiabetesConsultationComponent implements OnInit, AfterViewInit {
     'Count_Above_180_Less_8h',
   ];
   displayedColumns3: string[] = [
+    
     'Admission_No',
     'Admission_Date',
     'Id_Num',
@@ -50,7 +53,7 @@ export class DiabetesConsultationComponent implements OnInit, AfterViewInit {
     'Entry_Date',
   ];
   displayedColumns4: string[] = [
-    //'Patient',
+    'Source_Table',
     'Admission_No',
     'Admission_Date',
     'Id_Num',
@@ -101,7 +104,7 @@ export class DiabetesConsultationComponent implements OnInit, AfterViewInit {
   @ViewChild('paginatorAllConsiliums') paginatorAllConsiliums!: MatPaginator;
 
   @ViewChild('sort1') sort1!: MatSort;
-  @ViewChild('sort3') sort3!: MatSort;
+  @ViewChild('sort3', { static: false }) sort3!: MatSort;
   @ViewChild('sort4') sort4!: MatSort;
   @ViewChild('sortHemoglobin') sortHemoglobin!: MatSort;
   @ViewChild('sortAllConsiliums') sortAllConsiliums!: MatSort;
@@ -131,20 +134,23 @@ export class DiabetesConsultationComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit(): void {
+    console.log('Sort3:', this.sort3); // Log the MatSort instance
+    console.log('DataSource3 Sort:', this.dataSource3.sort); // Log data source sort
     this.dataSource1.paginator = this.paginator1;
-    //this.dataSource1.sort = this.sort1;
+    this.dataSource1.sort = this.sort1;
 
     this.dataSource3.paginator = this.Ensoleen;
-    //this.dataSource3.sort = this.sort3;
+    this.dataSource3.sort = this.sort3; // Explicitly assign sort3
+  console.log('DataSource3 Sort Assigned:', this.dataSource3.sort);
 
     this.dataSource4.paginator = this.paginator4;
-    //this.dataSource4.sort = this.sort4;
+    this.dataSource4.sort = this.sort4;
 
     this.dataSourceHemoglobin.paginator = this.paginatorHemoglobin;
-    // this.dataSourceHemoglobin.sort = this.sortHemoglobin;
+    this.dataSourceHemoglobin.sort = this.sortHemoglobin;
 
     this.dataSourceAllConsiliums.paginator = this.paginatorAllConsiliums;
-    //this.dataSourceAllConsiliums.sort = this.sortAllConsiliums;
+    this.dataSourceAllConsiliums.sort = this.sortAllConsiliums;
   }
 
   fetchData(): void {
@@ -180,13 +186,15 @@ export class DiabetesConsultationComponent implements OnInit, AfterViewInit {
         }
       );
   }
-  onTabChanged(event: MatTabChangeEvent) {
-    switch (event.index) {
-      case 1:
-        //this.fetchInsulinData();
-        break;
+  onTabChanged(event: MatTabChangeEvent): void {
+    if (event.index === 1) { // Adjust to the index of the tab containing your table
+      if (this.sort3) {
+        this.dataSource3.sort = this.sort3;
+        console.log('Sort3 assigned after tab change:', this.sort3);
+      }
     }
   }
+  
   fetchInsulinData(): void {
     this.http
       .get<any[]>(`${environment.apiUrl}/DiabetesConsultation/insulin`)
@@ -208,8 +216,8 @@ export class DiabetesConsultationComponent implements OnInit, AfterViewInit {
       .get<any[]>(`${environment.apiUrl}/DiabetesConsultation/Diagnosis`)
       .subscribe(
         (data) => {
-          console.log('Diagnosis Data:', data); // Debug backend response
-          this.dataSource4.data = data; // Assign data
+          this.originalDataSource4 = data; // Store the unfiltered data
+          this.applySourceTableFilter(); // Apply the filter on fetch
         },
         (error) => {
           console.error('Error fetching Diagnosis data:', error);
@@ -289,4 +297,22 @@ export class DiabetesConsultationComponent implements OnInit, AfterViewInit {
       type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
     });
   }
+  // Apply filter to dataSource4 based on Source_Table value
+applySourceTableFilter(): void {
+  if (this.sourceTableFilter === 'All') {
+    // Reset to original data if "All" is selected
+    this.dataSource4.data = this.originalDataSource4;
+  } else {
+    // Filter based on the selected Source_Table value
+    this.dataSource4.data = this.originalDataSource4.filter(
+      (item) => item.Source_Table === this.sourceTableFilter
+    );
+  }
+}
+
+// Handle toggle change
+onSourceTableToggleChange(value: string): void {
+  this.sourceTableFilter = value;
+  this.applySourceTableFilter();
+}
 }

@@ -5,6 +5,17 @@
       {{ titleUnit }}<span>{{ Title1 }}{{ Title2 }}{{ totalResults }}</span>
     </h1>
   </div>
+  <div class="filter-container">
+    <mat-button-toggle-group
+      name="sourceTableFilter"
+      [(ngModel)]="sourceTableFilter"
+      (change)="onSourceTableToggleChange($event.value)"
+    >
+      <mat-button-toggle value="All">All</mat-button-toggle>
+      <mat-button-toggle value="Hospitalizations">Hospitalizations</mat-button-toggle>
+      <mat-button-toggle value="MedicalRecords">Medical Records</mat-button-toggle>
+    </mat-button-toggle-group>
+  </div>
 
   <!-- <button (click)="toggleDarkMode()">
             {{ isDarkMode ? 'Disable Dark Mode' : 'Enable Dark Mode' }}
@@ -99,7 +110,7 @@
           mat-table
           [dataSource]="dataSource1"
           class="mat-elevation-z8"
-          matSort
+          matSort 
           style="table-layout: fixed; width: 100%"
         >
           <ng-container matColumnDef="Admission_No">
@@ -161,7 +172,7 @@
           mat-table
           [dataSource]="dataSource3"
           matSort
-          #sort3
+         
           class="mat-elevation-z8"
           style="table-layout: fixed; width: 100%"
         >
@@ -235,15 +246,15 @@
           [dataSource]="dataSource4"
           class="mat-elevation-z8"
           matSort
-          #sort4
+          
           style="table-layout: fixed; width: 100%"
         >
-          <ng-container matColumnDef="Hospitalization_Patient">
+          <ng-container matColumnDef="Source_Table">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>
-              Hospitalization_Patient
+                Source_Table
             </th>
             <td mat-cell *matCellDef="let element">
-              {{ element.Hospitalization_Patient }}
+              {{ element.Source_Table }}
             </td>
           </ng-container>
           <ng-container matColumnDef="Admission_No">
