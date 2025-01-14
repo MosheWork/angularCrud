@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
@@ -7,17 +7,18 @@ import { FormGroup, FormControl } from '@angular/forms';
 import * as XLSX from 'xlsx';
 import { environment } from '../../../environments/environment';
 import { Renderer2 } from '@angular/core';
+import { MatTabChangeEvent } from '@angular/material/tabs';
 
 @Component({
   selector: 'app-diabetes-consultation',
   templateUrl: './diabetes-consultation.component.html',
   styleUrls: ['./diabetes-consultation.component.scss'],
 })
-export class DiabetesConsultationComponent implements OnInit {
+export class DiabetesConsultationComponent implements OnInit, AfterViewInit {
   // Properties for the data
   filteredData: any[] = [];
   isDarkMode = false;
-
+  EnsoleenresultsLength = 0;
   totalHos: number = 0;
   totalHosWithIcd9: number = 0;
   Icd9Percentage: number = 0;
@@ -35,24 +36,21 @@ export class DiabetesConsultationComponent implements OnInit {
   displayedColumns: string[] = [
     'Admission_No',
     'Admission_Date',
-    //'Release_Date',
     'First_Name',
     'Last_Name',
     'Count_Above_180_Less_8h',
   ];
   displayedColumns3: string[] = [
-    //'Hospitalization_Patient',
     'Admission_No',
     'Admission_Date',
     'Id_Num',
     'First_Name',
     'Last_Name',
-    //'Main_Drug',
     'Name',
     'Entry_Date',
   ];
   displayedColumns4: string[] = [
-    'Hospitalization_Patient',
+    //'Patient',
     'Admission_No',
     'Admission_Date',
     'Id_Num',
@@ -63,21 +61,16 @@ export class DiabetesConsultationComponent implements OnInit {
     'Entry_Date',
   ];
 
-  dataSourceHemoglobin = new MatTableDataSource<any>();
   displayedColumnsHemoglobin: string[] = [
-      'Admission_Date',
-      'TestCode',
-      'TestName',
-      'Result',
-      'TestDate',
-      'Id_Num',
-      'First_Name',
-      'Last_Name'
+    'Admission_Date',
+    'TestCode',
+    'TestName',
+    'Result',
+    'TestDate',
+    'Id_Num',
+    'First_Name',
+    'Last_Name',
   ];
-  displayedColumns2: string[] = ['SomeColumn']; // Columns for the second table
-  dataSourceAllConsiliums = new MatTableDataSource<any>();
-  dataSourceConsiliumCounts: any = {}; // Holds the counts data
-  
   displayedColumnsAllConsiliums: string[] = [
     'Id_Num',
     'First_Name',
@@ -91,67 +84,45 @@ export class DiabetesConsultationComponent implements OnInit {
     'Answer_Date',
   ];
 
-
-  dataSource: MatTableDataSource<any> = new MatTableDataSource<any>();
-
   dataSource1 = new MatTableDataSource<any>();
-  dataSource2 = new MatTableDataSource<any>();
   dataSource3 = new MatTableDataSource<any>();
   dataSource4 = new MatTableDataSource<any>();
+  dataSourceHemoglobin = new MatTableDataSource<any>();
+  dataSourceAllConsiliums = new MatTableDataSource<any>();
 
-  // Form for global filter
   filterForm: FormGroup = new FormGroup({
     globalFilter: new FormControl(''),
   });
 
-  @ViewChild(MatPaginator) paginator1!: MatPaginator;
-  @ViewChild(MatPaginator) paginator2!: MatPaginator;
-
-  @ViewChild(MatSort) sort1!: MatSort;
-  @ViewChild(MatSort) sort2!: MatSort;
-  @ViewChild('sort3', { static: true }) sort3!: MatSort;
-  @ViewChild('paginator3', { static: true }) paginator3!: MatPaginator;
-  @ViewChild('paginatorAllConsiliums') paginatorAllConsiliums!: MatPaginator;
-  @ViewChild('sortAllConsiliums') sortAllConsiliums!: MatSort;
-  
+  @ViewChild('paginator1') paginator1!: MatPaginator;
+  @ViewChild('Ensoleen') Ensoleen!: MatPaginator;
   @ViewChild('paginator4') paginator4!: MatPaginator;
-  @ViewChild('sort4') sort4!: MatSort;
-
   @ViewChild('paginatorHemoglobin') paginatorHemoglobin!: MatPaginator;
+  @ViewChild('paginatorAllConsiliums') paginatorAllConsiliums!: MatPaginator;
+
+  @ViewChild('sort1') sort1!: MatSort;
+  @ViewChild('sort3') sort3!: MatSort;
+  @ViewChild('sort4') sort4!: MatSort;
   @ViewChild('sortHemoglobin') sortHemoglobin!: MatSort;
+  @ViewChild('sortAllConsiliums') sortAllConsiliums!: MatSort;
+
   constructor(private http: HttpClient, private renderer: Renderer2) {}
 
   ngOnInit(): void {
     this.fetchData();
     this.fetchTable1Data();
-    this.fetchInsulinData(); // Fetch insulin data
-    this.fetchDiagnosisData(); // Fetch diagnosis data
-    this.fetchHemoglobinAbove8(); // Fetch hemoglobin data
-    this.fetchAllConsiliums(); // Fetch all consiliums
-    this.fetchConsiliumCounts(); // Fetch consilium counts
+    this.fetchInsulinData();
+    this.fetchDiagnosisData();
+    this.fetchHemoglobinAbove8();
+    this.fetchAllConsiliums();
 
-    this.dataSource1.paginator = this.paginator1;
-    this.dataSource1.sort = this.sort1;
-  
-    this.dataSource3.paginator = this.paginator3;
-    this.dataSource3.sort = this.sort3;
-  
-    this.dataSource4.paginator = this.paginator4;
-    this.dataSource4.sort = this.sort4;
-  
-    this.dataSourceHemoglobin.paginator = this.paginatorHemoglobin;
-    this.dataSourceHemoglobin.sort = this.sortHemoglobin;
-  
-    this.dataSourceAllConsiliums.paginator = this.paginator1; // Adjust if using a separate paginator
-    this.dataSourceAllConsiliums.sort = this.sort1; // Adjust if using a separate sort
     const savedDarkMode = localStorage.getItem('darkMode') === 'true';
     this.isDarkMode = savedDarkMode;
 
-    // Apply the class if dark mode is enabled
     if (this.isDarkMode) {
       document.body.classList.add('dark-mode');
     }
-    // Apply filter when global filter changes
+
     this.filterForm
       .get('globalFilter')
       ?.valueChanges.subscribe((filterValue) => {
@@ -159,7 +130,23 @@ export class DiabetesConsultationComponent implements OnInit {
       });
   }
 
-  // Fetch data from the API
+  ngAfterViewInit(): void {
+    this.dataSource1.paginator = this.paginator1;
+    //this.dataSource1.sort = this.sort1;
+
+    this.dataSource3.paginator = this.Ensoleen;
+    //this.dataSource3.sort = this.sort3;
+
+    this.dataSource4.paginator = this.paginator4;
+    //this.dataSource4.sort = this.sort4;
+
+    this.dataSourceHemoglobin.paginator = this.paginatorHemoglobin;
+    // this.dataSourceHemoglobin.sort = this.sortHemoglobin;
+
+    this.dataSourceAllConsiliums.paginator = this.paginatorAllConsiliums;
+    //this.dataSourceAllConsiliums.sort = this.sortAllConsiliums;
+  }
+
   fetchData(): void {
     this.http.get<any>(`${environment.apiUrl}/DiabetesConsultation`).subscribe(
       (data) => {
@@ -186,26 +173,96 @@ export class DiabetesConsultationComponent implements OnInit {
       )
       .subscribe(
         (data) => {
-          this.dataSource1 = new MatTableDataSource(data);
-          this.dataSource1.paginator = this.paginator1;
-          this.dataSource1.sort = this.sort1;
+          this.dataSource1.data = data;
         },
         (error) => {
           console.error('Error fetching Table 1 data:', error);
         }
       );
   }
+  onTabChanged(event: MatTabChangeEvent) {
+    switch (event.index) {
+      case 1:
+        //this.fetchInsulinData();
+        break;
+    }
+  }
+  fetchInsulinData(): void {
+    this.http
+      .get<any[]>(`${environment.apiUrl}/DiabetesConsultation/insulin`)
+      .subscribe(
+        (data) => {
+          console.log('Insulin Data:', data); // Debug backend response
+          // debugger;
+          this.EnsoleenresultsLength = data.length;
+          this.dataSource3.data = data; // Assign data
+          debugger;
+        },
+        (error) => {
+          console.error('Error fetching insulin data:', error);
+        }
+      );
+  }
+  fetchDiagnosisData(): void {
+    this.http
+      .get<any[]>(`${environment.apiUrl}/DiabetesConsultation/Diagnosis`)
+      .subscribe(
+        (data) => {
+          console.log('Diagnosis Data:', data); // Debug backend response
+          this.dataSource4.data = data; // Assign data
+        },
+        (error) => {
+          console.error('Error fetching Diagnosis data:', error);
+        }
+      );
+  }
 
+  fetchHemoglobinAbove8(): void {
+    this.http
+      .get<any[]>(`${environment.apiUrl}/DiabetesConsultation/HemoglobinAbove8`)
+      .subscribe(
+        (data) => {
+          this.dataSourceHemoglobin.data = data;
+        },
+        (error) => {
+          console.error('Error fetching Hemoglobin Above 8 data:', error);
+        }
+      );
+  }
 
-  // Apply filter to table data
+  fetchAllConsiliums(): void {
+    this.http
+      .get<any[]>(`${environment.apiUrl}/DiabetesConsultation/AllConsiliums`)
+      .subscribe(
+        (data) => {
+          this.dataSourceAllConsiliums.data = data;
+        },
+        (error) => {
+          console.error('Error fetching All Consiliums data:', error);
+        }
+      );
+  }
+
   applyFilter(filterValue: string): void {
-    this.dataSource.filter = filterValue.trim().toLowerCase();
-    if (this.dataSource.paginator) {
-      this.dataSource.paginator.firstPage();
+    this.dataSource1.filter = filterValue.trim().toLowerCase();
+    if (this.dataSource1.paginator) {
+      this.dataSource1.paginator.firstPage();
     }
   }
 
-  exportToExcel() {
+  toggleDarkMode(): void {
+    this.isDarkMode = !this.isDarkMode;
+
+    if (this.isDarkMode) {
+      document.body.classList.add('dark-mode');
+    } else {
+      document.body.classList.remove('dark-mode');
+    }
+
+    localStorage.setItem('darkMode', this.isDarkMode.toString());
+  }
+
+  exportToExcel(): void {
     const excelData = this.convertToExcelFormat(this.filteredData);
 
     const blob = new Blob([excelData], {
@@ -218,7 +275,7 @@ export class DiabetesConsultationComponent implements OnInit {
     link.click();
   }
 
-  convertToExcelFormat(data: any[]) {
+  convertToExcelFormat(data: any[]): Blob {
     const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(data);
     const workbook: XLSX.WorkBook = {
       Sheets: { data: worksheet },
@@ -232,84 +289,4 @@ export class DiabetesConsultationComponent implements OnInit {
       type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
     });
   }
-  fetchInsulinData(): void {
-    this.http
-      .get<any[]>(`${environment.apiUrl}/DiabetesConsultation/insulin`)
-      .subscribe(
-        (data) => {
-          this.dataSource3 = new MatTableDataSource(data);
-          this.dataSource3.paginator = this.paginator3;
-          this.dataSource3.sort = this.sort3;
-         
-        },
-        (error) => {
-          console.error('Error fetching insulin data:', error);
-        }
-      );
-  }
-  fetchDiagnosisData(): void {
-    this.http.get<any[]>(`${environment.apiUrl}/DiabetesConsultation/diagnosis`).subscribe(
-      (data) => {
-        this.dataSource4 = new MatTableDataSource(data);
-        this.dataSource4.paginator = this.paginator4; // Correct paginator
-        this.dataSource4.sort = this.sort4; // Correct sort
-      },
-      (error) => {
-        console.error('Error fetching Diagnosis data:', error);
-      }
-    );
-  }
-  fetchHemoglobinAbove8(): void {
-    this.http.get<any[]>(`${environment.apiUrl}/DiabetesConsultation/HemoglobinAbove8`).subscribe(
-      (data) => {
-        this.dataSourceHemoglobin = new MatTableDataSource(data);
-        this.dataSourceHemoglobin.paginator = this.paginatorHemoglobin;
-        this.dataSourceHemoglobin.sort = this.sortHemoglobin;
-      },
-      (error) => {
-        console.error('Error fetching Hemoglobin Above 8 data:', error);
-      }
-    );
-  }
-  fetchAllConsiliums(): void {
-    this.http.get<any[]>(`${environment.apiUrl}/DiabetesConsultation/AllConsiliums`).subscribe(
-      (data) => {
-        this.dataSourceAllConsiliums = new MatTableDataSource(data);
-        // Assign paginator and sort explicitly here
-        this.dataSourceAllConsiliums.paginator = this.paginatorAllConsiliums;
-        this.dataSourceAllConsiliums.sort = this.sortAllConsiliums;
-      },
-      (error) => {
-        console.error('Error fetching All Consiliums data:', error);
-      }
-    );
-  }
-  fetchConsiliumCounts(): void {
-    this.http
-      .get<any>(`${environment.apiUrl}/DiabetesConsultation/ConsiliumCounts`)
-      .subscribe(
-        (data) => {
-          this.dataSourceConsiliumCounts = data;
-        },
-        (error) => {
-          console.error('Error fetching Consilium Counts:', error);
-        }
-      );
-  }
-  toggleDarkMode(): void {
-    this.isDarkMode = !this.isDarkMode;
-
-    if (this.isDarkMode) {
-      document.body.classList.add('dark-mode');
-      console.log('Dark mode enabled');
-    } else {
-      document.body.classList.remove('dark-mode');
-      console.log('Dark mode disabled');
-    }
-
-    // Save to localStorage
-    localStorage.setItem('darkMode', this.isDarkMode.toString());
-  }
- 
-  
 }
