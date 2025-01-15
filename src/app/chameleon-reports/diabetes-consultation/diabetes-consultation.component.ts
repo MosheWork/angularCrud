@@ -122,6 +122,9 @@ export class DiabetesConsultationComponent implements OnInit, AfterViewInit {
   dataSourceAllConsiliums = new MatTableDataSource<any>();
   dataSourceBelow70 = new MatTableDataSource<any>();
 
+  tempStartDate: Date | null = null;
+tempEndDate: Date | null = null;
+tempGlobalSourceTableFilter: string = 'All'; // Default to 'All'
 
   filterForm: FormGroup = new FormGroup({
     globalFilter: new FormControl(''),
@@ -424,21 +427,23 @@ updateGaugeValues(): void {
     const { start, end } = this.globalDateFilter;
   
     const isWithinDateRange = (date: Date | null): boolean => {
-      if (!date) return true; // Include if date is null
+      if (!date) return false; // Exclude if `Release_Date` is null
       const recordDate = new Date(date);
       if (start && recordDate < start) return false;
-      if (end && recordDate > end) return false;
+      if (end && recordDate > new Date(end.setHours(23, 59, 59, 999))) return false; // Include the full day of the end date
       return true;
     };
   
-    // Filter data sources
+    // Apply the date filter based on `Release_Date`
     this.dataSource1.data = this.originalDataSource1.filter((item) =>
-      isWithinDateRange(item.Admission_Date)
+      isWithinDateRange(item.Release_Date)
     );
   
-    this.fetchHosCount(); // Re-fetch count based on date filter
-    this.recalculateLabResultsPercentage(); // Recalculate percentages
+    // Fetch count and recalculate percentages after filtering
+    this.fetchHosCount();
+    this.recalculateLabResultsPercentage();
   }
+  
   
   
 
@@ -525,35 +530,41 @@ updateGaugeValues(): void {
     
     
     applyFilters(): void {
-      // Set the global date filter
-      this.globalDateFilter = { start: this.startDate, end: this.endDate };
+      // Apply the temporary values to the actual filters
+      this.startDate = this.tempStartDate;
+      this.endDate = this.tempEndDate;
+      this.globalSourceTableFilter = this.tempGlobalSourceTableFilter;
     
-      // Apply all filters
+      // Apply the filters
+      this.globalDateFilter = { start: this.startDate, end: this.endDate };
       this.applyGlobalSourceTableFilter();
       this.applyGlobalDateFilter();
-    
-      // Recalculate percentages
       this.recalculateLabResultsPercentage();
     }
-    resetFilters(): void {
-      // Reset date filters and source table filter
-      this.startDate = null;
-      this.endDate = null;
-      this.globalSourceTableFilter = 'All';
-    
-      // Reset the global date filter
-      this.globalDateFilter = { start: null, end: null };
-    
-      // Reset data to original
-      this.dataSource1.data = [...this.originalDataSource1];
-      this.dataSource3.data = [...this.originalDataSource3];
-      this.dataSource4.data = [...this.originalDataSource4];
-      this.dataSourceHemoglobin.data = [...this.originalDataSourceHemoglobin];
-      this.dataSourceAllConsiliums.data = [...this.originalDataSourceAllConsiliums];
-    
-      // Recalculate percentages
-      this.recalculateLabResultsPercentage();
-    }
+
+   resetFilters(): void {
+  // Reset temporary variables
+  this.tempStartDate = null;
+  this.tempEndDate = null;
+  this.tempGlobalSourceTableFilter = 'All';
+
+  // Reset the actual filters
+  this.startDate = null;
+  this.endDate = null;
+  this.globalSourceTableFilter = 'All';
+  this.globalDateFilter = { start: null, end: null };
+
+  // Reset the data
+  this.dataSource1.data = [...this.originalDataSource1];
+  this.dataSource3.data = [...this.originalDataSource3];
+  this.dataSource4.data = [...this.originalDataSource4];
+  this.dataSourceHemoglobin.data = [...this.originalDataSourceHemoglobin];
+  this.dataSourceAllConsiliums.data = [...this.originalDataSourceAllConsiliums];
+
+  // Recalculate percentages
+  this.recalculateLabResultsPercentage();
+}
+
     get denominator(): number {
       switch (this.globalSourceTableFilter) {
         case 'CurrentHospitalizations': // מאושפזים
