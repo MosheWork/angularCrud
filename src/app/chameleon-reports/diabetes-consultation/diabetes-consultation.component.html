@@ -2,7 +2,7 @@
   <!-- Title Section -->
   <div class="nine">
     <h1>
-      {{ titleUnit }}<span>{{ Title1 }}{{ Title2 }}{{ totalResults }}   סה"כ תיקים רפואיים:    {{ medicalRecordsCount }}</span>
+      {{ titleUnit }}<span>{{ Title1 }}{{ Title2 }}{{ CurrentHospitalizations }}   מאושפזי עבר   {{ TotalHospitalizations }}</span>
 
     </h1>
     
@@ -15,16 +15,16 @@
               <div class="filter-container">
                 <!-- Source Filter -->
                 <mat-button-toggle-group
-                  name="globalSourceTableFilter"
-                  [(ngModel)]="globalSourceTableFilter"
-                  (change)="onGlobalSourceTableToggleChange($event.value)"
-                  class="custom-toggle-group"
-                >
-                  <mat-button-toggle value="All">הכל</mat-button-toggle>
-                  <mat-button-toggle value="Hospitalizations">מאושפזים</mat-button-toggle>
-                  <mat-button-toggle value="MedicalRecords">מטופלי עבר</mat-button-toggle>
-                </mat-button-toggle-group>
-      
+                name="globalSourceTableFilter"
+                [(ngModel)]="globalSourceTableFilter"
+                (change)="onGlobalSourceTableToggleChange($event.value)"
+                class="custom-toggle-group"
+              >
+                <mat-button-toggle value="All">הכל</mat-button-toggle>
+                <mat-button-toggle value="CurrentHospitalizations">מאושפזים</mat-button-toggle>
+                <mat-button-toggle value="PastHospitalizations">מטופלי עבר</mat-button-toggle>
+              </mat-button-toggle-group>
+              
                 <!-- Date Filters -->
                 <mat-form-field class="filter-field">
                   <mat-label>Start Date</mat-label>
@@ -139,10 +139,15 @@
             [foregroundColor]="'#dd4b39'"
           ></ngx-gauge>
           <div class="gauge-info">
-            סה"כ מטופלים: <strong>{{ TotalHosLabResultover180 }}</strong> מתוך <strong>{{ medicalRecordsCount }}</strong>
+            סה"כ מטופלים: <strong>{{ filteredCount }}</strong>
+            מתוך <strong>{{ denominator }}</strong>
           </div>
+          
         </div>
       </mat-card>
+      
+      
+      
       
       <!-- ייעוצים -->
     </div>
@@ -156,7 +161,12 @@
   >
     <mat-tab-group >
       <!-- First Tab -->
-      <mat-tab class="tabtitle" label=" סוכר מעל 180">
+      <mat-tab class="tabtitle" label=" סוכר מעל 180" >
+        <ng-template mat-tab-label>
+          <span matTooltip="2 בדיקות סוכר מעל 180 תוך 48 שעות" matTooltipPosition="above">
+            סוכר מעל 180
+          </span>
+        </ng-template>
         <table
           mat-table
           [dataSource]="dataSource1"
@@ -180,14 +190,7 @@
               {{ element.Admission_Date | date }}
             </td>
           </ng-container>
-          <ng-container matColumnDef="Release_Date">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>
-              Release Date
-            </th>
-            <td mat-cell *matCellDef="let element">
-              {{ element.Release_Date | date }}
-            </td>
-          </ng-container>
+        
           <ng-container matColumnDef="First_Name">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>
               First Name
@@ -206,9 +209,9 @@
               {{ element.Count_Above_180_Less_48h }}
             </td>
           </ng-container>
-          <ng-container matColumnDef="Source_Table">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>Source_Table</th>
-            <td mat-cell *matCellDef="let element">{{ element.Source_Table }}</td>
+          <ng-container matColumnDef="Release_Date">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Release Date</th>
+            <td mat-cell *matCellDef="let element">{{ element.Release_Date | date }}</td>
           </ng-container>
 
           <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
@@ -221,7 +224,12 @@
         ></mat-paginator>
       </mat-tab>
 
-      <mat-tab label="סוכר מתחת ל-70">
+      <mat-tab class="tabtitle" label="סוכר מתחת ל-70">
+        <ng-template mat-tab-label>
+          <span matTooltip="2 בדיקות סוכר מתחת 70 תוך 48 שעות" matTooltipPosition="above">
+            סוכר מתחת ל 70
+          </span>
+        </ng-template>
         <table
           mat-table
           [dataSource]="dataSourceBelow70"
@@ -263,9 +271,9 @@
               {{ element.Count_Less_70_Less_48h }}
             </td>
           </ng-container>
-          <ng-container matColumnDef="Source_Table">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>Source</th>
-            <td mat-cell *matCellDef="let element">{{ element.Source_Table }}</td>
+          <ng-container matColumnDef="Release_Date">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Release Date</th>
+            <td mat-cell *matCellDef="let element">{{ element.Release_Date | date }}</td>
           </ng-container>
       
           <tr mat-header-row *matHeaderRowDef="displayedColumnsBelow70"></tr>
@@ -280,6 +288,11 @@
       
       
       <mat-tab label="מקבל אינסולין">
+        <ng-template mat-tab-label>
+          <span matTooltip="   לעדכן הסבר" matTooltipPosition="above">
+           אינסולין
+          </span>
+        </ng-template>
         <table
           mat-table
           [dataSource]="dataSource3"
@@ -352,7 +365,12 @@
         ></mat-paginator>
       </mat-tab>
 
-      <mat-tab label="מטופלים עם אבחנה ICD9">
+      <mat-tab label="">
+        <ng-template mat-tab-label>
+          <span matTooltip=" מטופלים עם אבחנה ICD9  " matTooltipPosition="above">
+            מטופלים עם אבחנה ICD9
+          </span>
+        </ng-template>
         <table
           mat-table
           [dataSource]="dataSource4"
@@ -361,14 +379,10 @@
           
           style="table-layout: fixed; width: 100%"
         >
-          <ng-container matColumnDef="Source_Table">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>
-                Source_Table
-            </th>
-            <td mat-cell *matCellDef="let element">
-              {{ element.Source_Table }}
-            </td>
-          </ng-container>
+        <ng-container matColumnDef="Release_Date">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Release Date</th>
+          <td mat-cell *matCellDef="let element">{{ element.Release_Date | date }}</td>
+        </ng-container>
           <ng-container matColumnDef="Admission_No">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>
               Admission No
@@ -426,12 +440,18 @@
         ></mat-paginator>
       </mat-tab>
 
-      <mat-tab label="Hemoglobin A1C Results">
+      <mat-tab label="">
+        <ng-template mat-tab-label>
+          <span matTooltip="" matTooltipPosition="above">
+            Hemoglobin A1C Results
+          </span>
+        </ng-template>
         <table
           mat-table
           [dataSource]="dataSourceHemoglobin"
           class="mat-elevation-z8"
           matSort
+          style="table-layout: fixed; width: 100%"
         >
           <ng-container matColumnDef="Admission_Date">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>

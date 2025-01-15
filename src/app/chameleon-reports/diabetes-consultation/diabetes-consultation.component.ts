@@ -31,9 +31,13 @@ export class DiabetesConsultationComponent implements OnInit, AfterViewInit {
   Title1: string = ' סה\"כ מטופלים- ';
   Title2: string = 'מאושפים:';
   titleUnit: string = 'דאשבורד סכרת';
-  totalResults: number = 0;
 
-  medicalRecordsCount: number = 0; 
+  CurrentHospitalizations: number = 0; // Total with non-null Release_Date
+  TotalHospitalizations: number = 0;  // Total with null Release_Date
+  FilteredCurrentHospitalizations: number = 0; // Temporary filtered count for CurrentHospitalizations
+  FilteredTotalHospitalizations: number = 0;   // Temporary filtered count for TotalHospitalizations
+  
+
   startDate: Date | null = null;
   endDate: Date | null = null;
 
@@ -59,7 +63,7 @@ export class DiabetesConsultationComponent implements OnInit, AfterViewInit {
     'First_Name',
     'Last_Name',
     'Count_Above_180_Less_48h',
-    'Source_Table'
+    'Release_Date', 
   ];
   displayedColumns3: string[] = [
     'Admission_No',
@@ -71,7 +75,7 @@ export class DiabetesConsultationComponent implements OnInit, AfterViewInit {
     'Entry_Date',
   ];
   displayedColumns4: string[] = [
-    'Source_Table',
+    'Release_Date',
     'Admission_No',
     'Admission_Date',
     'Id_Num',
@@ -81,7 +85,6 @@ export class DiabetesConsultationComponent implements OnInit, AfterViewInit {
     'Name',
     'Entry_Date',
   ];
-
   displayedColumnsHemoglobin: string[] = [
     'Admission_Date',
     'TestCode',
@@ -110,9 +113,8 @@ export class DiabetesConsultationComponent implements OnInit, AfterViewInit {
     'First_Name',
     'Last_Name',
     'Count_Less_70_Less_48h',
-    'Source_Table',
+    'Release_Date', // Use unique identifier
   ];
-
   dataSource1 = new MatTableDataSource<any>();
   dataSource3 = new MatTableDataSource<any>();
   dataSource4 = new MatTableDataSource<any>();
@@ -149,7 +151,7 @@ export class DiabetesConsultationComponent implements OnInit, AfterViewInit {
     this.fetchHemoglobinAbove8();
     this.fetchAllConsiliums();
     this.fetchLabResultsBelow70(); 
-    this.fetchMedicalRecordsCount(); 
+    this.fetchHosCount(); 
 
 
     const savedDarkMode = localStorage.getItem('darkMode') === 'true';
@@ -188,7 +190,7 @@ export class DiabetesConsultationComponent implements OnInit, AfterViewInit {
   // fetchGeneralData(): void {
   //   this.http.get<any>(`${environment.apiUrl}/DiabetesConsultation`).subscribe(
   //     (data) => {
-  //       this.totalResults = data.TotalHos;
+  //       this.CurrentHospitalizations = data.TotalHos;
   //       this.totalHosWithIcd9 = data.TotalHosWithIcd9;
   //       this.Icd9Percentage = data.Icd9Percentage;
   //       //this.TotalHosLabResultover180 = data.TotalHosLabResultover180;
@@ -211,22 +213,16 @@ export class DiabetesConsultationComponent implements OnInit, AfterViewInit {
         (data) => {
           this.originalDataSource1 = data;
           this.TotalHosLabResultover180 = data.length;
-          if (this.medicalRecordsCount > 0) {
-            this.labResultOver180Percentage =
-              (this.TotalHosLabResultover180 / this.medicalRecordsCount) * 100;
-          } else {
-            this.labResultOver180Percentage = 0;
-          }
+          this.recalculateLabResultsPercentage();
           this.applyGlobalSourceTableFilter();
           this.applyGlobalDateFilter();
-          
-
         },
         (error) => {
           console.error('Error fetching Lab Results Above Threshold:', error);
         }
       );
   }
+  
 
   fetchInsulinData(): void {
     this.http
@@ -355,104 +351,117 @@ export class DiabetesConsultationComponent implements OnInit, AfterViewInit {
 
   applyGlobalSourceTableFilter(): void {
     const filter = this.globalSourceTableFilter;
-
+  
+    // Apply filters to the main table
     this.dataSource1.data =
       filter === 'All'
         ? this.originalDataSource1
-        : this.originalDataSource1.filter((item) => item.Source_Table === filter);
-
-    this.dataSource3.data =
-      filter === 'All'
-        ? this.originalDataSource3
-        : this.originalDataSource3.filter((item) => item.Source_Table === filter);
-
-    this.dataSource4.data =
-      filter === 'All'
-        ? this.originalDataSource4
-        : this.originalDataSource4.filter((item) => item.Source_Table === filter);
-
-    this.dataSourceHemoglobin.data =
-      filter === 'All'
-        ? this.originalDataSourceHemoglobin
-        : this.originalDataSourceHemoglobin.filter((item) => item.Source_Table === filter);
-
-    this.dataSourceAllConsiliums.data =
-      filter === 'All'
-        ? this.originalDataSourceAllConsiliums
-        : this.originalDataSourceAllConsiliums.filter((item) => item.Source_Table === filter);
-
-    this.dataSourceBelow70.data =
-      filter === 'All'
-        ? this.originalDataSourceBelow70
-        : this.originalDataSourceBelow70.filter((item) => item.Source_Table === filter);
-        this.recalculateLabResultsPercentage();
-
+        : filter === 'CurrentHospitalizations'
+        ? this.originalDataSource1.filter((item) => item.Release_Date === null)
+        : this.originalDataSource1.filter((item) => item.Release_Date !== null);
+  
+    // Calculate filtered totals
+    this.FilteredTotalHospitalizations = this.dataSource1.data.length;
+  
+    if (filter === 'CurrentHospitalizations') {
+      this.FilteredCurrentHospitalizations = this.FilteredTotalHospitalizations;
+    } else if (filter === 'PastHospitalizations') {
+      this.FilteredCurrentHospitalizations = 0; // No current hospitalizations in this filter
+    } else {
+      this.FilteredCurrentHospitalizations = this.dataSource1.data.filter(
+        (item) => item.Release_Date === null
+      ).length;
+    }
+  
+    // Update gauge percentages
+    this.recalculateLabResultsPercentage();
   }
+  
+  
 
   onGlobalSourceTableToggleChange(value: string): void {
     this.globalSourceTableFilter = value;
-    this.applyGlobalSourceTableFilter();
+  
+    switch (value) {
+      case 'CurrentHospitalizations':
+        this.dataSource1.data = this.originalDataSource1.filter(
+          (item) => item.Release_Date === null
+        );
+        break;
+  
+      case 'PastHospitalizations':
+        this.dataSource1.data = this.originalDataSource1.filter(
+          (item) => item.Release_Date !== null
+        );
+        break;
+  
+      default:
+        this.dataSource1.data = [...this.originalDataSource1];
+        break;
+    }
+  
+    // Recalculate percentage after filter change
+    this.recalculateLabResultsPercentage();
   }
+  
+
+  
+updateGaugeValues(): void {
+  if (this.FilteredTotalHospitalizations > 0) {
+    this.labResultOver180Percentage =
+      (this.FilteredCurrentHospitalizations / this.FilteredTotalHospitalizations) * 100;
+  } else {
+    this.labResultOver180Percentage = 0;
+  }
+}
+
+  
+  
+  
+  
   // Method to apply global date filter
   applyGlobalDateFilter(): void {
     const { start, end } = this.globalDateFilter;
   
     const isWithinDateRange = (date: Date | null): boolean => {
-      if (!date) return true; // If date is null, include the record
+      if (!date) return true; // Include if date is null
       const recordDate = new Date(date);
       if (start && recordDate < start) return false;
       if (end && recordDate > end) return false;
       return true;
     };
   
-    // Apply filter for all tables using Admission_Date
+    // Filter data sources
     this.dataSource1.data = this.originalDataSource1.filter((item) =>
       isWithinDateRange(item.Admission_Date)
     );
-    this.dataSource3.data = this.originalDataSource3.filter((item) =>
-      isWithinDateRange(item.Admission_Date)
-    );
-    this.dataSource4.data = this.originalDataSource4.filter((item) =>
-      isWithinDateRange(item.Admission_Date)
-    );
-    this.dataSourceHemoglobin.data = this.originalDataSourceHemoglobin.filter((item) =>
-      isWithinDateRange(item.Admission_Date)
-    );
   
-    // Apply filter for AllConsiliums using Entry_Date
-    this.dataSourceAllConsiliums.data = this.originalDataSourceAllConsiliums.filter((item) =>
-      isWithinDateRange(item.Entry_Date)
-    );
-
-    this.dataSourceBelow70.data = this.originalDataSourceBelow70.filter((item) =>
-    isWithinDateRange(item.Admission_Date)
-  );
-  this.fetchMedicalRecordsCount();
-  this.recalculateLabResultsPercentage();
-
+    this.fetchHosCount(); // Re-fetch count based on date filter
+    this.recalculateLabResultsPercentage(); // Recalculate percentages
   }
+  
   
 
   // Handle date range changes
   onDateRangeChange(start: Date | null, end: Date | null): void {
     this.globalDateFilter = { start, end };
     this.applyGlobalDateFilter();
-    this.fetchMedicalRecordsCount(); // Re-fetch data based on the updated filters
+    this.fetchHosCount(); // Re-fetch data based on the updated filters
 
   }
 
     // Add this method to fetch the medical records count
-    fetchMedicalRecordsCount(): void {
+    fetchHosCount(): void {
       const startDate = this.globalDateFilter.start
         ? this.globalDateFilter.start.toISOString()
         : null;
       const endDate = this.globalDateFilter.end
         ? this.globalDateFilter.end.toISOString()
         : null;
-  
+    
       this.http
-        .get<{ MedicalRecordCount: number }>(
-          `${environment.apiUrl}/DiabetesConsultation/MedicalRecordsCount`,
+        .get<{ NullReleaseDateCount: number; NonNullReleaseDateCount: number }>(
+          `${environment.apiUrl}/DiabetesConsultation/totalHospitalizations`,
           {
             params: {
               startDate: startDate || '',
@@ -462,26 +471,59 @@ export class DiabetesConsultationComponent implements OnInit, AfterViewInit {
         )
         .subscribe(
           (data) => {
-            this.medicalRecordsCount = data.MedicalRecordCount;
+            console.log('API Response:', data);
+    
+            // Assign values from the API response
+            this.CurrentHospitalizations = data.NullReleaseDateCount;
+            this.TotalHospitalizations = data.NonNullReleaseDateCount;
+    
+            // Recalculate percentages based on both API data and filters
+            this.recalculateLabResultsPercentage();
           },
           (error) => {
-            console.error('Error fetching Medical Records Count:', error);
+            console.error('Error fetching Hospitalization Counts:', error);
           }
         );
     }
-
-    recalculateLabResultsPercentage(): void {
-      // Calculate the filtered total
-      this.TotalHosLabResultover180 = this.dataSource1.data.length;
     
-      // Recalculate the percentage based on the filtered total and the overall medical records count
-      if (this.medicalRecordsCount > 0) {
-        this.labResultOver180Percentage = (this.TotalHosLabResultover180 / this.medicalRecordsCount) * 100;
+    recalculateLabResultsPercentage(): void {
+      const filteredCount = this.dataSource1.filteredData.length;
+    
+      let denominator: number;
+      switch (this.globalSourceTableFilter) {
+        case 'CurrentHospitalizations': // מאושפזים
+          denominator = this.CurrentHospitalizations;
+          break;
+    
+        case 'PastHospitalizations': // מטופלי עבר
+          denominator = this.TotalHospitalizations;
+          break;
+    
+        case 'All': // הכל
+        default:
+          denominator = this.CurrentHospitalizations + this.TotalHospitalizations;
+          break;
+      }
+    
+      // Log the values to debug
+      console.log('Filtered Count:', filteredCount);
+      console.log('Denominator:', denominator);
+      console.log('Global Source Filter:', this.globalSourceTableFilter);
+    
+      if (denominator > 0) {
+        this.labResultOver180Percentage = (filteredCount / denominator) * 100;
       } else {
         this.labResultOver180Percentage = 0;
       }
+    
+      // Log the calculated percentage
+      console.log('Lab Result Percentage:', this.labResultOver180Percentage);
     }
-
+    
+    
+    
+    
+    
     applyFilters(): void {
       // Set the global date filter
       this.globalDateFilter = { start: this.startDate, end: this.endDate };
@@ -511,6 +553,23 @@ export class DiabetesConsultationComponent implements OnInit, AfterViewInit {
     
       // Recalculate percentages
       this.recalculateLabResultsPercentage();
+    }
+    get denominator(): number {
+      switch (this.globalSourceTableFilter) {
+        case 'CurrentHospitalizations': // מאושפזים
+          return this.CurrentHospitalizations;
+    
+        case 'PastHospitalizations': // מטופלי עבר
+          return this.TotalHospitalizations - this.CurrentHospitalizations;
+    
+        case 'All': // הכל
+        default:
+          return this.TotalHospitalizations;
+      }
+    }
+    
+    get filteredCount(): number {
+      return this.dataSource1.filteredData.length;
     }
     
 }
