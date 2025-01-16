@@ -14,16 +14,17 @@
             <div dir="rtl" class="card-body">
               <div class="filter-container">
                 <!-- Source Filter -->
-                <mat-button-toggle-group
-                name="globalSourceTableFilter"
-                [(ngModel)]="globalSourceTableFilter"
-                (change)="onGlobalSourceTableToggleChange($event.value)"
-                class="custom-toggle-group"
-              >
-                <mat-button-toggle value="All">הכל</mat-button-toggle>
-                <mat-button-toggle value="CurrentHospitalizations">מאושפזים</mat-button-toggle>
-                <mat-button-toggle value="PastHospitalizations">מטופלי עבר</mat-button-toggle>
-              </mat-button-toggle-group>
+            <!-- Toggle Group -->
+<mat-button-toggle-group
+name="globalSourceTableFilter"
+[(ngModel)]="tempGlobalSourceTableFilter"
+(change)="onSourceFilterChange($event.value)"
+class="custom-toggle-group"
+>
+<mat-button-toggle value="All">הכל</mat-button-toggle>
+<mat-button-toggle value="מאושפזים">מאושפזים</mat-button-toggle>
+</mat-button-toggle-group>
+
               
                 <!-- Date Filters -->
                 <mat-form-field class="filter-field">
@@ -31,32 +32,33 @@
                   <input
                     matInput
                     [matDatepicker]="startDatePicker"
-                    [(ngModel)]="startDate"
+                    [(ngModel)]="globalDateFilter.start"
                   />
                   <mat-datepicker-toggle matSuffix [for]="startDatePicker"></mat-datepicker-toggle>
                   <mat-datepicker #startDatePicker></mat-datepicker>
                 </mat-form-field>
-      
+                
                 <mat-form-field class="filter-field">
                   <mat-label>End Date</mat-label>
                   <input
                     matInput
                     [matDatepicker]="endDatePicker"
-                    [(ngModel)]="endDate"
+                    [(ngModel)]="globalDateFilter.end"
                   />
                   <mat-datepicker-toggle matSuffix [for]="endDatePicker"></mat-datepicker-toggle>
                   <mat-datepicker #endDatePicker></mat-datepicker>
                 </mat-form-field>
+                
       
-                <!-- Filter Buttons -->
-                <div class="filter-buttons" style="margin-top: 10px; text-align: right;">
-                  <button mat-raised-button color="primary" (click)="applyFilters()">
-                    התחל סינון
-                  </button>
-                  <button mat-raised-button color="warn" (click)="resetFilters()">
-                    אפס סינון
-                  </button>
-                </div>
+              <!-- Filter Buttons -->
+<div class="filter-buttons" style="margin-top: 10px; text-align: right;">
+  <button mat-raised-button color="primary" (click)="applyFilters()">
+    התחל סינון
+  </button>
+  <button mat-raised-button color="warn" (click)="resetFilters()">
+    אפס סינון
+  </button>
+</div>
               </div>
             </div>
           </div>

@@ -159,7 +159,8 @@ export class DiabetesConsultationComponent implements OnInit, AfterViewInit {
     this.fetchAllConsiliums();
     this.fetchLabResultsBelow70(); 
     this.fetchHosCount(); 
-
+    this.globalDateFilter = { start: null, end: null };
+    this.tempGlobalSourceTableFilter = 'All';
 
     const savedDarkMode = localStorage.getItem('darkMode') === 'true';
     this.isDarkMode = savedDarkMode;
@@ -545,44 +546,43 @@ updateGaugeValues(): void {
     
     
     
-    
     applyFilters(): void {
-      const { start, end } = this.globalDateFilter;
+      // Apply the temporary toggle filter
+      this.globalSourceTableFilter = this.tempGlobalSourceTableFilter;
+    
+      console.log('Applying Filters:');
+      console.log('Start Date:', this.globalDateFilter.start);
+      console.log('End Date:', this.globalDateFilter.end);
+      console.log('Global Source Filter:', this.globalSourceTableFilter);
     
       const isWithinDateRange = (date: Date | null): boolean => {
-        if (!date) return true; // Include if no date range filter is applied
+        if (!date) return true;
         const recordDate = new Date(date);
-        if (start && recordDate < start) return false;
-        if (end && recordDate > end) return false; // Include the end date
+        if (this.globalDateFilter.start && recordDate < this.globalDateFilter.start) return false;
+        if (this.globalDateFilter.end && recordDate > this.globalDateFilter.end) return false;
         return true;
       };
     
-      console.log('Applying Filters:');
-      console.log('Start Date:', start);
-      console.log('End Date:', end);
-      console.log('Global Source Filter:', this.globalSourceTableFilter);
+      // Apply filters
+      const applyTableFilter = (dataSource: MatTableDataSource<any>, originalData: any[]) => {
+        dataSource.data = originalData.filter((item) => {
+          const withinDateRange = isWithinDateRange(item.Admission_Date);
     
-      this.dataSource1.data = this.originalDataSource1.filter((item) => {
-        const withinDateRange = isWithinDateRange(item.Admission_Date);
+          if (this.globalSourceTableFilter === 'מאושפזים') {
+            return item.Release_Date === null && withinDateRange;
+          }
+          return withinDateRange; // For "All", only date range filter applies
+        });
+      };
     
-        if (this.globalSourceTableFilter === 'CurrentHospitalizations') {
-          console.log('Filtering for CurrentHospitalizations');
-          return item.Release_Date === null && withinDateRange;
-        } else if (this.globalSourceTableFilter === 'PastHospitalizations') {
-          console.log('Filtering for PastHospitalizations');
-          return item.Release_Date !== null && withinDateRange;
-        } else {
-          console.log('Filtering for All Records');
-          return withinDateRange;
-        }
-      });
+      applyTableFilter(this.dataSource1, this.originalDataSource1);
+      applyTableFilter(this.dataSource3, this.originalDataSource3);
+      applyTableFilter(this.dataSource4, this.originalDataSource4);
+      applyTableFilter(this.dataSourceHemoglobin, this.originalDataSourceHemoglobin);
+      applyTableFilter(this.dataSourceAllConsiliums, this.originalDataSourceAllConsiliums);
+      applyTableFilter(this.dataSourceBelow70, this.originalDataSourceBelow70);
     
-      console.log('Filtered Data:', this.dataSource1.data);
-      console.log('Filtered Count:', this.dataSource1.data.length);
-    
-      // Fetch updated counts and recalculate percentages
-      this.recalculateLabResultsPercentage();
-      this.fetchHosCount();
+      console.log('Filters applied successfully!');
     }
     
     
@@ -590,17 +590,14 @@ updateGaugeValues(): void {
     
     // Update the selected source filter when a toggle is clicked
     onSourceFilterChange(filter: string): void {
-      this.selectedSourceFilter = filter;
+      this.tempGlobalSourceTableFilter = filter;
+      console.log('Temporary Source Filter Updated:', this.tempGlobalSourceTableFilter);
     }
-    
     resetFilters(): void {
-      // Reset date filters
-      this.startDate = null;
-      this.endDate = null;
+      // Reset filters to their default state
+      this.tempGlobalSourceTableFilter = 'All';
       this.globalDateFilter = { start: null, end: null };
-      this.globalSourceTableFilter = 'All';
     
-      // Reset data sources to their original values
       this.dataSource1.data = [...this.originalDataSource1];
       this.dataSource3.data = [...this.originalDataSource3];
       this.dataSource4.data = [...this.originalDataSource4];
@@ -608,14 +605,7 @@ updateGaugeValues(): void {
       this.dataSourceAllConsiliums.data = [...this.originalDataSourceAllConsiliums];
       this.dataSourceBelow70.data = [...this.originalDataSourceBelow70];
     
-      // Reset hospitalization counts
-      this.fetchHosCount(); // Re-fetch counts based on the original data
-    
-      // Recalculate lab results percentage
-      this.recalculateLabResultsPercentage();
-    
-      // Log reset confirmation for debugging
-      console.log('Filters have been reset to default state.');
+      console.log('Filters reset to default state.');
     }
     
     get denominator(): number {
