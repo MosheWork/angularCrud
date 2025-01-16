@@ -123,7 +123,8 @@ class="custom-toggle-group"
             [foregroundColor]="'#00c0ef'"
           ></ngx-gauge>
           <div class="gauge-info">
-            סה"כ מטופלים : <strong>{{ TotalHosInsulin }}</strong>
+            סה"כ מטופלים: <strong>{{ dataSource3.data.length }}</strong>
+            מתוך <strong>{{ globalSourceTableFilter === 'מאושפזים' ? NullReleaseDateCount : NonNullReleaseDateCount }}</strong>
           </div>
         </div>
       </mat-card>

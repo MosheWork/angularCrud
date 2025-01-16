@@ -488,6 +488,17 @@ fetchDiagnosisData(): void {
       Denominator: icd9Denominator,
       Percentage: this.Icd9Percentage,
     });
+  
+    // Calculate Insulin Percentage
+    const insulinTableLength = this.dataSource3.data.length; // Data length for מקבל אינסולין
+    const insulinDenominator = this.globalSourceTableFilter === 'מאושפזים' ? this.NullReleaseDateCount : this.NonNullReleaseDateCount;
+    this.insulinPercentage = insulinDenominator > 0 ? (insulinTableLength / insulinDenominator) * 100 : 0;
+  
+    console.log('מקבל אינסולין:', {
+      TableLength: insulinTableLength,
+      Denominator: insulinDenominator,
+      Percentage: this.insulinPercentage,
+    });
   }
   
   
