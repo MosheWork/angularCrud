@@ -105,7 +105,8 @@ class="custom-toggle-group"
             [foregroundColor]="'#f39c12'"
           ></ngx-gauge>
           <div class="gauge-info">
-            סה"כ מטופלים : <strong>{{ totalHosWithIcd9 }}</strong>
+            סה"כ מטופלים : <strong> {{ dataSource4.data.length }} </strong> מתוך
+            <strong>{{ globalSourceTableFilter === 'מאושפזים' ? NullReleaseDateCount : NonNullReleaseDateCount }}</strong>
           </div>
         </div>
       </mat-card>
@@ -371,9 +372,17 @@ class="custom-toggle-group"
               {{ element.Entry_Date | date }}
             </td>
           </ng-container>
+          <ng-container matColumnDef="Release_Date">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>
+              Release_Date
+            </th>
+            <td mat-cell *matCellDef="let element">
+              {{ element.Release_Date | date }}
+            </td>
+          </ng-container>
 
-          <tr mat-header-row *matHeaderRowDef="displayedColumns3"></tr>
-          <tr mat-row *matRowDef="let row; columns: displayedColumns3"></tr>
+          <tr mat-header-row *matHeaderRowDef="insulinColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: insulinColumns"></tr>
         </table>
         <mat-paginator
           #Ensoleen

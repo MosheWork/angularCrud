@@ -78,7 +78,7 @@ below70Percentage: number = 0; // For סוכר מתחת ל-70
     'Count_Above_180_Less_48h',
     'Release_Date', 
   ];
-  displayedColumns3: string[] = [
+  insulinColumns: string[] = [
     'Admission_No',
     'Admission_Date',
     'Id_Num',
@@ -86,6 +86,8 @@ below70Percentage: number = 0; // For סוכר מתחת ל-70
     'Last_Name',
     'Name',
     'Entry_Date',
+    'Release_Date',
+
   ];
   DiagnosisICD9: string[] = [
   
@@ -185,6 +187,9 @@ below70Percentage: number = 0; // For סוכר מתחת ל-70
       this.updateGaugeValues();
     }, 0); // Wait for data fetching to complete
     
+
+    
+  
   }
   
 
@@ -462,6 +467,17 @@ fetchDiagnosisData(): void {
       Denominator: below70Denominator,
       Percentage: this.below70Percentage,
     });
+  
+    // Calculate ICD9 Percentage
+    const icd9TableLength = this.dataSource4.data.length; // Data length for מטופלים עם אבחנה
+    const icd9Denominator = this.globalSourceTableFilter === 'מאושפזים' ? this.NullReleaseDateCount : this.NonNullReleaseDateCount;
+    this.Icd9Percentage = icd9Denominator > 0 ? (icd9TableLength / icd9Denominator) * 100 : 0;
+  
+    console.log('מטופלים עם אבחנה:', {
+      TableLength: icd9TableLength,
+      Denominator: icd9Denominator,
+      Percentage: this.Icd9Percentage,
+    });
   }
   
   
@@ -630,8 +646,8 @@ fetchDiagnosisData(): void {
       this.updateGaugeValues();
     
       console.log('Filters applied successfully!');
-      console.log('Filtered ICD9 Data:', this.dataSource4.data);
     }
+    
     
     
     updateHospitalizationCounts(): void {
@@ -693,6 +709,13 @@ fetchDiagnosisData(): void {
       return this.dataSource1.filteredData.length;
     }
     
-   
+  
+    
+    
+    
+    
+    
+    
+     
     
 }
