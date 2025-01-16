@@ -75,7 +75,7 @@ class="custom-toggle-group"
   <div class="gauge-section">
     <div class="gauge-row">
       <!-- Total Percentage Card -->
-      <mat-card class="gauge-card">
+      <!-- <mat-card class="gauge-card">
         <div class="gauge-title">הומגלובין</div>
         <div class="gauge-content">
           <ngx-gauge
@@ -90,11 +90,19 @@ class="custom-toggle-group"
             סה"כ מטופלים : <strong>{{ HemoglobinAbove8Count }}</strong>
           </div>
         </div>
-      </mat-card>
+      </mat-card> -->
 
       <!-- ICD9 Percentage Card -->
       <mat-card class="gauge-card">
-        <div class="gauge-title">מטופלים עם אבחנה</div>
+        <div class="gauge-title"> אחוז מטופלים עם סוכרת  <span 
+          matTooltip="מונה: סך מטופלים עם סכרת על פי קוד | מכנה: סך מטופלים"
+ 
+          matTooltipPosition="above"
+          style="cursor: pointer; font-size: 16px; margin-left: 5px;"
+        >
+        <mat-icon style="color: #007BFF;">help_outline</mat-icon>
+
+        </span></div>
         <div class="gauge-content">
           <ngx-gauge
             [value]="Icd9Percentage"
@@ -167,7 +175,46 @@ class="custom-toggle-group"
   </div>
 </mat-card>
 
-      
+      <!-- Gauge for סוכר 180 וחולה סוכרת -->
+<mat-card class="gauge-card">
+  <div class="gauge-title">סוכר 180 וחולה סוכרת</div>
+  <div class="gauge-content">
+    <ngx-gauge
+      [value]="sugar180DiabetesPercentage"
+      [min]="0"
+      [max]="100"
+      [label]=""
+      [append]="'%'"
+      [foregroundColor]="'#e74c3c'"
+    ></ngx-gauge>
+    <div class="gauge-info">
+      חולי סוכרת עם סוכר מעל 180:
+      <strong>{{ dataSource1.data.length }}</strong> מתוך
+      <strong>{{ dataSource4.data.length }}</strong>
+    </div>
+  </div>
+</mat-card>
+
+<!-- Gauge for סוכר 70 וחולה סוכרת -->
+<mat-card class="gauge-card">
+  <div class="gauge-title">סוכר 70 וחולה סוכרת</div>
+  <div class="gauge-content">
+    <ngx-gauge
+      [value]="sugar70DiabetesPercentage"
+      [min]="0"
+      [max]="100"
+      [label]=""
+      [append]="'%'"
+      [foregroundColor]="'#3498db'"
+    ></ngx-gauge>
+    <div class="gauge-info">
+      חולי סוכרת עם סוכר מתחת ל-70:
+      <strong>{{ dataSource1.data.length }}</strong> מתוך
+      <strong>{{ dataSourceBelow70.data.length }}</strong>
+    </div>
+  </div>
+</mat-card>
+
       
       <!-- ייעוצים -->
     </div>

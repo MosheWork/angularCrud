@@ -35,6 +35,9 @@ export class DiabetesConsultationComponent implements OnInit, AfterViewInit {
   NonNullReleaseDateCount: number = 0;
   labResultBelow70Percentage: number = 0;
 
+
+  sugar180DiabetesPercentage: number = 0; // סוכר 180 וחולה סוכרת
+sugar70DiabetesPercentage: number = 0; // סוכר 70 וחולה סוכרת
   labResultsPercentage: number = 0; // For בדיקות מעבדה
 below70Percentage: number = 0; // For סוכר מתחת ל-70
 
@@ -489,6 +492,30 @@ fetchDiagnosisData(): void {
       Percentage: this.Icd9Percentage,
     });
   
+    // Calculate Sugar 180 and Diabetes Percentage
+    this.sugar180DiabetesPercentage =
+      this.dataSource4.data.length > 0
+        ? (this.dataSource1.data.length / this.dataSource4.data.length) * 100
+        : 0;
+  
+    console.log('סוכר 180 וחולה סוכרת:', {
+      Numerator: this.dataSource1.data.length,
+      Denominator: this.dataSource4.data.length,
+      Percentage: this.sugar180DiabetesPercentage,
+    });
+  
+    // Calculate Sugar 70 and Diabetes Percentage
+    this.sugar70DiabetesPercentage =
+      this.dataSourceBelow70.data.length > 0
+        ? (this.dataSource1.data.length / this.dataSourceBelow70.data.length) * 100
+        : 0;
+  
+    console.log('סוכר 70 וחולה סוכרת:', {
+      Numerator: this.dataSource1.data.length,
+      Denominator: this.dataSourceBelow70.data.length,
+      Percentage: this.sugar70DiabetesPercentage,
+    });
+  
     // Calculate Insulin Percentage
     const insulinTableLength = this.dataSource3.data.length; // Data length for מקבל אינסולין
     const insulinDenominator = this.globalSourceTableFilter === 'מאושפזים' ? this.NullReleaseDateCount : this.NonNullReleaseDateCount;
@@ -500,6 +527,7 @@ fetchDiagnosisData(): void {
       Percentage: this.insulinPercentage,
     });
   }
+  
   
   
 
