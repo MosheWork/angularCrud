@@ -14,38 +14,39 @@
             <div dir="rtl" class="card-body">
               <div class="filter-container">
                 <!-- Source Filter -->
-             <!-- Radio Group -->
-<mat-radio-group
-name="globalSourceTableFilter"
-[(ngModel)]="tempGlobalSourceTableFilter"
-class="custom-toggle-group"
->
-<mat-radio-button value="All">הכל</mat-radio-button>
-<mat-radio-button value="CurrentHospitalizations">מאושפזים</mat-radio-button>
-<mat-radio-button value="PastHospitalizations">מטופלי עבר</mat-radio-button>
-</mat-radio-group>
+                <mat-button-toggle-group
+                name="globalSourceTableFilter"
+                [(ngModel)]="globalSourceTableFilter"
+                (change)="onGlobalSourceTableToggleChange($event.value)"
+                class="custom-toggle-group"
+              >
+                <mat-button-toggle value="All">הכל</mat-button-toggle>
+                <mat-button-toggle value="CurrentHospitalizations">מאושפזים</mat-button-toggle>
+                <mat-button-toggle value="PastHospitalizations">מטופלי עבר</mat-button-toggle>
+              </mat-button-toggle-group>
+              
                 <!-- Date Filters -->
-<mat-form-field class="filter-field">
-  <mat-label>Start Date</mat-label>
-  <input
-    matInput
-    [matDatepicker]="startDatePicker"
-    [(ngModel)]="tempStartDate"
-  />
-  <mat-datepicker-toggle matSuffix [for]="startDatePicker"></mat-datepicker-toggle>
-  <mat-datepicker #startDatePicker></mat-datepicker>
-</mat-form-field>
-
-<mat-form-field class="filter-field">
-  <mat-label>End Date</mat-label>
-  <input
-    matInput
-    [matDatepicker]="endDatePicker"
-    [(ngModel)]="tempEndDate"
-  />
-  <mat-datepicker-toggle matSuffix [for]="endDatePicker"></mat-datepicker-toggle>
-  <mat-datepicker #endDatePicker></mat-datepicker>
-</mat-form-field>
+                <mat-form-field class="filter-field">
+                  <mat-label>Start Date</mat-label>
+                  <input
+                    matInput
+                    [matDatepicker]="startDatePicker"
+                    [(ngModel)]="startDate"
+                  />
+                  <mat-datepicker-toggle matSuffix [for]="startDatePicker"></mat-datepicker-toggle>
+                  <mat-datepicker #startDatePicker></mat-datepicker>
+                </mat-form-field>
+      
+                <mat-form-field class="filter-field">
+                  <mat-label>End Date</mat-label>
+                  <input
+                    matInput
+                    [matDatepicker]="endDatePicker"
+                    [(ngModel)]="endDate"
+                  />
+                  <mat-datepicker-toggle matSuffix [for]="endDatePicker"></mat-datepicker-toggle>
+                  <mat-datepicker #endDatePicker></mat-datepicker>
+                </mat-form-field>
       
                 <!-- Filter Buttons -->
                 <div class="filter-buttons" style="margin-top: 10px; text-align: right;">

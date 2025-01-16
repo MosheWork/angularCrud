@@ -38,11 +38,17 @@ export class DiabetesConsultationComponent implements OnInit, AfterViewInit {
   FilteredTotalHospitalizations: number = 0;   // Temporary filtered count for TotalHospitalizations
   
 
-  startDate: Date | null = null;
-  endDate: Date | null = null;
+ // Applied filter values
+ startDate: Date | null = null;
+ endDate: Date | null = null;
+ globalSourceTableFilter: string = 'All';
+
+    // Temporary values for the date pickers and filter
+    tempStartDate: Date | null = null;
+    tempEndDate: Date | null = null;
+    tempGlobalSourceTableFilter: string = 'All';
 
   // Global filter value
-  globalSourceTableFilter: string = 'All'; // Default to show all records
  // Global date range filter
  globalDateFilter: { start: Date | null; end: Date | null } = { start: null, end: null };
 
@@ -55,6 +61,7 @@ export class DiabetesConsultationComponent implements OnInit, AfterViewInit {
   originalDataSourceBelow70: any[] = [];
 
 
+  selectedSourceFilter: string = 'All'; // Temporary storage for selected toggle
 
 
   displayedColumns: string[] = [
@@ -122,9 +129,6 @@ export class DiabetesConsultationComponent implements OnInit, AfterViewInit {
   dataSourceAllConsiliums = new MatTableDataSource<any>();
   dataSourceBelow70 = new MatTableDataSource<any>();
 
-  tempStartDate: Date | null = null;
-tempEndDate: Date | null = null;
-tempGlobalSourceTableFilter: string = 'All'; // Default to 'All'
 
   filterForm: FormGroup = new FormGroup({
     globalFilter: new FormControl(''),
@@ -355,7 +359,6 @@ tempGlobalSourceTableFilter: string = 'All'; // Default to 'All'
   applyGlobalSourceTableFilter(): void {
     const filter = this.globalSourceTableFilter;
   
-    // Apply filters to the main table
     this.dataSource1.data =
       filter === 'All'
         ? this.originalDataSource1
@@ -363,22 +366,17 @@ tempGlobalSourceTableFilter: string = 'All'; // Default to 'All'
         ? this.originalDataSource1.filter((item) => item.Release_Date === null)
         : this.originalDataSource1.filter((item) => item.Release_Date !== null);
   
-    // Calculate filtered totals
-    this.FilteredTotalHospitalizations = this.dataSource1.data.length;
+    // Update hospitalization counts based on the filtered data
+    this.CurrentHospitalizations = this.dataSource1.data.filter(
+      (item) => item.Release_Date === null
+    ).length;
   
-    if (filter === 'CurrentHospitalizations') {
-      this.FilteredCurrentHospitalizations = this.FilteredTotalHospitalizations;
-    } else if (filter === 'PastHospitalizations') {
-      this.FilteredCurrentHospitalizations = 0; // No current hospitalizations in this filter
-    } else {
-      this.FilteredCurrentHospitalizations = this.dataSource1.data.filter(
-        (item) => item.Release_Date === null
-      ).length;
-    }
+    this.TotalHospitalizations = this.originalDataSource1.length;
   
-    // Update gauge percentages
+    // Recalculate percentage for gauges
     this.recalculateLabResultsPercentage();
   }
+  
   
   
 
@@ -405,6 +403,8 @@ tempGlobalSourceTableFilter: string = 'All'; // Default to 'All'
   
     // Recalculate percentage after filter change
     this.recalculateLabResultsPercentage();
+    this.applyGlobalDateFilter();
+
   }
   
 
@@ -427,34 +427,64 @@ updateGaugeValues(): void {
     const { start, end } = this.globalDateFilter;
   
     const isWithinDateRange = (date: Date | null): boolean => {
-      if (!date) return false; // Exclude if `Release_Date` is null
+      if (!date) return true; // Include records with null dates
       const recordDate = new Date(date);
       if (start && recordDate < start) return false;
-      if (end && recordDate > new Date(end.setHours(23, 59, 59, 999))) return false; // Include the full day of the end date
+      if (end && recordDate > end) return false; // Include the end date
       return true;
     };
   
-    // Apply the date filter based on `Release_Date`
+    // Filter based on Admission_Date for most tables
     this.dataSource1.data = this.originalDataSource1.filter((item) =>
-      isWithinDateRange(item.Release_Date)
+      isWithinDateRange(item.Admission_Date)
     );
   
-    // Fetch count and recalculate percentages after filtering
-    this.fetchHosCount();
-    this.recalculateLabResultsPercentage();
+    this.dataSource3.data = this.originalDataSource3.filter((item) =>
+      isWithinDateRange(item.Admission_Date)
+    );
+  
+    this.dataSource4.data = this.originalDataSource4.filter((item) =>
+      isWithinDateRange(item.Admission_Date)
+    );
+  
+    this.dataSourceHemoglobin.data = this.originalDataSourceHemoglobin.filter((item) =>
+      isWithinDateRange(item.Admission_Date)
+    );
+  
+    // Special case: Entry_Date for AllConsiliums
+    this.dataSourceAllConsiliums.data = this.originalDataSourceAllConsiliums.filter((item) =>
+      isWithinDateRange(item.Entry_Date)
+    );
+  
+    this.dataSourceBelow70.data = this.originalDataSourceBelow70.filter((item) =>
+      isWithinDateRange(item.Admission_Date)
+    );
+  
+    // Recalculate counts and percentages
+    this.fetchHosCount(); // Update counts
+    this.recalculateLabResultsPercentage(); // Update percentages
+  
+    console.log('Global Date Filter Applied:', this.globalDateFilter);
   }
+  
+  
   
   
   
 
   // Handle date range changes
   onDateRangeChange(start: Date | null, end: Date | null): void {
+    console.log('Start Date:', start);
+    console.log('End Date:', end);
+  
+    if (start && end && start > end) {
+      console.error('Start Date cannot be after End Date');
+      return;
+    }
+  
     this.globalDateFilter = { start, end };
-    this.applyGlobalDateFilter();
-    this.fetchHosCount(); // Re-fetch data based on the updated filters
-
+    this.applyGlobalDateFilter(); // Apply the date filter logic
   }
-
     // Add this method to fetch the medical records count
     fetchHosCount(): void {
       const startDate = this.globalDateFilter.start
@@ -490,38 +520,24 @@ updateGaugeValues(): void {
           }
         );
     }
-    
     recalculateLabResultsPercentage(): void {
-      const filteredCount = this.dataSource1.filteredData.length;
+      const filteredCount = this.dataSource1.data.length;
     
-      let denominator: number;
-      switch (this.globalSourceTableFilter) {
-        case 'CurrentHospitalizations': // מאושפזים
-          denominator = this.CurrentHospitalizations;
-          break;
+      // Use the appropriate denominator based on the global filter
+      const denominator =
+        this.globalSourceTableFilter === 'CurrentHospitalizations'
+          ? this.CurrentHospitalizations
+          : this.globalSourceTableFilter === 'PastHospitalizations'
+          ? this.TotalHospitalizations - this.CurrentHospitalizations
+          : this.TotalHospitalizations;
     
-        case 'PastHospitalizations': // מטופלי עבר
-          denominator = this.TotalHospitalizations;
-          break;
+      // Calculate percentage
+      this.labResultOver180Percentage =
+        denominator > 0 ? (filteredCount / denominator) * 100 : 0;
     
-        case 'All': // הכל
-        default:
-          denominator = this.CurrentHospitalizations + this.TotalHospitalizations;
-          break;
-      }
-    
-      // Log the values to debug
       console.log('Filtered Count:', filteredCount);
       console.log('Denominator:', denominator);
       console.log('Global Source Filter:', this.globalSourceTableFilter);
-    
-      if (denominator > 0) {
-        this.labResultOver180Percentage = (filteredCount / denominator) * 100;
-      } else {
-        this.labResultOver180Percentage = 0;
-      }
-    
-      // Log the calculated percentage
       console.log('Lab Result Percentage:', this.labResultOver180Percentage);
     }
     
@@ -529,42 +545,79 @@ updateGaugeValues(): void {
     
     
     
-    applyFilters(): void {
-      // Apply the temporary values to the actual filters
-      this.startDate = this.tempStartDate;
-      this.endDate = this.tempEndDate;
-      this.globalSourceTableFilter = this.tempGlobalSourceTableFilter;
     
-      // Apply the filters
-      this.globalDateFilter = { start: this.startDate, end: this.endDate };
-      this.applyGlobalSourceTableFilter();
-      this.applyGlobalDateFilter();
+    applyFilters(): void {
+      const { start, end } = this.globalDateFilter;
+    
+      const isWithinDateRange = (date: Date | null): boolean => {
+        if (!date) return true; // Include if no date range filter is applied
+        const recordDate = new Date(date);
+        if (start && recordDate < start) return false;
+        if (end && recordDate > end) return false; // Include the end date
+        return true;
+      };
+    
+      console.log('Applying Filters:');
+      console.log('Start Date:', start);
+      console.log('End Date:', end);
+      console.log('Global Source Filter:', this.globalSourceTableFilter);
+    
+      this.dataSource1.data = this.originalDataSource1.filter((item) => {
+        const withinDateRange = isWithinDateRange(item.Admission_Date);
+    
+        if (this.globalSourceTableFilter === 'CurrentHospitalizations') {
+          console.log('Filtering for CurrentHospitalizations');
+          return item.Release_Date === null && withinDateRange;
+        } else if (this.globalSourceTableFilter === 'PastHospitalizations') {
+          console.log('Filtering for PastHospitalizations');
+          return item.Release_Date !== null && withinDateRange;
+        } else {
+          console.log('Filtering for All Records');
+          return withinDateRange;
+        }
+      });
+    
+      console.log('Filtered Data:', this.dataSource1.data);
+      console.log('Filtered Count:', this.dataSource1.data.length);
+    
+      // Fetch updated counts and recalculate percentages
       this.recalculateLabResultsPercentage();
+      this.fetchHosCount();
     }
-
-   resetFilters(): void {
-  // Reset temporary variables
-  this.tempStartDate = null;
-  this.tempEndDate = null;
-  this.tempGlobalSourceTableFilter = 'All';
-
-  // Reset the actual filters
-  this.startDate = null;
-  this.endDate = null;
-  this.globalSourceTableFilter = 'All';
-  this.globalDateFilter = { start: null, end: null };
-
-  // Reset the data
-  this.dataSource1.data = [...this.originalDataSource1];
-  this.dataSource3.data = [...this.originalDataSource3];
-  this.dataSource4.data = [...this.originalDataSource4];
-  this.dataSourceHemoglobin.data = [...this.originalDataSourceHemoglobin];
-  this.dataSourceAllConsiliums.data = [...this.originalDataSourceAllConsiliums];
-
-  // Recalculate percentages
-  this.recalculateLabResultsPercentage();
-}
-
+    
+    
+    
+    
+    // Update the selected source filter when a toggle is clicked
+    onSourceFilterChange(filter: string): void {
+      this.selectedSourceFilter = filter;
+    }
+    
+    resetFilters(): void {
+      // Reset date filters
+      this.startDate = null;
+      this.endDate = null;
+      this.globalDateFilter = { start: null, end: null };
+      this.globalSourceTableFilter = 'All';
+    
+      // Reset data sources to their original values
+      this.dataSource1.data = [...this.originalDataSource1];
+      this.dataSource3.data = [...this.originalDataSource3];
+      this.dataSource4.data = [...this.originalDataSource4];
+      this.dataSourceHemoglobin.data = [...this.originalDataSourceHemoglobin];
+      this.dataSourceAllConsiliums.data = [...this.originalDataSourceAllConsiliums];
+      this.dataSourceBelow70.data = [...this.originalDataSourceBelow70];
+    
+      // Reset hospitalization counts
+      this.fetchHosCount(); // Re-fetch counts based on the original data
+    
+      // Recalculate lab results percentage
+      this.recalculateLabResultsPercentage();
+    
+      // Log reset confirmation for debugging
+      console.log('Filters have been reset to default state.');
+    }
+    
     get denominator(): number {
       switch (this.globalSourceTableFilter) {
         case 'CurrentHospitalizations': // מאושפזים
