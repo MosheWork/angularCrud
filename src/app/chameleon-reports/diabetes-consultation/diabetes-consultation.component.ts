@@ -85,9 +85,9 @@ below70Percentage: number = 0; // For סוכר מתחת ל-70
     'First_Name',
     'Last_Name',
     'Name',
+    'Main_Drug',
     'Entry_Date',
     'Release_Date',
-
   ];
   DiagnosisICD9: string[] = [
   
@@ -391,6 +391,16 @@ fetchDiagnosisData(): void {
         ? this.originalDataSource1.filter((item) => item.Release_Date === null)
         : this.originalDataSource1.filter((item) => item.Release_Date !== null);
   
+    // Filter data for the Insulin table (dataSource3)
+    this.dataSource3.data =
+      filter === 'All'
+        ? this.originalDataSource3
+        : filter === 'CurrentHospitalizations'
+        ? this.originalDataSource3.filter((item) => item.Release_Date === null)
+        : this.originalDataSource3.filter((item) => item.Release_Date !== null);
+  
+    console.log('Filtered dataSource3 after hospitalization filter:', this.dataSource3.data);
+  
     // Update hospitalization counts based on the filtered data
     this.CurrentHospitalizations = this.dataSource1.data.filter(
       (item) => item.Release_Date === null
@@ -398,15 +408,15 @@ fetchDiagnosisData(): void {
   
     this.TotalHospitalizations = this.originalDataSource1.length;
   
-    // Add any ICD9-specific counts or metrics here (if needed)
-    const icd9CurrentCount = this.dataSource4.data.filter(
+    // Add any Insulin-specific counts or metrics here (if needed)
+    const insulinCurrentCount = this.dataSource3.data.filter(
       (item) => item.Release_Date === null
     ).length;
   
-    const icd9TotalCount = this.originalDataSource4.length;
+    const insulinTotalCount = this.originalDataSource3.length;
   
-    console.log('ICD9 Current Count:', icd9CurrentCount);
-    console.log('ICD9 Total Count:', icd9TotalCount);
+    console.log('Insulin Current Count:', insulinCurrentCount);
+    console.log('Insulin Total Count:', insulinTotalCount);
   
     // Recalculate percentage for gauges (if applicable)
     this.recalculateLabResultsPercentage();
@@ -496,7 +506,6 @@ fetchDiagnosisData(): void {
   
   // Method to apply global date filter
   applyGlobalDateFilter(): void {
-    
     const { start, end } = this.globalDateFilter;
   
     const isWithinDateRange = (date: Date | null): boolean => {
@@ -517,9 +526,10 @@ fetchDiagnosisData(): void {
     );
   
     this.dataSource4.data = this.originalDataSource4.filter((item) =>
-    isWithinDateRange(item.Admission_Date)
-  );
-    console.log('Filtered dataSource4 after date filter:', this.dataSource4.data);
+      isWithinDateRange(item.Admission_Date)
+    );
+  
+    console.log('Filtered dataSource3 after date filter:', this.dataSource3.data);
   
     this.dataSourceHemoglobin.data = this.originalDataSourceHemoglobin.filter((item) =>
       isWithinDateRange(item.Admission_Date)
@@ -537,6 +547,7 @@ fetchDiagnosisData(): void {
     this.recalculateLabResultsPercentage();
     console.log('Global Date Filter Applied:', this.globalDateFilter);
   }
+  
   
 
   // Handle date range changes
@@ -630,22 +641,29 @@ fetchDiagnosisData(): void {
         this.isWithinDateRange(item.Admission_Date)
       );
     
+      const filteredInsulin = this.originalDataSource3.filter((item) =>
+        this.isWithinDateRange(item.Admission_Date)
+      );
+    
       if (this.globalSourceTableFilter === 'מאושפזים') {
         // Filter for "מאושפזים" (current hospitalizations)
         this.dataSource1.data = filteredData.filter((item) => item.Release_Date === null);
         this.dataSourceBelow70.data = filteredBelow70.filter((item) => item.Release_Date === null);
         this.dataSource4.data = filteredICD9.filter((item) => item.Release_Date === null);
+        this.dataSource3.data = filteredInsulin.filter((item) => item.Release_Date === null);
       } else {
         // Filter for "All"
         this.dataSource1.data = filteredData;
         this.dataSourceBelow70.data = filteredBelow70;
         this.dataSource4.data = filteredICD9;
+        this.dataSource3.data = filteredInsulin;
       }
     
       // Update gauge values
       this.updateGaugeValues();
     
       console.log('Filters applied successfully!');
+      console.log('Filtered Insulin Data:', this.dataSource3.data);
     }
     
     
