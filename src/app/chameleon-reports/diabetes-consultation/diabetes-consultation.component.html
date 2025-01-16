@@ -5,9 +5,7 @@
       {{ titleUnit }}<span>{{ Title1 }}{{ Title2 }}{{ NullReleaseDateCount }}   מאושפזי עבר   {{ NonNullReleaseDateCount }}</span>
 
     </h1>
-    
-      
-     
+
     <div class="filter-card-container">
         <div class="filter-card">
           <div dir="rtl" class="card mat-elevation-z8">
@@ -52,7 +50,7 @@ class="custom-toggle-group"
       
               <!-- Filter Buttons -->
 <div class="filter-buttons" style="margin-top: 10px; text-align: right;">
-  <button mat-raised-button color="primary" (click)="applyFilters()">
+  <button mat-raised-button color="primary" (click)="applyFilters()" >
     התחל סינון
   </button>
   <button mat-raised-button color="warn" (click)="resetFilters()">
@@ -399,10 +397,7 @@ class="custom-toggle-group"
           
           style="table-layout: fixed; width: 100%"
         >
-        <ng-container matColumnDef="Release_Date">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>Release Date</th>
-          <td mat-cell *matCellDef="let element">{{ element.Release_Date | date }}</td>
-        </ng-container>
+        
           <ng-container matColumnDef="Admission_No">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>
               Admission No
@@ -438,20 +433,23 @@ class="custom-toggle-group"
             <td mat-cell *matCellDef="let element">{{ element.ICD9 }}</td>
           </ng-container>
           <ng-container matColumnDef="Name">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>Drug Name</th>
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Name</th>
             <td mat-cell *matCellDef="let element">{{ element.Name }}</td>
           </ng-container>
-          <ng-container matColumnDef="Entry_Date">
+          <!-- <ng-container matColumnDef="Entry_Date">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>
               Entry Date
             </th>
             <td mat-cell *matCellDef="let element">
               {{ element.Entry_Date | date }}
             </td>
+          </ng-container> -->
+          <ng-container matColumnDef="Release_Date">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Release Date</th>
+            <td mat-cell *matCellDef="let element">{{ element.Release_Date | date }}</td>
           </ng-container>
-
-          <tr mat-header-row *matHeaderRowDef="displayedColumns4"></tr>
-          <tr mat-row *matRowDef="let row; columns: displayedColumns4"></tr>
+          <tr mat-header-row *matHeaderRowDef="DiagnosisICD9"></tr>
+          <tr mat-row *matRowDef="let row; columns: DiagnosisICD9"></tr>
         </table>
         <mat-paginator
           #paginator4

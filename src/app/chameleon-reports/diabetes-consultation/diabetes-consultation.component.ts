@@ -87,8 +87,8 @@ below70Percentage: number = 0; // For סוכר מתחת ל-70
     'Name',
     'Entry_Date',
   ];
-  displayedColumns4: string[] = [
-    'Release_Date',
+  DiagnosisICD9: string[] = [
+  
     'Admission_No',
     'Admission_Date',
     'Id_Num',
@@ -96,7 +96,8 @@ below70Percentage: number = 0; // For סוכר מתחת ל-70
     'Last_Name',
     'ICD9',
     'Name',
-    'Entry_Date',
+    'Release_Date'
+    //'Entry_Date',
   ];
   displayedColumnsHemoglobin: string[] = [
     'Admission_Date',
@@ -178,12 +179,7 @@ below70Percentage: number = 0; // For סוכר מתחת ל-70
     if (this.isDarkMode) {
       document.body.classList.add('dark-mode');
     }
-  
-    // Watch for filter changes (if needed)
-    this.filterForm.get('globalFilter')?.valueChanges.subscribe((filterValue) => {
-      this.applyFilter(filterValue);
-    });
-  
+    
     // Ensure gauges are updated after fetching data
     setTimeout(() => {
       this.updateGaugeValues();
@@ -209,7 +205,7 @@ below70Percentage: number = 0; // For סוכר מתחת ל-70
     this.dataSourceAllConsiliums.sort = this.sortAllConsiliums;
     this.dataSourceBelow70.paginator = this.paginatorBelow70;
     this.dataSourceBelow70.sort = this.sortBelow70;
-
+   
   }
 
   // fetchGeneralData(): void {
@@ -266,21 +262,22 @@ below70Percentage: number = 0; // For סוכר מתחת ל-70
       );
   }
 
-  fetchDiagnosisData(): void {
-    this.http
-      .get<any[]>(`${environment.apiUrl}/DiabetesConsultation/Diagnosis`)
-      .subscribe(
-        (data) => {
-          this.originalDataSource4 = data;
-          this.applyGlobalSourceTableFilter();
-          this.applyGlobalDateFilter();
+//icd9
+fetchDiagnosisData(): void {
+  this.http
+    .get<any[]>(`${environment.apiUrl}/DiabetesConsultation/Diagnosis`)
+    .subscribe(
+      (data) => {
+        this.originalDataSource4 = data;
+        this.dataSource4.data = data;
+      },
+      (error) => {
+        console.error('Error fetching Diagnosis data:', error);
+      }
+    );
+}
 
-        },
-        (error) => {
-          console.error('Error fetching Diagnosis data:', error);
-        }
-      );
-  }
+
 
   fetchHemoglobinAbove8(): void {
     this.http
@@ -327,13 +324,6 @@ below70Percentage: number = 0; // For סוכר מתחת ל-70
         }
       );
   }
-  
-  applyFilter(filterValue: string): void {
-    this.dataSource1.filter = filterValue.trim().toLowerCase();
-    if (this.dataSource1.paginator) {
-      this.dataSource1.paginator.firstPage();
-    }
-  }
 
   toggleDarkMode(): void {
     this.isDarkMode = !this.isDarkMode;
@@ -378,6 +368,17 @@ below70Percentage: number = 0; // For סוכר מתחת ל-70
   applyGlobalSourceTableFilter(): void {
     const filter = this.globalSourceTableFilter;
   
+    // Filter data for the ICD9 table
+    this.dataSource4.data =
+      filter === 'All'
+        ? this.originalDataSource4
+        : filter === 'CurrentHospitalizations'
+        ? this.originalDataSource4.filter((item) => item.Release_Date === null)
+        : this.originalDataSource4.filter((item) => item.Release_Date !== null);
+  
+    console.log('Filtered dataSource4 after hospitalization filter:', this.dataSource4.data);
+  
+    // Filter data for the Below 70 table
     this.dataSource1.data =
       filter === 'All'
         ? this.originalDataSource1
@@ -392,7 +393,17 @@ below70Percentage: number = 0; // For סוכר מתחת ל-70
   
     this.TotalHospitalizations = this.originalDataSource1.length;
   
-    // Recalculate percentage for gauges
+    // Add any ICD9-specific counts or metrics here (if needed)
+    const icd9CurrentCount = this.dataSource4.data.filter(
+      (item) => item.Release_Date === null
+    ).length;
+  
+    const icd9TotalCount = this.originalDataSource4.length;
+  
+    console.log('ICD9 Current Count:', icd9CurrentCount);
+    console.log('ICD9 Total Count:', icd9TotalCount);
+  
+    // Recalculate percentage for gauges (if applicable)
     this.recalculateLabResultsPercentage();
   }
   
@@ -402,23 +413,23 @@ below70Percentage: number = 0; // For סוכר מתחת ל-70
   onGlobalSourceTableToggleChange(value: string): void {
     this.globalSourceTableFilter = value;
   
-    switch (value) {
-      case 'CurrentHospitalizations':
-        this.dataSource1.data = this.originalDataSource1.filter(
-          (item) => item.Release_Date === null
-        );
-        break;
+    // switch (value) {
+    //   case 'CurrentHospitalizations':
+    //     this.dataSource1.data = this.originalDataSource1.filter(
+    //       (item) => item.Release_Date === null
+    //     );
+    //     break;
   
-      case 'PastHospitalizations':
-        this.dataSource1.data = this.originalDataSource1.filter(
-          (item) => item.Release_Date !== null
-        );
-        break;
+    //   case 'PastHospitalizations':
+    //     this.dataSource1.data = this.originalDataSource1.filter(
+    //       (item) => item.Release_Date !== null
+    //     );
+    //     break;
   
-      default:
-        this.dataSource1.data = [...this.originalDataSource1];
-        break;
-    }
+    //   default:
+    //     this.dataSource1.data = [...this.originalDataSource1];
+    //     break;
+    // }
   
     // Recalculate percentage after filter change
     this.recalculateLabResultsPercentage();
@@ -469,6 +480,7 @@ below70Percentage: number = 0; // For סוכר מתחת ל-70
   
   // Method to apply global date filter
   applyGlobalDateFilter(): void {
+    
     const { start, end } = this.globalDateFilter;
   
     const isWithinDateRange = (date: Date | null): boolean => {
@@ -479,7 +491,7 @@ below70Percentage: number = 0; // For סוכר מתחת ל-70
       return true;
     };
   
-    // Filter based on Admission_Date for most tables
+    // Filter data for each table
     this.dataSource1.data = this.originalDataSource1.filter((item) =>
       isWithinDateRange(item.Admission_Date)
     );
@@ -489,14 +501,14 @@ below70Percentage: number = 0; // For סוכר מתחת ל-70
     );
   
     this.dataSource4.data = this.originalDataSource4.filter((item) =>
-      isWithinDateRange(item.Admission_Date)
-    );
+    isWithinDateRange(item.Admission_Date)
+  );
+    console.log('Filtered dataSource4 after date filter:', this.dataSource4.data);
   
     this.dataSourceHemoglobin.data = this.originalDataSourceHemoglobin.filter((item) =>
       isWithinDateRange(item.Admission_Date)
     );
   
-    // Special case: Entry_Date for AllConsiliums
     this.dataSourceAllConsiliums.data = this.originalDataSourceAllConsiliums.filter((item) =>
       isWithinDateRange(item.Entry_Date)
     );
@@ -506,15 +518,9 @@ below70Percentage: number = 0; // For סוכר מתחת ל-70
     );
   
     // Recalculate counts and percentages
-   // this.fetchHosCount(); // Update counts
-    this.recalculateLabResultsPercentage(); // Update percentages
-  
+    this.recalculateLabResultsPercentage();
     console.log('Global Date Filter Applied:', this.globalDateFilter);
   }
-  
-  
-  
-  
   
 
   // Handle date range changes
@@ -576,6 +582,7 @@ below70Percentage: number = 0; // For סוכר מתחת ל-70
       console.log('Denominator:', denominator);
       console.log('Global Source Filter:', this.globalSourceTableFilter);
       console.log('Lab Result Percentage:', this.labResultOver180Percentage);
+
     }
     
     
@@ -594,7 +601,7 @@ below70Percentage: number = 0; // For סוכר מתחת ל-70
       // Fetch hospitalization counts for the filtered date range
       this.fetchHosCount(start, end);
     
-      // Filter data based on date range and source filter
+      // Filter data based on date range for each table
       const filteredData = this.originalDataSource1.filter((item) =>
         this.isWithinDateRange(item.Admission_Date)
       );
@@ -603,22 +610,28 @@ below70Percentage: number = 0; // For סוכר מתחת ל-70
         this.isWithinDateRange(item.Admission_Date)
       );
     
+      const filteredICD9 = this.originalDataSource4.filter((item) =>
+        this.isWithinDateRange(item.Admission_Date)
+      );
+    
       if (this.globalSourceTableFilter === 'מאושפזים') {
-        // Filter for "מאושפזים"
+        // Filter for "מאושפזים" (current hospitalizations)
         this.dataSource1.data = filteredData.filter((item) => item.Release_Date === null);
         this.dataSourceBelow70.data = filteredBelow70.filter((item) => item.Release_Date === null);
+        this.dataSource4.data = filteredICD9.filter((item) => item.Release_Date === null);
       } else {
         // Filter for "All"
         this.dataSource1.data = filteredData;
         this.dataSourceBelow70.data = filteredBelow70;
+        this.dataSource4.data = filteredICD9;
       }
     
       // Update gauge values
       this.updateGaugeValues();
     
       console.log('Filters applied successfully!');
+      console.log('Filtered ICD9 Data:', this.dataSource4.data);
     }
-    
     
     
     updateHospitalizationCounts(): void {
