@@ -4,7 +4,7 @@
     <h1>{{ titleUnit }}<span>{{ Title1 }}{{ Title2 }}{{ totalResults }}</span></h1>
   </div>
 
-  <form [formGroup]="filterForm" dir="rtl" class="filter-form" style="display: flex; justify-content: space-between; align-items: center;">
+  <form  dir="rtl" class="filter-form" style="display: flex; justify-content: space-between; align-items: center;">
       <!-- Search Bar: Full Width with Icons Aligned Right -->
       <mat-form-field class="long-search-bar" style="flex-grow: 1; margin-right: 10px; width: 70%;">
         <mat-label class="filters" style="color: blue">חיפוש</mat-label>
@@ -18,67 +18,43 @@
         <!-- Graph Navigation Icon -->
         <img (click)="navigateToGraphPage()" matTooltip="Move To Graph" src="../../../../assets/graphIcon.png" width="50px" style="margin-left: 10px;" />
         <!-- Reset Filters Button -->
-        <button mat-button (click)="resetFilters()" mat-raised-button color="primary" class="custom-button" matTooltip="Reset Filters" style="margin-left: 10px;">
+        <button mat-button  mat-raised-button color="primary" class="custom-button" matTooltip="Reset Filters" style="margin-left: 10px;">
           <i class="material-icons">refresh</i>
         </button>
       </div>
   </form>
-  <div *ngIf="isLoading" class="loading-spinner">
-      <mat-progress-spinner mode="indeterminate"> </mat-progress-spinner>
-      <h2>הדוחות נטענים</h2>
-    </div>
-  <!-- Data Table -->
-  <mat-table *ngIf="!showGraph && !isLoading" [dataSource]="matTableDataSource" matSort dir="rtl" class="mat-elevation-z8">
-      <ng-container matColumnDef="Urgent">
-        <mat-header-cell *matHeaderCellDef mat-sort-header> רמת דחיפות </mat-header-cell>
-        <mat-cell *matCellDef="let element"> {{ element.Urgent }} </mat-cell>
-      </ng-container>
-    
-      <ng-container matColumnDef="Name">
-        <mat-header-cell *matHeaderCellDef mat-sort-header> שם מלא </mat-header-cell>
-        <mat-cell *matCellDef="let element"> {{ element.Name }} </mat-cell>
-      </ng-container>
-    
-      <ng-container matColumnDef="EntryDate">
-        <mat-header-cell *matHeaderCellDef mat-sort-header> תאריך כניסה </mat-header-cell>
-        <mat-cell *matCellDef="let element"> {{ element.EntryDate }} </mat-cell>
-      </ng-container>
-    
-      <ng-container matColumnDef="AdmissionNo">
-        <mat-header-cell *matHeaderCellDef mat-sort-header> מספר אשפוז </mat-header-cell>
-        <mat-cell *matCellDef="let element"> {{ element.AdmissionNo }} </mat-cell>
-      </ng-container>
-    
-      <ng-container matColumnDef="AdjustedAdmissionNo">
-        <mat-header-cell *matHeaderCellDef mat-sort-header> מספר אשפוז מתואם </mat-header-cell>
-        <mat-cell *matCellDef="let element"> {{ element.AdjustedAdmissionNo }} </mat-cell>
-      </ng-container>
-    
-      <ng-container matColumnDef="IdNum">
-        <mat-header-cell *matHeaderCellDef mat-sort-header> ת.ז. </mat-header-cell>
-        <mat-cell *matCellDef="let element"> {{ element.IdNum }} </mat-cell>
-      </ng-container>
-    
-      <ng-container matColumnDef="ReleaseDate">
-          <mat-header-cell *matHeaderCellDef mat-sort-header> תאריך שחרור </mat-header-cell>
-          <mat-cell *matCellDef="let element"> {{ element.ReleaseDate | date: 'dd-MM-yyyy HH:mm:ss' }} </mat-cell>
+  <mat-tab-group>
+    <mat-tab label="מידע חדר מיון">
+      <div *ngIf="isLoadingUrgency" class="loading-spinner">
+        <mat-progress-spinner mode="indeterminate"></mat-progress-spinner>
+        <h2>הנתונים נטענים...</h2>
+      </div>
+      <mat-table *ngIf="!isLoadingUrgency" [dataSource]="urgencyDataSource" matSort dir="rtl" class="mat-elevation-z8">
+        <ng-container *ngFor="let column of urgencyColumns" [matColumnDef]="column">
+          <mat-header-cell *matHeaderCellDef mat-sort-header> {{ column }} </mat-header-cell>
+          <mat-cell *matCellDef="let element"> {{ element[column] }} </mat-cell>
         </ng-container>
-        
-        <ng-container matColumnDef="ArrivalDate">
-          <mat-header-cell *matHeaderCellDef mat-sort-header> תאריך הגעה </mat-header-cell>
-          <mat-cell *matCellDef="let element"> {{ element.ArrivalDate | date: 'dd-MM-yyyy HH:mm:ss' }} </mat-cell>
+        <mat-header-row *matHeaderRowDef="urgencyColumns"></mat-header-row>
+        <mat-row *matRowDef="let row; columns: urgencyColumns"></mat-row>
+      </mat-table>
+      <mat-paginator #urgencyPaginator [pageSizeOptions]="[15, 50, 100]"></mat-paginator>
+    </mat-tab>
+  
+    <mat-tab label="תלונות">
+      <div *ngIf="isLoadingComplaint" class="loading-spinner">
+        <mat-progress-spinner mode="indeterminate"></mat-progress-spinner>
+        <h2>הנתונים נטענים...</h2>
+      </div>
+      <mat-table *ngIf="!isLoadingComplaint" [dataSource]="complaintDataSource" matSort dir="rtl" class="mat-elevation-z8">
+        <ng-container *ngFor="let column of complaintColumns" [matColumnDef]="column">
+          <mat-header-cell *matHeaderCellDef mat-sort-header> {{ column }} </mat-header-cell>
+          <mat-cell *matCellDef="let element"> {{ element[column] }} </mat-cell>
         </ng-container>
-    
-      <mat-header-row *matHeaderRowDef="columns"></mat-header-row>
-      <mat-row *matRowDef="let row; columns: columns"></mat-row>
-    </mat-table>
-    
-
-  <!-- Paginator Component -->
-  <mat-paginator 
-    [length]="matTableDataSource.paginator?.length || 0"
-    [pageIndex]="matTableDataSource.paginator?.pageIndex"
-    [pageSize]="matTableDataSource.paginator?.pageSize"
-    [pageSizeOptions]="[15, 50, 100]">
-  </mat-paginator>
+        <mat-header-row *matHeaderRowDef="complaintColumns"></mat-header-row>
+        <mat-row *matRowDef="let row; columns: complaintColumns"></mat-row>
+      </mat-table>
+      <mat-paginator #complaintPaginator [pageSizeOptions]="[15, 50, 100]"></mat-paginator>
+    </mat-tab>
+  </mat-tab-group>
+  
 </div>

@@ -23,95 +23,90 @@ export class ERInfoComponent implements OnInit {
 
   showGraph: boolean = false;
   graphData: any[] = [];
-  isLoading: boolean = true;
+  isLoadingUrgency: boolean = true;
+  isLoadingComplaint: boolean = true;
 
 
-  columns: string[] = [
-    'Urgent',
-    'Name',
-    'EntryDate',
-    'AdmissionNo',
-    'AdjustedAdmissionNo',
-    'IdNum',
-    'ReleaseDate',
-    'ArrivalDate'
+  urgencyColumns: string[] = [
+    'Urgent', 'Name', 'EntryDate', 'AdmissionNo', 
+    'AdjustedAdmissionNo', 'IdNum', 'ReleaseDate', 'ArrivalDate'
+  ];
+
+  complaintColumns: string[] = [
+    'DescriptionText', 'EntryDate', 'EntryUserFullName',
+    'IdNum', 'AdmissionNo', 'ReleaseDate', 'ArrivalDate'
   ];
 
   dataSource: any[] = [];
   filteredData: any[] = [];
   matTableDataSource: MatTableDataSource<any>;
+  urgencyDataSource = new MatTableDataSource<any>([]);
+  complaintDataSource = new MatTableDataSource<any>([]);
+ // filterForm: FormGroup;
 
-  filterForm: FormGroup;
-
-  @ViewChild(MatPaginator) paginator!: MatPaginator;
-  @ViewChild(MatSort) sort!: MatSort;
+  @ViewChild('urgencyPaginator') urgencyPaginator!: MatPaginator;
+  @ViewChild('complaintPaginator') complaintPaginator!: MatPaginator;
+  @ViewChild('urgencySort') urgencySort!: MatSort;
+  @ViewChild('complaintSort') complaintSort!: MatSort;
 
   constructor(private http: HttpClient, private fb: FormBuilder, private router: Router) {
-    this.filterForm = this.createFilterForm();
+    //this.filterForm = this.createFilterForm();
     this.matTableDataSource = new MatTableDataSource<any>([]);
   }
 
   ngOnInit() {
-    this.isLoading = true; // Start loading
-
-    this.http.get<any[]>(environment.apiUrl + 'ERInfo/UrgencyTab').subscribe((data) => {
-      this.dataSource = data;
-      this.filteredData = [...data];
-      this.matTableDataSource = new MatTableDataSource(this.filteredData);
-      this.matTableDataSource.paginator = this.paginator;
-      this.matTableDataSource.sort = this.sort;
-      this.isLoading = false;
-
-      this.columns.forEach((column) => {
-        this.filterForm.get(column)?.valueChanges.pipe(debounceTime(300), distinctUntilChanged()).subscribe(() => this.applyFilters());
-      });
-
-      this.filterForm.valueChanges.subscribe(() => {
-        this.applyFilters();
-        this.paginator.firstPage();
-      });
-
-      this.applyFilters();
+    this.loadUrgencyData();
+    this.loadComplaintData();
+  }
+ 
+  loadUrgencyData() {
+    this.http.get<any[]>(environment.apiUrl + 'ERInfo/UrgencyTab').subscribe(data => {
+      this.urgencyDataSource.data = data;
+      this.urgencyDataSource.paginator = this.urgencyPaginator;
+      this.urgencyDataSource.sort = this.urgencySort;
+      //this.totalResultsUrgency = data.length;
+      this.isLoadingUrgency = false;
     });
   }
 
-  private createFilterForm(): FormGroup {
-    const formControls: any = {};
-    this.columns.forEach((column) => {
-      formControls[column] = new FormControl('');
+  loadComplaintData() {
+    this.http.get<any[]>(environment.apiUrl + 'ERInfo/ComplaintTab').subscribe(data => {
+      this.complaintDataSource.data = data;
+      this.complaintDataSource.paginator = this.complaintPaginator;
+      this.complaintDataSource.sort = this.complaintSort;
+      //this.totalResultsComplaint = data.length;
+      this.isLoadingComplaint = false;
     });
-    formControls['globalFilter'] = new FormControl('');
-    return this.fb.group(formControls);
   }
 
-  applyFilters() {
-    const filters = this.filterForm.value;
-    const globalFilter = (filters['globalFilter'] || '').toLowerCase();
+  // applyFilters() {
+  //   const filters = this.filterForm.value;
+  //   const globalFilter = (filters['globalFilter'] || '').toLowerCase();
 
-    this.filteredData = this.dataSource.filter((item) =>
-      this.columns.every((column) => {
-        const value = item[column];
-        const filterValue = filters[column];
+  //   this.filteredData = this.dataSource.filter((item) =>
+  //     this.columns.every((column) => {
+  //       const value = item[column];
+  //       const filterValue = filters[column];
 
-        const stringValue = typeof value === 'string' ? value.toLowerCase() : String(value).toLowerCase();
-        const filterString = typeof filterValue === 'string' ? filterValue.toLowerCase() : filterValue;
+  //       const stringValue = typeof value === 'string' ? value.toLowerCase() : String(value).toLowerCase();
+  //       const filterString = typeof filterValue === 'string' ? filterValue.toLowerCase() : filterValue;
 
-        return (!filterString || stringValue.includes(filterString)) &&
-               (!globalFilter || this.columns.some((col) => String(item[col]).toLowerCase().includes(globalFilter)));
-      })
-    );
+  //       return (!filterString || stringValue.includes(filterString)) &&
+  //              (!globalFilter || this.columns.some((col) => String(item[col]).toLowerCase().includes(globalFilter)));
+  //     })
+  //   );
 
-    this.totalResults = this.filteredData.length;
-    this.matTableDataSource.data = this.filteredData;
-    this.matTableDataSource.paginator = this.paginator;
-    this.graphData = this.filteredData;
-  }
+  //   this.totalResults = this.filteredData.length;
+  //   this.matTableDataSource.data = this.filteredData;
+  //   this.matTableDataSource.paginator = this.paginator;
+  //   this.graphData = this.filteredData;
+  // }
 
-  resetFilters() {
-    this.filterForm.reset();
-    this.filterForm.get('globalFilter')?.setValue('');
-    this.applyFilters();
-  }
+  // resetFilters() {
+  //   this.filterForm.reset();
+  //   this.filterForm.get('globalFilter')?.setValue('');
+  //   this.applyFilters();
+  // }
 
   exportToExcel() {
     const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(this.filteredData);
