@@ -126,6 +126,7 @@ import { Drug2hDetailsComponent } from './chameleon-reports/drug2h-review/drug2h
 import { DiabetesConsultationComponent } from './chameleon-reports/diabetes-consultation/diabetes-consultation.component';
 import { AwsClaudeInvocationComponent } from './aws-claude-invocation/aws-claude-invocation.component';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
+import { ERInfoComponent } from './chameleon-reports/erinfo/erinfo.component';
 
 @NgModule({
   declarations: [
@@ -219,7 +220,8 @@ import { MatButtonToggleModule } from '@angular/material/button-toggle';
     Drug2hReviewComponent,
     Drug2hDetailsComponent,
     DiabetesConsultationComponent,
-    AwsClaudeInvocationComponent
+    AwsClaudeInvocationComponent,
+    ERInfoComponent
   
   ],
   imports: [
