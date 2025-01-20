@@ -8,7 +8,7 @@
       <!-- Search Bar: Full Width with Icons Aligned Right -->
       <mat-form-field class="long-search-bar" style="flex-grow: 1; margin-right: 10px; width: 70%;">
         <mat-label class="filters" style="color: blue">חיפוש</mat-label>
-        <input matInput [formControlName]="'globalFilter'" class="search-input" />
+        <input matInput [formControl]="globalFilter" class="search-input" />
       </mat-form-field>
 
       <!-- Icons: Aligned on the Same Line -->

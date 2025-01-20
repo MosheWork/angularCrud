@@ -39,10 +39,11 @@ export class ERInfoComponent implements OnInit {
     'DescriptionText', 'EntryDate', 'EntryUserFullName',
     'IdNum', 'AdmissionNo', 'ReleaseDate', 'ArrivalDate'
   ];
+  globalFilter: FormControl = new FormControl('');
 
   dataSource: any[] = [];
   filteredData: any[] = [];
-  matTableDataSource: MatTableDataSource<any>;
+ // matTableDataSource: MatTableDataSource<any>;
   urgencyDataSource = new MatTableDataSource<any>([]);
   complaintDataSource = new MatTableDataSource<any>([]);
  // filterForm: FormGroup;
@@ -56,7 +57,7 @@ export class ERInfoComponent implements OnInit {
 
   constructor(private http: HttpClient, private fb: FormBuilder, private router: Router) {
     //this.filterForm = this.createFilterForm();
-    this.matTableDataSource = new MatTableDataSource<any>([]);
+   // this.matTableDataSource = new MatTableDataSource<any>([]);
     this.urgencyFilterForm = this.createFilterForm(this.urgencyColumns);
     this.complaintFilterForm = this.createFilterForm(this.complaintColumns);
   }
@@ -64,10 +65,17 @@ export class ERInfoComponent implements OnInit {
   ngOnInit() {
     this.loadUrgencyData();
     this.loadComplaintData();
-      // Apply filters for urgency tab
-      this.urgencyFilterForm.valueChanges.subscribe(() => this.applyUrgencyFilters());
-      // Apply filters for complaint tab
-      this.complaintFilterForm.valueChanges.subscribe(() => this.applyComplaintFilters());
+    // Apply global filter to both tables
+    this.globalFilter.valueChanges.subscribe((filterValue) => {
+      const trimmedValue = filterValue?.trim().toLowerCase() || '';
+      this.urgencyDataSource.filter = trimmedValue;
+      this.complaintDataSource.filter = trimmedValue;
+
+      // Update total result counts
+      this.totalResultsUrgency = this.urgencyDataSource.filteredData.length;
+      this.totalResultsComplaint = this.complaintDataSource.filteredData.length;
+    });
+      
   }
  
   loadUrgencyData() {
@@ -96,56 +104,17 @@ export class ERInfoComponent implements OnInit {
 
   private createFilterForm(columns: string[]): FormGroup {
     const formControls: any = {};
-    columns.forEach(column => {
-      formControls[column] = new FormControl('');
-    });
+    columns.forEach(column => (formControls[column] = new FormControl('')));
     formControls['globalFilter'] = new FormControl('');
     return this.fb.group(formControls);
   }
-   applyUrgencyFilters() {
-    const filters = this.urgencyFilterForm.value;
-    const globalFilter = (filters['globalFilter'] || '').toLowerCase();
 
-    this.urgencyDataSource.data = this.urgencyDataSource.data.filter(item =>
-      this.urgencyColumns.every(column => {
-        const value = item[column];
-        const filterValue = filters[column] || '';
-        return (
-          value?.toString().toLowerCase().includes(filterValue.toLowerCase()) &&
-          (!globalFilter || this.urgencyColumns.some(col => item[col]?.toString().toLowerCase().includes(globalFilter)))
-        );
-      })
-    );
 
-    this.totalResultsComplaint = this.complaintDataSource.filteredData.length;
-  }
 
-  applyComplaintFilters() {
-    const filters = this.complaintFilterForm.value;
-    const globalFilter = (filters['globalFilter'] || '').toLowerCase();
 
-    this.complaintDataSource.data = this.complaintDataSource.data.filter(item =>
-      this.complaintColumns.every(column => {
-        const value = item[column];
-        const filterValue = filters[column] || '';
-        return (
-          value?.toString().toLowerCase().includes(filterValue.toLowerCase()) &&
-          (!globalFilter || this.complaintColumns.some(col => item[col]?.toString().toLowerCase().includes(globalFilter)))
-        );
-      })
-    );
 
-    this.totalResultsComplaint = this.complaintDataSource.data.length;
-  }
-
-  resetUrgencyFilters() {
-    this.urgencyFilterForm.reset();
-    this.applyUrgencyFilters();
-  }
-  
-  resetComplaintFilters() {
-    this.complaintFilterForm.reset();
-    this.applyComplaintFilters();
+  resetGlobalFilter() {
+    this.globalFilter.reset();
   }
   exportToExcel() {
     const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(this.filteredData);
