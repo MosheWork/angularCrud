@@ -20,12 +20,15 @@ export class ERInfoComponent implements OnInit {
   titleUnit: string = 'מידע חדר מיון';
   Title1: string = ' סה\"כ תוצאות: ';
   Title2: string = '';
+  totalResultsUrgency: number = 0;
+  totalResultsComplaint: number = 0;
 
   showGraph: boolean = false;
   graphData: any[] = [];
   isLoadingUrgency: boolean = true;
   isLoadingComplaint: boolean = true;
-
+  urgencyFilterForm: FormGroup;
+  complaintFilterForm: FormGroup;
 
   urgencyColumns: string[] = [
     'Urgent', 'Name', 'EntryDate', 'AdmissionNo', 
@@ -49,14 +52,22 @@ export class ERInfoComponent implements OnInit {
   @ViewChild('urgencySort') urgencySort!: MatSort;
   @ViewChild('complaintSort') complaintSort!: MatSort;
 
+
+
   constructor(private http: HttpClient, private fb: FormBuilder, private router: Router) {
     //this.filterForm = this.createFilterForm();
     this.matTableDataSource = new MatTableDataSource<any>([]);
+    this.urgencyFilterForm = this.createFilterForm(this.urgencyColumns);
+    this.complaintFilterForm = this.createFilterForm(this.complaintColumns);
   }
 
   ngOnInit() {
     this.loadUrgencyData();
     this.loadComplaintData();
+      // Apply filters for urgency tab
+      this.urgencyFilterForm.valueChanges.subscribe(() => this.applyUrgencyFilters());
+      // Apply filters for complaint tab
+      this.complaintFilterForm.valueChanges.subscribe(() => this.applyComplaintFilters());
   }
  
   loadUrgencyData() {
@@ -66,6 +77,8 @@ export class ERInfoComponent implements OnInit {
       this.urgencyDataSource.sort = this.urgencySort;
       //this.totalResultsUrgency = data.length;
       this.isLoadingUrgency = false;
+      this.totalResultsUrgency = data.length; // Update the count
+
     });
   }
 
@@ -76,38 +89,64 @@ export class ERInfoComponent implements OnInit {
       this.complaintDataSource.sort = this.complaintSort;
       //this.totalResultsComplaint = data.length;
       this.isLoadingComplaint = false;
+      this.totalResultsComplaint = data.length; // Update the count
+
     });
   }
 
-  // applyFilters() {
-  //   const filters = this.filterForm.value;
-  //   const globalFilter = (filters['globalFilter'] || '').toLowerCase();
+  private createFilterForm(columns: string[]): FormGroup {
+    const formControls: any = {};
+    columns.forEach(column => {
+      formControls[column] = new FormControl('');
+    });
+    formControls['globalFilter'] = new FormControl('');
+    return this.fb.group(formControls);
+  }
+   applyUrgencyFilters() {
+    const filters = this.urgencyFilterForm.value;
+    const globalFilter = (filters['globalFilter'] || '').toLowerCase();
 
-  //   this.filteredData = this.dataSource.filter((item) =>
-  //     this.columns.every((column) => {
-  //       const value = item[column];
-  //       const filterValue = filters[column];
+    this.urgencyDataSource.data = this.urgencyDataSource.data.filter(item =>
+      this.urgencyColumns.every(column => {
+        const value = item[column];
+        const filterValue = filters[column] || '';
+        return (
+          value?.toString().toLowerCase().includes(filterValue.toLowerCase()) &&
+          (!globalFilter || this.urgencyColumns.some(col => item[col]?.toString().toLowerCase().includes(globalFilter)))
+        );
+      })
+    );
 
-  //       const stringValue = typeof value === 'string' ? value.toLowerCase() : String(value).toLowerCase();
-  //       const filterString = typeof filterValue === 'string' ? filterValue.toLowerCase() : filterValue;
+    this.totalResultsComplaint = this.complaintDataSource.filteredData.length;
+  }
 
-  //       return (!filterString || stringValue.includes(filterString)) &&
-  //              (!globalFilter || this.columns.some((col) => String(item[col]).toLowerCase().includes(globalFilter)));
-  //     })
-  //   );
+  applyComplaintFilters() {
+    const filters = this.complaintFilterForm.value;
+    const globalFilter = (filters['globalFilter'] || '').toLowerCase();
 
-  //   this.totalResults = this.filteredData.length;
-  //   this.matTableDataSource.data = this.filteredData;
-  //   this.matTableDataSource.paginator = this.paginator;
-  //   this.graphData = this.filteredData;
-  // }
+    this.complaintDataSource.data = this.complaintDataSource.data.filter(item =>
+      this.complaintColumns.every(column => {
+        const value = item[column];
+        const filterValue = filters[column] || '';
+        return (
+          value?.toString().toLowerCase().includes(filterValue.toLowerCase()) &&
+          (!globalFilter || this.complaintColumns.some(col => item[col]?.toString().toLowerCase().includes(globalFilter)))
+        );
+      })
+    );
 
-  // resetFilters() {
-  //   this.filterForm.reset();
-  //   this.filterForm.get('globalFilter')?.setValue('');
-  //   this.applyFilters();
-  // }
+    this.totalResultsComplaint = this.complaintDataSource.data.length;
+  }
 
+  resetUrgencyFilters() {
+    this.urgencyFilterForm.reset();
+    this.applyUrgencyFilters();
+  }
+  
+  resetComplaintFilters() {
+    this.complaintFilterForm.reset();
+    this.applyComplaintFilters();
+  }
   exportToExcel() {
     const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(this.filteredData);
     const workbook: XLSX.WorkBook = { Sheets: { data: worksheet }, SheetNames: ['data'] };
