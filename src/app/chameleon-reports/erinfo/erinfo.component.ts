@@ -25,8 +25,13 @@ export class ERInfoComponent implements OnInit {
 
   showGraph: boolean = false;
   graphData: any[] = [];
-  isLoadingUrgency: boolean = true;
-  isLoadingComplaint: boolean = true;
+ // Loading states
+ isLoadingUrgency = true;
+ isLoadingComplaint = true;
+ isLoadingDischarge = true;
+ isLoadingSignature = true;
+ isLoadingDecision = true;
+
   urgencyFilterForm: FormGroup;
   complaintFilterForm: FormGroup;
 
@@ -39,21 +44,41 @@ export class ERInfoComponent implements OnInit {
     'DescriptionText', 'EntryDate', 'EntryUserFullName',
     'IdNum', 'AdmissionNo', 'ReleaseDate', 'ArrivalDate'
   ];
+  dischargeColumns: string[] = [
+    'EntryDate', 'EntryUserFullName', 'IdNum', 'AdmissionNo', 'ReleaseDate', 'ArrivalDate'
+  ];
+  signatureColumns: string[] = [
+    'EntryDate', 'EntryUserFullName', 'IdNum', 'AdmissionNo', 'ReleaseDate', 'ArrivalDate'
+  ];
+  decisionColumns: string[] = ['EntryDate', 'Decision', 'DecisionDescription', 'EntryUserFullName', 'IdNum', 'AdmissionNo', 'ReleaseDate', 'ArrivalDate'];
+
   globalFilter: FormControl = new FormControl('');
 
   dataSource: any[] = [];
   filteredData: any[] = [];
- // matTableDataSource: MatTableDataSource<any>;
+  // Data sources
   urgencyDataSource = new MatTableDataSource<any>([]);
   complaintDataSource = new MatTableDataSource<any>([]);
+  dischargeDataSource = new MatTableDataSource<any>([]);
+  signatureDataSource = new MatTableDataSource<any>([]);
+  decisionDataSource = new MatTableDataSource<any>([]);
  // filterForm: FormGroup;
+ urgencyFilter = new FormControl('');
+ complaintFilter = new FormControl('');
+ dischargeFilter = new FormControl('');
+ signatureFilter = new FormControl('');
+ decisionFilter = new FormControl('');
 
-  @ViewChild('urgencyPaginator') urgencyPaginator!: MatPaginator;
-  @ViewChild('complaintPaginator') complaintPaginator!: MatPaginator;
-  @ViewChild('urgencySort') urgencySort!: MatSort;
-  @ViewChild('complaintSort') complaintSort!: MatSort;
-
-
+ @ViewChild('urgencyPaginator') urgencyPaginator!: MatPaginator;
+ @ViewChild('complaintPaginator') complaintPaginator!: MatPaginator;
+ @ViewChild('dischargePaginator') dischargePaginator!: MatPaginator;
+ @ViewChild('signaturePaginator') signaturePaginator!: MatPaginator;
+ @ViewChild('decisionPaginator') decisionPaginator!: MatPaginator;
+ @ViewChild('urgencySort') urgencySort!: MatSort;
+ @ViewChild('complaintSort') complaintSort!: MatSort;
+ @ViewChild('dischargeSort') dischargeSort!: MatSort;
+ @ViewChild('signatureSort') signatureSort!: MatSort;
+ @ViewChild('decisionSort') decisionSort!: MatSort;
 
   constructor(private http: HttpClient, private fb: FormBuilder, private router: Router) {
     //this.filterForm = this.createFilterForm();
@@ -65,19 +90,48 @@ export class ERInfoComponent implements OnInit {
   ngOnInit() {
     this.loadUrgencyData();
     this.loadComplaintData();
-    // Apply global filter to both tables
-    this.globalFilter.valueChanges.subscribe((filterValue) => {
-      const trimmedValue = filterValue?.trim().toLowerCase() || '';
-      this.urgencyDataSource.filter = trimmedValue;
-      this.complaintDataSource.filter = trimmedValue;
+    this.loadDischargeData();
+    this.loadSignatureData();
+    this.loadDecisionData();
 
-      // Update total result counts
-      this.totalResultsUrgency = this.urgencyDataSource.filteredData.length;
-      this.totalResultsComplaint = this.complaintDataSource.filteredData.length;
-    });
-      
+    this.setupFilter(this.urgencyFilter, this.urgencyDataSource);
+    this.setupFilter(this.complaintFilter, this.complaintDataSource);
+    this.setupFilter(this.dischargeFilter, this.dischargeDataSource);
+    this.setupFilter(this.signatureFilter, this.signatureDataSource);
+    this.setupFilter(this.decisionFilter, this.decisionDataSource);
   }
- 
+
+  setupFilter(filterControl: FormControl, dataSource: MatTableDataSource<any>) {
+    filterControl.valueChanges.subscribe((value) => {
+      dataSource.filter = value.trim().toLowerCase();
+    });
+  }
+
+  loadDecisionData() {
+    this.http.get<any[]>(environment.apiUrl + 'ERInfo/AdmissionTreatmentDecisionTab').subscribe((data) => {
+      this.decisionDataSource.data = data;
+      this.decisionDataSource.paginator = this.decisionPaginator;
+      this.decisionDataSource.sort = this.decisionSort;
+      this.isLoadingDecision = false;
+    });
+  }
+  loadDischargeData() {
+    this.http.get<any[]>(environment.apiUrl + 'ERInfo/DischargeDateTab').subscribe(data => {
+      this.dischargeDataSource.data = data;
+      this.dischargeDataSource.paginator = this.dischargePaginator;
+      this.dischargeDataSource.sort = this.dischargeSort;
+      this.isLoadingDischarge = false;
+    });
+  }
+
+  loadSignatureData() {
+    this.http.get<any[]>(environment.apiUrl + 'ERInfo/DoctorSignatureTab').subscribe(data => {
+      this.signatureDataSource.data = data;
+      this.signatureDataSource.paginator = this.signaturePaginator;
+      this.signatureDataSource.sort = this.signatureSort;
+      this.isLoadingSignature = false;
+    });
+  }
   loadUrgencyData() {
     this.http.get<any[]>(environment.apiUrl + 'ERInfo/UrgencyTab').subscribe(data => {
       this.urgencyDataSource.data = data;
@@ -113,26 +167,28 @@ export class ERInfoComponent implements OnInit {
 
 
 
-  resetGlobalFilter() {
-    this.globalFilter.reset();
-  }
-  exportToExcel() {
-    const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(this.filteredData);
+
+  exportToExcel(dataSource: MatTableDataSource<any>, fileName: string) {
+    const data = dataSource.filteredData;
+    if (data.length === 0) {
+      alert('No data to export!');
+      return;
+    }
+    const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(data);
     const workbook: XLSX.WorkBook = { Sheets: { data: worksheet }, SheetNames: ['data'] };
     const excelBuffer: any = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
     const blob: Blob = new Blob([excelBuffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-
     const link = document.createElement('a');
     link.href = window.URL.createObjectURL(blob);
-    link.download = 'er_info.xlsx';
+    link.download = `${fileName}.xlsx`;
     link.click();
   }
 
-  navigateToGraphPage() {
-    this.showGraph = !this.showGraph;
+  resetFilter(control: FormControl) {
+    control.reset();
   }
 
-  goToHome() {
-    this.router.navigate(['/MainPageReports']);
-  }
+
+
+ 
 }

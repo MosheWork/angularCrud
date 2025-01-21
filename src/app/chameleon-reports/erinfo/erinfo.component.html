@@ -1,59 +1,132 @@
-
 <div class="body">
   <div class="nine">
     <h1>{{ titleUnit }}<span>{{ Title1 }}{{ Title2 }}{{ totalResults }}</span></h1>
   </div>
 
-  <form  dir="rtl" class="filter-form" style="display: flex; justify-content: space-between; align-items: center;">
-      <!-- Search Bar: Full Width with Icons Aligned Right -->
-      <mat-form-field class="long-search-bar" style="flex-grow: 1; margin-right: 10px; width: 70%;">
-        <mat-label class="filters" style="color: blue">חיפוש</mat-label>
-        <input matInput [formControl]="globalFilter" class="search-input" />
-      </mat-form-field>
-
-      <!-- Icons: Aligned on the Same Line -->
-      <div dir="rtl" class="icon-container" style="display: flex; align-items: center;">
-        <!-- Excel Export Icon -->
-        <img src="../../assets/excel.png" alt="Download" (click)="exportToExcel()" class="download-icon icon" width="50px" style="margin-left: 10px;" />
-        <!-- Graph Navigation Icon -->
-        <!-- Reset Filters Button -->
-        <button mat-button  mat-raised-button color="primary" class="custom-button" matTooltip="Reset Filters" style="margin-left: 10px;">
-          <i class="material-icons">refresh</i>
-        </button>
-      </div>
-  </form>
   <mat-tab-group>
+    <!-- Admission Treatment Decision Tab -->
+    <mat-tab label="החלטות טיפול באשפוז">
+      <div class="tab-header">
+        <mat-form-field>
+          <mat-label>חיפוש</mat-label>
+          <input matInput [formControl]="decisionFilter" />
+        </mat-form-field>
+        <button mat-raised-button color="primary" (click)="exportToExcel(decisionDataSource, 'Admission_Treatment_Decision')">Export</button>
+        <button mat-raised-button (click)="resetFilter(decisionFilter)">Reset</button>
+      </div>
+      <div *ngIf="isLoadingDecision" class="loading-spinner">
+        <mat-progress-spinner mode="indeterminate"></mat-progress-spinner>
+        <h2>הנתונים נטענים...</h2>
+      </div>
+      <mat-table *ngIf="!isLoadingDecision" [dataSource]="decisionDataSource" matSort class="mat-elevation-z8">
+        <ng-container *ngFor="let column of decisionColumns" [matColumnDef]="column">
+          <mat-header-cell *matHeaderCellDef mat-sort-header>{{ column }}</mat-header-cell>
+          <mat-cell *matCellDef="let row">{{ row[column] }}</mat-cell>
+        </ng-container>
+        <mat-header-row *matHeaderRowDef="decisionColumns"></mat-header-row>
+        <mat-row *matRowDef="let row; columns: decisionColumns"></mat-row>
+      </mat-table>
+      <mat-paginator #decisionPaginator [pageSizeOptions]="[15, 50, 100]"></mat-paginator>
+    </mat-tab>
+
+    <!-- Urgency Tab -->
     <mat-tab label="מידע חדר מיון">
+      <div class="tab-header">
+        <mat-form-field>
+          <mat-label>חיפוש</mat-label>
+          <input matInput [formControl]="urgencyFilter" />
+        </mat-form-field>
+        <button mat-raised-button color="primary" (click)="exportToExcel(urgencyDataSource, 'Urgency')">Export</button>
+        <button mat-raised-button (click)="resetFilter(urgencyFilter)">Reset</button>
+      </div>
       <div *ngIf="isLoadingUrgency" class="loading-spinner">
         <mat-progress-spinner mode="indeterminate"></mat-progress-spinner>
         <h2>הנתונים נטענים...</h2>
       </div>
-      <mat-table *ngIf="!isLoadingUrgency" [dataSource]="urgencyDataSource" matSort dir="rtl" class="mat-elevation-z8">
+      <mat-table *ngIf="!isLoadingUrgency" [dataSource]="urgencyDataSource" matSort class="mat-elevation-z8">
         <ng-container *ngFor="let column of urgencyColumns" [matColumnDef]="column">
-          <mat-header-cell *matHeaderCellDef mat-sort-header> {{ column }} </mat-header-cell>
-          <mat-cell *matCellDef="let element"> {{ element[column] }} </mat-cell>
+          <mat-header-cell *matHeaderCellDef mat-sort-header>{{ column }}</mat-header-cell>
+          <mat-cell *matCellDef="let element">{{ element[column] }}</mat-cell>
         </ng-container>
         <mat-header-row *matHeaderRowDef="urgencyColumns"></mat-header-row>
         <mat-row *matRowDef="let row; columns: urgencyColumns"></mat-row>
       </mat-table>
       <mat-paginator #urgencyPaginator [pageSizeOptions]="[15, 50, 100]"></mat-paginator>
     </mat-tab>
-  
+
+    <!-- Complaint Tab -->
     <mat-tab label="תלונות">
+      <div class="tab-header">
+        <mat-form-field>
+          <mat-label>חיפוש</mat-label>
+          <input matInput [formControl]="complaintFilter" />
+        </mat-form-field>
+        <button mat-raised-button color="primary" (click)="exportToExcel(complaintDataSource, 'Complaint')">Export</button>
+        <button mat-raised-button (click)="resetFilter(complaintFilter)">Reset</button>
+      </div>
       <div *ngIf="isLoadingComplaint" class="loading-spinner">
         <mat-progress-spinner mode="indeterminate"></mat-progress-spinner>
         <h2>הנתונים נטענים...</h2>
       </div>
-      <mat-table *ngIf="!isLoadingComplaint" [dataSource]="complaintDataSource" matSort dir="rtl" class="mat-elevation-z8">
+      <mat-table *ngIf="!isLoadingComplaint" [dataSource]="complaintDataSource" matSort class="mat-elevation-z8">
         <ng-container *ngFor="let column of complaintColumns" [matColumnDef]="column">
-          <mat-header-cell *matHeaderCellDef mat-sort-header> {{ column }} </mat-header-cell>
-          <mat-cell *matCellDef="let element"> {{ element[column] }} </mat-cell>
+          <mat-header-cell *matHeaderCellDef mat-sort-header>{{ column }}</mat-header-cell>
+          <mat-cell *matCellDef="let element">{{ element[column] }}</mat-cell>
         </ng-container>
         <mat-header-row *matHeaderRowDef="complaintColumns"></mat-header-row>
         <mat-row *matRowDef="let row; columns: complaintColumns"></mat-row>
       </mat-table>
       <mat-paginator #complaintPaginator [pageSizeOptions]="[15, 50, 100]"></mat-paginator>
     </mat-tab>
+
+    <!-- Discharge Date Tab -->
+    <mat-tab label="תאריך שחרור">
+      <div class="tab-header">
+        <mat-form-field>
+          <mat-label>חיפוש</mat-label>
+          <input matInput [formControl]="dischargeFilter" />
+        </mat-form-field>
+        <button mat-raised-button color="primary" (click)="exportToExcel(dischargeDataSource, 'Discharge')">Export</button>
+        <button mat-raised-button (click)="resetFilter(dischargeFilter)">Reset</button>
+      </div>
+      <div *ngIf="isLoadingDischarge" class="loading-spinner">
+        <mat-progress-spinner mode="indeterminate"></mat-progress-spinner>
+        <h2>הנתונים נטענים...</h2>
+      </div>
+      <mat-table *ngIf="!isLoadingDischarge" [dataSource]="dischargeDataSource" matSort class="mat-elevation-z8">
+        <ng-container *ngFor="let column of dischargeColumns" [matColumnDef]="column">
+          <mat-header-cell *matHeaderCellDef mat-sort-header>{{ column }}</mat-header-cell>
+          <mat-cell *matCellDef="let row">{{ row[column] }}</mat-cell>
+        </ng-container>
+        <mat-header-row *matHeaderRowDef="dischargeColumns"></mat-header-row>
+        <mat-row *matRowDef="let row; columns: dischargeColumns"></mat-row>
+      </mat-table>
+      <mat-paginator #dischargePaginator [pageSizeOptions]="[15, 50, 100]"></mat-paginator>
+    </mat-tab>
+
+    <!-- Doctor Signature Tab -->
+    <mat-tab label="חתימת רופא">
+      <div class="tab-header">
+        <mat-form-field>
+          <mat-label>חיפוש</mat-label>
+          <input matInput [formControl]="signatureFilter" />
+        </mat-form-field>
+        <button mat-raised-button color="primary" (click)="exportToExcel(signatureDataSource, 'Doctor_Signature')">Export</button>
+        <button mat-raised-button (click)="resetFilter(signatureFilter)">Reset</button>
+      </div>
+      <div *ngIf="isLoadingSignature" class="loading-spinner">
+        <mat-progress-spinner mode="indeterminate"></mat-progress-spinner>
+        <h2>הנתונים נטענים...</h2>
+      </div>
+      <mat-table *ngIf="!isLoadingSignature" [dataSource]="signatureDataSource" matSort class="mat-elevation-z8">
+        <ng-container *ngFor="let column of signatureColumns" [matColumnDef]="column">
+          <mat-header-cell *matHeaderCellDef mat-sort-header>{{ column }}</mat-header-cell>
+          <mat-cell *matCellDef="let row">{{ row[column] }}</mat-cell>
+        </ng-container>
+        <mat-header-row *matHeaderRowDef="signatureColumns"></mat-header-row>
+        <mat-row *matRowDef="let row; columns: signatureColumns"></mat-row>
+      </mat-table>
+      <mat-paginator #signaturePaginator [pageSizeOptions]="[15, 50, 100]"></mat-paginator>
+    </mat-tab>
   </mat-tab-group>
-  
 </div>
