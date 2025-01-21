@@ -5,30 +5,38 @@
       <p class="loading-text">...טוען נתונים</p>
     </div>
   </div>
-  
+  <div class="nine">
+    <h1> דוח קלינאית תקשורת <span></span></h1>
+  </div>
   <!-- Main Content -->
   <div class="body" *ngIf="!loading">
     <div class="filter-card-container">
       <mat-card class="filter-card">
         <mat-card-content>
-          <form [formGroup]="filterForm">
-            <mat-form-field appearance="outline" class="filter-field">
-              <mat-label>Year</mat-label>
-              <mat-select formControlName="year">
-                <mat-option *ngFor="let year of availableYears" [value]="year">{{ year }}</mat-option>
-              </mat-select>
-            </mat-form-field>
-            <mat-form-field appearance="outline" class="filter-field">
-              <mat-label>Quarter</mat-label>
-              <mat-select formControlName="quarter">
-             
-              </mat-select>
-            </mat-form-field>
-            <button mat-raised-button color="primary" (click)="applyFilters()">Apply Filters</button>
-            <button mat-button (click)="resetFilters()" mat-raised-button color="primary" class="custom-button">
-              Reset Filters
-            </button>
-          </form>
+            <form [formGroup]="filterForm" class="filter-form" dir="rtl">
+                <!-- Year Dropdown -->
+                <mat-form-field appearance="outline" class="filter-field">
+                  <mat-label>Year</mat-label>
+                  <mat-select formControlName="year">
+                    <mat-option *ngFor="let year of availableYears" [value]="year">{{ year }}</mat-option>
+                  </mat-select>
+                </mat-form-field>
+              
+                <!-- Month Dropdown -->
+                <mat-form-field appearance="outline" class="filter-field">
+                  <mat-label>Month</mat-label>
+                  <mat-select formControlName="month">
+                    <mat-option *ngFor="let month of months" [value]="month.value">{{ month.name }}</mat-option>
+                  </mat-select>
+                </mat-form-field>
+              
+                <!-- Apply Filters Button -->
+                <button mat-raised-button color="primary" (click)="applyFilters()">Apply Filters</button>
+              
+                <!-- Reset Filters Button -->
+                <button mat-raised-button color="accent" (click)="resetFilters()">Reset Filters</button>
+              </form>
+              
         </mat-card-content>
       </mat-card>
     </div>

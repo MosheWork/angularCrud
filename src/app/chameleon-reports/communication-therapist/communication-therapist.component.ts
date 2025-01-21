@@ -14,7 +14,7 @@ import { environment } from '../../../environments/environment';
 })
 export class CommunicationTherapistComponent implements OnInit {
   loading: boolean = false;
-  isGraphVisible: boolean = false;
+  isGraphVisible: boolean = false; // Initialize `isGraphVisible`
 
   // Chart configuration
   chart: Chart | null = null;
@@ -31,112 +31,131 @@ export class CommunicationTherapistComponent implements OnInit {
       },
     ],
   };
-  // Data Sources and Columns
-  dailyFollowUpDataSource: MatTableDataSource<any>;
-  anamnesisResultsDataSource: MatTableDataSource<any>;
-  fullListDataSource: MatTableDataSource<any>;
 
+  // Data Sources and Columns
+  dailyFollowUpDataSource: MatTableDataSource<any> = new MatTableDataSource<any>([]);
+  anamnesisResultsDataSource: MatTableDataSource<any> = new MatTableDataSource<any>([]);
+  fullListDataSource: MatTableDataSource<any> = new MatTableDataSource<any>([]);
 
   dailyFollowUpColumns: string[] = ['EmployeeName', 'SimpleA', 'ComplexB', 'VeryComplexC', 'GroupD'];
   anamnesisResultsColumns: string[] = ['Code', 'EmployeeName', 'Simple', 'Complex', 'VeryComplex'];
   fullListColumns: string[] = ['Subject', 'EntryDate', 'Heading', 'IdNum', 'FirstName', 'LastName'];
 
+  // Filters
   filterForm: FormGroup;
   availableYears: number[] = [2023, 2024, 2025];
-  availableMonths: number[] = Array.from({ length: 12 }, (_, i) => i + 1);
+  months = [
+    { name: 'January', value: 1 },
+    { name: 'February', value: 2 },
+    { name: 'March', value: 3 },
+    { name: 'April', value: 4 },
+    { name: 'May', value: 5 },
+    { name: 'June', value: 6 },
+    { name: 'July', value: 7 },
+    { name: 'August', value: 8 },
+    { name: 'September', value: 9 },
+    { name: 'October', value: 10 },
+    { name: 'November', value: 11 },
+    { name: 'December', value: 12 },
+  ];
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
   @ViewChild('chartCanvas') chartCanvas!: ElementRef<HTMLCanvasElement>;
 
   constructor(private http: HttpClient, private fb: FormBuilder) {
-    this.dailyFollowUpDataSource = new MatTableDataSource<any>([]);
-    this.anamnesisResultsDataSource = new MatTableDataSource<any>([]);
-    this.fullListDataSource = new MatTableDataSource<any>([]);
-
     this.filterForm = this.fb.group({
-      year: new FormControl(new Date().getFullYear()),
-      month: new FormControl(new Date().getMonth() + 1),
+      year: new FormControl(new Date().getFullYear()), // Default to current year
+      month: new FormControl(null), // Default to no month selected
     });
+
+    Chart.register(...registerables); // Register Chart.js components
   }
 
   ngOnInit(): void {
-    this.fetchDailyFollowUpData();
-    this.fetchAnamnesisResultsData();
-    this.fetchFullListDailyFollowUp();
-
-  }
-
-  fetchFullListDailyFollowUp(): void {
-    this.loading = true;
-    this.http.get<any[]>(`${environment.apiUrl}CommunicationTherapist/FullListDailyFollowUp`).subscribe(
-      (data) => {
-        this.fullListDataSource.data = data;
-        this.fullListDataSource.paginator = this.paginator;
-        this.fullListDataSource.sort = this.sort;
-        this.loading = false;
-      },
-      (error) => {
-        console.error('Error fetching full list daily follow-up data:', error);
-        this.loading = false;
-      }
-    );
-  }
-  fetchDailyFollowUpData(): void {
-    this.loading = true;
-    const { year, month } = this.filterForm.value;
-
-    this.http
-      .get<any[]>(`${environment.apiUrl}CommunicationTherapist/V_DailyFollowUp`, {
-        params: { year, month },
-      })
-      .subscribe(
-        (data) => {
-          this.dailyFollowUpDataSource.data = data;
-          this.dailyFollowUpDataSource.paginator = this.paginator;
-          this.dailyFollowUpDataSource.sort = this.sort;
-          this.loading = false;
-        },
-        (error) => {
-          console.error('Error fetching daily follow-up data:', error);
-          this.loading = false;
-        }
-      );
-  }
-
-  fetchAnamnesisResultsData(): void {
-    this.loading = true;
-    const { year, month } = this.filterForm.value;
-
-    this.http
-      .get<any[]>(`${environment.apiUrl}CommunicationTherapist/AnamnesisResults`, {
-        params: { year, month },
-      })
-      .subscribe(
-        (data) => {
-          this.anamnesisResultsDataSource.data = data;
-          this.anamnesisResultsDataSource.paginator = this.paginator;
-          this.anamnesisResultsDataSource.sort = this.sort;
-          this.loading = false;
-        },
-        (error) => {
-          console.error('Error fetching anamnesis results data:', error);
-          this.loading = false;
-        }
-      );
+    this.applyFilters(); // Fetch data for all tables on init
   }
 
   applyFilters(): void {
-    this.fetchDailyFollowUpData();
-    this.fetchAnamnesisResultsData();
+    const filters = this.filterForm.value;
+    const year = filters.year;
+    const month = filters.month;
+
+    // Fetch data for all tables
+    this.fetchDailyFollowUpData(year, month);
+    this.fetchAnamnesisResultsData(year, month);
+    this.fetchFullListDailyFollowUp(year, month);
   }
 
   resetFilters(): void {
     this.filterForm.reset({
-      year: new Date().getFullYear(),
-      month: new Date().getMonth() + 1,
+      year: new Date().getFullYear(), // Reset to current year
+      month: null, // Reset month to null
     });
-    this.applyFilters();
+    this.applyFilters(); // Re-fetch all data with default filters
+  }
+
+  fetchDailyFollowUpData(year?: number, month?: number): void {
+    this.loading = true;
+
+    const params: any = {};
+    if (year) params.year = year;
+    if (month) params.month = month;
+
+    this.http
+      .get<any[]>(`${environment.apiUrl}CommunicationTherapist/V_DailyFollowUp`, { params })
+      .subscribe(
+        (data) => {
+          this.dailyFollowUpDataSource.data = data;
+          this.loading = false;
+        },
+        (error) => {
+          console.error('Error fetching Daily Follow-Up data:', error);
+          this.loading = false;
+        }
+      );
+  }
+
+  fetchAnamnesisResultsData(year?: number, month?: number): void {
+    this.loading = true;
+
+    const params: any = {};
+    if (year) params.year = year;
+    if (month) params.month = month;
+
+    this.http
+      .get<any[]>(`${environment.apiUrl}CommunicationTherapist/AnamnesisResults`, { params })
+      .subscribe(
+        (data) => {
+          this.anamnesisResultsDataSource.data = data;
+          this.loading = false;
+        },
+        (error) => {
+          console.error('Error fetching Anamnesis Results data:', error);
+          this.loading = false;
+        }
+      );
+  }
+
+  fetchFullListDailyFollowUp(year?: number, month?: number): void {
+    this.loading = true;
+
+    const params: any = {};
+    if (year) params.year = year;
+    if (month) params.month = month;
+
+    this.http
+      .get<any[]>(`${environment.apiUrl}CommunicationTherapist/FullListDailyFollowUp`, { params })
+      .subscribe(
+        (data) => {
+          this.fullListDataSource.data = data;
+          this.loading = false;
+        },
+        (error) => {
+          console.error('Error fetching Full List Daily Follow-Up data:', error);
+          this.loading = false;
+        }
+      );
   }
 
   toggleView(): void {
