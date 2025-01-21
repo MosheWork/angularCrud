@@ -12,7 +12,7 @@
           <input matInput [formControl]="decisionFilter" />
         </mat-form-field>
         <button mat-raised-button color="primary" (click)="exportToExcel(decisionDataSource, 'Admission_Treatment_Decision')">Export</button>
-        <button mat-raised-button (click)="resetFilter(decisionFilter)">Reset</button>
+        <button mat-raised-button (click)="resetFilter(decisionFilter, decisionDataSource)">Reset</button>
       </div>
       <div *ngIf="isLoadingDecision" class="loading-spinner">
         <mat-progress-spinner mode="indeterminate"></mat-progress-spinner>
@@ -37,7 +37,7 @@
           <input matInput [formControl]="urgencyFilter" />
         </mat-form-field>
         <button mat-raised-button color="primary" (click)="exportToExcel(urgencyDataSource, 'Urgency')">Export</button>
-        <button mat-raised-button (click)="resetFilter(urgencyFilter)">Reset</button>
+        <button mat-raised-button (click)="resetFilter(decisionFilter, decisionDataSource)">Reset</button>
       </div>
       <div *ngIf="isLoadingUrgency" class="loading-spinner">
         <mat-progress-spinner mode="indeterminate"></mat-progress-spinner>
@@ -62,7 +62,7 @@
           <input matInput [formControl]="complaintFilter" />
         </mat-form-field>
         <button mat-raised-button color="primary" (click)="exportToExcel(complaintDataSource, 'Complaint')">Export</button>
-        <button mat-raised-button (click)="resetFilter(complaintFilter)">Reset</button>
+        <button mat-raised-button (click)="resetFilter(decisionFilter, decisionDataSource)">Reset</button>
       </div>
       <div *ngIf="isLoadingComplaint" class="loading-spinner">
         <mat-progress-spinner mode="indeterminate"></mat-progress-spinner>
@@ -87,7 +87,7 @@
           <input matInput [formControl]="dischargeFilter" />
         </mat-form-field>
         <button mat-raised-button color="primary" (click)="exportToExcel(dischargeDataSource, 'Discharge')">Export</button>
-        <button mat-raised-button (click)="resetFilter(dischargeFilter)">Reset</button>
+        <button mat-raised-button (click)="resetFilter(decisionFilter, decisionDataSource)">Reset</button>
       </div>
       <div *ngIf="isLoadingDischarge" class="loading-spinner">
         <mat-progress-spinner mode="indeterminate"></mat-progress-spinner>
@@ -112,7 +112,7 @@
           <input matInput [formControl]="signatureFilter" />
         </mat-form-field>
         <button mat-raised-button color="primary" (click)="exportToExcel(signatureDataSource, 'Doctor_Signature')">Export</button>
-        <button mat-raised-button (click)="resetFilter(signatureFilter)">Reset</button>
+        <button mat-raised-button (click)="resetFilter(decisionFilter, decisionDataSource)">Reset</button>
       </div>
       <div *ngIf="isLoadingSignature" class="loading-spinner">
         <mat-progress-spinner mode="indeterminate"></mat-progress-spinner>
