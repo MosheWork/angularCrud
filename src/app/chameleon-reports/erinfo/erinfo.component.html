@@ -25,20 +25,21 @@
       </div>
 
       <mat-table [dataSource]="decisionDataSource" matSort class="mat-elevation-z8">
-  <ng-container *ngFor="let column of decisionColumns" [matColumnDef]="column">
-    <mat-header-cell *matHeaderCellDef mat-sort-header>{{ column }}</mat-header-cell>
-    <mat-cell *matCellDef="let row">
-      <ng-container *ngIf="['EntryDate', 'ReleaseDate', 'ArrivalDate'].includes(column); else defaultColumn">
-        {{ row[column] | date: 'dd/MM/yyyy HH:mm' }}
-      </ng-container>
-      <ng-template #defaultColumn>
-        {{ row[column] }}
-      </ng-template>
-    </mat-cell>
-  </ng-container>
-  <mat-header-row *matHeaderRowDef="decisionColumns"></mat-header-row>
-  <mat-row *matRowDef="let row; columns: decisionColumns"></mat-row>
-</mat-table>
+        <ng-container *ngFor="let column of decisionColumns" [matColumnDef]="column">
+          <mat-header-cell *matHeaderCellDef mat-sort-header>{{ column }}</mat-header-cell>
+          <mat-cell *matCellDef="let row">
+            <ng-container *ngIf="['EntryDate', 'ReleaseDate', 'ArrivalDate'].includes(column); else defaultColumn">
+              {{ row[column] | date: 'dd/MM/yyyy HH:mm' }}
+            </ng-container>
+            <ng-template #defaultColumn>
+              {{ row[column] }}
+            </ng-template>
+          </mat-cell>
+        </ng-container>
+        <mat-header-row *matHeaderRowDef="decisionColumns"></mat-header-row>
+        <mat-row *matRowDef="let row; columns: decisionColumns"></mat-row>
+      </mat-table>
+      
       <mat-paginator #decisionPaginator [pageSizeOptions]="[15, 50, 100]"></mat-paginator>
     </mat-tab>
 
