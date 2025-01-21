@@ -5,199 +5,92 @@
       <p class="loading-text">...טוען נתונים</p>
     </div>
   </div>
+  
   <div class="nine">
     <h1> דוח קלינאית תקשורת <span></span></h1>
   </div>
+  
   <!-- Main Content -->
   <div class="body" *ngIf="!loading">
     <div class="filter-card-container">
       <mat-card class="filter-card">
         <mat-card-content>
-            <form [formGroup]="filterForm" class="filter-form" dir="rtl">
-                <!-- Year Dropdown -->
-                <mat-form-field appearance="outline" class="filter-field">
-                  <mat-label>Year</mat-label>
-                  <mat-select formControlName="year">
-                    <mat-option *ngFor="let year of availableYears" [value]="year">{{ year }}</mat-option>
-                  </mat-select>
-                </mat-form-field>
-              
-                <!-- Month Dropdown -->
-                <mat-form-field appearance="outline" class="filter-field">
-                  <mat-label>Month</mat-label>
-                  <mat-select formControlName="month">
-                    <mat-option *ngFor="let month of months" [value]="month.value">{{ month.name }}</mat-option>
-                  </mat-select>
-                </mat-form-field>
-              
-                <!-- Apply Filters Button -->
-                <button mat-raised-button color="primary" (click)="applyFilters()">Apply Filters</button>
-              
-                <!-- Reset Filters Button -->
-                <button mat-raised-button color="accent" (click)="resetFilters()">Reset Filters</button>
-              </form>
-              
+          <form [formGroup]="filterForm" class="filter-form" dir="rtl">
+            <!-- Year Dropdown -->
+            <mat-form-field appearance="outline" class="filter-field">
+              <mat-label>Year</mat-label>
+              <mat-select formControlName="year">
+                <mat-option *ngFor="let year of availableYears" [value]="year">{{ year }}</mat-option>
+              </mat-select>
+            </mat-form-field>
+  
+            <!-- Month Dropdown -->
+            <mat-form-field appearance="outline" class="filter-field">
+              <mat-label>Month</mat-label>
+              <mat-select formControlName="month">
+                <mat-option *ngFor="let month of months" [value]="month.value">{{ month.name }}</mat-option>
+              </mat-select>
+            </mat-form-field>
+  
+            <!-- Apply Filters Button -->
+            <button mat-raised-button color="primary" (click)="applyFilters()">Apply Filters</button>
+  
+            <!-- Reset Filters Button -->
+            <button mat-raised-button color="accent" (click)="resetFilters()">Reset Filters</button>
+          </form>
         </mat-card-content>
       </mat-card>
     </div>
   
-    <!-- Two Tables in One Row -->
+    <!-- Tables -->
     <div class="dashboard-wrapper">
       <div class="dashboard-container">
         <!-- Daily Follow-Up Summary Table -->
         <mat-card class="dashboard-card">
           <div class="card-title">Daily Follow-Up Summary</div>
-          <mat-table [dataSource]="dailyFollowUpDataSource" matSort class="mat-elevation-z8">
-            <ng-container matColumnDef="EmployeeName">
-              <mat-header-cell *matHeaderCellDef mat-sort-header>Employee Name</mat-header-cell>
-              <mat-cell *matCellDef="let element">{{ element.EmployeeName }}</mat-cell>
-            </ng-container>
-            <ng-container matColumnDef="SimpleA">
-              <mat-header-cell *matHeaderCellDef mat-sort-header>Simple A</mat-header-cell>
-              <mat-cell *matCellDef="let element">{{ element.SimpleA }}</mat-cell>
-            </ng-container>
-            <ng-container matColumnDef="ComplexB">
-              <mat-header-cell *matHeaderCellDef mat-sort-header>Complex B</mat-header-cell>
-              <mat-cell *matCellDef="let element">{{ element.ComplexB }}</mat-cell>
-            </ng-container>
-            <ng-container matColumnDef="VeryComplexC">
-              <mat-header-cell *matHeaderCellDef mat-sort-header>Very Complex C</mat-header-cell>
-              <mat-cell *matCellDef="let element">{{ element.VeryComplexC }}</mat-cell>
-            </ng-container>
-            <ng-container matColumnDef="GroupD">
-              <mat-header-cell *matHeaderCellDef mat-sort-header>Group D</mat-header-cell>
-              <mat-cell *matCellDef="let element">{{ element.GroupD }}</mat-cell>
+          <mat-table [dataSource]="dailyFollowUpDataSource" matSort  class="mat-elevation-z8">
+            <ng-container *ngFor="let column of dailyFollowUpColumns" [matColumnDef]="column">
+              <mat-header-cell *matHeaderCellDef mat-sort-header>{{ column }}</mat-header-cell>
+              <mat-cell *matCellDef="let element">{{ element[column] }}</mat-cell>
             </ng-container>
             <mat-header-row *matHeaderRowDef="dailyFollowUpColumns"></mat-header-row>
             <mat-row *matRowDef="let row; columns: dailyFollowUpColumns"></mat-row>
           </mat-table>
-          <mat-paginator [length]="dailyFollowUpDataSource.data.length || 0" [pageSize]="10" showFirstLastButtons></mat-paginator>
+          <mat-paginator #dailyFollowUpPaginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
         </mat-card>
   
         <!-- Anamnesis Results Table -->
         <mat-card class="dashboard-card">
           <div class="card-title">Anamnesis Results</div>
-          <mat-table [dataSource]="anamnesisResultsDataSource" matSort class="mat-elevation-z8">
-            <ng-container matColumnDef="Code">
-              <mat-header-cell *matHeaderCellDef mat-sort-header>Code</mat-header-cell>
-              <mat-cell *matCellDef="let element">{{ element.Code }}</mat-cell>
-            </ng-container>
-            <ng-container matColumnDef="EmployeeName">
-              <mat-header-cell *matHeaderCellDef mat-sort-header>Employee Name</mat-header-cell>
-              <mat-cell *matCellDef="let element">{{ element.EmployeeName }}</mat-cell>
-            </ng-container>
-            <ng-container matColumnDef="Simple">
-              <mat-header-cell *matHeaderCellDef mat-sort-header>Simple</mat-header-cell>
-              <mat-cell *matCellDef="let element">{{ element.Simple }}</mat-cell>
-            </ng-container>
-            <ng-container matColumnDef="Complex">
-              <mat-header-cell *matHeaderCellDef mat-sort-header>Complex</mat-header-cell>
-              <mat-cell *matCellDef="let element">{{ element.Complex }}</mat-cell>
-            </ng-container>
-            <ng-container matColumnDef="VeryComplex">
-              <mat-header-cell *matHeaderCellDef mat-sort-header>Very Complex</mat-header-cell>
-              <mat-cell *matCellDef="let element">{{ element.VeryComplex }}</mat-cell>
+          <mat-table [dataSource]="anamnesisResultsDataSource" matSort #anamnesisResultsSort="matSort" class="mat-elevation-z8">
+            <ng-container *ngFor="let column of anamnesisResultsColumns" [matColumnDef]="column">
+              <mat-header-cell *matHeaderCellDef mat-sort-header>{{ column }}</mat-header-cell>
+              <mat-cell *matCellDef="let element">{{ element[column] }}</mat-cell>
             </ng-container>
             <mat-header-row *matHeaderRowDef="anamnesisResultsColumns"></mat-header-row>
             <mat-row *matRowDef="let row; columns: anamnesisResultsColumns"></mat-row>
           </mat-table>
-          <mat-paginator [length]="anamnesisResultsDataSource.data.length || 0" [pageSize]="10" showFirstLastButtons></mat-paginator>
+          <mat-paginator #anamnesisResultsPaginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
         </mat-card>
       </div>
     </div>
   
-    <!-- Full List Table in Separate Row -->
+    <!-- Full List Table -->
     <mat-card class="data-card-container">
-        <mat-card-content>
-          <div class="card-title">
-            <h3>טבלת נתונים</h3>
-          </div>
-      
-          <!-- Global Search -->
-          <form [formGroup]="filterForm" class="filter-form" dir="rtl">
-            <mat-form-field class="long-search-bar" appearance="outline" style="flex-grow: 1; margin-right: 10px; width: 70%;">
-              <mat-label class="filters" style="color: blue">חיפוש</mat-label>
-              <input matInput formControlName="globalFilter" class="search-input" (input)="applyFilters()" />
-            </mat-form-field>
-      
-            <!-- Icons and Actions -->
-            <div dir="rtl" class="icon-container" style="display: flex; align-items: center;">
-              <!-- Reset Filters Button -->
-              <button mat-button (click)="resetFilters()" mat-raised-button color="primary" class="custom-button" matTooltip="Reset Filters" style="margin-left: 10px;">
-                <i class="material-icons">refresh</i>
-              </button>
-              <div style="text-align: right; margin-bottom: 20px;">
-                <img
-                  *ngIf="!isGraphVisible"
-                  (click)="toggleView()"
-                  matTooltip="Move To Graph"
-                  src="../../../../assets/graphIcon.png"
-                  width="50px"
-                  style="margin-left: 10px;"
-                />
-                <img
-                  *ngIf="isGraphVisible"
-                  (click)="toggleView()"
-                  matTooltip="Move To Table"
-                  src="../../../../assets/TableIcon.png"
-                  width="50px"
-                  style="margin-left: 10px;"
-                />
-              </div>
-            </div>
-          </form>
-      
-          <!-- Graph or Table Toggle -->
-          <div *ngIf="isGraphVisible">
-            <canvas #allTimeChartCanvas></canvas>
-          </div>
-      
-          <!-- Data Table -->
-          <mat-table [dataSource]="fullListDataSource" matSort dir="rtl" class="mat-elevation-z8">
-            <ng-container matColumnDef="Subject">
-              <mat-header-cell *matHeaderCellDef mat-sort-header> נושא </mat-header-cell>
-              <mat-cell *matCellDef="let element"> {{ element.Subject }} </mat-cell>
-            </ng-container>
-      
-            <ng-container matColumnDef="EntryDate">
-              <mat-header-cell *matHeaderCellDef mat-sort-header> תאריך כניסה </mat-header-cell>
-              <mat-cell *matCellDef="let element"> {{ element.EntryDate }} </mat-cell>
-            </ng-container>
-      
-            <ng-container matColumnDef="Heading">
-              <mat-header-cell *matHeaderCellDef mat-sort-header> כותרת </mat-header-cell>
-              <mat-cell *matCellDef="let element"> {{ element.Heading }} </mat-cell>
-            </ng-container>
-      
-            <ng-container matColumnDef="IdNum">
-              <mat-header-cell *matHeaderCellDef mat-sort-header> מספר מזהה </mat-header-cell>
-              <mat-cell *matCellDef="let element"> {{ element.IdNum }} </mat-cell>
-            </ng-container>
-      
-            <ng-container matColumnDef="FirstName">
-              <mat-header-cell *matHeaderCellDef mat-sort-header> שם פרטי </mat-header-cell>
-              <mat-cell *matCellDef="let element"> {{ element.FirstName }} </mat-cell>
-            </ng-container>
-      
-            <ng-container matColumnDef="LastName">
-              <mat-header-cell *matHeaderCellDef mat-sort-header> שם משפחה </mat-header-cell>
-              <mat-cell *matCellDef="let element"> {{ element.LastName }} </mat-cell>
-            </ng-container>
-      
-            <mat-header-row *matHeaderRowDef="fullListColumns"></mat-header-row>
-            <mat-row *matRowDef="let row; columns: fullListColumns"></mat-row>
-          </mat-table>
-      
-          <!-- Paginator -->
-          <mat-paginator
-            #paginator
-            [length]="fullListDataSource.data.length || 0"
-            [pageSize]="10"
-            [pageSizeOptions]="[10, 25, 50]"
-            showFirstLastButtons>
-          </mat-paginator>
-        </mat-card-content>
-      </mat-card>
-      
+      <mat-card-content>
+        <div class="card-title">
+          <h3>טבלת נתונים</h3>
+        </div>
+        <mat-table [dataSource]="fullListDataSource" matSort #fullListSort="matSort" class="mat-elevation-z8">
+          <ng-container *ngFor="let column of fullListColumns" [matColumnDef]="column">
+            <mat-header-cell *matHeaderCellDef mat-sort-header>{{ column }}</mat-header-cell>
+            <mat-cell *matCellDef="let element">{{ element[column] }}</mat-cell>
+          </ng-container>
+          <mat-header-row *matHeaderRowDef="fullListColumns"></mat-header-row>
+          <mat-row *matRowDef="let row; columns: fullListColumns"></mat-row>
+        </mat-table>
+        <mat-paginator #fullListPaginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
+      </mat-card-content>
+    </mat-card>
   </div>
   

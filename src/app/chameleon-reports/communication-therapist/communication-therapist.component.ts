@@ -32,14 +32,15 @@ export class CommunicationTherapistComponent implements OnInit {
     ],
   };
 
+ 
   // Data Sources and Columns
-  dailyFollowUpDataSource: MatTableDataSource<any> = new MatTableDataSource<any>([]);
-  anamnesisResultsDataSource: MatTableDataSource<any> = new MatTableDataSource<any>([]);
-  fullListDataSource: MatTableDataSource<any> = new MatTableDataSource<any>([]);
+  dailyFollowUpDataSource = new MatTableDataSource<any>([]);
+  anamnesisResultsDataSource = new MatTableDataSource<any>([]);
+  fullListDataSource = new MatTableDataSource<any>([]);
 
   dailyFollowUpColumns: string[] = ['EmployeeName', 'SimpleA', 'ComplexB', 'VeryComplexC', 'GroupD'];
-  anamnesisResultsColumns: string[] = ['Code', 'EmployeeName', 'Simple', 'Complex', 'VeryComplex'];
-  fullListColumns: string[] = ['Subject', 'EntryDate', 'Heading', 'IdNum', 'FirstName', 'LastName'];
+  anamnesisResultsColumns: string[] = ['EmployeeName', 'Simple', 'Complex', 'VeryComplex'];
+  fullListColumns: string[] = ['Subject', 'EntryDate', 'Heading', 'IdNumber', 'FirstName', 'LastName'];
 
   // Filters
   filterForm: FormGroup;
@@ -59,8 +60,15 @@ export class CommunicationTherapistComponent implements OnInit {
     { name: 'December', value: 12 },
   ];
 
-  @ViewChild(MatPaginator) paginator!: MatPaginator;
-  @ViewChild(MatSort) sort!: MatSort;
+  @ViewChild('dailyFollowUpPaginator') dailyFollowUpPaginator!: MatPaginator;
+ // @ViewChild('dailyFollowUpSort') dailyFollowUpSort!: MatSort;
+  
+  @ViewChild('anamnesisResultsPaginator') anamnesisResultsPaginator!: MatPaginator;
+  @ViewChild('anamnesisResultsSort') anamnesisResultsSort!: MatSort;
+  
+  @ViewChild('fullListPaginator') fullListPaginator!: MatPaginator;
+  @ViewChild('fullListSort') fullListSort!: MatSort;
+
   @ViewChild('chartCanvas') chartCanvas!: ElementRef<HTMLCanvasElement>;
 
   constructor(private http: HttpClient, private fb: FormBuilder) {
@@ -75,7 +83,24 @@ export class CommunicationTherapistComponent implements OnInit {
   ngOnInit(): void {
     this.applyFilters(); // Fetch data for all tables on init
   }
+  ngAfterViewInit(): void {
+    this.dailyFollowUpDataSource.paginator = this.dailyFollowUpPaginator;
+    //this.dailyFollowUpDataSource.sort = this.dailyFollowUpSort;
+  
+    this.anamnesisResultsDataSource.paginator = this.anamnesisResultsPaginator;
+    this.anamnesisResultsDataSource.sort = this.anamnesisResultsSort;
+  
+    this.fullListDataSource.paginator = this.fullListPaginator;
+    this.fullListDataSource.sort = this.fullListSort;
+  
+    console.log('Daily Follow-Up Paginator:', this.dailyFollowUpPaginator);
+    //console.log('Daily Follow-Up Sort:', this.dailyFollowUpSort);
+  }
+  
+  
+  
 
+  
   applyFilters(): void {
     const filters = this.filterForm.value;
     const year = filters.year;
@@ -94,19 +119,28 @@ export class CommunicationTherapistComponent implements OnInit {
     });
     this.applyFilters(); // Re-fetch all data with default filters
   }
-
   fetchDailyFollowUpData(year?: number, month?: number): void {
     this.loading = true;
-
+  
     const params: any = {};
     if (year) params.year = year;
     if (month) params.month = month;
-
+  
     this.http
       .get<any[]>(`${environment.apiUrl}CommunicationTherapist/V_DailyFollowUp`, { params })
       .subscribe(
         (data) => {
           this.dailyFollowUpDataSource.data = data;
+  
+          // Assign paginator and sort after data is loaded
+          if (this.dailyFollowUpPaginator) {
+            this.dailyFollowUpDataSource.paginator = this.dailyFollowUpPaginator;
+          }
+         
+  
+          console.log('Daily Follow-Up Data:', this.dailyFollowUpDataSource.data);
+          console.log('Paginator:', this.dailyFollowUpPaginator);
+  
           this.loading = false;
         },
         (error) => {
@@ -115,19 +149,32 @@ export class CommunicationTherapistComponent implements OnInit {
         }
       );
   }
-
+  
   fetchAnamnesisResultsData(year?: number, month?: number): void {
     this.loading = true;
-
+  
     const params: any = {};
     if (year) params.year = year;
     if (month) params.month = month;
-
+  
     this.http
       .get<any[]>(`${environment.apiUrl}CommunicationTherapist/AnamnesisResults`, { params })
       .subscribe(
         (data) => {
           this.anamnesisResultsDataSource.data = data;
+  
+          // Assign paginator and sort after data is loaded
+          if (this.anamnesisResultsPaginator) {
+            this.anamnesisResultsDataSource.paginator = this.anamnesisResultsPaginator;
+          }
+          if (this.anamnesisResultsSort) {
+            this.anamnesisResultsDataSource.sort = this.anamnesisResultsSort;
+          }
+  
+          console.log('Anamnesis Results Data:', this.anamnesisResultsDataSource.data);
+          console.log('Paginator:', this.anamnesisResultsPaginator);
+          console.log('Sort:', this.anamnesisResultsSort);
+  
           this.loading = false;
         },
         (error) => {
@@ -136,19 +183,33 @@ export class CommunicationTherapistComponent implements OnInit {
         }
       );
   }
+  
 
   fetchFullListDailyFollowUp(year?: number, month?: number): void {
     this.loading = true;
-
+  
     const params: any = {};
     if (year) params.year = year;
     if (month) params.month = month;
-
+  
     this.http
       .get<any[]>(`${environment.apiUrl}CommunicationTherapist/FullListDailyFollowUp`, { params })
       .subscribe(
         (data) => {
           this.fullListDataSource.data = data;
+  
+          // Assign paginator and sort after data is loaded
+          if (this.fullListPaginator) {
+            this.fullListDataSource.paginator = this.fullListPaginator;
+          }
+          if (this.fullListSort) {
+            this.fullListDataSource.sort = this.fullListSort;
+          }
+  
+          console.log('Full List Daily Follow-Up Data:', this.fullListDataSource.data);
+          console.log('Paginator:', this.fullListPaginator);
+          console.log('Sort:', this.fullListSort);
+  
           this.loading = false;
         },
         (error) => {
@@ -157,7 +218,7 @@ export class CommunicationTherapistComponent implements OnInit {
         }
       );
   }
-
+  
   toggleView(): void {
     this.isGraphVisible = !this.isGraphVisible;
     if (this.isGraphVisible) {
