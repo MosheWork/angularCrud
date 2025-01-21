@@ -58,6 +58,7 @@ import { Drug2hReviewComponent } from './chameleon-reports/drug2h-review/drug2h-
 import { DiabetesConsultationComponent } from './chameleon-reports/diabetes-consultation/diabetes-consultation.component';
 import { AwsClaudeInvocationComponent } from './aws-claude-invocation/aws-claude-invocation.component';
 import { ERInfoComponent } from './chameleon-reports/erinfo/erinfo.component';
+import { CommunicationTherapistComponent } from './chameleon-reports/communication-therapist/communication-therapist.component';
 
 const routes: Routes = [
   { path: 'users', component: UsersComponent },
@@ -134,6 +135,7 @@ const routes: Routes = [
    { path: 'drug2h-review', component: Drug2hReviewComponent },//דוח לקרן בדיקה אם כל שעתיים אחות עשתה בקרה על תרופה ברת סיכון
    { path: 'diabetes-consultation', component: DiabetesConsultationComponent },//דוח סכרת לליך שביט
    { path: 'er-info', component: ERInfoComponent },//דוח מיון לעידן
+   { path: 'CommunicationTherapist', component: CommunicationTherapistComponent },//דוח קלינאית תקשורת לבתאל
 
 //chemelondashboard
 { path: 'DepartmentCapacity', component: DepartmentCapacityComponent }, // פרוייקט אישי
