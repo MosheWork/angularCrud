@@ -184,14 +184,15 @@ export class ERInfoComponent implements OnInit {
     link.click();
   }
 
-  resetFilter(filterControl: FormControl, dataSource: MatTableDataSource<any>) {
-    // Clear the filter control value
+  resetFilter(filterControl: FormControl) {
     filterControl.setValue('');
-    
-    // Clear the filter on the data source
-    dataSource.filter = '';
   }
 
-
+  attachFilter(filterControl: FormControl, dataSource: MatTableDataSource<any>) {
+    filterControl.valueChanges.subscribe((filterValue) => {
+      const trimmedValue = filterValue?.trim().toLowerCase() || '';
+      dataSource.filter = trimmedValue;
+    });
+  }
  
 }
