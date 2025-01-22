@@ -7,7 +7,7 @@
   </div>
   
   <div class="nine">
-    <h1> דוח קלינאית תקשורת <span></span></h1>
+    <h1> דוח תפוקות - קלינאית תקשורת <span></span></h1>
   </div>
   
   <!-- Main Content -->
@@ -18,7 +18,7 @@
           <form [formGroup]="filterForm" class="filter-form" dir="rtl">
             <!-- Year Dropdown -->
             <mat-form-field appearance="outline" class="filter-field">
-              <mat-label>Year</mat-label>
+              <mat-label>שנה</mat-label>
               <mat-select formControlName="year">
                 <mat-option *ngFor="let year of availableYears" [value]="year">{{ year }}</mat-option>
               </mat-select>
@@ -26,17 +26,17 @@
   
             <!-- Month Dropdown -->
             <mat-form-field appearance="outline" class="filter-field">
-              <mat-label>Month</mat-label>
+              <mat-label>חודש</mat-label>
               <mat-select formControlName="month">
                 <mat-option *ngFor="let month of months" [value]="month.value">{{ month.name }}</mat-option>
               </mat-select>
             </mat-form-field>
   
             <!-- Apply Filters Button -->
-            <button mat-raised-button color="primary" (click)="applyFilters()">Apply Filters</button>
+            <button mat-raised-button color="primary" (click)="applyFilters()">הפעל חיפוש</button>
   
             <!-- Reset Filters Button -->
-            <button mat-raised-button color="accent" (click)="resetFilters()">Reset Filters</button>
+            <button mat-raised-button color="accent" (click)="resetFilters()">איפוס</button>
           </form>
         </mat-card-content>
       </mat-card>
@@ -47,7 +47,9 @@
       <div class="dashboard-container">
         <!-- Daily Follow-Up Summary Table -->
         <mat-card class="dashboard-card">
-          <div class="card-title">Daily Follow-Up Summary</div>
+          <div class="card-title"><h3>סיכום רכיב -מעקב קלינאית תקשורת</h3></div>
+          <img src="../../assets/excel.png" alt="Download" (click)="exportDailyFollowUpToExcel()" class="download-icon" width="50px" />
+
           <mat-table [dataSource]="dailyFollowUpDataSource" matSort  class="mat-elevation-z8">
             <ng-container *ngFor="let column of dailyFollowUpColumns" [matColumnDef]="column">
               <mat-header-cell *matHeaderCellDef mat-sort-header>{{ column }}</mat-header-cell>
@@ -61,7 +63,9 @@
   
         <!-- Anamnesis Results Table -->
         <mat-card class="dashboard-card">
-          <div class="card-title">Anamnesis Results</div>
+          <div class="card-title"><h3> סיכום רכיב-סוג טיפול</h3></div>
+          <img src="../../assets/excel.png" alt="Download" (click)="exportAnamnesisResultsToExcel()" class="download-icon" width="50px" />
+
           <mat-table [dataSource]="anamnesisResultsDataSource" matSort #anamnesisResultsSort="matSort" class="mat-elevation-z8">
             <ng-container *ngFor="let column of anamnesisResultsColumns" [matColumnDef]="column">
               <mat-header-cell *matHeaderCellDef mat-sort-header>{{ column }}</mat-header-cell>
@@ -81,6 +85,7 @@
         <div class="card-title">
           <h3>טבלת נתונים</h3>
         </div>
+        <img src="../../assets/excel.png" alt="Download" (click)="exportFullListToExcel()" class="download-icon" width="50px" />
         <mat-table [dataSource]="fullListDataSource" matSort #fullListSort="matSort" class="mat-elevation-z8">
           <ng-container *ngFor="let column of fullListColumns" [matColumnDef]="column">
             <mat-header-cell *matHeaderCellDef mat-sort-header>{{ column }}</mat-header-cell>

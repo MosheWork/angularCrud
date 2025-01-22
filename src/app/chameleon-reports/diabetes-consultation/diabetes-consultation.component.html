@@ -131,7 +131,7 @@ class="custom-toggle-group"
             [foregroundColor]="'#00c0ef'"
           ></ngx-gauge>
           <div class="gauge-info">
-            סה"כ מטופלים: <strong>{{ dataSource3.data.length }}</strong>
+            סה"כ מטופלים: <strong>{{ InsulinDataSource.data.length }}</strong>
             מתוך <strong>{{ globalSourceTableFilter === 'מאושפזים' ? NullReleaseDateCount : NonNullReleaseDateCount }}</strong>
           </div>
         </div>
@@ -190,7 +190,7 @@ class="custom-toggle-group"
     <div class="gauge-info">
     מטופלים עם סוכר מעל 180:
       <strong>{{ sugerAbove180.data.length }}</strong> מתוך
-      <strong>{{ DiagnosisICD9dataSource.data.length }}</strong>
+      <strong>{{ DiagnosisICD9dataSource.data.length }} </strong>מטופלים עם אבחנה של סכרת : 
     </div>
   </div>
 </mat-card>
@@ -362,7 +362,7 @@ class="custom-toggle-group"
         </ng-template>
         <table
           mat-table
-          [dataSource]="dataSource3"
+          [dataSource]="InsulinDataSource"
           matSort
          
           class="mat-elevation-z8"

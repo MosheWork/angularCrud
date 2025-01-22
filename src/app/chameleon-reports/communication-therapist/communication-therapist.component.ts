@@ -6,6 +6,8 @@ import { MatSort } from '@angular/material/sort';
 import { FormGroup, FormBuilder, FormControl } from '@angular/forms';
 import { Chart, ChartData, ChartType, registerables } from 'chart.js';
 import { environment } from '../../../environments/environment';
+import * as XLSX from 'xlsx';
+
 
 @Component({
   selector: 'app-communication-therapist',
@@ -40,7 +42,7 @@ export class CommunicationTherapistComponent implements OnInit {
 
   dailyFollowUpColumns: string[] = ['EmployeeName', 'SimpleA', 'ComplexB', 'VeryComplexC', 'GroupD'];
   anamnesisResultsColumns: string[] = ['EmployeeName', 'Simple', 'Complex', 'VeryComplex'];
-  fullListColumns: string[] = ['Subject', 'EntryDate', 'Heading', 'IdNumber', 'FirstName', 'LastName'];
+  fullListColumns: string[] = ['Subject', 'EntryDate', 'EntryUser', 'Heading', 'IdNumber', 'FirstName', 'LastName'];
 
   // Filters
   filterForm: FormGroup;
@@ -244,5 +246,32 @@ export class CommunicationTherapistComponent implements OnInit {
         },
       });
     }
+  }
+
+  exportDailyFollowUpToExcel(): void {
+    this.exportToExcel(
+      this.dailyFollowUpDataSource.data,
+      'Daily_Follow_Up_Data.xlsx'
+    );
+  }
+
+  exportAnamnesisResultsToExcel(): void {
+    this.exportToExcel(
+      this.anamnesisResultsDataSource.data,
+      'Anamnesis_Results_Data.xlsx'
+    );
+  }
+
+  exportFullListToExcel(): void {
+    this.exportToExcel(
+      this.fullListDataSource.data,
+      'Full_List_Daily_Follow_Up_Data.xlsx'
+    );
+  }
+
+  private exportToExcel(data: any[], fileName: string): void {
+    const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(data);
+    const workbook: XLSX.WorkBook = { Sheets: { data: worksheet }, SheetNames: ['data'] };
+    XLSX.writeFile(workbook, fileName);
   }
 }

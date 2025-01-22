@@ -135,7 +135,7 @@ below70Percentage: number = 0; // For סוכר מתחת ל-70
     'Release_Date', // Use unique identifier
   ];
   sugerAbove180 = new MatTableDataSource<any>();
-  dataSource3 = new MatTableDataSource<any>();
+  InsulinDataSource = new MatTableDataSource<any>();
   DiagnosisICD9dataSource = new MatTableDataSource<any>();
   dataSourceHemoglobin = new MatTableDataSource<any>();
   dataSourceAllConsiliums = new MatTableDataSource<any>();
@@ -200,8 +200,8 @@ below70Percentage: number = 0; // For סוכר מתחת ל-70
     this.sugerAbove180.paginator = this.paginator1;
     this.sugerAbove180.sort = this.sort1;
 
-    this.dataSource3.paginator = this.Ensoleen;
-    this.dataSource3.sort = this.sort3;
+    this.InsulinDataSource.paginator = this.Ensoleen;
+    this.InsulinDataSource.sort = this.sort3;
 
     this.DiagnosisICD9dataSource.paginator = this.paginator4;
     this.DiagnosisICD9dataSource.sort = this.sort4;
@@ -394,15 +394,15 @@ fetchDiagnosisData(): void {
         ? this.originalSugerAbove180.filter((item) => item.Release_Date === null)
         : this.originalSugerAbove180.filter((item) => item.Release_Date !== null);
   
-    // Filter data for the Insulin table (dataSource3)
-    this.dataSource3.data =
+    // Filter data for the Insulin table (InsulinDataSource)
+    this.InsulinDataSource.data =
       filter === 'All'
         ? this.originalDataSource3
         : filter === 'CurrentHospitalizations'
         ? this.originalDataSource3.filter((item) => item.Release_Date === null)
         : this.originalDataSource3.filter((item) => item.Release_Date !== null);
   
-    console.log('Filtered dataSource3 after hospitalization filter:', this.dataSource3.data);
+    console.log('Filtered InsulinDataSource after hospitalization filter:', this.InsulinDataSource.data);
   
     // Update hospitalization counts based on the filtered data
     this.CurrentHospitalizations = this.sugerAbove180.data.filter(
@@ -412,7 +412,7 @@ fetchDiagnosisData(): void {
     this.TotalHospitalizations = this.originalSugerAbove180.length;
   
     // Add any Insulin-specific counts or metrics here (if needed)
-    const insulinCurrentCount = this.dataSource3.data.filter(
+    const insulinCurrentCount = this.InsulinDataSource.data.filter(
       (item) => item.Release_Date === null
     ).length;
   
@@ -517,7 +517,7 @@ fetchDiagnosisData(): void {
     });
   
     // Calculate Insulin Percentage
-    const insulinTableLength = this.dataSource3.data.length; // Data length for מקבל אינסולין
+    const insulinTableLength = this.InsulinDataSource.data.length; // Data length for מקבל אינסולין
     const insulinDenominator = this.globalSourceTableFilter === 'מאושפזים' ? this.NullReleaseDateCount : this.NonNullReleaseDateCount;
     this.insulinPercentage = insulinDenominator > 0 ? (insulinTableLength / insulinDenominator) * 100 : 0;
   
@@ -560,7 +560,7 @@ fetchDiagnosisData(): void {
       isWithinDateRange(item.Admission_Date)
     );
   
-    this.dataSource3.data = this.originalDataSource3.filter((item) =>
+    this.InsulinDataSource.data = this.originalDataSource3.filter((item) =>
       isWithinDateRange(item.Admission_Date)
     );
   
@@ -568,7 +568,7 @@ fetchDiagnosisData(): void {
       isWithinDateRange(item.Admission_Date)
     );
   
-    console.log('Filtered dataSource3 after date filter:', this.dataSource3.data);
+    console.log('Filtered InsulinDataSource after date filter:', this.InsulinDataSource.data);
   
     this.dataSourceHemoglobin.data = this.originalDataSourceHemoglobin.filter((item) =>
       isWithinDateRange(item.Admission_Date)
@@ -689,20 +689,20 @@ fetchDiagnosisData(): void {
         this.sugerAbove180.data = filteredData.filter((item) => item.Release_Date === null);
         this.dataSourceBelow70.data = filteredBelow70.filter((item) => item.Release_Date === null);
         this.DiagnosisICD9dataSource.data = filteredICD9.filter((item) => item.Release_Date === null);
-        this.dataSource3.data = filteredInsulin.filter((item) => item.Release_Date === null);
+        this.InsulinDataSource.data = filteredInsulin.filter((item) => item.Release_Date === null);
       } else {
         // Filter for "All"
         this.sugerAbove180.data = filteredData;
         this.dataSourceBelow70.data = filteredBelow70;
         this.DiagnosisICD9dataSource.data = filteredICD9;
-        this.dataSource3.data = filteredInsulin;
+        this.InsulinDataSource.data = filteredInsulin;
       }
     
       // Update gauge values
       this.updateGaugeValues();
     
       console.log('Filters applied successfully!');
-      console.log('Filtered Insulin Data:', this.dataSource3.data);
+      console.log('Filtered Insulin Data:', this.InsulinDataSource.data);
     }
     
     
@@ -735,7 +735,7 @@ fetchDiagnosisData(): void {
     
       // Reset data sources to their original values
       this.sugerAbove180.data = [...this.originalSugerAbove180];
-      this.dataSource3.data = [...this.originalDataSource3];
+      this.InsulinDataSource.data = [...this.originalDataSource3];
       this.DiagnosisICD9dataSource.data = [...this.originalDataSourceDiagnosisICD9];
       this.dataSourceHemoglobin.data = [...this.originalDataSourceHemoglobin];
       this.dataSourceAllConsiliums.data = [...this.originalDataSourceAllConsiliums];
