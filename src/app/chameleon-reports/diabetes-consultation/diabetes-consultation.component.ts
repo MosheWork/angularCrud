@@ -68,10 +68,22 @@ below70Percentage: number = 0; // For סוכר מתחת ל-70
   originalDataSourceHemoglobin: any[] = [];
   originalDataSourceAllConsiliums: any[] = [];
   originalDataSourceBelow70: any[] = [];
+  originalDiabeticFootEstimation: any[] = [];
 
 
   selectedSourceFilter: string = 'All'; // Temporary storage for selected toggle
 
+  displayedColumnsDiabeticFootEstimation: string[] = [
+    'Admission_No',
+    'Admission_Date',
+    'Release_Date',
+    'Hospitalization_Patient',
+    'Admission_Medical_Record',
+    'Id_Num',
+    'First_Name',
+    'Last_Name',
+    'Grade',
+  ];
 
   sugerAbove180Columns: string[] = [
     'Admission_No',
@@ -140,6 +152,7 @@ below70Percentage: number = 0; // For סוכר מתחת ל-70
   dataSourceHemoglobin = new MatTableDataSource<any>();
   dataSourceAllConsiliums = new MatTableDataSource<any>();
   dataSourceBelow70 = new MatTableDataSource<any>();
+  DiabeticFootEstimationDataSource = new MatTableDataSource<any>();
 
 
   filterForm: FormGroup = new FormGroup({
@@ -160,6 +173,9 @@ below70Percentage: number = 0; // For סוכר מתחת ל-70
   @ViewChild('sortAllConsiliums') sortAllConsiliums!: MatSort;
   @ViewChild('sortBelow70') sortBelow70!: MatSort;
 
+  @ViewChild('paginatorDiabeticFootEstimation') paginatorDiabeticFootEstimation!: MatPaginator;
+@ViewChild('sortDiabeticFootEstimation') sortDiabeticFootEstimation!: MatSort;
+
   constructor(private http: HttpClient, private renderer: Renderer2) {}
 
   ngOnInit(): void {
@@ -169,6 +185,8 @@ below70Percentage: number = 0; // For סוכר מתחת ל-70
     this.fetchHemoglobinAbove8();
     this.fetchAllConsiliums();
     this.fetchLabResultsBelow70();
+    this.fetchDiabeticFootEstimation(); // Fetch Diabetic Foot Estimation data
+
   
     // Fetch initial hospitalization counts
     this.fetchHosCount(null, null);
@@ -214,26 +232,27 @@ below70Percentage: number = 0; // For סוכר מתחת ל-70
     this.dataSourceBelow70.paginator = this.paginatorBelow70;
     this.dataSourceBelow70.sort = this.sortBelow70;
    
+    this.DiabeticFootEstimationDataSource.paginator = this.paginatorDiabeticFootEstimation;
+    this.DiabeticFootEstimationDataSource.sort = this.sortDiabeticFootEstimation;
   }
 
-  // fetchGeneralData(): void {
-  //   this.http.get<any>(`${environment.apiUrl}/DiabetesConsultation`).subscribe(
-  //     (data) => {
-  //       this.CurrentHospitalizations = data.TotalHos;
-  //       this.totalHosWithIcd9 = data.TotalHosWithIcd9;
-  //       this.Icd9Percentage = data.Icd9Percentage;
-  //       //this.TotalHosLabResultover180 = data.TotalHosLabResultover180;
-  //       //this.labResultOver180Percentage = data.LabResultover180Percentage;
-  //       this.TotalHosInsulin = data.TotalHosInsulin;
-  //       this.insulinPercentage = data.InsulinPercentage;
-  //       this.HemoglobinAbove8Count = data.HemoglobinAbove8Count;
-  //       this.HemoglobinAbove8Percentage = data.HemoglobinAbove8Percentage;
-  //     },
-  //     (error) => {
-  //       console.error('Error fetching general data:', error);
-  //     }
-  //   );
-  // }
+  fetchDiabeticFootEstimation(): void {
+    this.http
+      .get<any[]>(`${environment.apiUrl}/DiabetesConsultation/DiabeticFootEstimation`)
+      .subscribe(
+        (data) => {
+          this.originalDiabeticFootEstimation = data; // Store original data
+          this.DiabeticFootEstimationDataSource.data = data; // Update table data source
+          this.applyGlobalSourceTableFilter(); // Apply global filter
+          this.applyGlobalDateFilter(); // Apply date filter
+          console.log('Fetched Diabetic Foot Estimation Data:', data);
+        },
+        (error) => {
+          console.error('Error fetching Diabetic Foot Estimation data:', error);
+        }
+      );
+  }
+  
 
   fetchLabResultsAboveThreshold(): void {
     this.http
@@ -377,6 +396,14 @@ fetchDiagnosisData(): void {
     const filter = this.globalSourceTableFilter;
   
     // Filter data for the ICD9 table
+    this.DiabeticFootEstimationDataSource.data =
+    filter === 'All'
+      ? this.originalDiabeticFootEstimation
+      : filter === 'CurrentHospitalizations'
+      ? this.originalDiabeticFootEstimation.filter((item) => item.Release_Date === null)
+      : this.originalDiabeticFootEstimation.filter((item) => item.Release_Date !== null);
+
+  console.log('Filtered DiabeticFootEstimationDataSource:', this.DiabeticFootEstimationDataSource.data);
     this.DiagnosisICD9dataSource.data =
       filter === 'All'
         ? this.originalDataSourceDiagnosisICD9
@@ -556,6 +583,12 @@ fetchDiagnosisData(): void {
     };
   
     // Filter data for each table
+
+  this.DiabeticFootEstimationDataSource.data = this.originalDiabeticFootEstimation.filter((item) =>
+  isWithinDateRange(item.Admission_Date)
+);
+
+console.log('Filtered DiabeticFootEstimationDataSource after date filter:', this.DiabeticFootEstimationDataSource.data);
     this.sugerAbove180.data = this.originalSugerAbove180.filter((item) =>
       isWithinDateRange(item.Admission_Date)
     );
@@ -683,6 +716,10 @@ fetchDiagnosisData(): void {
       const filteredInsulin = this.originalDataSource3.filter((item) =>
         this.isWithinDateRange(item.Admission_Date)
       );
+
+      const filteredDiabeticFootEstimation = this.originalDiabeticFootEstimation.filter((item) =>
+      this.isWithinDateRange(item.Admission_Date)
+    );
     
       if (this.globalSourceTableFilter === 'מאושפזים') {
         // Filter for "מאושפזים" (current hospitalizations)
@@ -690,12 +727,16 @@ fetchDiagnosisData(): void {
         this.dataSourceBelow70.data = filteredBelow70.filter((item) => item.Release_Date === null);
         this.DiagnosisICD9dataSource.data = filteredICD9.filter((item) => item.Release_Date === null);
         this.InsulinDataSource.data = filteredInsulin.filter((item) => item.Release_Date === null);
+        this.DiabeticFootEstimationDataSource.data = filteredDiabeticFootEstimation.filter(
+          (item) => item.Release_Date === null);
       } else {
         // Filter for "All"
         this.sugerAbove180.data = filteredData;
         this.dataSourceBelow70.data = filteredBelow70;
         this.DiagnosisICD9dataSource.data = filteredICD9;
         this.InsulinDataSource.data = filteredInsulin;
+        this.DiabeticFootEstimationDataSource.data = filteredDiabeticFootEstimation;
+
       }
     
       // Update gauge values

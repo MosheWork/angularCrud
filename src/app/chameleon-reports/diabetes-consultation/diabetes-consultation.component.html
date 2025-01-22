@@ -177,7 +177,18 @@ class="custom-toggle-group"
 
       <!-- Gauge for סוכר 180 וחולה סוכרת -->
 <mat-card class="gauge-card">
-  <div class="gauge-title">סוכר 180 וחולה סוכרת</div>
+  <div class="gauge-title">סוכר 180 וחולה סוכרת
+    <span 
+          matTooltip="    מונה: סך מטופלים עם סכרת מעל 180 | מכנה: סך מטופלים עם אבחנת סכרת ב ICD9"
+ 
+          matTooltipPosition="above"
+          style="cursor: pointer; font-size: 16px; margin-left: 5px;"
+        >
+        <mat-icon style="color: #007BFF;">help_outline</mat-icon>
+
+        </span>
+  </div>
+  
   <div class="gauge-content">
     <ngx-gauge
       [value]="sugar180DiabetesPercentage"
@@ -188,9 +199,9 @@ class="custom-toggle-group"
       [foregroundColor]="'#e74c3c'"
     ></ngx-gauge>
     <div class="gauge-info">
-    מטופלים עם סוכר מעל 180:
+   
       <strong>{{ sugerAbove180.data.length }}</strong> מתוך
-      <strong>{{ DiagnosisICD9dataSource.data.length }} </strong>מטופלים עם אבחנה של סכרת : 
+      <strong>{{ DiagnosisICD9dataSource.data.length }} </strong>
     </div>
   </div>
 </mat-card>
@@ -228,6 +239,86 @@ class="custom-toggle-group"
   >
     <mat-tab-group >
       <!-- First Tab -->
+      <mat-tab class="tabtitle" label="הערכת כף רגל סוכרתית">
+        <ng-template mat-tab-label>
+          <span matTooltip="נתוני הערכה לכף רגל סוכרתית" matTooltipPosition="above">
+            הערכת כף רגל סוכרתית
+          </span>
+        </ng-template>
+        <table
+          mat-table
+          [dataSource]="DiabeticFootEstimationDataSource"
+          class="mat-elevation-z8"
+          matSort
+          style="table-layout: fixed; width: 100%"
+        >
+          <ng-container matColumnDef="Admission_No">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>
+              Admission No
+            </th>
+            <td mat-cell *matCellDef="let element">
+              {{ element.Admission_No }}
+            </td>
+          </ng-container>
+          <ng-container matColumnDef="Admission_Date">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>
+              Admission Date
+            </th>
+            <td mat-cell *matCellDef="let element">
+              {{ element.Admission_Date | date: 'dd/MM/yyyy HH:mm' }}
+            </td>
+          </ng-container>
+          <ng-container matColumnDef="Release_Date">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>
+              Release Date
+            </th>
+            <td mat-cell *matCellDef="let element">
+              {{ element.Release_Date | date: 'dd/MM/yyyy HH:mm' }}
+            </td>
+          </ng-container>
+          <ng-container matColumnDef="Hospitalization_Patient">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>
+              Hospitalization Patient
+            </th>
+            <td mat-cell *matCellDef="let element">
+              {{ element.Hospitalization_Patient }}
+            </td>
+          </ng-container>
+          <ng-container matColumnDef="Admission_Medical_Record">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>
+              Medical Record
+            </th>
+            <td mat-cell *matCellDef="let element">
+              {{ element.Admission_Medical_Record }}
+            </td>
+          </ng-container>
+          <ng-container matColumnDef="Id_Num">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>ID Number</th>
+            <td mat-cell *matCellDef="let element">{{ element.Id_Num }}</td>
+          </ng-container>
+          <ng-container matColumnDef="First_Name">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>First Name</th>
+            <td mat-cell *matCellDef="let element">{{ element.First_Name }}</td>
+          </ng-container>
+          <ng-container matColumnDef="Last_Name">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Last Name</th>
+            <td mat-cell *matCellDef="let element">{{ element.Last_Name }}</td>
+          </ng-container>
+          <ng-container matColumnDef="Grade">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Grade</th>
+            <td mat-cell *matCellDef="let element">{{ element.Grade }}</td>
+          </ng-container>
+      
+          <tr mat-header-row *matHeaderRowDef="displayedColumnsDiabeticFootEstimation"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumnsDiabeticFootEstimation"></tr>
+        </table>
+        <mat-paginator
+          #paginatorDiabeticFootEstimation
+          [pageSizeOptions]="[5, 10, 20]"
+          showFirstLastButtons
+        ></mat-paginator>
+      </mat-tab>
+      
       <mat-tab class="tabtitle" label=" סוכר מעל 180" >
         <ng-template mat-tab-label>
           <span matTooltip="2 בדיקות סוכר מעל 180 תוך 48 שעות" matTooltipPosition="above">
