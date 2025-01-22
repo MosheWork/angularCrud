@@ -225,6 +225,34 @@ class="custom-toggle-group"
     </div>
   </div>
 </mat-card>
+<mat-card class="gauge-card">
+  <div class="gauge-title">
+    אומדן רגל סוכרתית
+    <span
+      matTooltip="מונה: סך מטופלים עם אומדן רגל סוכרתית | מכנה: סך מטופלים עם אבחנת סכרת ב ICD9"
+      matTooltipPosition="above"
+      style="cursor: pointer; font-size: 16px; margin-left: 5px;"
+    >
+      <mat-icon style="color: #007BFF;">help_outline</mat-icon>
+    </span>
+  </div>
+
+  <div class="gauge-content">
+    <ngx-gauge
+      [value]="diabeticFootEstimationPercentage"
+      [min]="0"
+      [max]="100"
+      [label]=""
+      [append]="'%'"
+      [foregroundColor]="'#3498db'"
+    ></ngx-gauge>
+    <div class="gauge-info">
+      <strong>{{ DiagnosisICD9dataSource.data.length  }}</strong>/
+      <strong>{{ DiabeticFootEstimationDataSource.data.length}} </strong>
+    </div>
+  </div>
+</mat-card>
+
 
       
       <!-- ייעוצים -->

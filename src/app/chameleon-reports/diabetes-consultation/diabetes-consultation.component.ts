@@ -40,6 +40,7 @@ export class DiabetesConsultationComponent implements OnInit, AfterViewInit {
 sugar70DiabetesPercentage: number = 0; // סוכר 70 וחולה סוכרת
   labResultsPercentage: number = 0; // For בדיקות מעבדה
 below70Percentage: number = 0; // For סוכר מתחת ל-70
+diabeticFootEstimationPercentage: number = 0;
 
   CurrentHospitalizations: number = 0; // Total with non-null Release_Date
   TotalHospitalizations: number = 0;  // Total with null Release_Date
@@ -245,6 +246,8 @@ below70Percentage: number = 0; // For סוכר מתחת ל-70
           this.DiabeticFootEstimationDataSource.data = data; // Update table data source
           this.applyGlobalSourceTableFilter(); // Apply global filter
           this.applyGlobalDateFilter(); // Apply date filter
+          this.updateGaugeValues(); // Update gauges
+
           console.log('Fetched Diabetic Foot Estimation Data:', data);
         },
         (error) => {
@@ -496,6 +499,14 @@ fetchDiagnosisData(): void {
       Denominator: labDenominator,
       Percentage: this.labResultsPercentage,
     });
+
+     // Calculate Diabetic Foot Estimation Percentage
+  this.diabeticFootEstimationPercentage =
+  this.DiagnosisICD9dataSource.data.length > 0
+    ? (this.DiabeticFootEstimationDataSource.data.length / this.DiagnosisICD9dataSource.data.length) * 100
+    : 0;
+
+console.log('Diabetic Foot Estimation Percentage:', this.diabeticFootEstimationPercentage);
   
     // Calculate Below 70 Percentage
     const below70TableLength = this.dataSourceBelow70.data.length; // Data length for סוכר מתחת ל-70
