@@ -44,6 +44,23 @@ export class CommunicationTherapistComponent implements OnInit {
   anamnesisResultsColumns: string[] = ['EmployeeName', 'Simple', 'Complex', 'VeryComplex'];
   fullListColumns: string[] = ['Subject', 'EntryDate', 'EntryUser', 'Heading', 'IdNumber', 'FirstName', 'LastName'];
 
+columnDisplayNames: { [key: string]: string } = {
+    EmployeeName: 'שם העובד',
+    SimpleA: 'טיפול פשוט A',
+    ComplexB: 'טיפול מורכב B',
+    VeryComplexC: 'טיפול מורכב מאוד C',
+    GroupD: 'טיפול קבוצתי D',
+    Subject: 'נושא',
+    EntryDate: 'תאריך הזנה',
+    EntryUser: ' שם העובד',
+    Heading: 'כותרת',
+    IdNumber: 'מספר מזהה',
+    FirstName: 'שם פרטי',
+    LastName: 'שם משפחה',
+    Simple: 'פשוט',
+    Complex: 'מורכב',
+    VeryComplex: ' מורכב מאוד'
+  };
   // Filters
   filterForm: FormGroup;
   availableYears: number[] = [2023, 2024, 2025];

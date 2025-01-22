@@ -50,10 +50,16 @@
           <div class="card-title"><h3>סיכום רכיב -מעקב קלינאית תקשורת</h3></div>
           <img src="../../assets/excel.png" alt="Download" (click)="exportDailyFollowUpToExcel()" class="download-icon" width="50px" />
 
-          <mat-table [dataSource]="dailyFollowUpDataSource" matSort  class="mat-elevation-z8">
+          <mat-table [dataSource]="dailyFollowUpDataSource" matSort class="mat-elevation-z8">
             <ng-container *ngFor="let column of dailyFollowUpColumns" [matColumnDef]="column">
-              <mat-header-cell *matHeaderCellDef mat-sort-header>{{ column }}</mat-header-cell>
-              <mat-cell *matCellDef="let element">{{ element[column] }}</mat-cell>
+              <!-- Display Hebrew column name in the header -->
+              <mat-header-cell *matHeaderCellDef mat-sort-header>
+                {{ columnDisplayNames[column] }}
+              </mat-header-cell>
+              <!-- Display table data -->
+              <mat-cell *matCellDef="let element">
+                {{ element[column] }}
+              </mat-cell>
             </ng-container>
             <mat-header-row *matHeaderRowDef="dailyFollowUpColumns"></mat-header-row>
             <mat-row *matRowDef="let row; columns: dailyFollowUpColumns"></mat-row>
@@ -66,10 +72,16 @@
           <div class="card-title"><h3> סיכום רכיב-סוג טיפול</h3></div>
           <img src="../../assets/excel.png" alt="Download" (click)="exportAnamnesisResultsToExcel()" class="download-icon" width="50px" />
 
-          <mat-table [dataSource]="anamnesisResultsDataSource" matSort #anamnesisResultsSort="matSort" class="mat-elevation-z8">
+          <mat-table [dataSource]="anamnesisResultsDataSource" matSort class="mat-elevation-z8">
             <ng-container *ngFor="let column of anamnesisResultsColumns" [matColumnDef]="column">
-              <mat-header-cell *matHeaderCellDef mat-sort-header>{{ column }}</mat-header-cell>
-              <mat-cell *matCellDef="let element">{{ element[column] }}</mat-cell>
+              <!-- Display Hebrew column name in the header -->
+              <mat-header-cell *matHeaderCellDef mat-sort-header>
+                {{ columnDisplayNames[column] }}
+              </mat-header-cell>
+              <!-- Display table data -->
+              <mat-cell *matCellDef="let element">
+                {{ element[column] }}
+              </mat-cell>
             </ng-container>
             <mat-header-row *matHeaderRowDef="anamnesisResultsColumns"></mat-header-row>
             <mat-row *matRowDef="let row; columns: anamnesisResultsColumns"></mat-row>
@@ -86,14 +98,26 @@
           <h3>טבלת נתונים</h3>
         </div>
         <img src="../../assets/excel.png" alt="Download" (click)="exportFullListToExcel()" class="download-icon" width="50px" />
-        <mat-table [dataSource]="fullListDataSource" matSort #fullListSort="matSort" class="mat-elevation-z8">
+        <mat-table [dataSource]="fullListDataSource" matSort class="mat-elevation-z8">
           <ng-container *ngFor="let column of fullListColumns" [matColumnDef]="column">
-            <mat-header-cell *matHeaderCellDef mat-sort-header>{{ column }}</mat-header-cell>
-            <mat-cell *matCellDef="let element">{{ element[column] }}</mat-cell>
+            <!-- Use Hebrew display name for headers -->
+            <mat-header-cell *matHeaderCellDef mat-sort-header>
+              {{ columnDisplayNames[column] }}
+            </mat-header-cell>
+            <!-- Display formatted data for specific columns -->
+            <mat-cell *matCellDef="let element">
+              <ng-container *ngIf="column === 'EntryDate'; else defaultCell">
+                {{ element[column] | date: 'dd/MM/yyyy HH:mm' }}
+              </ng-container>
+              <ng-template #defaultCell>
+                {{ element[column] }}
+              </ng-template>
+            </mat-cell>
           </ng-container>
           <mat-header-row *matHeaderRowDef="fullListColumns"></mat-header-row>
           <mat-row *matRowDef="let row; columns: fullListColumns"></mat-row>
         </mat-table>
+        
         <mat-paginator #fullListPaginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
       </mat-card-content>
     </mat-card>
