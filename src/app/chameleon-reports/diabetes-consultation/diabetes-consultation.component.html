@@ -267,6 +267,99 @@ class="custom-toggle-group"
   >
     <mat-tab-group >
       <!-- First Tab -->
+      <mat-tab class="tabtitle" label=" הערכת רגל סוכרתית (מאושפזים בלבד) ">
+        <ng-template mat-tab-label>
+          <span matTooltip="רשימת מטופלים מאושפזים בלבד עם הערכת רגל סוכרתית" matTooltipPosition="above">
+            -  מאושפזים הערכת רגל סוכרתית
+          </span>
+        </ng-template>
+        <table
+          mat-table
+          [dataSource]="DiabeticFootEstimationOnlHosDataSource"
+          class="mat-elevation-z8"
+          matSort
+          style="table-layout: fixed; width: 100%"
+        >
+          <ng-container matColumnDef="Admission_No">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>
+              Admission No
+            </th>
+            <td mat-cell *matCellDef="let element">
+              {{ element.Admission_No }}
+            </td>
+          </ng-container>
+          <ng-container matColumnDef="Admission_Date">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>
+              Admission Date
+            </th>
+            <td mat-cell *matCellDef="let element">
+              {{ element.Admission_Date | date }}
+            </td>
+          </ng-container>
+          <ng-container matColumnDef="First_Name">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>
+              First Name
+            </th>
+            <td mat-cell *matCellDef="let element">
+              {{ element.First_Name }}
+            </td>
+          </ng-container>
+          <ng-container matColumnDef="Last_Name">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>
+              Last Name
+            </th>
+            <td mat-cell *matCellDef="let element">
+              {{ element.Last_Name }}
+            </td>
+          </ng-container>
+          <ng-container matColumnDef="Id_Num">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>
+              ID Number
+            </th>
+            <td mat-cell *matCellDef="let element">
+              {{ element.Id_Num }}
+            </td>
+          </ng-container>
+          <ng-container matColumnDef="Admission_Medical_Record">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>
+              Medical Record
+            </th>
+            <td mat-cell *matCellDef="let element">
+              {{ element.Admission_Medical_Record }}
+            </td>
+          </ng-container>
+          <ng-container matColumnDef="UnitName">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>
+              Unit Name
+            </th>
+            <td mat-cell *matCellDef="let element">
+              {{ element.UnitName }}
+            </td>
+          </ng-container>
+          <ng-container matColumnDef="Unit">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>
+              Unit ID
+            </th>
+            <td mat-cell *matCellDef="let element">
+              {{ element.Unit }}
+            </td>
+          </ng-container>
+          <ng-container matColumnDef="Release_Date">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>
+              Release Date
+            </th>
+            <td mat-cell *matCellDef="let element">
+              {{ element.Release_Date | date }}
+            </td>
+          </ng-container>
+      
+          <tr mat-header-row *matHeaderRowDef="displayedColumnsDiabeticFootEstimationOnlHos"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumnsDiabeticFootEstimationOnlHos"></tr>
+        </table>
+        <mat-paginator #paginatorDiabeticFootEstimationOnlHos [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
+
+      </mat-tab>
+      
       <mat-tab class="tabtitle" label="הערכת כף רגל סוכרתית">
         <ng-template mat-tab-label>
           <span matTooltip="נתוני הערכה לכף רגל סוכרתית" matTooltipPosition="above">

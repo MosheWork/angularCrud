@@ -147,6 +147,20 @@ diabeticFootEstimationPercentage: number = 0;
     'Count_Less_70_Less_48h',
     'Release_Date', // Use unique identifier
   ];
+
+  DiabeticFootEstimationOnlHosDataSource = new MatTableDataSource<any>();
+displayedColumnsDiabeticFootEstimationOnlHos: string[] = [
+  'Admission_No',
+  'Admission_Date',
+  'Release_Date',
+  //'Hospitalization_Patient',
+  'Admission_Medical_Record',
+  'Id_Num',
+  'First_Name',
+  'Last_Name',
+  'UnitName',
+  'Unit',
+];
   sugerAbove180 = new MatTableDataSource<any>();
   InsulinDataSource = new MatTableDataSource<any>();
   DiagnosisICD9dataSource = new MatTableDataSource<any>();
@@ -166,6 +180,9 @@ diabeticFootEstimationPercentage: number = 0;
   @ViewChild('paginatorHemoglobin') paginatorHemoglobin!: MatPaginator;
   @ViewChild('paginatorAllConsiliums') paginatorAllConsiliums!: MatPaginator;
   @ViewChild('paginatorBelow70') paginatorBelow70!: MatPaginator;
+  @ViewChild('paginatorDiabeticFootEstimation', { static: true }) paginatorDiabeticFootEstimation!: MatPaginator;
+  @ViewChild('sortDiabeticFootEstimation', { static: true }) sortDiabeticFootEstimation!: MatSort;
+
 
   @ViewChild('sort1') sort1!: MatSort;
   @ViewChild('sort3', { static: false }) sort3!: MatSort;
@@ -173,9 +190,10 @@ diabeticFootEstimationPercentage: number = 0;
   @ViewChild('sortHemoglobin') sortHemoglobin!: MatSort;
   @ViewChild('sortAllConsiliums') sortAllConsiliums!: MatSort;
   @ViewChild('sortBelow70') sortBelow70!: MatSort;
+  @ViewChild('paginatorDiabeticFootEstimationOnlHos', { static: true }) paginatorDiabeticFootEstimationOnlHos!: MatPaginator;
+  @ViewChild('sortDiabeticFootEstimationOnlHos', { static: true }) sortDiabeticFootEstimationOnlHos!: MatSort;
 
-  @ViewChild('paginatorDiabeticFootEstimation') paginatorDiabeticFootEstimation!: MatPaginator;
-@ViewChild('sortDiabeticFootEstimation') sortDiabeticFootEstimation!: MatSort;
+
 
   constructor(private http: HttpClient, private renderer: Renderer2) {}
 
@@ -187,6 +205,7 @@ diabeticFootEstimationPercentage: number = 0;
     this.fetchAllConsiliums();
     this.fetchLabResultsBelow70();
     this.fetchDiabeticFootEstimation(); // Fetch Diabetic Foot Estimation data
+    this.fetchDiabeticFootEstimationOnlHos();
 
   
     // Fetch initial hospitalization counts
@@ -216,6 +235,8 @@ diabeticFootEstimationPercentage: number = 0;
   
 
   ngAfterViewInit(): void {
+    this.DiabeticFootEstimationOnlHosDataSource .paginator = this.paginatorDiabeticFootEstimationOnlHos;
+    this.DiabeticFootEstimationOnlHosDataSource .sort = this.sortDiabeticFootEstimation;
     this.sugerAbove180.paginator = this.paginator1;
     this.sugerAbove180.sort = this.sort1;
 
@@ -236,6 +257,20 @@ diabeticFootEstimationPercentage: number = 0;
     this.DiabeticFootEstimationDataSource.paginator = this.paginatorDiabeticFootEstimation;
     this.DiabeticFootEstimationDataSource.sort = this.sortDiabeticFootEstimation;
   }
+// Fetch data from the new endpoint
+fetchDiabeticFootEstimationOnlHos(): void {
+  this.http
+    .get<any[]>(`${environment.apiUrl}/DiabetesConsultation/DiabeticFootEstimationOnlHos`)
+    .subscribe(
+      (data) => {
+        this.DiabeticFootEstimationOnlHosDataSource.data = data;
+        console.log('Fetched Diabetic Foot Estimation OnlHos Data:', data);
+      },
+      (error) => {
+        console.error('Error fetching Diabetic Foot Estimation OnlHos data:', error);
+      }
+    );
+}
 
   fetchDiabeticFootEstimation(): void {
     this.http
