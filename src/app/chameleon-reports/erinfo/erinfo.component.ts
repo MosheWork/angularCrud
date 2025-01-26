@@ -95,6 +95,7 @@ export class ERInfoComponent implements OnInit, AfterViewInit {
   setupGlobalFilter(): void {
     this.filterForm.valueChanges.subscribe((filterValues) => {
       this.dataSource.filter = JSON.stringify(filterValues);
+      this.totalResults = this.dataSource.filteredData.length; // Update total results after filtering
     });
   
     this.dataSource.filterPredicate = (data, filter: string) => {
@@ -188,6 +189,11 @@ export class ERInfoComponent implements OnInit, AfterViewInit {
   
       return true; // Include the row if all conditions pass
     };
+  
+    // Update total results when global filter changes
+    this.globalFilter.valueChanges.subscribe(() => {
+      this.totalResults = this.dataSource.filteredData.length; // Update total results after global filtering
+    });
   }
   
 
@@ -201,7 +207,9 @@ export class ERInfoComponent implements OnInit, AfterViewInit {
     });
     this.globalFilter.setValue('');
     this.dataSource.filter = '';
+    this.totalResults = this.dataSource.data.length; // Reset total results to the full dataset
   }
+  
   
   
 
