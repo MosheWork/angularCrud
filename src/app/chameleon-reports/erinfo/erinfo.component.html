@@ -1,198 +1,99 @@
 <div class="body">
   <div class="nine">
-    <h1>{{ titleUnit }}</h1>
+    <h1>
+      דוח מטופלים
+      <span>סה"כ תוצאות: {{ totalResults }}</span>
+    </h1>
   </div>
 
-  <mat-tab-group dir="rtl">
-    <!-- Admission Treatment Decision Tab -->
-    <mat-tab label="סיום טיפול במלרד">
-      <div dir="rtl" class="filter-form" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-        <!-- Search Field -->
-        <mat-form-field style="flex-grow: 1; margin-right: 10px; width: 70%;">
-          <mat-label>חיפוש</mat-label>
-          <input matInput [formControl]="decisionFilter" />
-        </mat-form-field>
+  <div *ngIf="isLoading" class="spinner-container">
+    <mat-spinner></mat-spinner>
+  </div>
 
-        <!-- Icons -->
-        <div class="icon-container" style="display: flex; align-items: center;">
-          <!-- Excel Export -->
-          <img src="../../assets/excel.png" alt="Export to Excel" (click)="exportToExcel(decisionDataSource, 'Admission_Treatment_Decision')" width="50px" style="margin-left: 10px;" />
-          <!-- Reset Filters -->
-          <button mat-button mat-raised-button color="primary" class="custom-button" (click)="resetFilter(decisionFilter)">
-            <i class="material-icons">refresh</i>
-          </button>
+  <form [formGroup]="filterForm" dir="rtl" class="filter-form">
+    <div class="container-fluid mb-2">
+      <div class="row search-count">
+        <div class="col">
+          <div dir="rtl" class="card">
+            <div dir="rtl" class="card-body">
+              <!-- Date Filters -->
+              <mat-form-field class="filter-field">
+                <mat-label>חתימות על גיליון - תאריך</mat-label>
+                <input matInput [matDatepicker]="sheetDatePicker" formControlName="SignaturesInSheetEntryDate" />
+                <mat-datepicker-toggle matSuffix [for]="sheetDatePicker"></mat-datepicker-toggle>
+                <mat-datepicker #sheetDatePicker></mat-datepicker>
+              </mat-form-field>
+
+              <mat-form-field class="filter-field">
+                <mat-label>תאריך תלונה</mat-label>
+                <input matInput [matDatepicker]="complaintDatePicker" formControlName="ComplaintTabEntryDate" />
+                <mat-datepicker-toggle matSuffix [for]="complaintDatePicker"></mat-datepicker-toggle>
+                <mat-datepicker #complaintDatePicker></mat-datepicker>
+              </mat-form-field>
+
+              <mat-form-field class="filter-field">
+                <mat-label>תאריך שחרור</mat-label>
+                <input matInput [matDatepicker]="dischargeDatePicker" formControlName="DischargeDateTabEntryDate" />
+                <mat-datepicker-toggle matSuffix [for]="dischargeDatePicker"></mat-datepicker-toggle>
+                <mat-datepicker #dischargeDatePicker></mat-datepicker>
+              </mat-form-field>
+
+              <mat-form-field class="filter-field">
+                <mat-label>תאריך החלטה לטיפול</mat-label>
+                <input matInput [matDatepicker]="decisionDatePicker" formControlName="AdmissionTreatmentDecisionTabEntryDate" />
+                <mat-datepicker-toggle matSuffix [for]="decisionDatePicker"></mat-datepicker-toggle>
+                <mat-datepicker #decisionDatePicker></mat-datepicker>
+              </mat-form-field>
+
+              <mat-form-field class="filter-field">
+                <mat-label>תיאור החלטה</mat-label>
+                <input matInput formControlName="DecisionDescription" />
+              </mat-form-field>
+            </div>
+          </div>
         </div>
       </div>
+    </div>
+    <div dir="rtl" style="display: flex; justify-content: space-between; align-items: center">
+      <mat-form-field class="long-search-bar" style="flex: 1; padding-right: 10px">
+        <mat-label class="filters" style="color: blue">חיפוש</mat-label>
+        <input matInput [formControl]="globalFilter" class="search-input" />
+      </mat-form-field>
+      <div class="button-card">
+        <!-- Reset Button -->
+        <button mat-raised-button class="button reset-button" matTooltip="אפס סנן" (click)="resetFilters()">
+          <i class="material-icons">refresh</i>
+        </button>
+        <!-- Excel Button -->
+        <button mat-raised-button class="button excel-button" matTooltip="Download Excel" (click)="exportToExcel()">
+          <img src="../../assets/excel.png" alt="Download Excel" class="download-icon" />
+        </button>
+      </div>
+    </div>
+  </form>
 
-      <mat-table [dataSource]="decisionDataSource" matSort class="mat-elevation-z8">
-        <ng-container *ngFor="let column of decisionColumns" [matColumnDef]="column">
-          <mat-header-cell *matHeaderCellDef mat-sort-header>{{ column }}</mat-header-cell>
-          <mat-cell *matCellDef="let row">
-            <ng-container *ngIf="['EntryDate', 'ReleaseDate', 'ArrivalDate'].includes(column); else defaultColumn">
-              {{ row[column] | date: 'dd/MM/yyyy HH:mm' }}
-            </ng-container>
-            <ng-template #defaultColumn>
-              {{ row[column] }}
-            </ng-template>
-          </mat-cell>
+  <!-- Data Table -->
+  <mat-paginator [pageSize]="10" [pageSizeOptions]="[10, 25, 50]" showFirstLastButtons></mat-paginator>
+
+  <mat-table [dataSource]="dataSource" matSort dir="rtl" class="mat-elevation-z8">
+    <!-- Define table columns -->
+    <ng-container *ngFor="let column of displayedColumns" [matColumnDef]="column">
+      <mat-header-cell *matHeaderCellDef mat-sort-header>
+        {{ columnHeaders[column] }}
+      </mat-header-cell>
+      <mat-cell *matCellDef="let element">
+        <!-- Render date columns -->
+        <ng-container *ngIf="column.endsWith('Date'); else defaultCell">
+          {{ element[column] | date: 'dd/MM/yyyy HH:mm' }}
         </ng-container>
-        <mat-header-row *matHeaderRowDef="decisionColumns"></mat-header-row>
-        <mat-row *matRowDef="let row; columns: decisionColumns"></mat-row>
-      </mat-table>
-      
-      <mat-paginator #decisionPaginator [pageSizeOptions]="[15, 50, 100]"></mat-paginator>
-    </mat-tab>
+        <ng-template #defaultCell>
+          {{ element[column] }}
+        </ng-template>
+      </mat-cell>
+    </ng-container>
 
-    <!-- Urgency Tab -->
-    <mat-tab label="רמת דחיפות">
-      <div dir="rtl" class="filter-form" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-        <!-- Search Field -->
-        <mat-form-field style="flex-grow: 1; margin-right: 10px; width: 70%;">
-          <mat-label>חיפוש</mat-label>
-          <input matInput [formControl]="urgencyFilter" />
-        </mat-form-field>
-
-        <!-- Icons -->
-        <div class="icon-container" style="display: flex; align-items: center;">
-          <!-- Excel Export -->
-          <img src="../../assets/excel.png" alt="Export to Excel" (click)="exportToExcel(urgencyDataSource, 'Urgency')" width="50px" style="margin-left: 10px;" />
-          <!-- Reset Filters -->
-          <button mat-button mat-raised-button color="primary" class="custom-button" (click)="resetFilter(urgencyFilter)">
-            <i class="material-icons">refresh</i>
-          </button>
-        </div>
-      </div>
-
-      <mat-table [dataSource]="urgencyDataSource" matSort dir="rtl" class="mat-elevation-z8">
-        <ng-container *ngFor="let column of urgencyColumns" [matColumnDef]="column">
-          <mat-header-cell *matHeaderCellDef mat-sort-header>{{ column }}</mat-header-cell>
-          <mat-cell *matCellDef="let row">
-            <ng-container *ngIf="['EntryDate', 'ReleaseDate', 'ArrivalDate'].includes(column); else defaultColumn">
-              {{ row[column] | date: 'dd/MM/yyyy HH:mm' }}
-            </ng-container>
-            <ng-template #defaultColumn>
-              {{ row[column] }}
-            </ng-template>
-          </mat-cell>
-              </ng-container>
-        <mat-header-row *matHeaderRowDef="urgencyColumns"></mat-header-row>
-        <mat-row *matRowDef="let row; columns: urgencyColumns"></mat-row>
-      </mat-table>
-      <mat-paginator #urgencyPaginator [pageSizeOptions]="[15, 50, 100]"></mat-paginator>
-    </mat-tab>
-
-    <!-- Complaint Tab -->
-    <mat-tab label="סיבת פנייה">
-      <div dir="rtl" class="filter-form" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-        <!-- Search Field -->
-        <mat-form-field style="flex-grow: 1; margin-right: 10px; width: 70%;">
-          <mat-label>חיפוש</mat-label>
-          <input matInput [formControl]="complaintFilter" />
-        </mat-form-field>
-
-        <!-- Icons -->
-        <div class="icon-container" style="display: flex; align-items: center;">
-          <!-- Excel Export -->
-          <img src="../../assets/excel.png" alt="Export to Excel" (click)="exportToExcel(complaintDataSource, 'Complaint')" width="50px" style="margin-left: 10px;" />
-          <!-- Reset Filters -->
-          <button mat-button mat-raised-button color="primary" class="custom-button" (click)="resetFilter(complaintFilter)">
-            <i class="material-icons">refresh</i>
-          </button>
-        </div>
-      </div>
-
-      <mat-table [dataSource]="complaintDataSource" matSort dir="rtl" class="mat-elevation-z8">
-        <ng-container *ngFor="let column of complaintColumns" [matColumnDef]="column">
-          <mat-header-cell *matHeaderCellDef mat-sort-header>{{ column }}</mat-header-cell>
-          <mat-cell *matCellDef="let row">
-            <ng-container *ngIf="['EntryDate', 'ReleaseDate', 'ArrivalDate'].includes(column); else defaultColumn">
-              {{ row[column] | date: 'dd/MM/yyyy HH:mm' }}
-            </ng-container>
-            <ng-template #defaultColumn>
-              {{ row[column] }}
-            </ng-template>
-          </mat-cell>
-              </ng-container>
-        <mat-header-row *matHeaderRowDef="complaintColumns"></mat-header-row>
-        <mat-row *matRowDef="let row; columns: complaintColumns"></mat-row>
-      </mat-table>
-      <mat-paginator #complaintPaginator [pageSizeOptions]="[15, 50, 100]"></mat-paginator>
-    </mat-tab>
-
-    <!-- Discharge Date Tab -->
-    <mat-tab label="תאריך שחרור בפועל">
-      <div dir="rtl" class="filter-form" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-        <!-- Search Field -->
-        <mat-form-field style="flex-grow: 1; margin-right: 10px; width: 70%;">
-          <mat-label>חיפוש</mat-label>
-          <input matInput [formControl]="dischargeFilter" />
-        </mat-form-field>
-
-        <!-- Icons -->
-        <div class="icon-container" style="display: flex; align-items: center;">
-          <!-- Excel Export -->
-          <img src="../../assets/excel.png" alt="Export to Excel" (click)="exportToExcel(dischargeDataSource, 'Discharge_Date')" width="50px" style="margin-left: 10px;" />
-          <!-- Reset Filters -->
-          <button mat-button mat-raised-button color="primary" class="custom-button" (click)="resetFilter(dischargeFilter)">
-            <i class="material-icons">refresh</i>
-          </button>
-        </div>
-      </div>
-
-      <mat-table [dataSource]="dischargeDataSource" matSort dir="rtl" class="mat-elevation-z8">
-        <ng-container *ngFor="let column of dischargeColumns" [matColumnDef]="column">
-          <mat-header-cell *matHeaderCellDef mat-sort-header>{{ column }}</mat-header-cell>
-          <mat-cell *matCellDef="let row">
-            <ng-container *ngIf="['EntryDate', 'ReleaseDate', 'ArrivalDate'].includes(column); else defaultColumn">
-              {{ row[column] | date: 'dd/MM/yyyy HH:mm' }}
-            </ng-container>
-            <ng-template #defaultColumn>
-              {{ row[column] }}
-            </ng-template>
-          </mat-cell>
-              </ng-container>
-        <mat-header-row *matHeaderRowDef="dischargeColumns"></mat-header-row>
-        <mat-row *matRowDef="let row; columns: dischargeColumns"></mat-row>
-      </mat-table>
-      <mat-paginator #dischargePaginator [pageSizeOptions]="[15, 50, 100]"></mat-paginator>
-    </mat-tab>
-
-    <!-- Doctor Signature Tab -->
-    <mat-tab label=" חתימת רופא משחרר">
-      <div dir="rtl" class="filter-form" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-        <!-- Search Field -->
-        <mat-form-field style="flex-grow: 1; margin-right: 10px; width: 70%;">
-          <mat-label>חיפוש</mat-label>
-          <input matInput [formControl]="signatureFilter" />
-        </mat-form-field>
-
-        <!-- Icons -->
-        <div class="icon-container" style="display: flex; align-items: center;">
-          <!-- Excel Export -->
-          <img src="../../assets/excel.png" alt="Export to Excel" (click)="exportToExcel(signatureDataSource, 'Doctor_Signature')" width="50px" style="margin-left: 10px;" />
-          <!-- Reset Filters -->
-          <button mat-button mat-raised-button color="primary" class="custom-button" (click)="resetFilter(signatureFilter)">
-            <i class="material-icons">refresh</i>
-          </button>
-        </div>
-      </div>
-
-      <mat-table [dataSource]="signatureDataSource" matSort dir="rtl" class="mat-elevation-z8">
-        <ng-container *ngFor="let column of signatureColumns" [matColumnDef]="column">
-          <mat-header-cell *matHeaderCellDef mat-sort-header>{{ column }}</mat-header-cell>
-          <mat-cell *matCellDef="let row">
-            <ng-container *ngIf="['EntryDate', 'ReleaseDate', 'ArrivalDate'].includes(column); else defaultColumn">
-              {{ row[column] | date: 'dd/MM/yyyy HH:mm' }}
-            </ng-container>
-            <ng-template #defaultColumn>
-              {{ row[column] }}
-            </ng-template>
-          </mat-cell>
-              </ng-container>
-        <mat-header-row *matHeaderRowDef="signatureColumns"></mat-header-row>
-        <mat-row *matRowDef="let row; columns: signatureColumns"></mat-row>
-      </mat-table>
-      <mat-paginator #signaturePaginator [pageSizeOptions]="[15, 50, 100]"></mat-paginator>
-    </mat-tab>
-  </mat-tab-group>
+    <!-- Header and Row Definitions -->
+    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+    <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+  </mat-table>
 </div>
