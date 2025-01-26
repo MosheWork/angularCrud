@@ -92,26 +92,118 @@ export class ERInfoComponent implements OnInit, AfterViewInit {
       }
     );
   }
-
   setupGlobalFilter(): void {
-    this.globalFilter.valueChanges.subscribe((filterValue) => {
-      const safeFilterValue = filterValue?.trim().toLowerCase() || '';
-      this.dataSource.filter = safeFilterValue;
+    this.filterForm.valueChanges.subscribe((filterValues) => {
+      this.dataSource.filter = JSON.stringify(filterValues);
     });
-
+  
     this.dataSource.filterPredicate = (data, filter: string) => {
-      const dataStr = Object.values(data)
-        .map((value) => (value ? value.toString().toLowerCase() : ''))
-        .join(' ');
-      return dataStr.includes(filter);
+      const filterValues = JSON.parse(filter);
+  
+      // Check SignaturesInSheetEntryDate filter
+      if (filterValues.SignaturesInSheetEntryDate) {
+        if (
+          filterValues.SignaturesInSheetEntryDate === 'hasValue' &&
+          (!data.SignaturesInSheetEntryDate || data.SignaturesInSheetEntryDate.trim() === '')
+        ) {
+          return false; // Exclude if no value but filter expects a value
+        }
+        if (
+          filterValues.SignaturesInSheetEntryDate === 'noValue' &&
+          data.SignaturesInSheetEntryDate &&
+          data.SignaturesInSheetEntryDate.trim() !== ''
+        ) {
+          return false; // Exclude if value exists but filter expects no value
+        }
+      }
+  
+      // Check ComplaintTabEntryDate filter
+      if (filterValues.ComplaintTabEntryDate) {
+        if (
+          filterValues.ComplaintTabEntryDate === 'hasValue' &&
+          (!data.ComplaintTabEntryDate || data.ComplaintTabEntryDate.trim() === '')
+        ) {
+          return false;
+        }
+        if (
+          filterValues.ComplaintTabEntryDate === 'noValue' &&
+          data.ComplaintTabEntryDate &&
+          data.ComplaintTabEntryDate.trim() !== ''
+        ) {
+          return false;
+        }
+      }
+  
+      // Check DischargeDateTabEntryDate filter
+      if (filterValues.DischargeDateTabEntryDate) {
+        if (
+          filterValues.DischargeDateTabEntryDate === 'hasValue' &&
+          (!data.DischargeDateTabEntryDate || data.DischargeDateTabEntryDate.trim() === '')
+        ) {
+          return false;
+        }
+        if (
+          filterValues.DischargeDateTabEntryDate === 'noValue' &&
+          data.DischargeDateTabEntryDate &&
+          data.DischargeDateTabEntryDate.trim() !== ''
+        ) {
+          return false;
+        }
+      }
+  
+      // Check AdmissionTreatmentDecisionTabEntryDate filter
+      if (filterValues.AdmissionTreatmentDecisionTabEntryDate) {
+        if (
+          filterValues.AdmissionTreatmentDecisionTabEntryDate === 'hasValue' &&
+          (!data.AdmissionTreatmentDecisionTabEntryDate ||
+            data.AdmissionTreatmentDecisionTabEntryDate.trim() === '')
+        ) {
+          return false;
+        }
+        if (
+          filterValues.AdmissionTreatmentDecisionTabEntryDate === 'noValue' &&
+          data.AdmissionTreatmentDecisionTabEntryDate &&
+          data.AdmissionTreatmentDecisionTabEntryDate.trim() !== ''
+        ) {
+          return false;
+        }
+      }
+  
+      // Check DecisionDescription filter
+      if (filterValues.DecisionDescription) {
+        if (
+          filterValues.DecisionDescription === 'hasValue' &&
+          (!data.DecisionDescription || data.DecisionDescription.trim() === '')
+        ) {
+          return false; // Exclude if no value but filter expects a value
+        }
+        if (
+          filterValues.DecisionDescription === 'noValue' &&
+          data.DecisionDescription &&
+          data.DecisionDescription.trim() !== ''
+        ) {
+          return false; // Exclude if value exists but filter expects no value
+        }
+      }
+  
+      return true; // Include the row if all conditions pass
     };
   }
+  
 
   resetFilters(): void {
-    this.filterForm.reset();
+    this.filterForm.reset({
+      SignaturesInSheetEntryDate: '',
+      ComplaintTabEntryDate: '',
+      DischargeDateTabEntryDate: '',
+      AdmissionTreatmentDecisionTabEntryDate: '',
+      DecisionDescription: '',
+    });
     this.globalFilter.setValue('');
     this.dataSource.filter = '';
   }
+  
+  
 
   exportToExcel(): void {
     const data = this.dataSource.data.map((item) => {

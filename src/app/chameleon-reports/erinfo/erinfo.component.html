@@ -16,38 +16,54 @@
         <div class="col">
           <div dir="rtl" class="card">
             <div dir="rtl" class="card-body">
-              <!-- Date Filters -->
+              <!-- SignaturesInSheetEntryDate Filter -->
               <mat-form-field class="filter-field">
                 <mat-label>חתימות על גיליון - תאריך</mat-label>
-                <input matInput [matDatepicker]="sheetDatePicker" formControlName="SignaturesInSheetEntryDate" />
-                <mat-datepicker-toggle matSuffix [for]="sheetDatePicker"></mat-datepicker-toggle>
-                <mat-datepicker #sheetDatePicker></mat-datepicker>
+                <mat-select formControlName="SignaturesInSheetEntryDate">
+                  <mat-option value="">הכל</mat-option>
+                  <mat-option value="hasValue">יש תיעוד</mat-option>
+                  <mat-option value="noValue">אין תיעוד</mat-option>
+                </mat-select>
               </mat-form-field>
-
+  
+              <!-- ComplaintTabEntryDate Filter -->
               <mat-form-field class="filter-field">
                 <mat-label>תאריך תלונה</mat-label>
-                <input matInput [matDatepicker]="complaintDatePicker" formControlName="ComplaintTabEntryDate" />
-                <mat-datepicker-toggle matSuffix [for]="complaintDatePicker"></mat-datepicker-toggle>
-                <mat-datepicker #complaintDatePicker></mat-datepicker>
+                <mat-select formControlName="ComplaintTabEntryDate">
+                  <mat-option value="">הכל</mat-option>
+                  <mat-option value="hasValue">יש תיעוד</mat-option>
+                  <mat-option value="noValue">אין תיעוד</mat-option>
+                </mat-select>
               </mat-form-field>
-
+  
+              <!-- DischargeDateTabEntryDate Filter -->
               <mat-form-field class="filter-field">
                 <mat-label>תאריך שחרור</mat-label>
-                <input matInput [matDatepicker]="dischargeDatePicker" formControlName="DischargeDateTabEntryDate" />
-                <mat-datepicker-toggle matSuffix [for]="dischargeDatePicker"></mat-datepicker-toggle>
-                <mat-datepicker #dischargeDatePicker></mat-datepicker>
+                <mat-select formControlName="DischargeDateTabEntryDate">
+                  <mat-option value="">הכל</mat-option>
+                  <mat-option value="hasValue">יש תיעוד</mat-option>
+                  <mat-option value="noValue">אין תיעוד</mat-option>
+                </mat-select>
               </mat-form-field>
-
+  
+              <!-- AdmissionTreatmentDecisionTabEntryDate Filter -->
               <mat-form-field class="filter-field">
                 <mat-label>תאריך החלטה לטיפול</mat-label>
-                <input matInput [matDatepicker]="decisionDatePicker" formControlName="AdmissionTreatmentDecisionTabEntryDate" />
-                <mat-datepicker-toggle matSuffix [for]="decisionDatePicker"></mat-datepicker-toggle>
-                <mat-datepicker #decisionDatePicker></mat-datepicker>
+                <mat-select formControlName="AdmissionTreatmentDecisionTabEntryDate">
+                  <mat-option value="">הכל</mat-option>
+                  <mat-option value="hasValue">יש תיעוד</mat-option>
+                  <mat-option value="noValue">אין תיעוד</mat-option>
+                </mat-select>
               </mat-form-field>
-
+  
+              <!-- DecisionDescription Filter -->
               <mat-form-field class="filter-field">
                 <mat-label>תיאור החלטה</mat-label>
-                <input matInput formControlName="DecisionDescription" />
+                <mat-select formControlName="DecisionDescription">
+                  <mat-option value="">הכל</mat-option>
+                  <mat-option value="hasValue">יש תיעוד</mat-option>
+                  <mat-option value="noValue">אין תיעוד</mat-option>
+                </mat-select>
               </mat-form-field>
             </div>
           </div>
