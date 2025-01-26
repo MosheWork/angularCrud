@@ -91,7 +91,7 @@
   <!-- Data Table -->
   <mat-paginator [pageSize]="10" [pageSizeOptions]="[10, 25, 50]" showFirstLastButtons></mat-paginator>
 
-  <mat-table [dataSource]="dataSource" matSort dir="rtl" class="mat-elevation-z8">
+  <mat-table [dataSource]="dataSource" matSort dir="rtl" class="bold-header-table">
     <!-- Define table columns -->
     <ng-container *ngFor="let column of displayedColumns" [matColumnDef]="column">
       <mat-header-cell *matHeaderCellDef mat-sort-header>

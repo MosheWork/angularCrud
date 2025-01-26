@@ -214,25 +214,35 @@ export class ERInfoComponent implements OnInit, AfterViewInit {
   
 
   exportToExcel(): void {
+    // Map the data to include Hebrew column headers
     const data = this.dataSource.data.map((item) => {
       return this.displayedColumns.reduce((acc, column) => {
-        acc[column] = item[column];
+        acc[this.columnHeaders[column]] = item[column]; // Use Hebrew column headers
         return acc;
       }, {} as any);
     });
-
+  
+    // Create an Excel worksheet
     const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(data);
+  
+    // Create a workbook with the worksheet
     const workbook: XLSX.WorkBook = { Sheets: { data: worksheet }, SheetNames: ['data'] };
+  
+    // Write the workbook to a buffer
     const excelBuffer: any = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
+  
+    // Create a Blob from the buffer
     const blob: Blob = new Blob([excelBuffer], {
       type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
     });
-
+  
+    // Create a download link for the Blob
     const url = window.URL.createObjectURL(blob);
     const anchor = document.createElement('a');
     anchor.href = url;
-    anchor.download = 'ERInfoData.xlsx';
+    anchor.download = 'דוח_מטופלים.xlsx'; // Hebrew filename
     anchor.click();
     window.URL.revokeObjectURL(url);
   }
+  
 }
