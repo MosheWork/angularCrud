@@ -1,18 +1,18 @@
-import { Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
+import { Component, OnInit, AfterViewInit, ViewChild } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
-import { FormControl, FormGroup, FormBuilder } from '@angular/forms';
+import { FormGroup, FormBuilder, FormControl } from '@angular/forms';
 import { environment } from '../../../environments/environment';
 import * as XLSX from 'xlsx';
 
 @Component({
   selector: 'app-erinfo',
   templateUrl: './erinfo.component.html',
-  styleUrls: ['./erinfo.component.scss']
+  styleUrls: ['./erinfo.component.scss'],
 })
-export class ERInfoComponent implements OnInit {
+export class ERInfoComponent implements OnInit, AfterViewInit {
   displayedColumns: string[] = [
     'AdmissionNo',
     'IdNum',
@@ -26,49 +26,52 @@ export class ERInfoComponent implements OnInit {
     'EntryUserFullName',
     'AdjustedAdmissionNo',
     'ReleaseDate',
-    'ArrivalDate'
+    'ArrivalDate',
   ];
 
   columnHeaders: { [key: string]: string } = {
-    AdmissionNo: 'מספר קבלה',
-    IdNum: 'תעודת זהות',
+    AdmissionNo: 'מספר תיק',
+    IdNum: 'מספר זהות',
     SignaturesInSheetEntryDate: 'חתימות על גיליון - תאריך',
     ComplaintTabEntryDate: 'תאריך תלונה',
     DischargeDateTabEntryDate: 'תאריך שחרור',
     AdmissionTreatmentDecisionTabEntryDate: 'תאריך החלטה לטיפול',
-    AdmissionTreatmentUrgencyEntryDate: 'תאריך דחיפות טיפול',
+    AdmissionTreatmentUrgencyEntryDate: 'דחיפות טיפול - תאריך',
     DecisionDescription: 'תיאור החלטה',
     SystemUnitName: 'שם יחידה',
-    EntryUserFullName: 'שם משתמש מלא',
-    AdjustedAdmissionNo: 'מספר קבלה מותאם',
+    EntryUserFullName: 'שם משתמש',
+    AdjustedAdmissionNo: 'מספר תיק מותאם',
     ReleaseDate: 'תאריך שחרור',
-    ArrivalDate: 'תאריך הגעה'
+    ArrivalDate: 'תאריך הגעה',
   };
 
   dataSource = new MatTableDataSource<any>([]);
   globalFilter = new FormControl('');
   filterForm: FormGroup;
   isLoading: boolean = true;
-  totalResults: number = 0;
+  totalResults: number = 0; // Add totalResults property
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
   constructor(private http: HttpClient, private fb: FormBuilder) {
     this.filterForm = this.fb.group({
-      SignaturesInSheetEntryDate: new FormControl(''),
-      ComplaintTabEntryDate: new FormControl(''),
-      DischargeDateTabEntryDate: new FormControl(''),
-      AdmissionTreatmentDecisionTabEntryDate: new FormControl(''),
-      AdmissionTreatmentUrgencyEntryDate: new FormControl(''),
-      DecisionDescription: new FormControl('')
+      SignaturesInSheetEntryDate: [''],
+      ComplaintTabEntryDate: [''],
+      DischargeDateTabEntryDate: [''],
+      AdmissionTreatmentDecisionTabEntryDate: [''],
+      DecisionDescription: [''],
     });
   }
 
   ngOnInit(): void {
     this.loadData();
     this.setupGlobalFilter();
-    this.filterForm.valueChanges.subscribe(() => this.applyFilters());
+  }
+
+  ngAfterViewInit(): void {
+    this.dataSource.paginator = this.paginator;
+    this.dataSource.sort = this.sort;
   }
 
   loadData(): void {
@@ -78,8 +81,10 @@ export class ERInfoComponent implements OnInit {
     this.http.get<any[]>(url).subscribe(
       (response: any[]) => {
         this.dataSource.data = response;
-        this.totalResults = response.length;
+        this.totalResults = response.length; // Update totalResults with the length of the data
+
         this.isLoading = false;
+
       },
       (error) => {
         console.error('Error loading data:', error);
@@ -102,48 +107,14 @@ export class ERInfoComponent implements OnInit {
     };
   }
 
-  applyFilters(): void {
-    const filters = this.filterForm.value;
-
-    this.dataSource.filterPredicate = (data: any, filter: string) => {
-      const matchesDateFilter = (field: string) => {
-        if (!filters[field]) return true;
-        const filterDate = new Date(filters[field]);
-        const dataDate = new Date(data[field]);
-        return filterDate.getTime() === dataDate.getTime();
-      };
-
-      const matchesTextFilter = (field: string) => {
-        if (!filters[field]) return true;
-        return data[field]?.toLowerCase().includes(filters[field].toLowerCase());
-      };
-
-      return (
-        matchesDateFilter('SignaturesInSheetEntryDate') &&
-        matchesDateFilter('ComplaintTabEntryDate') &&
-        matchesDateFilter('DischargeDateTabEntryDate') &&
-        matchesDateFilter('AdmissionTreatmentDecisionTabEntryDate') &&
-        matchesDateFilter('AdmissionTreatmentUrgencyEntryDate') &&
-        matchesTextFilter('DecisionDescription')
-      );
-    };
-
-    this.dataSource.filter = 'apply';
-    this.totalResults = this.dataSource.filteredData.length;
-  }
-
-  onFilterChange(): void {
-    this.applyFilters();
-  }
-
   resetFilters(): void {
     this.filterForm.reset();
     this.globalFilter.setValue('');
-    this.applyFilters();
+    this.dataSource.filter = '';
   }
 
   exportToExcel(): void {
-    const data = this.dataSource.filteredData.map((item) => {
+    const data = this.dataSource.data.map((item) => {
       return this.displayedColumns.reduce((acc, column) => {
         acc[column] = item[column];
         return acc;
@@ -154,7 +125,7 @@ export class ERInfoComponent implements OnInit {
     const workbook: XLSX.WorkBook = { Sheets: { data: worksheet }, SheetNames: ['data'] };
     const excelBuffer: any = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
     const blob: Blob = new Blob([excelBuffer], {
-      type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+      type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
     });
 
     const url = window.URL.createObjectURL(blob);
