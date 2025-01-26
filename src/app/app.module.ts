@@ -128,6 +128,7 @@ import { AwsClaudeInvocationComponent } from './aws-claude-invocation/aws-claude
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { ERInfoComponent } from './chameleon-reports/erinfo/erinfo.component';
 import { CommunicationTherapistComponent } from './chameleon-reports/communication-therapist/communication-therapist.component';
+import { VWInfectionControlICUComponent } from './chameleon-reports/vwinfection-control-icu/vwinfection-control-icu.component';
 
 @NgModule({
   declarations: [
@@ -223,7 +224,8 @@ import { CommunicationTherapistComponent } from './chameleon-reports/communicati
     DiabetesConsultationComponent,
     AwsClaudeInvocationComponent,
     ERInfoComponent,
-    CommunicationTherapistComponent
+    CommunicationTherapistComponent,
+    VWInfectionControlICUComponent
   
   ],
   imports: [

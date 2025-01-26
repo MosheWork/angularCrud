@@ -59,6 +59,7 @@ import { DiabetesConsultationComponent } from './chameleon-reports/diabetes-cons
 import { AwsClaudeInvocationComponent } from './aws-claude-invocation/aws-claude-invocation.component';
 import { ERInfoComponent } from './chameleon-reports/erinfo/erinfo.component';
 import { CommunicationTherapistComponent } from './chameleon-reports/communication-therapist/communication-therapist.component';
+import { VWInfectionControlICUComponent } from './chameleon-reports/vwinfection-control-icu/vwinfection-control-icu.component';
 
 const routes: Routes = [
   { path: 'users', component: UsersComponent },
@@ -136,6 +137,7 @@ const routes: Routes = [
    { path: 'diabetes-consultation', component: DiabetesConsultationComponent },//דוח סכרת לליך שביט
    { path: 'er-info', component: ERInfoComponent },//דוח מיון לעידן
    { path: 'CommunicationTherapist', component: CommunicationTherapistComponent },//דוח קלינאית תקשורת לבתאל
+   { path: 'vwinfection-control-icu', component: VWInfectionControlICUComponent },//דוח  להיבה מחלות זיהומיות שאילתא מאופיר
 
 //chemelondashboard
 { path: 'DepartmentCapacity', component: DepartmentCapacityComponent }, // פרוייקט אישי
