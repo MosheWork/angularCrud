@@ -18,7 +18,7 @@
             <div dir="rtl" class="card-body">
               <!-- SignaturesInSheetEntryDate Filter -->
               <mat-form-field class="filter-field">
-                <mat-label>חתימות על גיליון - תאריך</mat-label>
+                <mat-label>חתימת רופא משחרר</mat-label>
                 <mat-select formControlName="SignaturesInSheetEntryDate">
                   <mat-option value="">הכל</mat-option>
                   <mat-option value="hasValue">יש תיעוד</mat-option>
@@ -28,7 +28,7 @@
   
               <!-- ComplaintTabEntryDate Filter -->
               <mat-form-field class="filter-field">
-                <mat-label>תאריך תלונה</mat-label>
+                <mat-label>סיבת פנייה </mat-label>
                 <mat-select formControlName="ComplaintTabEntryDate">
                   <mat-option value="">הכל</mat-option>
                   <mat-option value="hasValue">יש תיעוד</mat-option>
@@ -38,7 +38,7 @@
   
               <!-- DischargeDateTabEntryDate Filter -->
               <mat-form-field class="filter-field">
-                <mat-label>תאריך שחרור</mat-label>
+                <mat-label> תאריך שחרור בפועל </mat-label>
                 <mat-select formControlName="DischargeDateTabEntryDate">
                   <mat-option value="">הכל</mat-option>
                   <mat-option value="hasValue">יש תיעוד</mat-option>
@@ -48,7 +48,7 @@
   
               <!-- AdmissionTreatmentDecisionTabEntryDate Filter -->
               <mat-form-field class="filter-field">
-                <mat-label>תאריך החלטה לטיפול</mat-label>
+                <mat-label>סיבת פנייה </mat-label>
                 <mat-select formControlName="AdmissionTreatmentDecisionTabEntryDate">
                   <mat-option value="">הכל</mat-option>
                   <mat-option value="hasValue">יש תיעוד</mat-option>
@@ -58,13 +58,41 @@
   
               <!-- DecisionDescription Filter -->
               <mat-form-field class="filter-field">
-                <mat-label>תיאור החלטה</mat-label>
+                <mat-label>סיום טיפול במלר"ד </mat-label>
                 <mat-select formControlName="DecisionDescription">
                   <mat-option value="">הכל</mat-option>
-                  <mat-option value="hasValue">יש תיעוד</mat-option>
-                  <mat-option value="noValue">אין תיעוד</mat-option>
+                  <mat-option value="אשפוז">אשפוז</mat-option>
+                  <mat-option value="אשפוז בית">אשפוז בית</mat-option>
+                  <mat-option value="העברה למוסד רפואי אחר">העברה למוסד רפואי אחר</mat-option>
+                  <mat-option value="העברה למיון אחר">העברה למיון אחר</mat-option>
+                  <mat-option value="חדר לידה">חדר לידה</mat-option>
+                  <mat-option value="חדר ניתוח">חדר ניתוח</mat-option>
+                  <mat-option value="נפטר/ה">נפטר/ה</mat-option>
+                  <mat-option value="סירוב אשפוז">סירוב אשפוז</mat-option>
+                  <mat-option value="עזב/ה על דעת עצמו/ה">עזב/ה על דעת עצמו/ה</mat-option>
+                  <mat-option value="שחרור">שחרור</mat-option>
+                  <mat-option value="(ריק)">(ריק)</mat-option>
+                </mat-select>
+
+              </mat-form-field>
+              <mat-form-field class="filter-field">
+                <mat-label>סוג מיון </mat-label>
+                <mat-select formControlName="ResponsibleDoctor">
+                  <mat-option value="">הכל</mat-option>
+                  <mat-option value="פנימי">פנימי</mat-option>
+                  <mat-option value="כירורגיי">כירורגיי</mat-option>
+                  <mat-option value="אורתופדי">אורתופדי</mat-option>
+                  <mat-option value="עיניים">עיניים</mat-option>
+                  <mat-option value="נשים">נשים</mat-option>
+                  <mat-option value="פה ולסת">פה ולסת</mat-option>
+                  <mat-option value="אף אוזן גרון">אף אוזן גרון</mat-option>
+                  <mat-option value="אורולוגי">אורולוגי</mat-option>
+                  <mat-option value="אא&quot;ג">אא"ג</mat-option>
+                  <mat-option value="נפש">נפש</mat-option>
+                  <mat-option value="(ריק)">(ריק)</mat-option>
                 </mat-select>
               </mat-form-field>
+
             </div>
           </div>
         </div>

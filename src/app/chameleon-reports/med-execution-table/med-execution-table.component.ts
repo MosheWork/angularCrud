@@ -68,7 +68,11 @@ export class MedExecutionTableComponent implements OnInit, AfterViewInit {
   filteredGenericNameOptions!: Observable<string[]>;
   filteredUnitNameOptions: string[] = [];
   unitNameFilter: string = '';
+  unitSatelliteNameOptions: string[] = []; // Holds options for Unit_Satellite_Name
+  unitSatelliteNamesControl = new FormControl<string[]>([]); // Form control for Unit_Satellite_Name
 
+  // Add this to the `createFilterForm` method:
+  
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
@@ -84,6 +88,7 @@ export class MedExecutionTableComponent implements OnInit, AfterViewInit {
     this.fetchBasicNameOptions();
     this.fetchGenericNameOptions();
     this.fetchUnitNameOptions();
+    this.fetchUnitSatelliteNameOptions()
 
     this.filteredBasicNameOptions = this.basicNamesControl.valueChanges.pipe(
       startWith(''),
@@ -110,7 +115,18 @@ export class MedExecutionTableComponent implements OnInit, AfterViewInit {
       }
     );
   }
-
+  fetchUnitSatelliteNameOptions() {
+    this.http.get<string[]>(`${environment.apiUrl}MedExecutionAPI/GetUnitSatelliteNameOptions`).subscribe(
+      data => {
+        this.unitSatelliteNameOptions = data;
+      },
+      error => {
+        console.error('Error fetching unit satellite name options:', error);
+      }
+    );
+  }
+  
+  
   fetchGenericNameOptions() {
     this.http.get<string[]>(`${environment.apiUrl}MedExecutionAPI/GetGenericNameOptions`).subscribe(
       data => {
@@ -175,49 +191,57 @@ export class MedExecutionTableComponent implements OnInit, AfterViewInit {
     this.showSuccessMessage = false;
     const filters = this.filterForm.value;
     let params = new HttpParams();
-
+  
     if (this.basicNamesControl.value) {
       params = params.append('Basic_Names', this.basicNamesControl.value);
     }
-
+  
     if (filters.Drug) {
       params = params.append('Drug', filters.Drug);
     }
-
+  
     if (filters.Execution_Date) {
       const formattedExecutionDate = this.datePipe.transform(filters.Execution_Date, 'yyyy-MM-dd');
       params = params.append('Execution_Date', formattedExecutionDate!);
     }
-
+  
     if (filters.Category_Name) {
       params = params.append('Category_Name', filters.Category_Name);
     }
-
+  
     const selectedUnitNames: string[] = this.unitNamesControl.value ?? [];
     if (selectedUnitNames.length > 0) {
       selectedUnitNames.forEach((unitName: string) => {
         params = params.append('Execution_UnitNames', unitName);
       });
     }
-
+  
     if (filters.Admission_No) {
       params = params.append('Admission_No', filters.Admission_No);
     }
-
+  
     if (this.genericNamesControl.value) {
       params = params.append('Generic_Names_ForDisplay', this.genericNamesControl.value);
     }
-
+  
     if (filters.StartDate) {
       const formattedStartDate = this.datePipe.transform(filters.StartDate, 'yyyy-MM-dd');
       params = params.append('StartDate', formattedStartDate!);
     }
-
+  
     if (filters.EndDate) {
       const formattedEndDate = this.datePipe.transform(filters.EndDate, 'yyyy-MM-dd');
       params = params.append('EndDate', formattedEndDate!);
     }
-
+  
+    // New filter for Unit_Satellite_Name
+    const selectedUnitSatelliteNames: string[] = this.unitSatelliteNamesControl.value ?? [];
+    if (selectedUnitSatelliteNames.length > 0) {
+      selectedUnitSatelliteNames.forEach((unitSatelliteName: string) => {
+        params = params.append('Unit_SatelliteNames', unitSatelliteName);
+      });
+    }
+  
     this.http.get<MedExecutionModel[]>(`${environment.apiUrl}MedExecutionAPI`, { params })
       .subscribe(data => {
         this.dataSource.data = data;
@@ -231,6 +255,7 @@ export class MedExecutionTableComponent implements OnInit, AfterViewInit {
         this.loading = false;
       });
   }
+  
 
   createFilterForm(): FormGroup {
     return this.fb.group({
@@ -239,12 +264,14 @@ export class MedExecutionTableComponent implements OnInit, AfterViewInit {
       Execution_Date: new FormControl(''),
       Category_Name: new FormControl(''),
       Execution_UnitNames: this.unitNamesControl,
+      Unit_SatelliteNames: this.unitSatelliteNamesControl, // Include the control here
       Admission_No: new FormControl(''),
       Generic_Names_ForDisplay: this.genericNamesControl,
       StartDate: new FormControl(''),
-      EndDate: new FormControl('')
+      EndDate: new FormControl(''),
     });
   }
+  
 
   getFormControl(column: string): FormControl {
     return this.filterForm.get(column) as FormControl;

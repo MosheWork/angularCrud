@@ -257,3 +257,70 @@
     overflow: hidden;
     vertical-align: middle;
   }
+  .scrollable-container {
+    overflow-x: auto; /* Enable horizontal scrolling */
+    max-width: 100%; /* Ensure the table doesn't exceed the container */
+    background-color: #f9f9f9; /* Light gray background for contrast */
+    border-radius: 8px; /* Rounded corners */
+    padding: 10px; /* Space around the table */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+  }
+  
+  .mat-table {
+    min-width: 800px; /* Set a minimum width for the table */
+    background-color: white; /* White table background */
+    border-radius: 8px; /* Rounded corners */
+    overflow: hidden; /* Hide content that overflows */
+  }
+  
+  .mat-header-row {
+    background-color: #673ab7; /* Purple header row */
+    color: white; /* White text for headers */
+    font-weight: bold; /* Bold text */
+  }
+  
+  .mat-header-cell {
+    font-size: 14px; /* Slightly larger font size */
+    padding: 8px 12px; /* Padding for spacing */
+    text-align: center; /* Center-align text */
+    border-bottom: 2px solid #ddd; /* Bottom border for separation */
+  }
+  
+  .mat-row {
+    font-size: 14px; /* Default font size for rows */
+    background-color: white; /* White background for rows */
+    transition: background-color 0.3s ease; /* Smooth transition on hover */
+  }
+  
+  .mat-row:nth-child(even) {
+    background-color: #f3f3f3; /* Light gray for alternating rows */
+  }
+  
+  .mat-row:hover {
+    background-color: #e0f7fa; /* Light teal on hover */
+  }
+  
+  .mat-cell {
+    padding: 8px 12px; /* Padding for each cell */
+    text-align: center; /* Center-align text */
+    border-bottom: 1px solid #ddd; /* Light gray border between rows */
+  }
+  
+  .mat-sort-header {
+    cursor: pointer; /* Pointer cursor on sortable headers */
+  }
+  
+  .mat-sort-header-arrow {
+    color: white; /* Arrow color matches the header text */
+  }
+  
+  .mat-paginator {
+    background-color: white; /* White background for the paginator */
+    padding: 10px; /* Add padding */
+  }
+  
+  .mat-paginator-range-label,
+  .mat-paginator-page-size-label {
+    font-size: 14px; /* Font size for paginator text */
+  }
+  

@@ -16,35 +16,49 @@ export class ERInfoComponent implements OnInit, AfterViewInit {
   displayedColumns: string[] = [
     'AdmissionNo',
     'IdNum',
-    'SignaturesInSheetEntryDate',
-    'ComplaintTabEntryDate',
-    'DischargeDateTabEntryDate',
-    'AdmissionTreatmentDecisionTabEntryDate',
+    'ResponsibleDoctor', // סוג מיון
     'AdmissionTreatmentUrgencyEntryDate',
+    'AdmissionTreatmentUrgencyEntryUser',
+    'AdmissionTreatmentDecisionTabEntryDate',
+    'AdmissionTreatmentDecisionTabEntryUser',
+    'ComplaintTabEntryDate',
+    'ComplaintTabEntryUser',
     'DecisionDescription',
+    'DischargeDateTabEntryDate',
+    'DischargeDateTabEntryUser',
+    'SignaturesInSheetEntryDate',
+    'SignaturesInSheetEntryUser',
     'SystemUnitName',
     'EntryUserFullName',
-    'AdjustedAdmissionNo',
+    //'AdjustedAdmissionNo',
     'ReleaseDate',
-    'ArrivalDate',
+    'ArrivalDate'
+   
   ];
+  
 
   columnHeaders: { [key: string]: string } = {
     AdmissionNo: 'מספר תיק',
     IdNum: 'מספר זהות',
-    SignaturesInSheetEntryDate: 'חתימות על גיליון - תאריך',
-    ComplaintTabEntryDate: 'תאריך תלונה',
-    DischargeDateTabEntryDate: 'תאריך שחרור',
-    AdmissionTreatmentDecisionTabEntryDate: 'תאריך החלטה לטיפול',
-    AdmissionTreatmentUrgencyEntryDate: 'דחיפות טיפול - תאריך',
-    DecisionDescription: 'תיאור החלטה',
+    AdmissionTreatmentUrgencyEntryDate: 'רמת דחיפות',
+    AdmissionTreatmentUrgencyEntryUser: 'משתמש רמת דחיפות',
+    AdmissionTreatmentDecisionTabEntryDate: 'סיבת פנייה',
+    AdmissionTreatmentDecisionTabEntryUser: 'משתמש סיבת פנייה',
+    ComplaintTabEntryDate: 'תלונה עיקרית',
+    ComplaintTabEntryUser: 'משתמש תלונה עיקרית',
+    DecisionDescription: 'סיום טיפול במלר"ד',
+    DischargeDateTabEntryDate: 'תאריך שחרור בפועל',
+    DischargeDateTabEntryUser: 'משתמש תאריך שחרור',
+    SignaturesInSheetEntryDate: 'חתימת רופא משחרר',
+    SignaturesInSheetEntryUser: 'משתמש חתימת רופא משחרר',
     SystemUnitName: 'שם יחידה',
     EntryUserFullName: 'שם משתמש',
     AdjustedAdmissionNo: 'מספר תיק מותאם',
     ReleaseDate: 'תאריך שחרור',
     ArrivalDate: 'תאריך הגעה',
+    ResponsibleDoctor: ' סוג מיון' // Hebrew name for Responsible Doctor
   };
-
+  
   dataSource = new MatTableDataSource<any>([]);
   globalFilter = new FormControl('');
   filterForm: FormGroup;
@@ -61,6 +75,8 @@ export class ERInfoComponent implements OnInit, AfterViewInit {
       DischargeDateTabEntryDate: [''],
       AdmissionTreatmentDecisionTabEntryDate: [''],
       DecisionDescription: [''],
+      ResponsibleDoctor: [''], 
+
     });
   }
 
@@ -170,20 +186,25 @@ export class ERInfoComponent implements OnInit, AfterViewInit {
         }
       }
   
+      // Check ResponsibleDoctor filter
+      if (filterValues.ResponsibleDoctor) {
+        const doctor = data.ResponsibleDoctor ? data.ResponsibleDoctor.trim() : '';
+        if (filterValues.ResponsibleDoctor === '(ריק)') {
+          if (doctor !== '') {
+            return false; // Exclude if value exists but the filter expects '(ריק)'
+          }
+        } else if (filterValues.ResponsibleDoctor !== doctor) {
+          return false; // Exclude if value does not match the selected filter
+        }
+      }
+  
       // Check DecisionDescription filter
       if (filterValues.DecisionDescription) {
         if (
-          filterValues.DecisionDescription === 'hasValue' &&
-          (!data.DecisionDescription || data.DecisionDescription.trim() === '')
+          filterValues.DecisionDescription !== '' &&
+          filterValues.DecisionDescription !== data.DecisionDescription
         ) {
-          return false; // Exclude if no value but filter expects a value
-        }
-        if (
-          filterValues.DecisionDescription === 'noValue' &&
-          data.DecisionDescription &&
-          data.DecisionDescription.trim() !== ''
-        ) {
-          return false; // Exclude if value exists but filter expects no value
+          return false; // Exclude if the value doesn't match the selected option
         }
       }
   
@@ -195,6 +216,8 @@ export class ERInfoComponent implements OnInit, AfterViewInit {
       this.totalResults = this.dataSource.filteredData.length; // Update total results after global filtering
     });
   }
+  
+  
   
 
   resetFilters(): void {
