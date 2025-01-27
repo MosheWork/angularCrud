@@ -39,10 +39,14 @@
                   </mat-form-field>
                   
                   
-                  <mat-form-field appearance="fill">
-                    <mat-label>Unit Satellite Name</mat-label>
-                    <mat-select [formControl]="unitSatelliteNamesControl" multiple>
-                      <mat-option *ngFor="let name of unitSatelliteNameOptions" [value]="name">
+                  <mat-form-field appearance="outline">
+                    <mat-label>Unit Satellite Names</mat-label>
+                    <mat-select
+                      [formControl]="unitSatelliteNamesControl"
+                      multiple>
+                      <mat-option
+                        *ngFor="let name of unitSatelliteNameOptions"
+                        [value]="name">
                         {{ name }}
                       </mat-option>
                     </mat-select>

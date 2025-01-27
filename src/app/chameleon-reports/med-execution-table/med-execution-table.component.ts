@@ -26,6 +26,7 @@ interface MedExecutionModel {
   Id_Num: string;
   Full_Name: string;
   Depart_Name: string;
+  Unit_Satellite_Name: string; // Add this property
 }
 
 @Component({
@@ -49,6 +50,125 @@ export class MedExecutionTableComponent implements OnInit, AfterViewInit {
     'Full_Name',
     'Unit_Satellite_Name'
   ];
+  unitSatelliteNameOptions: string[] = [
+    'קבלה לחדר ניתוח כללי',
+    'אולטראסאונד למיילדות וגניקולוגיה',
+    'אשפוז יום אונקולוגי',
+    'אשפוז יום גינקו-אונקולוגי',
+    'אשפוז יום המטולוגי',
+    'אשפוז יום כאב',
+    'אשפוז יום ראומטולוגי',
+    'אשפוז יום שיקומי מבוגרים',
+    'בדיקה חדשה 123',
+    'גסטרואנטולוגיה - מכון',
+    'היחידה לדיאליזה פריטוניאלית',
+    'היחידה לרפואת הפה',
+    'המחלקה לגריאטריה שיקומית',
+    'המחלקה לרפואת האם והעובר',
+    'השירות לשיחזורים מיקרוכירורגית',
+    'התאוששות ח.נ אמבולטורי',
+    'התאוששות ח.נ חדר לידה',
+    'התאוששות ח.נ כללי',
+    'התאוששות ח.נ פה ולסת',
+    'התאוששות חדר ניתוח',
+    'חדר לידה',
+    'חדר ניתוח',
+    'חדר ניתוח אמבולטורי',
+    'חדר ניתוח חדר לידה',
+    'חדר ניתוח כללי',
+    'חדר ניתוח פה ולסת',
+    'טיפול נמרץ בפג ובילוד',
+    'טיפול נמרץ כירורגית חזה',
+    'טיפול נמרץ כירורגית כלי דם',
+    'טיפול נמרץ כירורגית לב',
+    'טיפול נמרץ כללי',
+    'טיפול נמרץ כללי.',
+    'טיפול נמרץ לב',
+    'טיפול נמרץ נשימתי',
+    'יומנים לא פעילים',
+    'ילדים',
+    'כירורגית חזה',
+    'כירורגית כלי דם',
+    'כירורגית לב',
+    'מודולים סופיים לפריסה',
+    'מחלקה אונקולוגית',
+    'מחלקה גנרית פנימית - לא פעילה',
+    'מחלקה גנרית פנימית מנהלת פוריה',
+    'מחלקה גנרית פנימית מנהלת פוריה- חדש',
+    'מחלקה גריאטרית',
+    'מחלקה כירורגית',
+    'מחלקה לרפואה דחופה',
+    'מחלקה נוירולוגית ',
+    'מחלקה פסיכיאטרית',
+    'מחלקת אורולוגיה',
+    'מחלקת אורתופדיה',
+    'מחלקת אף אוזן גרון',
+    'מחלקת בדיקות',
+    'מחלקת הדרכות',
+    'מחלקת הריון בסיכון',
+    'מחלקת יולדות',
+    'מחלקת ילדים',
+    'מחלקת ילודים',
+    'מחלקת כירורגיה',
+    'מחלקת כירורגית ילדים',
+    'מחלקת נוירולוגיה ושבץ מוחי',
+    'מחלקת נשים',
+    'מחלקת עיניים',
+    'מחלקת פה ולסת',
+    'מחלקת פנימית א',
+    'מחלקת פנימית ב',
+    'מחלקת צנתרים',
+    'מחלקת קרדיולוגיה',
+    'מחלקת שיקום אורטופדי',
+    'מחלקת שיקום ילדים',
+    'מחלקת שיקום כללי',
+    'מיון ילדים',
+    'מיון מיילדותי',
+    'מכון אונקולוגי',
+    'מכון גסטרואנטורולוגיה',
+    'מכון דיאליזה',
+    'מכון המודיאליזה',
+    'מכון נוירולוגיה',
+    'מכון ריאות',
+    'מרפאה אונקולוגית/ המטואונקולגית',
+    'מרפאה אורולוגית',
+    'מרפאה אורתופדית',
+    'מרפאה אנדוקרינולוגית',
+    'מרפאה אנדוקרינולוגית ילדים',
+    'מרפאה אף אוזן גרון',
+    'מרפאה גנרית פנימית מנהלת פוריה',
+    'מרפאה המטולוגית',
+    'מרפאה כירורגית א',
+    'מרפאה נשים',
+    'מרפאה פנימית מנהלת פוריה',
+    'מרפאה ראומטולוגית',
+    'מרפאת אורתופדית כף יד',
+    'מרפאת אורתופדית משתחררים',
+    'מרפאת אורתופדית פרקי ירך וברך',
+    'מרפאת אי ספיקה',
+    'מרפאת אקו לב',
+    'מרפאת בלוטות רוק',
+    'מרפאת גסטרו ילדים',
+    'מרפאת דיאליזה צפקית',
+    'מרפאת כאב',
+    'מרפאת כירורגית פה ולסת',
+    'מרפאת מפרקי לסתות',
+    'מרפאת סוכרת הריון',
+    'מרפאת עיניים',
+    'מרפאת פה ולסת',
+    'מרפאת ציטוטק',
+    'מרפאת ריאות',
+    'פנימית - מחלקה ראשונה פוריה',
+    'פנימית - מנהלת',
+    'צנתורי מח',
+    'קבלה חדר ניתוח פה ולסת',
+    'קבלה לחדר ניתוח',
+    'קבלה לחדר ניתוח אמבולטורי',
+    'קבלה לחדר ניתוח חדרי לידה',
+    'קרדיולוגיה פולשנית',
+    'רדיולוגיה פולשנית'
+  ];
+  originalData: MedExecutionModel[] = []; // Add this property
 
   dataSource = new MatTableDataSource<MedExecutionModel>();
   searchValue: string = '';
@@ -68,7 +188,6 @@ export class MedExecutionTableComponent implements OnInit, AfterViewInit {
   filteredGenericNameOptions!: Observable<string[]>;
   filteredUnitNameOptions: string[] = [];
   unitNameFilter: string = '';
-  unitSatelliteNameOptions: string[] = []; // Holds options for Unit_Satellite_Name
   unitSatelliteNamesControl = new FormControl<string[]>([]); // Form control for Unit_Satellite_Name
 
   // Add this to the `createFilterForm` method:
@@ -88,17 +207,23 @@ export class MedExecutionTableComponent implements OnInit, AfterViewInit {
     this.fetchBasicNameOptions();
     this.fetchGenericNameOptions();
     this.fetchUnitNameOptions();
-    this.fetchUnitSatelliteNameOptions()
-
+  
+    // Listen for changes in Unit Satellite Names selection
+    this.unitSatelliteNamesControl.valueChanges.subscribe((selectedUnits: string[] | null) => {
+      this.filterUnitSatelliteNames(selectedUnits || []); // Pass an empty array if null
+    });
+  
     this.filteredBasicNameOptions = this.basicNamesControl.valueChanges.pipe(
       startWith(''),
       map(value => this._filterBasicNameOptions(value || ''))
     );
+  
     this.filteredGenericNameOptions = this.genericNamesControl.valueChanges.pipe(
       startWith(''),
       map(value => this._filterGenericNameOptions(value || ''))
     );
   }
+  
 
   ngAfterViewInit() {
     this.dataSource.paginator = this.paginator;
@@ -189,40 +314,9 @@ export class MedExecutionTableComponent implements OnInit, AfterViewInit {
   loadData() {
     this.loading = true;
     this.showSuccessMessage = false;
+  
     const filters = this.filterForm.value;
     let params = new HttpParams();
-  
-    if (this.basicNamesControl.value) {
-      params = params.append('Basic_Names', this.basicNamesControl.value);
-    }
-  
-    if (filters.Drug) {
-      params = params.append('Drug', filters.Drug);
-    }
-  
-    if (filters.Execution_Date) {
-      const formattedExecutionDate = this.datePipe.transform(filters.Execution_Date, 'yyyy-MM-dd');
-      params = params.append('Execution_Date', formattedExecutionDate!);
-    }
-  
-    if (filters.Category_Name) {
-      params = params.append('Category_Name', filters.Category_Name);
-    }
-  
-    const selectedUnitNames: string[] = this.unitNamesControl.value ?? [];
-    if (selectedUnitNames.length > 0) {
-      selectedUnitNames.forEach((unitName: string) => {
-        params = params.append('Execution_UnitNames', unitName);
-      });
-    }
-  
-    if (filters.Admission_No) {
-      params = params.append('Admission_No', filters.Admission_No);
-    }
-  
-    if (this.genericNamesControl.value) {
-      params = params.append('Generic_Names_ForDisplay', this.genericNamesControl.value);
-    }
   
     if (filters.StartDate) {
       const formattedStartDate = this.datePipe.transform(filters.StartDate, 'yyyy-MM-dd');
@@ -234,27 +328,25 @@ export class MedExecutionTableComponent implements OnInit, AfterViewInit {
       params = params.append('EndDate', formattedEndDate!);
     }
   
-    // New filter for Unit_Satellite_Name
-    const selectedUnitSatelliteNames: string[] = this.unitSatelliteNamesControl.value ?? [];
-    if (selectedUnitSatelliteNames.length > 0) {
-      selectedUnitSatelliteNames.forEach((unitSatelliteName: string) => {
-        params = params.append('Unit_SatelliteNames', unitSatelliteName);
-      });
-    }
-  
-    this.http.get<MedExecutionModel[]>(`${environment.apiUrl}MedExecutionAPI`, { params })
-      .subscribe(data => {
-        this.dataSource.data = data;
+    this.http.get<MedExecutionModel[]>(`${environment.apiUrl}MedExecutionAPI`, { params }).subscribe(
+      data => {
+        this.originalData = data; // Save the unfiltered data
+        this.dataSource.data = [...data]; // Initialize the table with unfiltered data
         this.totalResults = data.length;
         this.loading = false;
-        this.showSuccessMessage = true;
-        setTimeout(() => {
-          this.showSuccessMessage = false;
-        }, 5000);
-      }, () => {
+      },
+      error => {
+        console.error('Error loading data:', error);
         this.loading = false;
-      });
+      }
+    );
   }
+  
+  
+  applyFilters() {
+    
+  }
+  
   
 
   createFilterForm(): FormGroup {
@@ -336,5 +428,27 @@ export class MedExecutionTableComponent implements OnInit, AfterViewInit {
   @HostListener('mouseleave', ['$event'])
   onMouseLeave() {
     this.showMessage = false;
+  }
+
+  filterUnitSatelliteNames(selectedUnitSatelliteNames: string[]): void {
+    if (selectedUnitSatelliteNames.length > 0) {
+      // Filter data based on selected units
+      this.dataSource.data = this.originalData.filter(item =>
+        selectedUnitSatelliteNames.includes(item.Unit_Satellite_Name)
+      );
+    } else {
+      // If no units are selected, reset the data
+      this.dataSource.data = [...this.originalData];
+    }
+  
+    this.totalResults = this.dataSource.data.length; // Update total results count
+  }
+  
+  
+  
+
+  resetUnitSatelliteFilter(): void {
+    this.unitSatelliteNamesControl.setValue([]);
+    this.dataSource.data = [...this.originalData]; // Store the original data initially
   }
 }
