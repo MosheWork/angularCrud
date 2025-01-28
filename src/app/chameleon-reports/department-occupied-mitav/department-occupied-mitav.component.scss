@@ -269,9 +269,11 @@
         gap: 8px; /* Space between icon and text */
   
         .info-label {
-          font-size: 16px; /* Font size for labels */
+          font-size: 18px; /* Font size for labels */
           font-weight: normal; /* Standard weight for labels */
-          color: #616161; /* Light gray color for labels */
+         // color: #616161; /* Light gray color for labels */
+          font-weight: bold; /* Make the text bold */
+
         }
   
         strong {
@@ -281,10 +283,11 @@
         }
   
         mat-icon {
-          font-size: 20px; /* Adjust icon size */
+          font-size: 25px; /* Adjust icon size */
           color: #3f51b5; /* MUI blue for icons */
         }
       }
+      
     }
   }
   mat-card-title {
@@ -294,3 +297,4 @@
     margin-bottom: 10px; /* Spacing below the title */
   }
   
+ 
