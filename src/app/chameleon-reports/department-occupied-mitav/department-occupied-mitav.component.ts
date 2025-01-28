@@ -31,6 +31,7 @@ export class DepartmentOccupiedMitavComponent implements OnInit {
   };
 
   dataSource: MatTableDataSource<any> = new MatTableDataSource();
+  unitOptions: string[] = []; // Stores unique UnitName options for the dropdown
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
@@ -40,12 +41,13 @@ export class DepartmentOccupiedMitavComponent implements OnInit {
   constructor(private http: HttpClient, private fb: FormBuilder, private router: Router) {
     this.filterForm = this.fb.group({
       globalFilter: [''],
+      unitFilter: [''], // Filter control for UnitName
     });
   }
 
   ngOnInit(): void {
     this.loadData();
-    this.filterForm.get('globalFilter')?.valueChanges.subscribe(() => this.applyFilter());
+    this.setupFilterListeners();
   }
 
   loadData(): void {
@@ -55,6 +57,12 @@ export class DepartmentOccupiedMitavComponent implements OnInit {
         this.dataSource.paginator = this.paginator;
         this.dataSource.sort = this.sort;
         this.totalResults = data.length;
+
+        // Extract unique UnitName values for the dropdown
+        this.unitOptions = [...new Set(data.map((item) => item.UnitName))].sort();
+
+        // Set up the filter predicate
+        this.dataSource.filterPredicate = this.customFilterPredicate();
       },
       (error) => {
         console.error('Error fetching data', error);
@@ -62,14 +70,44 @@ export class DepartmentOccupiedMitavComponent implements OnInit {
     );
   }
 
+  setupFilterListeners(): void {
+    this.filterForm.get('globalFilter')?.valueChanges.subscribe(() => this.applyFilter());
+    this.filterForm.get('unitFilter')?.valueChanges.subscribe(() => this.applyFilter());
+  }
+
   applyFilter(): void {
-    const filterValue = this.filterForm.get('globalFilter')?.value.trim().toLowerCase();
-    this.dataSource.filter = filterValue;
+    const globalFilterValue = this.filterForm.get('globalFilter')?.value?.trim().toLowerCase() || '';
+    const unitFilterValue = this.filterForm.get('unitFilter')?.value || '';
+
+    // Update the filter string with a combination of global and unit filters
+    this.dataSource.filter = JSON.stringify({ global: globalFilterValue, unit: unitFilterValue });
+    this.totalResults = this.dataSource.filteredData.length;
+
+  }
+
+  customFilterPredicate(): (data: any, filter: string) => boolean {
+    return (data, filter) => {
+      const filterObject = JSON.parse(filter);
+      const globalFilter = filterObject.global;
+      const unitFilter = filterObject.unit;
+
+      const matchesGlobalFilter = !globalFilter || JSON.stringify(data).toLowerCase().includes(globalFilter);
+      const matchesUnitFilter = !unitFilter || data.UnitName === unitFilter;
+
+      return matchesGlobalFilter && matchesUnitFilter;
+    };
   }
 
   resetFilters(): void {
+    // Reset all filter controls
     this.filterForm.reset();
-    this.dataSource.filter = '';
+    this.filterForm.patchValue({
+      globalFilter: '',
+      unitFilter: '',
+    });
+
+    // Ensure the filterPredicate processes the reset
+    this.applyFilter();
   }
 
   getColumnLabel(column: string): string {

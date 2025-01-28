@@ -238,3 +238,59 @@
     font-weight: bold; /* Optional: Make text bold */
     font-size: larger;
   }
+  .red-text {
+    color: red;
+    font-weight: bold; /* Optional: Make the text bold for emphasis */
+  }
+  .info-card {
+    width: 95%; /* Adjust the width to 95% */
+    margin: 10px auto; /* Add a small margin above and below, center horizontally */
+    padding: 15px; /* Maintain padding for content */
+    background-color: #ffffff; /* Background color for the card */
+    border-radius: 12px; /* Rounded corners */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Soft shadow */
+    mat-card-title {
+      font-size: 18px; /* Font size for the title */
+      font-weight: bold; /* Make the title bold */
+      color: #3f51b5; /* MUI blue for the title color */
+      margin-bottom: 10px; /* Spacing below the title */
+    }
+  
+    .info-card-content {
+      display: flex;
+    justify-content: space-between; /* Space items evenly across the card */
+    align-items: center; /* Align vertically */
+    flex-wrap: wrap; /* Allow wrapping for smaller screens */
+    gap: 10px; /* Space between each row in the card */
+  
+      div {
+        display: flex;
+        align-items: center; /* Align icon and text vertically */
+        gap: 8px; /* Space between icon and text */
+  
+        .info-label {
+          font-size: 16px; /* Font size for labels */
+          font-weight: normal; /* Standard weight for labels */
+          color: #616161; /* Light gray color for labels */
+        }
+  
+        strong {
+          font-size: 16px; /* Font size for values */
+          font-weight: bold; /* Make values bold */
+          color: #212121; /* Darker color for emphasis */
+        }
+  
+        mat-icon {
+          font-size: 20px; /* Adjust icon size */
+          color: #3f51b5; /* MUI blue for icons */
+        }
+      }
+    }
+  }
+  mat-card-title {
+    font-size: 18px; /* Font size for the title */
+    font-weight: bold; /* Make the title bold */
+    color: #3f51b5; /* MUI blue for the title color */
+    margin-bottom: 10px; /* Spacing below the title */
+  }
+  
