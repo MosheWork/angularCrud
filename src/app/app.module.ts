@@ -129,6 +129,7 @@ import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { ERInfoComponent } from './chameleon-reports/erinfo/erinfo.component';
 import { CommunicationTherapistComponent } from './chameleon-reports/communication-therapist/communication-therapist.component';
 import { VWInfectionControlICUComponent } from './chameleon-reports/vwinfection-control-icu/vwinfection-control-icu.component';
+import { DepartmentOccupiedMitavComponent } from './chameleon-reports/department-occupied-mitav/department-occupied-mitav.component';
 
 @NgModule({
   declarations: [
@@ -225,7 +226,8 @@ import { VWInfectionControlICUComponent } from './chameleon-reports/vwinfection-
     AwsClaudeInvocationComponent,
     ERInfoComponent,
     CommunicationTherapistComponent,
-    VWInfectionControlICUComponent
+    VWInfectionControlICUComponent,
+    DepartmentOccupiedMitavComponent
   
   ],
   imports: [

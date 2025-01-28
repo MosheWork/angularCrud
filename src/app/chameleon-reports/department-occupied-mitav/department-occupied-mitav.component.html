@@ -1,0 +1,27 @@
+<div class="body">
+    <div class="nine">
+        <h1>{{ titleUnit }}<span>{{ Title1 }}{{ Title2 }}{{ totalResults }}</span></h1>
+      </div>
+    <form [formGroup]="filterForm" class="filter-form" dir="rtl">
+      <mat-form-field class="long-search-bar">
+        <mat-label>חיפוש</mat-label>
+        <input matInput formControlName="globalFilter" />
+      </mat-form-field>
+      <button mat-raised-button color="primary" (click)="resetFilters()">איפוס</button>
+      <!-- //<button mat-raised-button color="accent" (click)="exportToExcel()">ייצוא לאקסל</button> -->
+    </form>
+  
+    
+      <mat-table [dataSource]="dataSource" matSort dir="rtl" class="mat-elevation-z8">
+        <ng-container *ngFor="let column of displayedColumns" [matColumnDef]="column">
+          <mat-header-cell *matHeaderCellDef mat-sort-header>{{ getColumnLabel(column) }}</mat-header-cell>
+          <mat-cell *matCellDef="let element">{{ element[column] }}</mat-cell>
+        </ng-container>
+    
+        <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+        <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+      </mat-table>
+    
+      <mat-paginator [pageSizeOptions]="[10, 25, 50]" showFirstLastButtons></mat-paginator>
+    </div>
+    

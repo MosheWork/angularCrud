@@ -60,6 +60,7 @@ import { AwsClaudeInvocationComponent } from './aws-claude-invocation/aws-claude
 import { ERInfoComponent } from './chameleon-reports/erinfo/erinfo.component';
 import { CommunicationTherapistComponent } from './chameleon-reports/communication-therapist/communication-therapist.component';
 import { VWInfectionControlICUComponent } from './chameleon-reports/vwinfection-control-icu/vwinfection-control-icu.component';
+import { DepartmentOccupiedMitavComponent } from './chameleon-reports/department-occupied-mitav/department-occupied-mitav.component';
 
 const routes: Routes = [
   { path: 'users', component: UsersComponent },
@@ -138,6 +139,7 @@ const routes: Routes = [
    { path: 'er-info', component: ERInfoComponent },//דוח מיון לעידן
    { path: 'CommunicationTherapist', component: CommunicationTherapistComponent },//דוח קלינאית תקשורת לבתאל
    { path: 'vwinfection-control-icu', component: VWInfectionControlICUComponent },//דוח  להיבה מחלות זיהומיות שאילתא מאופיר
+   { path: 'DepartmentOccupiedMitav', component: DepartmentOccupiedMitavComponent },// מסך תפוסה למחלקות של דוח מיתב לקרן
 
 //chemelondashboard
 { path: 'DepartmentCapacity', component: DepartmentCapacityComponent }, // פרוייקט אישי
