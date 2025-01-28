@@ -14,8 +14,10 @@ import * as XLSX from 'xlsx';
 })
 export class ERInfoComponent implements OnInit, AfterViewInit {
   displayedColumns: string[] = [
+    'ArrivalDate',
     'AdmissionNo',
     'IdNum',
+    'SystemUnitName',
     'ResponsibleDoctor', // סוג מיון
     'AdmissionTreatmentUrgencyEntryDate',
     'AdmissionTreatmentUrgencyEntryUser',
@@ -28,18 +30,19 @@ export class ERInfoComponent implements OnInit, AfterViewInit {
     'DischargeDateTabEntryUser',
     'SignaturesInSheetEntryDate',
     'SignaturesInSheetEntryUser',
-    'SystemUnitName',
-    'EntryUserFullName',
+    
+    //'EntryUserFullName',
     //'AdjustedAdmissionNo',
     'ReleaseDate',
-    'ArrivalDate'
+  
    
   ];
   
 
   columnHeaders: { [key: string]: string } = {
-    AdmissionNo: 'מספר תיק',
+    AdmissionNo: 'מספר מקרה',
     IdNum: 'מספר זהות',
+    SystemUnitName: 'שם יחידה',
     AdmissionTreatmentUrgencyEntryDate: 'רמת דחיפות',
     AdmissionTreatmentUrgencyEntryUser: 'משתמש רמת דחיפות',
     AdmissionTreatmentDecisionTabEntryDate: 'סיבת פנייה',
@@ -51,8 +54,8 @@ export class ERInfoComponent implements OnInit, AfterViewInit {
     DischargeDateTabEntryUser: 'משתמש תאריך שחרור',
     SignaturesInSheetEntryDate: 'חתימת רופא משחרר',
     SignaturesInSheetEntryUser: 'משתמש חתימת רופא משחרר',
-    SystemUnitName: 'שם יחידה',
-    EntryUserFullName: 'שם משתמש',
+   
+    //EntryUserFullName: 'שם משתמש',
     AdjustedAdmissionNo: 'מספר תיק מותאם',
     ReleaseDate: 'תאריך שחרור',
     ArrivalDate: 'תאריך הגעה',
