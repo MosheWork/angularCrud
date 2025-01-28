@@ -18,6 +18,10 @@ export class DepartmentOccupiedMitavComponent implements OnInit {
   titleUnit: string = 'תפוסת מחלקה לדוח מיתב ';
   totalResults: number = 0;
 
+  physiotherapyStats: string = '';
+  mobilityStats: string = '';
+  walkingStats: string = '';
+  
   displayedColumns: string[] = ['PName', 'UnitName', 'Room', 'BedName', 'Age', 'PhysiotherapyConsultation', 'MobilityAssessment', 'WalkingPrescription'];
   columnLabels: { [key: string]: string } = {
     PName: 'שם המטופל',
@@ -57,18 +61,22 @@ export class DepartmentOccupiedMitavComponent implements OnInit {
         this.dataSource.paginator = this.paginator;
         this.dataSource.sort = this.sort;
         this.totalResults = data.length;
-
+  
         // Extract unique UnitName values for the dropdown
         this.unitOptions = [...new Set(data.map((item) => item.UnitName))].sort();
-
+  
         // Set up the filter predicate
         this.dataSource.filterPredicate = this.customFilterPredicate();
+  
+        // Update counts after loading data
+        this.updateCounts(data);
       },
       (error) => {
         console.error('Error fetching data', error);
       }
     );
   }
+  
 
   setupFilterListeners(): void {
     this.filterForm.get('globalFilter')?.valueChanges.subscribe(() => this.applyFilter());
@@ -78,12 +86,14 @@ export class DepartmentOccupiedMitavComponent implements OnInit {
   applyFilter(): void {
     const globalFilterValue = this.filterForm.get('globalFilter')?.value?.trim().toLowerCase() || '';
     const unitFilterValue = this.filterForm.get('unitFilter')?.value || '';
-
+  
     // Update the filter string with a combination of global and unit filters
     this.dataSource.filter = JSON.stringify({ global: globalFilterValue, unit: unitFilterValue });
-    this.totalResults = this.dataSource.filteredData.length;
-
+  
+    // Update counts based on filtered data
+    this.updateCounts(this.dataSource.filteredData);
   }
+  
 
   customFilterPredicate(): (data: any, filter: string) => boolean {
     return (data, filter) => {
@@ -105,16 +115,35 @@ export class DepartmentOccupiedMitavComponent implements OnInit {
       globalFilter: '',
       unitFilter: '',
     });
-
+  
     // Ensure the filterPredicate processes the reset
     this.applyFilter();
+  
+    // Update counts after resetting filters
+    this.updateCounts(this.dataSource.filteredData);
   }
+  
 
   getColumnLabel(column: string): string {
     return this.columnLabels[column] || column;
   }
 
-  goToHome(): void {
-    this.router.navigate(['/MainPageReports']);
+  updateCounts(data: any[]): void {
+    const total = data.length;
+  
+    // Physiotherapy stats (count "כן")
+    const physiotherapyYes = data.filter(item => item.PhysiotherapyConsultation === 'כן').length;
+    this.physiotherapyStats = `התייעצות פיזיותרפיה: ${physiotherapyYes}/${total} (${((physiotherapyYes / total) * 100).toFixed(2)}%)`;
+  
+    // Mobility stats (exclude "אין תיעוד" from count)
+    const mobilityValid = data.filter(item => item.MobilityAssessment !== 'אין תיעוד').length;
+    this.mobilityStats = `הערכת ניידות: ${mobilityValid}/${total} (${((mobilityValid / total) * 100).toFixed(2)}%)`;
+  
+    // Walking prescription stats (count "כן")
+    const walkingYes = data.filter(item => item.WalkingPrescription === 'כן').length;
+    this.walkingStats = `מרשם להליכה: ${walkingYes}/${total} (${((walkingYes / total) * 100).toFixed(2)}%)`;
   }
+  
+  
+  
 }

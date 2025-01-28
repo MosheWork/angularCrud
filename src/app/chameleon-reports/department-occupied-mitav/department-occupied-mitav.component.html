@@ -7,18 +7,22 @@
         <mat-card-content>
           <div class="info-card-content">
             <div>
-              <mat-icon>people</mat-icon>
-              <span class="info-label">סה"כ מטופלים:</span>
-              <strong>{{ totalResults }}</strong>
+              <mat-icon>directions_walk</mat-icon>
+              <span class="info-label">{{ walkingStats }}</span>
             </div>
             <div>
-              <mat-icon>info</mat-icon>
-              <span class="info-label">מידע נוסף:</span>
-              <strong>נתון לדוגמא</strong>
+              <mat-icon>accessibility</mat-icon>
+              <span class="info-label">{{ mobilityStats }}</span>
+            </div>
+            <div>
+              <mat-icon>medical_services</mat-icon>
+              <span class="info-label">{{ physiotherapyStats }}</span>
             </div>
           </div>
         </mat-card-content>
       </mat-card>
+      
+      
       
     <form [formGroup]="filterForm" class="filter-form" dir="rtl">
       <mat-form-field class="long-search-bar">
