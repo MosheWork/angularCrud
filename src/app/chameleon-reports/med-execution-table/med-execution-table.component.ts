@@ -310,7 +310,6 @@ export class MedExecutionTableComponent implements OnInit, AfterViewInit {
   search() {
     this.loadData();
   }
-
   loadData() {
     this.loading = true;
     this.showSuccessMessage = false;
@@ -320,12 +319,28 @@ export class MedExecutionTableComponent implements OnInit, AfterViewInit {
   
     if (filters.StartDate) {
       const formattedStartDate = this.datePipe.transform(filters.StartDate, 'yyyy-MM-dd');
-      params = params.append('StartDate', formattedStartDate!);
+      params = params.append('startDate', formattedStartDate!); // Match backend parameter name
     }
   
     if (filters.EndDate) {
       const formattedEndDate = this.datePipe.transform(filters.EndDate, 'yyyy-MM-dd');
-      params = params.append('EndDate', formattedEndDate!);
+      params = params.append('endDate', formattedEndDate!); // Match backend parameter name
+    }
+  
+    if (filters.Basic_Names) {
+      params = params.append('basic_Names', filters.Basic_Names); // Match backend parameter name
+    }
+  
+    if (filters.Category_Name) {
+      params = params.append('category_Name', filters.Category_Name); // Match backend parameter name
+    }
+  
+    if (filters.Generic_Names_ForDisplay) {
+      params = params.append('generic_Names_ForDisplay', filters.Generic_Names_ForDisplay); // Match backend parameter name
+    }
+  
+    if (filters.Drug) {
+      params = params.append('drug', filters.Drug); // Match backend parameter name
     }
   
     this.http.get<MedExecutionModel[]>(`${environment.apiUrl}MedExecutionAPI`, { params }).subscribe(
@@ -341,6 +356,8 @@ export class MedExecutionTableComponent implements OnInit, AfterViewInit {
       }
     );
   }
+  
+  
   
   
   applyFilters() {
