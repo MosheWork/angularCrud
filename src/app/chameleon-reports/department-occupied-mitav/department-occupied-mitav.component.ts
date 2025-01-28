@@ -129,7 +129,7 @@ export class DepartmentOccupiedMitavComponent implements OnInit {
   }
 
   updateCounts(data: any[]): void {
-    const total = this.totalResults;
+    const total = data.length; // Recalculate total patients from the filtered data
 
     // Physiotherapy stats (count "כן")
     const physiotherapyYes = data.filter(item => item.PhysiotherapyConsultation === 'כן').length;
