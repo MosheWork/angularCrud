@@ -15,7 +15,7 @@
     left: 50%;
     display: unset;
   }
-  .mat-row:nth-child(even) {
+  mat-row:nth-of-type(even) {
     background-color: aliceblue;
   }
   .mat-row:hover {
@@ -228,3 +228,13 @@
     padding: 10px; /* Add some padding */
   }
   
+  mat-header-cell {
+    font-weight: bold;
+    font-size: 16px;
+  }
+  mat-header-row {
+    background-color: rgb(245, 242, 242); /* Replace with your desired color */
+    color: white; /* Optional: Change text color to improve contrast */
+    font-weight: bold; /* Optional: Make text bold */
+    font-size: larger;
+  }
