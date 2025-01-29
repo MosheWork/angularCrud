@@ -119,6 +119,7 @@ export class VWInfectionControlICUComponent implements OnInit {
   dataSource: any[] = [];
   filteredData: any[] = [];
   matTableDataSource: MatTableDataSource<any>;
+  loading: boolean = true; // <-- Added loading state
 
   filterForm: FormGroup;
 
@@ -131,28 +132,46 @@ export class VWInfectionControlICUComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.http.get<any[]>(environment.apiUrl + 'VWInfectionControlICU').subscribe((data) => {
-      this.dataSource = data;
-      this.filteredData = [...data];
-      this.matTableDataSource = new MatTableDataSource(this.filteredData);
-      this.matTableDataSource.paginator = this.paginator;
-      this.matTableDataSource.sort = this.sort;
+    this.loading = true; // Show spinner while fetching data
 
-      // Add value changes listener to all form controls
-      this.columns.forEach((column) => {
-        this.filterForm.get(column)?.valueChanges.pipe(debounceTime(300), distinctUntilChanged()).subscribe(() => this.applyFilters());
-      });
+    this.http.get<any[]>(environment.apiUrl + 'VWInfectionControlICU').subscribe({
+      next: (data) => {
+        this.dataSource = data;
+        this.filteredData = [...data];
+        this.matTableDataSource = new MatTableDataSource(this.filteredData);
 
-      // Global filter value change listener
-      this.filterForm.valueChanges.subscribe(() => {
+        // Delay the paginator assignment to ensure it's initialized
+        setTimeout(() => {
+          this.matTableDataSource.paginator = this.paginator;
+          this.matTableDataSource.sort = this.sort;
+        });
+
+        this.loading = false; // Hide spinner when data is loaded
+
+        // Add value changes listener to all form controls
+        this.columns.forEach((column) => {
+          this.filterForm.get(column)?.valueChanges
+            .pipe(debounceTime(300), distinctUntilChanged())
+            .subscribe(() => this.applyFilters());
+        });
+
+        // Global filter value change listener
+        this.filterForm.valueChanges.subscribe(() => {
+          this.applyFilters();
+          this.paginator.firstPage(); // Reset to first page after filtering
+        });
+
+        // Initial filter application
         this.applyFilters();
-        this.paginator.firstPage(); // Reset to first page after filtering
-      });
-
-      // Initial filter application
-      this.applyFilters();
+      },
+      error: (error) => {
+        console.error('Error fetching data:', error);
+        this.loading = false; // Hide spinner even if there's an error
+      }
     });
-  }
+}
+
+
 
   private createFilterForm(): FormGroup {
     const formControls: any = {};

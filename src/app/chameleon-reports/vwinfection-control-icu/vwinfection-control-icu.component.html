@@ -1,8 +1,17 @@
-<div class="body">
+<!-- Loading Spinner (Centered) -->
+<div class="loading-container" *ngIf="loading">
+  <div class="spinner-wrapper">
+    <mat-spinner></mat-spinner>
+    <p class="loading-text">Loading...</p>
+  </div>
+</div>
+
+<!-- Main Content (Hidden While Loading) -->
+<div class="body" *ngIf="!loading">
     <div class="nine">
       <h1>{{ titleUnit }}<span>{{ Title1 }}{{ Title2 }}{{ totalResults }}</span></h1>
     </div>
-  
+
     <form [formGroup]="filterForm" dir="rtl" class="filter-form">
       <mat-form-field class="long-search-bar">
         <mat-label>חיפוש</mat-label>
@@ -12,9 +21,8 @@
         איפוס מסננים
       </button>
       <img src="../../assets/excel.png" alt="Download" (click)="exportToExcel()" class="download-icon" width="50px" />
-
     </form>
-  
+
     <!-- Scrollable Table Container -->
     <div class="table-responsive">
         <mat-table [dataSource]="matTableDataSource" matSort dir="rtl" class="mat-elevation-z8">
@@ -29,7 +37,6 @@
             <mat-row *matRowDef="let row; columns: columns"></mat-row>
           </mat-table>
     </div>
-  
+
     <mat-paginator [length]="totalResults" [pageSize]="30" [pageSizeOptions]="[30, 100, 500]"></mat-paginator>
-  </div>
-  
+</div>
