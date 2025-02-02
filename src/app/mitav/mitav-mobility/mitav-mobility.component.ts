@@ -4,6 +4,9 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatSort } from '@angular/material/sort';
 import { environment } from '../../../environments/environment';
+import { MatDialog } from '@angular/material/dialog';
+import { DepartmentPercentagesDialogComponent } from '../department-percentages-dialog/department-percentages-dialog.component';
+
 
 @Component({
   selector: 'app-mitav-mobility',
@@ -43,7 +46,7 @@ export class MitavMobilityComponent implements OnInit, AfterViewInit {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private dialog: MatDialog) {}
 
   ngOnInit(): void {
     this.fetchMobilityReport();
@@ -143,6 +146,11 @@ toggleDepartmentList(): void {
   this.showDepartmentList = !this.showDepartmentList;
 }
 
-
+openDepartmentPercentagesDialog(): void {
+  this.dialog.open(DepartmentPercentagesDialogComponent, {
+    width: '600px',
+    data: { percentages: this.departmentPercentages },
+  });
+}
 
 }
