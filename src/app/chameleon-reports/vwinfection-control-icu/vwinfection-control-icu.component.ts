@@ -21,105 +21,103 @@ export class VWInfectionControlICUComponent implements OnInit {
   Title1: string = ' סה"כ תוצאות: ';
   Title2: string = '';
 
-   // Define the columns and their friendly headers
-   columns: string[] = [
+  // Updated columns list based on the new SQL View
+  columns: string[] = [
     'PersonalID',
     'PersonalFirstName',
     'PersonalLastName',
-    'תאריךמילוי',
-    'אבחוןשלVAP',
-    'תאריךאבחון',
-    'מספרמיטה',
-    'יומןשמה',
-    'כיח',
-    'טיפולאנטיביוטי',
+    'DateOfFill',
+    'DiagnosticVaP',
+    'DiagnosticDate',
+    'BadNum',
+    'VentilationDay',
+    'Mucus',
+    'AntibuoticTrerment',
     'WBC',
-    'חום',
+    'Fever',
     'FIO2',
     'PEEP',
-    'דרךסוגהנשמה',
-    'לקיחתכיחלתרבית',
-    'מניעהשלVAP',
-    'טיפוללב',
-    'פיזיוטרפיהנשימתית',
-    'השכבה30מעלות',
-    'הפסקתסדציה',
-    'בדיקתאפשרותלאקסטובציה',
-    'אבחוןCLABSI',
-    'תאריךהכנסתצנתר1',
-    'מיקוםצנתר1',
-    'תאריךהוצאתצנתר1',
-    'תאריךהכנסתצנתר2',
-    'מיקוםצנתר2',
-    'תאריךהוצאתצנתר2',
-    'מניעתCLABSI',
-    'סימניזיהום',
-    'החלפתחבישה',
-    'חבישהעםכלורהקסידין',
-    'רחצהיבשה',
-    'שימושבNEEDLESS',
-    'קיימתנחיצותלצנתר1',
-    'קיימתנחיצותלצנתר2',
-    'מעקבאחרייפצעניתוח',
-    'בדיקתפצעבהחלפתחבישהתקין',
-    'סוגהפרשהוכמות',
-    'צמיחהתרביתמהפצע',
-    'התחלתטיפולאנטיביוטיטיפולי',
-    'התחלתטיפולאנטיביוטיוסוג',
+    'VentilationType',
+    'MucusCalture',
+    'VapControl',
+    'HeartTritment',
+    'BrathFisoterapy',
+    'Lying30Degry',
+    'StopSadation',
+    'ActubationChech',
+    'DiagnosticCLABSI',
+    'CateterInsertDate1',
+    'CateterPlace1',
+    'CateterOutDate1',
+    'CateterInsertDate2',
+    'CateterPlace2',
+    'CateterOutDate2',
+    'PreventionCLABSI',
+    'InfectionSigns',
+    'ChangeBnded',
+    'BandedCloresidin',
+    'DryClean',
+    'NEEDLESSUse',
+    'ChateterNeed1',
+    'ChateterNeed2',
+    'CheckWondAfterSurgery',
+    'CheckWondChangeBandedGood',
+    'LiquidQuantityAndType',
+    'CultureGrowWound',
+    'StartAntibuticTritment',
+    'StartAntibuticTritmentType',
   ];
 
   columnHeaders: { [key: string]: string } = {
     PersonalID: 'תעודת זהות',
     PersonalFirstName: 'שם פרטי',
     PersonalLastName: 'שם משפחה',
-    תאריךמילוי: 'תאריך מילוי',
-    אבחוןשלVAP: 'אבחון של VAP',
-    תאריךאבחון: 'תאריך אבחון',
-    מספרמיטה: 'מספר מיטה',
-    יומןשמה: 'יום הנשמה',
-    כיח: 'כיח',
-    טיפולאנטיביוטי: 'טיפול אנטיביוטי',
+    DateOfFill: 'תאריך מילוי',
+    DiagnosticVaP: 'אבחון של VAP',
+    DiagnosticDate: 'תאריך אבחון',
+    BadNum: 'מספר מיטה',
+    VentilationDay: 'יום הנשמה',
+    Mucus: 'כיח',
+    AntibuoticTrerment: 'טיפול אנטיביוטי',
     WBC: 'WBC',
-    חום: 'חום',
+    Fever: 'חום',
     FIO2: 'FIO2',
     PEEP: 'PEEP',
-    דרךסוגהנשמה: 'דרך / סוג הנשמה',
-    לקיחתכיחלתרבית: 'לקיחת כיח לתרבית',
-    מניעהשלVAP: 'מניעה של VAP',
-    טיפוללב: 'טיפול לב',
-    פיזיוטרפיהנשימתית: 'פיזיותרפיה נשימתית',
-    השכבה30מעלות: 'השכבה 30 מעלות',
-    הפסקתסדציה: 'הפסקת סדציה',
-    בדיקתאפשרותלאקסטובציה: 'בדיקת אפשרות לאקסטובציה',
-    אבחוןCLABSI: 'אבחון CLABSI',
-    תאריךהכנסתצנתר1: 'ת. הכנסת צנתר 1',
-    מיקוםצנתר1: 'מיקום צנתר 1',
-    תאריךהוצאתצנתר1: 'ת. הוצאת צנתר 1',
-    תאריךהכנסתצנתר2: 'ת. הכנסת צנתר 2',
-    מיקוםצנתר2: 'מיקום צנתר 2',
-    תאריךהוצאתצנתר2: 'ת. הוצאת צנתר 2',
-    מניעתCLABSI: 'מניעת CLABSI',
-    סימניזיהום: 'סימני זיהום',
-    החלפתחבישה: 'החלפת חבישה',
-    חבישהעםכלורהקסידין: 'חבישה עם כלורהקסידין',
-    רחצהיבשה: 'רחצה יבשה',
-    שימושבNEEDLESS: 'שימוש ב NEEDLESS',
-    קיימתנחיצותלצנתר1: 'קיימת נחיצות לצנתר 1',
-    קיימתנחיצותלצנתר2: 'קיימת נחיצות לצנתר 2',
-    מעקבאחרייפצעניתוח: 'מעקב אחרי פצע ניתוח',
-    בדיקתפצעבהחלפתחבישהתקין: 'בדיקת פצע בהחלפת חבישה תקין',
-    סוגהפרשהוכמות: 'סוג הפרשה וכמות',
-    צמיחהתרביתמהפצע: 'צמיחה תרבית מהפצע',
-    התחלתטיפולאנטיביוטיטיפולי: 'התחלת טיפול אנטיביוטי טיפולי',
-    התחלתטיפולאנטיביוטיוסוג: 'התחלת טיפול אנטיביוטי וסוג',
+    VentilationType: 'דרך / סוג הנשמה',
+    MucusCalture: 'לקיחת כיח לתרבית',
+    VapControl: 'מניעה של VAP',
+    HeartTritment: 'טיפול לב',
+    BrathFisoterapy: 'פיזיותרפיה נשימתית',
+    Lying30Degry: 'השכבה 30 מעלות',
+    StopSadation: 'הפסקת סדציה',
+    ActubationChech: 'בדיקת אפשרות לאקסטובציה',
+    DiagnosticCLABSI: 'אבחון CLABSI',
+    CateterInsertDate1: 'תאריך הכנסת צנתר 1',
+    CateterPlace1: 'מיקום צנתר 1',
+    CateterOutDate1: 'תאריך הוצאת צנתר 1',
+    CateterInsertDate2: 'תאריך הכנסת צנתר 2',
+    CateterPlace2: 'מיקום צנתר 2',
+    CateterOutDate2: 'תאריך הוצאת צנתר 2',
+    PreventionCLABSI: 'מניעת CLABSI',
+    InfectionSigns: 'סימני זיהום',
+    ChangeBnded: 'החלפת חבישה',
+    BandedCloresidin: 'חבישה עם כלורהקסידין',
+    DryClean: 'רחצה יבשה',
+    NEEDLESSUse: 'שימוש ב NEEDLESS',
+    ChateterNeed1: 'קיימת נחיצות לצנתר 1',
+    ChateterNeed2: 'קיימת נחיצות לצנתר 2',
+    CheckWondAfterSurgery: 'מעקב אחרי פצע ניתוח',
+    CheckWondChangeBandedGood: 'בדיקת פצע בהחלפת חבישה תקין',
+    LiquidQuantityAndType: 'סוג הפרשה וכמות',
+    CultureGrowWound: 'צמיחה תרבית מהפצע',
+    StartAntibuticTritment: 'התחלת טיפול אנטיביוטי טיפולי',
+    StartAntibuticTritmentType: 'התחלת טיפול אנטיביוטי וסוג',
   };
-
-  
 
   dataSource: any[] = [];
   filteredData: any[] = [];
   matTableDataSource: MatTableDataSource<any>;
-  loading: boolean = true; // <-- Added loading state
+  loading: boolean = true;
 
   filterForm: FormGroup;
 
@@ -132,7 +130,7 @@ export class VWInfectionControlICUComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.loading = true; // Show spinner while fetching data
+    this.loading = true;
 
     this.http.get<any[]>(environment.apiUrl + 'VWInfectionControlICU').subscribe({
       next: (data) => {
@@ -140,38 +138,32 @@ export class VWInfectionControlICUComponent implements OnInit {
         this.filteredData = [...data];
         this.matTableDataSource = new MatTableDataSource(this.filteredData);
 
-        // Delay the paginator assignment to ensure it's initialized
         setTimeout(() => {
           this.matTableDataSource.paginator = this.paginator;
           this.matTableDataSource.sort = this.sort;
         });
 
-        this.loading = false; // Hide spinner when data is loaded
+        this.loading = false;
 
-        // Add value changes listener to all form controls
         this.columns.forEach((column) => {
           this.filterForm.get(column)?.valueChanges
             .pipe(debounceTime(300), distinctUntilChanged())
             .subscribe(() => this.applyFilters());
         });
 
-        // Global filter value change listener
         this.filterForm.valueChanges.subscribe(() => {
           this.applyFilters();
-          this.paginator.firstPage(); // Reset to first page after filtering
+          this.paginator.firstPage();
         });
 
-        // Initial filter application
         this.applyFilters();
       },
       error: (error) => {
         console.error('Error fetching data:', error);
-        this.loading = false; // Hide spinner even if there's an error
+        this.loading = false;
       }
     });
-}
-
-
+  }
 
   private createFilterForm(): FormGroup {
     const formControls: any = {};
@@ -213,12 +205,6 @@ export class VWInfectionControlICUComponent implements OnInit {
   exportToExcel() {
     const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(this.filteredData);
     const workbook: XLSX.WorkBook = { Sheets: { data: worksheet }, SheetNames: ['data'] };
-    const excelBuffer: any = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
-    const blob: Blob = new Blob([excelBuffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-
-    const link = document.createElement('a');
-    link.href = window.URL.createObjectURL(blob);
-    link.download = 'vw_infection_control_icu.xlsx';
-    link.click();
+    XLSX.writeFile(workbook, 'vw_infection_control_icu.xlsx');
   }
 }

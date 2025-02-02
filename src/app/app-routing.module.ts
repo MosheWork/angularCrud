@@ -61,6 +61,7 @@ import { ERInfoComponent } from './chameleon-reports/erinfo/erinfo.component';
 import { CommunicationTherapistComponent } from './chameleon-reports/communication-therapist/communication-therapist.component';
 import { VWInfectionControlICUComponent } from './chameleon-reports/vwinfection-control-icu/vwinfection-control-icu.component';
 import { DepartmentOccupiedMitavComponent } from './chameleon-reports/department-occupied-mitav/department-occupied-mitav.component';
+import { MitavMobilityComponent } from './mitav/mitav-mobility/mitav-mobility.component';
 
 const routes: Routes = [
   { path: 'users', component: UsersComponent },
@@ -146,6 +147,9 @@ const routes: Routes = [
 //shift-table
    { path: 'shift-table', component: ShiftTableComponent },
    { path: 'shift-calendar', component: ShiftCalendarComponent },
+
+   // דוח מיתב
+   { path: 'MitavMobility', component: MitavMobilityComponent },
 
    //amin
    { path: 'aws', component: AwsClaudeInvocationComponent },

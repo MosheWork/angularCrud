@@ -130,6 +130,7 @@ import { ERInfoComponent } from './chameleon-reports/erinfo/erinfo.component';
 import { CommunicationTherapistComponent } from './chameleon-reports/communication-therapist/communication-therapist.component';
 import { VWInfectionControlICUComponent } from './chameleon-reports/vwinfection-control-icu/vwinfection-control-icu.component';
 import { DepartmentOccupiedMitavComponent } from './chameleon-reports/department-occupied-mitav/department-occupied-mitav.component';
+import { MitavMobilityComponent } from './mitav/mitav-mobility/mitav-mobility.component';
 
 @NgModule({
   declarations: [
@@ -227,7 +228,8 @@ import { DepartmentOccupiedMitavComponent } from './chameleon-reports/department
     ERInfoComponent,
     CommunicationTherapistComponent,
     VWInfectionControlICUComponent,
-    DepartmentOccupiedMitavComponent
+    DepartmentOccupiedMitavComponent,
+    MitavMobilityComponent
   
   ],
   imports: [
