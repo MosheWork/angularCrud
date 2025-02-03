@@ -32,7 +32,10 @@ export class MitavMobilityComponent implements OnInit, AfterViewInit {
     'TotalDaysInHospital',
     'TotalPercentage',
     'IsRecordMatchingReleaseDate',
-    'HasRecordPerDate'
+    'HasRecordPerDate',
+    'CognitiveFunctionBeforeHospitalization',  // Added
+    'MobilityBeforeHospitalization',          // Added
+    'BasicFunctionBeforeHospitalization'
   ];
 
   dataSource = new MatTableDataSource<any>();
@@ -245,14 +248,20 @@ toggleDepartmentList(): void {
 }
 
 openDepartmentPercentagesDialog(): void {
-  const departmentMap = new Map<string, { totalShifts: number; totalDays: number; mobilityGrades: number[] }>();
+  const departmentMap = new Map<string, { 
+    totalShifts: number; 
+    totalDays: number; 
+    mobilityGrades: number[];
+    recommendations: string[]; // Added for RecommendationForWalking
+  }>();
 
   this.dataSource.data.forEach(item => {
     const unitName = item.UnitName || 'Unknown';
     const mobilityGrade = item.MobilityGrade;
+    const recommendation = item.RecommendationForWalking;
 
     if (!departmentMap.has(unitName)) {
-      departmentMap.set(unitName, { totalShifts: 0, totalDays: 0, mobilityGrades: [] });
+      departmentMap.set(unitName, { totalShifts: 0, totalDays: 0, mobilityGrades: [], recommendations: [] });
     }
 
     const department = departmentMap.get(unitName)!;
@@ -262,19 +271,28 @@ openDepartmentPercentagesDialog(): void {
     if (mobilityGrade !== null && mobilityGrade !== undefined && mobilityGrade !== '') {
       department.mobilityGrades.push(mobilityGrade);
     }
+
+    if (recommendation !== null && recommendation !== undefined && recommendation !== '') {
+      department.recommendations.push(recommendation);
+    }
   });
 
   const departmentPercentages = Array.from(departmentMap.entries()).map(([unitName, data]) => ({
     unitName,
     percentage: data.totalDays > 0 ? (data.totalShifts / data.totalDays) * 100 : 0,
-    mobilityGrades: data.mobilityGrades
-  })).sort((a, b) => b.percentage - a.percentage);
+    mobilityGrades: data.mobilityGrades,
+    recommendations: data.recommendations // Added for RecommendationForWalking
+  }));
+
+  // Debug: Log what is being sent to the dialog
+  console.log('Data sent to the dialog:', departmentPercentages);
 
   this.dialog.open(DepartmentPercentagesDialogComponent, {
     width: '600px',
     data: { percentages: departmentPercentages },
   });
 }
+
 
 getGaugeColor(): string {
   if (this.gaugeValue < 40) {

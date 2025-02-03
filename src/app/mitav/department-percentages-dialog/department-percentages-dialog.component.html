@@ -14,14 +14,21 @@
       <td mat-cell *matCellDef="let element"> {{ element.percentage | number:'1.1-1' }}% </td>
     </ng-container>
 
-    <!-- Formatted Mobility Grade Column -->
-    <ng-container matColumnDef="formattedMobilityData">
-      <th mat-header-cell *matHeaderCellDef> ממוצע ניידות </th>
-      <td mat-cell *matCellDef="let element"> {{ element.formattedMobilityData }} </td>
-    </ng-container>
+ <!-- RecommendationForWalking Column -->
+<ng-container matColumnDef="formattedRecommendationData">
+  <th mat-header-cell *matHeaderCellDef> מרשם הליכה  </th>
+  <td mat-cell *matCellDef="let element"> {{ element.formattedRecommendationData || 'N/A' }} </td>
+</ng-container>
 
-    <tr mat-header-row *matHeaderRowDef="['unitName', 'percentage', 'formattedMobilityData']"></tr>
-    <tr mat-row *matRowDef="let row; columns: ['unitName', 'percentage', 'formattedMobilityData'];"></tr>
+<!-- Mobility Grade Column -->
+<ng-container matColumnDef="formattedMobilityData">
+  <th mat-header-cell *matHeaderCellDef> דרגת ניידות</th>
+  <td mat-cell *matCellDef="let element"> {{ element.formattedMobilityData || 'N/A' }} </td>
+</ng-container>
+
+
+    <tr mat-header-row *matHeaderRowDef="['unitName', 'percentage', 'formattedMobilityData', 'formattedRecommendationData']"></tr>
+    <tr mat-row *matRowDef="let row; columns: ['unitName', 'percentage', 'formattedMobilityData', 'formattedRecommendationData'];"></tr>
   </table>
 </mat-dialog-content>
 <mat-dialog-actions align="end">

@@ -143,7 +143,29 @@
             <th mat-header-cell *matHeaderCellDef mat-sort-header>דרגת ניידות</th>
             <td mat-cell *matCellDef="let element"> {{ element.MobilityGrade }}</td>
           </ng-container>
-      
+      <!-- Cognitive Function Before Hospitalization Column -->
+<ng-container matColumnDef="CognitiveFunctionBeforeHospitalization">
+  <th mat-header-cell *matHeaderCellDef mat-sort-header>תפקוד קוגניטיבי לפני אשפוז</th>
+  <td mat-cell *matCellDef="let element">
+    {{ element.CognitiveFunctionBeforeHospitalization }}
+  </td>
+</ng-container>
+
+<!-- Mobility Before Hospitalization Column -->
+<ng-container matColumnDef="MobilityBeforeHospitalization">
+  <th mat-header-cell *matHeaderCellDef mat-sort-header>ניידות לפני אשפוז</th>
+  <td mat-cell *matCellDef="let element">
+    {{ element.MobilityBeforeHospitalization }}
+  </td>
+</ng-container>
+
+<!-- Basic Function Before Hospitalization Column -->
+<ng-container matColumnDef="BasicFunctionBeforeHospitalization">
+  <th mat-header-cell *matHeaderCellDef mat-sort-header>תפקוד בסיסי לפני אשפוז</th>
+  <td mat-cell *matCellDef="let element">
+    {{ element.BasicFunctionBeforeHospitalization }}
+  </td>
+</ng-container>
           <!-- Consultation Status Column -->
           <ng-container matColumnDef="ConsultationStatus">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>סטטוס ייעוץ</th>
