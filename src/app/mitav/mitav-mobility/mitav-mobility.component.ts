@@ -41,6 +41,8 @@ export class MitavMobilityComponent implements OnInit, AfterViewInit {
   endDate: Date | null = null;
   originalData: any[] = [];
   gaugeValue: number = 0;
+  departmentList: string[] = []; // List of unique departments
+  selectedDepartments: string[] = []; // Selected departments for filtering
   departmentPercentages: { unitName: string; percentage: number }[] = [];
   showDepartmentList: boolean = false; // Toggle for department list
   @ViewChild(MatPaginator) paginator!: MatPaginator;
@@ -64,8 +66,12 @@ export class MitavMobilityComponent implements OnInit, AfterViewInit {
         (data) => {
           console.log('Raw API Response:', data); // Debug log to inspect response
           this.dataSource.data = data;
+          this.originalData = data; // Store original data
+
           this.calculateMobilityGradeAverage();
           this.calculateDepartmentPercentages();
+          this.departmentList = Array.from(new Set(data.map((item) => item.UnitName || 'Unknown')));
+
         },
         (error) => {
           console.error('Error fetching Mobility Report data:', error);
@@ -94,6 +100,18 @@ export class MitavMobilityComponent implements OnInit, AfterViewInit {
     this.endDate = null;
     this.dataSource.data = this.originalData;
     this.calculateMobilityGradeAverage();
+    this.selectedDepartments = [];
+
+  }
+  applyDepartmentFilter(): void {
+    if (this.selectedDepartments.length === 0) {
+      this.dataSource.data = this.originalData; // Reset to original data if no departments are selected
+      return;
+    }
+
+    this.dataSource.data = this.originalData.filter((item) =>
+      this.selectedDepartments.includes(item.UnitName)
+    );
   }
 
   calculateMobilityGradeAverage(): void {
@@ -152,5 +170,13 @@ openDepartmentPercentagesDialog(): void {
     data: { percentages: this.departmentPercentages },
   });
 }
-
+getGaugeColor(): string {
+  if (this.gaugeValue < 40) {
+    return 'red';
+  } else if (this.gaugeValue < 50) {
+    return 'orange';
+  } else {
+    return 'green';
+  }
+}
 }
