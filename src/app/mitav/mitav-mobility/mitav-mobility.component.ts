@@ -251,17 +251,31 @@ openDepartmentPercentagesDialog(): void {
   const departmentMap = new Map<string, { 
     totalShifts: number; 
     totalDays: number; 
-    mobilityGrades: number[];
-    recommendations: string[]; // Added for RecommendationForWalking
+    mobilityGrades: number[]; 
+    recommendations: string[];
+    cognitiveStates: string[]; // New field
+    mobilityStates: string[];  // New field
+    basicStates: string[];     // New field
   }>();
 
   this.dataSource.data.forEach(item => {
     const unitName = item.UnitName || 'Unknown';
     const mobilityGrade = item.MobilityGrade;
     const recommendation = item.RecommendationForWalking;
+    const cognitive = item.CognitiveFunctionBeforeHospitalization; // New
+    const mobility = item.MobilityBeforeHospitalization;           // New
+    const basic = item.BasicFunctionBeforeHospitalization;         // New
 
     if (!departmentMap.has(unitName)) {
-      departmentMap.set(unitName, { totalShifts: 0, totalDays: 0, mobilityGrades: [], recommendations: [] });
+      departmentMap.set(unitName, { 
+        totalShifts: 0, 
+        totalDays: 0, 
+        mobilityGrades: [], 
+        recommendations: [], 
+        cognitiveStates: [],  // Initialize
+        mobilityStates: [],   // Initialize
+        basicStates: []       // Initialize
+      });
     }
 
     const department = departmentMap.get(unitName)!;
@@ -275,23 +289,29 @@ openDepartmentPercentagesDialog(): void {
     if (recommendation !== null && recommendation !== undefined && recommendation !== '') {
       department.recommendations.push(recommendation);
     }
+
+    // Push functional states
+    department.cognitiveStates.push(cognitive);
+    department.mobilityStates.push(mobility);
+    department.basicStates.push(basic);
   });
 
   const departmentPercentages = Array.from(departmentMap.entries()).map(([unitName, data]) => ({
     unitName,
     percentage: data.totalDays > 0 ? (data.totalShifts / data.totalDays) * 100 : 0,
     mobilityGrades: data.mobilityGrades,
-    recommendations: data.recommendations // Added for RecommendationForWalking
+    recommendations: data.recommendations,
+    cognitiveStates: data.cognitiveStates, // Added
+    mobilityStates: data.mobilityStates,   // Added
+    basicStates: data.basicStates          // Added
   }));
 
-  // Debug: Log what is being sent to the dialog
-  console.log('Data sent to the dialog:', departmentPercentages);
-
   this.dialog.open(DepartmentPercentagesDialogComponent, {
-    width: '600px',
+    width: '1200px',
     data: { percentages: departmentPercentages },
   });
 }
+
 
 
 getGaugeColor(): string {

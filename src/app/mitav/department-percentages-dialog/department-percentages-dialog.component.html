@@ -1,4 +1,3 @@
-<h2 mat-dialog-title class="dialog-title">אחוזי ניידות לפי מחלקה</h2>
 <mat-dialog-content class="dialog-content">
   <table mat-table [dataSource]="departmentData" class="mat-elevation-z8 styled-table">
     
@@ -11,26 +10,49 @@
     <!-- Mobility Percentage Column -->
     <ng-container matColumnDef="percentage">
       <th mat-header-cell *matHeaderCellDef> % ניידות </th>
-      <td mat-cell *matCellDef="let element"> {{ element.percentage | number:'1.1-1' }}% </td>
+      <td mat-cell *matCellDef="let element">
+        {{ element.percentage | number:'1.1-1' }}%
+        <mat-icon *ngIf="isAboveThreshold(element.percentage)" class="green-icon">check_circle</mat-icon>
+        <mat-icon *ngIf="!isAboveThreshold(element.percentage)" class="red-icon">cancel</mat-icon>
+      </td>
     </ng-container>
 
- <!-- RecommendationForWalking Column -->
-<ng-container matColumnDef="formattedRecommendationData">
-  <th mat-header-cell *matHeaderCellDef> מרשם הליכה  </th>
-  <td mat-cell *matCellDef="let element"> {{ element.formattedRecommendationData || 'N/A' }} </td>
-</ng-container>
+    <!-- RecommendationForWalking Column -->
+    <ng-container matColumnDef="formattedRecommendationData">
+      <th mat-header-cell *matHeaderCellDef> מרשם הליכה </th>
+      <td mat-cell *matCellDef="let element">
+        {{ element.formattedRecommendationData || 'N/A' }}
+        <mat-icon *ngIf="isAboveThreshold(element.formattedRecommendationData)" class="green-icon">check_circle</mat-icon>
+        <mat-icon *ngIf="!isAboveThreshold(element.formattedRecommendationData)" class="red-icon">cancel</mat-icon>
+      </td>
+    </ng-container>
 
-<!-- Mobility Grade Column -->
-<ng-container matColumnDef="formattedMobilityData">
-  <th mat-header-cell *matHeaderCellDef> דרגת ניידות</th>
-  <td mat-cell *matCellDef="let element"> {{ element.formattedMobilityData || 'N/A' }} </td>
-</ng-container>
+    <!-- Mobility Grade Column -->
+    <ng-container matColumnDef="formattedMobilityData">
+      <th mat-header-cell *matHeaderCellDef> דרגת ניידות </th>
+      <td mat-cell *matCellDef="let element">
+        {{ element.formattedMobilityData || 'N/A' }}
+        <mat-icon *ngIf="isAboveThreshold(element.formattedMobilityData)" class="green-icon">check_circle</mat-icon>
+        <mat-icon *ngIf="!isAboveThreshold(element.formattedMobilityData)" class="red-icon">cancel</mat-icon>
+      </td>
+    </ng-container>
 
+    <!-- Functional State Column (מצב תפקודי) -->
+    <ng-container matColumnDef="functionalState">
+      <th mat-header-cell *matHeaderCellDef> מצב תפקודי </th>
+      <td mat-cell *matCellDef="let element">
+        {{ element.functionalState || 'N/A' }}
+        <mat-icon *ngIf="isAboveThreshold(element.functionalState)" class="green-icon">check_circle</mat-icon>
+        <mat-icon *ngIf="!isAboveThreshold(element.functionalState)" class="red-icon">cancel</mat-icon>
+      </td>
+    </ng-container>
 
-    <tr mat-header-row *matHeaderRowDef="['unitName', 'percentage', 'formattedMobilityData', 'formattedRecommendationData']"></tr>
-    <tr mat-row *matRowDef="let row; columns: ['unitName', 'percentage', 'formattedMobilityData', 'formattedRecommendationData'];"></tr>
+    <tr mat-header-row *matHeaderRowDef="['unitName', 'percentage', 'formattedMobilityData', 'formattedRecommendationData', 'functionalState']"></tr>
+    <tr mat-row *matRowDef="let row; columns: ['unitName', 'percentage', 'formattedMobilityData', 'formattedRecommendationData', 'functionalState'];"></tr>
+
   </table>
 </mat-dialog-content>
+
 <mat-dialog-actions align="end">
   <button mat-raised-button color="primary" mat-dialog-close>סגור</button>
 </mat-dialog-actions>
