@@ -45,6 +45,10 @@ export class MitavMobilityComponent implements OnInit, AfterViewInit {
   selectedDepartments: string[] = []; // Selected departments for filtering
   departmentPercentages: { unitName: string; percentage: number }[] = [];
   showDepartmentList: boolean = false; // Toggle for department list
+  selectedYear: number | null = null;
+selectedQuarter: string | null = null;
+yearList: number[] = [];
+
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
@@ -71,6 +75,14 @@ export class MitavMobilityComponent implements OnInit, AfterViewInit {
           this.calculateMobilityGradeAverage();
           this.calculateDepartmentPercentages();
           this.departmentList = Array.from(new Set(data.map((item) => item.UnitName || 'Unknown')));
+          this.calculateGaugeValue(this.dataSource.data);
+
+      // ✅ Extract Unique Years from AdmissionDate
+      this.yearList = Array.from(
+        new Set(
+          data.map((item) => new Date(item.AdmissionDate).getFullYear()).filter((y) => !isNaN(y))
+        )
+      ).sort((a, b) => b - a); // Sort years in descending order
 
         },
         (error) => {
@@ -79,40 +91,101 @@ export class MitavMobilityComponent implements OnInit, AfterViewInit {
       );
   }
   
-
-
-  applyDateFilter(): void {
-    if (!this.startDate || !this.endDate) {
-      return;
+  applyFilters(): void {
+    let filteredData = [...this.originalData];
+  
+    // ✅ Apply Date Filter based on AdmissionDate
+    if (this.startDate && this.endDate) {
+      filteredData = filteredData.filter((item) => {
+        const admissionDate = new Date(item.AdmissionDate);
+        return admissionDate >= this.startDate! && admissionDate <= this.endDate!;
+      });
     }
-
-    const filteredData = this.originalData.filter(item => {
-      const admissionDate = new Date(item.AdmissionDate);
-      return admissionDate >= this.startDate! && admissionDate <= this.endDate!;
-    });
-
+  
+    // ✅ Apply Department Filter
+    if (this.selectedDepartments.length > 0) {
+      filteredData = filteredData.filter((item) =>
+        this.selectedDepartments.includes(item.UnitName)
+      );
+    }
+  
+    // ✅ Apply Year Filter
+    if (this.selectedYear) {
+      filteredData = filteredData.filter(
+        (item) => new Date(item.AdmissionDate).getFullYear() === this.selectedYear
+      );
+    }
+  
+    // ✅ Apply Quarter Filter
+    if (this.selectedQuarter) {
+      filteredData = filteredData.filter((item) => {
+        const month = new Date(item.AdmissionDate).getMonth() + 1; // Month index starts from 0
+        if (this.selectedQuarter === 'Q1') return month >= 1 && month <= 3;
+        if (this.selectedQuarter === 'Q2') return month >= 4 && month <= 6;
+        if (this.selectedQuarter === 'Q3') return month >= 7 && month <= 9;
+        if (this.selectedQuarter === 'Q4') return month >= 10 && month <= 12;
+        return false;
+      });
+    }
+  
     this.dataSource.data = filteredData;
-    this.calculateMobilityGradeAverage();
+  
+    // ✅ Update the Gauge based on the filtered data
+    this.calculateGaugeValue(filteredData);
   }
+  
+  
+  calculateGaugeValue(data: any[]): void {
+    const totalDatesWithBothShifts = data
+      .map((item) => item.DatesWithBothShifts || 0)
+      .reduce((sum, value) => sum + value, 0);
+  
+    const totalDaysInHospital = data
+      .map((item) => item.TotalDaysInHospital || 1) // Avoid division by zero
+      .reduce((sum, value) => sum + value, 0);
+  
+    this.gaugeValue = totalDaysInHospital > 0
+      ? (totalDatesWithBothShifts / totalDaysInHospital) * 100
+      : 0;
+  }
+  
+  // applyDateFilter(): void {
+  //   if (!this.startDate || !this.endDate) {
+  //     return;
+  //   }
 
-  resetFilter(): void {
+  //   const filteredData = this.originalData.filter(item => {
+  //     const admissionDate = new Date(item.AdmissionDate);
+  //     return admissionDate >= this.startDate! && admissionDate <= this.endDate!;
+  //   });
+
+  //   this.dataSource.data = filteredData;
+  //   this.calculateMobilityGradeAverage();
+  // }
+
+  resetFilters(): void {
     this.startDate = null;
     this.endDate = null;
-    this.dataSource.data = this.originalData;
-    this.calculateMobilityGradeAverage();
     this.selectedDepartments = [];
-
+    this.selectedYear = null;
+    this.selectedQuarter = null;
+    this.dataSource.data = this.originalData;
+  
+    // ✅ Reset Gauge Value
+    this.calculateGaugeValue(this.originalData);
   }
-  applyDepartmentFilter(): void {
-    if (this.selectedDepartments.length === 0) {
-      this.dataSource.data = this.originalData; // Reset to original data if no departments are selected
-      return;
-    }
+  
+  
+  // applyDepartmentFilter(): void {
+  //   if (this.selectedDepartments.length === 0) {
+  //     this.dataSource.data = this.originalData; // Reset to original data if no departments are selected
+  //     return;
+  //   }
 
-    this.dataSource.data = this.originalData.filter((item) =>
-      this.selectedDepartments.includes(item.UnitName)
-    );
-  }
+  //   this.dataSource.data = this.originalData.filter((item) =>
+  //     this.selectedDepartments.includes(item.UnitName)
+  //   );
+  // }
 
   calculateMobilityGradeAverage(): void {
     if (this.dataSource.data.length > 0) {

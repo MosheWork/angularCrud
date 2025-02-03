@@ -13,33 +13,53 @@
           <!-- Department Multi-Select -->
           <mat-form-field class="filter-field">
             <mat-label>Select Departments</mat-label>
-            <mat-select [(value)]="selectedDepartments" multiple (selectionChange)="applyDepartmentFilter()">
+            <mat-select [(ngModel)]="selectedDepartments" multiple (selectionChange)="applyFilters()">
               <mat-option *ngFor="let department of departmentList" [value]="department">
                 {{ department }}
-              </mat-option>
-            </mat-select>
+              </mat-option> 
+            </mat-select> 
           </mat-form-field>
+          
   
-          <!-- Start Date Filter -->
-          <mat-form-field class="filter-field">
-            <mat-label>Start Date</mat-label>
-            <input matInput [matDatepicker]="startDatePicker" [(ngModel)]="startDate" />
-            <mat-datepicker-toggle matSuffix [for]="startDatePicker"></mat-datepicker-toggle>
-            <mat-datepicker #startDatePicker></mat-datepicker>
-          </mat-form-field>
-  
-          <!-- End Date Filter -->
-          <mat-form-field class="filter-field">
-            <mat-label>End Date</mat-label>
-            <input matInput [matDatepicker]="endDatePicker" [(ngModel)]="endDate" />
-            <mat-datepicker-toggle matSuffix [for]="endDatePicker"></mat-datepicker-toggle>
-            <mat-datepicker #endDatePicker></mat-datepicker>
-          </mat-form-field>
-  
+     <!-- Start Date Filter -->
+<mat-form-field class="filter-field">
+  <mat-label>Start Date</mat-label>
+  <input matInput [matDatepicker]="startDatePicker" [(ngModel)]="startDate" (ngModelChange)="applyFilters()" />
+  <mat-datepicker-toggle matSuffix [for]="startDatePicker"></mat-datepicker-toggle>
+  <mat-datepicker #startDatePicker></mat-datepicker>
+</mat-form-field>
+
+<!-- End Date Filter -->
+<mat-form-field class="filter-field">
+  <mat-label>End Date</mat-label>
+  <input matInput [matDatepicker]="endDatePicker" [(ngModel)]="endDate" (ngModelChange)="applyFilters()" />
+  <mat-datepicker-toggle matSuffix [for]="endDatePicker"></mat-datepicker-toggle>
+  <mat-datepicker #endDatePicker></mat-datepicker>
+</mat-form-field>
+
+  <!-- Year Filter -->
+<mat-form-field class="filter-field">
+  <mat-label>Select Year</mat-label>
+  <mat-select [(ngModel)]="selectedYear" (selectionChange)="applyFilters()">
+    <mat-option *ngFor="let year of yearList" [value]="year">
+      {{ year }}
+    </mat-option>
+  </mat-select>
+</mat-form-field>
+
+<!-- Quarter Filter -->
+<mat-form-field class="filter-field">
+  <mat-label>Select Quarter</mat-label>
+  <mat-select [(ngModel)]="selectedQuarter" (selectionChange)="applyFilters()">
+    <mat-option *ngFor="let quarter of ['Q1', 'Q2', 'Q3', 'Q4']" [value]="quarter">
+      {{ quarter }}
+    </mat-option>
+  </mat-select>
+</mat-form-field>
           <!-- Filter Buttons -->
           <div class="filter-buttons" style="margin-top: 10px; text-align: right;">
-            <button mat-raised-button color="primary" (click)="applyDateFilter()">Apply</button>
-            <button mat-raised-button color="warn" (click)="resetFilter()">Reset</button>
+            <button mat-raised-button color="primary" (click)="applyFilters()">Apply</button>
+            <button mat-raised-button color="warn" (click)="resetFilters()">Reset</button>
           </div>
         </div>
       </div>
@@ -71,10 +91,10 @@
    
           
   
-          <mat-tab-group>
+          <mat-tab-group dir="rtl">
             <!-- Tab 1: Main Table -->
-            <mat-tab label="Main Table">
-              <div class="table-section">
+            <mat-tab label="ניידות" >
+              <div class="table-section" dir="rtl">
                 <table mat-table [dataSource]="dataSource" matSort>
                   <ng-container *ngFor="let column of displayedColumns" [matColumnDef]="column">
                     <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ column }}</th>
