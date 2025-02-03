@@ -1,0 +1,47 @@
+.dialog-title {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #2c3e50;
+    text-align: center;
+    margin-bottom: 1rem;
+  }
+  
+  .dialog-content {
+    padding: 0 1.5rem 1.5rem;
+  }
+  
+  .styled-table {
+    width: 100%;
+    border-spacing: 0;
+    border-collapse: collapse;
+  
+    th {
+      background-color: #f4f4f4;
+      color: #4a4a4a;
+      font-weight: bold;
+      padding: 0.75rem;
+      text-align: left;
+      border-bottom: 2px solid #e0e0e0;
+    }
+  
+    td {
+      padding: 0.75rem;
+      border-bottom: 1px solid #e0e0e0;
+      color: #333;
+    }
+  
+    tr:hover {
+      background-color: #f9f9f9;
+    }
+  }
+  
+  mat-dialog-actions {
+    padding: 1rem;
+    display: flex;
+    justify-content: flex-end;
+  
+    button {
+      font-size: 0.9rem;
+    }
+  }
+  

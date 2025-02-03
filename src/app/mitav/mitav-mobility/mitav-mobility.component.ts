@@ -6,6 +6,7 @@ import { MatSort } from '@angular/material/sort';
 import { environment } from '../../../environments/environment';
 import { MatDialog } from '@angular/material/dialog';
 import { DepartmentPercentagesDialogComponent } from '../department-percentages-dialog/department-percentages-dialog.component';
+import { DocumentationOfPatientMobilityDialogComponent } from '../documentation-of-patient-mobility-dialog/documentation-of-patient-mobility-dialog.component';
 
 
 @Component({
@@ -244,11 +245,37 @@ toggleDepartmentList(): void {
 }
 
 openDepartmentPercentagesDialog(): void {
+  const departmentMap = new Map<string, { totalShifts: number; totalDays: number; mobilityGrades: number[] }>();
+
+  this.dataSource.data.forEach(item => {
+    const unitName = item.UnitName || 'Unknown';
+    const mobilityGrade = item.MobilityGrade;
+
+    if (!departmentMap.has(unitName)) {
+      departmentMap.set(unitName, { totalShifts: 0, totalDays: 0, mobilityGrades: [] });
+    }
+
+    const department = departmentMap.get(unitName)!;
+    department.totalShifts += item.DatesWithBothShifts || 0;
+    department.totalDays += item.TotalDaysInHospital || 1;
+
+    if (mobilityGrade !== null && mobilityGrade !== undefined && mobilityGrade !== '') {
+      department.mobilityGrades.push(mobilityGrade);
+    }
+  });
+
+  const departmentPercentages = Array.from(departmentMap.entries()).map(([unitName, data]) => ({
+    unitName,
+    percentage: data.totalDays > 0 ? (data.totalShifts / data.totalDays) * 100 : 0,
+    mobilityGrades: data.mobilityGrades
+  })).sort((a, b) => b.percentage - a.percentage);
+
   this.dialog.open(DepartmentPercentagesDialogComponent, {
     width: '600px',
-    data: { percentages: this.departmentPercentages },
+    data: { percentages: departmentPercentages },
   });
 }
+
 getGaugeColor(): string {
   if (this.gaugeValue < 40) {
     return 'red';
@@ -258,4 +285,17 @@ getGaugeColor(): string {
     return 'green';
   }
 }
+
+
+openDetailsDialog(admissionNo: string): void {
+  const dialogRef = this.dialog.open(DocumentationOfPatientMobilityDialogComponent, {
+    width: '800px',
+    data: { admissionNo }
+  });
+
+  dialogRef.afterClosed().subscribe(() => {
+    console.log('Details dialog closed');
+  });
+}
+
 }

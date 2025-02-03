@@ -468,7 +468,7 @@
   .mat-button-toggle .mat-button-toggle-label-content {
     text-transform: none; /* Prevent uppercase text */
   }
-  .loading-screen {
+  .bed-doctor-loader {
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -477,9 +477,20 @@
     text-align: center;
   }
   
-  .loading-screen p {
+  .animation {
+    font-size: 1.8rem;
+    animation: moveBeds 2s infinite linear;
+    white-space: nowrap;
+  }
+  
+  @keyframes moveBeds {
+    0% { transform: translateX(-20px); }
+    100% { transform: translateX(20px); }
+  }
+  
+  .bed-doctor-loader p {
     font-size: 1.5rem;
-    margin-top: 15px;
+    margin-top: 10px;
     color: #555;
   }
   

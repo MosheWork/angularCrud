@@ -1,7 +1,12 @@
 <!-- Loader (Full Page) -->
 <div *ngIf="isLoading" class="loading-screen">
-  <mat-progress-spinner mode="indeterminate" color="primary"></mat-progress-spinner>
-  <p>אוסף נתונים לדוח מיתב....</p>
+  <div class="bed-doctor-loader">
+    <div class="animation">
+      🏥 ➡️ 🏥 ➡️ 🏥 ➡️ 👨‍⚕️
+    </div>
+    <mat-progress-bar mode="indeterminate" color="accent"></mat-progress-bar>
+    <p>מעבד מידע רפואי...</p>
+  </div>  <p>אוסף נתונים לדוח מיתב....</p>
 </div>
 
 <!-- Entire Page (Hidden Until Data is Loaded) -->
@@ -11,81 +16,81 @@
     <h1>דוח מיתב</h1>
   </div>
 
-  <!-- Filters Section -->
-  <div class="filter-card">
-    <div dir="rtl" class="card mat-elevation-z8">
-      <div class="card-body">
-        <div class="filter-container">
-          <!-- Department Multi-Select -->
-          <mat-form-field class="filter-field">
-            <mat-label>Select Departments</mat-label>
-            <mat-select [(ngModel)]="selectedDepartments" multiple (selectionChange)="applyFilters()">
-              <mat-option *ngFor="let department of departmentList" [value]="department">
-                {{ department }}
-              </mat-option> 
-            </mat-select> 
-          </mat-form-field>
+<!-- Filters Section -->
+<div class="filter-card">
+  <div dir="rtl" class="card mat-elevation-z8">
+    <div class="card-body">
+      <div class="filter-container">
+        <!-- Department Multi-Select -->
+        <mat-form-field class="filter-field">
+          <mat-label>בחר מחלקות</mat-label>
+          <mat-select [(ngModel)]="selectedDepartments" multiple (selectionChange)="applyFilters()">
+            <mat-option *ngFor="let department of departmentList" [value]="department">
+              {{ department }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
 
-          <!-- Start Date Filter -->
-          <mat-form-field class="filter-field">
-            <mat-label>Start Date</mat-label>
-            <input matInput [matDatepicker]="startDatePicker" [(ngModel)]="startDate" (ngModelChange)="applyFilters()" />
-            <mat-datepicker-toggle matSuffix [for]="startDatePicker"></mat-datepicker-toggle>
-            <mat-datepicker #startDatePicker></mat-datepicker>
-          </mat-form-field>
+        <!-- Start Date Filter -->
+        <mat-form-field class="filter-field">
+          <mat-label>תאריך התחלה</mat-label>
+          <input matInput [matDatepicker]="startDatePicker" [(ngModel)]="startDate" (ngModelChange)="applyFilters()" />
+          <mat-datepicker-toggle matSuffix [for]="startDatePicker"></mat-datepicker-toggle>
+          <mat-datepicker #startDatePicker></mat-datepicker>
+        </mat-form-field>
 
-          <!-- End Date Filter -->
-          <mat-form-field class="filter-field">
-            <mat-label>End Date</mat-label>
-            <input matInput [matDatepicker]="endDatePicker" [(ngModel)]="endDate" (ngModelChange)="applyFilters()" />
-            <mat-datepicker-toggle matSuffix [for]="endDatePicker"></mat-datepicker-toggle>
-            <mat-datepicker #endDatePicker></mat-datepicker>
-          </mat-form-field>
+        <!-- End Date Filter -->
+        <mat-form-field class="filter-field">
+          <mat-label>תאריך סיום</mat-label>
+          <input matInput [matDatepicker]="endDatePicker" [(ngModel)]="endDate" (ngModelChange)="applyFilters()" />
+          <mat-datepicker-toggle matSuffix [for]="endDatePicker"></mat-datepicker-toggle>
+          <mat-datepicker #endDatePicker></mat-datepicker>
+        </mat-form-field>
 
-          <!-- Year Filter -->
-          <mat-form-field class="filter-field">
-            <mat-label>Select Year</mat-label>
-            <mat-select [(ngModel)]="selectedYear" (selectionChange)="applyFilters()">
-              <mat-option *ngFor="let year of yearList" [value]="year">
-                {{ year }}
-              </mat-option>
-            </mat-select>
-          </mat-form-field>
+        <!-- Year Filter -->
+        <mat-form-field class="filter-field">
+          <mat-label>בחר שנה</mat-label>
+          <mat-select [(ngModel)]="selectedYear" (selectionChange)="applyFilters()">
+            <mat-option *ngFor="let year of yearList" [value]="year">
+              {{ year }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
 
-          <!-- Quarter Filter -->
-          <mat-form-field class="filter-field">
-            <mat-label>Select Quarter</mat-label>
-            <mat-select [(ngModel)]="selectedQuarter" (selectionChange)="applyFilters()">
-              <mat-option *ngFor="let quarter of ['Q1', 'Q2', 'Q3', 'Q4']" [value]="quarter">
-                {{ quarter }}
-              </mat-option>
-            </mat-select>
-          </mat-form-field>
+        <!-- Quarter Filter -->
+        <mat-form-field class="filter-field">
+          <mat-label>בחר רבעון</mat-label>
+          <mat-select [(ngModel)]="selectedQuarter" (selectionChange)="applyFilters()">
+            <mat-option *ngFor="let quarter of ['רבעון 1', 'רבעון 2', 'רבעון 3', 'רבעון 4']" [value]="quarter">
+              {{ quarter }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
 
-          <!-- Filter Buttons -->
-          <div class="filter-buttons" style="margin-top: 10px; text-align: right;">
-            <button mat-raised-button color="warn" (click)="resetFilters()">Reset</button>
-          </div>
+        <!-- Filter Buttons -->
+        <div class="filter-buttons" style="margin-top: 10px; text-align: right;">
+          <button mat-raised-button color="warn" (click)="resetFilters()">איפוס</button>
         </div>
       </div>
     </div>
   </div>
+</div>
 
   <!-- Gauge Section -->
   <div class="gauge-section">
     <mat-card class="gauge-card">
-      <div class="gauge-title">Mobility Grade Distribution</div>
+      <div class="gauge-title">מדד ניידות</div>
       <div class="gauge-content">
         <ngx-gauge
           [value]="gaugeValue"
           [min]="0"
           [max]="100"
-          [label]="'Mobility Percentage'"
+          [label]="''"
           [append]="'%'"
           [foregroundColor]="getGaugeColor()"> 
         </ngx-gauge>
         <div class="gauge-info">
-          <strong>Overall Mobility Percentage: {{ gaugeValue | number:'1.1-1' }}%</strong>
+          <strong>יעד 50%</strong>
         </div>
       </div>
       <button mat-raised-button color="primary" (click)="openDepartmentPercentagesDialog()">
@@ -99,22 +104,125 @@
     <mat-tab label="ניידות">
       <div class="table-section" dir="rtl">
         <table mat-table [dataSource]="dataSource" matSort>
-          <ng-container *ngFor="let column of displayedColumns" [matColumnDef]="column">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ column }}</th>
+          <!-- Admission No Column -->
+          <ng-container matColumnDef="AdmissionNo">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>מספר אשפוז</th>
+            <td mat-cell *matCellDef="let element"> {{ element.AdmissionNo }}</td>
+          </ng-container>
+      
+          <!-- Unit Name Column -->
+          <ng-container matColumnDef="UnitName">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>מחלקה</th>
+            <td mat-cell *matCellDef="let element"> {{ element.UnitName }}</td>
+          </ng-container>
+      
+          <!-- Age Column -->
+          <ng-container matColumnDef="AgeYears">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>גיל (שנים)</th>
+            <td mat-cell *matCellDef="let element"> {{ element.AgeYears }}</td>
+          </ng-container>
+      
+          <!-- Admission Date Column -->
+          <ng-container matColumnDef="AdmissionDate">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>תאריך כניסה</th>
             <td mat-cell *matCellDef="let element">
-              <ng-container *ngIf="column === 'AdmissionDate' || column === 'ReleaseDate'; else normalColumn">
-                {{ element[column] | date:'dd/MM/yyyy' }}
-              </ng-container>
-              <ng-template #normalColumn>
-                {{ element[column] }}
-              </ng-template>
+              {{ element.AdmissionDate | date:'dd/MM/yyyy' }}
             </td>
           </ng-container>
+      
+          <!-- Release Date Column -->
+          <ng-container matColumnDef="ReleaseDate">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>תאריך שחרור</th>
+            <td mat-cell *matCellDef="let element">
+              {{ element.ReleaseDate | date:'dd/MM/yyyy' }}
+            </td>
+          </ng-container>
+      
+          <!-- Mobility Grade Column -->
+          <ng-container matColumnDef="MobilityGrade">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>דרגת ניידות</th>
+            <td mat-cell *matCellDef="let element"> {{ element.MobilityGrade }}</td>
+          </ng-container>
+      
+          <!-- Consultation Status Column -->
+          <ng-container matColumnDef="ConsultationStatus">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>סטטוס ייעוץ</th>
+            <td mat-cell *matCellDef="let element"> {{ element.ConsultationStatus }}</td>
+          </ng-container>
+      
+          <!-- Recommendation For Walking Column -->
+          <ng-container matColumnDef="RecommendationForWalking">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>המלצה להליכה</th>
+            <td mat-cell *matCellDef="let element"> {{ element.RecommendationForWalking }}</td>
+          </ng-container>
+      
+          <!-- Required Assistive Device Column -->
+          <ng-container matColumnDef="RequiredAssistiveDevice">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>אביזר עזר נדרש</th>
+            <td mat-cell *matCellDef="let element"> {{ element.RequiredAssistiveDevice }}</td>
+          </ng-container>
+      
+          <!-- Recommended Walking Distance Column -->
+          <ng-container matColumnDef="RecommendedWalkingDistance">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>מרחק הליכה מומלץ</th>
+            <td mat-cell *matCellDef="let element"> {{ element.RecommendedWalkingDistance }}</td>
+          </ng-container>
+      
+          <!-- Morning Shift Count Column -->
+          <ng-container matColumnDef="MorningShiftCount">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>מספר משמרות בוקר</th>
+            <td mat-cell *matCellDef="let element"> {{ element.MorningShiftCount }}</td>
+          </ng-container>
+      
+          <!-- Night Shift Count Column -->
+          <ng-container matColumnDef="NightShiftCount">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>מספר משמרות לילה</th>
+            <td mat-cell *matCellDef="let element"> {{ element.NightShiftCount }}</td>
+          </ng-container>
+      
+          <!-- Dates With Both Shifts Column -->
+          <ng-container matColumnDef="DatesWithBothShifts">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>ימים עם שתי משמרות</th>
+            <td mat-cell *matCellDef="let element"> {{ element.DatesWithBothShifts }}</td>
+          </ng-container>
+      
+          <!-- Total Days In Hospital Column -->
+          <ng-container matColumnDef="TotalDaysInHospital">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>סך הימים באשפוז</th>
+            <td mat-cell *matCellDef="let element"> {{ element.TotalDaysInHospital }}</td>
+          </ng-container>
+      
+          <!-- Total Percentage Column -->
+          <ng-container matColumnDef="TotalPercentage">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>אחוז כולל</th>
+            <td mat-cell *matCellDef="let element"> {{ element.TotalPercentage }}%</td>
+          </ng-container>
+      
+          <!-- Is Record Matching Release Date Column -->
+          <ng-container matColumnDef="IsRecordMatchingReleaseDate">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>תואם תאריך שחרור</th>
+            <td mat-cell *matCellDef="let element">
+              {{ element.IsRecordMatchingReleaseDate ? 'כן' : 'לא' }}
+            </td>
+          </ng-container>
+      
+          <!-- Has Record Per Date Column -->
+          <ng-container matColumnDef="HasRecordPerDate">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>רשומה לפי תאריך</th>
+            <td mat-cell *matCellDef="let element">
+              {{ element.HasRecordPerDate ? 'כן' : 'לא' }}
+            </td>
+          </ng-container>
+      
+          <!-- Header and Row Definitions -->
           <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-          <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns;" (click)="openDetailsDialog(row.AdmissionNo)"></tr>
         </table>
+      
+        <!-- Paginator -->
         <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
       </div>
+      
     </mat-tab>
 
     <!-- Additional Table Placeholder -->

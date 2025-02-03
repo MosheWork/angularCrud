@@ -1,0 +1,41 @@
+<div class="dialog-container" *ngIf="!isLoading; else loading">
+  <h2 mat-dialog-title class="dialog-title">
+    פרטי מספר אשפוז: {{ data.admissionNo }}
+  </h2>
+  <mat-dialog-content class="dialog-content">
+    <table mat-table [dataSource]="admissionDetails" class="styled-table mat-elevation-z8">
+      <!-- Unit Name Column -->
+      <ng-container matColumnDef="UnitName">
+        <th mat-header-cell *matHeaderCellDef>מחלקה</th>
+        <td mat-cell *matCellDef="let element">{{ element.UnitName }}</td>
+      </ng-container>
+
+      <!-- Entry Date Column -->
+      <ng-container matColumnDef="EntryDate">
+        <th mat-header-cell *matHeaderCellDef>תאריך כניסה</th>
+        <td mat-cell *matCellDef="let element">
+          {{ element.EntryDate | date: 'HH:mm dd/MM/yyyy ' }}
+        </td>
+      </ng-container>
+
+      <!-- Combo Text Column -->
+      <ng-container matColumnDef="ComboText">
+        <th mat-header-cell *matHeaderCellDef>תיאור</th>
+        <td mat-cell *matCellDef="let element">{{ element.ComboText }}</td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="['UnitName', 'EntryDate', 'ComboText']"></tr>
+      <tr mat-row *matRowDef="let row; columns: ['UnitName', 'EntryDate', 'ComboText'];"></tr>
+    </table>
+  </mat-dialog-content>
+  <mat-dialog-actions class="dialog-actions">
+    <button mat-raised-button color="primary" (click)="closeDialog()">סגור</button>
+  </mat-dialog-actions>
+</div>
+
+<ng-template #loading>
+  <div class="loading-state">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    <p>טוען נתונים...</p>
+  </div>
+</ng-template>

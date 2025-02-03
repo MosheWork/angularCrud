@@ -132,6 +132,7 @@ import { VWInfectionControlICUComponent } from './chameleon-reports/vwinfection-
 import { DepartmentOccupiedMitavComponent } from './chameleon-reports/department-occupied-mitav/department-occupied-mitav.component';
 import { MitavMobilityComponent } from './mitav/mitav-mobility/mitav-mobility.component';
 import { DepartmentPercentagesDialogComponent } from './mitav/department-percentages-dialog/department-percentages-dialog.component';
+import { DocumentationOfPatientMobilityDialogComponent } from './mitav/documentation-of-patient-mobility-dialog/documentation-of-patient-mobility-dialog.component';
 
 @NgModule({
   declarations: [
@@ -231,7 +232,8 @@ import { DepartmentPercentagesDialogComponent } from './mitav/department-percent
     VWInfectionControlICUComponent,
     DepartmentOccupiedMitavComponent,
     MitavMobilityComponent,
-    DepartmentPercentagesDialogComponent
+    DepartmentPercentagesDialogComponent,
+    DocumentationOfPatientMobilityDialogComponent
   
   ],
   imports: [
