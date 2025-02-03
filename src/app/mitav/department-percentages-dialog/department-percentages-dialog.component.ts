@@ -32,11 +32,25 @@ export class DepartmentPercentagesDialogComponent implements OnInit {
 
   ngOnInit(): void {
     this.calculateAverages();
+   
   }
-  isAboveThreshold(value: string | number, threshold: number = 70): boolean {
-    const numValue = typeof value === 'string' ? parseFloat(value.replace(/[^\d.-]/g, '')) : value;
-    return !isNaN(numValue) && numValue >= threshold;
+
+  isAboveThreshold(value: string | number, columnType: string): boolean {
+    if (typeof value === 'string') {
+      const percentageMatch = value.match(/(\d+(\.\d+)?)%/); // Extract numeric percentage from "XX.XX%"
+      const numValue = percentageMatch ? parseFloat(percentageMatch[1]) : NaN;
+  
+      console.log(`Parsed Value for threshold check: ${numValue}, Column Type: ${columnType}`);
+      if (isNaN(numValue)) return false;
+  
+      if (columnType === 'percentage') return numValue >= 50;
+      return numValue >= 70;
+    }
+  
+    return typeof value === 'number' && value >= (columnType === 'percentage' ? 50 : 70);
   }
+  
+  
   
   calculateAverages(): void {
     this.departmentData = this.data.percentages.map(dept => {
