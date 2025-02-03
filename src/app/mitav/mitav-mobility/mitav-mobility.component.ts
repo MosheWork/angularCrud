@@ -36,7 +36,7 @@ export class MitavMobilityComponent implements OnInit, AfterViewInit {
 
   dataSource = new MatTableDataSource<any>();
   mobilityGradeAverage: number = 0;
-
+  isLoading:boolean=true;
   startDate: Date | null = null;
   endDate: Date | null = null;
   originalData: any[] = [];
@@ -64,41 +64,59 @@ yearList: number[] = [];
   }
 
   fetchMobilityReport(): void {
-    this.http
-      .get<any[]>(`${environment.apiUrl}/MITAVMobility/GetMobilityReport`)
-      .subscribe(
-        (data) => {
-          console.log('Raw API Response:', data); // Debug log to inspect response
-          this.dataSource.data = data;
-          this.originalData = data; // Store original data
-
-          this.calculateMobilityGradeAverage();
-          this.calculateDepartmentPercentages();
-          this.departmentList = Array.from(new Set(data.map((item) => item.UnitName || 'Unknown')));
-          this.calculateGaugeValue(this.dataSource.data);
-
-      // ✅ Extract Unique Years from AdmissionDate
-      this.yearList = Array.from(
-        new Set(
-          data.map((item) => new Date(item.AdmissionDate).getFullYear()).filter((y) => !isNaN(y))
-        )
-      ).sort((a, b) => b - a); // Sort years in descending order
-
-        },
-        (error) => {
-          console.error('Error fetching Mobility Report data:', error);
+    this.isLoading = true;
+  
+    this.http.get<any[]>(`${environment.apiUrl}/MITAVMobility/GetMobilityReport`).subscribe(
+      (data) => {
+        console.log('Raw API Response:', data); // ✅ Debug log to check data
+  
+        if (!data || data.length === 0) {
+          console.warn('⚠️ No data received from API! Showing message instead of table.');
+          this.dataSource.data = [];
+          this.isLoading = false;
+          return;
         }
-      );
+  
+        this.dataSource.data = data;
+        this.originalData = data; // Store original data
+  
+        // ✅ Assign paginator after setting data
+        setTimeout(() => {
+          this.dataSource.paginator = this.paginator;
+          this.dataSource.sort = this.sort; // Ensure sorting works too
+        });
+  
+        this.isLoading = false;
+        this.calculateMobilityGradeAverage();
+        this.calculateDepartmentPercentages();
+        this.calculateGaugeValue(this.dataSource.data);
+  
+        // ✅ Extract Unique Years from AdmissionDate
+        this.yearList = Array.from(
+          new Set(
+            data.map((item) => new Date(item.AdmissionDate).getFullYear()).filter((y) => !isNaN(y))
+          )
+        ).sort((a, b) => b - a); // Sort years in descending order
+  
+        this.departmentList = Array.from(new Set(data.map((item) => item.UnitName || 'Unknown')));
+      },
+      (error) => {
+        console.error('❌ Error fetching Mobility Report data:', error);
+        this.isLoading = false; // ✅ Ensure loader disappears even on error
+      }
+    );
   }
+  
   
   applyFilters(): void {
     let filteredData = [...this.originalData];
   
     // ✅ Apply Date Filter based on AdmissionDate
-    if (this.startDate && this.endDate) {
+    if (this.startDate || this.endDate) {
       filteredData = filteredData.filter((item) => {
         const admissionDate = new Date(item.AdmissionDate);
-        return admissionDate >= this.startDate! && admissionDate <= this.endDate!;
+        return (!this.startDate || admissionDate >= this.startDate) &&
+               (!this.endDate || admissionDate <= this.endDate);
       });
     }
   
@@ -119,7 +137,7 @@ yearList: number[] = [];
     // ✅ Apply Quarter Filter
     if (this.selectedQuarter) {
       filteredData = filteredData.filter((item) => {
-        const month = new Date(item.AdmissionDate).getMonth() + 1; // Month index starts from 0
+        const month = new Date(item.AdmissionDate).getMonth() + 1;
         if (this.selectedQuarter === 'Q1') return month >= 1 && month <= 3;
         if (this.selectedQuarter === 'Q2') return month >= 4 && month <= 6;
         if (this.selectedQuarter === 'Q3') return month >= 7 && month <= 9;
@@ -149,19 +167,7 @@ yearList: number[] = [];
       : 0;
   }
   
-  // applyDateFilter(): void {
-  //   if (!this.startDate || !this.endDate) {
-  //     return;
-  //   }
 
-  //   const filteredData = this.originalData.filter(item => {
-  //     const admissionDate = new Date(item.AdmissionDate);
-  //     return admissionDate >= this.startDate! && admissionDate <= this.endDate!;
-  //   });
-
-  //   this.dataSource.data = filteredData;
-  //   this.calculateMobilityGradeAverage();
-  // }
 
   resetFilters(): void {
     this.startDate = null;

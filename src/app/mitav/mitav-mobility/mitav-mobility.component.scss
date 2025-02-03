@@ -468,4 +468,26 @@
   .mat-button-toggle .mat-button-toggle-label-content {
     text-transform: none; /* Prevent uppercase text */
   }
+  .loading-screen {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    text-align: center;
+  }
+  
+  .loading-screen p {
+    font-size: 1.5rem;
+    margin-top: 15px;
+    color: #555;
+  }
+  
+  .body {
+    display: none;
+  }
+  
+  .body:not(.loading) {
+    display: block;
+  }
   
