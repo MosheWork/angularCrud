@@ -14,14 +14,14 @@
       <td mat-cell *matCellDef="let element"> {{ element.percentage | number:'1.1-1' }}% </td>
     </ng-container>
 
-    <!-- Average Mobility Grade Column -->
-    <ng-container matColumnDef="avgMobilityGrade">
+    <!-- Formatted Mobility Grade Column -->
+    <ng-container matColumnDef="formattedMobilityData">
       <th mat-header-cell *matHeaderCellDef> ממוצע ניידות </th>
-      <td mat-cell *matCellDef="let element"> {{ element.avgMobilityGrade }} </td>
+      <td mat-cell *matCellDef="let element"> {{ element.formattedMobilityData }} </td>
     </ng-container>
 
-    <tr mat-header-row *matHeaderRowDef="['unitName', 'percentage', 'avgMobilityGrade']"></tr>
-    <tr mat-row *matRowDef="let row; columns: ['unitName', 'percentage', 'avgMobilityGrade'];"></tr>
+    <tr mat-header-row *matHeaderRowDef="['unitName', 'percentage', 'formattedMobilityData']"></tr>
+    <tr mat-row *matRowDef="let row; columns: ['unitName', 'percentage', 'formattedMobilityData'];"></tr>
   </table>
 </mat-dialog-content>
 <mat-dialog-actions align="end">

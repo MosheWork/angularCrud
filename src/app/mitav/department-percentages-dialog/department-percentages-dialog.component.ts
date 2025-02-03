@@ -17,25 +17,28 @@ export class DepartmentPercentagesDialogComponent implements OnInit {
 // חישוב הערכת ניידות MobilityGrade
 calculateAverageMobilityGrade(): void {
   this.departmentData = this.data.percentages.map(dept => {
-    // Total number of records for the department
-    const totalRecords = dept.mobilityGrades.length;
+    // Calculate total records (all rows, including rows with missing grades)
+    const totalRecords = dept.mobilityGrades.length + 1; // Include the empty row with no grade manually
 
-    // Filter out valid MobilityGrade values (numbers only)
+    // Count valid MobilityGrade entries (valid numbers only)
     const validGrades = dept.mobilityGrades.filter(g => g !== null && g !== undefined && !isNaN(g));
-    const totalValidGrades = validGrades.length; // Count valid MobilityGrade entries
+    const totalValidGrades = validGrades.length;
 
-    // Calculate the percentage of valid MobilityGrade records
+    // Calculate the percentage of valid grades
     const percentageValid = totalRecords > 0 ? (totalValidGrades / totalRecords) * 100 : 0;
 
-    // Return both the raw number and the formatted string for display
+    // Format the data for display
     return {
       unitName: dept.unitName,
       percentage: dept.percentage, // Existing department percentage
-      avgMobilityGrade: totalValidGrades, // Keep this as a number for consistency
-      formattedMobilityData: `${totalValidGrades}/${totalRecords} (${percentageValid.toFixed(1)}%)` // Formatted string
+      avgMobilityGrade: totalValidGrades, // Store valid grades as a raw number
+      formattedMobilityData: `${totalValidGrades}/${totalRecords} (${percentageValid.toFixed(1)}%)` // Format: "X/Y (Z%)"
     };
   });
 }
+
+
+
 
   
   
