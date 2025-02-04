@@ -16,6 +16,22 @@
         <div class="col">
           <div dir="rtl" class="card">
             <div dir="rtl" class="card-body">
+                 <!-- Date Range Filters for Arrival Date -->
+    <div class="date-range">
+      <mat-form-field class="filter-field">
+        <mat-label>מתאריך</mat-label>
+        <input matInput [matDatepicker]="startDate" formControlName="startDate" />
+        <mat-datepicker-toggle matSuffix [for]="startDate"></mat-datepicker-toggle>
+        <mat-datepicker #startDate></mat-datepicker>
+      </mat-form-field>
+
+      <mat-form-field class="filter-field">
+        <mat-label>עד תאריך</mat-label>
+        <input matInput [matDatepicker]="endDate" formControlName="endDate" />
+        <mat-datepicker-toggle matSuffix [for]="endDate"></mat-datepicker-toggle>
+        <mat-datepicker #endDate></mat-datepicker>
+      </mat-form-field>
+    </div>
               <!-- SignaturesInSheetEntryDate Filter -->
               <mat-form-field class="filter-field">
                 <mat-label>חתימת רופא משחרר</mat-label>

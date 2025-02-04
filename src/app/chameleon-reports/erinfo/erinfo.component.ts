@@ -79,7 +79,8 @@ export class ERInfoComponent implements OnInit, AfterViewInit {
       AdmissionTreatmentDecisionTabEntryDate: [''],
       DecisionDescription: [''],
       ResponsibleDoctor: [''], 
-
+      startDate: [''],
+      endDate: [''],
     });
   }
 
@@ -117,8 +118,33 @@ export class ERInfoComponent implements OnInit, AfterViewInit {
       this.totalResults = this.dataSource.filteredData.length; // Update total results after filtering
     });
   
-    this.dataSource.filterPredicate = (data, filter: string) => {
+    this.dataSource.filterPredicate = (data: any, filter: string) => {
       const filterValues = JSON.parse(filter);
+      if (filterValues.startDate || filterValues.endDate) {
+        const arrivalDate = new Date(data.ArrivalDate); // Parse ArrivalDate
+        if (filterValues.startDate && arrivalDate < new Date(filterValues.startDate)) {
+          return false; // Exclude if the ArrivalDate is before startDate
+        }
+        if (filterValues.endDate && arrivalDate > new Date(filterValues.endDate)) {
+          return false; // Exclude if the ArrivalDate is after endDate
+        }
+      }
+      // Filter by Start and End Date (תאריך הגעה)
+      if (filterValues.startDate || filterValues.endDate) {
+        const arrivalDate = new Date(data.ArrivalDate); // Parse ArrivalDate from data
+        if (
+          filterValues.startDate &&
+          arrivalDate < new Date(filterValues.startDate)
+        ) {
+          return false; // Exclude if the ArrivalDate is before the start date
+        }
+        if (
+          filterValues.endDate &&
+          arrivalDate > new Date(filterValues.endDate)
+        ) {
+          return false; // Exclude if the ArrivalDate is after the end date
+        }
+      }
   
       // Check SignaturesInSheetEntryDate filter
       if (filterValues.SignaturesInSheetEntryDate) {
@@ -175,8 +201,7 @@ export class ERInfoComponent implements OnInit, AfterViewInit {
       if (filterValues.AdmissionTreatmentDecisionTabEntryDate) {
         if (
           filterValues.AdmissionTreatmentDecisionTabEntryDate === 'hasValue' &&
-          (!data.AdmissionTreatmentDecisionTabEntryDate ||
-            data.AdmissionTreatmentDecisionTabEntryDate.trim() === '')
+          (!data.AdmissionTreatmentDecisionTabEntryDate || data.AdmissionTreatmentDecisionTabEntryDate.trim() === '')
         ) {
           return false;
         }
@@ -238,12 +263,19 @@ export class ERInfoComponent implements OnInit, AfterViewInit {
   
   
   
-
   exportToExcel(): void {
-    // Map the data to include Hebrew column headers
-    const data = this.dataSource.data.map((item) => {
+    // Map the data to include Hebrew column headers and preserve raw date formats
+    const data = this.dataSource.filteredData.map((item) => {
       return this.displayedColumns.reduce((acc, column) => {
-        acc[this.columnHeaders[column]] = item[column]; // Use Hebrew column headers
+        let value = item[column];
+  
+        // Preserve raw date format for date fields
+        if (column.endsWith('Date') && value) {
+          const date = new Date(value);
+          value = `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')} ${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}:${date.getSeconds().toString().padStart(2, '0')}`;
+        }
+  
+        acc[this.columnHeaders[column]] = value;
         return acc;
       }, {} as any);
     });
@@ -270,5 +302,7 @@ export class ERInfoComponent implements OnInit, AfterViewInit {
     anchor.click();
     window.URL.revokeObjectURL(url);
   }
+  
+  
   
 }

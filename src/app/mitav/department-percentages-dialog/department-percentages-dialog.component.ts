@@ -51,53 +51,67 @@ export class DepartmentPercentagesDialogComponent implements OnInit {
   }
   
   
-  
   calculateAverages(): void {
     this.departmentData = this.data.percentages.map(dept => {
-      // Total number of cases (all cases, regardless of validity)
+      console.log("Processing department:", dept.unitName);
+      console.log("Raw consultationStatuses:", dept.consultationStatuses);
+  
       const allCases = dept.recommendations.length;
   
-      // Valid cases: Exclude "אין תיעוד"
-      const isValid = (value: string | number) => value !== null && value !== undefined && value !== '' && value !== 'אין תיעוד';
+      const isValid = (value: string | number) => 
+        value !== null && value !== undefined && value !== '' && value !== 'אין תיעוד';
   
-      // Valid records for recommendations
+      // Count valid recommendations
       const validRecommendations = dept.recommendations.filter(r => isValid(r));
       const validRecords = validRecommendations.length;
       const recommendationPercentage = allCases > 0 ? (validRecords / allCases) * 100 : 0;
   
-      // Valid records for mobility grades
+      // Count valid mobility grades
       const validMobilityGrades = dept.mobilityGrades.filter(g => isValid(g));
       const validMobilityCount = validMobilityGrades.length;
       const mobilityPercentage = allCases > 0 ? (validMobilityCount / allCases) * 100 : 0;
   
-      // Functional state (מצב תפקודי): Check all three states and count collectively as one per row
+      // Functional State Calculation
       const validFunctionalStates = dept.cognitiveStates.map((_, index) => {
-        const isValidRow =
-          isValid(dept.cognitiveStates[index]) ||
-          isValid(dept.mobilityStates[index]) ||
-          isValid(dept.basicStates[index]);
-        return isValidRow ? 1 : 0;
+        return (isValid(dept.cognitiveStates[index]) || isValid(dept.mobilityStates[index]) || isValid(dept.basicStates[index])) ? 1 : 0;
       });
   
       const validFunctionalCount = validFunctionalStates.reduce((sum: number, count: number) => sum + count, 0);
       const functionalStatePercentage = allCases > 0 ? (validFunctionalCount / allCases) * 100 : 0;
   
-      // Consultation percentage
-      const consultationPercentage = `${validRecords}/${allCases} (${recommendationPercentage.toFixed(1)}%)`;
+      // Consultation Status Calculation
+      if (!dept.consultationStatuses) {
+        console.warn(`Missing consultationStatuses for department: ${dept.unitName}`);
+      }
+  
+      const validConsultationStatuses = dept.consultationStatuses || [];
+      console.log("Valid consultation statuses:", validConsultationStatuses);
+  
+      const yesConsultationCount = validConsultationStatuses.filter(status => status === 'Yes').length;
+      const totalConsultationCases = validConsultationStatuses.length;
+  
+      console.log(`Yes Consultation Count: ${yesConsultationCount} / Total: ${totalConsultationCases}`);
+  
+      const consultationPercentage = totalConsultationCases > 0 
+        ? `${yesConsultationCount}/${totalConsultationCases} (${((yesConsultationCount / totalConsultationCases) * 100).toFixed(1)}%)`
+        : 'N/A';
   
       return {
         unitName: dept.unitName,
-        percentage: dept.percentage, // Existing department percentage
+        percentage: dept.percentage,
         avgMobilityGrade: validMobilityCount,
         formattedMobilityData: `${validMobilityCount}/${allCases} (${mobilityPercentage.toFixed(1)}%)`,
         formattedRecommendationData: `${validRecords}/${allCases} (${recommendationPercentage.toFixed(1)}%)`,
-        functionalState: `${validFunctionalCount}/${allCases} (${functionalStatePercentage.toFixed(1)}%)`, // מצב תפקודי
-        consultationPercentage, // Add consultation percentage
+        functionalState: `${validFunctionalCount}/${allCases} (${functionalStatePercentage.toFixed(1)}%)`,
+        consultationPercentage,  // ✅ Make sure this is set correctly
       };
     });
   
-    console.log('Processed Department Data with Functional States:', this.departmentData); // Debugging log
+    console.log('Processed Department Data:', this.departmentData);
   }
+  
+  
+  
   
   
 }

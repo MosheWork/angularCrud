@@ -46,9 +46,20 @@
         <mat-icon *ngIf="!isAboveThreshold(element.functionalState, 'default')" class="red-icon">cancel</mat-icon>
       </td>
     </ng-container>
+<!-- Consultation Status Column -->
+<!-- Consultation Status Column -->
+<ng-container matColumnDef="consultationStatus">
+  <th mat-header-cell *matHeaderCellDef> סטטוס התייעצות </th>
+  <td mat-cell *matCellDef="let element">
+    {{ element.consultationPercentage || 'N/A' }}
+    <mat-icon *ngIf="isAboveThreshold(element.consultationPercentage, 'default')" class="green-icon">check_circle</mat-icon>
+    <mat-icon *ngIf="!isAboveThreshold(element.consultationPercentage, 'default')" class="red-icon">cancel</mat-icon>
+  </td>
+</ng-container>
 
-    <tr mat-header-row *matHeaderRowDef="['unitName', 'percentage', 'formattedMobilityData', 'formattedRecommendationData', 'functionalState']"></tr>
-    <tr mat-row *matRowDef="let row; columns: ['unitName', 'percentage', 'formattedMobilityData', 'formattedRecommendationData', 'functionalState'];"></tr>
+
+    <tr mat-header-row *matHeaderRowDef="['unitName', 'percentage', 'formattedMobilityData', 'formattedRecommendationData', 'functionalState','consultationStatus']"></tr>
+    <tr mat-row *matRowDef="let row; columns: ['unitName', 'percentage', 'formattedMobilityData', 'formattedRecommendationData', 'functionalState','consultationStatus'];"></tr>
   </table>
 </mat-dialog-content>
 

@@ -256,6 +256,7 @@ openDepartmentPercentagesDialog(): void {
     cognitiveStates: string[]; // New field
     mobilityStates: string[];  // New field
     basicStates: string[];     // New field
+    consultationStatuses: string[]; // ✅ New field for ConsultationStatus
   }>();
 
   this.dataSource.data.forEach(item => {
@@ -265,6 +266,7 @@ openDepartmentPercentagesDialog(): void {
     const cognitive = item.CognitiveFunctionBeforeHospitalization; // New
     const mobility = item.MobilityBeforeHospitalization;           // New
     const basic = item.BasicFunctionBeforeHospitalization;         // New
+    const consultationStatus = item.ConsultationStatus;            // ✅ New
 
     if (!departmentMap.has(unitName)) {
       departmentMap.set(unitName, { 
@@ -274,7 +276,8 @@ openDepartmentPercentagesDialog(): void {
         recommendations: [], 
         cognitiveStates: [],  // Initialize
         mobilityStates: [],   // Initialize
-        basicStates: []       // Initialize
+        basicStates: [],      // Initialize
+        consultationStatuses: [] // ✅ Initialize
       });
     }
 
@@ -294,6 +297,11 @@ openDepartmentPercentagesDialog(): void {
     department.cognitiveStates.push(cognitive);
     department.mobilityStates.push(mobility);
     department.basicStates.push(basic);
+
+    // ✅ Push ConsultationStatus (Ignore 'Grade X - Not for Filter')
+    if (consultationStatus !== 'Grade X - Not for Filter') {
+      department.consultationStatuses.push(consultationStatus);
+    }
   });
 
   const departmentPercentages = Array.from(departmentMap.entries()).map(([unitName, data]) => ({
@@ -303,8 +311,11 @@ openDepartmentPercentagesDialog(): void {
     recommendations: data.recommendations,
     cognitiveStates: data.cognitiveStates, // Added
     mobilityStates: data.mobilityStates,   // Added
-    basicStates: data.basicStates          // Added
+    basicStates: data.basicStates,         // Added
+    consultationStatuses: data.consultationStatuses // ✅ Added
   }));
+
+  console.log("Sending data to dialog:", departmentPercentages); // Debug log
 
   this.dialog.open(DepartmentPercentagesDialogComponent, {
     width: '1200px',
