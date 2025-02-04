@@ -7,32 +7,40 @@ import { MAT_DIALOG_DATA } from '@angular/material/dialog';
   styleUrls: ['./department-percentages-dialog.component.scss'],
 })
 export class DepartmentPercentagesDialogComponent implements OnInit {
-  departmentData: { 
-    unitName: string; 
-    percentage: number; 
-    avgMobilityGrade: number; 
-    formattedMobilityData: string; 
-    formattedRecommendationData: string;
-    functionalState: string; // Add functional state data
-    consultationPercentage: string; // Add consultation percentage
-  }[] = [];
-  
-  constructor(@Inject(MAT_DIALOG_DATA) public data: { 
-    percentages: { 
+    departmentData: { 
       unitName: string; 
       percentage: number; 
-      mobilityGrades: number[]; 
-      recommendations: string[];
-      consultationStatuses: string[]; // Add consultation statuses
-      cognitiveStates: string[]; // Add cognitive states
-      mobilityStates: string[];  // Add mobility states
-      basicStates: string[];     // Add basic states
-    }[] 
-  }) {}
+      avgMobilityGrade: number; 
+      formattedMobilityData: string; 
+      formattedRecommendationData: string;
+      functionalState: string; // Add functional state data
+      consultationPercentage: string; // Add consultation percentage
+    }[] = [];
+    
+    totalMobilityPercentage: number = 0; // Add a property to store the passed percentage
+  
+    constructor(@Inject(MAT_DIALOG_DATA) public data: { 
+      percentages: { 
+        unitName: string; 
+        percentage: number; 
+        mobilityGrades: number[]; 
+        recommendations: string[];
+        consultationStatuses: string[]; 
+        cognitiveStates: string[]; 
+        mobilityStates: string[];  
+        basicStates: string[];     
+      }[], 
+      totalMobilityPercentage: number, // Accept the percentage from the parent
+    }) {
+      this.totalMobilityPercentage = data.totalMobilityPercentage; // Assign the value
+    }
 
   ngOnInit(): void {
     this.calculateAverages();
-   
+  
+    // Use the total percentage from the parent component
+    const totalPercentage = this.data.totalMobilityPercentage;
+    console.log('Total Mobility Percentage from Parent:', totalPercentage);
   }
 
   isAboveThreshold(value: string | number, columnType: string): boolean {
@@ -53,12 +61,9 @@ export class DepartmentPercentagesDialogComponent implements OnInit {
   
   calculateAverages(): void {
     this.departmentData = this.data.percentages.map(dept => {
-      console.log("Processing department:", dept.unitName);
-      console.log("Raw consultationStatuses:", dept.consultationStatuses);
-  
       const allCases = dept.recommendations.length;
   
-      const isValid = (value: string | number) => 
+      const isValid = (value: string | number) =>
         value !== null && value !== undefined && value !== '' && value !== 'אין תיעוד';
   
       // Count valid recommendations
@@ -80,21 +85,11 @@ export class DepartmentPercentagesDialogComponent implements OnInit {
       const functionalStatePercentage = allCases > 0 ? (validFunctionalCount / allCases) * 100 : 0;
   
       // Consultation Status Calculation
-      if (!dept.consultationStatuses) {
-        console.warn(`Missing consultationStatuses for department: ${dept.unitName}`);
-      }
-  
-      const validConsultationStatuses = dept.consultationStatuses || [];
-      console.log("Valid consultation statuses:", validConsultationStatuses);
-  
-      const yesConsultationCount = validConsultationStatuses.filter(status => status === 'Yes').length;
-      const totalConsultationCases = validConsultationStatuses.length;
-  
-      console.log(`Yes Consultation Count: ${yesConsultationCount} / Total: ${totalConsultationCases}`);
-  
-      const consultationPercentage = totalConsultationCases > 0 
+      const yesConsultationCount = dept.consultationStatuses.filter(status => status === 'Yes').length;
+      const totalConsultationCases = dept.consultationStatuses.length;
+      const consultationPercentage = totalConsultationCases > 0
         ? `${yesConsultationCount}/${totalConsultationCases} (${((yesConsultationCount / totalConsultationCases) * 100).toFixed(1)}%)`
-        : 'N/A';
+        : '0/0 (0%)'; // Default for empty or missing data
   
       return {
         unitName: dept.unitName,
@@ -103,12 +98,55 @@ export class DepartmentPercentagesDialogComponent implements OnInit {
         formattedMobilityData: `${validMobilityCount}/${allCases} (${mobilityPercentage.toFixed(1)}%)`,
         formattedRecommendationData: `${validRecords}/${allCases} (${recommendationPercentage.toFixed(1)}%)`,
         functionalState: `${validFunctionalCount}/${allCases} (${functionalStatePercentage.toFixed(1)}%)`,
-        consultationPercentage,  // ✅ Make sure this is set correctly
+        consultationPercentage,
       };
     });
   
-    console.log('Processed Department Data:', this.departmentData);
+    // Add totals row
+    const totalPercentage = this.departmentData.reduce((sum, dept) => sum + dept.percentage, 0) / this.departmentData.length;
+    const totalMobilityCount = this.departmentData.reduce((sum, dept) => sum + dept.avgMobilityGrade, 0);
+    const totalValidRecords = this.departmentData.reduce((sum, dept) => {
+      const values = dept.formattedRecommendationData.split('/');
+      const numericValue = values[0] ? parseInt(values[0], 10) : 0;
+      return sum + numericValue;
+    }, 0);
+    const totalCases = this.departmentData.reduce((sum, dept) => {
+      const values = dept.formattedRecommendationData.split('/');
+      const numericValue = values[1] ? parseInt(values[1].split(' ')[0], 10) : 0;
+      return sum + numericValue;
+    }, 0);
+    const totalFunctionalCount = this.departmentData.reduce((sum, dept) => {
+      const values = dept.functionalState.split('/');
+      const numericValue = values[0] ? parseInt(values[0], 10) : 0;
+      return sum + numericValue;
+    }, 0);
+    const totalYesConsultations = this.departmentData.reduce((sum, dept) => {
+      const consultationValues = dept.consultationPercentage.split('/');
+      const yesCount = consultationValues[0] ? parseInt(consultationValues[0], 10) : 0;
+      return sum + yesCount;
+    }, 0);
+    const totalConsultationCases = this.departmentData.reduce((sum, dept) => {
+      const consultationValues = dept.consultationPercentage.split('/');
+      const caseCount = consultationValues[1] ? parseInt(consultationValues[1].split(' ')[0], 10) : 0;
+      return sum + caseCount;
+    }, 0);
+  
+    const consultationPercentageTotal = totalConsultationCases > 0
+      ? `${totalYesConsultations}/${totalConsultationCases} (${((totalYesConsultations / totalConsultationCases) * 100).toFixed(1)}%)`
+      : '0/0 (0%)';
+  
+    this.departmentData.push({
+      unitName: 'סה"כ', // Hebrew for Total
+      percentage: totalPercentage,
+      avgMobilityGrade: totalMobilityCount,
+      formattedMobilityData: `${totalMobilityCount}/${totalCases} (${((totalMobilityCount / totalCases) * 100).toFixed(1)}%)`,
+      formattedRecommendationData: `${totalValidRecords}/${totalCases} (${((totalValidRecords / totalCases) * 100).toFixed(1)}%)`,
+      functionalState: `${totalFunctionalCount}/${totalCases} (${((totalFunctionalCount / totalCases) * 100).toFixed(1)}%)`,
+      consultationPercentage: consultationPercentageTotal, // Correct total for consultation status
+    });
   }
+  
+  
   
   
   

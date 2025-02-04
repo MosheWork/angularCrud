@@ -52,6 +52,7 @@ export class MitavMobilityComponent implements OnInit, AfterViewInit {
   selectedYear: number | null = null;
 selectedQuarter: string | null = null;
 yearList: number[] = [];
+totalMobilityPercentage: number = 0; // Add a property to store the percentage
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
@@ -166,9 +167,13 @@ yearList: number[] = [];
       .map((item) => item.TotalDaysInHospital || 1) // Avoid division by zero
       .reduce((sum, value) => sum + value, 0);
   
-    this.gaugeValue = totalDaysInHospital > 0
+    this.totalMobilityPercentage = totalDaysInHospital > 0
       ? (totalDatesWithBothShifts / totalDaysInHospital) * 100
       : 0;
+  
+    console.log('Total Mobility Percentage:', this.totalMobilityPercentage);
+  
+    this.gaugeValue = this.totalMobilityPercentage; // Reuse the same value for the gauge
   }
   
 
@@ -253,20 +258,21 @@ openDepartmentPercentagesDialog(): void {
     totalDays: number; 
     mobilityGrades: number[]; 
     recommendations: string[];
-    cognitiveStates: string[]; // New field
-    mobilityStates: string[];  // New field
-    basicStates: string[];     // New field
-    consultationStatuses: string[]; // ✅ New field for ConsultationStatus
+    cognitiveStates: string[]; 
+    mobilityStates: string[];
+    basicStates: string[];
+    consultationStatuses: string[];
   }>();
 
   this.dataSource.data.forEach(item => {
     const unitName = item.UnitName || 'Unknown';
     const mobilityGrade = item.MobilityGrade;
     const recommendation = item.RecommendationForWalking;
-    const cognitive = item.CognitiveFunctionBeforeHospitalization; // New
-    const mobility = item.MobilityBeforeHospitalization;           // New
-    const basic = item.BasicFunctionBeforeHospitalization;         // New
-    const consultationStatus = item.ConsultationStatus;            // ✅ New
+    const cognitive = item.CognitiveFunctionBeforeHospitalization;
+    const mobility = item.MobilityBeforeHospitalization;
+    const basic = item.BasicFunctionBeforeHospitalization;
+    const consultationStatus = item.ConsultationStatus;
+    const departmentPercentages = this.calculateDepartmentPercentages();
 
     if (!departmentMap.has(unitName)) {
       departmentMap.set(unitName, { 
@@ -274,10 +280,10 @@ openDepartmentPercentagesDialog(): void {
         totalDays: 0, 
         mobilityGrades: [], 
         recommendations: [], 
-        cognitiveStates: [],  // Initialize
-        mobilityStates: [],   // Initialize
-        basicStates: [],      // Initialize
-        consultationStatuses: [] // ✅ Initialize
+        cognitiveStates: [], 
+        mobilityStates: [],
+        basicStates: [],
+        consultationStatuses: []
       });
     }
 
@@ -293,12 +299,10 @@ openDepartmentPercentagesDialog(): void {
       department.recommendations.push(recommendation);
     }
 
-    // Push functional states
     department.cognitiveStates.push(cognitive);
     department.mobilityStates.push(mobility);
     department.basicStates.push(basic);
 
-    // ✅ Push ConsultationStatus (Ignore 'Grade X - Not for Filter')
     if (consultationStatus !== 'Grade X - Not for Filter') {
       department.consultationStatuses.push(consultationStatus);
     }
@@ -309,19 +313,23 @@ openDepartmentPercentagesDialog(): void {
     percentage: data.totalDays > 0 ? (data.totalShifts / data.totalDays) * 100 : 0,
     mobilityGrades: data.mobilityGrades,
     recommendations: data.recommendations,
-    cognitiveStates: data.cognitiveStates, // Added
-    mobilityStates: data.mobilityStates,   // Added
-    basicStates: data.basicStates,         // Added
-    consultationStatuses: data.consultationStatuses // ✅ Added
+    cognitiveStates: data.cognitiveStates,
+    mobilityStates: data.mobilityStates,
+    basicStates: data.basicStates,
+    consultationStatuses: data.consultationStatuses
   }));
 
-  console.log("Sending data to dialog:", departmentPercentages); // Debug log
+  const totalMobilityPercentage = this.departmentPercentages.reduce((sum, dept) => sum + dept.percentage, 0) / this.departmentPercentages.length;
 
   this.dialog.open(DepartmentPercentagesDialogComponent, {
     width: '1200px',
-    data: { percentages: departmentPercentages },
+    data: { 
+      percentages: departmentPercentages,
+      totalMobilityPercentage: this.totalMobilityPercentage, // Pass the same value
+    },
   });
 }
+
 
 
 

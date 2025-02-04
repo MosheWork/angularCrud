@@ -133,7 +133,7 @@ import { DepartmentOccupiedMitavComponent } from './chameleon-reports/department
 import { MitavMobilityComponent } from './mitav/mitav-mobility/mitav-mobility.component';
 import { DepartmentPercentagesDialogComponent } from './mitav/department-percentages-dialog/department-percentages-dialog.component';
 import { DocumentationOfPatientMobilityDialogComponent } from './mitav/documentation-of-patient-mobility-dialog/documentation-of-patient-mobility-dialog.component';
-
+import { CdkTableModule } from '@angular/cdk/table';
 @NgModule({
   declarations: [
     AppComponent,
@@ -272,7 +272,8 @@ import { DocumentationOfPatientMobilityDialogComponent } from './mitav/documenta
     NgxGaugeModule,
     MatSlideToggleModule,
     DragDropModule,
-    MatButtonToggleModule
+    MatButtonToggleModule,
+    CdkTableModule
 
   ],
   providers: [DatePipe],
