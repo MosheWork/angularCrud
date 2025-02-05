@@ -372,9 +372,15 @@ toggleView(): void {
   if (this.showGraph) {
     console.log('Switching to graph view');
     this.prepareChartData();
-    setTimeout(() => this.initializeChart(), 0); // Delay to allow DOM to update
+    setTimeout(() => this.initializeChart()); // Initialize chart after DOM updates
   } else {
-    console.log('Switching to table view');
+    console.log('Switching back to table view');
+
+    // ✅ Reassign paginator and sort after view switch
+    setTimeout(() => {
+      this.dataSource.paginator = this.paginator;
+      this.dataSource.sort = this.sort;
+    });
   }
 }
 
