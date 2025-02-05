@@ -7,7 +7,9 @@ import { environment } from '../../../environments/environment';
 import { MatDialog } from '@angular/material/dialog';
 import { DepartmentPercentagesDialogComponent } from '../department-percentages-dialog/department-percentages-dialog.component';
 import { DocumentationOfPatientMobilityDialogComponent } from '../documentation-of-patient-mobility-dialog/documentation-of-patient-mobility-dialog.component';
+import { ElementRef } from '@angular/core';
 
+import { Chart, ChartData, ChartType, registerables } from 'chart.js';
 
 @Component({
   selector: 'app-mitav-mobility',
@@ -53,11 +55,17 @@ export class MitavMobilityComponent implements OnInit, AfterViewInit {
 selectedQuarter: string | null = null;
 yearList: number[] = [];
 totalMobilityPercentage: number = 0; // Add a property to store the percentage
-
+mobilityGradeChartData: { name: string; value: number }[] = [];
+showGraph: boolean = false;
+colorScheme = {
+  domain: ['#5AA454', '#A10A28', '#C7B42C', '#AAAAAA'], // Example colors
+};
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
+  @ViewChild('chartCanvas') chartCanvas!: ElementRef<HTMLCanvasElement>;
 
-  constructor(private http: HttpClient, private dialog: MatDialog) {}
+  constructor(private http: HttpClient, private dialog: MatDialog) {    Chart.register(...registerables); // Register Chart.js components
+}
 
   ngOnInit(): void {
     this.fetchMobilityReport();
@@ -66,6 +74,10 @@ totalMobilityPercentage: number = 0; // Add a property to store the percentage
   ngAfterViewInit(): void {
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
+    if (this.showGraph) {
+      this.prepareChartData();
+      this.initializeChart();
+    }
   }
 
   fetchMobilityReport(): void {
@@ -353,6 +365,162 @@ openDetailsDialog(admissionNo: string): void {
   dialogRef.afterClosed().subscribe(() => {
     console.log('Details dialog closed');
   });
+}
+toggleView(): void {
+  this.showGraph = !this.showGraph;
+
+  if (this.showGraph) {
+    console.log('Switching to graph view');
+    this.prepareChartData();
+    setTimeout(() => this.initializeChart(), 0); // Delay to allow DOM to update
+  } else {
+    console.log('Switching to table view');
+  }
+}
+
+
+initializeChartData(): void {
+  // Generate chart data for mobility grades
+  const gradeCounts = new Map<string, number>();
+
+  this.dataSource.data.forEach((item) => {
+    const grade = item.MobilityGrade || 'אין תיעוד'; // Default value
+    gradeCounts.set(grade, (gradeCounts.get(grade) || 0) + 1);
+  });
+
+  this.mobilityGradeChartData = Array.from(gradeCounts.entries()).map(([name, value]) => ({
+    name,
+    value,
+  }));
+
+  console.log('Chart Data Initialized:', this.mobilityGradeChartData);
+}
+public chart: Chart | null = null;
+public chartData: ChartData<'pie'> = {
+  labels: [], // Labels for your pie chart
+  datasets: [
+    {
+      label: 'Mobility Grades Distribution',
+      data: [], // Data for the pie chart
+      backgroundColor: [], // Array of colors for each segment
+      borderColor: [], // Array of border colors for each segment
+      borderWidth: 1,
+    },
+  ],
+};
+public chartType: ChartType = 'pie';
+public chartOptions = {
+  responsive: true,
+  plugins: {
+    legend: {
+      position: 'top' as const, // Explicitly specify the type to match
+    },
+    tooltip: {
+      enabled: true, // Enable tooltips
+    },
+  },
+};
+
+initializeChart(): void {
+  if (!this.chartCanvas || !this.chartCanvas.nativeElement) {
+    console.warn('Chart canvas is not available yet. Retrying...');
+    setTimeout(() => this.initializeChart(), 100); // Retry after a short delay
+    return;
+  }
+
+  if (this.chart) {
+    this.chart.destroy(); // Destroy any existing chart instance
+  }
+
+  const ctx = this.chartCanvas.nativeElement.getContext('2d');
+  if (ctx) {
+    const colors = [
+      '#4CAF50', // Green
+      '#2196F3', // Blue
+      '#FFC107', // Yellow
+      '#FF5722', // Orange
+      '#9C27B0', // Purple
+      '#E91E63', // Pink
+      '#607D8B', // Grey
+    ];
+
+    const borderColors = colors.map(color => `${color}CC`); // Add transparency
+
+    this.chart = new Chart(ctx, {
+      type: this.chartType,
+      data: {
+        labels: this.chartData.labels,
+        datasets: [
+          {
+            label: 'Mobility Grades Distribution',
+            data: this.chartData.datasets[0].data,
+            backgroundColor: colors,
+            borderColor: borderColors,
+            borderWidth: 2,
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            position: 'top', // Legend at the top
+            labels: {
+              font: {
+                size: 14, // Larger font size for better visibility
+                family: 'Arial, sans-serif',
+              },
+              color: '#444444', // Darker text for better contrast
+            },
+          },
+          tooltip: {
+            enabled: true,
+            backgroundColor: '#FFFFFF', // White background for tooltip
+            titleColor: '#000000', // Black title text
+            bodyColor: '#333333', // Dark body text
+            borderColor: '#CCCCCC',
+            borderWidth: 1,
+          },
+        },
+        layout: {
+          padding: 20, // Add padding around the chart
+        },
+        scales: {
+          x: {
+            display: false, // Hide x-axis since it's a pie chart
+          },
+          y: {
+            display: false, // Hide y-axis since it's a pie chart
+          },
+        },
+      },
+    });
+  }
+}
+
+
+
+
+prepareChartData(): void {
+  const gradeCounts = new Map<string, number>();
+  const tags = ['Low', 'Medium', 'High', 'Unknown']; // Example tags for categories
+
+  this.dataSource.data.forEach((item) => {
+    const grade = item.MobilityGrade || 'Unknown'; // Default for missing grades
+    gradeCounts.set(grade, (gradeCounts.get(grade) || 0) + 1);
+  });
+
+  const labelsWithTags = Array.from(gradeCounts.keys()).map((label, index) => {
+    const tag = tags[index % tags.length]; // Assign tags in a loop
+    return `${label} (${tag})`; // Append the tag to the label
+  });
+
+  this.chartData.labels = labelsWithTags; // Labels with tags
+  this.chartData.datasets[0].data = Array.from(gradeCounts.values());
+  this.chartData.datasets[0].backgroundColor = [
+    '#4CAF50', '#2196F3', '#FFC107', '#FF5722', '#9C27B0', '#E91E63', '#607D8B',
+  ];
 }
 
 }

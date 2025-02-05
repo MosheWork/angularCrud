@@ -501,4 +501,39 @@
   .body:not(.loading) {
     display: block;
   }
+  .chart-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 450px; /* Fixed height to prevent sliding */
+    max-height: 450px;
+    width: 100%;
+    padding: 10px;
+  }
+  
+  canvas {
+    max-width: 400px !important;
+    max-height: 400px !important;
+    width: 100%;
+    height: auto;
+  }
+  
+  .chart-tags {
+    display: flex;
+    flex-wrap: wrap;
+    margin-top: 10px;
+    justify-content: center;
+  
+    .tag {
+      background-color: #f0f0f0;
+      color: #444;
+      padding: 5px 10px;
+      margin: 5px;
+      border-radius: 10px;
+      font-size: 12px;
+      font-weight: bold;
+    }
+  }
+  
   

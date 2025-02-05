@@ -71,6 +71,7 @@
         <div class="filter-buttons" style="margin-top: 10px; text-align: right;">
           <button mat-raised-button color="warn" (click)="resetFilters()">איפוס</button>
         </div>
+      
       </div>
     </div>
   </div>
@@ -80,6 +81,7 @@
   <div class="gauge-section">
     <mat-card class="gauge-card">
       <div class="gauge-title">מדד ניידות</div>
+
       <div class="gauge-content">
         <ngx-gauge
           [value]="gaugeValue"
@@ -101,11 +103,31 @@
 
   <!-- Tabs Section -->
   <mat-tab-group dir="rtl">
+    <!-- Mobility Tab -->
     <mat-tab label="ניידות">
-      <div class="table-section" dir="rtl">
+      <!-- Button to Toggle Between Table and Pie Chart -->
+      <img 
+          *ngIf="!showGraph" 
+          (click)="toggleView()" 
+          matTooltip="Move To Graph" 
+          src="../../../../assets/graphIcon.png" 
+          width="50px" 
+          style="margin-left: 10px;" 
+        />
+        <img 
+          *ngIf="showGraph" 
+          (click)="toggleView()" 
+          matTooltip="Move To Table" 
+          src="../../../../assets/TableIcon.png" 
+          width="50px" 
+          style="margin-left: 10px;" 
+        />
+  
+      <!-- Table Section -->
+      <div *ngIf="!showGraph" class="table-section" dir="rtl">
         <table mat-table [dataSource]="dataSource" matSort>
-          <!-- Admission No Column -->
-          <ng-container matColumnDef="AdmissionNo">
+           <!-- Admission No Column -->
+           <ng-container matColumnDef="AdmissionNo">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>מספר אשפוז</th>
             <td mat-cell *matCellDef="let element"> {{ element.AdmissionNo }}</td>
           </ng-container>
@@ -235,19 +257,29 @@
               {{ element.HasRecordPerDate ? 'כן' : 'לא' }}
             </td>
           </ng-container>
-      
           <!-- Header and Row Definitions -->
           <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
           <tr mat-row *matRowDef="let row; columns: displayedColumns;" (click)="openDetailsDialog(row.AdmissionNo)"></tr>
         </table>
-      
+  
         <!-- Paginator -->
         <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
       </div>
-      
+  
+      <!-- Pie Chart Section -->
+      <div *ngIf="showGraph" class="chart-container">
+        <h3>Distribution of Mobility Grades</h3>
+        <canvas #chartCanvas width="400" height="400"></canvas>
+       
+      </div>
     </mat-tab>
-
+  
     <!-- Additional Table Placeholder -->
-    <mat-tab label="Additional Table"></mat-tab>
+    <mat-tab label="Additional Table">
+      <div class="placeholder-content">
+        <p>Additional table content goes here.</p>
+      </div>
+    </mat-tab>
   </mat-tab-group>
+  
 </div>
