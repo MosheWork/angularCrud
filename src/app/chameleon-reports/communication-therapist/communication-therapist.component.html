@@ -98,13 +98,15 @@
           <h3>טבלת נתונים</h3>
         </div>
         <img src="../../assets/excel.png" alt="Download" (click)="exportFullListToExcel()" class="download-icon" width="50px" />
+    
         <mat-table [dataSource]="fullListDataSource" matSort class="mat-elevation-z8">
           <ng-container *ngFor="let column of fullListColumns" [matColumnDef]="column">
-            <!-- Use Hebrew display name for headers -->
+            <!-- Display Hebrew column headers -->
             <mat-header-cell *matHeaderCellDef mat-sort-header>
               {{ columnDisplayNames[column] }}
             </mat-header-cell>
-            <!-- Display formatted data for specific columns -->
+        
+            <!-- Display formatted data -->
             <mat-cell *matCellDef="let element">
               <ng-container *ngIf="column === 'EntryDate'; else defaultCell">
                 {{ element[column] | date: 'dd/MM/yyyy HH:mm' }}
@@ -114,12 +116,17 @@
               </ng-template>
             </mat-cell>
           </ng-container>
+        
           <mat-header-row *matHeaderRowDef="fullListColumns"></mat-header-row>
           <mat-row *matRowDef="let row; columns: fullListColumns"></mat-row>
         </mat-table>
         
+    
         <mat-paginator #fullListPaginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
+    
       </mat-card-content>
     </mat-card>
+    
+    
   </div>
   

@@ -42,25 +42,33 @@ export class CommunicationTherapistComponent implements OnInit {
 
   dailyFollowUpColumns: string[] = ['EmployeeName', 'SimpleA', 'ComplexB', 'VeryComplexC', 'GroupD'];
   anamnesisResultsColumns: string[] = ['EmployeeName', 'Simple', 'Complex', 'VeryComplex'];
-  fullListColumns: string[] = ['Subject', 'EntryDate', 'EntryUser', 'Heading', 'IdNumber', 'FirstName', 'LastName'];
+  fullListColumns: string[] = [
+    'AdmissionNo',
+    'IdNum',
+    'FirstName',
+    'LastName',
+    'Code',
+    'EmployeeName',
+    'MedicalRecord',
+    'EntryDate',
+    'AnswerType',
+    'FreeText'
+  ];
 
+
+// Define Hebrew display names for the columns
 columnDisplayNames: { [key: string]: string } = {
-    EmployeeName: 'שם העובד',
-    SimpleA: 'טיפול פשוט A',
-    ComplexB: 'טיפול מורכב B',
-    VeryComplexC: 'טיפול מורכב מאוד C',
-    GroupD: 'טיפול קבוצתי D',
-    Subject: 'נושא',
-    EntryDate: 'תאריך הזנה',
-    EntryUser: ' שם העובד',
-    Heading: 'כותרת',
-    IdNumber: 'מספר מזהה',
-    FirstName: 'שם פרטי',
-    LastName: 'שם משפחה',
-    Simple: 'פשוט',
-    Complex: 'מורכב',
-    VeryComplex: ' מורכב מאוד'
-  };
+  AdmissionNo: 'מספר מקרה',
+  IdNum: 'מספר זהות',
+  FirstName: 'שם פרטי',
+  LastName: 'שם משפחה',
+  Code: 'קוד משתמש',
+  EmployeeName: 'שם העובד',
+  MedicalRecord: 'תיק רפואי',
+  EntryDate: 'תאריך כניסה',
+  AnswerType: 'סוג תשובה',
+  FreeText: 'טקסט חופשי'
+};
   // Filters
   filterForm: FormGroup;
   availableYears: number[] = [2023, 2024, 2025];
@@ -124,11 +132,16 @@ columnDisplayNames: { [key: string]: string } = {
     const filters = this.filterForm.value;
     const year = filters.year;
     const month = filters.month;
+    const admissionNo = filters.admissionNo;
+    const idNum = filters.idNum;
+
 
     // Fetch data for all tables
     this.fetchDailyFollowUpData(year, month);
     this.fetchAnamnesisResultsData(year, month);
     this.fetchFullListDailyFollowUp(year, month);
+    this.fetchFilteredAnamnesisResults(year, month, admissionNo, idNum);
+
   }
 
   resetFilters(): void {
@@ -168,7 +181,28 @@ columnDisplayNames: { [key: string]: string } = {
         }
       );
   }
-  
+  fetchFilteredAnamnesisResults(year?: number, month?: number, admissionNo?: string, idNum?: string): void {
+    this.loading = true;
+
+    const params: any = {};
+    if (year) params.year = year;
+    if (month) params.month = month;
+    if (admissionNo) params.admissionNo = admissionNo;
+    if (idNum) params.idNum = idNum;
+
+    this.http
+    .get<any[]>(`${environment.apiUrl}CommunicationTherapist/FilteredAnamnesisResults`, { params })
+    .subscribe(
+      (data) => {
+        console.log('API Response:', data); // Verify the full data is returned
+        this.fullListDataSource.data = data;
+      },
+      (error) => {
+        console.error('Error fetching data:', error);
+      }
+    );
+  }
+
   fetchAnamnesisResultsData(year?: number, month?: number): void {
     this.loading = true;
   
