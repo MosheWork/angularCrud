@@ -21,9 +21,13 @@ export class ERInfoComponent implements OnInit, AfterViewInit {
     'ResponsibleDoctor', // סוג מיון
     'AdmissionTreatmentUrgencyEntryDate',
     'AdmissionTreatmentUrgencyEntryUser',
+    'UrgencyLevel', // Add this column
+    'FirstExecutionDate', // Add this column
+    'LastExecutionDate', // Add this column
     'AdmissionTreatmentDecisionTabEntryDate',
     'AdmissionTreatmentDecisionTabEntryUser',
     'ComplaintTabEntryDate',
+    'FieldCombo18Translated', // Add this column
     'ComplaintTabEntryUser',
     'DecisionDescription',
     'DischargeDateTabEntryDate',
@@ -33,8 +37,10 @@ export class ERInfoComponent implements OnInit, AfterViewInit {
     
     //'EntryUserFullName',
     //'AdjustedAdmissionNo',
-    'ReleaseDate',
-  
+    'ReleaseDate'
+   
+   
+   
    
   ];
   
@@ -54,13 +60,16 @@ export class ERInfoComponent implements OnInit, AfterViewInit {
     DischargeDateTabEntryUser: 'משתמש תאריך שחרור',
     SignaturesInSheetEntryDate: 'חתימת רופא משחרר',
     SignaturesInSheetEntryUser: 'משתמש חתימת רופא משחרר',
-   
-    //EntryUserFullName: 'שם משתמש',
     AdjustedAdmissionNo: 'מספר תיק מותאם',
     ReleaseDate: 'תאריך שחרור',
     ArrivalDate: 'תאריך הגעה',
-    ResponsibleDoctor: ' סוג מיון' // Hebrew name for Responsible Doctor
+    ResponsibleDoctor: 'סוג מיון',
+    FirstExecutionDate: 'תאריך לחץ דם ראשון', // Add label
+    LastExecutionDate: 'תאריך לחץ דם אחרון', // Add label
+    UrgencyLevel: 'רמת דחיפות', // Add label
+    FieldCombo18Translated: ' בדיקה גופנית ?', // Add label
   };
+  
   
   dataSource = new MatTableDataSource<any>([]);
   globalFilter = new FormControl('');
@@ -113,36 +122,37 @@ export class ERInfoComponent implements OnInit, AfterViewInit {
     );
   }
   setupGlobalFilter(): void {
+    // Subscribe to field-specific filter changes
     this.filterForm.valueChanges.subscribe((filterValues) => {
-      this.dataSource.filter = JSON.stringify(filterValues);
-      this.totalResults = this.dataSource.filteredData.length; // Update total results after filtering
+      this.dataSource.filter = JSON.stringify(filterValues); // Update filter for field-specific filters
+      this.totalResults = this.dataSource.filteredData.length; // Update total results
     });
   
+    // Subscribe to global filter changes
+    this.globalFilter.valueChanges.subscribe(() => {
+      this.dataSource.filter = JSON.stringify(this.filterForm.value); // Trigger filterPredicate
+      this.totalResults = this.dataSource.filteredData.length; // Update total results after global filtering
+    });
+  
+    // Combine global filter and field-specific filters
     this.dataSource.filterPredicate = (data: any, filter: string) => {
       const filterValues = JSON.parse(filter);
+  
+      // Global search (search across all columns)
+      const globalValue = this.globalFilter.value?.trim().toLowerCase() || '';
+      const columnValues = Object.values(data).join(' ').toLowerCase();
+      if (globalValue && !columnValues.includes(globalValue)) {
+        return false; // Exclude row if it does not match the global filter
+      }
+  
+      // Filter by Start and End Date (תאריך הגעה)
       if (filterValues.startDate || filterValues.endDate) {
         const arrivalDate = new Date(data.ArrivalDate); // Parse ArrivalDate
         if (filterValues.startDate && arrivalDate < new Date(filterValues.startDate)) {
-          return false; // Exclude if the ArrivalDate is before startDate
+          return false; // Exclude if ArrivalDate is before startDate
         }
         if (filterValues.endDate && arrivalDate > new Date(filterValues.endDate)) {
-          return false; // Exclude if the ArrivalDate is after endDate
-        }
-      }
-      // Filter by Start and End Date (תאריך הגעה)
-      if (filterValues.startDate || filterValues.endDate) {
-        const arrivalDate = new Date(data.ArrivalDate); // Parse ArrivalDate from data
-        if (
-          filterValues.startDate &&
-          arrivalDate < new Date(filterValues.startDate)
-        ) {
-          return false; // Exclude if the ArrivalDate is before the start date
-        }
-        if (
-          filterValues.endDate &&
-          arrivalDate > new Date(filterValues.endDate)
-        ) {
-          return false; // Exclude if the ArrivalDate is after the end date
+          return false; // Exclude if ArrivalDate is after endDate
         }
       }
   
@@ -238,12 +248,8 @@ export class ERInfoComponent implements OnInit, AfterViewInit {
   
       return true; // Include the row if all conditions pass
     };
-  
-    // Update total results when global filter changes
-    this.globalFilter.valueChanges.subscribe(() => {
-      this.totalResults = this.dataSource.filteredData.length; // Update total results after global filtering
-    });
   }
+  
   
   
   
