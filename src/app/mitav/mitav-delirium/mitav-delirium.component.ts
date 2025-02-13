@@ -28,6 +28,8 @@ export class MitavDeliriumComponent implements OnInit {
     'PreventionORInterventionCAM',
     'ReleaseCAM'
   ];
+
+ 
   selectedYear: number | null = null;
 selectedQuarter: string | null = null;
 yearList: number[] = [];

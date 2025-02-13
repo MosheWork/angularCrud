@@ -80,19 +80,145 @@
       </div>
     </div>
   </div>
+
+  
   <div class="table-section">
-    <mat-table [dataSource]="dataSource" matSort class="mat-elevation-z8">
-      <ng-container *ngFor="let column of displayedColumns" [matColumnDef]="column">
-        <mat-header-cell *matHeaderCellDef mat-sort-header> {{ column }} </mat-header-cell>
-        <mat-cell *matCellDef="let element"> {{ element[column] }} </mat-cell>
+    <mat-table [dataSource]="dataSource" matSort class="mat-elevation-z8" dir="rtl">
+  
+      <!-- תאריך קבלה -->
+      <ng-container matColumnDef="ATD_Admission_Date">
+        <mat-header-cell *matHeaderCellDef mat-sort-header> תאריך קבלה </mat-header-cell>
+        <mat-cell *matCellDef="let element"> {{ element.ATD_Admission_Date | date: 'dd/MM/yyyy HH:mm' }} </mat-cell>
       </ng-container>
   
-      <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-      <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+      <!-- תאריך שחרור -->
+      <ng-container matColumnDef="Release_Date">
+        <mat-header-cell *matHeaderCellDef mat-sort-header> תאריך שחרור </mat-header-cell>
+        <mat-cell *matCellDef="let element"> {{ element.Release_Date | date: 'dd/MM/yyyy HH:mm' }} </mat-cell>
+      </ng-container>
+  
+      <!-- מספר מטופל -->
+      <ng-container matColumnDef="Patient">
+        <mat-header-cell *matHeaderCellDef mat-sort-header> מספר מטופל </mat-header-cell>
+        <mat-cell *matCellDef="let element"> {{ element.Patient }} </mat-cell>
+      </ng-container>
+  
+      <!-- מספר אשפוז -->
+      <ng-container matColumnDef="Admission_No">
+        <mat-header-cell *matHeaderCellDef mat-sort-header> מספר אשפוז </mat-header-cell>
+        <mat-cell *matCellDef="let element"> {{ element.Admission_No }} </mat-cell>
+      </ng-container>
+  
+      <!-- יחידה -->
+      <ng-container matColumnDef="Unit">
+        <mat-header-cell *matHeaderCellDef mat-sort-header> יחידה </mat-header-cell>
+        <mat-cell *matCellDef="let element"> {{ element.Unit }} </mat-cell>
+      </ng-container>
+  
+      <!-- תיק רפואי מעקב -->
+      <ng-container matColumnDef="FollowUp_Medical_Record">
+        <mat-header-cell *matHeaderCellDef mat-sort-header> תיק רפואי מעקב </mat-header-cell>
+        <mat-cell *matCellDef="let element"> {{ element.FollowUp_Medical_Record }} </mat-cell>
+      </ng-container>
+  
+      <!-- תיק רפואי קבלה -->
+      <ng-container matColumnDef="Admission_Medical_Record">
+        <mat-header-cell *matHeaderCellDef mat-sort-header> תיק רפואי קבלה </mat-header-cell>
+        <mat-cell *matCellDef="let element"> {{ element.Admission_Medical_Record }} </mat-cell>
+      </ng-container>
+  
+      <!-- תיק רפואי שחרור -->
+      <ng-container matColumnDef="Release_Medical_Record">
+        <mat-header-cell *matHeaderCellDef mat-sort-header> תיק רפואי שחרור </mat-header-cell>
+        <mat-cell *matCellDef="let element"> {{ element.Release_Medical_Record }} </mat-cell>
+      </ng-container>
+  
+      <!-- ציון -->
+      <ng-container matColumnDef="Grade">
+        <mat-header-cell *matHeaderCellDef mat-sort-header> ציון </mat-header-cell>
+        <mat-cell *matCellDef="let element"> {{ element.Grade }} </mat-cell>
+      </ng-container>
+  
+      <!-- דליריום -->
+      <ng-container matColumnDef="PatientWithDelirium">
+        <mat-header-cell *matHeaderCellDef mat-sort-header> דליריום </mat-header-cell>
+        <mat-cell *matCellDef="let element"> {{ element.PatientWithDelirium }} </mat-cell>
+      </ng-container>
+  
+      <!-- תאריך הופעת דליריום -->
+      <ng-container matColumnDef="PatientWithDeliriumEntryDate">
+        <mat-header-cell *matHeaderCellDef mat-sort-header> תאריך הופעת דליריום </mat-header-cell>
+        <mat-cell *matCellDef="let element">
+          {{ element.PatientWithDeliriumEntryDate ? (element.PatientWithDeliriumEntryDate | date: 'dd/MM/yyyy HH:mm') : 'אין נתונים' }}
+        </mat-cell>
+      </ng-container>
+  
+      <!-- מספר ימים עם דליריום -->
+      <ng-container matColumnDef="DeliriumDaysCount">
+        <mat-header-cell *matHeaderCellDef mat-sort-header> מספר ימים עם דליריום </mat-header-cell>
+        <mat-cell *matCellDef="let element"> {{ element.DeliriumDaysCount }} </mat-cell>
+      </ng-container>
+  
+      <!-- האם נפתח קונסיליום -->
+      <ng-container matColumnDef="DeliriumConsiliumsOpened">
+        <mat-header-cell *matHeaderCellDef mat-sort-header> האם נפתח קונסיליום </mat-header-cell>
+        <mat-cell *matCellDef="let element"> {{ element.DeliriumConsiliumsOpened }} </mat-cell>
+      </ng-container>
+  
+      <!-- תאריך קונסיליום -->
+      <ng-container matColumnDef="DeliriumConsiliumsDate">
+        <mat-header-cell *matHeaderCellDef mat-sort-header> תאריך קונסיליום </mat-header-cell>
+        <mat-cell *matCellDef="let element">
+          {{ element.DeliriumConsiliumsDate ? (element.DeliriumConsiliumsDate | date: 'dd/MM/yyyy HH:mm') : 'אין נתונים' }}
+        </mat-cell>
+      </ng-container>
+  
+      <!-- הפרש שעות בין דליריום לקונסיליום -->
+      <ng-container matColumnDef="HoursDifference">
+        <mat-header-cell *matHeaderCellDef mat-sort-header> הפרש שעות בין דליריום לקונסיליום </mat-header-cell>
+        <mat-cell *matCellDef="let element"> {{ element.HoursDifference !== null ? element.HoursDifference : 'אין נתונים' }} </mat-cell>
+      </ng-container>
+  
+      <!-- התערבות CAM -->
+      <ng-container matColumnDef="PreventionAndInterventionCAM">
+        <mat-header-cell *matHeaderCellDef mat-sort-header> התערבות CAM </mat-header-cell>
+        <mat-cell *matCellDef="let element"> {{ element.PreventionAndInterventionCAM }} </mat-cell>
+      </ng-container>
+  
+      <!-- מניעה או התערבות CAM -->
+      <ng-container matColumnDef="PreventionORInterventionCAM">
+        <mat-header-cell *matHeaderCellDef mat-sort-header> מניעה או התערבות CAM </mat-header-cell>
+        <mat-cell *matCellDef="let element"> {{ element.PreventionORInterventionCAM }} </mat-cell>
+      </ng-container>
+  
+      <!-- CAM בשחרור -->
+      <ng-container matColumnDef="ReleaseCAM">
+        <mat-header-cell *matHeaderCellDef mat-sort-header> CAM בשחרור </mat-header-cell>
+        <mat-cell *matCellDef="let element"> {{ element.ReleaseCAM }} </mat-cell>
+      </ng-container>
+  
+      <!-- Header & Row Definitions -->
+      <mat-header-row *matHeaderRowDef="[
+        'ATD_Admission_Date', 'Release_Date', 'Patient', 'Admission_No', 'Unit',
+        'FollowUp_Medical_Record', 'Admission_Medical_Record', 'Release_Medical_Record',
+        'Grade', 'PatientWithDelirium', 'PatientWithDeliriumEntryDate', 'DeliriumDaysCount',
+        'DeliriumConsiliumsOpened', 'DeliriumConsiliumsDate', 'HoursDifference',
+        'PreventionAndInterventionCAM', 'PreventionORInterventionCAM', 'ReleaseCAM'
+      ]"></mat-header-row>
+  
+      <mat-row *matRowDef="let row; columns: [
+        'ATD_Admission_Date', 'Release_Date', 'Patient', 'Admission_No', 'Unit',
+        'FollowUp_Medical_Record', 'Admission_Medical_Record', 'Release_Medical_Record',
+        'Grade', 'PatientWithDelirium', 'PatientWithDeliriumEntryDate', 'DeliriumDaysCount',
+        'DeliriumConsiliumsOpened', 'DeliriumConsiliumsDate', 'HoursDifference',
+        'PreventionAndInterventionCAM', 'PreventionORInterventionCAM', 'ReleaseCAM'
+      ];"></mat-row>
+  
     </mat-table>
   
-    <mat-paginator [pageSizeOptions]="[10, 25, 50]" showFirstLastButtons></mat-paginator>
-</div>
+    <mat-paginator [pageSizeOptions]="[5, 25, 50]" showFirstLastButtons></mat-paginator>
+  </div>
+  
   </div>
   </div>
   

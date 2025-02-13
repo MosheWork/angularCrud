@@ -160,7 +160,7 @@
           <ng-container matColumnDef="ReleaseDate">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>תאריך שחרור</th>
             <td mat-cell *matCellDef="let element">
-              {{ element.ReleaseDate | date:'dd/MM/yyyy' }}
+              {{ element.ReleaseDate | date:'dd/MM/yyyy HH:mm' }}
             </td>
           </ng-container>
       
