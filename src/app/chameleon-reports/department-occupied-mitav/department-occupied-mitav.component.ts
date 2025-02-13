@@ -22,18 +22,27 @@ export class DepartmentOccupiedMitavComponent implements OnInit {
   mobilityStats: string = '';
   walkingStats: string = '';
   
-  displayedColumns: string[] = ['PName', 'UnitName', 'Room', 'BedName', 'Age', 'PhysiotherapyConsultation', 'MobilityAssessment', 'WalkingPrescription'];
+  displayedColumns: string[] = [
+    'AdmissionNo', 'PName', 'UnitName', 'Room', 'BedName', 'Age', 'MobilityAssessment', 'MobilityAssessmentDate', 
+    'PhysiotherapyConsultation', 'WalkingPrescription', 'DatesWithBothShifts',
+    'MobilityAtReception', 'FunctionalStateExecution',
+   
+  ];
   columnLabels: { [key: string]: string } = {
+    AdmissionNo: 'מספר מקרה ',
     PName: 'שם המטופל',
     UnitName: 'שם המחלקה',
     Room: 'חדר',
     BedName: 'מיטה',
     Age: 'גיל',
-    PhysiotherapyConsultation: 'התייעצות פיזיותרפיה',
+    PhysiotherapyConsultation: 'ייעוץ פיזיותרפיה',
     MobilityAssessment: 'הערכת ניידות',
     WalkingPrescription: 'מרשם להליכה',
+    MobilityAssessmentDate: 'תאריך הערכת ניידות',  // ✅ Ensure it's unique
+    MobilityAtReception: 'ניידות בקבלה',
+    FunctionalStateExecution: 'מצב תפקודי',
+    DatesWithBothShifts: 'תיעוד הליכה (יעד 70%)'
   };
-
   dataSource: MatTableDataSource<any> = new MatTableDataSource();
   unitOptions: string[] = []; // Stores unique UnitName options for the dropdown
 

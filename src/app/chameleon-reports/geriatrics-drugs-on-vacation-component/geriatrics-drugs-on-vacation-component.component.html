@@ -17,13 +17,26 @@
         <div class="col">
           <div dir="rtl" class="card">
             <div dir="rtl" class="card-body">
+              
+              <!-- Multi-Select Dropdown for Name -->
+              <mat-form-field class="filter-field">
+                <mat-label class="filters">מחלקה</mat-label>
+                <mat-select [formControl]="getFormControl('Name')" multiple>
+                  <mat-option *ngFor="let name of uniqueNames" [value]="name">
+                    {{ name }}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+  
+              <!-- Other Filters -->
               <ng-container *ngFor="let column of columns">
-                <mat-form-field class="filter-field">
+                <mat-form-field class="filter-field" *ngIf="column !== 'Name'">
                   <mat-label class="filters">{{ getColumnLabel(column) }}</mat-label>
                   <input matInput [formControl]="getFormControl(column)" class="filter-input" />
                 </mat-form-field>
               </ng-container>
             </div>
+  
             <div class="reset-button-container">
               <button
                 mat-button
@@ -40,11 +53,14 @@
         </div>
       </div>
     </div>
+  
+    <!-- Search and Export Section -->
     <div dir="rtl" style="display: flex; justify-content: space-between; align-items: center">
-        <mat-form-field class="long-search-bar" style="flex: 1; padding-right: 10px">
-            <mat-label class="filters" style="color: blue"> חיפוש</mat-label>
-            <input matInput [formControlName]="'globalFilter'" class="search-input" />
-          </mat-form-field>
+      <mat-form-field class="long-search-bar" style="flex: 1; padding-right: 10px">
+        <mat-label class="filters" style="color: blue"> חיפוש</mat-label>
+        <input matInput [formControlName]="'globalFilter'" class="search-input" />
+      </mat-form-field>
+  
       <div class="icon" matTooltip="Download Excel">
         <img
           src="../../assets/excel.png"
@@ -56,6 +72,7 @@
       </div>
     </div>
   </form>
+  
   <mat-table [dataSource]="matTableDataSource" matSort dir="rtl" class="mat-elevation-z8">
     <!-- Loop through columns to define each column in the table -->
     <ng-container *ngFor="let column of columns" [matColumnDef]="column">
@@ -76,7 +93,7 @@
     [length]="matTableDataSource.paginator?.length || 0"
     [pageIndex]="matTableDataSource.paginator?.pageIndex"
     [pageSize]="matTableDataSource.paginator?.pageSize"
-    [pageSizeOptions]="[15, 50, 100]"
+    [pageSizeOptions]="[10, 50, 100]"
     dir="rtl"
   ></mat-paginator>
 </div>

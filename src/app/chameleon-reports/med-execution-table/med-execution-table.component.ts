@@ -172,7 +172,7 @@ export class MedExecutionTableComponent implements OnInit, AfterViewInit {
 
   dataSource = new MatTableDataSource<MedExecutionModel>();
   searchValue: string = '';
-  titleUnit: string = 'מעבדות ';
+  titleUnit: string = 'בית מרקחת ';
   Title1: string = '   דוח תרופות - ';
   Title2: string = 'סה"כ תוצאות ';
   totalResults: number = 0;

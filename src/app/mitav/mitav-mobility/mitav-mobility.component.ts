@@ -17,6 +17,23 @@ import { Chart, ChartData, ChartType, registerables } from 'chart.js';
   styleUrls: ['./mitav-mobility.component.scss'],
 })
 export class MitavMobilityComponent implements OnInit, AfterViewInit {
+  deliriumDisplayedColumns: string[] = [
+    'Admission_No',
+    'Unit',
+    'ATD_Admission_Date',
+    'Release_Date',
+    'Grade',
+    'PatientWithDelirium',
+    'PatientWithDeliriumEntryDate',
+    'DeliriumDaysCount',
+    'DeliriumConsiliumsOpened',
+    'DeliriumConsiliumsDate',
+    'HoursDifference',
+    'PreventionAndInterventionCAM',
+    'PreventionORInterventionCAM',
+    'ReleaseCAM'
+  ];
+  
   displayedColumns: string[] = [
     'AdmissionNo',
     'UnitName',
@@ -28,8 +45,8 @@ export class MitavMobilityComponent implements OnInit, AfterViewInit {
     'RecommendationForWalking',
     'RequiredAssistiveDevice',
     'RecommendedWalkingDistance',
-    'MorningShiftCount',
-    'NightShiftCount',
+    //'MorningShiftCount',
+    //'NightShiftCount',
     'DatesWithBothShifts',
     'TotalDaysInHospital',
     'TotalPercentage',
@@ -39,6 +56,8 @@ export class MitavMobilityComponent implements OnInit, AfterViewInit {
     'MobilityBeforeHospitalization',          // Added
     'BasicFunctionBeforeHospitalization'
   ];
+  globalFilterValue: string = ''; // Store global filter text
+  deliriumDataSource = new MatTableDataSource<any>();
 
   dataSource = new MatTableDataSource<any>();
   mobilityGradeAverage: number = 0;
@@ -64,11 +83,18 @@ colorScheme = {
   @ViewChild(MatSort) sort!: MatSort;
   @ViewChild('chartCanvas') chartCanvas!: ElementRef<HTMLCanvasElement>;
 
+  @ViewChild('paginatorDelirium') paginatorDelirium!: MatPaginator;
+@ViewChild('sortDelirium') sortDelirium!: MatSort;
+
   constructor(private http: HttpClient, private dialog: MatDialog) {    Chart.register(...registerables); // Register Chart.js components
 }
 
   ngOnInit(): void {
     this.fetchMobilityReport();
+    this.fetchMitavDeliriumReport(); // Fetch Delirium Report
+
+    this.dataSource.filterPredicate = this.createFilterPredicate();
+
   }
 
   ngAfterViewInit(): void {
@@ -78,8 +104,29 @@ colorScheme = {
       this.prepareChartData();
       this.initializeChart();
     }
-  }
 
+    this.deliriumDataSource.paginator = this.paginator;
+    this.deliriumDataSource.sort = this.sort;
+  }
+  createFilterPredicate(): (data: any, filter: string) => boolean {
+    return (data: any, filter: string): boolean => {
+      const filterText = filter.trim().toLowerCase();
+  
+      // ✅ Convert all data properties to a single string for search
+      const dataString = Object.values(data)
+        .map(value => (value ? value.toString().toLowerCase() : ''))
+        .join(' ');
+  
+      return dataString.includes(filterText);
+    };
+  }
+  applyGlobalFilter(event: Event): void {
+    const filterValue = (event.target as HTMLInputElement).value;
+    this.globalFilterValue = filterValue.trim().toLowerCase();
+  
+    this.dataSource.filter = this.globalFilterValue;
+  }
+  
   fetchMobilityReport(): void {
     this.isLoading = true;
   
@@ -120,6 +167,22 @@ colorScheme = {
       (error) => {
         console.error('❌ Error fetching Mobility Report data:', error);
         this.isLoading = false; // ✅ Ensure loader disappears even on error
+      }
+    );
+  }
+  fetchMitavDeliriumReport(): void {
+    this.http.get<any[]>(`${environment.apiUrl}/MITAVMobility/GetMitavDeliriumReport`).subscribe(
+      (data) => {
+        console.log('Mitav Delirium Report Data:', data);
+        this.deliriumDataSource.data = data;
+  
+        setTimeout(() => {
+          this.deliriumDataSource.paginator = this.paginator;
+          this.deliriumDataSource.sort = this.sort;
+        });
+      },
+      (error) => {
+        console.error('❌ Error fetching Mitav Delirium Report:', error);
       }
     );
   }

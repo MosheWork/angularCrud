@@ -49,41 +49,74 @@
   
     
     <mat-table [dataSource]="dataSource" matSort dir="rtl" class="mat-elevation-z8">
-        <ng-container *ngFor="let column of displayedColumns" [matColumnDef]="column">
-          <mat-header-cell *matHeaderCellDef mat-sort-header>{{ getColumnLabel(column) }}</mat-header-cell>
-      
-          <!-- Custom cell for PhysiotherapyConsultation -->
+      <ng-container *ngFor="let column of displayedColumns" [matColumnDef]="column">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>{{ getColumnLabel(column) }}</mat-header-cell>
+    
+        <mat-cell *matCellDef="let element">
+          <!-- ✅ Special formatting for specific columns -->
+          
+          <!-- 🔴 "DatesWithBothShifts" (שיעור תיעוד הליכה) - If less than 70%, turn red -->
+          <ng-container *ngIf="column === 'DatesWithBothShifts'">
+            <span [ngClass]="{'red-text': element.PercentageOfBothShifts < 70}">
+              {{ element.TotalDaysInHospital }}/ {{ element.DatesWithBothShifts }}   ({{ element.PercentageOfBothShifts }}%)
+            </span>
+          </ng-container>
+    
+          <!-- 📅 "MobilityAssessmentDate" - Format as a Date -->
+          <ng-container *ngIf="column === 'MobilityAssessmentDate'">
+            {{ element.MobilityAssessmentDate | date:'dd/MM/yyyy HH:mm' }}
+          </ng-container>
+    
+          <!-- 🔴 "MobilityAtReception" (ניידות בקבלה) - If אין תיעוד, turn red -->
+          <ng-container *ngIf="column === 'MobilityAtReception'">
+            <span [ngClass]="{'red-text': element.MobilityAtReception === 'אין תיעוד'}">
+              {{ element.MobilityAtReception }}
+            </span>
+          </ng-container>
+    
+          <!-- 🔴 "FunctionalStateExecution" (מצב תפקודי) - If אין תיעוד, turn red -->
+          <ng-container *ngIf="column === 'FunctionalStateExecution'">
+            <span [ngClass]="{'red-text': element.FunctionalStateExecution === 'אין תיעוד'}">
+              {{ element.FunctionalStateExecution }}
+            </span>
+          </ng-container>
+    
+          <!-- 🔴 "PhysiotherapyConsultation" - If 'לא', turn red -->
           <ng-container *ngIf="column === 'PhysiotherapyConsultation'">
-            <mat-cell *matCellDef="let element" [ngClass]="{'red-text': element.PhysiotherapyConsultation === 'לא'}">
+            <span [ngClass]="{'red-text': element.PhysiotherapyConsultation === 'לא'}">
               {{ element.PhysiotherapyConsultation }}
-            </mat-cell>
+            </span>
           </ng-container>
-      
-          <!-- Custom cell for MobilityAssessment -->
+    
+          <!-- 🔴 "MobilityAssessment" - If 'אין תיעוד', turn red -->
           <ng-container *ngIf="column === 'MobilityAssessment'">
-            <mat-cell *matCellDef="let element" [ngClass]="{'red-text': element.MobilityAssessment === 'אין תיעוד'}">
+            <span [ngClass]="{'red-text': element.MobilityAssessment === 'אין תיעוד'}">
               {{ element.MobilityAssessment }}
-            </mat-cell>
+            </span>
           </ng-container>
-      
-          <!-- Custom cell for WalkingPrescription -->
+    
+          <!-- 🔴 "WalkingPrescription" - If 'לא', turn red -->
           <ng-container *ngIf="column === 'WalkingPrescription'">
-            <mat-cell *matCellDef="let element" [ngClass]="{'red-text': element.WalkingPrescription === 'לא'}">
+            <span [ngClass]="{'red-text': element.WalkingPrescription === 'לא'}">
               {{ element.WalkingPrescription }}
-            </mat-cell>
+            </span>
           </ng-container>
-      
-          <!-- Default cell for other columns -->
-          <ng-container *ngIf="column !== 'PhysiotherapyConsultation' && column !== 'MobilityAssessment' && column !== 'WalkingPrescription'">
-            <mat-cell *matCellDef="let element">
-              {{ element[column] }}
-            </mat-cell>
+    
+          <!-- ✅ Default rendering for all other columns -->
+          <ng-container *ngIf="!['DatesWithBothShifts', 'MobilityAssessmentDate', 'MobilityAtReception', 'FunctionalStateExecution', 'PhysiotherapyConsultation', 'MobilityAssessment', 'WalkingPrescription'].includes(column)">
+            {{ element[column] }}
           </ng-container>
-        </ng-container>
-      
-        <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-        <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
-      </mat-table>
+        </mat-cell>
+      </ng-container>
+    
+      <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+      <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+    </mat-table>
+    
+    
+    
+    <!-- <mat-paginator [pageSizeOptions]="[10, 25, 50]" showFirstLastButtons></mat-paginator> -->
+    
       
       
     

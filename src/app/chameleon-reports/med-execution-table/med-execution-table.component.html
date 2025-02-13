@@ -118,7 +118,7 @@
     </ng-container>
     <ng-container matColumnDef="Execution_Date">
       <mat-header-cell *matHeaderCellDef mat-sort-header>תאריך ביצוע</mat-header-cell>
-      <mat-cell *matCellDef="let element"> {{ element.Execution_Date | date: 'dd-MM-yyyy' }} </mat-cell>
+      <mat-cell *matCellDef="let element"> {{ element.Execution_Date | date: 'dd-MM-yyyy HH:mm' }} </mat-cell>
     </ng-container>
     <ng-container matColumnDef="Category_Name">
       <mat-header-cell *matHeaderCellDef mat-sort-header> קטגוריה</mat-header-cell>
