@@ -26,14 +26,14 @@
             <mat-label>Search</mat-label>
             <input matInput (keyup)="applyGlobalFilter($event)" placeholder="Search across all columns">
           </mat-form-field>
-          <!-- <mat-form-field class="filter-field">
+          <mat-form-field class="filter-field">
             <mat-label>בחר מחלקות</mat-label>
             <mat-select [(ngModel)]="selectedDepartments" multiple (selectionChange)="applyFilters()">
               <mat-option *ngFor="let department of departmentList" [value]="department">
                 {{ department }}
               </mat-option>
             </mat-select>
-          </mat-form-field> -->
+          </mat-form-field>
   
           <!-- Start Date Filter -->
           <mat-form-field class="filter-field">
@@ -110,9 +110,9 @@
       </ng-container>
   
       <!-- יחידה -->
-      <ng-container matColumnDef="Unit">
+      <ng-container matColumnDef="Name">
         <mat-header-cell *matHeaderCellDef mat-sort-header> יחידה </mat-header-cell>
-        <mat-cell *matCellDef="let element"> {{ element.Unit }} </mat-cell>
+        <mat-cell *matCellDef="let element"> {{ element.Name }} </mat-cell>
       </ng-container>
   
       <!-- תיק רפואי מעקב -->
@@ -199,7 +199,7 @@
   
       <!-- Header & Row Definitions -->
       <mat-header-row *matHeaderRowDef="[
-        'ATD_Admission_Date', 'Release_Date', 'Patient', 'Admission_No', 'Unit',
+        'ATD_Admission_Date', 'Release_Date', 'Patient', 'Admission_No', 'Name',
         'FollowUp_Medical_Record', 'Admission_Medical_Record', 'Release_Medical_Record',
         'Grade', 'PatientWithDelirium', 'PatientWithDeliriumEntryDate', 'DeliriumDaysCount',
         'DeliriumConsiliumsOpened', 'DeliriumConsiliumsDate', 'HoursDifference',
@@ -207,7 +207,7 @@
       ]"></mat-header-row>
   
       <mat-row *matRowDef="let row; columns: [
-        'ATD_Admission_Date', 'Release_Date', 'Patient', 'Admission_No', 'Unit',
+        'ATD_Admission_Date', 'Release_Date', 'Patient', 'Admission_No', 'Name',
         'FollowUp_Medical_Record', 'Admission_Medical_Record', 'Release_Medical_Record',
         'Grade', 'PatientWithDelirium', 'PatientWithDeliriumEntryDate', 'DeliriumDaysCount',
         'DeliriumConsiliumsOpened', 'DeliriumConsiliumsDate', 'HoursDifference',

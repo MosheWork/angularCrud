@@ -14,7 +14,7 @@ export class MitavDeliriumComponent implements OnInit {
 
   displayedColumns: string[] = [
     'Admission_No',
-    'Unit',
+    'Name',
     'ATD_Admission_Date',
     'Release_Date',
     'Grade',
@@ -29,7 +29,9 @@ export class MitavDeliriumComponent implements OnInit {
     'ReleaseCAM'
   ];
 
- 
+  departmentList: string[] = []; // List of unique departments
+  selectedDepartments: string[] = []; // Selected departments for filtering
+
   selectedYear: number | null = null;
 selectedQuarter: string | null = null;
 yearList: number[] = [];
@@ -68,6 +70,7 @@ globalFilterValue: string = ''; // Store global filter text
         console.log('Mitav Delirium Report Data:', data);
         this.dataSource.data = data;
         this.originalData = data; // Store original data
+        this.departmentList = Array.from(new Set(data.map((item) => item.Name || 'Unknown')));
 
         setTimeout(() => {
           if (this.paginator) {
@@ -111,12 +114,12 @@ if (this.startDate || this.endDate) {
 
 
   
-    // // ✅ Apply Department Filter
-    // if (this.selectedDepartments.length > 0) {
-    //   filteredData = filteredData.filter((item) =>
-    //     this.selectedDepartments.includes(item.UnitName)
-    //   );
-    // }
+    // ✅ Apply Department Filter
+    if (this.selectedDepartments.length > 0) {
+      filteredData = filteredData.filter((item) =>
+        this.selectedDepartments.includes(item.Name)
+      );
+    }
   
     // ✅ Apply Year Filter
     if (this.selectedYear) {
@@ -143,7 +146,7 @@ if (this.startDate || this.endDate) {
   resetFilters(): void {
     this.startDate = null;
     this.endDate = null;
-    //this.selectedDepartments = [];
+    this.selectedDepartments = [];
     this.selectedYear = null;
     this.selectedQuarter = null;
     this.dataSource.data = this.originalData;
