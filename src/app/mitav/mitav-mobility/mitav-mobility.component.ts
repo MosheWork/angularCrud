@@ -17,22 +17,7 @@ import { Chart, ChartData, ChartType, registerables } from 'chart.js';
   styleUrls: ['./mitav-mobility.component.scss'],
 })
 export class MitavMobilityComponent implements OnInit, AfterViewInit {
-  deliriumDisplayedColumns: string[] = [
-    'Admission_No',
-    'Unit',
-    'ATD_Admission_Date',
-    'Release_Date',
-    'Grade',
-    'PatientWithDelirium',
-    'PatientWithDeliriumEntryDate',
-    'DeliriumDaysCount',
-    'DeliriumConsiliumsOpened',
-    'DeliriumConsiliumsDate',
-    'HoursDifference',
-    'PreventionAndInterventionCAM',
-    'PreventionORInterventionCAM',
-    'ReleaseCAM'
-  ];
+
   
   displayedColumns: string[] = [
     'AdmissionNo',
@@ -83,15 +68,13 @@ colorScheme = {
   @ViewChild(MatSort) sort!: MatSort;
   @ViewChild('chartCanvas') chartCanvas!: ElementRef<HTMLCanvasElement>;
 
-  @ViewChild('paginatorDelirium') paginatorDelirium!: MatPaginator;
-@ViewChild('sortDelirium') sortDelirium!: MatSort;
+
 
   constructor(private http: HttpClient, private dialog: MatDialog) {    Chart.register(...registerables); // Register Chart.js components
 }
 
   ngOnInit(): void {
     this.fetchMobilityReport();
-    this.fetchMitavDeliriumReport(); // Fetch Delirium Report
 
     this.dataSource.filterPredicate = this.createFilterPredicate();
 
@@ -105,8 +88,7 @@ colorScheme = {
       this.initializeChart();
     }
 
-    this.deliriumDataSource.paginator = this.paginator;
-    this.deliriumDataSource.sort = this.sort;
+  
   }
   createFilterPredicate(): (data: any, filter: string) => boolean {
     return (data: any, filter: string): boolean => {
@@ -170,22 +152,7 @@ colorScheme = {
       }
     );
   }
-  fetchMitavDeliriumReport(): void {
-    this.http.get<any[]>(`${environment.apiUrl}/MITAVMobility/GetMitavDeliriumReport`).subscribe(
-      (data) => {
-        console.log('Mitav Delirium Report Data:', data);
-        this.deliriumDataSource.data = data;
-  
-        setTimeout(() => {
-          this.deliriumDataSource.paginator = this.paginator;
-          this.deliriumDataSource.sort = this.sort;
-        });
-      },
-      (error) => {
-        console.error('❌ Error fetching Mitav Delirium Report:', error);
-      }
-    );
-  }
+
   
   
   applyFilters(): void {

@@ -106,9 +106,9 @@
   </div>
 
   <!-- Tabs Section -->
-  <mat-tab-group dir="rtl">
+  <!-- <mat-tab-group dir="rtl"> -->
     <!-- Mobility Tab -->
-    <mat-tab label="ניידות">
+   
       <!-- Button to Toggle Between Table and Pie Chart -->
       <img 
           *ngIf="!showGraph" 
@@ -276,10 +276,10 @@
         <canvas #chartCanvas width="400" height="400"></canvas>
        
       </div>
-    </mat-tab>
+
   
    <!-- Delirium Report Tab -->
-  <mat-tab label="דלריום">
+  <!-- <mat-tab label="דלריום">
     <div class="placeholder-content">
       <h3>Mitav Delirium Report</h3>
       <mat-table [dataSource]="deliriumDataSource" matSort class="mat-elevation-z8">
@@ -292,10 +292,10 @@
         <mat-row *matRowDef="let row; columns: deliriumDisplayedColumns;"></mat-row>
       </mat-table>
 
-      <mat-paginator #paginatorDelirium [pageSizeOptions]="[10, 25, 50]" showFirstLastButtons></mat-paginator>
+      <mat-paginator #paginatorDelirium="matPaginator"  [pageSizeOptions]="[5, 25, 50]" showFirstLastButtons></mat-paginator>
     </div>
-  </mat-tab>
+  </mat-tab> -->
 
-  </mat-tab-group>
+  <!-- </mat-tab-group> -->
   
 </div>

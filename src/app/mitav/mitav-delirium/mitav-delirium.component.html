@@ -1,0 +1,98 @@
+<!-- Loader (Full Page) -->
+<div *ngIf="isLoading" class="loading-screen">
+    <div class="bed-doctor-loader">
+      <div class="animation">
+        🏥 ➡️ 🏥 ➡️ 🏥 ➡️ 👨‍⚕️
+      </div>
+      <mat-progress-bar mode="indeterminate" color="accent"></mat-progress-bar>
+      <p>מעבד מידע רפואי...</p>
+    </div>  <p>אוסף נתונים לדוח מיתב....</p>
+  </div>
+  
+  <div *ngIf="!isLoading" class="body">
+    <!-- Title Section -->
+    <div class="nine">
+      <h1> דוח מיתב - דליריום</h1>
+    </div>
+<div class="table-container">
+  
+  <!-- Filters Section -->
+<div class="filter-card">
+    <div dir="rtl" class="card mat-elevation-z8">
+      <div class="card-body">
+        <div class="filter-container">
+          <!-- Department Multi-Select -->
+          <mat-form-field appearance="outline">
+            <mat-label>Search</mat-label>
+            <input matInput (keyup)="applyGlobalFilter($event)" placeholder="Search across all columns">
+          </mat-form-field>
+          <!-- <mat-form-field class="filter-field">
+            <mat-label>בחר מחלקות</mat-label>
+            <mat-select [(ngModel)]="selectedDepartments" multiple (selectionChange)="applyFilters()">
+              <mat-option *ngFor="let department of departmentList" [value]="department">
+                {{ department }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field> -->
+  
+          <!-- Start Date Filter -->
+          <mat-form-field class="filter-field">
+            <mat-label>תאריך התחלה</mat-label>
+            <input matInput [matDatepicker]="startDatePicker" [(ngModel)]="startDate" (ngModelChange)="applyFilters()" />
+            <mat-datepicker-toggle matSuffix [for]="startDatePicker"></mat-datepicker-toggle>
+            <mat-datepicker #startDatePicker></mat-datepicker>
+          </mat-form-field>
+  
+          <!-- End Date Filter -->
+          <mat-form-field class="filter-field">
+            <mat-label>תאריך סיום</mat-label>
+            <input matInput [matDatepicker]="endDatePicker" [(ngModel)]="endDate" (ngModelChange)="applyFilters()" />
+            <mat-datepicker-toggle matSuffix [for]="endDatePicker"></mat-datepicker-toggle>
+            <mat-datepicker #endDatePicker></mat-datepicker>
+          </mat-form-field>
+  
+          <!-- Year Filter -->
+          <mat-form-field class="filter-field">
+            <mat-label>בחר שנה</mat-label>
+            <mat-select [(ngModel)]="selectedYear" (selectionChange)="applyFilters()">
+              <mat-option *ngFor="let year of yearList" [value]="year">
+                {{ year }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+  
+          <!-- Quarter Filter -->
+          <mat-form-field class="filter-field">
+            <mat-label>בחר רבעון</mat-label>
+            <mat-select [(ngModel)]="selectedQuarter" (selectionChange)="applyFilters()">
+              <mat-option *ngFor="let quarter of ['רבעון 1', 'רבעון 2', 'רבעון 3', 'רבעון 4']" [value]="quarter">
+                {{ quarter }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+  
+          <!-- Filter Buttons -->
+          <div class="filter-buttons" style="margin-top: 10px; text-align: right;">
+            <button mat-raised-button color="warn" (click)="resetFilters()">איפוס</button>
+          </div>
+        
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="table-section">
+    <mat-table [dataSource]="dataSource" matSort class="mat-elevation-z8">
+      <ng-container *ngFor="let column of displayedColumns" [matColumnDef]="column">
+        <mat-header-cell *matHeaderCellDef mat-sort-header> {{ column }} </mat-header-cell>
+        <mat-cell *matCellDef="let element"> {{ element[column] }} </mat-cell>
+      </ng-container>
+  
+      <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+      <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+    </mat-table>
+  
+    <mat-paginator [pageSizeOptions]="[10, 25, 50]" showFirstLastButtons></mat-paginator>
+</div>
+  </div>
+  </div>
+  
