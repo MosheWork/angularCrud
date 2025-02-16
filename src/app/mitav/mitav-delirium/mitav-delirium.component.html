@@ -115,30 +115,34 @@
         <mat-cell *matCellDef="let element"> {{ element.Name }} </mat-cell>
       </ng-container>
   
-      <!-- תיק רפואי מעקב -->
+      <!-- תיק רפואי מעקב
       <ng-container matColumnDef="FollowUp_Medical_Record">
         <mat-header-cell *matHeaderCellDef mat-sort-header> תיק רפואי מעקב </mat-header-cell>
         <mat-cell *matCellDef="let element"> {{ element.FollowUp_Medical_Record }} </mat-cell>
       </ng-container>
   
-      <!-- תיק רפואי קבלה -->
+      
       <ng-container matColumnDef="Admission_Medical_Record">
         <mat-header-cell *matHeaderCellDef mat-sort-header> תיק רפואי קבלה </mat-header-cell>
         <mat-cell *matCellDef="let element"> {{ element.Admission_Medical_Record }} </mat-cell>
       </ng-container>
   
-      <!-- תיק רפואי שחרור -->
+     
       <ng-container matColumnDef="Release_Medical_Record">
         <mat-header-cell *matHeaderCellDef mat-sort-header> תיק רפואי שחרור </mat-header-cell>
         <mat-cell *matCellDef="let element"> {{ element.Release_Medical_Record }} </mat-cell>
-      </ng-container>
+      </ng-container> -->
   
       <!-- ציון -->
       <ng-container matColumnDef="Grade">
-        <mat-header-cell *matHeaderCellDef mat-sort-header> ציון </mat-header-cell>
+        <mat-header-cell *matHeaderCellDef mat-sort-header> ציון אומדן cam </mat-header-cell>
         <mat-cell *matCellDef="let element"> {{ element.Grade }} </mat-cell>
       </ng-container>
-  
+  <!-- גיל -->
+  <ng-container matColumnDef="Age_Years">
+    <mat-header-cell *matHeaderCellDef mat-sort-header> גיל </mat-header-cell>
+    <mat-cell *matCellDef="let element"> {{ element.Age_Years }} </mat-cell>
+  </ng-container>
       <!-- דליריום -->
       <ng-container matColumnDef="PatientWithDelirium">
         <mat-header-cell *matHeaderCellDef mat-sort-header> דליריום </mat-header-cell>
@@ -199,19 +203,19 @@
   
       <!-- Header & Row Definitions -->
       <mat-header-row *matHeaderRowDef="[
-        'ATD_Admission_Date', 'Release_Date', 'Patient', 'Admission_No', 'Name',
-        'FollowUp_Medical_Record', 'Admission_Medical_Record', 'Release_Medical_Record',
+      'Admission_No','Name','Age_Years','ATD_Admission_Date', 'Release_Date', 
+        
         'Grade', 'PatientWithDelirium', 'PatientWithDeliriumEntryDate', 'DeliriumDaysCount',
-        'DeliriumConsiliumsOpened', 'DeliriumConsiliumsDate', 'HoursDifference',
-        'PreventionAndInterventionCAM', 'PreventionORInterventionCAM', 'ReleaseCAM'
+        'DeliriumConsiliumsOpened', 'DeliriumConsiliumsDate', 'HoursDifference','PreventionAndInterventionCAM',
+         'PreventionORInterventionCAM', 'ReleaseCAM'
       ]"></mat-header-row>
   
       <mat-row *matRowDef="let row; columns: [
-        'ATD_Admission_Date', 'Release_Date', 'Patient', 'Admission_No', 'Name',
-        'FollowUp_Medical_Record', 'Admission_Medical_Record', 'Release_Medical_Record',
-        'Grade', 'PatientWithDelirium', 'PatientWithDeliriumEntryDate', 'DeliriumDaysCount',
+      'Admission_No','Name','Age_Years','ATD_Admission_Date', 'Release_Date', 
+        
+        'Grade', 'PatientWithDelirium', 'PatientWithDeliriumEntryDate', 'DeliriumDaysCount','PreventionAndInterventionCAM',
         'DeliriumConsiliumsOpened', 'DeliriumConsiliumsDate', 'HoursDifference',
-        'PreventionAndInterventionCAM', 'PreventionORInterventionCAM', 'ReleaseCAM'
+         'PreventionORInterventionCAM', 'ReleaseCAM'
       ];"></mat-row>
   
     </mat-table>

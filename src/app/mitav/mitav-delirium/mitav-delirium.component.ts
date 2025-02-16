@@ -34,6 +34,8 @@ export class MitavDeliriumComponent implements OnInit {
 
   selectedYear: number | null = null;
 selectedQuarter: string | null = null;
+quarterList: string[] = ['Q1', 'Q2', 'Q3', 'Q4'];  // ✅ Fixed: Define valid quarters
+
 yearList: number[] = [];
 startDate: Date | null = null;
 endDate: Date | null = null;
@@ -69,9 +71,24 @@ globalFilterValue: string = ''; // Store global filter text
       (data) => {
         console.log('Mitav Delirium Report Data:', data);
         this.dataSource.data = data;
-        this.originalData = data; // Store original data
+        this.originalData = data;
+  
+        // ✅ Extract Unique Years from ATD_Admission_Date & Release_Date
+        const years = new Set<number>();
+        data.forEach(item => {
+          if (item.ATD_Admission_Date) {
+            years.add(new Date(item.ATD_Admission_Date).getFullYear());
+          }
+          if (item.Release_Date) {
+            years.add(new Date(item.Release_Date).getFullYear());
+          }
+        });
+  
+        this.yearList = Array.from(years).sort((a, b) => b - a); // Sort years descending
+  
+        // ✅ Populate Department List
         this.departmentList = Array.from(new Set(data.map((item) => item.Name || 'Unknown')));
-
+  
         setTimeout(() => {
           if (this.paginator) {
             this.dataSource.paginator = this.paginator;
@@ -81,7 +98,7 @@ globalFilterValue: string = ''; // Store global filter text
           }
           this.dataSource._updateChangeSubscription();
         }, 500);
-
+  
         this.isLoading = false;
       },
       (error) => {
@@ -90,6 +107,7 @@ globalFilterValue: string = ''; // Store global filter text
       }
     );
   }
+  
   applyFilters(): void {
     let filteredData = [...this.originalData];
   
@@ -122,21 +140,26 @@ if (this.startDate || this.endDate) {
     }
   
     // ✅ Apply Year Filter
-    if (this.selectedYear) {
-      filteredData = filteredData.filter(
-        (item) => new Date(item.AdmissionDate).getFullYear() === this.selectedYear
-      );
-    }
+   // ✅ Apply Year Filter
+if (this.selectedYear) {
+  filteredData = filteredData.filter((item) => {
+    const admissionYear = item.ATD_Admission_Date ? new Date(item.ATD_Admission_Date).getFullYear() : null;
+    const releaseYear = item.Release_Date ? new Date(item.Release_Date).getFullYear() : null;
+
+    return (admissionYear === this.selectedYear) || (releaseYear === this.selectedYear);
+  });
+}
   
     // ✅ Apply Quarter Filter
     if (this.selectedQuarter) {
       filteredData = filteredData.filter((item) => {
-        const month = new Date(item.AdmissionDate).getMonth() + 1;
-        if (this.selectedQuarter === 'Q1') return month >= 1 && month <= 3;
-        if (this.selectedQuarter === 'Q2') return month >= 4 && month <= 6;
-        if (this.selectedQuarter === 'Q3') return month >= 7 && month <= 9;
-        if (this.selectedQuarter === 'Q4') return month >= 10 && month <= 12;
-        return false;
+        if (!item.ATD_Admission_Date) return false; // Ensure valid date
+        const month = new Date(item.ATD_Admission_Date).getMonth() + 1;
+        
+        return (this.selectedQuarter === 'Q1' && month >= 1 && month <= 3) ||
+               (this.selectedQuarter === 'Q2' && month >= 4 && month <= 6) ||
+               (this.selectedQuarter === 'Q3' && month >= 7 && month <= 9) ||
+               (this.selectedQuarter === 'Q4' && month >= 10 && month <= 12);
       });
     }
   
