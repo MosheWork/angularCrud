@@ -117,8 +117,12 @@ export class TraumaPatientsComponent implements OnInit {
     });
   }
   ngAfterViewInit(): void {
-    this.dataSource.paginator = this.paginator;
-    this.dataSource.sort = this.sort;
+    setTimeout(() => {
+      if (this.paginator) {
+        this.dataSource.paginator = this.paginator;
+      }
+      this.dataSource.sort = this.sort;
+    });
   }
 
 
@@ -129,7 +133,11 @@ export class TraumaPatientsComponent implements OnInit {
         this.dataSource.data = data;
         this.filteredData = [...data];
         this.totalResults = data.length;
-  
+  // ✅ Set initial data into table
+  this.dataSource.data = this.filteredData;
+      
+  // ✅ Apply initial filters automatically
+  setTimeout(() => this.applyFilters(), 100);
         // ✅ Initialize forms for each row
         data.forEach(patient => {
           this.editForms[patient.CaseNumber] = new FormGroup({
@@ -149,7 +157,7 @@ export class TraumaPatientsComponent implements OnInit {
   private createFilterForm(): FormGroup {
     return this.fb.group({
       globalFilter: new FormControl(''),
-      relevantFilter: new FormControl('') // Dropdown for filtering by Relevant
+      relevantFilter: new FormControl(1) // ✅ Default filter to 1 (Yes)
     });
   }
   applyFilters() {
@@ -164,9 +172,11 @@ export class TraumaPatientsComponent implements OnInit {
             val && val.toString().toLowerCase().includes(globalFilter)
           )
         : true;
-  
-      const matchesRelevantFilter =
-        relevantFilter === '' || item.Relevant == relevantFilter;
+       
+        const matchesRelevantFilter =
+        relevantFilter === '' || relevantFilter === null ||
+        (relevantFilter == 1 && item.Relevant == 1) ||
+        (relevantFilter == 0 && item.Relevant == 0);
   
       return matchesGlobalFilter && matchesRelevantFilter;
     });
@@ -185,24 +195,25 @@ export class TraumaPatientsComponent implements OnInit {
   }
   
   
-  
   resetFilters() {
-    this.filterForm.reset(); // ✅ Clears the form
+    this.filterForm.reset({
+      globalFilter: '',
+      relevantFilter: 1 // ✅ Ensure it resets to default value '1'
+    });
   
-    // ✅ Restore the original dataset
-    this.filteredData = [...this.originalData]; // ✅ Ensures we get back original data
-    this.dataSource.data = this.filteredData;
-    this.totalResults = this.filteredData.length;
-  
-    // ✅ Ensure paginator updates
     setTimeout(() => {
+      this.filteredData = [...this.originalData]; // ✅ Restore original data
+      this.dataSource.data = this.filteredData;
+      this.totalResults = this.filteredData.length;
+  
       if (this.paginator) {
         this.paginator.firstPage();
         this.dataSource.paginator = this.paginator;
       }
     });
-  }
   
+    this.applyFilters(); // ✅ Ensures table refreshes with new filters
+  }
   
   
 
