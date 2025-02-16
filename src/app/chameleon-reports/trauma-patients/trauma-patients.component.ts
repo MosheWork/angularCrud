@@ -33,6 +33,8 @@ interface TraumaPatient {
   Month: number;
   Week: number;
   Year: number;
+  TransferToOtherInstitution: string; 
+
 }
 
 @Component({
@@ -124,7 +126,15 @@ export class TraumaPatientsComponent implements OnInit {
   editForms: { [key: string]: FormGroup  } = {};
   filteredData: any[] = [];
 
-  
+  // Unique filter options
+  uniqueYears: number[] = [];
+  uniqueMonths: number[] = [];
+  uniqueWeeks: number[] = [];
+  uniqueAdmissionDepartments: string[] = [];
+  uniqueShockRooms: string[] = [];
+  uniqueTransfers: string[] = [];
+  uniqueReceiveCauses: string[] = [];
+  TransferToOtherInstitution: string[] = [];
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
@@ -163,7 +173,14 @@ export class TraumaPatientsComponent implements OnInit {
         this.totalResults = data.length;
   // ✅ Set initial data into table
   this.dataSource.data = this.filteredData;
-      
+       // Extract unique values for filters
+       this.uniqueYears = [...new Set(data.map(item => item.Year).filter(Boolean))].sort((a, b) => b - a);
+       this.uniqueMonths = [...new Set(data.map(item => item.Month).filter(Boolean))].sort((a, b) => b - a);
+       this.uniqueWeeks = [...new Set(data.map(item => item.Week).filter(Boolean))].sort((a, b) => b - a);
+       this.uniqueAdmissionDepartments = [...new Set(data.map(item => item.AdmissionDepartment).filter(Boolean))].sort();
+       this.uniqueShockRooms = [...new Set(data.map(item => item.ShockRoom).filter(Boolean))].sort();
+       this.uniqueTransfers = [...new Set(data.map(item => item.TransferToOtherInstitution).filter(Boolean))].sort();
+       this.uniqueReceiveCauses = [...new Set(data.map(item => item.ReceiveCauseDescription).filter(Boolean))].sort();
   // ✅ Apply initial filters automatically
   setTimeout(() => this.applyFilters(), 100);
         // ✅ Initialize forms for each row
@@ -185,7 +202,14 @@ export class TraumaPatientsComponent implements OnInit {
   private createFilterForm(): FormGroup {
     return this.fb.group({
       globalFilter: new FormControl(''),
-      relevantFilter: new FormControl(1) // ✅ Default filter to 1 (Yes)
+      relevantFilter: new FormControl('1'), // Default value is 1 ✅
+      YearFilter: new FormControl([]),  // Multi-select support ✅
+      MonthFilter: new FormControl([]),
+      WeekFilter: new FormControl([]),
+      AdmissionDepartmentFilter: new FormControl([]),
+      ShockRoomFilter: new FormControl([]),
+      TransferFilter: new FormControl([]),
+      ReceiveCauseDesFilter: new FormControl([])
     });
   }
   applyFilters() {
@@ -193,27 +217,46 @@ export class TraumaPatientsComponent implements OnInit {
     const globalFilter = (filters.globalFilter || '').toLowerCase();
     const relevantFilter = filters.relevantFilter;
   
-    // ✅ Always filter from the original dataset
+    // Multi-select filters
+    const selectedYears = filters.YearFilter.length ? filters.YearFilter : null;
+    const selectedMonths = filters.MonthFilter.length ? filters.MonthFilter : null;
+    const selectedWeeks = filters.WeekFilter.length ? filters.WeekFilter : null;
+    const selectedDepartments = filters.AdmissionDepartmentFilter.length ? filters.AdmissionDepartmentFilter : null;
+    const selectedShockRooms = filters.ShockRoomFilter.length ? filters.ShockRoomFilter : null;
+    const selectedTransfers = filters.TransferFilter.length ? filters.TransferFilter : null;
+    const selectedReceiveCauses = filters.ReceiveCauseDesFilter.length ? filters.ReceiveCauseDesFilter : null;
+  
     this.filteredData = this.originalData.filter((item: TraumaPatient) => {
       const matchesGlobalFilter = globalFilter
         ? Object.values(item).some((val) =>
             val && val.toString().toLowerCase().includes(globalFilter)
           )
         : true;
-       
-        const matchesRelevantFilter =
-        relevantFilter === '' || relevantFilter === null ||
-        (relevantFilter == 1 && item.Relevant == 1) ||
-        (relevantFilter == 0 && item.Relevant == 0);
   
-      return matchesGlobalFilter && matchesRelevantFilter;
+      const matchesRelevantFilter = relevantFilter === '' || item.Relevant == relevantFilter;
+      
+      const matchesYear = selectedYears ? selectedYears.includes(item.Year) : true;
+      const matchesMonth = selectedMonths ? selectedMonths.includes(item.Month) : true;
+      const matchesWeek = selectedWeeks ? selectedWeeks.includes(item.Week) : true;
+      const matchesDepartment = selectedDepartments ? selectedDepartments.includes(item.AdmissionDepartment) : true;
+      const matchesShockRoom = selectedShockRooms ? selectedShockRooms.includes(item.ShockRoom) : true;
+      const matchesTransfer = selectedTransfers ? selectedTransfers.includes(item.TransferToOtherInstitution) : true;
+      const matchesReceiveCause = selectedReceiveCauses ? selectedReceiveCauses.includes(item.ReceiveCauseDescription) : true;
+  
+      return matchesGlobalFilter &&
+             matchesRelevantFilter &&
+             matchesYear &&
+             matchesMonth &&
+             matchesWeek &&
+             matchesDepartment &&
+             matchesShockRoom &&
+             matchesTransfer &&
+             matchesReceiveCause;
     });
   
-    // ✅ Update data source properly
     this.dataSource.data = this.filteredData;
     this.totalResults = this.filteredData.length;
   
-    // ✅ Update paginator
     setTimeout(() => {
       if (this.paginator) {
         this.paginator.firstPage();
@@ -221,27 +264,34 @@ export class TraumaPatientsComponent implements OnInit {
       }
     });
   }
+  
   
   
   resetFilters() {
     this.filterForm.reset({
       globalFilter: '',
-      relevantFilter: 1 // ✅ Ensure it resets to default value '1'
+      relevantFilter: '1',
+      YearFilter: [],
+      MonthFilter: [],
+      WeekFilter: [],
+      AdmissionDepartmentFilter: [],
+      ShockRoomFilter: [],
+      TransferFilter: [],
+      ReceiveCauseDesFilter: []
     });
   
-    setTimeout(() => {
-      this.filteredData = [...this.originalData]; // ✅ Restore original data
-      this.dataSource.data = this.filteredData;
-      this.totalResults = this.filteredData.length;
+    this.filteredData = [...this.originalData]; 
+    this.dataSource.data = this.filteredData;
+    this.totalResults = this.filteredData.length;
   
+    setTimeout(() => {
       if (this.paginator) {
         this.paginator.firstPage();
         this.dataSource.paginator = this.paginator;
       }
     });
-  
-    this.applyFilters(); // ✅ Ensures table refreshes with new filters
   }
+  
   
   
 

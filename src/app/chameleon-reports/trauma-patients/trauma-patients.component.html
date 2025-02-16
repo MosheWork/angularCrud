@@ -2,6 +2,80 @@
     <div class="nine">
       <h1>{{ titleUnit }}<span>{{ Title1 }}{{ Title2 }}{{ totalResults }}</span></h1>
     </div>
+
+    <div class="filter-card">
+      <form [formGroup]="filterForm" class="filter-form">
+        <button mat-button (click)="resetFilters()" mat-raised-button color="primary">
+          איפוס מסננים
+        </button>
+        <img src="../../assets/excel.png" alt="Download" (click)="exportToExcel()" class="download-icon" width="50px" />
+         
+        
+        <mat-form-field>
+          <mat-label>שנה</mat-label>
+          <mat-select formControlName="YearFilter" multiple>
+            <mat-option *ngFor="let year of uniqueYears" [value]="year">{{ year }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+    
+        <mat-form-field>
+          <mat-label>חודש</mat-label>
+          <mat-select formControlName="MonthFilter" multiple>
+            <mat-option *ngFor="let month of uniqueMonths" [value]="month">{{ month }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+    
+        <mat-form-field>
+          <mat-label>שבוע</mat-label>
+          <mat-select formControlName="WeekFilter" multiple>
+            <mat-option *ngFor="let week of uniqueWeeks" [value]="week">{{ week }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+    
+        <mat-form-field>
+          <mat-label>מחלקה בקבלה</mat-label>
+          <mat-select formControlName="AdmissionDepartmentFilter" multiple>
+            <mat-option *ngFor="let department of uniqueAdmissionDepartments" [value]="department">
+              {{ department }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+    
+        <mat-form-field>
+          <mat-label>חדר הלם</mat-label>
+          <mat-select formControlName="ShockRoomFilter" multiple>
+            <mat-option *ngFor="let room of uniqueShockRooms" [value]="room">{{ room }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+    
+        <mat-form-field>
+          <mat-label>העברה למוסד אחר</mat-label>
+          <mat-select formControlName="TransferFilter" multiple>
+            <mat-option *ngFor="let transfer of uniqueTransfers" [value]="transfer">{{ transfer }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+    
+        <mat-form-field>
+          <mat-label>סיבת קבלה</mat-label>
+          <mat-select formControlName="ReceiveCauseDesFilter" multiple>
+            <mat-option *ngFor="let cause of uniqueReceiveCauses" [value]="cause">{{ cause }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+     <!-- Relevant Filter (Radio Buttons) -->
+     <div class="filter-radio-group" dir="rtl">
+      <span class="filter-label">רלוונטי:  </span>
+      <mat-radio-group formControlName="relevantFilter" class="radio-group"  >
+        <mat-radio-button value="">הכל</mat-radio-button>
+        <mat-radio-button [value]="1">כן</mat-radio-button>
+        <mat-radio-button [value]="0">לא</mat-radio-button>
+      </mat-radio-group>
+    </div>
+  
+ 
+      </form>
+    </div>
+    
+    
     <form [formGroup]="filterForm" dir="rtl" class="filter-form">
       <!-- Global Search -->
       <mat-form-field class="long-search-bar">
@@ -9,20 +83,7 @@
         <input matInput [formControlName]="'globalFilter'" />
       </mat-form-field>
     
-      <!-- Relevant Filter (Radio Buttons) -->
-      <div class="filter-radio-group">
-        <span class="filter-label">Filter by Relevant:</span>
-        <mat-radio-group formControlName="relevantFilter" class="radio-group" >
-          <mat-radio-button value="">All</mat-radio-button>
-          <mat-radio-button [value]="1">Yes</mat-radio-button>
-          <mat-radio-button [value]="0">No</mat-radio-button>
-        </mat-radio-group>
-      </div>
-    
-      <button mat-button (click)="resetFilters()" mat-raised-button color="primary">
-        איפוס מסננים
-      </button>
-      <img src="../../assets/excel.png" alt="Download" (click)="exportToExcel()" class="download-icon" width="50px" />
+     
     </form>
     
     
