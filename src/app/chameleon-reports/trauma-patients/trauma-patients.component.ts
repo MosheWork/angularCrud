@@ -296,10 +296,57 @@ export class TraumaPatientsComponent implements OnInit {
   
 
   exportToExcel() {
-    const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(this.filteredData);
-    const workbook: XLSX.WorkBook = { Sheets: { data: worksheet }, SheetNames: ['data'] };
+    if (!this.filteredData.length) {
+      console.warn('No data available to export.');
+      return;
+    }
+  
+    // ✅ Hebrew column headers mapping
+    const columnHeaders: { [key: string]: string } = {
+      CaseNumber: 'מס מקרה',
+      PatientName: 'שם מטופל',
+      AdmissionDepartment: 'מחלקה בקבלה',
+      ShockRoom: 'חדר הלם',
+      AdmissionTime: 'זמן קבלה',
+      ERReleaseTime: 'זמן שחרור ממיון',
+      HospitalReleaseTime: 'זמן שחרור בית חולים',
+      TransferToOtherInstitution: 'העברה למוסד אחר',
+      DeathTime: 'זמן פטירה',
+      CTTime: 'זמן CT',
+      SurgeryTime: 'זמן ניתוחים',
+      ReceiveCauseDescription: 'ReceiveCauseDes(סיבת קבלה)',
+      Year: 'שנה',
+      Month: 'חודש',
+      Week: 'שבוע',
+      DepartmentName: 'מחלקה מאשפזת',
+      ReceiveCause: 'תאור פעולה',
+      ERDoctor: 'רופא במיון',
+      ERNurse: 'אח/ות במיון',
+      ChestXRayTime: 'זמן צילום חזה',
+      UltrasoundTechTime: 'זמן טכנאי אולטרסאונד',
+      Remarks: 'הערות',
+      Relevant: 'רלוונטי'
+    };
+  
+    // ✅ Format data with Hebrew headers
+    const formattedData = this.filteredData.map(item => {
+      let newItem: any = {};
+      Object.keys(item).forEach(key => {
+        if (columnHeaders[key]) {
+          newItem[columnHeaders[key]] = item[key]; // ✅ Assign Hebrew names
+        }
+      });
+      return newItem;
+    });
+  
+    // ✅ Convert to Excel sheet
+    const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(formattedData);
+    const workbook: XLSX.WorkBook = { Sheets: { 'טראומה': worksheet }, SheetNames: ['טראומה'] };
+    
+    // ✅ Export as Excel file
     XLSX.writeFile(workbook, 'טראומה.xlsx');
   }
+  
   enableEdit(caseNumber: string): void {
     this.editMode[caseNumber] = true;
   }
