@@ -150,18 +150,41 @@ if (this.selectedYear) {
   });
 }
   
-    // ✅ Apply Quarter Filter
-    if (this.selectedQuarter) {
-      filteredData = filteredData.filter((item) => {
-        if (!item.ATD_Admission_Date) return false; // Ensure valid date
-        const month = new Date(item.ATD_Admission_Date).getMonth() + 1;
-        
-        return (this.selectedQuarter === 'Q1' && month >= 1 && month <= 3) ||
-               (this.selectedQuarter === 'Q2' && month >= 4 && month <= 6) ||
-               (this.selectedQuarter === 'Q3' && month >= 7 && month <= 9) ||
-               (this.selectedQuarter === 'Q4' && month >= 10 && month <= 12);
-      });
-    }
+// ✅ Apply Quarter Filter
+if (this.selectedQuarter) {
+  const quarterMapping: { [key: string]: number[] } = {
+    'רבעון 1': [1, 2, 3],  // Q1 (January-March)
+    'רבעון 2': [4, 5, 6],  // Q2 (April-June)
+    'רבעון 3': [7, 8, 9],  // Q3 (July-September)
+    'רבעון 4': [10, 11, 12] // Q4 (October-December)
+  };
+
+  // Ensure selectedQuarter is a valid string before accessing the mapping
+  const selectedQuarterKey = this.selectedQuarter ? this.selectedQuarter.trim() : '';
+
+  if (quarterMapping[selectedQuarterKey]) {
+    filteredData = filteredData.filter((item) => {
+      const admissionMonth = item.ATD_Admission_Date ? new Date(item.ATD_Admission_Date).getMonth() + 1 : null;
+      const releaseMonth = item.Release_Date ? new Date(item.Release_Date).getMonth() + 1 : null;
+
+      console.log('Checking Quarter:', selectedQuarterKey);
+      console.log('Admission Month:', admissionMonth);
+      console.log('Release Month:', releaseMonth);
+
+      return (
+        (admissionMonth && quarterMapping[selectedQuarterKey].includes(admissionMonth)) ||
+        (releaseMonth && quarterMapping[selectedQuarterKey].includes(releaseMonth))
+      );
+    });
+
+    console.log('Final Filtered Data:', filteredData.length);
+  } else {
+    console.error('Invalid Quarter Selected:', selectedQuarterKey);
+  }
+}
+
+
+
   
     this.dataSource.data = filteredData;
   

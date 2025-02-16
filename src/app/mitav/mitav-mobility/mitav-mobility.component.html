@@ -84,7 +84,7 @@
   <!-- Gauge Section -->
   <div class="gauge-section">
     <mat-card class="gauge-card">
-      <div class="gauge-title">מדד ניידות</div>
+      <div class="gauge-title">פילוח מחלקתי - ציון מסכם</div>
 
       <div class="gauge-content">
         <ngx-gauge
@@ -100,8 +100,7 @@
         </div>
       </div>
       <button mat-raised-button color="primary" (click)="openDepartmentPercentagesDialog()">
-        View Department Percentages
-      </button>
+פילוח מחלקתי - ציון מסכם </button>
     </mat-card>
   </div>
 
@@ -230,7 +229,7 @@
        -->
           <!-- Dates With Both Shifts Column -->
           <ng-container matColumnDef="DatesWithBothShifts">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>ימים עם שתי משמרות</th>
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>הליכה בפועל (בימים)</th>
             <td mat-cell *matCellDef="let element"> {{ element.DatesWithBothShifts }}</td>
           </ng-container>
       
@@ -242,7 +241,7 @@
       
           <!-- Total Percentage Column -->
           <ng-container matColumnDef="TotalPercentage">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>אחוז כולל</th>
+            <th mat-header-cell *matHeaderCellDef mat-sort-header> אחוז כולל ( יעד מעל 70%)</th>
             <td mat-cell *matCellDef="let element"> {{ element.TotalPercentage }}%</td>
           </ng-container>
       
