@@ -286,7 +286,6 @@ colorScheme = {
       percentage: data.totalDays > 0 ? (data.totalShifts / data.totalDays) * 100 : 0
     })).sort((a, b) => b.percentage - a.percentage);
   
-    console.log('Department Percentages:', this.departmentPercentages); // Debug log
   }
   
 

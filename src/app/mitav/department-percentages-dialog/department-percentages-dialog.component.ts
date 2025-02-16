@@ -60,16 +60,33 @@ export class DepartmentPercentagesDialogComponent implements OnInit {
   
   
   calculateAverages(): void {
+    
     this.departmentData = this.data.percentages.map(dept => {
       const allCases = dept.recommendations.length;
   
       const isValid = (value: string | number) =>
         value !== null && value !== undefined && value !== '' && value !== 'אין תיעוד';
   
-      // Count valid recommendations
-      const validRecommendations = dept.recommendations.filter(r => isValid(r));
-      const validRecords = validRecommendations.length;
-      const recommendationPercentage = allCases > 0 ? (validRecords / allCases) * 100 : 0;
+ // Filter recommendations where MobilityGrade is 2 or 3
+ const filteredIndices = dept.mobilityGrades
+ .map((grade, index) => (Number(grade) === 2 || Number(grade) === 3 ? index : -1))
+ .filter(index => index !== -1);
+
+
+console.log(`📊 Mobility Grades for ${dept.unitName}:`, dept.mobilityGrades);
+console.log(`✅ Filtered Indices (MobilityGrade 2 or 3) for ${dept.unitName}:`, filteredIndices);
+
+const filteredRecommendations = filteredIndices.map(index => dept.recommendations[index]);
+console.log(`🔎 Filtered Recommendations for ${dept.unitName}:`, filteredRecommendations);
+
+const totalValidRecordsByGrade = filteredRecommendations.filter(r => isValid(r)).length;
+const totalCasesByGrade = filteredIndices.length;
+console.log(`📌 Total Valid Records (MobilityGrade 2/3) for ${dept.unitName}: ${totalValidRecordsByGrade}`);
+console.log(`📌 Total Cases (MobilityGrade 2/3) for ${dept.unitName}: ${totalCasesByGrade}`);
+
+const recommendationPercentage = totalCasesByGrade > 0 
+? (totalValidRecordsByGrade / totalCasesByGrade) * 100 
+: 0;
   
       // Count valid mobility grades
       const validMobilityGrades = dept.mobilityGrades.filter(g => isValid(g));
@@ -84,19 +101,19 @@ export class DepartmentPercentagesDialogComponent implements OnInit {
       const validFunctionalCount = validFunctionalStates.reduce((sum: number, count: number) => sum + count, 0);
       const functionalStatePercentage = allCases > 0 ? (validFunctionalCount / allCases) * 100 : 0;
   
-      // Consultation Status Calculation
-      const yesConsultationCount = dept.consultationStatuses.filter(status => status === 'Yes').length;
-      const totalConsultationCases = dept.consultationStatuses.length;
-      const consultationPercentage = totalConsultationCases > 0
-        ? `${yesConsultationCount}/${totalConsultationCases} (${((yesConsultationCount / totalConsultationCases) * 100).toFixed(1)}%)`
-        : '0/0 (0%)'; // Default for empty or missing data
-  
+     // Consultation Percentage Calculation (only for MobilityGrade 2 or 3)
+const filteredConsultations = filteredIndices.map(index => dept.consultationStatuses[index]);
+const yesConsultationCount = filteredConsultations.filter(status => status === 'Yes').length;
+const consultationPercentage = totalCasesByGrade > 0
+  ? `${yesConsultationCount}/${totalCasesByGrade} (${((yesConsultationCount / totalCasesByGrade) * 100).toFixed(1)}%)`
+  : '0/0 (0%)';
+
       return {
         unitName: dept.unitName,
         percentage: dept.percentage,
         avgMobilityGrade: validMobilityCount,
         formattedMobilityData: `${validMobilityCount}/${allCases} (${mobilityPercentage.toFixed(1)}%)`,
-        formattedRecommendationData: `${validRecords}/${allCases} (${recommendationPercentage.toFixed(1)}%)`,
+        formattedRecommendationData: `${totalValidRecordsByGrade}/${totalCasesByGrade} (${((totalValidRecordsByGrade / totalCasesByGrade) * 100).toFixed(1)}%)`,
         functionalState: `${validFunctionalCount}/${allCases} (${functionalStatePercentage.toFixed(1)}%)`,
         consultationPercentage,
       };
@@ -105,16 +122,18 @@ export class DepartmentPercentagesDialogComponent implements OnInit {
     // Add totals row
     const totalPercentage = this.departmentData.reduce((sum, dept) => sum + dept.percentage, 0) / this.departmentData.length;
     const totalMobilityCount = this.departmentData.reduce((sum, dept) => sum + dept.avgMobilityGrade, 0);
-    const totalValidRecords = this.departmentData.reduce((sum, dept) => {
-      const values = dept.formattedRecommendationData.split('/');
-      const numericValue = values[0] ? parseInt(values[0], 10) : 0;
-      return sum + numericValue;
-    }, 0);
-    const totalCases = this.departmentData.reduce((sum, dept) => {
-      const values = dept.formattedRecommendationData.split('/');
-      const numericValue = values[1] ? parseInt(values[1].split(' ')[0], 10) : 0;
-      return sum + numericValue;
-    }, 0);
+   const totalValidRecordsByGrade = this.departmentData.reduce((sum, dept) => {
+  const values = dept.formattedRecommendationData.split('/');
+  const numericValue = values[0] ? parseInt(values[0], 10) : 0;
+  return sum + numericValue;
+}, 0);
+
+const totalCasesByGrade = this.departmentData.reduce((sum, dept) => {
+  const values = dept.formattedRecommendationData.split('/');
+  const numericValue = values[1] ? parseInt(values[1].split(' ')[0], 10) : 0;
+  return sum + numericValue;
+}, 0);
+
     const totalFunctionalCount = this.departmentData.reduce((sum, dept) => {
       const values = dept.functionalState.split('/');
       const numericValue = values[0] ? parseInt(values[0], 10) : 0;
@@ -139,9 +158,9 @@ export class DepartmentPercentagesDialogComponent implements OnInit {
       unitName: 'סה"כ', // Hebrew for Total
       percentage: totalPercentage,
       avgMobilityGrade: totalMobilityCount,
-      formattedMobilityData: `${totalMobilityCount}/${totalCases} (${((totalMobilityCount / totalCases) * 100).toFixed(1)}%)`,
-      formattedRecommendationData: `${totalValidRecords}/${totalCases} (${((totalValidRecords / totalCases) * 100).toFixed(1)}%)`,
-      functionalState: `${totalFunctionalCount}/${totalCases} (${((totalFunctionalCount / totalCases) * 100).toFixed(1)}%)`,
+      formattedMobilityData: `${totalMobilityCount}/${totalCasesByGrade} (${((totalMobilityCount / totalCasesByGrade) * 100).toFixed(1)}%)`,
+      formattedRecommendationData: `${totalValidRecordsByGrade}/${totalCasesByGrade} (${((totalValidRecordsByGrade / totalCasesByGrade) * 100).toFixed(1)}%)`,
+      functionalState: `${totalFunctionalCount}/${totalCasesByGrade} (${((totalFunctionalCount / totalCasesByGrade) * 100).toFixed(1)}%)`,
       consultationPercentage: consultationPercentageTotal, // Correct total for consultation status
     });
   }
