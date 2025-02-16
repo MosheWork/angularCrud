@@ -19,7 +19,7 @@
       <mat-row *matRowDef="let row; columns: displayedColumns;" class="clickable-row"></mat-row>
     </mat-table>
 
-    <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
+    <mat-paginator [pageSizeOptions]="[30, 50, 100]" showFirstLastButtons></mat-paginator>
 </div>
     <!-- Edit Dialog (inside the same component) -->
     <div *ngIf="selectedPatient" class="dialog-backdrop">

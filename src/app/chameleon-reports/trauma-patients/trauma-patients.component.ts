@@ -41,7 +41,10 @@ interface TraumaPatient {
 })
 export class TraumaPatientsComponent implements OnInit {
   displayedColumns: string[] = [
+    'Remarks',
+    'Relevant',
     'CaseNumber',
+    
     'PatientName',
     'AdmissionDepartment',
     'AdmissionTime',
@@ -62,9 +65,8 @@ export class TraumaPatientsComponent implements OnInit {
     'ReceiveCauseDescription',
     'ERDoctor',
     'ERNurse',  // ✅ Added missing ERNurse
-    'TransferToOtherInstitution',  // ✅ Added missing TransferToOtherInstitution
-    'Remarks',
-    'Relevant'
+    'TransferToOtherInstitution'  // ✅ Added missing TransferToOtherInstitution
+    
  
   ];
   totalResults: number = 0;
