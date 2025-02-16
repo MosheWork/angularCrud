@@ -34,14 +34,23 @@
         <mat-table [dataSource]="dataSource" matSort class="mat-elevation-z8">
           <ng-container *ngFor="let column of displayedColumns" [matColumnDef]="column">
             <mat-header-cell *matHeaderCellDef mat-sort-header>{{ column }}</mat-header-cell>
+      
             <mat-cell *matCellDef="let element" (click)="openDialog(element)">
+              <!-- Relevant Column Formatting -->
               <ng-container *ngIf="column === 'Relevant'; else defaultColumn">
                 <span *ngIf="element.Relevant === 1">כן</span>
                 <span *ngIf="element.Relevant === 0">לא</span>
                 <span *ngIf="element.Relevant === null">לא עודכן</span>
               </ng-container>
+      
+              <!-- Date Formatting -->
               <ng-template #defaultColumn>
-                {{ element[column] }}
+                <ng-container *ngIf="isDateColumn(column); else textContent">
+                  {{ element[column] | date:'dd/MM/yyyy HH:mm' }}
+                </ng-container>
+                <ng-template #textContent>
+                  {{ element[column] }}
+                </ng-template>
               </ng-template>
             </mat-cell>
           </ng-container>

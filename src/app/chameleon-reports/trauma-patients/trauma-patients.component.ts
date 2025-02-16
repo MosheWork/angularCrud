@@ -70,6 +70,19 @@ export class TraumaPatientsComponent implements OnInit {
     
  
   ];
+
+  isDateColumn(column: string): boolean {
+    return [
+      'AdmissionTime',
+      'ERReleaseTime',
+      'HospitalReleaseTime',
+      'CTTime',
+      'ChestXRayTime',
+      'DeathTime',
+      'SurgeryTime',
+      'UltrasoundTechTime'
+    ].includes(column);
+  }
   filterForm: FormGroup;
   totalResults: number = 0;
   titleUnit: string = 'דוח טראומה';
@@ -196,7 +209,7 @@ export class TraumaPatientsComponent implements OnInit {
   exportToExcel() {
     const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(this.filteredData);
     const workbook: XLSX.WorkBook = { Sheets: { data: worksheet }, SheetNames: ['data'] };
-    XLSX.writeFile(workbook, 'vw_infection_control_icu.xlsx');
+    XLSX.writeFile(workbook, 'טראומה.xlsx');
   }
   enableEdit(caseNumber: string): void {
     this.editMode[caseNumber] = true;
