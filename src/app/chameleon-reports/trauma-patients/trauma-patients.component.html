@@ -1,6 +1,12 @@
+<div class="body" >
+    <div class="nine">
+      <h1>{{ titleUnit }}<span>{{ Title1 }}{{ Title2 }}{{ totalResults }}</span></h1>
+    </div>
+
+
 <div class="trauma-container">
     <h2>Trauma Patients</h2>
-  
+    <div class="table-responsive">
     <mat-table [dataSource]="dataSource" matSort class="mat-elevation-z8">
       <ng-container *ngFor="let column of displayedColumns" [matColumnDef]="column">
         <mat-header-cell *matHeaderCellDef mat-sort-header>{{ column }}</mat-header-cell>
@@ -12,9 +18,9 @@
       <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
       <mat-row *matRowDef="let row; columns: displayedColumns;" class="clickable-row"></mat-row>
     </mat-table>
-  
-    <mat-paginator [pageSize]="10" [pageSizeOptions]="[10, 25, 50]"></mat-paginator>
-  
+
+    <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
+</div>
     <!-- Edit Dialog (inside the same component) -->
     <div *ngIf="selectedPatient" class="dialog-backdrop">
       <div class="dialog-box">
@@ -26,18 +32,18 @@
             <input matInput formControlName="CaseNumber" readonly />
           </mat-form-field>
   
-          <mat-form-field>
-            <mat-label>Remarks</mat-label>
-            <input matInput formControlName="Remarks" />
-          </mat-form-field>
+              <!-- Remarks (Now a Large TextArea) -->
+    <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Remarks</mat-label>
+        <textarea matInput formControlName="Remarks" rows="5" maxlength="2000"></textarea>
+      </mat-form-field>
   
-          <mat-form-field>
+          
             <mat-label>Relevant</mat-label>
-            <mat-select formControlName="Relevant">
-              <mat-option [value]="1">Yes</mat-option>
-              <mat-option [value]="0">No</mat-option>
-            </mat-select>
-          </mat-form-field>
+            <mat-radio-group formControlName="Relevant" class="radio-group">
+                <mat-radio-button [value]="1">Yes</mat-radio-button>
+                <mat-radio-button [value]="0">No</mat-radio-button>
+            </mat-radio-group>
         </form>
   
         <div class="dialog-actions">

@@ -67,11 +67,17 @@ export class TraumaPatientsComponent implements OnInit {
     'Relevant'
  
   ];
-  
+  totalResults: number = 0;
+  titleUnit: string = 'דוח זיהומים טיפול נמרץ';
+  Title1: string = ' סה"כ תוצאות: ';
+  Title2: string = '';
+
   selectedPatient: any | null = null;
   dataSource = new MatTableDataSource<TraumaPatient>([]);
   editMode: { [key: string]: boolean } = {};
   editForms: { [key: string]: FormGroup  } = {};
+
+  
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
@@ -81,12 +87,18 @@ export class TraumaPatientsComponent implements OnInit {
   ngOnInit(): void {
     this.fetchTraumaPatients();
   }
+  ngAfterViewInit(): void {
+    this.dataSource.paginator = this.paginator;
+    this.dataSource.sort = this.sort;
+   
 
+  
+  }
   fetchTraumaPatients() {
     this.http.get<any[]>(environment.apiUrl + 'Trauma/GetTraumaPatients').subscribe(
       (data) => {
         this.dataSource.data = data;
-
+        
         // ✅ Initialize forms for each row
         data.forEach(patient => {
           this.editForms[patient.CaseNumber] = new FormGroup({
