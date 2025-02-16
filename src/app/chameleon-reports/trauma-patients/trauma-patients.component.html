@@ -2,25 +2,62 @@
     <div class="nine">
       <h1>{{ titleUnit }}<span>{{ Title1 }}{{ Title2 }}{{ totalResults }}</span></h1>
     </div>
-
-
+    <form [formGroup]="filterForm" dir="rtl" class="filter-form">
+      <!-- Global Search -->
+      <mat-form-field class="long-search-bar">
+        <mat-label>חיפוש</mat-label>
+        <input matInput [formControlName]="'globalFilter'" />
+      </mat-form-field>
+    
+      <!-- Relevant Filter (Radio Buttons) -->
+      <div class="filter-radio-group">
+        <span class="filter-label">Filter by Relevant:</span>
+        <mat-radio-group formControlName="relevantFilter" class="radio-group">
+          <mat-radio-button value="">All</mat-radio-button>
+          <mat-radio-button [value]="1">Yes</mat-radio-button>
+          <mat-radio-button [value]="0">No</mat-radio-button>
+        </mat-radio-group>
+      </div>
+    
+      <button mat-button (click)="resetFilters()" mat-raised-button color="primary">
+        איפוס מסננים
+      </button>
+      <img src="../../assets/excel.png" alt="Download" (click)="exportToExcel()" class="download-icon" width="50px" />
+    </form>
+    
+    
+    
 <div class="trauma-container">
-    <h2>Trauma Patients</h2>
-    <div class="table-responsive">
-    <mat-table [dataSource]="dataSource" matSort class="mat-elevation-z8">
-      <ng-container *ngFor="let column of displayedColumns" [matColumnDef]="column">
-        <mat-header-cell *matHeaderCellDef mat-sort-header>{{ column }}</mat-header-cell>
-        <mat-cell *matCellDef="let element" (click)="openDialog(element)">
-          {{ element[column] }}
-        </mat-cell>
-      </ng-container>
   
-      <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-      <mat-row *matRowDef="let row; columns: displayedColumns;" class="clickable-row"></mat-row>
-    </mat-table>
+    <div class="table-responsive">
+      <div class="table-responsive">
+        <mat-table [dataSource]="dataSource" matSort class="mat-elevation-z8">
+          <ng-container *ngFor="let column of displayedColumns" [matColumnDef]="column">
+            <mat-header-cell *matHeaderCellDef mat-sort-header>{{ column }}</mat-header-cell>
+            <mat-cell *matCellDef="let element" (click)="openDialog(element)">
+              <ng-container *ngIf="column === 'Relevant'; else defaultColumn">
+                <span *ngIf="element.Relevant === 1">כן</span>
+                <span *ngIf="element.Relevant === 0">לא</span>
+                <span *ngIf="element.Relevant === null">לא עודכן</span>
+              </ng-container>
+              <ng-template #defaultColumn>
+                {{ element[column] }}
+              </ng-template>
+            </mat-cell>
+          </ng-container>
+      
+          <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+          <mat-row *matRowDef="let row; columns: displayedColumns;" class="clickable-row"></mat-row>
+        </mat-table>
+      </div>
+      
+      
 
-    <mat-paginator [pageSizeOptions]="[30, 50, 100]" showFirstLastButtons></mat-paginator>
-</div>
+      <mat-paginator
+      [pageSizeOptions]="[20, 50, 100]"
+      showFirstLastButtons
+      class="mat-paginator">
+    </mat-paginator></div>
     <!-- Edit Dialog (inside the same component) -->
     <div *ngIf="selectedPatient" class="dialog-backdrop">
       <div class="dialog-box">

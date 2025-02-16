@@ -2,11 +2,12 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatDialogRef } from '@angular/material/dialog';
 import { HttpClient } from '@angular/common/http';
+import * as XLSX from 'xlsx';
 
 import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatSort } from '@angular/material/sort';
-import { FormControl, FormGroup } from '@angular/forms';
+import { FormControl, FormGroup, FormBuilder } from '@angular/forms';
 import { environment } from '../../../environments/environment';
 
 interface TraumaPatient {
@@ -69,38 +70,53 @@ export class TraumaPatientsComponent implements OnInit {
     
  
   ];
+  filterForm: FormGroup;
   totalResults: number = 0;
-  titleUnit: string = 'דוח זיהומים טיפול נמרץ';
+  titleUnit: string = 'דוח טראומה';
   Title1: string = ' סה"כ תוצאות: ';
   Title2: string = '';
+  originalData: TraumaPatient[] = []; // ✅ Store the original dataset
 
   selectedPatient: any | null = null;
   dataSource = new MatTableDataSource<TraumaPatient>([]);
   editMode: { [key: string]: boolean } = {};
   editForms: { [key: string]: FormGroup  } = {};
+  filteredData: any[] = [];
 
   
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
-  constructor(private http: HttpClient, private dialog: MatDialog) {}
-
+  constructor(
+    private http: HttpClient,
+    private fb: FormBuilder,
+    private dialog: MatDialog
+  ) {
+    this.filterForm = this.createFilterForm();
+  }
   ngOnInit(): void {
     this.fetchTraumaPatients();
+  
+    // ✅ Automatically apply filters when form changes
+    this.filterForm.valueChanges.subscribe(() => {
+      this.applyFilters();
+    });
   }
   ngAfterViewInit(): void {
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
-   
-
-  
   }
+
+
   fetchTraumaPatients() {
-    this.http.get<any[]>(environment.apiUrl + 'Trauma/GetTraumaPatients').subscribe(
+    this.http.get<TraumaPatient[]>(environment.apiUrl + 'Trauma/GetTraumaPatients').subscribe(
       (data) => {
+        this.originalData = [...data]; // ✅ Store the original data
         this.dataSource.data = data;
-        
+        this.filteredData = [...data];
+        this.totalResults = data.length;
+  
         // ✅ Initialize forms for each row
         data.forEach(patient => {
           this.editForms[patient.CaseNumber] = new FormGroup({
@@ -115,9 +131,73 @@ export class TraumaPatientsComponent implements OnInit {
       }
     );
   }
+  
 
+  private createFilterForm(): FormGroup {
+    return this.fb.group({
+      globalFilter: new FormControl(''),
+      relevantFilter: new FormControl('') // Dropdown for filtering by Relevant
+    });
+  }
+  applyFilters() {
+    const filters = this.filterForm.value;
+    const globalFilter = (filters.globalFilter || '').toLowerCase();
+    const relevantFilter = filters.relevantFilter;
+  
+    // ✅ Always filter from the original dataset
+    this.filteredData = this.originalData.filter((item: TraumaPatient) => {
+      const matchesGlobalFilter = globalFilter
+        ? Object.values(item).some((val) =>
+            val && val.toString().toLowerCase().includes(globalFilter)
+          )
+        : true;
+  
+      const matchesRelevantFilter =
+        relevantFilter === '' || item.Relevant == relevantFilter;
+  
+      return matchesGlobalFilter && matchesRelevantFilter;
+    });
+  
+    // ✅ Update data source properly
+    this.dataSource.data = this.filteredData;
+    this.totalResults = this.filteredData.length;
+  
+    // ✅ Update paginator
+    setTimeout(() => {
+      if (this.paginator) {
+        this.paginator.firstPage();
+        this.dataSource.paginator = this.paginator;
+      }
+    });
+  }
+  
+  
+  
+  resetFilters() {
+    this.filterForm.reset(); // ✅ Clears the form
+  
+    // ✅ Restore the original dataset
+    this.filteredData = [...this.originalData]; // ✅ Ensures we get back original data
+    this.dataSource.data = this.filteredData;
+    this.totalResults = this.filteredData.length;
+  
+    // ✅ Ensure paginator updates
+    setTimeout(() => {
+      if (this.paginator) {
+        this.paginator.firstPage();
+        this.dataSource.paginator = this.paginator;
+      }
+    });
+  }
+  
+  
+  
 
- 
+  exportToExcel() {
+    const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(this.filteredData);
+    const workbook: XLSX.WorkBook = { Sheets: { data: worksheet }, SheetNames: ['data'] };
+    XLSX.writeFile(workbook, 'vw_infection_control_icu.xlsx');
+  }
   enableEdit(caseNumber: string): void {
     this.editMode[caseNumber] = true;
   }

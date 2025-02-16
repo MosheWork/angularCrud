@@ -228,9 +228,32 @@
     padding: 10px; /* Add some padding */
   }
   .table-responsive {
-    display: block;
-    width: 100%;
-    overflow-x: auto;
+    overflow-x: auto; /* Enables horizontal scrolling */
+    direction: rtl; /* Ensures the table is right-aligned */
+    scrollbar-gutter: stable both-edges; /* Keeps scrollbar in a stable position */
+  }
+  .table-responsive::-webkit-scrollbar {
+    width: 8px;
+    height: 8px; /* Horizontal scrollbar size */
+    direction: rtl; /* Forces scrollbar to the left */
+  }
+  .table-responsive::-webkit-scrollbar-track {
+    background: #f1f1f1; /* Light background */
+  }
+  .table-responsive::-webkit-scrollbar-thumb {
+    background: #888; /* Scrollbar color */
+    border-radius: 5px;
+  }
+  
+  .table-responsive::-webkit-scrollbar-thumb:hover {
+    background: #555; /* Darker on hover */
+  }
+  
+  /* Makes the scrollbar work for Firefox */
+  .table-responsive {
+    scrollbar-color: #888 #f1f1f1;
+    scrollbar-width: thin;
+   // direction: ltr; /* Critical: Forces scrollbar to appear on the left */
   }
   
   mat-table {
@@ -317,6 +340,22 @@
   .mat-paginator {
     background-color: white; /* White background for the paginator */
     padding: 10px; /* Add padding */
+    direction: ltr !important;  /* Forces proper layout */
+    text-align: left !important;
+  }
+  .mat-paginator .mat-paginator-range-label {
+    direction: rtl !important;  /* Ensures correct order */
+    text-align: right;
+  }
+  
+  .mat-paginator .mat-paginator-page-size {
+    direction: rtl !important;
+    text-align: right;
+  }
+  
+  .mat-paginator .mat-form-field {
+    direction: rtl !important;
+    text-align: right;
   }
   
   .mat-paginator-range-label,
@@ -395,7 +434,98 @@
   .full-width {
     width: 100%;
   }
+  .dialog-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
   
+  .dialog {
+    background: white;
+    padding: 25px;
+    width: 800px;
+    max-width: 90%;
+    border-radius: 12px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+  }
+  
+  h3 {
+    text-align: center;
+    font-size: 22px;
+    font-weight: bold;
+    margin-bottom: 20px;
+  }
+  
+  /* Case Number Field */
+  .mat-form-field {
+    width: 100%;
+  }
+  
+  /* Styling the Remarks Textarea */
+  textarea {
+    min-height: 100px;
+    font-size: 14px;
+    padding: 10px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+  }
+  
+  /* Radio Buttons - Styling */
+  .radio-group {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-top: 10px;
+  }
+  
+  .radio-group label {
+    font-weight: 500;
+    font-size: 16px;
+    color: #333;
+  }
+  
+  /* Dialog Buttons */
+  .dialog-actions {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+  }
+  
+  button {
+    padding: 8px 20px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: bold;
+    text-transform: uppercase;
+    transition: all 0.3s ease-in-out;
+  }
+  
+  .cancel-button {
+    border: 2px solid #d32f2f;
+    color: #d32f2f;
+    background: white;
+  }
+  
+  .cancel-button:hover {
+    background: #d32f2f;
+    color: white;
+  }
+  
+  .save-button {
+    border: 2px solid #4caf50;
+    color: white;
+    background: #4caf50;
+  }
+  
+  .save-button:hover {
+    background: #388e3c;
+  }
  
   
   .dialog-backdrop {
@@ -430,4 +560,30 @@
     z-index: 2;
   }
   
- 
+  .filter-form {
+    display: flex;
+    align-items: center;
+    gap: 20px; // Space between elements
+  
+    .long-search-bar {
+      flex: 1; // Expands search bar
+    }
+  
+    .filter-radio-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+  
+      .filter-label {
+        font-size: 14px;
+        font-weight: bold;
+        margin-right: 5px;
+      }
+    }
+  
+    .radio-group {
+      display: flex;
+      gap: 10px;
+    }
+  }
+  
