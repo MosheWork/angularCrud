@@ -63,6 +63,7 @@ import { VWInfectionControlICUComponent } from './chameleon-reports/vwinfection-
 import { DepartmentOccupiedMitavComponent } from './chameleon-reports/department-occupied-mitav/department-occupied-mitav.component';
 import { MitavMobilityComponent } from './mitav/mitav-mobility/mitav-mobility.component';
 import { MitavDeliriumComponent } from './mitav/mitav-delirium/mitav-delirium.component';
+import { TraumaPatientsComponent } from './chameleon-reports/trauma-patients/trauma-patients.component';
 
 const routes: Routes = [
   { path: 'users', component: UsersComponent },
@@ -142,6 +143,7 @@ const routes: Routes = [
    { path: 'CommunicationTherapist', component: CommunicationTherapistComponent },//דוח קלינאית תקשורת לבתאל
    { path: 'vwinfection-control-icu', component: VWInfectionControlICUComponent },//דוח  להיבה מחלות זיהומיות שאילתא מאופיר
    { path: 'DepartmentOccupiedMitav', component: DepartmentOccupiedMitavComponent },// מסך תפוסה למחלקות של דוח מיתב לקרן
+   { path: 'TraumaPatients', component: TraumaPatientsComponent },// מטופלי טרואמה מאופיר
 
 //chemelondashboard
 { path: 'DepartmentCapacity', component: DepartmentCapacityComponent }, // פרוייקט אישי

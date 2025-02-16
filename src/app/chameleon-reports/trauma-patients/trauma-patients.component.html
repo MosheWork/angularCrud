@@ -1,0 +1,50 @@
+<div class="trauma-container">
+    <h2>Trauma Patients</h2>
+  
+    <mat-table [dataSource]="dataSource" matSort class="mat-elevation-z8">
+      <ng-container *ngFor="let column of displayedColumns" [matColumnDef]="column">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>{{ column }}</mat-header-cell>
+        <mat-cell *matCellDef="let element" (click)="openDialog(element)">
+          {{ element[column] }}
+        </mat-cell>
+      </ng-container>
+  
+      <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+      <mat-row *matRowDef="let row; columns: displayedColumns;" class="clickable-row"></mat-row>
+    </mat-table>
+  
+    <mat-paginator [pageSize]="10" [pageSizeOptions]="[10, 25, 50]"></mat-paginator>
+  
+    <!-- Edit Dialog (inside the same component) -->
+    <div *ngIf="selectedPatient" class="dialog-backdrop">
+      <div class="dialog-box">
+        <h2>Edit Trauma Remark</h2>
+  
+        <form [formGroup]="editForms[selectedPatient.CaseNumber]"> <!-- ✅ Fix: Use correct form -->
+          <mat-form-field>
+            <mat-label>Case Number</mat-label>
+            <input matInput formControlName="CaseNumber" readonly />
+          </mat-form-field>
+  
+          <mat-form-field>
+            <mat-label>Remarks</mat-label>
+            <input matInput formControlName="Remarks" />
+          </mat-form-field>
+  
+          <mat-form-field>
+            <mat-label>Relevant</mat-label>
+            <mat-select formControlName="Relevant">
+              <mat-option [value]="1">Yes</mat-option>
+              <mat-option [value]="0">No</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </form>
+  
+        <div class="dialog-actions">
+          <button mat-button (click)="closeDialog()">Cancel</button>
+          <button mat-button color="primary" (click)="saveEdit()">Save</button> <!-- ✅ Fix: No parameter -->
+        </div>
+      </div>
+    </div>
+  </div>
+  
