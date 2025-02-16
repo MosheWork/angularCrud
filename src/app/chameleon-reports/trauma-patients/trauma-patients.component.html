@@ -33,8 +33,9 @@
       <div class="table-responsive">
         <mat-table [dataSource]="dataSource" matSort class="mat-elevation-z8">
           <ng-container *ngFor="let column of displayedColumns" [matColumnDef]="column">
-            <mat-header-cell *matHeaderCellDef mat-sort-header>{{ column }}</mat-header-cell>
-      
+            <mat-header-cell *matHeaderCellDef mat-sort-header>
+              {{ columnHeaders[column] || column }}
+            </mat-header-cell>      
             <mat-cell *matCellDef="let element" (click)="openDialog(element)">
               <!-- Relevant Column Formatting -->
               <ng-container *ngIf="column === 'Relevant'; else defaultColumn">

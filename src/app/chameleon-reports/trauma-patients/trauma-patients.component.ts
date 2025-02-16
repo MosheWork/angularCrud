@@ -45,7 +45,6 @@ export class TraumaPatientsComponent implements OnInit {
     'Remarks',
     'Relevant',
     'CaseNumber',
-    
     'PatientName',
     'AdmissionDepartment',
     'AdmissionTime',
@@ -83,6 +82,35 @@ export class TraumaPatientsComponent implements OnInit {
       'UltrasoundTechTime'
     ].includes(column);
   }
+
+
+  columnHeaders: { [key: string]: string } = {
+    'Remarks': 'הערות',
+    'Relevant': 'רלוונטי',
+    'CaseNumber': 'מס מקרה',
+    'PatientName': 'שם מטופל',
+    'AdmissionDepartment': 'מחלקה בקבלה',
+    'ShockRoom': 'חדר הלם',
+    'AdmissionTime': 'זמן קבלה',
+    'ERReleaseTime': 'זמן שחרור ממיון',
+    'HospitalReleaseTime': 'זמן שחרור בית חולים',
+    'TransferToOtherInstitution': 'העברה למוסד אחר',
+    'DeathTime': 'זמן פטירה',
+    'CTTime': 'זמן CT',
+    'SurgeryTime': 'זמן ניתוחים',
+    'ICDName': 'תאור פעולה',
+    'Year': 'שנה',
+    'Month': 'חודש',
+    'Week': 'שבוע',
+    'DepartmentName': 'מחלקה מאשפזת',
+    'ReceiveCauseDescription': 'סיבת קבלה',
+    'ERDoctor': 'רופא במיון',
+    'ERNurse': 'אח/ות במיון',
+    'ChestXRayTime': 'זמן צילום חזה',
+    'UltrasoundTechTime': 'זמן טכנאי אולטרסאונד'
+    
+};
+
   filterForm: FormGroup;
   totalResults: number = 0;
   titleUnit: string = 'דוח טראומה';

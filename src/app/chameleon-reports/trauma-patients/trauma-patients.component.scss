@@ -290,7 +290,7 @@
   }
   
   .mat-table {
-    min-width: 800px; /* Set a minimum width for the table */
+    min-width: auto; /* Set a minimum width for the table */
     background-color: white; /* White table background */
     border-radius: 8px; /* Rounded corners */
     overflow: hidden; /* Hide content that overflows */
