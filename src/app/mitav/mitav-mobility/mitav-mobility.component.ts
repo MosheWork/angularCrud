@@ -748,18 +748,25 @@ calculateRecommendationCases(data: any[]): void {
   this.validWalkingCases = data.filter(item => item.RecommendationForWalking && item.RecommendationForWalking !== 'אין תיעוד').length;
   this.invalidWalkingCases = totalCases - this.validWalkingCases;
 }
-
 calculateConsultationCases(data: any[]): void {
-  const totalCases = data.length;
+
+  // ✅ Step 1: Filter only cases where MobilityGrade is 2 or 3
+  const filteredData = data.filter(item => Number(item.MobilityGrade) === 2 || Number(item.MobilityGrade) === 3);
+
+  const totalCases = filteredData.length;
   if (totalCases === 0) {
     this.validConsultationCases = 0;
     this.invalidConsultationCases = 0;
     return;
   }
 
-  this.validConsultationCases = data.filter(item => item.ConsultationStatus === 'Yes').length;
+  // ✅ Step 2: Count "Yes" in ConsultationStatus
+  this.validConsultationCases = filteredData.filter(item => item.ConsultationStatus === 'Yes').length;
   this.invalidConsultationCases = totalCases - this.validConsultationCases;
+
+  console.log(`📌 סטטוס התייעצות - תקין: ${this.validConsultationCases} / לא תקין: ${this.invalidConsultationCases}`);
 }
+
 
 calculateCognitiveCases(data: any[]): void {
   const totalCases = data.length;
