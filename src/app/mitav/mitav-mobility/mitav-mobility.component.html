@@ -81,12 +81,15 @@
   </div>
 </div>
 
-  <!-- Gauge Section -->
-  <div class="gauge-section">
-    <mat-card class="gauge-card">
-      <div class="gauge-title">פילוח מחלקתי - ציון מסכם</div>
+ <!-- Unified Gauge Section -->
+<div class="gauge-section">
+  <mat-card class="gauge-card">
+    <div class="gauge-title">פילוח מחלקתי - מדדי ניתוח</div>
 
-      <div class="gauge-content">
+    <div class="gauge-row">
+      <!-- Total Mobility Score Gauge -->
+      <div class="gauge-item">
+        <div class="gauge-title">פילוח מחלקתי - ציון מסכם</div>
         <ngx-gauge
           [value]="gaugeValue"
           [min]="0"
@@ -95,14 +98,73 @@
           [append]="'%'"
           [foregroundColor]="getGaugeColor()"> 
         </ngx-gauge>
-        <div class="gauge-info">
-          <strong>יעד 50%</strong>
-        </div>
       </div>
+
+      <!-- Recommendation for Walking Gauge -->
+      <div class="gauge-item">
+        <div class="gauge-title">מרשם הליכה</div>
+        <ngx-gauge
+          [value]="recommendationForWalkingGauge"
+          [min]="0"
+          [max]="100"
+          [label]="''"
+          [append]="'%'"
+          [foregroundColor]="getGaugeColor()"> 
+        </ngx-gauge>
+      </div>
+
+      <!-- Consultation Status Gauge -->
+      <div class="gauge-item">
+        <div class="gauge-title">סטטוס התייעצות</div>
+        <ngx-gauge
+          [value]="consultationPercentageGauge"
+          [min]="0"
+          [max]="100"
+          [label]="''"
+          [append]="'%'"
+          [foregroundColor]="getGaugeColor()"> 
+        </ngx-gauge>
+      </div>
+
+      <!-- Cognitive State Gauge -->
+      <div class="gauge-item">
+        <div class="gauge-title">מצב קוגניטיבי</div>
+        <ngx-gauge
+          [value]="cognitiveStateGauge"
+          [min]="0"
+          [max]="100"
+          [label]="''"
+          [append]="'%'"
+          [foregroundColor]="getGaugeColor()"> 
+        </ngx-gauge>
+      </div>
+
+      <!-- Mobility State Gauge -->
+      <div class="gauge-item">
+        <div class="gauge-title">מצב ניידות</div>
+        <ngx-gauge
+          [value]="mobilityStateGauge"
+          [min]="0"
+          [max]="100"
+          [label]="''"
+          [append]="'%'"
+          [foregroundColor]="getGaugeColor()"> 
+        </ngx-gauge>
+      </div>
+    </div>
+
+    <!-- Button -->
+    <div class="button-section">
       <button mat-raised-button color="primary" (click)="openDepartmentPercentagesDialog()">
-פילוח מחלקתי - ציון מסכם </button>
-    </mat-card>
-  </div>
+        פילוח מחלקתי - ציון מסכם
+      </button>
+    </div>
+
+  </mat-card>
+</div>
+
+
+
 
   <!-- Tabs Section -->
   <!-- <mat-tab-group dir="rtl"> -->

@@ -249,7 +249,7 @@
   }
 
   ::ng-deep ngx-gauge .reading-block {
-    font-size: 25px !important; /* Desired font size */
+    font-size: 20px !important; /* Desired font size */
     transform: translateY(78px) !important;
     font-weight: 400;
     color: black !important;
@@ -270,14 +270,44 @@
     background-color: #fff;
     border: 1px solid #ccc;
     margin: 0; /* Remove margin to prevent extra spacing */
+    text-align: center;
+    width: 100%;
+  max-width: 1200px;
   }
-  
- 
+  .gauge-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); // Dynamic grid
+    gap: 20px;
+    justify-content: center;
+    align-items: center;
+  }
+  .gauge-item {
+    flex: 1;
+    min-width: 200px; /* Ensures even spacing */
+    max-width: 250px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    background: #f9f9f9;
+    border-radius: 8px;
+    padding: 15px;
+  }
   .gauge-title {
-    font-size: 1.2rem;
+    font-size: 16px;
     font-weight: bold;
-    color: #333;
-    margin: 5px 0; /* Adjust spacing between title and gauge */
+    margin-bottom: 8px;
+  }
+  // .gauge-title {
+  //   font-size: 1.2rem;
+  //   font-weight: bold;
+  //   color: #333;
+  //   margin: 5px 0; /* Adjust spacing between title and gauge */
+  // }
+  .button-section {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
   }
   ngx-gauge {
     flex: 2; /* Allow gauge to take up more space */
@@ -301,19 +331,22 @@
     
   }
   .gauge-section {
-    flex: 0 0 30%; /* 30% height */
     display: flex;
     justify-content: center;
-    align-items: center;
-    padding: 0; /* Remove padding to align closer to the title */
-    margin: 0; /* Remove margin to align closer to the title */
+    margin-top: 20px;
   }
   .gauge-row {
     display: flex;
-    justify-content: space-around;
-    align-items: center;
-    width: 95%; /* Match table width */
+    justify-content: space-between;
+    flex-wrap: wrap; /* Ensures responsiveness */
+    gap: 15px;
   }
+  // .gauge-row {
+  //   display: flex;
+  //   justify-content: space-around;
+  //   align-items: center;
+  //   width: 95%; /* Match table width */
+  // }
   mat-tab-group {
     width: 95%; /* Keep consistent width with the table */
     margin: 0 auto; /* Center the tab group horizontally */

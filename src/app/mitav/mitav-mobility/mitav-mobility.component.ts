@@ -68,7 +68,11 @@ colorScheme = {
   @ViewChild(MatSort) sort!: MatSort;
   @ViewChild('chartCanvas') chartCanvas!: ElementRef<HTMLCanvasElement>;
 
-
+//חישובים
+recommendationForWalkingGauge: number = 0; // Gauge for valid recommendations
+consultationPercentageGauge: number = 0; // Stores the calculated consultation percentage
+cognitiveStateGauge: number = 0; // Stores the calculated cognitive state percentage
+mobilityStateGauge: number = 0;  // Stores the calculated mobility state percentage
 
   constructor(private http: HttpClient, private dialog: MatDialog) {    Chart.register(...registerables); // Register Chart.js components
 }
@@ -114,7 +118,7 @@ colorScheme = {
   
     this.http.get<any[]>(`${environment.apiUrl}/MITAVMobility/GetMobilityReport`).subscribe(
       (data) => {
-        console.log('Raw API Response:', data); // ✅ Debug log to check data
+        //console.log('Raw API Response:', data);
   
         if (!data || data.length === 0) {
           console.warn('⚠️ No data received from API! Showing message instead of table.');
@@ -124,12 +128,11 @@ colorScheme = {
         }
   
         this.dataSource.data = data;
-        this.originalData = data; // Store original data
+        this.originalData = data;
   
-        // ✅ Assign paginator after setting data
         setTimeout(() => {
           this.dataSource.paginator = this.paginator;
-          this.dataSource.sort = this.sort; // Ensure sorting works too
+          this.dataSource.sort = this.sort;
         });
   
         this.isLoading = false;
@@ -137,22 +140,31 @@ colorScheme = {
         this.calculateDepartmentPercentages();
         this.calculateGaugeValue(this.dataSource.data);
   
-        // ✅ Extract Unique Years from AdmissionDate
+        // **Calculate מרשם הליכה (RecommendationForWalking)**
+        this.calculateRecommendationForWalking();
+          // **Calculate מצב קוגניטיבי (Cognitive State)**
+        this.calculateCognitiveStatePercentage();
+
+          // **Calculate מצב ניידות (Mobility State)**
+        this.calculateMobilityStatePercentage();
+           // **Calculate סטטוס התייעצות (Consultation Status)**
+
+        this.calculateConsultationPercentage();
         this.yearList = Array.from(
           new Set(
             data.map((item) => new Date(item.AdmissionDate).getFullYear()).filter((y) => !isNaN(y))
           )
-        ).sort((a, b) => b - a); // Sort years in descending order
+        ).sort((a, b) => b - a);
   
         this.departmentList = Array.from(new Set(data.map((item) => item.UnitName || 'Unknown')));
       },
       (error) => {
         console.error('❌ Error fetching Mobility Report data:', error);
-        this.isLoading = false; // ✅ Ensure loader disappears even on error
+        this.isLoading = false;
       }
     );
   }
-
+  
   
   
   applyFilters(): void {
@@ -197,6 +209,17 @@ colorScheme = {
   
     // ✅ Update the Gauge based on the filtered data
     this.calculateGaugeValue(filteredData);
+    
+        // **Calculate מרשם הליכה (RecommendationForWalking)**
+        this.calculateRecommendationForWalking();
+          // **Calculate מצב קוגניטיבי (Cognitive State)**
+        this.calculateCognitiveStatePercentage();
+
+          // **Calculate מצב ניידות (Mobility State)**
+        this.calculateMobilityStatePercentage();
+           // **Calculate סטטוס התייעצות (Consultation Status)**
+
+        this.calculateConsultationPercentage();
   }
   
   
@@ -556,6 +579,148 @@ prepareChartData(): void {
   this.chartData.datasets[0].backgroundColor = [
     '#4CAF50', '#2196F3', '#FFC107', '#FF5722', '#9C27B0', '#E91E63', '#607D8B',
   ];
+}
+
+calculateRecommendationForWalking(): void {
+  console.log('🔄 Calculating מרשם הליכה (RecommendationForWalking)...');
+
+  // Get all relevant data
+  const allCases = this.dataSource.data.length;
+  if (allCases === 0) {
+    console.warn('⚠️ No data available.');
+    this.recommendationForWalkingGauge = 0;
+    return;
+  }
+
+  // Filter only cases where MobilityGrade is 2 or 3
+  const filteredData = this.dataSource.data.filter(item => Number(item.MobilityGrade) === 2 || Number(item.MobilityGrade) === 3);
+
+  console.log(`✅ Filtered Cases (MobilityGrade 2/3): ${filteredData.length}`);
+
+  // Count valid recommendations for filtered cases
+  const isValid = (value: string | number) =>
+    value !== null && value !== undefined && value !== '' && value !== 'אין תיעוד';
+
+  const totalValidRecommendations = filteredData
+    .map(item => item.RecommendationForWalking)
+    .filter(rec => isValid(rec)).length;
+
+  const totalCasesByGrade = filteredData.length;
+
+  console.log(`📌 Total Valid Recommendations for MobilityGrade 2/3: ${totalValidRecommendations}`);
+  console.log(`📌 Total Cases for MobilityGrade 2/3: ${totalCasesByGrade}`);
+
+  const recommendationPercentage = totalCasesByGrade > 0
+    ? (totalValidRecommendations / totalCasesByGrade) * 100
+    : 0;
+
+  // Update the gauge value
+  this.recommendationForWalkingGauge = recommendationPercentage;
+}
+calculateConsultationPercentage(): void {
+  console.log('🔄 Calculating סטטוס התייעצות (Consultation Status)...');
+
+  // Get all relevant data
+  const allCases = this.dataSource.data.length;
+  if (allCases === 0) {
+    console.warn('⚠️ No data available.');
+    this.consultationPercentageGauge = 0;
+    return;
+  }
+
+  // Filter only cases where MobilityGrade is 2 or 3
+  const filteredData = this.dataSource.data.filter(item => Number(item.MobilityGrade) === 2 || Number(item.MobilityGrade) === 3);
+
+  console.log(`✅ Filtered Cases (MobilityGrade 2/3): ${filteredData.length}`);
+
+  // Count "Yes" in ConsultationStatus
+  const totalYesConsultations = filteredData
+    .map(item => item.ConsultationStatus)
+    .filter(status => status && status.trim().toLowerCase() === 'yes').length;
+
+  const totalCasesByGrade = filteredData.length;
+
+  console.log(`💬 Total "Yes" Consultations for MobilityGrade 2/3: ${totalYesConsultations}`);
+  console.log(`📌 Total Cases for MobilityGrade 2/3: ${totalCasesByGrade}`);
+
+  const consultationPercentage = totalCasesByGrade > 0
+    ? (totalYesConsultations / totalCasesByGrade) * 100
+    : 0;
+
+  // Update the consultation gauge value
+  this.consultationPercentageGauge = consultationPercentage;
+}
+calculateCognitiveStatePercentage(): void {
+  console.log('🔄 Calculating מצב קוגניטיבי (Cognitive State)...');
+
+  // Get all relevant data
+  const allCases = this.dataSource.data.length;
+  if (allCases === 0) {
+    console.warn('⚠️ No data available.');
+    this.cognitiveStateGauge = 0;
+    return;
+  }
+
+  // Filter only cases where MobilityGrade is 2 or 3
+  const filteredData = this.dataSource.data.filter(item => Number(item.MobilityGrade) === 2 || Number(item.MobilityGrade) === 3);
+
+  console.log(`✅ Filtered Cases (MobilityGrade 2/3): ${filteredData.length}`);
+
+  // Count valid cognitive states
+  const isValid = (value: string | number) =>
+    value !== null && value !== undefined && value !== '' && value !== 'אין תיעוד';
+
+  const totalValidCognitiveStates = filteredData
+    .map(item => item.CognitiveFunctionBeforeHospitalization)
+    .filter(state => isValid(state)).length;
+
+  const totalCasesByGrade = filteredData.length;
+
+  console.log(`🧠 Total Valid Cognitive States for MobilityGrade 2/3: ${totalValidCognitiveStates}`);
+  console.log(`📌 Total Cases for MobilityGrade 2/3: ${totalCasesByGrade}`);
+
+  const cognitiveStatePercentage = totalCasesByGrade > 0
+    ? (totalValidCognitiveStates / totalCasesByGrade) * 100
+    : 0;
+
+  // Update the cognitive state gauge value
+  this.cognitiveStateGauge = cognitiveStatePercentage;
+}
+calculateMobilityStatePercentage(): void {
+  console.log('🔄 Calculating מצב ניידות (Mobility State)...');
+
+  // Get all relevant data
+  const allCases = this.dataSource.data.length;
+  if (allCases === 0) {
+    console.warn('⚠️ No data available.');
+    this.mobilityStateGauge = 0;
+    return;
+  }
+
+  // Filter only cases where MobilityGrade is 2 or 3
+  const filteredData = this.dataSource.data.filter(item => Number(item.MobilityGrade) === 2 || Number(item.MobilityGrade) === 3);
+
+  console.log(`✅ Filtered Cases (MobilityGrade 2/3): ${filteredData.length}`);
+
+  // Count valid mobility states
+  const isValid = (value: string | number) =>
+    value !== null && value !== undefined && value !== '' && value !== 'אין תיעוד';
+
+  const totalValidMobilityStates = filteredData
+    .map(item => item.MobilityBeforeHospitalization)
+    .filter(state => isValid(state)).length;
+
+  const totalCasesByGrade = filteredData.length;
+
+  console.log(`🏃 Total Valid Mobility States for MobilityGrade 2/3: ${totalValidMobilityStates}`);
+  console.log(`📌 Total Cases for MobilityGrade 2/3: ${totalCasesByGrade}`);
+
+  const mobilityStatePercentage = totalCasesByGrade > 0
+    ? (totalValidMobilityStates / totalCasesByGrade) * 100
+    : 0;
+
+  // Update the mobility state gauge value
+  this.mobilityStateGauge = mobilityStatePercentage;
 }
 
 }
