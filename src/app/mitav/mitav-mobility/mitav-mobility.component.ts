@@ -94,6 +94,9 @@ functionalStateGauge: number = 0;
 validFunctionalCases: number = 0;
 invalidFunctionalCases: number = 0;
 
+  
+  validMobilityCasesAboveThreshold: number = 0;
+  invalidMobilityCasesBelowThreshold: number = 0;
 
 
   constructor(private http: HttpClient, private dialog: MatDialog,private cdr: ChangeDetectorRef) {    Chart.register(...registerables); // Register Chart.js components
@@ -728,14 +731,23 @@ calculateFunctionalStatePercentage(data: any[]): void {
 calculateMobilityCases(data: any[]): void {
   const totalCases = data.length;
   if (totalCases === 0) {
-    this.validMobilityCases = 0;
-    this.invalidMobilityCases = 0;
+    this.validMobilityCasesAboveThreshold = 0;
+    this.invalidMobilityCasesBelowThreshold = 0;
     return;
   }
 
-  this.validMobilityCases = data.filter(item => item.MobilityGrade && item.MobilityGrade !== 'אין תיעוד').length;
-  this.invalidMobilityCases = totalCases - this.validMobilityCases;
+  // ✅ Filter cases where TotalPercentage is 70% or higher
+  this.validMobilityCasesAboveThreshold = data.filter(item => 
+    item.TotalPercentage && Number(item.TotalPercentage) >= 70
+  ).length;
+
+  // ✅ The rest are invalid cases
+  this.invalidMobilityCasesBelowThreshold = totalCases - this.validMobilityCasesAboveThreshold;
+
+  console.log(`📌 ניידות - תקין: ${this.validMobilityCasesAboveThreshold} / לא תקין: ${this.invalidMobilityCasesBelowThreshold}`);
 }
+
+
 
 calculateRecommendationCases(data: any[]): void {
   const totalCases = data.length;

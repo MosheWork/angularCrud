@@ -102,7 +102,9 @@
           [foregroundColor]="getGaugeColor()"> 
         </ngx-gauge>
         <div class="gauge-info">
-          <strong>תוקף: {{ validMobilityCases }} / לא תוקף: {{ invalidMobilityCases }}</strong>
+          <strong>
+            תקין - {{ validMobilityCasesAboveThreshold }} / לא תקין - {{ invalidMobilityCasesBelowThreshold }}
+          </strong>
         </div>
       </div>
 
