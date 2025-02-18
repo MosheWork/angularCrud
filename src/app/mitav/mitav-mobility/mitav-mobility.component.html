@@ -117,7 +117,7 @@
           [max]="100"
           [label]="''"
           [append]="'%'"
-          [foregroundColor]="getGaugeColor()"> 
+          [foregroundColor]="recommendationForWalkingColor()"> 
         </ngx-gauge>
         <div class="gauge-info">
           <strong>  תקין - {{ validWalkingCases }} / לא תקין - {{ invalidWalkingCases }}</strong>
@@ -127,19 +127,23 @@
 
       <!-- Consultation Status Gauge -->
       <div class="gauge-item">
-        <div class="gauge-title">סטטוס התייעצות</div>
+        <div class="gauge-title">
+          הזמנת ייעוץ לפיזיותרפיה 
+          <mat-icon matTooltip="רלוונטי רק לדרגת נידות 2/3" class="info-icon">info</mat-icon>
+        </div>
         <ngx-gauge
           [value]="consultationPercentageGauge"
           [min]="0"
           [max]="100"
           [label]="''"
           [append]="'%'"
-          [foregroundColor]="getGaugeColor()"> 
+          [foregroundColor]="consultationGaugeColor()"> 
         </ngx-gauge>
         <div class="gauge-info">
           <strong>הוזמן ייעוץ - {{ validConsultationCases }} / לא הוזמן ייעוץ - {{ invalidConsultationCases }}</strong>
         </div>
       </div>
+      
 
       <!-- Functional State (מצב תפקודי) -->
       <div class="gauge-item">
@@ -150,7 +154,7 @@
           [max]="100"
           [label]="''"
           [append]="'%'"
-          [foregroundColor]="getGaugeColor()"> 
+          [foregroundColor]="functionalStateGaugeColor()"> 
         </ngx-gauge>
         <div class="gauge-info">
           <strong> תקין {{ validFunctionalCases }} / לא תקין {{ invalidFunctionalCases }} </strong>
@@ -159,14 +163,14 @@
 
       <!-- Mobility State (מצב ניידות) -->
       <div class="gauge-item">
-        <div class="gauge-title">מצב ניידות</div>
+        <div class="gauge-title">הערכת ניידות בקבלה </div>
         <ngx-gauge
           [value]="mobilityStateGauge"
           [min]="0"
           [max]="100"
           [label]="''"
           [append]="'%'"
-          [foregroundColor]="getGaugeColor()"> 
+          [foregroundColor]="mobilityStateGaugeColor()"> 
         </ngx-gauge>
         <div class="gauge-info">
           <strong> תקין {{ validMobilityStateCases }} / לא תקין {{ invalidMobilityStateCases }} </strong>

@@ -9,6 +9,8 @@ import { DepartmentPercentagesDialogComponent } from '../department-percentages-
 import { DocumentationOfPatientMobilityDialogComponent } from '../documentation-of-patient-mobility-dialog/documentation-of-patient-mobility-dialog.component';
 import { ElementRef } from '@angular/core';
 import { ChangeDetectorRef } from '@angular/core';
+import { MatTooltipModule } from '@angular/material/tooltip';
+
 
 import { Chart, ChartData, ChartType, registerables } from 'chart.js';
 
@@ -433,8 +435,43 @@ getGaugeColor(): string {
     return 'green';
   }
 }
+mobilityStateGaugeColor(): string {
+  if (this.mobilityStateGauge === 100) {
+    return 'green';
+  } else if (this.mobilityStateGauge >= 90) {
+    return 'orange';
+  } else {
+    return 'red';
+  }
+}
+functionalStateGaugeColor(): string {
+  if (this.functionalStateGauge === 100) {
+    return 'green';
+  } else if (this.functionalStateGauge >= 90) {
+    return 'orange';
+  } else {
+    return 'red';
+  }
+}
+consultationGaugeColor(): string {
+  if (this.consultationPercentageGauge >=80) {
+    return 'green';
+  } else if (this.consultationPercentageGauge >= 70) {
+    return 'orange';
+  } else {
+    return 'red';
+  }
+}
 
-
+recommendationForWalkingColor(): string {
+  if (this.recommendationForWalkingGauge >= 80) {
+    return 'green';
+  } else if (this.recommendationForWalkingGauge >= 70) {
+    return 'orange';
+  } else {
+    return 'red';
+  }
+}
 openDetailsDialog(admissionNo: string): void {
   const dialogRef = this.dialog.open(DocumentationOfPatientMobilityDialogComponent, {
     width: '800px',
