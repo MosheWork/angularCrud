@@ -91,91 +91,91 @@
     <div class="gauge-row">
 
       <!-- Total Mobility Score Gauge -->
-      <div class="gauge-item">
-        <div class="gauge-title">פילוח מחלקתי - ציון מסכם</div>
-        <ngx-gauge
-          [value]="gaugeValue"
-          [min]="0"
-          [max]="100"
-          [label]="''"
-          [append]="'%'"
-          [foregroundColor]="getGaugeColor()"> 
-        </ngx-gauge>
-        <div class="gauge-info">
-          <strong>
-            תקין - {{ validMobilityCasesAboveThreshold }} / לא תקין - {{ invalidMobilityCasesBelowThreshold }}
-          </strong>
-        </div>
-      </div>
+      <!-- Total Mobility Score Gauge -->
+<div class="gauge-item">
+  <div class="gauge-title">פילוח מחלקתי - ציון מסכם</div>
+  <ngx-gauge
+    [value]="gaugeValue"
+    [min]="0"
+    [max]="100"
+    [label]="''"
+    [append]="'%'"
+    [foregroundColor]="getGaugeColor()"> 
+  </ngx-gauge>
+  <div class="gauge-info">
+    <strong>
+      תקין - {{ validMobilityCasesAboveThreshold }} / לא תקין - {{ invalidMobilityCasesBelowThreshold }} / סה"כ - {{ totalMobilityCases }}
+    </strong>
+  </div>
+</div>
 
-      <!-- Recommendation for Walking Gauge -->
-      <div class="gauge-item">
-        <div class="gauge-title">מרשם הליכה</div>
-        <ngx-gauge
-          [value]="recommendationForWalkingGauge"
-          [min]="0"
-          [max]="100"
-          [label]="''"
-          [append]="'%'"
-          [foregroundColor]="recommendationForWalkingColor()"> 
-        </ngx-gauge>
-        <div class="gauge-info">
-          <strong>  תקין - {{ validWalkingCases }} / לא תקין - {{ invalidWalkingCases }}</strong>
-        </div>
-        
-      </div>
+<!-- Recommendation for Walking Gauge -->
+<div class="gauge-item">
+  <div class="gauge-title">מרשם הליכה</div>
+  <ngx-gauge
+    [value]="recommendationForWalkingGauge"
+    [min]="0"
+    [max]="100"
+    [label]="''"
+    [append]="'%'"
+    [foregroundColor]="recommendationForWalkingColor()"> 
+  </ngx-gauge>
+  <div class="gauge-info">
+    <strong>תקין - {{ validWalkingCases }} / לא תקין - {{ invalidWalkingCases }} / סה"כ - {{ totalWalkingCases }}</strong>
+  </div>
+</div>
 
-      <!-- Consultation Status Gauge -->
-      <div class="gauge-item">
-        <div class="gauge-title">
-          הזמנת ייעוץ לפיזיותרפיה 
-          <mat-icon matTooltip="רלוונטי רק לדרגת נידות 2/3" class="info-icon">info</mat-icon>
-        </div>
-        <ngx-gauge
-          [value]="consultationPercentageGauge"
-          [min]="0"
-          [max]="100"
-          [label]="''"
-          [append]="'%'"
-          [foregroundColor]="consultationGaugeColor()"> 
-        </ngx-gauge>
-        <div class="gauge-info">
-          <strong>הוזמן ייעוץ - {{ validConsultationCases }} / לא הוזמן ייעוץ - {{ invalidConsultationCases }}</strong>
-        </div>
-      </div>
-      
+<!-- Consultation Status Gauge -->
+<div class="gauge-item">
+  <!-- <mat-icon matTooltip="רלוונטי רק לדרגת נידות 2/3" class="info-icon">info</mat-icon> -->
+  <div class="gauge-title">
+    הזמנת ייעוץ לפיזיותרפיה 
+  </div>
+  <ngx-gauge
+    [value]="consultationPercentageGauge"
+    [min]="0"
+    [max]="100"
+    [label]="''"
+    [append]="'%'"
+    [foregroundColor]="consultationGaugeColor()"> 
+  </ngx-gauge>
+  <div class="gauge-info">
+    <strong>תקין  - {{ validConsultationCases }} /   לא תקין- {{ invalidConsultationCases }} / סה"כ - {{ totalConsultationCases }}</strong>
+  </div>
+</div>
 
-      <!-- Functional State (מצב תפקודי) -->
-      <div class="gauge-item">
-        <div class="gauge-title">מצב תפקודי</div>
-        <ngx-gauge
-          [value]="functionalStateGauge"
-          [min]="0"
-          [max]="100"
-          [label]="''"
-          [append]="'%'"
-          [foregroundColor]="functionalStateGaugeColor()"> 
-        </ngx-gauge>
-        <div class="gauge-info">
-          <strong> תקין {{ validFunctionalCases }} / לא תקין {{ invalidFunctionalCases }} </strong>
-        </div>
-      </div>
+<!-- Functional State (מצב תפקודי) -->
+<div class="gauge-item">
+  <div class="gauge-title">מצב תפקודי</div>
+  <ngx-gauge
+    [value]="functionalStateGauge"
+    [min]="0"
+    [max]="100"
+    [label]="''"
+    [append]="'%'"
+    [foregroundColor]="functionalStateGaugeColor()"> 
+  </ngx-gauge>
+  <div class="gauge-info">
+    <strong> תקין {{ validFunctionalCases }} / לא תקין {{ invalidFunctionalCases }} / סה"כ - {{ totalFunctionalCases }} </strong>
+  </div>
+</div>
 
-      <!-- Mobility State (מצב ניידות) -->
-      <div class="gauge-item">
-        <div class="gauge-title">הערכת ניידות בקבלה </div>
-        <ngx-gauge
-          [value]="mobilityStateGauge"
-          [min]="0"
-          [max]="100"
-          [label]="''"
-          [append]="'%'"
-          [foregroundColor]="mobilityStateGaugeColor()"> 
-        </ngx-gauge>
-        <div class="gauge-info">
-          <strong> תקין {{ validMobilityStateCases }} / לא תקין {{ invalidMobilityStateCases }} </strong>
-        </div>
-      </div>
+<!-- Mobility State (מצב ניידות) -->
+<div class="gauge-item">
+  <div class="gauge-title">הערכת ניידות בקבלה </div>
+  <ngx-gauge
+    [value]="mobilityStateGauge"
+    [min]="0"
+    [max]="100"
+    [label]="''"
+    [append]="'%'"
+    [foregroundColor]="mobilityStateGaugeColor()"> 
+  </ngx-gauge>
+  <div class="gauge-info">
+    <strong> תקין {{ validMobilityStateCases }} / לא תקין {{ invalidMobilityStateCases }} / סה"כ - {{ totalMobilityStateCases }} </strong>
+  </div>
+</div>
+
 
     </div> <!-- End of gauge-row -->
 
@@ -214,7 +214,8 @@
           width="50px" 
           style="margin-left: 10px;" 
         />
-  
+        <img src="../../assets/excel.png" alt="Download" (click)="exportToExcel()" class="download-icon" width="50px" />
+
       <!-- Table Section -->
       <div *ngIf="!showGraph" class="table-section" dir="rtl">
         <table mat-table [dataSource]="dataSource" matSort>

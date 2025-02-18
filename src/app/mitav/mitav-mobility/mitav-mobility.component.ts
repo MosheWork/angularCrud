@@ -10,6 +10,8 @@ import { DocumentationOfPatientMobilityDialogComponent } from '../documentation-
 import { ElementRef } from '@angular/core';
 import { ChangeDetectorRef } from '@angular/core';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import * as XLSX from 'xlsx';
+//import { saveAs } from 'file-saver';
 
 
 import { Chart, ChartData, ChartType, registerables } from 'chart.js';
@@ -46,6 +48,7 @@ export class MitavMobilityComponent implements OnInit, AfterViewInit {
   ];
   globalFilterValue: string = ''; // Store global filter text
   deliriumDataSource = new MatTableDataSource<any>();
+  filteredData: any[] = [];
 
   dataSource = new MatTableDataSource<any>();
   mobilityGradeAverage: number = 0;
@@ -148,6 +151,8 @@ invalidFunctionalCases: number = 0;
         if (!data || data.length === 0) {
           console.warn('⚠️ No data received from API! Showing message instead of table.');
           this.dataSource.data = [];
+          this.filteredData = []; // ✅ Ensure filteredData is empty when no data is received
+
           this.isLoading = false;
           return;
         }
@@ -232,7 +237,8 @@ invalidFunctionalCases: number = 0;
       });
     }
   
-    this.dataSource.data = filteredData;
+    this.filteredData = filteredData; // ✅ Assign filtered data
+  this.dataSource.data = filteredData;
   
      // ✅ Recalculate Gauges based on filtered data
      this.calculateGaugeValue(filteredData);
@@ -278,10 +284,34 @@ invalidFunctionalCases: number = 0;
     this.selectedDepartments = [];
     this.selectedYear = null;
     this.selectedQuarter = null;
-    this.dataSource.data = this.originalData;
   
-    // ✅ Reset Gauge Value
-    this.calculateGaugeValue(this.originalData);
+    // ✅ Reset filteredData along with dataSource
+    this.filteredData = [...this.originalData];  
+    this.dataSource.data = this.filteredData;
+  
+    // ✅ Reset Gauge Values
+    this.calculateGaugeValue(this.filteredData);
+    this.calculateRecommendationForWalking(this.filteredData);
+    this.calculateConsultationPercentage(this.filteredData);
+    this.calculateCognitiveStatePercentage(this.filteredData);
+    this.calculateMobilityStatePercentage(this.filteredData);
+    this.calculateFunctionalStatePercentage(this.filteredData);
+  
+    // ✅ Reset Count Values
+    this.calculateMobilityCases(this.filteredData);
+    this.calculateConsultationCases(this.filteredData);
+    this.calculateCognitiveCases(this.filteredData);
+    this.calculateMobilityStateCases(this.filteredData);
+  
+    // ✅ Reset paginator
+    setTimeout(() => {
+      if (this.paginator) {
+        this.paginator.firstPage();
+        this.dataSource.paginator = this.paginator;
+      }
+    });
+  
+    console.log('🔄 Filters reset, table data restored.');
   }
   
   
@@ -839,6 +869,68 @@ calculateMobilityStateCases(data: any[]): void {
 
   this.validMobilityStateCases = data.filter(item => item.MobilityBeforeHospitalization && item.MobilityBeforeHospitalization !== 'אין תיעוד').length;
   this.invalidMobilityStateCases = totalCases - this.validMobilityStateCases;
+}
+
+// לקחת חישובים של סה"כ מקרים "
+get totalMobilityStateCases(): number {
+  return this.validMobilityStateCases + this.invalidMobilityStateCases;
+}
+
+get totalFunctionalCases(): number {
+  return this.validFunctionalCases + this.invalidFunctionalCases;
+}
+
+get totalConsultationCases(): number {
+  return this.validConsultationCases + this.invalidConsultationCases;
+}
+
+get totalWalkingCases(): number {
+  return this.validWalkingCases + this.invalidWalkingCases;
+}
+
+get totalMobilityCases(): number {
+  return this.validMobilityCasesAboveThreshold + this.invalidMobilityCasesBelowThreshold;
+}
+exportToExcel() {
+  if (!this.filteredData || this.filteredData.length === 0) {
+    console.warn('No data available to export.');
+    return;
+  }
+
+  // ✅ Define Hebrew column headers
+  const columnHeaders: { [key: string]: string } = {
+    AdmissionNo: "מספר אשפוז",
+    UnitName: "מחלקה",
+    AgeYears: "גיל (שנים)",
+    AdmissionDate: "תאריך כניסה",
+    ReleaseDate: "תאריך שחרור",
+    MobilityGrade: "דרגת ניידות",
+    ConsultationStatus: "סטטוס ייעוץ",
+    RecommendationForWalking: "המלצה להליכה",
+    RequiredAssistiveDevice: "אביזר עזר נדרש",
+    RecommendedWalkingDistance: "מרחק הליכה מומלץ",
+    DatesWithBothShifts: "הליכה בפועל (בימים)",
+    TotalDaysInHospital: "סך הימים באשפוז",
+    TotalPercentage: "אחוז כולל ( יעד מעל 70%)",
+    IsRecordMatchingReleaseDate: "תואם תאריך שחרור",
+    HasRecordPerDate: "רשומה לפי תאריך"
+  };
+
+  // ✅ Convert filtered data to Hebrew format
+  const formattedData = this.filteredData.map((item: any) => {
+    let newItem: { [key: string]: any } = {};
+    Object.keys(columnHeaders).forEach(key => {
+      newItem[columnHeaders[key]] = item[key] ?? ''; // ✅ Assign Hebrew names, prevent undefined
+    });
+    return newItem;
+  });
+
+  // ✅ Create Excel sheet
+  const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(formattedData);
+  const workbook: XLSX.WorkBook = { Sheets: { 'פילוח מחלקתי' : worksheet }, SheetNames: ['פילוח מחלקתי'] };
+
+  // ✅ Export file
+  XLSX.writeFile(workbook, 'פילוח_מחלקתי.xlsx');
 }
 
 }

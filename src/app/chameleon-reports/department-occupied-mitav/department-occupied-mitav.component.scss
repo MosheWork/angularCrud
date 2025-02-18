@@ -301,4 +301,74 @@
     color: red;
     font-weight: bold;
   }
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
   
+  @keyframes flipRotate {
+    0% { opacity: 0; transform: rotateY(90deg); }
+    50% { opacity: 1; transform: rotateY(0deg); }
+    100% { opacity: 0; transform: rotateY(-90deg); }
+  }
+  
+  @keyframes typing {
+    from { width: 0; }
+    to { width: 100%; }
+  }
+  
+  .loading-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    overflow: hidden;
+  }
+  
+  .image-slider {
+    position: fixed; // ✅ Ensures it stays full screen
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+  }
+  
+  .loading-image {
+    position: absolute;
+    width: 100vw;  // ✅ Full width
+    height: 100vh; // ✅ Full height
+    object-fit: cover;  // ✅ Ensures full coverage without stretching
+    opacity: 0;
+    transition: opacity 1.5s ease-in-out;
+  }
+  
+  .loading-image.active {
+    opacity: 1;
+    animation: flipRotate 4s ease-in-out infinite;
+  }
+  
+  .loading-text {
+    position: relative;
+    font-size: 2rem;
+    font-weight: bold;
+    color: white;
+    background: rgba(0, 0, 0, 0.6);
+    padding: 10px 20px;
+    border-radius: 5px;
+    overflow: hidden;
+    white-space: nowrap;
+    border-right: 3px solid white;
+    display: inline-block;
+    animation: typing 3s steps(40, end) infinite;
+  }
+  .loading-image.active {
+    opacity: 1;
+    animation: flipRotate 4s ease-in-out infinite;
+  }
