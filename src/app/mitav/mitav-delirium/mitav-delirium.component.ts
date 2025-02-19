@@ -27,7 +27,8 @@ export class MitavDeliriumComponent implements OnInit {
     'HoursDifference',
     //'PreventionAndInterventionCAM',
     'PreventionORInterventionCAM',
-    'ReleaseCAM'
+    'ReleaseCAM',
+   'GradeCount'
   ];
 
   departmentList: string[] = []; // List of unique departments
@@ -88,9 +89,7 @@ globalFilterValue: string = ''; // Store global filter text
           }
         });
 
-        data.forEach(item => {
-          console.log('DeliriumConsiliumsDate:', item.DeliriumConsiliumsDate); // ✅ Check each row
-        });
+      
   
         this.yearList = Array.from(years).sort((a, b) => b - a); // Sort years descending
   

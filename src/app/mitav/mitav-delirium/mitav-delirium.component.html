@@ -200,6 +200,11 @@
         <mat-header-cell *matHeaderCellDef mat-sort-header> CAM בשחרור </mat-header-cell>
         <mat-cell *matCellDef="let element"> {{ element.ReleaseCAM }} </mat-cell>
       </ng-container>
+       <!-- האם בוצע אומדן CAM חוזר למטופל שהוא חיובי -->
+       <ng-container matColumnDef="GradeCount">
+        <mat-header-cell *matHeaderCellDef mat-sort-header> האם בוצע אומדן CAM חוזר למטופל שהוא חיובי </mat-header-cell>
+        <mat-cell *matCellDef="let element"> {{ element.GradeCount }} </mat-cell>
+      </ng-container>
   
       <!-- Header & Row Definitions -->
       <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
