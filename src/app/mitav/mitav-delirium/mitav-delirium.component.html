@@ -105,7 +105,7 @@
   
       <!-- מספר אשפוז -->
       <ng-container matColumnDef="Admission_No">
-        <mat-header-cell *matHeaderCellDef mat-sort-header> מספר אשפוז </mat-header-cell>
+        <mat-header-cell *matHeaderCellDef mat-sort-header> מספר מקרה </mat-header-cell>
         <mat-cell *matCellDef="let element"> {{ element.Admission_No }} </mat-cell>
       </ng-container>
   
@@ -165,13 +165,13 @@
   
       <!-- האם נפתח קונסיליום -->
       <ng-container matColumnDef="DeliriumConsiliumsOpened">
-        <mat-header-cell *matHeaderCellDef mat-sort-header> האם נפתח קונסיליום </mat-header-cell>
+        <mat-header-cell *matHeaderCellDef mat-sort-header> הוזמן ייעוץ ריפוי בעיסוק</mat-header-cell>
         <mat-cell *matCellDef="let element"> {{ element.DeliriumConsiliumsOpened }} </mat-cell>
       </ng-container>
   
       <!-- תאריך קונסיליום -->
       <ng-container matColumnDef="DeliriumConsiliumsDate">
-        <mat-header-cell *matHeaderCellDef mat-sort-header> תאריך קונסיליום </mat-header-cell>
+        <mat-header-cell *matHeaderCellDef mat-sort-header> תאריך הזמנת הייעוץ </mat-header-cell>
         <mat-cell *matCellDef="let element">
           {{ element.DeliriumConsiliumsDate ? (element.DeliriumConsiliumsDate | date: 'dd/MM/yyyy HH:mm') : 'אין נתונים' }}
         </mat-cell>
@@ -184,10 +184,10 @@
       </ng-container>
   
       <!-- התערבות CAM -->
-      <ng-container matColumnDef="PreventionAndInterventionCAM">
+      <!-- <ng-container matColumnDef="PreventionAndInterventionCAM">
         <mat-header-cell *matHeaderCellDef mat-sort-header> התערבות CAM </mat-header-cell>
         <mat-cell *matCellDef="let element"> {{ element.PreventionAndInterventionCAM }} </mat-cell>
-      </ng-container>
+      </ng-container> -->
   
       <!-- מניעה או התערבות CAM -->
       <ng-container matColumnDef="PreventionORInterventionCAM">
@@ -202,21 +202,9 @@
       </ng-container>
   
       <!-- Header & Row Definitions -->
-      <mat-header-row *matHeaderRowDef="[
-      'Admission_No','Name','Age_Years','ATD_Admission_Date', 'Release_Date', 
-        
-        'Grade', 'PatientWithDelirium', 'PatientWithDeliriumEntryDate', 'DeliriumDaysCount',
-        'DeliriumConsiliumsOpened', 'DeliriumConsiliumsDate', 'HoursDifference','PreventionAndInterventionCAM',
-         'PreventionORInterventionCAM', 'ReleaseCAM'
-      ]"></mat-header-row>
-  
-      <mat-row *matRowDef="let row; columns: [
-      'Admission_No','Name','Age_Years','ATD_Admission_Date', 'Release_Date', 
-        
-        'Grade', 'PatientWithDelirium', 'PatientWithDeliriumEntryDate', 'DeliriumDaysCount','PreventionAndInterventionCAM',
-        'DeliriumConsiliumsOpened', 'DeliriumConsiliumsDate', 'HoursDifference',
-         'PreventionORInterventionCAM', 'ReleaseCAM'
-      ];"></mat-row>
+      <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+      <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+      
   
     </mat-table>
   

@@ -13,8 +13,9 @@ import { environment } from '../../../environments/environment';
 export class MitavDeliriumComponent implements OnInit {
 
   displayedColumns: string[] = [
-    'Admission_No',
     'Name',
+    'Admission_No',
+    'Age_Years',
     'ATD_Admission_Date',
     'Release_Date',
     'Grade',
@@ -24,7 +25,7 @@ export class MitavDeliriumComponent implements OnInit {
     'DeliriumConsiliumsOpened',
     'DeliriumConsiliumsDate',
     'HoursDifference',
-    'PreventionAndInterventionCAM',
+    //'PreventionAndInterventionCAM',
     'PreventionORInterventionCAM',
     'ReleaseCAM'
   ];
@@ -82,6 +83,13 @@ globalFilterValue: string = ''; // Store global filter text
           if (item.Release_Date) {
             years.add(new Date(item.Release_Date).getFullYear());
           }
+          if (item.DeliriumConsiliumsDate) {
+            years.add(new Date(item.DeliriumConsiliumsDate).getFullYear());
+          }
+        });
+
+        data.forEach(item => {
+          console.log('DeliriumConsiliumsDate:', item.DeliriumConsiliumsDate); // ✅ Check each row
         });
   
         this.yearList = Array.from(years).sort((a, b) => b - a); // Sort years descending
