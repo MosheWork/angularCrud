@@ -76,11 +76,13 @@
       </mat-form-field>
       <button mat-raised-button color="primary" (click)="resetFilters()">איפוס</button>
       <img src="../../assets/excel.png" alt="Download" (click)="exportToExcel()" class="download-icon" width="50px" />
-      
+      <!-- <img src="../../assets/PDF.jfif" alt="Download" (click)="exportToPDF()" class="download-icon" width="50px"  /> -->
+
+
     </form>
   
     
-    <mat-table [dataSource]="dataSource" matSort dir="rtl" class="mat-elevation-z8">
+    <mat-table #pdfTable [dataSource]="dataSource" matSort dir="rtl" class="mat-elevation-z8">
       <ng-container *ngFor="let column of displayedColumns" [matColumnDef]="column">
         <mat-header-cell *matHeaderCellDef mat-sort-header>{{ getColumnLabel(column) }}</mat-header-cell>
     

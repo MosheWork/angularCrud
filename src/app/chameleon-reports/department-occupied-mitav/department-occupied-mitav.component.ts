@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, AfterViewInit } from '@angular/core'; // Import AfterViewInit
 import { HttpClient } from '@angular/common/http';
 import { FormControl, FormGroup, FormBuilder } from '@angular/forms';
 import { MatPaginator } from '@angular/material/paginator';
@@ -7,8 +7,9 @@ import { MatSort } from '@angular/material/sort';
 import { Router } from '@angular/router';
 import { environment } from '../../../environments/environment';
 import * as XLSX from 'xlsx';
+import { jsPDF } from 'jspdf';
 
-
+import html2canvas from 'html2canvas';
 
 @Component({
   selector: 'app-department-occupied-mitav',
@@ -36,7 +37,7 @@ export class DepartmentOccupiedMitavComponent implements OnInit {
     loadingImages: string[] = [
       'assets/poriagood1.jfif',
       'assets/poriagood2.jfif',
-      //'assets/hospPoria.png.jpg',
+      'assets/poria icon.jpg',
       'assets/poriagood3.jfif'
     ];
     currentImageIndex: number = 0;
@@ -67,6 +68,7 @@ export class DepartmentOccupiedMitavComponent implements OnInit {
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
+  @ViewChild('pdfTable', { static: false }) pdfTable!: ElementRef;
 
   filterForm: FormGroup;
 
@@ -214,7 +216,7 @@ export class DepartmentOccupiedMitavComponent implements OnInit {
   startImageRotation(): void {
     setInterval(() => {
       this.currentImageIndex = (this.currentImageIndex + 1) % this.loadingImages.length;
-    }, 5000); // ✅ Change image every 5 seconds
+    }, 3000); // ✅ Change image every 5 seconds
   }
 
   ngAfterViewInit(): void {
@@ -224,6 +226,7 @@ export class DepartmentOccupiedMitavComponent implements OnInit {
         this.dataSource.sort = this.sort;
       }
     });
+    
 }
   // ✅ Export Filtered Data to Excel with Hebrew Column Headers
   exportToExcel() {
@@ -267,6 +270,52 @@ export class DepartmentOccupiedMitavComponent implements OnInit {
   
     // ✅ Export file
     XLSX.writeFile(workbook, 'פילוח_מחלקתי.xlsx');
+  }
+  exportToPDF(): void {
+     // Check if pdfTable is available *before* using it (THIS IS STILL IMPORTANT)
+  if (!this.pdfTable || !this.pdfTable.nativeElement) {
+    console.error('❌ Error: Table reference not found! Ensure #pdfTable exists in the HTML.');
+    return; // Stop execution if not found
+  }
+      const pdf = new jsPDF({
+        orientation: 'landscape',
+        unit: 'mm',
+        format: 'a4',
+      });
+  
+      // ✅ Clone the table and append it to a temporary container
+      const pdfContainer = document.createElement('div');
+      pdfContainer.innerHTML = `
+        <div dir="rtl" style="padding: 20px; font-size: 16px;">
+          ${this.pdfTable.nativeElement.innerHTML}
+        </div>`;
+      document.body.appendChild(pdfContainer);
+  
+      html2canvas(pdfContainer, { scale: 2 })
+        .then((canvas) => {
+          const imgData = canvas.toDataURL('image/png');
+          const imgWidth = pdf.internal.pageSize.getWidth();
+          const imgHeight = (canvas.height * imgWidth) / canvas.width;
+  
+          pdf.addImage(imgData, 'PNG', 0, 20, imgWidth, imgHeight);
+          pdf.save('תפוסת_מחלקה.pdf');
+  
+          pdfContainer.remove();
+        })
+        .catch((error) => {
+          console.error('❌ Error generating PDF:', error);
+          pdfContainer.remove();
+        });
+    
+  }
+  
+  
+  // ✅ Utility function: Convert ArrayBuffer to Base64
+  private arrayBufferToBase64(buffer: ArrayBuffer): string {
+    let binary = '';
+    const bytes = new Uint8Array(buffer);
+    bytes.forEach(byte => (binary += String.fromCharCode(byte)));
+    return btoa(binary);
   }
   
 } 
