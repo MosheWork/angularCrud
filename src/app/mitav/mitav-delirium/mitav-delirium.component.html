@@ -1,5 +1,6 @@
 <!-- Loader (Full Page) -->
-<div *ngIf="isLoading" class="loading-screen">
+<app-spinner [isLoading]="isLoading"></app-spinner>
+<!-- <div *ngIf="isLoading" class="loading-screen">
     <div class="bed-doctor-loader">
       <div class="animation">
         🏥 ➡️ 🏥 ➡️ 🏥 ➡️ 👨‍⚕️
@@ -7,8 +8,9 @@
       <mat-progress-bar mode="indeterminate" color="accent"></mat-progress-bar>
       <p>מעבד מידע רפואי...</p>
     </div>  <p>אוסף נתונים לדוח מיתב....</p>
-  </div>
-  
+  </div> -->
+
+
   <div *ngIf="!isLoading" class="body">
     <!-- Title Section -->
     <div class="nine">
@@ -135,8 +137,10 @@
   
       <!-- ציון -->
       <ng-container matColumnDef="Grade">
-        <mat-header-cell *matHeaderCellDef mat-sort-header> ציון אומדן cam </mat-header-cell>
-        <mat-cell *matCellDef="let element"> {{ element.Grade }} </mat-cell>
+        <mat-header-cell *matHeaderCellDef mat-sort-header> ציון אומדן  CAM </mat-header-cell>
+        <mat-cell *matCellDef="let element"> 
+          {{ element.Grade && element.Grade.trim() !== '' ? element.Grade : 'אין תיעוד' }} 
+        </mat-cell>
       </ng-container>
   <!-- גיל -->
   <ng-container matColumnDef="Age_Years">
@@ -153,7 +157,7 @@
       <ng-container matColumnDef="PatientWithDeliriumEntryDate">
         <mat-header-cell *matHeaderCellDef mat-sort-header> תאריך הופעת דליריום </mat-header-cell>
         <mat-cell *matCellDef="let element">
-          {{ element.PatientWithDeliriumEntryDate ? (element.PatientWithDeliriumEntryDate | date: 'dd/MM/yyyy HH:mm') : 'אין נתונים' }}
+          {{ element.PatientWithDeliriumEntryDate ? (element.PatientWithDeliriumEntryDate | date: 'dd/MM/yyyy HH:mm') : 'לא רלוונטי '}}
         </mat-cell>
       </ng-container>
   
@@ -166,7 +170,7 @@
       <!-- האם נפתח קונסיליום -->
       <ng-container matColumnDef="DeliriumConsiliumsOpened">
         <mat-header-cell *matHeaderCellDef mat-sort-header> הוזמן ייעוץ ריפוי בעיסוק</mat-header-cell>
-        <mat-cell *matCellDef="let element"> {{ element.DeliriumConsiliumsOpened }} </mat-cell>
+        <mat-cell *matCellDef="let element"> {{ element.DeliriumConsiliumsOpened }} </mat-cell>HoursDifference
       </ng-container>
   
       <!-- תאריך קונסיליום -->
@@ -179,10 +183,17 @@
   
       <!-- הפרש שעות בין דליריום לקונסיליום -->
       <ng-container matColumnDef="HoursDifference">
-        <mat-header-cell *matHeaderCellDef mat-sort-header> הפרש שעות בין דליריום לקונסיליום </mat-header-cell>
+        <mat-header-cell *matHeaderCellDef mat-sort-header>הפרש שעות בין דליריום להזמנת ייעוץ </mat-header-cell>
         <mat-cell *matCellDef="let element"> {{ element.HoursDifference !== null ? element.HoursDifference : 'אין נתונים' }} </mat-cell>
       </ng-container>
-  
+
+ <!-- AdmissionCAMGrade בקבלה ציון אומדן CAM -->
+<ng-container matColumnDef="AdmissionCAMGrade">
+  <mat-header-cell *matHeaderCellDef mat-sort-header> ציון אומדן בקבלה CAM </mat-header-cell>
+  <mat-cell *matCellDef="let element"> 
+    {{ element.AdmissionCAMGrade && element.AdmissionCAMGrade.trim() !== '' ? element.AdmissionCAMGrade : 'אין תיעוד' }} 
+  </mat-cell>
+</ng-container>
       <!-- התערבות CAM -->
       <!-- <ng-container matColumnDef="PreventionAndInterventionCAM">
         <mat-header-cell *matHeaderCellDef mat-sort-header> התערבות CAM </mat-header-cell>
@@ -194,7 +205,11 @@
         <mat-header-cell *matHeaderCellDef mat-sort-header> מניעה או התערבות CAM </mat-header-cell>
         <mat-cell *matCellDef="let element"> {{ element.PreventionORInterventionCAM }} </mat-cell>
       </ng-container>
-  
+       <!-- האח חל שינוי במצבו CAM -->
+       <ng-container matColumnDef="CAMGradeChanged">
+        <mat-header-cell *matHeaderCellDef mat-sort-header> האם חל שינוי במצבו </mat-header-cell>
+        <mat-cell *matCellDef="let element"> {{ element.CAMGradeChanged }} </mat-cell>
+      </ng-container>
       <!-- CAM בשחרור -->
       <ng-container matColumnDef="ReleaseCAM">
         <mat-header-cell *matHeaderCellDef mat-sort-header> CAM בשחרור </mat-header-cell>
@@ -205,7 +220,11 @@
         <mat-header-cell *matHeaderCellDef mat-sort-header> האם בוצע אומדן CAM חוזר למטופל שהוא חיובי </mat-header-cell>
         <mat-cell *matCellDef="let element"> {{ element.GradeCount }} </mat-cell>
       </ng-container>
-  
+   <!-- DrugForDelirium  האם הותחל טיפול תרפותי -->
+   <ng-container matColumnDef="DrugForDelirium">
+    <mat-header-cell *matHeaderCellDef mat-sort-header>התחלת טיפול תרופתי </mat-header-cell>
+    <mat-cell *matCellDef="let element"> {{ element.DrugForDelirium }} </mat-cell>
+  </ng-container>
       <!-- Header & Row Definitions -->
       <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
       <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>

@@ -136,6 +136,7 @@ import { DocumentationOfPatientMobilityDialogComponent } from './mitav/documenta
 import { CdkTableModule } from '@angular/cdk/table';
 import { MitavDeliriumComponent } from './mitav/mitav-delirium/mitav-delirium.component';
 import { TraumaPatientsComponent } from './chameleon-reports/trauma-patients/trauma-patients.component';
+import { SpinnerComponent } from './components/spinner/spinner.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -237,7 +238,8 @@ import { TraumaPatientsComponent } from './chameleon-reports/trauma-patients/tra
     DepartmentPercentagesDialogComponent,
     DocumentationOfPatientMobilityDialogComponent,
     MitavDeliriumComponent,
-    TraumaPatientsComponent
+    TraumaPatientsComponent,
+    SpinnerComponent
   
   ],
   imports: [

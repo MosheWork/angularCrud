@@ -17,7 +17,7 @@ export class MitavDeliriumComponent implements OnInit {
     'Admission_No',
     'Age_Years',
     'ATD_Admission_Date',
-    'Release_Date',
+    'AdmissionCAMGrade',
     'Grade',
     'PatientWithDelirium',
     'PatientWithDeliriumEntryDate',
@@ -27,8 +27,12 @@ export class MitavDeliriumComponent implements OnInit {
     'HoursDifference',
     //'PreventionAndInterventionCAM',
     'PreventionORInterventionCAM',
-    'ReleaseCAM',
-   'GradeCount'
+   'GradeCount',
+   'DrugForDelirium',
+   'ReleaseCAM',
+   'CAMGradeChanged',
+   'Release_Date',
+  
   ];
 
   departmentList: string[] = []; // List of unique departments
@@ -107,6 +111,7 @@ globalFilterValue: string = ''; // Store global filter text
         }, 500);
   
         this.isLoading = false;
+        console.log('משה'+ this.isLoading)
       },
       (error) => {
         console.error('❌ Error fetching Mitav Delirium Report:', error);
