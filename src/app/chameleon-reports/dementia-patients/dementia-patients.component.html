@@ -8,26 +8,22 @@
 
   <!-- Filter Form for Table -->
   <form [formGroup]="filterForm" dir="rtl" class="filter-form">
-    <!-- Global Search Input
-    <mat-form-field class="long-search-bar">
-      <mat-label class="filters" style="color: blue">חיפוש</mat-label>
-      <input matInput formControlName="globalFilter" class="search-input" />
-    </mat-form-field>
-   -->
-    <!-- Date Pickers -->
-    <mat-form-field>
-      <mat-label>בחר תאריך קבלה</mat-label>
-      <input matInput [matDatepicker]="recordDatePicker" formControlName="Record_Date">
-      <mat-datepicker-toggle matSuffix [for]="recordDatePicker"></mat-datepicker-toggle>
-      <mat-datepicker #recordDatePicker></mat-datepicker>
-    </mat-form-field>
+<!-- Entry Date (Date Range for Report Filtering) -->
+<mat-form-field>
+    <mat-label>תאריך דיווח - התחלה</mat-label>
+    <input matInput [matDatepicker]="startDatePicker" formControlName="startEntryDate">
+    <mat-datepicker-toggle matSuffix [for]="startDatePicker"></mat-datepicker-toggle>
+    <mat-datepicker #startDatePicker></mat-datepicker>
+  </mat-form-field>
   
-    <mat-form-field>
-      <mat-label>בחר תאריך דיווח</mat-label>
-      <input matInput [matDatepicker]="entryDatePicker" formControlName="Entry_Date">
-      <mat-datepicker-toggle matSuffix [for]="entryDatePicker"></mat-datepicker-toggle>
-      <mat-datepicker #entryDatePicker></mat-datepicker>
-    </mat-form-field>
+  <mat-form-field>
+    <mat-label>תאריך דיווח - סוף</mat-label>
+    <input matInput [matDatepicker]="endDatePicker" formControlName="endEntryDate">
+    <mat-datepicker-toggle matSuffix [for]="endDatePicker"></mat-datepicker-toggle>
+    <mat-datepicker #endDatePicker></mat-datepicker>
+  </mat-form-field>
+  
+ 
     <!-- Form Footer with Search, Reset, and Export Options -->
     <div dir="rtl" class="form-footer" style="display: flex; justify-content: space-between;">
       <!-- Global Search Input with Full Width -->
