@@ -137,6 +137,9 @@ import { CdkTableModule } from '@angular/cdk/table';
 import { MitavDeliriumComponent } from './mitav/mitav-delirium/mitav-delirium.component';
 import { TraumaPatientsComponent } from './chameleon-reports/trauma-patients/trauma-patients.component';
 import { SpinnerComponent } from './components/spinner/spinner.component';
+import { ERdashboardComponent } from './chameleon-reports/erdashboard/erdashboard.component';
+import { DementiaPatientsComponent } from './chameleon-reports/dementia-patients/dementia-patients.component';
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -239,7 +242,9 @@ import { SpinnerComponent } from './components/spinner/spinner.component';
     DocumentationOfPatientMobilityDialogComponent,
     MitavDeliriumComponent,
     TraumaPatientsComponent,
-    SpinnerComponent
+    SpinnerComponent,
+    ERdashboardComponent,
+    DementiaPatientsComponent
   
   ],
   imports: [

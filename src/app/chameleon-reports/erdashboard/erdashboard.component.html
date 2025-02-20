@@ -1,0 +1,76 @@
+<div class="container">
+    <h1 class="title">ER Patient Records Dashboard</h1>
+  
+    <!-- ✅ Date Range Filter -->
+    <form [formGroup]="filterForm" class="filter-form">
+      <mat-form-field appearance="outline">
+        <mat-label>Start Date</mat-label>
+        <input matInput [matDatepicker]="startPicker" formControlName="startDate">
+        <mat-datepicker-toggle matSuffix [for]="startPicker"></mat-datepicker-toggle>
+        <mat-datepicker #startPicker></mat-datepicker>
+      </mat-form-field>
+  
+      <mat-form-field appearance="outline">
+        <mat-label>End Date</mat-label>
+        <input matInput [matDatepicker]="endPicker" formControlName="endDate">
+        <mat-datepicker-toggle matSuffix [for]="endPicker"></mat-datepicker-toggle>
+        <mat-datepicker #endPicker></mat-datepicker>
+      </mat-form-field>
+  
+      <button mat-raised-button color="primary" (click)="fetchData()">Apply</button>
+      <button mat-raised-button color="warn" (click)="resetFilters()">Reset</button>
+    </form>
+  
+    <!-- ✅ Loading Spinner -->
+    <div *ngIf="isLoading" class="loading">
+      <mat-spinner></mat-spinner>
+      <p>Loading data...</p>
+    </div>
+  
+    <!-- ✅ Results Section -->
+    <div *ngIf="!isLoading" class="results-container">
+      
+      <!-- 📅 Record Count by Weekday Table -->
+      <mat-card class="data-card">
+        <mat-card-title>Record Count by Weekday</mat-card-title>
+        <table mat-table [dataSource]="recordCountByWeekday" class="mat-elevation-z8">
+          <ng-container matColumnDef="Weekday">
+            <mat-header-cell *matHeaderCellDef> Weekday </mat-header-cell>
+            <mat-cell *matCellDef="let element"> {{ element.Weekday }} </mat-cell>
+          </ng-container>
+  
+          <ng-container matColumnDef="RecordCount">
+            <mat-header-cell *matHeaderCellDef> Record Count </mat-header-cell>
+            <mat-cell *matCellDef="let element"> {{ element.RecordCount }} </mat-cell>
+          </ng-container>
+  
+          <mat-header-row *matHeaderRowDef="['Weekday', 'RecordCount']"></mat-header-row>
+          <mat-row *matRowDef="let row; columns: ['Weekday', 'RecordCount'];"></mat-row>
+        </table>
+      </mat-card>
+  
+      <!-- ⏳ Record Count by Hour Table -->
+      <mat-card class="data-card">
+        <mat-card-title>Record Count by Hour</mat-card-title>
+        <table mat-table [dataSource]="recordCountByHour" class="mat-elevation-z8">
+          <ng-container matColumnDef="HourRange">
+            <mat-header-cell *matHeaderCellDef> Hour Range </mat-header-cell>
+            <mat-cell *matCellDef="let element"> {{ element.HourRange }} </mat-cell>
+          </ng-container>
+  
+          <ng-container matColumnDef="RecordCount">
+            <mat-header-cell *matHeaderCellDef> Record Count </mat-header-cell>
+            <mat-cell *matCellDef="let element"> {{ element.RecordCount }} </mat-cell>
+          </ng-container>
+  
+          <mat-header-row *matHeaderRowDef="['HourRange', 'RecordCount']"></mat-header-row>
+          <mat-row *matRowDef="let row; columns: ['HourRange', 'RecordCount'];"></mat-row>
+        </table>
+      </mat-card>
+  
+    </div>
+      <!-- ✅ Charts Section -->
+<!-- Chart: ER Records Per Weekday -->
+
+  </div>
+  

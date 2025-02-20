@@ -64,6 +64,8 @@ import { DepartmentOccupiedMitavComponent } from './chameleon-reports/department
 import { MitavMobilityComponent } from './mitav/mitav-mobility/mitav-mobility.component';
 import { MitavDeliriumComponent } from './mitav/mitav-delirium/mitav-delirium.component';
 import { TraumaPatientsComponent } from './chameleon-reports/trauma-patients/trauma-patients.component';
+import { ERdashboardComponent } from './chameleon-reports/erdashboard/erdashboard.component';
+import { DementiaPatientsComponent } from './chameleon-reports/dementia-patients/dementia-patients.component';
 
 const routes: Routes = [
   { path: 'users', component: UsersComponent },
@@ -144,6 +146,10 @@ const routes: Routes = [
    { path: 'vwinfection-control-icu', component: VWInfectionControlICUComponent },//דוח  להיבה מחלות זיהומיות שאילתא מאופיר
    { path: 'DepartmentOccupiedMitav', component: DepartmentOccupiedMitavComponent },// מסך תפוסה למחלקות של דוח מיתב לקרן
    { path: 'TraumaPatients', component: TraumaPatientsComponent },// מטופלי טרואמה מאופיר
+   { path: 'ERdashboard', component: ERdashboardComponent },// דאשבורד למיון
+   { path: 'dementia-patients', component: DementiaPatientsComponent },// מטופלים דימנטים לרויטל 
+
+
 
 //chemelondashboard
 { path: 'DepartmentCapacity', component: DepartmentCapacityComponent }, // פרוייקט אישי
