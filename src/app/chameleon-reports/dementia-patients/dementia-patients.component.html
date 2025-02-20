@@ -7,18 +7,18 @@
   </div>
 
   <!-- Filter Form for Table -->
-  <form [formGroup]="filterForm" dir="rtl" class="filter-form">
+  <form [formGroup]="filterForm" (ngSubmit)="applyFilters()" dir="rtl" class="filter-form">
     <!-- Entry Date (Date Range for Report Filtering) -->
     <mat-form-field>
       <mat-label>תאריך דיווח - התחלה</mat-label>
-      <input matInput [matDatepicker]="startDatePicker" formControlName="startEntryDate">
+      <input matInput [matDatepicker]="startDatePicker" formControlName="startEntryDate" (dateChange)="applyFilters()">
       <mat-datepicker-toggle matSuffix [for]="startDatePicker"></mat-datepicker-toggle>
       <mat-datepicker #startDatePicker></mat-datepicker>
     </mat-form-field>
     
     <mat-form-field>
       <mat-label>תאריך דיווח - סוף</mat-label>
-      <input matInput [matDatepicker]="endDatePicker" formControlName="endEntryDate">
+      <input matInput [matDatepicker]="endDatePicker" formControlName="endEntryDate" (dateChange)="applyFilters()">
       <mat-datepicker-toggle matSuffix [for]="endDatePicker"></mat-datepicker-toggle>
       <mat-datepicker #endDatePicker></mat-datepicker>
     </mat-form-field>

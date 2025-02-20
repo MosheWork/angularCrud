@@ -47,7 +47,7 @@ export class DementiaPatientsComponent implements OnInit {
 
     this.http.get<any[]>(`${environment.apiUrl}Dementia/DementiaPatients`)
       .subscribe(data => {
-        // Convert EntryDate to Date Object before setting the data
+        // ✅ Convert EntryDate to a JavaScript Date object
         this.originalData = data.map(item => ({
           ...item,
           EntryDate: item.EntryDate ? new Date(item.EntryDate) : null
@@ -70,17 +70,19 @@ export class DementiaPatientsComponent implements OnInit {
 
   applyFilters() {
     const { startEntryDate, endEntryDate, globalFilter } = this.filterForm.value;
-    const formattedStartDate = this.formatDate(startEntryDate);
-    const formattedEndDate = this.formatDate(endEntryDate);
+    
+    // ✅ Convert selected dates to Date objects for comparison
+    const startDate = startEntryDate ? new Date(startEntryDate) : null;
+    const endDate = endEntryDate ? new Date(endEntryDate) : null;
 
     console.log("Total API results:", this.originalData.length); // Debug API results
 
     this.dataSource.data = this.originalData.filter(patient => {
-      const patientDate = this.formatDate(patient.EntryDate);
+      const patientDate = patient.EntryDate ? new Date(patient.EntryDate) : null;
 
       const isDateInRange = 
-        (!formattedStartDate || patientDate >= formattedStartDate) && 
-        (!formattedEndDate || patientDate <= formattedEndDate);
+        (!startDate || (patientDate && patientDate >= startDate)) &&
+        (!endDate || (patientDate && patientDate <= endDate));
 
       const isGlobalMatch = !globalFilter || Object.values(patient).some(value =>
         value?.toString().toLowerCase().includes(globalFilter.toLowerCase())
@@ -102,17 +104,6 @@ export class DementiaPatientsComponent implements OnInit {
       globalFilter: ''
     });
     this.applyFilters();
-  }
-
-  formatDate(date: any): string {
-    if (!date) return ''; // Handle empty/null values
-    if (typeof date === 'string') {
-      date = new Date(date);
-    }
-    if (date instanceof Date && !isNaN(date.getTime())) {
-      return date.toISOString().split('T')[0]; // Format as YYYY-MM-DD
-    }
-    return '';
   }
 
   exportToExcel() {
