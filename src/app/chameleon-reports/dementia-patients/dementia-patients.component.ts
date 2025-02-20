@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { FormControl, FormGroup, FormBuilder } from '@angular/forms';
+import { FormGroup, FormBuilder } from '@angular/forms';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatSort } from '@angular/material/sort';
@@ -15,7 +15,7 @@ import { environment } from '../../../environments/environment';
 export class DementiaPatientsComponent implements OnInit {
   totalResults: number = 0;
   titleUnit: string = 'מטופלים דימנטים ';
-  Title1: string = ' סה"כ תוצאות: ';  // Title1 for display
+  Title1: string = ' סה"כ תוצאות: ';
   Title2: string = '';    
 
   displayedColumns: string[] = [
@@ -32,14 +32,11 @@ export class DementiaPatientsComponent implements OnInit {
 
   constructor(private http: HttpClient, private fb: FormBuilder) {
     this.filterForm = this.fb.group({
-      startDate: [new Date(new Date().setDate(new Date().getDate() - 30))], // Default: Last 30 Days
-      endDate: [new Date()],
-      Record_Date: [''],  // ✅ Added missing form control
-      Entry_Date: [''],   // ✅ Added missing form control
-      globalFilter: ['']  // ✅ Added missing form control
+      startEntryDate: [null],  // ✅ Start empty
+      endEntryDate: [null],    // ✅ Start empty
+      globalFilter: ['']
     });
-}
-
+  }
 
   ngOnInit() {
     this.fetchData();
@@ -47,65 +44,77 @@ export class DementiaPatientsComponent implements OnInit {
 
   fetchData() {
     this.isLoading = true;
-  
-    const startDate = this.formatDate(this.filterForm.value.startEntryDate);
-    const endDate = this.formatDate(this.filterForm.value.endEntryDate);
-  
-    this.http.get<any[]>(`${environment.apiUrl}Dementia/DementiaPatients?startDate=${startDate}&endDate=${endDate}`)
+
+    this.http.get<any[]>(`${environment.apiUrl}Dementia/DementiaPatients`)
       .subscribe(data => {
-        this.originalData = data; // Store original data
-        this.applyFilters(); // Apply filters immediately
-        this.totalResults=data.length
-        // ✅ Ensure MatTableDataSource is updated
-        this.dataSource.data = [...this.originalData]; 
-  
+        // Convert EntryDate to Date Object before setting the data
+        this.originalData = data.map(item => ({
+          ...item,
+          EntryDate: item.EntryDate ? new Date(item.EntryDate) : null
+        }));
+
+        this.applyFilters();
+        this.totalResults = data.length;
+        this.dataSource = new MatTableDataSource(this.originalData);
+
+        // ✅ Assign paginator & sort AFTER setting data
+        this.dataSource.paginator = this.paginator;
+        this.dataSource.sort = this.sort;
+
         this.isLoading = false;
       }, error => {
         console.error('Error fetching data', error);
         this.isLoading = false;
       });
   }
-  
 
   applyFilters() {
-    const { startEntryDate, endEntryDate } = this.filterForm.value;
+    const { startEntryDate, endEntryDate, globalFilter } = this.filterForm.value;
     const formattedStartDate = this.formatDate(startEntryDate);
     const formattedEndDate = this.formatDate(endEntryDate);
-  
+
     console.log("Total API results:", this.originalData.length); // Debug API results
-  
+
     this.dataSource.data = this.originalData.filter(patient => {
       const patientDate = this.formatDate(patient.EntryDate);
-      return patientDate >= formattedStartDate && patientDate <= formattedEndDate;
+
+      const isDateInRange = 
+        (!formattedStartDate || patientDate >= formattedStartDate) && 
+        (!formattedEndDate || patientDate <= formattedEndDate);
+
+      const isGlobalMatch = !globalFilter || Object.values(patient).some(value =>
+        value?.toString().toLowerCase().includes(globalFilter.toLowerCase())
+      );
+
+      return isDateInRange && isGlobalMatch;
     });
-  
+
     console.log("Filtered results:", this.dataSource.data.length); // Debug filtered results
     this.totalResults = this.dataSource.data.length;
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
   }
-  
-
 
   resetFilters() {
     this.filterForm.setValue({
-      startDate: new Date(new Date().setDate(new Date().getDate() - 30)),
-      endDate: new Date()
+      startEntryDate: null,
+      endEntryDate: null,
+      globalFilter: ''
     });
     this.applyFilters();
   }
 
   formatDate(date: any): string {
-    if (!date) return ''; // Handle null/undefined cases
+    if (!date) return ''; // Handle empty/null values
     if (typeof date === 'string') {
-      date = new Date(date); // Convert string to Date
+      date = new Date(date);
     }
     if (date instanceof Date && !isNaN(date.getTime())) {
       return date.toISOString().split('T')[0]; // Format as YYYY-MM-DD
     }
-    return ''; // Return empty string if date is invalid
+    return '';
   }
-  
+
   exportToExcel() {
     const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(this.dataSource.data);
     const workbook: XLSX.WorkBook = { Sheets: { 'Dementia Patients': worksheet }, SheetNames: ['Dementia Patients'] };
