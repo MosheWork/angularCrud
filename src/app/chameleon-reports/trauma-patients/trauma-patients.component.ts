@@ -202,8 +202,8 @@ export class TraumaPatientsComponent implements OnInit {
   private createFilterForm(): FormGroup {
     return this.fb.group({
       globalFilter: new FormControl(''),
-      relevantFilter: new FormControl('1'), // Default value is 1 ✅
-      YearFilter: new FormControl([]),  // Multi-select support ✅
+      relevantFilter: new FormControl('לא עודכן'), // ✅ Default value is "לא עודכן"
+      YearFilter: new FormControl([]),
       MonthFilter: new FormControl([]),
       WeekFilter: new FormControl([]),
       AdmissionDepartmentFilter: new FormControl([]),
@@ -212,46 +212,31 @@ export class TraumaPatientsComponent implements OnInit {
       ReceiveCauseDesFilter: new FormControl([])
     });
   }
+  
   applyFilters() {
     const filters = this.filterForm.value;
     const globalFilter = (filters.globalFilter || '').toLowerCase();
     const relevantFilter = filters.relevantFilter;
   
-    // Multi-select filters
-    const selectedYears = filters.YearFilter.length ? filters.YearFilter : null;
-    const selectedMonths = filters.MonthFilter.length ? filters.MonthFilter : null;
-    const selectedWeeks = filters.WeekFilter.length ? filters.WeekFilter : null;
-    const selectedDepartments = filters.AdmissionDepartmentFilter.length ? filters.AdmissionDepartmentFilter : null;
-    const selectedShockRooms = filters.ShockRoomFilter.length ? filters.ShockRoomFilter : null;
-    const selectedTransfers = filters.TransferFilter.length ? filters.TransferFilter : null;
-    const selectedReceiveCauses = filters.ReceiveCauseDesFilter.length ? filters.ReceiveCauseDesFilter : null;
-  
     this.filteredData = this.originalData.filter((item: TraumaPatient) => {
       const matchesGlobalFilter = globalFilter
-        ? Object.values(item).some((val) =>
-            val && val.toString().toLowerCase().includes(globalFilter)
-          )
+        ? Object.values(item).some((val) => val && val.toString().toLowerCase().includes(globalFilter))
         : true;
   
-      const matchesRelevantFilter = relevantFilter === '' || item.Relevant == relevantFilter;
-      
-      const matchesYear = selectedYears ? selectedYears.includes(item.Year) : true;
-      const matchesMonth = selectedMonths ? selectedMonths.includes(item.Month) : true;
-      const matchesWeek = selectedWeeks ? selectedWeeks.includes(item.Week) : true;
-      const matchesDepartment = selectedDepartments ? selectedDepartments.includes(item.AdmissionDepartment) : true;
-      const matchesShockRoom = selectedShockRooms ? selectedShockRooms.includes(item.ShockRoom) : true;
-      const matchesTransfer = selectedTransfers ? selectedTransfers.includes(item.TransferToOtherInstitution) : true;
-      const matchesReceiveCause = selectedReceiveCauses ? selectedReceiveCauses.includes(item.ReceiveCauseDescription) : true;
+      let matchesRelevantFilter = true;
   
-      return matchesGlobalFilter &&
-             matchesRelevantFilter &&
-             matchesYear &&
-             matchesMonth &&
-             matchesWeek &&
-             matchesDepartment &&
-             matchesShockRoom &&
-             matchesTransfer &&
-             matchesReceiveCause;
+      if (relevantFilter === "לא עודכן") {
+        matchesRelevantFilter = item.Relevant === null; // ✅ Match NULL values only
+      } else if (relevantFilter === "1") {
+        matchesRelevantFilter = item.Relevant === 1; // ✅ Match "כן"
+      } else if (relevantFilter === "2") {
+        matchesRelevantFilter = item.Relevant === 2; // ✅ Match "לא"
+      } else if (relevantFilter === "") {
+        // ✅ "הכל" should include all records (yes, no, and null)
+        matchesRelevantFilter = true;
+      }
+  
+      return matchesGlobalFilter && matchesRelevantFilter;
     });
   
     this.dataSource.data = this.filteredData;
@@ -264,6 +249,9 @@ export class TraumaPatientsComponent implements OnInit {
       }
     });
   }
+  
+  
+  
   
   
   

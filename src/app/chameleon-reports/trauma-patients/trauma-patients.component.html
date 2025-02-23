@@ -61,15 +61,20 @@
             <mat-option *ngFor="let cause of uniqueReceiveCauses" [value]="cause">{{ cause }}</mat-option>
           </mat-select>
         </mat-form-field>
-     <!-- Relevant Filter (Radio Buttons) -->
-     <div class="filter-radio-group" dir="rtl">
-      <span class="filter-label">רלוונטי:  </span>
-      <mat-radio-group formControlName="relevantFilter" class="radio-group"  >
-        <mat-radio-button value="">הכל</mat-radio-button>
-        <mat-radio-button [value]="1">כן</mat-radio-button>
-        <mat-radio-button [value]="0">לא</mat-radio-button>
-      </mat-radio-group>
-    </div>
+   <!-- Relevant Filter (Radio Buttons) -->
+<!-- Relevant Filter (Radio Buttons) -->
+<!-- Relevant Filter (Radio Buttons) -->
+<div class="filter-radio-group" dir="rtl">
+  <span class="filter-label">רלוונטי: </span>
+  <mat-radio-group formControlName="relevantFilter" class="radio-group">
+    <mat-radio-button value="לא עודכן">לא עודכן</mat-radio-button>
+    <mat-radio-button value="1">כן</mat-radio-button>
+    <mat-radio-button value="2">לא</mat-radio-button>
+    <mat-radio-button value="">הכל</mat-radio-button>
+  </mat-radio-group>
+</div>
+
+
   
  
       </form>
@@ -132,31 +137,31 @@
     <!-- Edit Dialog (inside the same component) -->
     <div *ngIf="selectedPatient" class="dialog-backdrop">
       <div class="dialog-box">
-        <h2>Edit Trauma Remark</h2>
+        <h2>עריכת מטופל טראומה</h2>
   
         <form [formGroup]="editForms[selectedPatient.CaseNumber]"> <!-- ✅ Fix: Use correct form -->
           <mat-form-field>
-            <mat-label>Case Number</mat-label>
+            <mat-label>מספר מקרה</mat-label>
             <input matInput formControlName="CaseNumber" readonly />
           </mat-form-field>
   
               <!-- Remarks (Now a Large TextArea) -->
     <mat-form-field appearance="outline" class="full-width">
-        <mat-label>Remarks</mat-label>
+        <mat-label>הערות</mat-label>
         <textarea matInput formControlName="Remarks" rows="5" maxlength="2000"></textarea>
       </mat-form-field>
   
           
-            <mat-label>Relevant</mat-label>
+            <mat-label>רלוונטי</mat-label>
             <mat-radio-group formControlName="Relevant" class="radio-group">
-                <mat-radio-button [value]="1">Yes</mat-radio-button>
-                <mat-radio-button [value]="0">No</mat-radio-button>
+                <mat-radio-button [value]="1">כן</mat-radio-button>
+                <mat-radio-button [value]="0">לא</mat-radio-button>
             </mat-radio-group>
         </form>
   
         <div class="dialog-actions">
-          <button mat-button (click)="closeDialog()">Cancel</button>
-          <button mat-button color="primary" (click)="saveEdit()">Save</button> <!-- ✅ Fix: No parameter -->
+          <button mat-button (click)="closeDialog()">בטל</button>
+          <button mat-button color="primary" (click)="saveEdit()">שמור</button> <!-- ✅ Fix: No parameter -->
         </div>
       </div>
     </div>
