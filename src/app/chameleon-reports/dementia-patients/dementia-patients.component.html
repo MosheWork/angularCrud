@@ -24,7 +24,7 @@
     </mat-form-field>
 
     <!-- Form Footer with Search, Reset, and Export Options -->
-    <div dir="rtl" class="form-footer" style="display: flex; justify-content: space-between;">
+    <div dir="rtl" class="form-footer" style="display: flex; justify-content: space-between;" >
       <mat-form-field class="long-search-bar" style="flex: 1; margin-right: 10px;">
         <mat-label class="filters" style="color: blue">חיפוש</mat-label>
         <input matInput formControlName="globalFilter" class="search-input" (input)="applyFilters()" />
@@ -40,19 +40,49 @@
   </form>
 
   <!-- Data Table with Pagination and Sorting -->
-  <table mat-table [dataSource]="dataSource" matSort class="mat-elevation-z8">
-    <ng-container *ngFor="let column of displayedColumns" [matColumnDef]="column">
-      <mat-header-cell *matHeaderCellDef mat-sort-header> {{ column }} </mat-header-cell>
-      <mat-cell *matCellDef="let element">
-        <ng-container *ngIf="column === 'EntryDate'; else defaultCell">
-          {{ element[column] | date:'dd/MM/yyyy' }} 
-        </ng-container>
-        <ng-template #defaultCell>
-          {{ element[column] }}
-        </ng-template>
-      </mat-cell>
+  <table mat-table [dataSource]="dataSource" matSort class="mat-elevation-z8" dir="rtl">
+    <!-- Column Definitions with Hebrew Headers -->
+    <ng-container matColumnDef="EntryDate">
+      <mat-header-cell *matHeaderCellDef mat-sort-header> תאריך דיווח </mat-header-cell>
+      <mat-cell *matCellDef="let element"> {{ element.EntryDate | date:'dd/MM/yyyy' }} </mat-cell>
     </ng-container>
 
+    <ng-container matColumnDef="UnitName">
+      <mat-header-cell *matHeaderCellDef mat-sort-header> שם מחלקה </mat-header-cell>
+      <mat-cell *matCellDef="let element"> {{ element.UnitName }} </mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="ICD9">
+      <mat-header-cell *matHeaderCellDef mat-sort-header> קוד ICD9 </mat-header-cell>
+      <mat-cell *matCellDef="let element"> {{ element.ICD9 }} </mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="DiagnosisName">
+      <mat-header-cell *matHeaderCellDef mat-sort-header> אבחנה </mat-header-cell>
+      <mat-cell *matCellDef="let element"> {{ element.DiagnosisName }} </mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="IdNum">
+      <mat-header-cell *matHeaderCellDef mat-sort-header> ת.ז </mat-header-cell>
+      <mat-cell *matCellDef="let element"> {{ element.IdNum }} </mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="AdmissionNo">
+      <mat-header-cell *matHeaderCellDef mat-sort-header> מספר אשפוז </mat-header-cell>
+      <mat-cell *matCellDef="let element"> {{ element.AdmissionNo }} </mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="FirstName">
+      <mat-header-cell *matHeaderCellDef mat-sort-header> שם פרטי </mat-header-cell>
+      <mat-cell *matCellDef="let element"> {{ element.FirstName }} </mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="LastName">
+      <mat-header-cell *matHeaderCellDef mat-sort-header> שם משפחה </mat-header-cell>
+      <mat-cell *matCellDef="let element"> {{ element.LastName }} </mat-cell>
+    </ng-container>
+
+    <!-- Table Header and Rows -->
     <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
     <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
   </table>
