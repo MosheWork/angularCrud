@@ -306,3 +306,30 @@
   width: 100%;
   padding: 10px 0;
 }
+
+
+.gauge-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.gauge-info {
+  text-align: center;
+  font-size: 12px;
+  font-weight: bold;
+  color: #333;
+}
+
+
+
+::ng-deep ngx-gauge .reading-block {
+  font-size: 28px !important; /* Desired font size */
+  transform: translateY(78px) !important;
+  font-weight: 400;
+  color: black !important;
+  margin-top: 0; /* Ensure no gap between the title and gauge */
+
+}

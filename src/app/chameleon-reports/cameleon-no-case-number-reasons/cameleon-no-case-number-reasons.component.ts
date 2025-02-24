@@ -49,11 +49,31 @@ export class CameleonNoCaseNumberReasonsComponent implements OnInit {
   filteredData: any[] = [];
   matTableDataSource: MatTableDataSource<any>;
   loading: boolean = true;
+// Gauge values
+totalRows: number = 0;         // Total rows count
+updatedRows: number = 0;       // Rows where ReasonForNoCaseNumber is set
+gaugeValue: number = 0;        // Gauge percentage
+gaugeLabel: string = 'עודכן מתוך סה"כ';
+gaugeMax: number = 100;        // 100% scale
+
+// Gauge colors
+gaugeType = "arch"; // Circular gauge
+gaugeSize = 200;
+gaugeThick = 12; // Thickness of the arc
+gaugeForegroundColor = '#3f51b5'; // Primary color
+gaugeBackgroundColor = '#e0e0e0'; // Grey background
+
+
 
   filterForm: FormGroup;
   dialogForm: FormGroup;
-  reasonList: string[] = ['תשלח לי רשימת סיבות', ''];
-  @ViewChild(MatPaginator) paginator!: MatPaginator;
+  reasonList: string[] = ['',
+    'המשתמש לא מוצא מטופל עקב סינון יומן ומבקש לקלוט מחדש',
+    'זימון למספר יומנים, פתיחת מקרה באחד מהם',
+    'זימון ליחידה מאשפזת (פעולה פולשנית)',
+    'הוספת מטופל ידנית בלחיצה על כפתור'
+  ];
+    @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
   @ViewChild('dialogTemplate') dialogTemplate!: TemplateRef<any>;
 
@@ -65,17 +85,26 @@ export class CameleonNoCaseNumberReasonsComponent implements OnInit {
 
   ngOnInit() {
     this.loading = true;
+  
     this.http.get<any[]>(environment.apiUrl + 'CameleonNoCaseNumberReasonsMM').subscribe({
       next: (data) => {
         this.dataSource = data;
-        this.totalResults=data.length;
         this.filteredData = [...data];
         this.matTableDataSource = new MatTableDataSource(this.filteredData);
+  
         setTimeout(() => {
           this.matTableDataSource.paginator = this.paginator;
           this.matTableDataSource.sort = this.sort;
         });
+  
         this.loading = false;
+  
+        // Calculate total and updated row counts
+        this.totalRows = data.length;
+        this.updatedRows = data.filter(row => row.ReasonForNoCaseNumber && row.ReasonForNoCaseNumber.trim() !== '').length;
+  
+        // Set gauge values (percentage)
+        this.gaugeValue = this.totalRows ? Math.round((this.updatedRows / this.totalRows) * 100) : 0;
       },
       error: (error) => {
         console.error('Error fetching data:', error);
@@ -83,6 +112,8 @@ export class CameleonNoCaseNumberReasonsComponent implements OnInit {
       }
     });
   }
+  
+  
 
   private createFilterForm(): FormGroup {
     return this.fb.group({
@@ -181,8 +212,8 @@ export class CameleonNoCaseNumberReasonsComponent implements OnInit {
       Comments: this.dialogForm.value.Comments
     };
   
-    // Check if record exists (if ReasonForNoCaseNumber exists, it means the record already exists)
-    const existingRecord = this.dataSource.find(record => record.IdNum === idNum);
+    // Check if the row exists in CameleonNoCaseNumberReasonsMM
+    const existingRecord = this.dataSource.find(record => record.IdNum === idNum && record.ReasonForNoCaseNumber);
   
     const requestType = existingRecord ? 'put' : 'post';
     const requestUrl = environment.apiUrl + `CameleonNoCaseNumberReasonsMM/${existingRecord ? 'update' : 'insert'}`;
@@ -200,6 +231,7 @@ export class CameleonNoCaseNumberReasonsComponent implements OnInit {
       }
     });
   }
+  
   
   
   
