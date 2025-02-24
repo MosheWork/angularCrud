@@ -66,6 +66,7 @@ import { MitavDeliriumComponent } from './mitav/mitav-delirium/mitav-delirium.co
 import { TraumaPatientsComponent } from './chameleon-reports/trauma-patients/trauma-patients.component';
 import { ERdashboardComponent } from './chameleon-reports/erdashboard/erdashboard.component';
 import { DementiaPatientsComponent } from './chameleon-reports/dementia-patients/dementia-patients.component';
+import { CameleonNoCaseNumberReasonsComponent } from './chameleon-reports/cameleon-no-case-number-reasons/cameleon-no-case-number-reasons.component';
 
 const routes: Routes = [
   { path: 'users', component: UsersComponent },
@@ -147,7 +148,8 @@ const routes: Routes = [
    { path: 'DepartmentOccupiedMitav', component: DepartmentOccupiedMitavComponent },// מסך תפוסה למחלקות של דוח מיתב לקרן
    { path: 'TraumaPatients', component: TraumaPatientsComponent },// מטופלי טרואמה מאופיר
    { path: 'ERdashboard', component: ERdashboardComponent },// דאשבורד למיון
-   { path: 'dementia-patients', component: DementiaPatientsComponent },// מטופלים דימנטים לרויטל 
+   { path: 'dementia-patients', component: DementiaPatientsComponent },// מטופלים דימנטים לרויטל
+   { path: 'CameleonNoCaseNumberReasons', component: CameleonNoCaseNumberReasonsComponent },// מטופלים  ללא מספרי מקרה לדלאשה   
 
 
 

@@ -1,0 +1,77 @@
+<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
+
+<div class="body">
+  <div class="nine">
+    <h1>{{ titleUnit }}<span>{{ Title1 }}{{ totalResults }}</span></h1>
+  </div>
+
+  <form [formGroup]="filterForm" (ngSubmit)="applyFilters()" dir="rtl" class="filter-form">
+    <mat-form-field>
+      <mat-label>תאריך דיווח - התחלה</mat-label>
+      <input matInput [matDatepicker]="startDatePicker" formControlName="startEntryDate" (dateChange)="applyFilters()">
+      <mat-datepicker-toggle matSuffix [for]="startDatePicker"></mat-datepicker-toggle>
+      <mat-datepicker #startDatePicker></mat-datepicker>
+    </mat-form-field>
+    
+    <mat-form-field>
+      <mat-label>תאריך דיווח - סוף</mat-label>
+      <input matInput [matDatepicker]="endDatePicker" formControlName="endEntryDate" (dateChange)="applyFilters()">
+      <mat-datepicker-toggle matSuffix [for]="endDatePicker"></mat-datepicker-toggle>
+      <mat-datepicker #endDatePicker></mat-datepicker>
+    </mat-form-field>
+
+    <div dir="rtl" class="form-footer" style="display: flex; justify-content: space-between;">
+      <mat-form-field class="long-search-bar" style="flex: 1; margin-right: 10px;">
+        <mat-label class="filters" style="color: blue">חיפוש</mat-label>
+        <input matInput formControlName="globalFilter" class="search-input" (input)="applyFilters()" />
+      </mat-form-field>
+
+      <div class="button-container" style="display: flex; align-items: center;">
+        <button mat-button (click)="resetFilters()" mat-raised-button color="primary" class="custom-button" matTooltip="Reset Filters">
+          <i class="material-icons">refresh</i>
+        </button>
+        <img src="../../assets/excel.png" alt="Download" (click)="exportToExcel()" class="download-icon icon" width="50px" style="margin-right: 10px;" />
+      </div>
+    </div>
+  </form>
+
+  <div class="table-responsive">
+    <mat-table [dataSource]="matTableDataSource" matSort dir="rtl" class="mat-elevation-z8">
+      <ng-container *ngFor="let column of columns" [matColumnDef]="column">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>
+          {{ columnHeaders[column] || column }}
+        </mat-header-cell>
+        <mat-cell *matCellDef="let element" (click)="openDialog(element)">
+          {{ element[column] || '-' }}
+        </mat-cell>
+      </ng-container>
+      <mat-header-row *matHeaderRowDef="columns"></mat-header-row>
+      <mat-row *matRowDef="let row; columns: columns" (click)="openDialog(row)"></mat-row>
+    </mat-table>
+  </div>
+
+  <mat-paginator [pageSize]="10" [pageSizeOptions]="[10, 25, 50]" showFirstLastButtons></mat-paginator>
+</div>
+
+<ng-template #dialogTemplate let-data>
+  <h2 mat-dialog-title>הוסף סיבה</h2>
+  <mat-dialog-content>
+    <form [formGroup]="dialogForm">
+      <mat-form-field>
+        <mat-label>סיבת היעדר מספר מקרה</mat-label>
+        <mat-select formControlName="ReasonForNoCaseNumber">
+          <mat-option *ngFor="let reason of reasonList" [value]="reason">{{ reason }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field class="full-width">
+        <mat-label>הערות</mat-label>
+        <textarea matInput formControlName="Comments" rows="5"></textarea>
+      </mat-form-field>
+    </form>
+  </mat-dialog-content>
+  <mat-dialog-actions>
+    <button mat-button (click)="closeDialog()">ביטול</button>
+    <button mat-button color="primary" (click)="submitReason(dialogData.IdNum)">שלח</button>
+  </mat-dialog-actions>
+</ng-template>
