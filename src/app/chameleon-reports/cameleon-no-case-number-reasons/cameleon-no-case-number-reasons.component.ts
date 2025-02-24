@@ -7,6 +7,7 @@ import { MatTableDataSource } from '@angular/material/table';
 import { MatSort } from '@angular/material/sort';
 import { MatDialog } from '@angular/material/dialog';
 import { environment } from '../../../environments/environment';
+import * as XLSX from 'xlsx';
 
 @Component({
   selector: 'app-cameleon-no-case-number-reasons',
@@ -15,7 +16,7 @@ import { environment } from '../../../environments/environment';
 })
 export class CameleonNoCaseNumberReasonsComponent implements OnInit {
   totalResults: number = 0;
-  titleUnit: string = 'רשימת סיבות ללא מספר מקרה';
+  titleUnit: string = 'רשימת מטופלים מספר מקרה';
   Title1: string = 'סה"כ תוצאות: ';
   Title2: string = '';
 
@@ -51,7 +52,7 @@ export class CameleonNoCaseNumberReasonsComponent implements OnInit {
 
   filterForm: FormGroup;
   dialogForm: FormGroup;
-  reasonList: string[] = ['Administrative Issue', 'Technical Error', 'Missing Documentation'];
+  reasonList: string[] = ['תשלח לי רשימת סיבות', ''];
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
   @ViewChild('dialogTemplate') dialogTemplate!: TemplateRef<any>;
@@ -67,6 +68,7 @@ export class CameleonNoCaseNumberReasonsComponent implements OnInit {
     this.http.get<any[]>(environment.apiUrl + 'CameleonNoCaseNumberReasonsMM').subscribe({
       next: (data) => {
         this.dataSource = data;
+        this.totalResults=data.length;
         this.filteredData = [...data];
         this.matTableDataSource = new MatTableDataSource(this.filteredData);
         setTimeout(() => {
@@ -83,12 +85,11 @@ export class CameleonNoCaseNumberReasonsComponent implements OnInit {
   }
 
   private createFilterForm(): FormGroup {
-    const formControls: any = {};
-    this.columns.forEach((column) => {
-      formControls[column] = new FormControl('');
+    return this.fb.group({
+      startEntryDate: new FormControl(null), // Start Date
+      endEntryDate: new FormControl(null),   // End Date
+      globalFilter: new FormControl('')      // Global Search
     });
-    formControls['globalFilter'] = new FormControl('');
-    return this.fb.group(formControls);
   }
 
   private createDialogForm(): FormGroup {
@@ -105,21 +106,63 @@ export class CameleonNoCaseNumberReasonsComponent implements OnInit {
   }
 
   exportToExcel() {
-    console.log('Exporting to Excel...');
-  }
-
-  openDialog(row: any): void {
-    this.dialogData = { IdNum: row.IdNum }; // Store the selected row data
-    this.dialogForm.reset();
-    const dialogRef = this.dialog.open(this.dialogTemplate, {
-      width: '400px',
-      data: this.dialogData // Pass data to dialog
+    if (!this.filteredData || this.filteredData.length === 0) {
+      console.warn('No data available to export.');
+      return;
+    }
+  
+    // ✅ Hebrew column headers mapping
+    const columnHeaders: { [key: string]: string } = {
+      IdNum: 'תעודת זהות',
+      ReasonForNoCaseNumber: 'סיבת היעדר מספר מקרה',
+      Comments: 'הערות',
+      AdmissionNo: 'מספר אישפוז',
+      UnitName: 'יחידה',
+      FirstName: 'שם פרטי',
+      LastName: 'שם משפחה',
+      RecordDate: 'תאריך רישום',
+      MedicalRecord: 'רשומה רפואית'
+    };
+  
+    // ✅ Format data with Hebrew headers
+    const formattedData = this.filteredData.map(item => {
+      let newItem: any = {};
+      Object.keys(item).forEach(key => {
+        if (columnHeaders[key]) {
+          newItem[columnHeaders[key]] = key === 'RecordDate' ? this.formatDate(item[key]) : item[key]; // Format date
+        }
+      });
+      return newItem;
     });
   
-    dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        this.submitReason(this.dialogData.IdNum);
-      }
+    // ✅ Convert to Excel sheet
+    const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(formattedData);
+    const workbook: XLSX.WorkBook = { Sheets: { 'מטופלים ללא מספר מקרה': worksheet }, SheetNames: ['מטופלים ללא מספר מקרה'] };
+  
+    // ✅ Export as Excel file
+    XLSX.writeFile(workbook, 'מטופלים_ללא_מספר_מקרה.xlsx');
+  }
+  
+  // **Helper function to format dates**
+  private formatDate(dateString: string): string {
+    if (!dateString) return 'אין תיעוד';
+    const date = new Date(dateString);
+    return date.toLocaleDateString('he-IL', { day: '2-digit', month: '2-digit', year: 'numeric' });
+  }
+  
+  openDialog(data: any) {
+    this.dialogData = data; // Store the selected row data
+  
+    this.dialogForm.patchValue({
+      ReasonForNoCaseNumber: data.ReasonForNoCaseNumber || '', // Set existing reason if available
+      Comments: data.Comments || '' // Set existing comments if available
+    });
+  
+    this.dialog.open(this.dialogTemplate, {
+      width: '1200px', // Set dialog width (change as needed)
+      maxWidth: '90vw', // Prevent it from becoming too large on small screens
+      height: 'auto', // Adjust height automatically
+      panelClass: 'custom-dialog-container' // Apply custom styles if needed
     });
   }
   
@@ -129,44 +172,68 @@ export class CameleonNoCaseNumberReasonsComponent implements OnInit {
     this.dialog.closeAll();
   }
 
-  submitReason(IdNum: string): void {
+  submitReason(idNum: string) {
+    if (!this.dialogForm.valid) return; // Validate form
+  
     const requestData = {
-      IdNum,
+      IdNum: idNum,
       ReasonForNoCaseNumber: this.dialogForm.value.ReasonForNoCaseNumber,
       Comments: this.dialogForm.value.Comments
     };
-    
-    this.http.post(environment.apiUrl + 'CameleonNoCaseNumberReasonsMM/insert', requestData)
-      .subscribe({
-        next: () => {
-          console.log('Data inserted successfully');
-        },
-        error: (error) => {
-          console.error('Error inserting data:', error);
-        }
-      });
+  
+    // Check if record exists (if ReasonForNoCaseNumber exists, it means the record already exists)
+    const existingRecord = this.dataSource.find(record => record.IdNum === idNum);
+  
+    const requestType = existingRecord ? 'put' : 'post';
+    const requestUrl = environment.apiUrl + `CameleonNoCaseNumberReasonsMM/${existingRecord ? 'update' : 'insert'}`;
+  
+    this.http[requestType](requestUrl, requestData, {
+      headers: { 'Content-Type': 'application/json' }
+    }).subscribe({
+      next: (response) => {
+        console.log('Data submitted successfully:', response);
+        this.dialog.closeAll(); // Close dialog
+        setTimeout(() => location.reload(), 500); // Reload page after submission
+      },
+      error: (error) => {
+        console.error('Error submitting data:', error);
+      }
+    });
   }
+  
+  
+  
 
   applyFilters() {
     const filters = this.filterForm.value;
-    const globalFilter = (filters['globalFilter'] || '').toLowerCase();
+    const startDate = filters.startEntryDate ? new Date(filters.startEntryDate).setHours(0, 0, 0, 0) : null;
+    const endDate = filters.endEntryDate ? new Date(filters.endEntryDate).setHours(23, 59, 59, 999) : null;
+    const globalFilter = filters.globalFilter ? filters.globalFilter.toLowerCase() : '';
   
-    this.filteredData = this.dataSource.filter((item) =>
-      this.columns.every((column) => {
-        const value = item[column];
-        const filterValue = filters[column];
+    console.log("Start Date:", startDate, "End Date:", endDate); // Debugging
+    
+    this.filteredData = this.dataSource.filter((item) => {
+      let recordDate = item.RecordDate ? new Date(item.RecordDate).setHours(0, 0, 0, 0) : null;
   
-        const stringValue = typeof value === 'string' ? value.toLowerCase() : String(value).toLowerCase();
-        const filterString = typeof filterValue === 'string' ? filterValue.toLowerCase() : filterValue;
+      console.log("Checking RecordDate:", item.RecordDate, "Converted:", recordDate); // Debugging
   
-        return (!filterString || stringValue.includes(filterString)) &&
-               (!globalFilter || this.columns.some((col) => String(item[col]).toLowerCase().includes(globalFilter)));
-      })
-    );
+      // Date filter logic
+      const isWithinDateRange = (!startDate || (recordDate && recordDate >= startDate)) &&
+                                (!endDate || (recordDate && recordDate <= endDate));
   
+      // Global search filter
+      const matchesGlobalFilter = !globalFilter || Object.values(item).some(value =>
+        value?.toString().toLowerCase().includes(globalFilter)
+      );
+  
+      return isWithinDateRange && matchesGlobalFilter;
+    });
+  
+    console.log("Filtered Data:", this.filteredData); // Debugging
     this.totalResults = this.filteredData.length;
     this.matTableDataSource.data = this.filteredData;
-    this.matTableDataSource.paginator = this.paginator;
   }
+  
+  
   
 }
