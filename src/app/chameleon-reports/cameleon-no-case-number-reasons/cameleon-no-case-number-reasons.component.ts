@@ -212,11 +212,11 @@ gaugeBackgroundColor = '#e0e0e0'; // Grey background
       Comments: this.dialogForm.value.Comments
     };
   
-    // Check if the row exists in CameleonNoCaseNumberReasonsMM
-    const existingRecord = this.dataSource.find(record => record.IdNum === idNum && record.ReasonForNoCaseNumber);
+    // Check if the row already exists
+    const existingRecord = this.dataSource.find(record => record.IdNum === idNum);
   
     const requestType = existingRecord ? 'put' : 'post';
-    const requestUrl = environment.apiUrl + `CameleonNoCaseNumberReasonsMM/${existingRecord ? 'update' : 'insert'}`;
+    const requestUrl = environment.apiUrl + `CameleonNoCaseNumberReasonsMM/${requestType === 'put' ? 'update' : 'insert'}`;
   
     this.http[requestType](requestUrl, requestData, {
       headers: { 'Content-Type': 'application/json' }
@@ -224,13 +224,25 @@ gaugeBackgroundColor = '#e0e0e0'; // Grey background
       next: (response) => {
         console.log('Data submitted successfully:', response);
         this.dialog.closeAll(); // Close dialog
-        setTimeout(() => location.reload(), 500); // Reload page after submission
+  
+        // ✅ Update data locally without reloading
+        if (existingRecord) {
+          existingRecord.ReasonForNoCaseNumber = requestData.ReasonForNoCaseNumber;
+          existingRecord.Comments = requestData.Comments;
+        } else {
+          this.dataSource.push(requestData);
+        }
+  
+        // ✅ Refresh the table
+        this.matTableDataSource.data = [...this.dataSource];
+  
       },
       error: (error) => {
         console.error('Error submitting data:', error);
       }
     });
   }
+  
   
   
   

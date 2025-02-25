@@ -1,0 +1,50 @@
+<mat-card>
+    <mat-card-title>📊 API Request Count Per Controller</mat-card-title>
+    <mat-progress-bar *ngIf="isLoadingRequestCount" mode="indeterminate"></mat-progress-bar>
+  
+    <table mat-table [dataSource]="requestCountData" class="mat-elevation-z8 small-table">
+      <ng-container matColumnDef="ControllerName">
+        <th mat-header-cell *matHeaderCellDef> Controller </th>
+        <td mat-cell *matCellDef="let row"> {{ row.ControllerName }} </td>
+      </ng-container>
+  
+      <ng-container matColumnDef="RequestCount">
+        <th mat-header-cell *matHeaderCellDef> Requests </th>
+        <td mat-cell *matCellDef="let row"> {{ row.RequestCount }} </td>
+      </ng-container>
+  
+      <tr mat-header-row *matHeaderRowDef="requestCountColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: requestCountColumns;"></tr>
+    </table>
+  </mat-card>
+  
+  <mat-card>
+    <mat-card-title>📜 Moshe Online Logs</mat-card-title>
+    <mat-progress-bar *ngIf="isLoadingLogs" mode="indeterminate"></mat-progress-bar>
+  
+    <table mat-table [dataSource]="logsData" class="mat-elevation-z8">
+      <ng-container matColumnDef="RequestTime">
+        <th mat-header-cell *matHeaderCellDef> Request Time </th>
+        <td mat-cell *matCellDef="let log"> {{ log.RequestTime | date:'short' }} </td>
+      </ng-container>
+  
+      <ng-container matColumnDef="RequestUrl">
+        <th mat-header-cell *matHeaderCellDef> Request URL </th>
+        <td mat-cell *matCellDef="let log"> {{ log.RequestUrl }} </td>
+      </ng-container>
+  
+      <ng-container matColumnDef="HttpMethod">
+        <th mat-header-cell *matHeaderCellDef> HTTP Method </th>
+        <td mat-cell *matCellDef="let log"> {{ log.HttpMethod }} </td>
+      </ng-container>
+  
+      <ng-container matColumnDef="UserIP">
+        <th mat-header-cell *matHeaderCellDef> User IP </th>
+        <td mat-cell *matCellDef="let log"> {{ log.UserIP }} </td>
+      </ng-container>
+  
+      <tr mat-header-row *matHeaderRowDef="logColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: logColumns;"></tr>
+    </table>
+  </mat-card>
+  

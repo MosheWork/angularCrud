@@ -140,6 +140,7 @@ import { SpinnerComponent } from './components/spinner/spinner.component';
 import { ERdashboardComponent } from './chameleon-reports/erdashboard/erdashboard.component';
 import { DementiaPatientsComponent } from './chameleon-reports/dementia-patients/dementia-patients.component';
 import { CameleonNoCaseNumberReasonsComponent } from './chameleon-reports/cameleon-no-case-number-reasons/cameleon-no-case-number-reasons.component';
+import { MosheOnlineLogsComponent } from './chameleon-reports/moshe-online-logs/moshe-online-logs.component';
 
 @NgModule({
   declarations: [
@@ -246,7 +247,8 @@ import { CameleonNoCaseNumberReasonsComponent } from './chameleon-reports/camele
     SpinnerComponent,
     ERdashboardComponent,
     DementiaPatientsComponent,
-    CameleonNoCaseNumberReasonsComponent
+    CameleonNoCaseNumberReasonsComponent,
+    MosheOnlineLogsComponent
   
   ],
   imports: [
