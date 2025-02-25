@@ -68,6 +68,7 @@ import { ERdashboardComponent } from './chameleon-reports/erdashboard/erdashboar
 import { DementiaPatientsComponent } from './chameleon-reports/dementia-patients/dementia-patients.component';
 import { CameleonNoCaseNumberReasonsComponent } from './chameleon-reports/cameleon-no-case-number-reasons/cameleon-no-case-number-reasons.component';
 import { MosheOnlineLogsComponent } from './chameleon-reports/moshe-online-logs/moshe-online-logs.component';
+import { HospPhoneByDepartmentComponent } from './chameleon-reports/hosp-phone-by-department/hosp-phone-by-department.component';
 
 const routes: Routes = [
   { path: 'users', component: UsersComponent },
@@ -151,7 +152,9 @@ const routes: Routes = [
    { path: 'ERdashboard', component: ERdashboardComponent },// דאשבורד למיון
    { path: 'dementia-patients', component: DementiaPatientsComponent },// מטופלים דימנטים לרויטל
    { path: 'CameleonNoCaseNumberReasons', component: CameleonNoCaseNumberReasonsComponent },// מטופלים  ללא מספרי מקרה לדלאשה   
-   { path: 'MosheOnlineLogs', component: MosheOnlineLogsComponent },// מטופלים  ללא מספרי מקרה לדלאשה   
+   { path: 'MosheOnlineLogs', component: MosheOnlineLogsComponent },// מטופלים  ללא מספרי מקרה לדלאשה  
+   { path: 'HospPhoneByDepartment', component: HospPhoneByDepartmentComponent },// מטופלים  ללא מספרי מקרה לדלאשה   
+ 
 
 
 
