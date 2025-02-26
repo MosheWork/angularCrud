@@ -28,6 +28,15 @@ interface MedExecutionModel {
   Depart_Name: string;
   Unit_Satellite_Name: string; // Add this property
 }
+interface AggregatedMedExecutionModel {
+  Unit_Satellite_Name: string;
+  Generic_Name_ForDisplay: string;
+  Way_Of_Giving: string;
+  Dosage_Unit_InOrder: string;
+  Dosage_InOrder: number;
+  Count_Dosage_InOrder: number;
+  Sum_Dosage_InOrder2: number;
+}
 
 @Component({
   selector: 'app-med-execution-table',
@@ -190,6 +199,19 @@ export class MedExecutionTableComponent implements OnInit, AfterViewInit {
   unitNameFilter: string = '';
   unitSatelliteNamesControl = new FormControl<string[]>([]); // Form control for Unit_Satellite_Name
 
+
+  aggregatedDataSource = new MatTableDataSource<AggregatedMedExecutionModel>();
+aggregatedDisplayedColumns: string[] = [
+  'Unit_Satellite_Name',
+  'Generic_Name_ForDisplay',
+  'Way_Of_Giving',
+  'Dosage_Unit_InOrder',
+  'Dosage_InOrder',
+  'Count_Dosage_InOrder',
+  'Sum_Dosage_InOrder2'
+];
+@ViewChild('aggregatedPaginator') aggregatedPaginator!: MatPaginator;
+@ViewChild('aggregatedSort') aggregatedSort!: MatSort;
   // Add this to the `createFilterForm` method:
   
   @ViewChild(MatPaginator) paginator!: MatPaginator;
@@ -228,8 +250,11 @@ export class MedExecutionTableComponent implements OnInit, AfterViewInit {
   ngAfterViewInit() {
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
+  
+    this.aggregatedDataSource.paginator = this.aggregatedPaginator;
+    this.aggregatedDataSource.sort = this.aggregatedSort;
   }
-
+  
   fetchBasicNameOptions() {
     this.http.get<string[]>(`${environment.apiUrl}MedExecutionAPI/GetBasicNameOptions`).subscribe(
       data => {
@@ -319,43 +344,53 @@ export class MedExecutionTableComponent implements OnInit, AfterViewInit {
   
     if (filters.StartDate) {
       const formattedStartDate = this.datePipe.transform(filters.StartDate, 'yyyy-MM-dd');
-      params = params.append('startDate', formattedStartDate!); // Match backend parameter name
+      params = params.append('startDate', formattedStartDate!);
     }
   
     if (filters.EndDate) {
       const formattedEndDate = this.datePipe.transform(filters.EndDate, 'yyyy-MM-dd');
-      params = params.append('endDate', formattedEndDate!); // Match backend parameter name
+      params = params.append('endDate', formattedEndDate!);
     }
   
     if (filters.Basic_Names) {
-      params = params.append('basic_Names', filters.Basic_Names); // Match backend parameter name
+      params = params.append('basic_Names', filters.Basic_Names);
     }
   
     if (filters.Category_Name) {
-      params = params.append('category_Name', filters.Category_Name); // Match backend parameter name
+      params = params.append('category_Name', filters.Category_Name);
     }
   
     if (filters.Generic_Names_ForDisplay) {
-      params = params.append('generic_Names_ForDisplay', filters.Generic_Names_ForDisplay); // Match backend parameter name
+      params = params.append('generic_Names_ForDisplay', filters.Generic_Names_ForDisplay);
     }
   
     if (filters.Drug) {
-      params = params.append('drug', filters.Drug); // Match backend parameter name
+      params = params.append('drug', filters.Drug);
     }
   
-    this.http.get<MedExecutionModel[]>(`${environment.apiUrl}MedExecutionAPI`, { params }).subscribe(
+    // 🚀 Fetch Main Data & Aggregated Data in Parallel
+    const mainData$ = this.http.get<MedExecutionModel[]>(`${environment.apiUrl}MedExecutionAPI`, { params });
+    const aggregatedData$ = this.http.get<AggregatedMedExecutionModel[]>(`${environment.apiUrl}MedExecutionAPI/AggregatedData`, { params });
+  
+    mainData$.subscribe(
       data => {
-        this.originalData = data; // Save the unfiltered data
-        this.dataSource.data = [...data]; // Initialize the table with unfiltered data
+        this.originalData = data;
+        this.dataSource.data = [...data];
         this.totalResults = data.length;
-        this.loading = false;
       },
-      error => {
-        console.error('Error loading data:', error);
-        this.loading = false;
-      }
+      error => console.error('Error loading main data:', error)
     );
+  
+    aggregatedData$.subscribe(
+      aggregatedData => {
+        this.aggregatedDataSource.data = aggregatedData;
+      },
+      error => console.error('Error loading aggregated data:', error)
+    );
+  
+    this.loading = false;
   }
+  
   
   
   
