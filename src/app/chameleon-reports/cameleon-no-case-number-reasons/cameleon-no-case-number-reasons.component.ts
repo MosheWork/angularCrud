@@ -212,30 +212,29 @@ gaugeBackgroundColor = '#e0e0e0'; // Grey background
       Comments: this.dialogForm.value.Comments
     };
   
-    // Check if the row already exists
-    const existingRecord = this.dataSource.find(record => record.IdNum === idNum);
+    const requestUrl = environment.apiUrl + `CameleonNoCaseNumberReasonsMM/save`;
   
-    const requestType = existingRecord ? 'put' : 'post';
-    const requestUrl = environment.apiUrl + `CameleonNoCaseNumberReasonsMM/${requestType === 'put' ? 'update' : 'insert'}`;
-  
-    this.http[requestType](requestUrl, requestData, {
+    this.http.post(requestUrl, requestData, {
       headers: { 'Content-Type': 'application/json' }
     }).subscribe({
       next: (response) => {
         console.log('Data submitted successfully:', response);
         this.dialog.closeAll(); // Close dialog
   
-        // ✅ Update data locally without reloading
+        // ✅ Check if the record already exists in dataSource
+        const existingRecord = this.dataSource.find(record => record.IdNum === idNum);
+  
         if (existingRecord) {
+          // ✅ Update existing record in the table
           existingRecord.ReasonForNoCaseNumber = requestData.ReasonForNoCaseNumber;
           existingRecord.Comments = requestData.Comments;
         } else {
+          // ✅ Add new record to dataSource
           this.dataSource.push(requestData);
         }
   
         // ✅ Refresh the table
         this.matTableDataSource.data = [...this.dataSource];
-  
       },
       error: (error) => {
         console.error('Error submitting data:', error);

@@ -25,18 +25,15 @@ export class HospPhoneByDepartmentComponent implements OnInit {
   dataSource: any[] = [];
   filteredData: any[] = [];
   matTableDataSource: MatTableDataSource<any>;
-  medUnitOptions: string[] = [];
-  nurseUnitOptions: string[] = [];
+  UnitOptions: string[] = [];
 
   columns: string[] = [
+    'UnitName',
     'PatientName',
     'IdNum',
     'Phone',
     'PhoneCell',
-    'PhoneWork',
-   
-    'MedUnit',
-    'NurseUnit'
+    'PhoneWork'
   ];
 
   constructor(private http: HttpClient, private fb: FormBuilder) {
@@ -53,9 +50,8 @@ export class HospPhoneByDepartmentComponent implements OnInit {
         this.matTableDataSource.paginator = this.paginator;
         this.matTableDataSource.sort = this.sort;
 
-        // Populate filter dropdown options
-        this.medUnitOptions = [...new Set(data.map(item => item.MedUnit).filter(Boolean))];
-        this.nurseUnitOptions = [...new Set(data.map(item => item.NurseUnit).filter(Boolean))];
+        // Populate Unit filter dropdown options
+        this.UnitOptions = [...new Set(data.map(item => item.UnitName).filter(Boolean))];
 
         this.filterForm.valueChanges.pipe(
           debounceTime(300),
@@ -74,23 +70,21 @@ export class HospPhoneByDepartmentComponent implements OnInit {
       formControls[column] = new FormControl('');
     });
     formControls['globalFilter'] = new FormControl('');
-    formControls['medUnitFilter'] = new FormControl([]);
-    formControls['nurseUnitFilter'] = new FormControl([]);
+    formControls['UnitFilter'] = new FormControl([]);
     return this.fb.group(formControls);
   }
 
   applyFilters() {
     const filters = this.filterForm.value;
     const globalFilter = filters['globalFilter'].toLowerCase();
-    const selectedMedUnits = filters['medUnitFilter'];
-    const selectedNurseUnits = filters['nurseUnitFilter'];
-    
+    const selectedMedUnits = filters['UnitFilter'];
+
     this.filteredData = this.dataSource.filter(item =>
       this.columns.every(column => !filters[column] || String(item[column]).toLowerCase().includes(filters[column].toLowerCase())) &&
       (globalFilter === '' || this.columns.some(column => String(item[column]).toLowerCase().includes(globalFilter))) &&
-      (selectedMedUnits.length === 0 || selectedMedUnits.includes(item.MedUnit)) &&
-      (selectedNurseUnits.length === 0 || selectedNurseUnits.includes(item.NurseUnit))
+      (selectedMedUnits.length === 0 || selectedMedUnits.includes(item.UnitName)) 
     );
+
     this.totalResults = this.filteredData.length;
     this.matTableDataSource.data = this.filteredData;
   }
@@ -98,8 +92,7 @@ export class HospPhoneByDepartmentComponent implements OnInit {
   resetFilters() {
     this.filterForm.reset();
     this.filterForm.get('globalFilter')?.setValue('');
-    this.filterForm.get('medUnitFilter')?.setValue([]);
-    this.filterForm.get('nurseUnitFilter')?.setValue([]);
+    this.filterForm.get('UnitFilter')?.setValue([]);
     this.applyFilters();
   }
 

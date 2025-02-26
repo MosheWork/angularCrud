@@ -87,9 +87,7 @@
       <button mat-button (click)="search()" mat-raised-button color="primary" class="custom-button" matTooltip="חפש">
         <mat-icon>search</mat-icon>
       </button>
-      <div class="icon" matTooltip="Download Excel">
-        <img src="../../assets/excel.png" alt="Download" (click)="exportToExcel()" class="download-icon" />
-      </div>
+    
     </div>
     <div class="button-container">
       <button mat-button (click)="resetFilters()" mat-raised-button color="primary" class="custom-button" matTooltip="איפוס מסננים">
@@ -108,7 +106,9 @@
   </div>
   <mat-tab-group>
     <mat-tab label="טבלה ראשית">
-
+      <div class="icon" matTooltip="Download Excel">
+        <img src="../../assets/excel.png" alt="Download" (click)="exportToExcel()" class="download-icon" />
+      </div>
   <mat-table *ngIf="!showGraph && !loading" [dataSource]="dataSource" matSort dir="rtl" class="mat-elevation-z8">
     <ng-container matColumnDef="Basic_Name">
       <mat-header-cell *matHeaderCellDef mat-sort-header>שם תרופה</mat-header-cell>
@@ -164,7 +164,11 @@
   <mat-paginator [length]="totalResults" [pageSize]="10" [pageSizeOptions]="[10, 25, 50]"></mat-paginator>
 </mat-tab>
   <!-- 🔹 Second Tab: Aggregated Data -->
+ 
   <mat-tab label="טבלה מסוכמת">
+    <div class="icon" matTooltip="Download Aggregated Excel">
+      <img src="../../assets/excel.png" alt="Download" (click)="exportToExcel2()" class="download-icon" />
+    </div>
     <mat-table *ngIf="!loading" [dataSource]="aggregatedDataSource" matSort dir="rtl" class="mat-elevation-z8">
       <ng-container matColumnDef="Unit_Satellite_Name">
         <mat-header-cell *matHeaderCellDef mat-sort-header>מחלקת לווין</mat-header-cell>

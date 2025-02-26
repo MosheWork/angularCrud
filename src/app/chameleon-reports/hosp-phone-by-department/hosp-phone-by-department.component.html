@@ -23,18 +23,18 @@
       </mat-form-field>
 
       <mat-form-field>
-        <mat-label>מחלקה רפואית</mat-label>
-        <mat-select [formControlName]="'medUnitFilter'" multiple>
-          <mat-option *ngFor="let unit of medUnitOptions" [value]="unit">{{ unit }}</mat-option>
+        <mat-label>מחלקה </mat-label>
+        <mat-select [formControlName]="'UnitFilter'" multiple>
+          <mat-option *ngFor="let unit of UnitOptions" [value]="unit">{{ unit }}</mat-option>
         </mat-select>
       </mat-form-field>
 
-      <mat-form-field>
+      <!-- <mat-form-field>
         <mat-label>מחלקה סיעודית</mat-label>
         <mat-select [formControlName]="'nurseUnitFilter'" multiple>
           <mat-option *ngFor="let unit of nurseUnitOptions" [value]="unit">{{ unit }}</mat-option>
         </mat-select>
-      </mat-form-field>
+      </mat-form-field> -->
 
       <button mat-button (click)="resetFilters()" mat-raised-button color="primary" class="custom-button" matTooltip="Reset Filters">
         <i class="material-icons">refresh</i>
@@ -54,7 +54,7 @@
            column === 'PhoneWork' ? 'טלפון עבודה' :
            column === 'UnitSatellite' ? 'יחידה לוויינית' :
            column === 'Unit' ? 'יחידה' :
-           column === 'MedUnit' ? 'מחלקה רפואית' :
+           column === 'UnitName' ? 'מחלקה ' :
            column === 'NurseUnit' ? 'מחלקה סיעודית' : column }}
       </mat-header-cell>
       <mat-cell *matCellDef="let element">{{ element[column] }}</mat-cell>
