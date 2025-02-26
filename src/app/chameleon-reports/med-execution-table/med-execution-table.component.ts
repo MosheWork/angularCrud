@@ -200,7 +200,6 @@ export class MedExecutionTableComponent implements OnInit, AfterViewInit {
   unitSatelliteNamesControl = new FormControl<string[]>([]); // Form control for Unit_Satellite_Name
 
 
-  aggregatedDataSource = new MatTableDataSource<AggregatedMedExecutionModel>();
 aggregatedDisplayedColumns: string[] = [
   'Unit_Satellite_Name',
   'Generic_Name_ForDisplay',
@@ -216,7 +215,9 @@ aggregatedDisplayedColumns: string[] = [
   
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
-
+  aggregatedData: MedExecutionModel[] = []; // Store original aggregated data
+  aggregatedDataSource = new MatTableDataSource<MedExecutionModel>(); // DataSource for aggregated table
+  
   basicNamesControl = new FormControl('');
   genericNamesControl = new FormControl('');
   unitNamesControl = new FormControl<string[]>([]);
@@ -230,11 +231,10 @@ aggregatedDisplayedColumns: string[] = [
     this.fetchGenericNameOptions();
     this.fetchUnitNameOptions();
   
-    // Listen for changes in Unit Satellite Names selection
-    this.unitSatelliteNamesControl.valueChanges.subscribe((selectedUnits: string[] | null) => {
-      this.filterUnitSatelliteNames(selectedUnits || []); // Pass an empty array if null
-    });
-  
+ // 🔹 Apply Filtering when Unit Satellite Names change
+ this.unitSatelliteNamesControl.valueChanges.subscribe((selectedUnits: string[] | null) => {
+  this.filterUnitSatelliteNames(selectedUnits || []);
+});
     this.filteredBasicNameOptions = this.basicNamesControl.valueChanges.pipe(
       startWith(''),
       map(value => this._filterBasicNameOptions(value || ''))
@@ -368,28 +368,32 @@ aggregatedDisplayedColumns: string[] = [
       params = params.append('drug', filters.Drug);
     }
   
-    // 🚀 Fetch Main Data & Aggregated Data in Parallel
-    const mainData$ = this.http.get<MedExecutionModel[]>(`${environment.apiUrl}MedExecutionAPI`, { params });
-    const aggregatedData$ = this.http.get<AggregatedMedExecutionModel[]>(`${environment.apiUrl}MedExecutionAPI/AggregatedData`, { params });
-  
-    mainData$.subscribe(
+    // 🔹 Fetch data for Main Table
+    this.http.get<MedExecutionModel[]>(`${environment.apiUrl}MedExecutionAPI`, { params }).subscribe(
       data => {
-        this.originalData = data;
-        this.dataSource.data = [...data];
+        this.originalData = data; // Save unfiltered data
+        this.dataSource.data = [...data]; // Initialize Main Table
         this.totalResults = data.length;
+        this.loading = false;
       },
-      error => console.error('Error loading main data:', error)
+      error => {
+        console.error('Error loading data:', error);
+        this.loading = false;
+      }
     );
   
-    aggregatedData$.subscribe(
-      aggregatedData => {
-        this.aggregatedDataSource.data = aggregatedData;
+    // 🔹 Fetch data for Aggregated Table
+    this.http.get<MedExecutionModel[]>(`${environment.apiUrl}MedExecutionAPI/GetAggregatedData`, { params }).subscribe(
+      data => {
+        this.aggregatedData = data; // Save unfiltered aggregated data
+        this.aggregatedDataSource.data = [...data]; // Initialize Aggregated Table
       },
-      error => console.error('Error loading aggregated data:', error)
+      error => {
+        console.error('Error loading aggregated data:', error);
+      }
     );
-  
-    this.loading = false;
   }
+  
   
   
   
@@ -484,23 +488,41 @@ aggregatedDisplayedColumns: string[] = [
 
   filterUnitSatelliteNames(selectedUnitSatelliteNames: string[]): void {
     if (selectedUnitSatelliteNames.length > 0) {
-      // Filter data based on selected units
+      // 🔹 Filter Main Table
       this.dataSource.data = this.originalData.filter(item =>
         selectedUnitSatelliteNames.includes(item.Unit_Satellite_Name)
       );
+  
+      // 🔹 Filter Aggregated Table
+      this.aggregatedDataSource.data = this.aggregatedData.filter(item =>
+        selectedUnitSatelliteNames.includes(item.Unit_Satellite_Name)
+      );
     } else {
-      // If no units are selected, reset the data
+      // 🔹 Restore Original Data in Both Tables
       this.dataSource.data = [...this.originalData];
+      this.aggregatedDataSource.data = [...this.aggregatedData];
     }
   
-    this.totalResults = this.dataSource.data.length; // Update total results count
+    // Update total results count
+    this.totalResults = this.dataSource.data.length;
   }
   
   
   
-
+  
+  
+  
+  
   resetUnitSatelliteFilter(): void {
     this.unitSatelliteNamesControl.setValue([]);
-    this.dataSource.data = [...this.originalData]; // Store the original data initially
+  
+    // Restore original data in both tables
+    this.dataSource.data = [...this.originalData];
+    this.aggregatedDataSource.data = [...this.aggregatedData];
+  
+    // Update total results count
+    this.totalResults = this.dataSource.data.length;
   }
+  
+  
 }
