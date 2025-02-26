@@ -536,4 +536,38 @@
     }
   }
   
+  //gauge
+  .gauge-item {
+    text-align: center;
+    margin-bottom: 20px;
+  }
   
+  .gauge-title {
+    font-weight: bold;
+    font-size: 16px;
+    margin-bottom: 10px;
+  }
+  
+  .gauge-info {
+    margin-top: 10px;
+    font-size: 14px;
+  }
+  ngx-gauge .value {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 14px; /* Adjust font size to fit */
+    font-weight: bold;
+    color: black; /* Ensure contrast for visibility */
+    white-space: nowrap; /* Prevent text wrapping */
+  }
+
+  ::ng-deep ngx-gauge .reading-block {
+    font-size: 20px !important; /* Desired font size */
+    transform: translateY(78px) !important;
+    font-weight: 400;
+    color: black !important;
+    margin-top: 0; /* Ensure no gap between the title and gauge */
+
+  }

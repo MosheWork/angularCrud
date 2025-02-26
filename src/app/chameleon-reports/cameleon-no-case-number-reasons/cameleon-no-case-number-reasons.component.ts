@@ -71,7 +71,7 @@ gaugeBackgroundColor = '#e0e0e0'; // Grey background
     'המשתמש לא מוצא מטופל עקב סינון יומן ומבקש לקלוט מחדש',
     'זימון למספר יומנים, פתיחת מקרה באחד מהם',
     'זימון ליחידה מאשפזת (פעולה פולשנית)',
-    'הוספת מטופל ידנית בלחיצה על כפתור'
+    'הוספת מטופל ידנית בלחיצה על כפתור', 'אחר'
   ];
     @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;

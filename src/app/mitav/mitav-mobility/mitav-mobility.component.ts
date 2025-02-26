@@ -31,6 +31,10 @@ export class MitavMobilityComponent implements OnInit, AfterViewInit {
     'AdmissionDate',
     'ReleaseDate',
     'MobilityGrade',
+    'EntryDate15478', // ✅ Added
+    'ComboText15478', // ✅ Added
+    'MobilityAssessmentAtDischarge', // ✅ Added
+    'MobilityStatus',
     'ConsultationStatus',
     'RecommendationForWalking',
     'RequiredAssistiveDevice',
@@ -42,8 +46,8 @@ export class MitavMobilityComponent implements OnInit, AfterViewInit {
     'TotalPercentage',
     'IsRecordMatchingReleaseDate',
     'HasRecordPerDate',
-    'CognitiveFunctionBeforeHospitalization',  // Added
-    'MobilityBeforeHospitalization',          // Added
+    //'CognitiveFunctionBeforeHospitalization',  // Added
+    //'MobilityBeforeHospitalization',          // Added
     'BasicFunctionBeforeHospitalization'
   ];
   globalFilterValue: string = ''; // Store global filter text

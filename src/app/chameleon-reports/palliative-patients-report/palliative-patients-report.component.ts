@@ -28,18 +28,22 @@ export class PalliativePatientsReportComponent implements OnInit, AfterViewInit 
     'PatientName',
     'IdNum',
     'AdmissionNo',
-    'ResultComboText',
-    'ComboEntryDate',
-    'AdmissionDate'
+    'AdmissionDate',
+    'ResultCognitive',
+    'ResultEntryDate',
+    'DescriptionCognitive',
+    'DescriptionEntryDate'
   ];
 
   columnHeaders: { [key: string]: string } = {
     PatientName: 'שם המטופל',
     IdNum: 'תעודת זהות',
     AdmissionNo: 'מספר מקרה',
-    ResultComboText: 'מצב החולה',
-    ComboEntryDate: 'תאריך כניסת האבחנה',
-    AdmissionDate: 'תאריך קבלה'
+    AdmissionDate: 'תאריך קבלה',
+    ResultCognitive:'הגדרת החולה',
+    ResultEntryDate:'תאריך הגדרה',
+    DescriptionCognitive:'תיעוד רופא מלל חופשי',
+    DescriptionEntryDate:' תאריך התיעוד',
   };
 
   dataSource = new MatTableDataSource<PalliativePatientsReportModel>();

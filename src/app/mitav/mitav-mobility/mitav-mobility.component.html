@@ -258,11 +258,33 @@
             <th mat-header-cell *matHeaderCellDef mat-sort-header>דרגת ניידות</th>
             <td mat-cell *matCellDef="let element"> {{ element.MobilityGrade }}</td>
           </ng-container>
-      <!-- Cognitive Function Before Hospitalization Column -->
-<ng-container matColumnDef="CognitiveFunctionBeforeHospitalization">
-  <th mat-header-cell *matHeaderCellDef mat-sort-header>תפקוד קוגניטיבי לפני אשפוז</th>
+
+           <!-- EntryDate15478 Column -->
+           <ng-container matColumnDef="EntryDate15478">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header> תאריך דרגת ניידות- אחרון</th>
+            <td mat-cell *matCellDef="let element"> {{ element.EntryDate15478 }}</td>
+          </ng-container>
+ <!-- ComboText15478 Column -->
+ <ng-container matColumnDef="ComboText15478">
+  <th mat-header-cell *matHeaderCellDef mat-sort-header>דרגת ניידות- אחרון</th>
+  <td mat-cell *matCellDef="let element"> {{ element.ComboText15478 }}</td>
+</ng-container>
+ <!-- MobilityAssessmentAtDischarge Column -->
+ <ng-container matColumnDef="MobilityAssessmentAtDischarge">
+  <th mat-header-cell *matHeaderCellDef mat-sort-header> הערכת ניידות בשחרור </th>
+  <td mat-cell *matCellDef="let element"> {{ element.MobilityAssessmentAtDischarge }}</td>
+</ng-container>
+ <!-- MobilityAssessmentAtDischarge Column
+ <ng-container matColumnDef="MobilityAssessmentAtDischarge">
+  <th mat-header-cell *matHeaderCellDef mat-sort-header> הערכת ניידות בשחרור </th>
+  <td mat-cell *matCellDef="let element"> {{ element.MobilityAssessmentAtDischarge }}</td>
+</ng-container> -->
+
+      <!-- MobilityStatus Column -->
+<ng-container matColumnDef="MobilityStatus">
+  <th mat-header-cell *matHeaderCellDef mat-sort-header>האם היה שינוי בניידות</th>
   <td mat-cell *matCellDef="let element">
-    {{ element.CognitiveFunctionBeforeHospitalization }}
+    {{ element.MobilityStatus }}
   </td>
 </ng-container>
 

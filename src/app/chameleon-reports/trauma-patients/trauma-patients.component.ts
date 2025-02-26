@@ -49,6 +49,7 @@ export class TraumaPatientsComponent implements OnInit {
     'CaseNumber',
     'PatientName',
     'AdmissionDepartment',
+    'DepartmentName',
     'AdmissionTime',
     'ERReleaseTime',
     'HospitalReleaseTime',
@@ -62,7 +63,7 @@ export class TraumaPatientsComponent implements OnInit {
     'Month',  // ✅ Added missing Month
     'Week',  // ✅ Added missing Week
     'Year',  // ✅ Added missing Year
-    'DepartmentName',
+
     'ReceiveCause',
     'ReceiveCauseDescription',
     'ERDoctor',
@@ -92,6 +93,7 @@ export class TraumaPatientsComponent implements OnInit {
     'CaseNumber': 'מס מקרה',
     'PatientName': 'שם מטופל',
     'AdmissionDepartment': 'מחלקה בקבלה',
+    'DepartmentName': 'מחלקה מאשפזת',
     'ShockRoom': 'חדר הלם',
     'AdmissionTime': 'זמן קבלה',
     'ERReleaseTime': 'זמן שחרור ממיון',
@@ -104,7 +106,7 @@ export class TraumaPatientsComponent implements OnInit {
     'Year': 'שנה',
     'Month': 'חודש',
     'Week': 'שבוע',
-    'DepartmentName': 'מחלקה מאשפזת',
+    
     'ReceiveCauseDescription': 'סיבת קבלה',
     'ERDoctor': 'רופא במיון',
     'ERNurse': 'אח/ות במיון',

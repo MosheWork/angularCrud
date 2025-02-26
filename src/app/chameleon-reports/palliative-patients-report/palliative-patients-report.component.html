@@ -47,17 +47,19 @@
     <mat-table [dataSource]="dataSource" matSort dir="rtl" class="mat-elevation-z8">
       <!-- Table Columns -->
       <ng-container *ngFor="let column of displayedColumns" [matColumnDef]="column">
-        <mat-header-cell *matHeaderCellDef mat-sort-header>{{ columnHeaders[column] }}</mat-header-cell>
+        <mat-header-cell *matHeaderCellDef mat-sort-header>
+          {{ columnHeaders[column] }}
+        </mat-header-cell>
         <mat-cell *matCellDef="let element">
-          <ng-container *ngIf="column === 'ComboEntryDate' || column === 'AdmissionDate'; else defaultCell">
-            {{ element[column] | date: 'dd/MM/yyyy HH:mm' }}
+          <ng-container *ngIf="column === 'ResultEntryDate' || column === 'DescriptionEntryDate' ||column === 'AdmissionDate' ; else defaultCell">
+            {{ element[column] ? (element[column] | date: 'dd/MM/yyyy HH:mm') : 'אין תיעוד' }}
           </ng-container>
+      
           <ng-template #defaultCell>
-            {{ element[column] }}
+            {{ element[column] || 'אין תיעוד' }}
           </ng-template>
         </mat-cell>
       </ng-container>
-
       <!-- Table Headers & Rows -->
       <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
       <mat-row *matRowDef="let row; columns: displayedColumns;" class="mat-row"></mat-row>

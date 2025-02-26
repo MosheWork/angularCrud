@@ -83,7 +83,22 @@
     </div>
   </div>
 
-  
+  <!-- CAM Assessment Gauge (אומדן CAM) -->
+<div class="gauge-item">
+  <div class="gauge-title">אומדן CAM</div>
+  <ngx-gauge
+    [value]="camAssessmentGauge"
+    [min]="0"
+    [max]="100"
+    [label]="''"
+    [append]="'%'"
+    [foregroundColor]="camAssessmentGaugeColor()"> 
+  </ngx-gauge>
+  <div class="gauge-info">
+    <strong> תקין {{ validCAMCount }} / לא תקין {{ invalidCAMCount }} / סה"כ - {{ totalCAMCases }} </strong>
+  </div>
+</div>
+
   <div class="table-section">
     <mat-table [dataSource]="dataSource" matSort class="mat-elevation-z8" dir="rtl">
   
@@ -142,6 +157,11 @@
           {{ element.Grade && element.Grade.trim() !== '' ? element.Grade : 'אין תיעוד' }} 
         </mat-cell>
       </ng-container>
+
+      <ng-container matColumnDef="GradeEntryDate">
+        <mat-header-cell *matHeaderCellDef mat-sort-header> תאריך ביצוע האומדן</mat-header-cell>
+        <mat-cell *matCellDef="let element"> {{ element.GradeEntryDate | date: 'dd/MM/yyyy ' }} </mat-cell>
+      </ng-container>
   <!-- גיל -->
   <ng-container matColumnDef="Age_Years">
     <mat-header-cell *matHeaderCellDef mat-sort-header> גיל </mat-header-cell>
@@ -157,7 +177,7 @@
       <ng-container matColumnDef="PatientWithDeliriumEntryDate">
         <mat-header-cell *matHeaderCellDef mat-sort-header> תאריך הופעת דליריום </mat-header-cell>
         <mat-cell *matCellDef="let element">
-          {{ element.PatientWithDeliriumEntryDate ? (element.PatientWithDeliriumEntryDate | date: 'dd/MM/yyyy HH:mm') : 'לא רלוונטי '}}
+          {{ element.PatientWithDeliriumEntryDate ? (element.PatientWithDeliriumEntryDate | date: 'dd/MM/yyyy ') : 'לא רלוונטי '}}
         </mat-cell>
       </ng-container>
   

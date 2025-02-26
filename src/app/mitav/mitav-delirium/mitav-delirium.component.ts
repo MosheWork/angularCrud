@@ -4,6 +4,7 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatSort } from '@angular/material/sort';
 import { environment } from '../../../environments/environment';
+import { ChartOptions } from 'chart.js';
 
 @Component({
   selector: 'app-mitav-delirium',
@@ -19,6 +20,7 @@ export class MitavDeliriumComponent implements OnInit {
     'ATD_Admission_Date',
     'AdmissionCAMGrade',
     'Grade',
+    'GradeEntryDate',
     'PatientWithDelirium',
     'PatientWithDeliriumEntryDate',
     'DeliriumDaysCount',
@@ -32,6 +34,7 @@ export class MitavDeliriumComponent implements OnInit {
    'ReleaseCAM',
    'CAMGradeChanged',
    'Release_Date',
+  
   
   ];
 
@@ -47,6 +50,16 @@ startDate: Date | null = null;
 endDate: Date | null = null;
 originalData: any[] = [];
 globalFilterValue: string = ''; // Store global filter text
+
+// CAM Assessment Gauge Data
+validCAMCount: number = 0;
+invalidCAMCount: number = 0;
+totalCAMCases: number = 0;
+camAssessmentGauge: number = 0;
+
+camAssessmentGaugeColor(): string {
+  return this.camAssessmentGauge > 80 ? '#28a745' : this.camAssessmentGauge > 50 ? '#ffc107' : '#dc3545';
+}
 
   dataSource = new MatTableDataSource<any>();
   isLoading: boolean = true;
@@ -78,6 +91,14 @@ globalFilterValue: string = ''; // Store global filter text
         console.log('Mitav Delirium Report Data:', data);
         this.dataSource.data = data;
         this.originalData = data;
+// Calculate Gauge Data
+this.totalCAMCases = data.length;
+this.validCAMCount = data.filter(item => item.Grade && item.Grade.trim() !== '' && item.Grade !== 'אין תיעוד').length;
+this.invalidCAMCount = this.totalCAMCases - this.validCAMCount;
+
+// Calculate percentage
+this.camAssessmentGauge = this.totalCAMCases > 0 ? (this.validCAMCount / this.totalCAMCases) * 100 : 0;
+
   
         // ✅ Extract Unique Years from ATD_Admission_Date & Release_Date
         const years = new Set<number>();
@@ -123,7 +144,13 @@ globalFilterValue: string = ''; // Store global filter text
   applyFilters(): void {
     let filteredData = [...this.originalData];
   
-    
+    // ✅ Recalculate Gauge Data Based on Filtered Data
+this.totalCAMCases = filteredData.length;
+this.validCAMCount = filteredData.filter(item => item.Grade && item.Grade.trim() !== '' && item.Grade !== 'אין תיעוד').length;
+this.invalidCAMCount = this.totalCAMCases - this.validCAMCount;
+
+// ✅ Update Gauge Percentage
+this.camAssessmentGauge = this.totalCAMCases > 0 ? (this.validCAMCount / this.totalCAMCases) * 100 : 0;
 // ✅ Apply Date Filter based on ATD_Admission_Date and Release_Date
 if (this.startDate || this.endDate) {
   filteredData = filteredData.filter((item) => {
@@ -208,6 +235,12 @@ if (this.selectedQuarter) {
     this.selectedYear = null;
     this.selectedQuarter = null;
     this.dataSource.data = this.originalData;
+    // ✅ Reset Gauge Values
+this.totalCAMCases = this.originalData.length;
+this.validCAMCount = this.originalData.filter(item => item.Grade && item.Grade.trim() !== '' && item.Grade !== 'אין תיעוד').length;
+this.invalidCAMCount = this.totalCAMCases - this.validCAMCount;
+this.camAssessmentGauge = this.totalCAMCases > 0 ? (this.validCAMCount / this.totalCAMCases) * 100 : 0;
+
   
     // ✅ Reset Gauge Value
   }
