@@ -1,0 +1,33 @@
+<h2 mat-dialog-title>סיכום לפי מחלקות</h2>
+<mat-dialog-content>
+  <mat-table [dataSource]="data" class="mat-elevation-z8" dir="rtl">
+    <ng-container matColumnDef="department">
+      <mat-header-cell *matHeaderCellDef> מחלקה </mat-header-cell>
+      <mat-cell *matCellDef="let element"> {{ element.department }} </mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="totalCAMCases">
+      <mat-header-cell *matHeaderCellDef> סה"כ מקרים </mat-header-cell>
+      <mat-cell *matCellDef="let element"> {{ element.totalCAMCases }} </mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="validCAMCount">
+      <mat-header-cell *matHeaderCellDef> תקין </mat-header-cell>
+      <mat-cell *matCellDef="let element"> {{ element.validCAMCount }} </mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="validPercentage">
+      <mat-header-cell *matHeaderCellDef> אחוז תקינות </mat-header-cell>
+      <mat-cell *matCellDef="let element">
+        {{ element.validPercentage | number: '1.0-2' }}%
+      </mat-cell>
+    </ng-container>
+
+    <mat-header-row *matHeaderRowDef="['department', 'totalCAMCases', 'validCAMCount', 'validPercentage']"></mat-header-row>
+    <mat-row *matRowDef="let row; columns: ['department', 'totalCAMCases', 'validCAMCount', 'validPercentage'];"></mat-row>
+  </mat-table>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="closeDialog()">סגור</button>
+</mat-dialog-actions>

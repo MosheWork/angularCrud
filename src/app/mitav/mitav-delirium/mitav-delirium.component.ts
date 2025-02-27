@@ -6,6 +6,8 @@ import { MatSort } from '@angular/material/sort';
 import { environment } from '../../../environments/environment';
 import { ElementRef } from '@angular/core'; // ✅ Fix ElementRef error
 import { Chart, ChartType, ChartData, registerables } from 'chart.js'; // ✅ Fix Chart error
+import { DepartmentSummaryDialogComponent } from '../mitav-delirium/department-summary-dialog/department-summary-dialog.component';
+import { MatDialog } from '@angular/material/dialog';
 
 
 @Component({
@@ -76,7 +78,7 @@ camAssessmentGaugeColor(): string {
   @ViewChild('barChart') barChartRef!: ElementRef<HTMLCanvasElement>;
 private barChart!: Chart;
 
-constructor(private http: HttpClient) {
+constructor(private http: HttpClient, public dialog: MatDialog) {
   Chart.register(...registerables);
 }
   ngOnInit(): void {
@@ -365,18 +367,20 @@ this.camAssessmentGauge = this.totalCAMCases > 0 ? (this.validCAMCount / this.to
     }
   }
   
-  // Function to toggle department summary view
-  toggleDepartmentSummary(): void {
-    this.showDepartmentSummary = !this.showDepartmentSummary;
-    if (this.showDepartmentSummary) {
-      this.generateDepartmentSummaryData(); // Call function when opening summary view
-    }
+
+
+  openDepartmentSummaryDialog(): void {
+    this.generateDepartmentSummaryData();
+    this.dialog.open(DepartmentSummaryDialogComponent, {
+      width: '600px',
+      data: this.departmentSummaryData
+    });
   }
 
   generateDepartmentSummaryData(): void {
     const departmentMap = new Map<string, { totalCases: number; validCases: number }>();
 
-    this.originalData.forEach(item => {
+    this.dataSource.data.forEach(item => {
       const department = item.Name || 'Unknown';
       const isValid = item.Grade && item.Grade.trim() !== '' && item.Grade !== 'אין תיעוד';
 
@@ -395,4 +399,6 @@ this.camAssessmentGauge = this.totalCAMCases > 0 ? (this.validCAMCount / this.to
       validPercentage: counts.totalCases > 0 ? (counts.validCases / counts.totalCases) * 100 : 0
     }));
   }
+
+  
 }

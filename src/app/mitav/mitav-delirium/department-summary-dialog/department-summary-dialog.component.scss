@@ -1,0 +1,15 @@
+mat-dialog-content {
+    max-height: 400px;
+    overflow: auto;
+  }
+  
+  mat-table {
+    width: 100%;
+  }
+  
+  .mat-dialog-actions {
+    padding-top: 15px;
+    display: flex;
+    justify-content: flex-end;
+  }
+  

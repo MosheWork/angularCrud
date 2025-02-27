@@ -99,9 +99,10 @@
   </div>
 </div>
 <div class="toggle-container">
-  <img (click)="toggleView()" matTooltip="Move To Graph" src="../../../../assets/graphIcon.png" width="50px" />
-  <button mat-raised-button color="primary" (click)="toggleDepartmentSummary()">הצג סיכום לפי מחלקות</button>
+  <img (click)="toggleView()" matTooltip="הצג גרף" src="../../../../assets/graphIcon.png" width="50px" />
+  <button mat-raised-button color="primary" (click)="openDepartmentSummaryDialog()">סיכום לפי מחלקות</button>
 </div>
+
 
 <div *ngIf="showGraph" class="chart-container">
   <canvas #barChart></canvas>
