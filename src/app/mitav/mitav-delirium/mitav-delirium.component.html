@@ -99,9 +99,50 @@
   </div>
 </div>
 <div class="toggle-container">
-
-<img (click)="toggleView()" matTooltip="Move To Graph" src="../../../../assets/graphIcon.png" width="50px" />
+  <img (click)="toggleView()" matTooltip="Move To Graph" src="../../../../assets/graphIcon.png" width="50px" />
+  <button mat-raised-button color="primary" (click)="toggleDepartmentSummary()">הצג סיכום לפי מחלקות</button>
 </div>
+
+<div *ngIf="showGraph" class="chart-container">
+  <canvas #barChart></canvas>
+</div>
+
+<div *ngIf="showDepartmentSummary" class="department-summary">
+  <h2> סיכום לפי מחלקות</h2>
+  <mat-table [dataSource]="departmentSummaryData" class="mat-elevation-z8" dir="rtl">
+    
+    <!-- מחלקה -->
+    <ng-container matColumnDef="department">
+      <mat-header-cell *matHeaderCellDef> מחלקה </mat-header-cell>
+      <mat-cell *matCellDef="let element"> {{ element.department }} </mat-cell>
+    </ng-container>
+
+    <!-- מספר מקרים -->
+    <ng-container matColumnDef="totalCAMCases">
+      <mat-header-cell *matHeaderCellDef> סה"כ מקרים </mat-header-cell>
+      <mat-cell *matCellDef="let element"> {{ element.totalCAMCases }} </mat-cell>
+    </ng-container>
+
+    <!-- מספר תקינים -->
+    <ng-container matColumnDef="validCAMCount">
+      <mat-header-cell *matHeaderCellDef> תקין </mat-header-cell>
+      <mat-cell *matCellDef="let element"> {{ element.validCAMCount }} </mat-cell>
+    </ng-container>
+
+    <!-- אחוז תקינות -->
+    <ng-container matColumnDef="validPercentage">
+      <mat-header-cell *matHeaderCellDef> אחוז תקינות </mat-header-cell>
+      <mat-cell *matCellDef="let element"> 
+        {{ element.validPercentage | number: '1.0-2' }}%
+      </mat-cell>
+    </ng-container>
+
+    <mat-header-row *matHeaderRowDef="['department', 'totalCAMCases', 'validCAMCount', 'validPercentage']"></mat-header-row>
+    <mat-row *matRowDef="let row; columns: ['department', 'totalCAMCases', 'validCAMCount', 'validPercentage'];"></mat-row>
+
+  </mat-table>
+</div>
+
 
 
 <div *ngIf="showGraph" class="chart-container">

@@ -41,7 +41,9 @@ export class MitavDeliriumComponent implements OnInit {
   ];
   showGraph: boolean = false;
   departmentWiseCAMData: { department: string; validPercentage: number }[] = [];
-  
+  showDepartmentSummary: boolean = false; // New state for department summary view
+
+  departmentSummaryData: any[] = []; // Data for department summary table
   
   departmentList: string[] = []; // List of unique departments
   selectedDepartments: string[] = []; // Selected departments for filtering
@@ -363,5 +365,34 @@ this.camAssessmentGauge = this.totalCAMCases > 0 ? (this.validCAMCount / this.to
     }
   }
   
-  
+  // Function to toggle department summary view
+  toggleDepartmentSummary(): void {
+    this.showDepartmentSummary = !this.showDepartmentSummary;
+    if (this.showDepartmentSummary) {
+      this.generateDepartmentSummaryData(); // Call function when opening summary view
+    }
+  }
+
+  generateDepartmentSummaryData(): void {
+    const departmentMap = new Map<string, { totalCases: number; validCases: number }>();
+
+    this.originalData.forEach(item => {
+      const department = item.Name || 'Unknown';
+      const isValid = item.Grade && item.Grade.trim() !== '' && item.Grade !== 'אין תיעוד';
+
+      if (!departmentMap.has(department)) {
+        departmentMap.set(department, { totalCases: 0, validCases: 0 });
+      }
+
+      departmentMap.get(department)!.totalCases++;
+      if (isValid) departmentMap.get(department)!.validCases++;
+    });
+
+    this.departmentSummaryData = Array.from(departmentMap.entries()).map(([department, counts]) => ({
+      department,
+      totalCAMCases: counts.totalCases,
+      validCAMCount: counts.validCases,
+      validPercentage: counts.totalCases > 0 ? (counts.validCases / counts.totalCases) * 100 : 0
+    }));
+  }
 }
