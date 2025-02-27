@@ -571,3 +571,19 @@
     margin-top: 0; /* Ensure no gap between the title and gauge */
 
   }
+  .chart-container {
+    width: 100vw; /* ✅ Make the chart take full screen width */
+    height: 80vh; /* ✅ Adjust the height as needed */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  canvas {
+    width: 100% !important;
+    height: 100% !important;
+    max-width: none !important;
+    max-height: none !important;
+  }
+  
+  

@@ -4,7 +4,9 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatSort } from '@angular/material/sort';
 import { environment } from '../../../environments/environment';
-import { ChartOptions } from 'chart.js';
+import { ElementRef } from '@angular/core'; // ✅ Fix ElementRef error
+import { Chart, ChartType, ChartData, registerables } from 'chart.js'; // ✅ Fix Chart error
+
 
 @Component({
   selector: 'app-mitav-delirium',
@@ -37,7 +39,10 @@ export class MitavDeliriumComponent implements OnInit {
   
   
   ];
-
+  showGraph: boolean = false;
+  departmentWiseCAMData: { department: string; validPercentage: number }[] = [];
+  
+  
   departmentList: string[] = []; // List of unique departments
   selectedDepartments: string[] = []; // Selected departments for filtering
 
@@ -66,9 +71,12 @@ camAssessmentGaugeColor(): string {
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
+  @ViewChild('barChart') barChartRef!: ElementRef<HTMLCanvasElement>;
+private barChart!: Chart;
 
-  constructor(private http: HttpClient) {}
-
+constructor(private http: HttpClient) {
+  Chart.register(...registerables);
+}
   ngOnInit(): void {
     this.fetchMitavDeliriumReport();
   }
@@ -95,6 +103,7 @@ camAssessmentGaugeColor(): string {
 this.totalCAMCases = data.length;
 this.validCAMCount = data.filter(item => item.Grade && item.Grade.trim() !== '' && item.Grade !== 'אין תיעוד').length;
 this.invalidCAMCount = this.totalCAMCases - this.validCAMCount;
+this.calculateDepartmentWiseCAMData(data);
 
 // Calculate percentage
 this.camAssessmentGauge = this.totalCAMCases > 0 ? (this.validCAMCount / this.totalCAMCases) * 100 : 0;
@@ -250,5 +259,109 @@ this.camAssessmentGauge = this.totalCAMCases > 0 ? (this.validCAMCount / this.to
   
     this.dataSource.filter = this.globalFilterValue;
   }
+  toggleView(): void {
+    this.showGraph = !this.showGraph;
+    if (this.showGraph) {
+      setTimeout(() => this.initializeChart(), 100);
+    }
+  }
+  calculateDepartmentWiseCAMData(data: any[]): void {
+    const departmentMap = new Map<string, { totalCases: number; validCases: number }>();
+  
+    data.forEach(item => {
+      const department = item.Name || 'Unknown';
+      const isValid = item.Grade && item.Grade.trim() !== '' && item.Grade !== 'אין תיעוד';
+  
+      if (!departmentMap.has(department)) {
+        departmentMap.set(department, { totalCases: 0, validCases: 0 });
+      }
+  
+      departmentMap.get(department)!.totalCases++;
+      if (isValid) departmentMap.get(department)!.validCases++;
+    });
+  
+    this.departmentWiseCAMData = Array.from(departmentMap.entries()).map(([department, counts]) => ({
+      department,
+      validPercentage: counts.totalCases > 0 ? (counts.validCases / counts.totalCases) * 100 : 0
+    }));
+  }
+  
+  initializeChart(): void {
+    if (!this.barChartRef || !this.barChartRef.nativeElement) {
+      console.warn('Chart canvas is not available yet.');
+      setTimeout(() => this.initializeChart(), 100);
+      return;
+    }
+  
+    if (this.barChart) {
+      this.barChart.destroy();
+    }
+  
+    const ctx = this.barChartRef.nativeElement.getContext('2d');
+    if (ctx) {
+      // 🎨 Define a set of unique colors for each department
+      const departmentColors: string[] = [
+        '#FF5733', '#33FF57', '#3357FF', '#FF33A1', '#A133FF',
+        '#FF8C33', '#33FFF5', '#FF3333', '#33FFA1', '#A1FF33'
+      ];
+  
+      // 🔄 Dynamically assign colors to departments (Fix: Use `departmentWiseCAMData`)
+      const backgroundColors = this.departmentWiseCAMData.map((_dept: any, index: number) =>
+        departmentColors[index % departmentColors.length] // Wrap around colors
+      );
+  
+      this.barChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: this.departmentWiseCAMData.map((dept: any) => dept.department), // ✅ Fix: Use `departmentWiseCAMData`
+          datasets: [
+            {
+              label: 'אחוז ניידות תקין לפי מחלקה',
+              data: this.departmentWiseCAMData.map((dept: any) => dept.validPercentage), // ✅ Fix: Use `departmentWiseCAMData`
+              backgroundColor: backgroundColors, // ✅ Unique Colors
+              borderColor: backgroundColors.map((color: string) => color.replace('1)', '0.8)')), // Slightly Darker Border
+              borderWidth: 1,
+            },
+          ],
+        },
+      options: {
+  responsive: true,
+  maintainAspectRatio: false,
+  plugins: {
+    legend: {
+      position: 'top',
+      labels: {
+        font: {
+          size: 16 // ✅ Increase legend text size
+        }
+      }
+    },
+    tooltip: {
+      enabled: true,
+      callbacks: {
+        label: (tooltipItem) => {
+          let value = tooltipItem.raw as number;
+          return `${value.toFixed(1)}%`; // ✅ Show 1 decimal place
+        }
+      }
+    },
+    datalabels: { // ✅ Show values inside bars
+      anchor: 'center',
+      align: 'center',
+      color: 'black', // ✅ Make text black
+      font: {
+        size: 16, // ✅ Increase text size
+        weight: 'bold'
+      },
+      formatter: (value: number) => `${value.toFixed(1)}%` // ✅ Format to 1 decimal place
+    }
+  }
+}
+
+        ,
+      });
+    }
+  }
+  
   
 }

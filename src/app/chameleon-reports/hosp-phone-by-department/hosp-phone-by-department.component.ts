@@ -97,8 +97,28 @@ export class HospPhoneByDepartmentComponent implements OnInit {
   }
 
   exportToExcel() {
-    const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(this.filteredData);
-    const workbook: XLSX.WorkBook = { Sheets: { 'Data': worksheet }, SheetNames: ['Data'] };
+    const columnHeaders = {
+      UnitName: 'מחלקה',
+      PatientName: 'שם מטופל',
+      IdNum: 'תעודת זהות',
+      Phone: 'טלפון בית',
+      PhoneCell: 'טלפון נייד',
+      PhoneWork: 'טלפון עבודה'
+    };
+  
+    const dataForExport = this.filteredData.map(item => ({
+      [columnHeaders.UnitName]: item.UnitName,
+      [columnHeaders.PatientName]: item.PatientName,
+      [columnHeaders.IdNum]: item.IdNum,
+      [columnHeaders.Phone]: item.Phone,
+      [columnHeaders.PhoneCell]: item.PhoneCell,
+      [columnHeaders.PhoneWork]: item.PhoneWork
+    }));
+  
+    const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(dataForExport);
+    const workbook: XLSX.WorkBook = { Sheets: { 'נתונים': worksheet }, SheetNames: ['נתונים'] };
+    
     XLSX.writeFile(workbook, 'HospPhoneByDepartment.xlsx');
   }
+  
 }

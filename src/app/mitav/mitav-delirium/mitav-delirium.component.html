@@ -98,8 +98,16 @@
     <strong> תקין {{ validCAMCount }} / לא תקין {{ invalidCAMCount }} / סה"כ - {{ totalCAMCases }} </strong>
   </div>
 </div>
+<div class="toggle-container">
 
-  <div class="table-section">
+<img (click)="toggleView()" matTooltip="Move To Graph" src="../../../../assets/graphIcon.png" width="50px" />
+</div>
+
+
+<div *ngIf="showGraph" class="chart-container">
+  <canvas #barChart></canvas>
+</div>
+  <div *ngIf="!showGraph" class="table-section">
     <mat-table [dataSource]="dataSource" matSort class="mat-elevation-z8" dir="rtl">
   
       <!-- תאריך קבלה -->
