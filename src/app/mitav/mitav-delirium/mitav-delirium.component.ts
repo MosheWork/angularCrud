@@ -286,11 +286,14 @@ this.camAssessmentGauge = this.totalCAMCases > 0 ? (this.validCAMCount / this.to
       if (isValid) departmentMap.get(department)!.validCases++;
     });
   
-    this.departmentWiseCAMData = Array.from(departmentMap.entries()).map(([department, counts]) => ({
-      department,
-      validPercentage: counts.totalCases > 0 ? (counts.validCases / counts.totalCases) * 100 : 0
-    }));
+    this.departmentWiseCAMData = Array.from(departmentMap.entries())
+      .map(([department, counts]) => ({
+        department,
+        validPercentage: counts.totalCases > 0 ? (counts.validCases / counts.totalCases) * 100 : 0
+      }))
+      .sort((a, b) => a.validPercentage - b.validPercentage); // ✅ Sort in ascending order
   }
+  
   
   initializeChart(): void {
     if (!this.barChartRef || !this.barChartRef.nativeElement) {
