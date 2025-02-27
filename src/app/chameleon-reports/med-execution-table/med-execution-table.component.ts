@@ -178,6 +178,7 @@ export class MedExecutionTableComponent implements OnInit, AfterViewInit {
     'רדיולוגיה פולשנית'
   ];
   originalData: MedExecutionModel[] = []; // Add this property
+  aggregatedDataSource = new MatTableDataSource<AggregatedMedExecutionModel>();
 
   dataSource = new MatTableDataSource<MedExecutionModel>();
   searchValue: string = '';
@@ -215,8 +216,7 @@ aggregatedDisplayedColumns: string[] = [
   
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
-  aggregatedData: MedExecutionModel[] = []; // Store original aggregated data
-  aggregatedDataSource = new MatTableDataSource<MedExecutionModel>(); // DataSource for aggregated table
+  aggregatedData: AggregatedMedExecutionModel[] = []; // ✅ Ensure correct type
   
   basicNamesControl = new FormControl('');
   genericNamesControl = new FormControl('');
@@ -383,15 +383,25 @@ aggregatedDisplayedColumns: string[] = [
     );
   
     // 🔹 Fetch data for Aggregated Table
-    this.http.get<MedExecutionModel[]>(`${environment.apiUrl}MedExecutionAPI/GetAggregatedData`, { params }).subscribe(
+    this.http.get<AggregatedMedExecutionModel[]>(`${environment.apiUrl}MedExecutionAPI/GetAggregatedData`, { params }).subscribe(
       data => {
-        this.aggregatedData = data; // Save unfiltered aggregated data
-        this.aggregatedDataSource.data = [...data]; // Initialize Aggregated Table
+        this.aggregatedData = data.map(item => ({
+          Unit_Satellite_Name: item.Unit_Satellite_Name,
+          Generic_Name_ForDisplay: item.Generic_Name_ForDisplay,
+          Way_Of_Giving: item.Way_Of_Giving,
+          Dosage_Unit_InOrder: item.Dosage_Unit_InOrder,
+          Dosage_InOrder: item.Dosage_InOrder,
+          Count_Dosage_InOrder: item.Count_Dosage_InOrder,
+          Sum_Dosage_InOrder2: item.Sum_Dosage_InOrder2
+        })); // ✅ Ensure correct data structure
+    
+        this.aggregatedDataSource.data = [...this.aggregatedData]; // ✅ Correct assignment
       },
       error => {
         console.error('Error loading aggregated data:', error);
       }
     );
+    
   }
   
   
@@ -464,32 +474,32 @@ aggregatedDisplayedColumns: string[] = [
   }
 
   exportToExcel2() {
-    const data = this.aggregatedDataSource.data.map(item => {
-      const record: any = {
-        Unit_Satellite_Name: item.Unit_Satellite_Name,
-        Generic_Name_ForDisplay: item.Generic_Name_ForDisplay,
-        Way_Of_Giving: item.Way_Of_Giving,
-        Dosage_Unit_InOrder: item.Dosage_Unit_InOrder,
-        Dosage_InOrder: item.Dosage_InOrder,
-        Count_Dosage_InOrder: item.Dosage_InOrder,
-        Sum_Dosage_InOrder2: item.Dosage_InOrder,
-      };
-      return record;
-    });
+    const exportData = this.aggregatedDataSource.data.map(item => ({
+      'Unit Satellite Name': item.Unit_Satellite_Name,
+      'Generic Name For Display': item.Generic_Name_ForDisplay,
+      'Way Of Giving': item.Way_Of_Giving,
+      'Dosage Unit In Order': item.Dosage_Unit_InOrder,
+      'Dosage In Order': item.Dosage_InOrder,
+      'Count of Dosage In Order': item.Count_Dosage_InOrder, // ✅ Ensure correct mapping
+      'Total Dosage Sum': item.Sum_Dosage_InOrder2
+    }));
   
-    const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(data);
+    const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(exportData);
     const workbook: XLSX.WorkBook = {
-      Sheets: { data: worksheet },
-      SheetNames: ['data'],
+      Sheets: { 'Aggregated Data': worksheet },
+      SheetNames: ['Aggregated Data'],
     };
+  
     const excelBuffer: any = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
     const blob: Blob = new Blob([excelBuffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+  
     const url = window.URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
-    link.download = 'AggregatedMedExecutionData.xlsx';
+    link.download = 'Aggregated_Med_Execution_Data.xlsx';
     link.click();
   }
+  
   
   
 
