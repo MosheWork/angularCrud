@@ -67,8 +67,15 @@ totalCAMCases: number = 0;
 camAssessmentGauge: number = 0;
 
 camAssessmentGaugeColor(): string {
-  return this.camAssessmentGauge > 80 ? '#28a745' : this.camAssessmentGauge > 50 ? '#ffc107' : '#dc3545';
+  if (this.camAssessmentGauge >= 25) {
+    return '#28a745'; // ✅ Green
+  } else if (this.camAssessmentGauge >= 20 && this.camAssessmentGauge < 25) {
+    return '#ffc107'; // ✅ Orange
+  } else {
+    return '#dc3545'; // ✅ Red
+  }
 }
+
 
   dataSource = new MatTableDataSource<any>();
   isLoading: boolean = true;
@@ -157,32 +164,20 @@ this.camAssessmentGauge = this.totalCAMCases > 0 ? (this.validCAMCount / this.to
   applyFilters(): void {
     let filteredData = [...this.originalData];
   
-    // ✅ Recalculate Gauge Data Based on Filtered Data
-this.totalCAMCases = filteredData.length;
-this.validCAMCount = filteredData.filter(item => item.Grade && item.Grade.trim() !== '' && item.Grade !== 'אין תיעוד').length;
-this.invalidCAMCount = this.totalCAMCases - this.validCAMCount;
-
-// ✅ Update Gauge Percentage
-this.camAssessmentGauge = this.totalCAMCases > 0 ? (this.validCAMCount / this.totalCAMCases) * 100 : 0;
-// ✅ Apply Date Filter based on ATD_Admission_Date and Release_Date
-if (this.startDate || this.endDate) {
-  filteredData = filteredData.filter((item) => {
-    // ✅ Ensure correct date conversion
-    const admissionDate = item.ATD_Admission_Date ? new Date(item.ATD_Admission_Date) : null;
-    const releaseDate = item.Release_Date ? new Date(item.Release_Date) : null;
-
-    // ✅ Ensure comparison works with time removed
-    const start = this.startDate ? new Date(this.startDate.setHours(0, 0, 0, 0)) : null;
-    const end = this.endDate ? new Date(this.endDate.setHours(23, 59, 59, 999)) : null;
-
-    return (
-      (!start || (admissionDate && admissionDate >= start) || (releaseDate && releaseDate >= start)) &&
-      (!end || (admissionDate && admissionDate <= end) || (releaseDate && releaseDate <= end))
-    );
-  });
-}
-
-
+    // ✅ Apply Date Filter
+    if (this.startDate || this.endDate) {
+      filteredData = filteredData.filter((item) => {
+        const admissionDate = item.ATD_Admission_Date ? new Date(item.ATD_Admission_Date) : null;
+        const releaseDate = item.Release_Date ? new Date(item.Release_Date) : null;
+        const start = this.startDate ? new Date(this.startDate.setHours(0, 0, 0, 0)) : null;
+        const end = this.endDate ? new Date(this.endDate.setHours(23, 59, 59, 999)) : null;
+  
+        return (
+          (!start || (admissionDate && admissionDate >= start) || (releaseDate && releaseDate >= start)) &&
+          (!end || (admissionDate && admissionDate <= end) || (releaseDate && releaseDate <= end))
+        );
+      });
+    }
   
     // ✅ Apply Department Filter
     if (this.selectedDepartments.length > 0) {
@@ -192,55 +187,57 @@ if (this.startDate || this.endDate) {
     }
   
     // ✅ Apply Year Filter
-   // ✅ Apply Year Filter
-if (this.selectedYear) {
-  filteredData = filteredData.filter((item) => {
-    const admissionYear = item.ATD_Admission_Date ? new Date(item.ATD_Admission_Date).getFullYear() : null;
-    const releaseYear = item.Release_Date ? new Date(item.Release_Date).getFullYear() : null;
-
-    return (admissionYear === this.selectedYear) || (releaseYear === this.selectedYear);
-  });
-}
+    if (this.selectedYear) {
+      filteredData = filteredData.filter((item) => {
+        const admissionYear = item.ATD_Admission_Date ? new Date(item.ATD_Admission_Date).getFullYear() : null;
+        const releaseYear = item.Release_Date ? new Date(item.Release_Date).getFullYear() : null;
   
-// ✅ Apply Quarter Filter
-if (this.selectedQuarter) {
-  const quarterMapping: { [key: string]: number[] } = {
-    'רבעון 1': [1, 2, 3],  // Q1 (January-March)
-    'רבעון 2': [4, 5, 6],  // Q2 (April-June)
-    'רבעון 3': [7, 8, 9],  // Q3 (July-September)
-    'רבעון 4': [10, 11, 12] // Q4 (October-December)
-  };
-
-  // Ensure selectedQuarter is a valid string before accessing the mapping
-  const selectedQuarterKey = this.selectedQuarter ? this.selectedQuarter.trim() : '';
-
-  if (quarterMapping[selectedQuarterKey]) {
-    filteredData = filteredData.filter((item) => {
-      const admissionMonth = item.ATD_Admission_Date ? new Date(item.ATD_Admission_Date).getMonth() + 1 : null;
-      const releaseMonth = item.Release_Date ? new Date(item.Release_Date).getMonth() + 1 : null;
-
-      console.log('Checking Quarter:', selectedQuarterKey);
-      console.log('Admission Month:', admissionMonth);
-      console.log('Release Month:', releaseMonth);
-
-      return (
-        (admissionMonth && quarterMapping[selectedQuarterKey].includes(admissionMonth)) ||
-        (releaseMonth && quarterMapping[selectedQuarterKey].includes(releaseMonth))
-      );
-    });
-
-    console.log('Final Filtered Data:', filteredData.length);
-  } else {
-    console.error('Invalid Quarter Selected:', selectedQuarterKey);
-  }
-}
-
-
-
+        return (admissionYear === this.selectedYear) || (releaseYear === this.selectedYear);
+      });
+    }
   
+    // ✅ Apply Quarter Filter
+    if (this.selectedQuarter) {
+      const quarterMapping: { [key: string]: number[] } = {
+        'רבעון 1': [1, 2, 3],
+        'רבעון 2': [4, 5, 6],
+        'רבעון 3': [7, 8, 9],
+        'רבעון 4': [10, 11, 12]
+      };
+  
+      const selectedQuarterKey = this.selectedQuarter ? this.selectedQuarter.trim() : '';
+  
+      if (quarterMapping[selectedQuarterKey]) {
+        filteredData = filteredData.filter((item) => {
+          const admissionMonth = item.ATD_Admission_Date ? new Date(item.ATD_Admission_Date).getMonth() + 1 : null;
+          const releaseMonth = item.Release_Date ? new Date(item.Release_Date).getMonth() + 1 : null;
+  
+          return (
+            (admissionMonth && quarterMapping[selectedQuarterKey].includes(admissionMonth)) ||
+            (releaseMonth && quarterMapping[selectedQuarterKey].includes(releaseMonth))
+          );
+        });
+      }
+    }
+  
+    // ✅ Update the filtered data
     this.dataSource.data = filteredData;
   
+    // ✅ Update Gauge Data Based on Filtered Data
+    this.totalCAMCases = filteredData.length;
+    this.validCAMCount = filteredData.filter(item => item.Grade && item.Grade.trim() !== '' && item.Grade !== 'אין תיעוד').length;
+    this.invalidCAMCount = this.totalCAMCases - this.validCAMCount;
+  
+    // ✅ Update Gauge Percentage
+    this.camAssessmentGauge = this.totalCAMCases > 0 ? (this.validCAMCount / this.totalCAMCases) * 100 : 0;
+  
+    // ✅ Update Graph Data
+    this.calculateDepartmentWiseCAMData(filteredData);
+  
+    // ✅ Reinitialize Graph with New Data
+    setTimeout(() => this.initializeChart(), 100);
   }
+  
   resetFilters(): void {
     this.startDate = null;
     this.endDate = null;
@@ -248,15 +245,20 @@ if (this.selectedQuarter) {
     this.selectedYear = null;
     this.selectedQuarter = null;
     this.dataSource.data = this.originalData;
-    // ✅ Reset Gauge Values
-this.totalCAMCases = this.originalData.length;
-this.validCAMCount = this.originalData.filter(item => item.Grade && item.Grade.trim() !== '' && item.Grade !== 'אין תיעוד').length;
-this.invalidCAMCount = this.totalCAMCases - this.validCAMCount;
-this.camAssessmentGauge = this.totalCAMCases > 0 ? (this.validCAMCount / this.totalCAMCases) * 100 : 0;
-
   
-    // ✅ Reset Gauge Value
+    // ✅ Reset Gauge Values
+    this.totalCAMCases = this.originalData.length;
+    this.validCAMCount = this.originalData.filter(item => item.Grade && item.Grade.trim() !== '' && item.Grade !== 'אין תיעוד').length;
+    this.invalidCAMCount = this.totalCAMCases - this.validCAMCount;
+    this.camAssessmentGauge = this.totalCAMCases > 0 ? (this.validCAMCount / this.totalCAMCases) * 100 : 0;
+  
+    // ✅ Update Graph Data
+    this.calculateDepartmentWiseCAMData(this.originalData);
+  
+    // ✅ Reinitialize Graph
+    setTimeout(() => this.initializeChart(), 100);
   }
+  
   applyGlobalFilter(event: Event): void {
     const filterValue = (event.target as HTMLInputElement).value;
     this.globalFilterValue = filterValue.trim().toLowerCase();
@@ -309,63 +311,57 @@ this.camAssessmentGauge = this.totalCAMCases > 0 ? (this.validCAMCount / this.to
         '#FF8C33', '#33FFF5', '#FF3333', '#33FFA1', '#A1FF33'
       ];
   
-      // 🔄 Dynamically assign colors to departments (Fix: Use `departmentWiseCAMData`)
+      // 🔄 Use Filtered Data Instead of Original Data
       const backgroundColors = this.departmentWiseCAMData.map((_dept: any, index: number) =>
-        departmentColors[index % departmentColors.length] // Wrap around colors
+        departmentColors[index % departmentColors.length]
       );
   
       this.barChart = new Chart(ctx, {
         type: 'bar',
         data: {
-          labels: this.departmentWiseCAMData.map((dept: any) => dept.department), // ✅ Fix: Use `departmentWiseCAMData`
+          labels: this.departmentWiseCAMData.map((dept: any) => dept.department),
           datasets: [
             {
               label: 'אחוז ניידות תקין לפי מחלקה',
-              data: this.departmentWiseCAMData.map((dept: any) => dept.validPercentage), // ✅ Fix: Use `departmentWiseCAMData`
-              backgroundColor: backgroundColors, // ✅ Unique Colors
-              borderColor: backgroundColors.map((color: string) => color.replace('1)', '0.8)')), // Slightly Darker Border
+              data: this.departmentWiseCAMData.map((dept: any) => dept.validPercentage),
+              backgroundColor: backgroundColors,
+              borderColor: backgroundColors.map((color: string) => color.replace('1)', '0.8)')),
               borderWidth: 1,
             },
           ],
         },
-      options: {
-  responsive: true,
-  maintainAspectRatio: false,
-  plugins: {
-    legend: {
-      position: 'top',
-      labels: {
-        font: {
-          size: 16 // ✅ Increase legend text size
-        }
-      }
-    },
-    tooltip: {
-      enabled: true,
-      callbacks: {
-        label: (tooltipItem) => {
-          let value = tooltipItem.raw as number;
-          return `${value.toFixed(1)}%`; // ✅ Show 1 decimal place
-        }
-      }
-    },
-    datalabels: { // ✅ Show values inside bars
-      anchor: 'center',
-      align: 'center',
-      color: 'black', // ✅ Make text black
-      font: {
-        size: 16, // ✅ Increase text size
-        weight: 'bold'
-      },
-      formatter: (value: number) => `${value.toFixed(1)}%` // ✅ Format to 1 decimal place
-    }
-  }
-}
-
-        ,
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              position: 'top',
+              labels: {
+                font: { size: 16 }
+              }
+            },
+            tooltip: {
+              enabled: true,
+              callbacks: {
+                label: (tooltipItem) => {
+                  let value = tooltipItem.raw as number;
+                  return `${value.toFixed(1)}%`;
+                }
+              }
+            },
+            datalabels: {
+              anchor: 'center',
+              align: 'center',
+              color: 'black',
+              font: { size: 16, weight: 'bold' },
+              formatter: (value: number) => `${value.toFixed(1)}%`
+            }
+          }
+        },
       });
     }
   }
+  
   
 
 
@@ -379,26 +375,29 @@ this.camAssessmentGauge = this.totalCAMCases > 0 ? (this.validCAMCount / this.to
 
   generateDepartmentSummaryData(): void {
     const departmentMap = new Map<string, { totalCases: number; validCases: number }>();
-
+  
     this.dataSource.data.forEach(item => {
       const department = item.Name || 'Unknown';
       const isValid = item.Grade && item.Grade.trim() !== '' && item.Grade !== 'אין תיעוד';
-
+  
       if (!departmentMap.has(department)) {
         departmentMap.set(department, { totalCases: 0, validCases: 0 });
       }
-
+  
       departmentMap.get(department)!.totalCases++;
       if (isValid) departmentMap.get(department)!.validCases++;
     });
-
-    this.departmentSummaryData = Array.from(departmentMap.entries()).map(([department, counts]) => ({
-      department,
-      totalCAMCases: counts.totalCases,
-      validCAMCount: counts.validCases,
-      validPercentage: counts.totalCases > 0 ? (counts.validCases / counts.totalCases) * 100 : 0
-    }));
+  
+    this.departmentSummaryData = Array.from(departmentMap.entries())
+      .map(([department, counts]) => ({
+        department,
+        totalCAMCases: counts.totalCases,
+        validCAMCount: counts.validCases,
+        validPercentage: counts.totalCases > 0 ? (counts.validCases / counts.totalCases) * 100 : 0
+      }))
+      .sort((a, b) => b.validPercentage - a.validPercentage); // ✅ Sort by % (descending)
   }
+  
 
   
 }
