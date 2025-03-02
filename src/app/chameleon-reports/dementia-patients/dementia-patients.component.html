@@ -81,7 +81,14 @@
       <mat-header-cell *matHeaderCellDef mat-sort-header> שם משפחה </mat-header-cell>
       <mat-cell *matCellDef="let element"> {{ element.LastName }} </mat-cell>
     </ng-container>
-
+    <ng-container matColumnDef="DescriptionEntryDate">
+      <mat-header-cell *matHeaderCellDef mat-sort-header> תאריך דיווח </mat-header-cell>
+      <mat-cell *matCellDef="let element"> {{ element.DescriptionEntryDate | date:'dd/MM/yyyy' }} </mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="DescriptionCognitive">
+      <mat-header-cell *matHeaderCellDef mat-sort-header> מלל חופשי</mat-header-cell>
+      <mat-cell *matCellDef="let element"> {{ element.DescriptionCognitive }} </mat-cell>
+    </ng-container>
     <!-- Table Header and Rows -->
     <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
     <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>

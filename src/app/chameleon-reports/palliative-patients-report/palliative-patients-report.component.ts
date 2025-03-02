@@ -31,8 +31,8 @@ export class PalliativePatientsReportComponent implements OnInit, AfterViewInit 
     'AdmissionDate',
     'ResultCognitive',
     'ResultEntryDate',
-    'DescriptionCognitive',
-    'DescriptionEntryDate'
+    //'DescriptionCognitive',
+    //'DescriptionEntryDate'
   ];
 
   columnHeaders: { [key: string]: string } = {
@@ -42,8 +42,8 @@ export class PalliativePatientsReportComponent implements OnInit, AfterViewInit 
     AdmissionDate: 'תאריך קבלה',
     ResultCognitive:'הגדרת החולה',
     ResultEntryDate:'תאריך הגדרה',
-    DescriptionCognitive:'תיעוד רופא מלל חופשי',
-    DescriptionEntryDate:' תאריך התיעוד',
+    //DescriptionCognitive:'תיעוד רופא מלל חופשי',
+    //DescriptionEntryDate:' תאריך התיעוד',
   };
 
   dataSource = new MatTableDataSource<PalliativePatientsReportModel>();
