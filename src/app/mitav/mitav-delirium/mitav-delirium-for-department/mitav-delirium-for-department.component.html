@@ -1,0 +1,130 @@
+<!-- ✅ Loading Section -->
+<div *ngIf="isLoading" class="loading-container">
+    <div class="image-slider">
+      <img *ngFor="let img of loadingImages; let i = index"
+           [src]="img" 
+           [class.active]="i === currentImageIndex"
+           alt="Loading"
+           class="loading-image" />
+    </div>
+    <p class="loading-text">...אוסף נתונים לדוח דליריום</p>
+  </div>
+  
+  <!-- ✅ Content Section -->
+  <div class="body" *ngIf="!isLoading">
+    <div class="nine">
+      <h1>{{ title }}<span> סה"כ תוצאות :{{ totalResults }}</span></h1>
+    </div>
+  
+    <!-- ✅ Summary Information -->
+    <mat-card class="info-card mat-elevation-z4">
+      <mat-card-title>מידע כללי</mat-card-title>
+      <mat-card-content>
+        <div class="info-card-content">
+          
+          <!-- Total Hospitalization Days -->
+          <div class="info-item">
+            <mat-icon class="info-icon">event</mat-icon>
+            <span class="info-label">סה"כ ימי אשפוז: {{ totalResults }}</span>
+          </div>
+  
+          <!-- Delirium Cases -->
+          <div class="info-item">
+            <mat-icon class="info-icon">psychology</mat-icon>
+            <span class="info-label">דליריום: {{ deliriumCount }}</span>
+          </div>
+  
+          <!-- CAM Grade Change -->
+          <div class="info-item">
+            <mat-icon class="info-icon">sync_alt</mat-icon>
+            <span class="info-label">שינוי בציון CAM: {{ camGradeChangeCount }}</span>
+          </div>
+  
+          <!-- Delirium Consiliums -->
+          <div class="info-item">
+            <mat-icon class="info-icon">medical_services</mat-icon>
+            <span class="info-label">קונסיליום דליריום נפתח: {{ consiliumsOpenedCount }}</span>
+          </div>
+  
+          <!-- Drug for Delirium -->
+          <div class="info-item">
+            <mat-icon class="info-icon">medication</mat-icon>
+            <span class="info-label">טיפול תרופתי לדליריום: {{ drugForDeliriumCount }}</span>
+          </div>
+  
+        </div>
+      </mat-card-content>
+    </mat-card>
+  
+    <!-- ✅ Filter Form -->
+    <form [formGroup]="filterForm" class="filter-form" dir="rtl">
+      <mat-form-field class="long-search-bar">
+        <mat-label>חיפוש</mat-label>
+        <input matInput formControlName="globalFilter" />
+      </mat-form-field>
+      
+      <mat-form-field>
+        <mat-label>שם המחלקה</mat-label>
+        <mat-select formControlName="unitFilter">
+          <mat-option value="">הכל</mat-option>
+          <mat-option *ngFor="let unit of unitOptions" [value]="unit">{{ unit }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+  
+      <button mat-raised-button color="primary" (click)="resetFilters()">איפוס</button>
+      <img src="../../assets/excel.png" alt="Download" (click)="exportToExcel()" class="download-icon" width="50px" />
+    </form>
+  
+    <!-- ✅ Data Table -->
+    <mat-table #pdfTable [dataSource]="dataSource" matSort dir="rtl" class="mat-elevation-z8">
+      <ng-container *ngFor="let column of displayedColumns" [matColumnDef]="column">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>{{ getColumnLabel(column) }}</mat-header-cell>
+        <mat-cell *matCellDef="let element">
+  
+          <!-- 🔴 Special Formatting -->
+          
+          <!-- Delirium Days Count -->
+          <ng-container *ngIf="column === 'DeliriumDaysCount'">
+            <span >
+              {{ element.DeliriumDaysCount }}
+            </span>
+          </ng-container>
+  
+          <!-- Hours Difference -->
+          <ng-container *ngIf="column === 'HoursDifference'">
+            <span >
+              {{ element.HoursDifference }}
+            </span>
+          </ng-container>
+  
+          <!-- Patient with Delirium -->
+          <ng-container *ngIf="column === 'PatientWithDelirium'">
+            <span [ngClass]="{'red-text': element.PatientWithDelirium === 'כן'}">
+              {{ element.PatientWithDelirium }}
+            </span>
+          </ng-container>
+  
+          <!-- CAM Grade Change -->
+          <ng-container *ngIf="column === 'CAMGradeChanged'">
+            <span [ngClass]="{'red-text': element.CAMGradeChanged !== 'ללא שינוי'}">
+              {{ element.CAMGradeChanged }}
+            </span>
+          </ng-container>
+  
+          <!-- ✅ Default Rendering -->
+          <ng-container *ngIf="!['DeliriumDaysCount', 'HoursDifference', 'PatientWithDelirium', 'CAMGradeChanged'].includes(column)">
+            {{ element[column] }}
+          </ng-container>
+  
+        </mat-cell>
+      </ng-container>
+  
+      <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+      <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+  
+    </mat-table>
+  
+    <!-- ✅ Paginator -->
+    <mat-paginator [pageSizeOptions]="[5, 25, 50]" showFirstLastButtons></mat-paginator>
+  </div>
+  

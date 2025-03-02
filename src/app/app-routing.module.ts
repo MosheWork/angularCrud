@@ -69,6 +69,7 @@ import { DementiaPatientsComponent } from './chameleon-reports/dementia-patients
 import { CameleonNoCaseNumberReasonsComponent } from './chameleon-reports/cameleon-no-case-number-reasons/cameleon-no-case-number-reasons.component';
 import { MosheOnlineLogsComponent } from './chameleon-reports/moshe-online-logs/moshe-online-logs.component';
 import { HospPhoneByDepartmentComponent } from './chameleon-reports/hosp-phone-by-department/hosp-phone-by-department.component';
+import { MitavDeliriumForDepartmentComponent } from './mitav/mitav-delirium/mitav-delirium-for-department/mitav-delirium-for-department.component';
 
 const routes: Routes = [
   { path: 'users', component: UsersComponent },
@@ -167,6 +168,7 @@ const routes: Routes = [
    // דוח מיתב
    { path: 'MitavMobility', component: MitavMobilityComponent },
    { path: 'MitavDelirium', component: MitavDeliriumComponent },
+   { path: 'mitav-delirium-for-department', component: MitavDeliriumForDepartmentComponent },
 
    //amin
    { path: 'aws', component: AwsClaudeInvocationComponent },

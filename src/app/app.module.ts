@@ -143,6 +143,7 @@ import { CameleonNoCaseNumberReasonsComponent } from './chameleon-reports/camele
 import { MosheOnlineLogsComponent } from './chameleon-reports/moshe-online-logs/moshe-online-logs.component';
 import { HospPhoneByDepartmentComponent } from './chameleon-reports/hosp-phone-by-department/hosp-phone-by-department.component';
 import { DepartmentSummaryDialogComponent } from './mitav/mitav-delirium/department-summary-dialog/department-summary-dialog.component';
+import { MitavDeliriumForDepartmentComponent } from './mitav/mitav-delirium/mitav-delirium-for-department/mitav-delirium-for-department.component';
 
 @NgModule({
   declarations: [
@@ -252,7 +253,8 @@ import { DepartmentSummaryDialogComponent } from './mitav/mitav-delirium/departm
     CameleonNoCaseNumberReasonsComponent,
     MosheOnlineLogsComponent,
     HospPhoneByDepartmentComponent,
-    DepartmentSummaryDialogComponent
+    DepartmentSummaryDialogComponent,
+    MitavDeliriumForDepartmentComponent
   
   ],
   imports: [
