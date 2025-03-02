@@ -153,7 +153,7 @@
       <ng-container matColumnDef="PatientWithDeliriumEntryDate">
         <mat-header-cell *matHeaderCellDef mat-sort-header>תאריך דליריום</mat-header-cell>
         <mat-cell *matCellDef="let element">
-          <span>{{ element.PatientWithDeliriumEntryDate ? (element.PatientWithDeliriumEntryDate | date: 'dd/MM/yyyy HH:mm') : 'לא בוצע' }}</span>
+          <span>{{ element.PatientWithDeliriumEntryDate ? (element.PatientWithDeliriumEntryDate | date: 'dd/MM/yyyy') : 'לא בוצע' }}</span>
         </mat-cell>
       </ng-container>
     
