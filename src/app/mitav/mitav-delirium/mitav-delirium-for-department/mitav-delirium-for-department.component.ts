@@ -33,11 +33,11 @@ export class MitavDeliriumForDepartmentComponent implements OnInit {
   drugForDeliriumCount: number = 0;
 
   displayedColumns: string[] = [
-    'ATD_Admission_Date', 'AdmissionNo', 'AgeYears', 'SystemUnitName', 'TotalHospDays', 
+    'ATD_Admission_Date', 'AdmissionNo', 'AgeYears',  'TotalHospDays', 'AdmissionCAMGrade','PreventionORInterventionCAM',
     'Grade', 'GradeEntryDate', 'PatientWithDelirium', 'PatientWithDeliriumEntryDate',
-    'DeliriumDaysCount', 'AdmissionCAMGrade', 'DrugForDelirium', 'TotalEstimationGradesCount',
+    'DeliriumDaysCount',  'DrugForDelirium', 'TotalEstimationGradesCount',
     'GradeCount', 'DeliriumConsiliumsOpened', 'DeliriumConsiliumsDate', 'HoursDifference',
-    'CAMGradeChanged', 'PreventionORInterventionCAM'
+    'CAMGradeChanged'
   ];
 
   columnLabels: { [key: string]: string } = {
@@ -55,9 +55,9 @@ export class MitavDeliriumForDepartmentComponent implements OnInit {
     DrugForDelirium: 'טיפול תרופתי לדליריום',
     TotalEstimationGradesCount: 'סה"כ אומדנים',
     GradeCount: 'יחס אומדנים לימי אשפוז',
-    DeliriumConsiliumsOpened: 'קונסיליום דליריום נפתח',
-    DeliriumConsiliumsDate: 'תאריך קונסיליום',
-    HoursDifference: 'שעות בין דליריום לקונסיליום',
+    DeliriumConsiliumsOpened: 'הזמנת ייעוץ ריפוי בעיסוק ',
+    DeliriumConsiliumsDate: 'תאריך ייעוץ',
+    HoursDifference: 'שעות בין דליריום ייעוץ',
     CAMGradeChanged: 'שינוי בציון CAM',
     PreventionORInterventionCAM: 'מניעה/התערבות'
   };
@@ -85,25 +85,32 @@ export class MitavDeliriumForDepartmentComponent implements OnInit {
 }
 
 
-  loadData(): void {
-    this.isLoading = true;
-    this.http.get<any[]>(`${environment.apiUrl}MitavDelirumForDepartment`).subscribe(
-      (data) => {
-        this.dataSource = new MatTableDataSource(data);
-        this.totalResults = data.length;
-        setTimeout(() => {
-          this.dataSource.paginator = this.paginator;
-          this.dataSource.sort = this.sort;
-        });
-        this.unitOptions = [...new Set(data.map((item) => item.SystemUnitName))].sort();
-        this.isLoading = false;
-      },
-      (error) => {
-        console.error('Error fetching data', error);
-        this.isLoading = false;
-      }
-    );
-  }
+loadData(): void {
+  this.isLoading = true;
+  this.http.get<any[]>(`${environment.apiUrl}MitavDelirumForDepartment`).subscribe(
+    (data) => {
+      this.dataSource = new MatTableDataSource(data);
+
+      // ✅ Set custom filter predicate AFTER initializing dataSource
+      this.dataSource.filterPredicate = this.customFilterPredicate();
+
+      this.totalResults = data.length;
+
+      setTimeout(() => {
+        this.dataSource.paginator = this.paginator;
+        this.dataSource.sort = this.sort;
+      });
+
+      this.unitOptions = [...new Set(data.map((item) => item.SystemUnitName))].sort();
+      this.isLoading = false;
+    },
+    (error) => {
+      console.error('Error fetching data', error);
+      this.isLoading = false;
+    }
+  );
+}
+
 
   setupFilterListeners(): void {
     this.filterForm.get('globalFilter')?.valueChanges.subscribe(() => this.applyFilter());
@@ -113,13 +120,19 @@ export class MitavDeliriumForDepartmentComponent implements OnInit {
   applyFilter(): void {
     const globalFilterValue = this.filterForm.get('globalFilter')?.value?.trim().toLowerCase() || '';
     const unitFilterValue = this.filterForm.get('unitFilter')?.value || '';
-
+  
+    // ✅ Make sure filter predicate is applied before setting filter
+    this.dataSource.filterPredicate = this.customFilterPredicate();
+  
+    // ✅ Apply filter
     this.dataSource.filter = JSON.stringify({ global: globalFilterValue, unit: unitFilterValue });
-
-    // ✅ Ensure filtered data updates the displayed count
-    this.totalResults = this.dataSource.filteredData.length;
-}
-
+  
+    // ✅ Update displayed count after filtering
+    setTimeout(() => {
+      this.totalResults = this.dataSource.filteredData.length;
+    });
+  }
+  
 
   resetFilters(): void {
     this.filterForm.reset();
@@ -185,11 +198,12 @@ export class MitavDeliriumForDepartmentComponent implements OnInit {
       const globalFilter = filterObject.global?.trim().toLowerCase() || '';
       const unitFilter = filterObject.unit || '';
   
-      // ✅ Ensure all values are strings and check for global filter
+      // ✅ Ensure all values are valid strings before checking
       const matchesGlobalFilter =
         !globalFilter ||
         Object.values(data).some(
-          (value) => value && value.toString().toLowerCase().includes(globalFilter)
+          (value) =>
+            value && value.toString().toLowerCase().includes(globalFilter)
         );
   
       // ✅ Ensure UnitName is valid before checking
@@ -198,6 +212,7 @@ export class MitavDeliriumForDepartmentComponent implements OnInit {
       return matchesGlobalFilter && matchesUnitFilter;
     };
   }
+  
   
   
 

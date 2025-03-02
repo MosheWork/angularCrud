@@ -75,56 +75,165 @@
       <img src="../../assets/excel.png" alt="Download" (click)="exportToExcel()" class="download-icon" width="50px" />
     </form>
   
-    <!-- ✅ Data Table -->
     <mat-table #pdfTable [dataSource]="dataSource" matSort dir="rtl" class="mat-elevation-z8">
-      <ng-container *ngFor="let column of displayedColumns" [matColumnDef]="column">
-        <mat-header-cell *matHeaderCellDef mat-sort-header>{{ getColumnLabel(column) }}</mat-header-cell>
+
+      <!-- תאריך קבלה - ATD_Admission_Date -->
+      <ng-container matColumnDef="ATD_Admission_Date">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>תאריך קבלה</mat-header-cell>
         <mat-cell *matCellDef="let element">
-  
-          <!-- 🔴 Special Formatting -->
-          
-          <!-- Delirium Days Count -->
-          <ng-container *ngIf="column === 'DeliriumDaysCount'">
-            <span >
-              {{ element.DeliriumDaysCount }}
-            </span>
-          </ng-container>
-  
-          <!-- Hours Difference -->
-          <ng-container *ngIf="column === 'HoursDifference'">
-            <span >
-              {{ element.HoursDifference }}
-            </span>
-          </ng-container>
-  
-          <!-- Patient with Delirium -->
-          <ng-container *ngIf="column === 'PatientWithDelirium'">
-            <span [ngClass]="{'red-text': element.PatientWithDelirium === 'כן'}">
-              {{ element.PatientWithDelirium }}
-            </span>
-          </ng-container>
-  
-          <!-- CAM Grade Change -->
-          <ng-container *ngIf="column === 'CAMGradeChanged'">
-            <span [ngClass]="{'red-text': element.CAMGradeChanged !== 'ללא שינוי'}">
-              {{ element.CAMGradeChanged }}
-            </span>
-          </ng-container>
-  
-          <!-- ✅ Default Rendering -->
-          <ng-container *ngIf="!['DeliriumDaysCount', 'HoursDifference', 'PatientWithDelirium', 'CAMGradeChanged'].includes(column)">
-            {{ element[column] }}
-          </ng-container>
-  
+          <span>{{ element.ATD_Admission_Date ? (element.ATD_Admission_Date | date: 'dd/MM/yyyy HH:mm') : 'לא בוצע' }}</span>
         </mat-cell>
       </ng-container>
-  
+    
+      <!-- מספר מקרה - AdmissionNo -->
+      <ng-container matColumnDef="AdmissionNo">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>מספר מקרה</mat-header-cell>
+        <mat-cell *matCellDef="let element">
+          <span>{{ element.AdmissionNo || 'לא זמין' }}</span>
+        </mat-cell>
+      </ng-container>
+    
+      <!-- גיל - AgeYears -->
+      <ng-container matColumnDef="AgeYears">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>גיל</mat-header-cell>
+        <mat-cell *matCellDef="let element">
+          <span>{{ element.AgeYears || 'לא זמין' }}</span>
+        </mat-cell>
+      </ng-container>
+    
+      <!-- מחלקה - SystemUnitName -->
+      <ng-container matColumnDef="SystemUnitName">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>מחלקה</mat-header-cell>
+        <mat-cell *matCellDef="let element">
+          <span>{{ element.SystemUnitName || 'לא זמין' }}</span>
+        </mat-cell>
+      </ng-container>
+    
+      <!-- סה"כ ימי אשפוז - TotalHospDays -->
+      <ng-container matColumnDef="TotalHospDays">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>סה"כ ימי אשפוז</mat-header-cell>
+        <mat-cell *matCellDef="let element">
+          <span>{{ element.TotalHospDays || 0 }}</span>
+        </mat-cell>
+      </ng-container>
+    
+      <!-- ציון אומדן - Grade -->
+      <ng-container matColumnDef="Grade">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>ציון אומדן</mat-header-cell>
+        <mat-cell *matCellDef="let element">
+          <span>{{ element.Grade !== null ? element.Grade : 'לא בוצע' }}</span>
+        </mat-cell>
+      </ng-container>
+    
+      <!-- תאריך אומדן - GradeEntryDate -->
+      <ng-container matColumnDef="GradeEntryDate">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>תאריך אומדן</mat-header-cell>
+        <mat-cell *matCellDef="let element">
+          <span>{{ element.GradeEntryDate ? (element.GradeEntryDate | date: 'dd/MM/yyyy') : 'לא בוצע' }}</span>
+        </mat-cell>
+      </ng-container>
+    
+      <!-- דליריום - PatientWithDelirium -->
+      <ng-container matColumnDef="PatientWithDelirium">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>דליריום</mat-header-cell>
+        <mat-cell *matCellDef="let element">
+          <span>{{ element.PatientWithDelirium || 'לא זמין' }}</span>
+        </mat-cell>
+      </ng-container>
+    
+      <!-- תאריך דליריום - PatientWithDeliriumEntryDate -->
+      <ng-container matColumnDef="PatientWithDeliriumEntryDate">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>תאריך דליריום</mat-header-cell>
+        <mat-cell *matCellDef="let element">
+          <span>{{ element.PatientWithDeliriumEntryDate ? (element.PatientWithDeliriumEntryDate | date: 'dd/MM/yyyy HH:mm') : 'לא בוצע' }}</span>
+        </mat-cell>
+      </ng-container>
+    
+      <!-- ימי דליריום - DeliriumDaysCount -->
+      <ng-container matColumnDef="DeliriumDaysCount">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>ימי דליריום</mat-header-cell>
+        <mat-cell *matCellDef="let element">
+          <span>{{ element.DeliriumDaysCount || 0 }}</span>
+        </mat-cell>
+      </ng-container>
+    
+      <!-- ציון CAM בקבלה - AdmissionCAMGrade -->
+      <ng-container matColumnDef="AdmissionCAMGrade">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>ציון CAM בקבלה</mat-header-cell>
+        <mat-cell *matCellDef="let element">
+          <span>{{ element.AdmissionCAMGrade !== null ? element.AdmissionCAMGrade : 'לא בוצע' }}</span>
+        </mat-cell>
+      </ng-container>
+    
+      <!-- טיפול תרופתי לדליריום - DrugForDelirium -->
+      <ng-container matColumnDef="DrugForDelirium">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>טיפול תרופתי לדליריום</mat-header-cell>
+        <mat-cell *matCellDef="let element">
+          <span>{{ element.DrugForDelirium ? 'כן' : 'לא' }}</span>
+        </mat-cell>
+      </ng-container>
+    
+      <!-- סה"כ אומדנים - TotalEstimationGradesCount -->
+      <ng-container matColumnDef="TotalEstimationGradesCount">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>סה"כ אומדנים</mat-header-cell>
+        <mat-cell *matCellDef="let element">
+          <span>{{ element.TotalEstimationGradesCount || 0 }}</span>
+        </mat-cell>
+      </ng-container>
+    
+      <!-- יחס אומדנים לימי אשפוז - GradeCount -->
+      <ng-container matColumnDef="GradeCount">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>יחס אומדנים לימי אשפוז</mat-header-cell>
+        <mat-cell *matCellDef="let element">
+          <span>{{ element.GradeCount || 0 }}</span>
+        </mat-cell>
+      </ng-container>
+    
+      <!-- הזמנת ייעוץ ריפוי בעיסוק - DeliriumConsiliumsOpened -->
+      <ng-container matColumnDef="DeliriumConsiliumsOpened">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>הזמנת ייעוץ ריפוי בעיסוק</mat-header-cell>
+        <mat-cell *matCellDef="let element">
+          <span>{{ element.DeliriumConsiliumsOpened || 'לא בוצע' }}</span>
+        </mat-cell>
+      </ng-container>
+    
+      <!-- תאריך ייעוץ - DeliriumConsiliumsDate -->
+      <ng-container matColumnDef="DeliriumConsiliumsDate">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>תאריך ייעוץ</mat-header-cell>
+        <mat-cell *matCellDef="let element">
+          <span>{{ element.DeliriumConsiliumsDate ? (element.DeliriumConsiliumsDate | date: 'dd/MM/yyyy HH:mm') : 'לא בוצע' }}</span>
+        </mat-cell>
+      </ng-container>
+    <!-- שעות בין דליריום ייעוץ - HoursDifference -->
+<ng-container matColumnDef="HoursDifference">
+  <mat-header-cell *matHeaderCellDef mat-sort-header>שעות בין דליריום ייעוץ</mat-header-cell>
+  <mat-cell *matCellDef="let element">
+    <span>{{ element.HoursDifference !== null ? element.HoursDifference : 'לא זמין' }}</span>
+  </mat-cell>
+</ng-container>
+
+      <!-- שינוי בציון CAM - CAMGradeChanged -->
+      <ng-container matColumnDef="CAMGradeChanged">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>שינוי בציון CAM</mat-header-cell>
+        <mat-cell *matCellDef="let element">
+          <span>{{ element.CAMGradeChanged || 'לא זמין' }}</span>
+        </mat-cell>
+      </ng-container>
+    
+      <!-- מניעה/התערבות - PreventionORInterventionCAM -->
+      <ng-container matColumnDef="PreventionORInterventionCAM">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>מניעה/התערבות</mat-header-cell>
+        <mat-cell *matCellDef="let element">
+          <span>{{ element.PreventionORInterventionCAM || 'לא זמין' }}</span>
+        </mat-cell>
+      </ng-container>
+    
       <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
       <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
-  
+    
     </mat-table>
-  
-    <!-- ✅ Paginator -->
+    
     <mat-paginator [pageSizeOptions]="[5, 25, 50]" showFirstLastButtons></mat-paginator>
+    
   </div>
   

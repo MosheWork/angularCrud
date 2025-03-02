@@ -5,8 +5,17 @@
     z-index: 10;
   }
   table {
-    width: 95%;
-    margin: 20px 23px 1px 0px;
+    width: 100% !important;
+    table-layout: auto !important; // Auto-adjust column width
+    border-collapse: collapse; // Prevent spacing issues
+    overflow: hidden !important; // Prevent content from being cut off
+  }
+  th, td {
+    white-space: normal !important; // Prevents text truncation
+    overflow: hidden; // Ensures content doesn't overflow the container
+    text-overflow: ellipsis; // Adds '...' for overflowed text
+    word-wrap: break-word !important; // Ensures wrapping
+    max-width: 200px; // Adjust as needed for readability
   }
   .mat-row:nth-child(odd) {
     background-color: white;
@@ -235,8 +244,10 @@
   mat-header-row {
     background-color: rgb(245, 242, 242); /* Replace with your desired color */
     color: white; /* Optional: Change text color to improve contrast */
-    font-weight: bold; /* Optional: Make text bold */
-    font-size: larger;
+    white-space: normal !important; // Allow wrapping
+    font-size: 16px !important;
+    font-weight: bold !important;
+    text-align: center !important; // Center align headers
   }
   .red-text {
     color: red;
@@ -372,3 +383,28 @@
     opacity: 1;
     animation: flipRotate 4s ease-in-out infinite;
   }
+
+  table {
+    width: 100% !important;
+    table-layout: auto !important; // Auto-adjust column width
+    border-collapse: collapse; // Prevent spacing issues
+    overflow: hidden !important; // Prevent content from being cut off
+  }
+  
+  mat-header-cell, mat-cell {
+    white-space: normal !important; // Allow text wrapping
+    overflow: visible !important; // Ensure text is visible
+    text-overflow: ellipsis !important; // Add "..." for overflow text
+    word-wrap: break-word !important; // Ensure wrapping
+    padding: 10px; // Improve spacing
+    max-width: 200px; // Prevent excessive text from shrinking cells
+  }
+  
+  mat-header-row {
+    background-color: rgb(245, 242, 242); /* Background color */
+    font-weight: bold !important;
+    font-size: 16px !important;
+    white-space: normal !important; // Allow text wrapping
+    text-align: center;
+  }
+  
