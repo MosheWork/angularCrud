@@ -22,35 +22,43 @@
       <mat-card-content>
         <div class="info-card-content">
           
-          <!-- Total Hospitalization Days -->
+          <!-- Total Hospitalization Days
           <div class="info-item">
             <mat-icon class="info-icon">event</mat-icon>
             <span class="info-label">סה"כ ימי אשפוז: {{ totalResults }}</span>
           </div>
-  
+   -->
+   <!-- CAM Grade Change -->
+   <div class="info-item">
+    <mat-icon class="info-icon">grading</mat-icon>
+    <span class="info-label">  בוצע אומדן:  {{ camGradeChangeCount }}</span>
+    
+          </div>
           <!-- Delirium Cases -->
           <div class="info-item">
+            <span class="info-label">דליריום: {{ PatientWithDeliriumCount }}</span>
+
             <mat-icon class="info-icon">psychology</mat-icon>
-            <span class="info-label">דליריום: {{ deliriumCount }}</span>
           </div>
   
-          <!-- CAM Grade Change -->
-          <div class="info-item">
-            <mat-icon class="info-icon">sync_alt</mat-icon>
-            <span class="info-label">שינוי בציון CAM: {{ camGradeChangeCount }}</span>
-          </div>
+          
   
-          <!-- Delirium Consiliums -->
+          <!-- Delirium Consiliums
           <div class="info-item">
             <mat-icon class="info-icon">medical_services</mat-icon>
             <span class="info-label">קונסיליום דליריום נפתח: {{ consiliumsOpenedCount }}</span>
-          </div>
+          </div> -->
   
-          <!-- Drug for Delirium -->
+          <!-- Drug for Delirium
           <div class="info-item">
             <mat-icon class="info-icon">medication</mat-icon>
             <span class="info-label">טיפול תרופתי לדליריום: {{ drugForDeliriumCount }}</span>
-          </div>
+          </div> -->
+          <!-- Prevention or Intervention CAM Count -->
+<div class="info-item">
+  <mat-icon class="info-icon">medical_services</mat-icon>
+  <span class="info-label">מניעה/התערבות: {{ preventionInterventionCount }}</span>
+</div>
   
         </div>
       </mat-card-content>
@@ -205,10 +213,12 @@
         </mat-cell>
       </ng-container>
     <!-- שעות בין דליריום ייעוץ - HoursDifference -->
+<!-- HoursDifference Column -->
 <ng-container matColumnDef="HoursDifference">
   <mat-header-cell *matHeaderCellDef mat-sort-header>שעות בין דליריום ייעוץ</mat-header-cell>
-  <mat-cell *matCellDef="let element">
-    <span>{{ element.HoursDifference !== null ? element.HoursDifference : 'לא זמין' }}</span>
+  <mat-cell *matCellDef="let element" [ngClass]="{'blink-text': highlightHoursDifference(element)}">
+    <span *ngIf="highlightHoursDifference(element)">צריך להזמין ייעוץ!!!</span>
+    <span *ngIf="!highlightHoursDifference(element)">{{ element.HoursDifference || 'לא זמין' }}</span>
   </mat-cell>
 </ng-container>
 

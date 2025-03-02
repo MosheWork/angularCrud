@@ -28,9 +28,12 @@ export class MitavDeliriumForDepartmentComponent implements OnInit {
   ];
   currentImageIndex: number = 0;
   deliriumCount: number = 0;
-  camGradeChangeCount: number = 0;
+  camGradeChangeCount: string = ''; 
   consiliumsOpenedCount: number = 0;
   drugForDeliriumCount: number = 0;
+  preventionInterventionCount: string = ''; 
+  PatientWithDeliriumCount: number = 0;
+
 
   displayedColumns: string[] = [
     'ATD_Admission_Date', 'AdmissionNo', 'AgeYears',  'TotalHospDays', 'AdmissionCAMGrade','PreventionORInterventionCAM',
@@ -90,6 +93,9 @@ loadData(): void {
   this.http.get<any[]>(`${environment.apiUrl}MitavDelirumForDepartment`).subscribe(
     (data) => {
       this.dataSource = new MatTableDataSource(data);
+      this.calculateGradeStats();
+      this.calculatePreventionInterventionStats();
+      this.calculatePatientWithDeliriumStats();
 
       // ✅ Set custom filter predicate AFTER initializing dataSource
       this.dataSource.filterPredicate = this.customFilterPredicate();
@@ -116,22 +122,25 @@ loadData(): void {
     this.filterForm.get('globalFilter')?.valueChanges.subscribe(() => this.applyFilter());
     this.filterForm.get('unitFilter')?.valueChanges.subscribe(() => this.applyFilter());
   }
-
   applyFilter(): void {
     const globalFilterValue = this.filterForm.get('globalFilter')?.value?.trim().toLowerCase() || '';
     const unitFilterValue = this.filterForm.get('unitFilter')?.value || '';
   
-    // ✅ Make sure filter predicate is applied before setting filter
+    // ✅ Ensure filter predicate is applied before setting filter
     this.dataSource.filterPredicate = this.customFilterPredicate();
   
     // ✅ Apply filter
     this.dataSource.filter = JSON.stringify({ global: globalFilterValue, unit: unitFilterValue });
   
-    // ✅ Update displayed count after filtering
+    // ✅ Recalculate counts after filtering
     setTimeout(() => {
       this.totalResults = this.dataSource.filteredData.length;
+      this.calculateGradeStats();
+      this.calculatePreventionInterventionStats();
+      this.calculatePatientWithDeliriumStats();
     });
   }
+  
   
 
   resetFilters(): void {
@@ -214,8 +223,41 @@ loadData(): void {
   }
   
   
+  calculateGradeStats() {
+    const totalRows = this.dataSource.filteredData.length; // ✅ Use filtered data
+    const validGrades = this.dataSource.filteredData.filter(row => row.Grade !== null && row.Grade !== 'לא בוצע').length;
   
-
-
+    const percentage = totalRows > 0 ? ((validGrades / totalRows) * 100).toFixed(0) : '0';
+  
+    this.camGradeChangeCount = `${validGrades}/${totalRows} (${percentage}%)`;
+  }
+  
+  calculatePreventionInterventionStats() {
+    const totalRows = this.dataSource.filteredData.length; // ✅ Use filtered data
+    const validCases = this.dataSource.filteredData.filter(row => row.PreventionORInterventionCAM !== 'לא בוצע').length;
+  
+    const percentage = totalRows > 0 ? ((validCases / totalRows) * 100).toFixed(0) : '0';
+  
+    this.preventionInterventionCount = `${validCases}/${totalRows} (${percentage}%)`;
+  }
+  
+  calculatePatientWithDeliriumStats() {
+    const validCases = this.dataSource.filteredData.filter(row => row.PatientWithDelirium === 'כן').length;
+  
+    this.PatientWithDeliriumCount = validCases;
+  }
+  highlightHoursDifference(element: any): boolean {
+    if (!element.PatientWithDeliriumEntryDate || element.DeliriumConsiliumsOpened !== 'לא') {
+      return false; // ✅ No highlighting if date is missing or consultation was opened
+    }
+  
+    const deliriumEntryDate = new Date(element.PatientWithDeliriumEntryDate);
+    const currentDate = new Date();
+    const hoursPassed = (currentDate.getTime() - deliriumEntryDate.getTime()) / (1000 * 60 * 60); // Convert ms to hours
+  
+    return hoursPassed >= 72; // ✅ Return true if more than 72 hours have passed
+  }
+  
+  
 }
 
