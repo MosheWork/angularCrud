@@ -144,6 +144,7 @@ import { MosheOnlineLogsComponent } from './chameleon-reports/moshe-online-logs/
 import { HospPhoneByDepartmentComponent } from './chameleon-reports/hosp-phone-by-department/hosp-phone-by-department.component';
 import { DepartmentSummaryDialogComponent } from './mitav/mitav-delirium/department-summary-dialog/department-summary-dialog.component';
 import { MitavDeliriumForDepartmentComponent } from './mitav/mitav-delirium/mitav-delirium-for-department/mitav-delirium-for-department.component';
+import { HeaderNewComponent } from './header-new/header-new.component';
 
 @NgModule({
   declarations: [
@@ -254,7 +255,8 @@ import { MitavDeliriumForDepartmentComponent } from './mitav/mitav-delirium/mita
     MosheOnlineLogsComponent,
     HospPhoneByDepartmentComponent,
     DepartmentSummaryDialogComponent,
-    MitavDeliriumForDepartmentComponent
+    MitavDeliriumForDepartmentComponent,
+    HeaderNewComponent
   
   ],
   imports: [

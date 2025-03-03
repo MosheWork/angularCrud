@@ -86,8 +86,10 @@
       <mat-cell *matCellDef="let element"> {{ element.DescriptionEntryDate | date:'dd/MM/yyyy' }} </mat-cell>
     </ng-container>
     <ng-container matColumnDef="DescriptionCognitive">
-      <mat-header-cell *matHeaderCellDef mat-sort-header> מלל חופשי</mat-header-cell>
-      <mat-cell *matCellDef="let element"> {{ element.DescriptionCognitive }} </mat-cell>
+      <mat-header-cell *matHeaderCellDef mat-sort-header>מלל חופשי</mat-header-cell>
+      <mat-cell *matCellDef="let element">
+        {{ element.DescriptionCognitive ? element.DescriptionCognitive : 'אין תיעוד' }}
+      </mat-cell>
     </ng-container>
     <!-- Table Header and Rows -->
     <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>

@@ -1,0 +1,22 @@
+header p{
+    margin: auto;
+}
+.header {
+    background: #1976d2;
+    color: white;
+    text-align: center;
+    font-size: 24px;
+    font-weight: bold;
+    position: fixed; /* ✅ Make it stick to the top */
+    top: 0; /* ✅ Align to the very top */
+    left: 0;
+    right: 0;
+    height: 40px;
+    line-height: 40px; /* ✅ Centers text vertically */
+    margin: 0; /* ✅ Remove any margin */
+    padding: 0; /* ✅ Remove extra padding */
+    z-index: 1000; /* ✅ Ensures it stays above other elements */
+    width: 100%; /* ✅ Full width */
+}  
+
+

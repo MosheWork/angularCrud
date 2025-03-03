@@ -20,7 +20,7 @@ export class DementiaPatientsComponent implements OnInit {
 
   displayedColumns: string[] = [
     'EntryDate', 'UnitName', 'ICD9', 'DiagnosisName', 'IdNum', 'AdmissionNo', 'FirstName',
-     'LastName','DescriptionEntryDate','DescriptionEntryDate'
+     'LastName','DescriptionEntryDate','DescriptionCognitive'
   ];
   dataSource: MatTableDataSource<any> = new MatTableDataSource<any>([]);
   originalData: any[] = [];
@@ -45,59 +45,64 @@ export class DementiaPatientsComponent implements OnInit {
 
   fetchData() {
     this.isLoading = true;
-
+  
     this.http.get<any[]>(`${environment.apiUrl}Dementia/DementiaPatients`)
       .subscribe(data => {
-        // ✅ Convert EntryDate to a JavaScript Date object
         this.originalData = data.map(item => ({
           ...item,
           EntryDate: item.EntryDate ? new Date(item.EntryDate) : null
         }));
-
-        this.applyFilters();
-        this.totalResults = data.length;
-        this.dataSource = new MatTableDataSource(this.originalData);
-
-        // ✅ Assign paginator & sort AFTER setting data
-        this.dataSource.paginator = this.paginator;
-        this.dataSource.sort = this.sort;
-
+  
+        this.applyFilters(); // ✅ Apply filters to ensure data is loaded correctly
+  
+        setTimeout(() => {
+          this.dataSource.paginator = this.paginator;
+          this.dataSource.sort = this.sort;
+        });
+  
         this.isLoading = false;
       }, error => {
         console.error('Error fetching data', error);
         this.isLoading = false;
       });
   }
-
+  
   applyFilters() {
     const { startEntryDate, endEntryDate, globalFilter } = this.filterForm.value;
     
     // ✅ Convert selected dates to Date objects for comparison
     const startDate = startEntryDate ? new Date(startEntryDate) : null;
     const endDate = endEntryDate ? new Date(endEntryDate) : null;
-
+  
     console.log("Total API results:", this.originalData.length); // Debug API results
-
-    this.dataSource.data = this.originalData.filter(patient => {
+  
+    // ✅ Apply Filters
+    const filteredData = this.originalData.filter(patient => {
       const patientDate = patient.EntryDate ? new Date(patient.EntryDate) : null;
-
+  
       const isDateInRange = 
         (!startDate || (patientDate && patientDate >= startDate)) &&
         (!endDate || (patientDate && patientDate <= endDate));
-
+  
       const isGlobalMatch = !globalFilter || Object.values(patient).some(value =>
         value?.toString().toLowerCase().includes(globalFilter.toLowerCase())
       );
-
+  
       return isDateInRange && isGlobalMatch;
     });
-
-    console.log("Filtered results:", this.dataSource.data.length); // Debug filtered results
+  
+    console.log("Filtered results:", filteredData.length); // Debug filtered results
+    
+    // ✅ Ensure Angular Updates the UI
+    this.dataSource.data = [...filteredData]; // Force change detection
     this.totalResults = this.dataSource.data.length;
-    this.dataSource.paginator = this.paginator;
-    this.dataSource.sort = this.sort;
+  
+    setTimeout(() => {
+      this.dataSource.paginator = this.paginator;
+      this.dataSource.sort = this.sort;
+    });
   }
-
+  
   resetFilters() {
     this.filterForm.setValue({
       startEntryDate: null,

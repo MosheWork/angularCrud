@@ -168,7 +168,9 @@ const routes: Routes = [
    // דוח מיתב
    { path: 'MitavMobility', component: MitavMobilityComponent },
    { path: 'MitavDelirium', component: MitavDeliriumComponent },
-   { path: 'mitav-delirium-for-department', component: MitavDeliriumForDepartmentComponent },
+   { path: 'mitav-delirium-for-department', component: MitavDeliriumForDepartmentComponent , data: { title: ' דו"ח דליריום למחלקה' }},
+
+
 
    //amin
    { path: 'aws', component: AwsClaudeInvocationComponent },
