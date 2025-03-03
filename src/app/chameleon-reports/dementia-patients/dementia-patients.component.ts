@@ -20,7 +20,7 @@ export class DementiaPatientsComponent implements OnInit {
 
   displayedColumns: string[] = [
     'EntryDate', 'UnitName', 'ICD9', 'DiagnosisName', 'IdNum', 'AdmissionNo', 'FirstName',
-     'LastName','DescriptionEntryDate','DescriptionCognitive'
+     'LastName','DescriptionEntryDate'
   ];
   dataSource: MatTableDataSource<any> = new MatTableDataSource<any>([]);
   originalData: any[] = [];

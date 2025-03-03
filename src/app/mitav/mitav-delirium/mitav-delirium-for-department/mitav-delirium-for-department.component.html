@@ -125,21 +125,24 @@
         </mat-cell>
       </ng-container>
     
-      <!-- ציון אומדן - Grade -->
-      <ng-container matColumnDef="Grade">
-        <mat-header-cell *matHeaderCellDef mat-sort-header>ציון אומדן</mat-header-cell>
-        <mat-cell *matCellDef="let element">
-          <span>{{ element.Grade !== null ? element.Grade : 'לא בוצע' }}</span>
-        </mat-cell>
-      </ng-container>
-    
-      <!-- תאריך אומדן - GradeEntryDate -->
-      <ng-container matColumnDef="GradeEntryDate">
-        <mat-header-cell *matHeaderCellDef mat-sort-header>תאריך אומדן</mat-header-cell>
-        <mat-cell *matCellDef="let element">
-          <span>{{ element.GradeEntryDate ? (element.GradeEntryDate | date: 'dd/MM/yyyy') : 'לא בוצע' }}</span>
-        </mat-cell>
-      </ng-container>
+   <!-- ציון אומדן - Grade -->
+<ng-container matColumnDef="Grade">
+  <mat-header-cell *matHeaderCellDef mat-sort-header>ציון CAM באשפוז</mat-header-cell>
+  <mat-cell *matCellDef="let element">
+    <span [ngClass]="{'red-bold': element.Grade === null || element.Grade === 'לא בוצע'}">
+      {{ element.Grade !== null ? element.Grade : 'לא בוצע' }}
+    </span>
+  </mat-cell>
+</ng-container>
+    <!-- תאריך אומדן - GradeEntryDate -->
+<ng-container matColumnDef="GradeEntryDate">
+  <mat-header-cell *matHeaderCellDef mat-sort-header>תאריך אומדן</mat-header-cell>
+  <mat-cell *matCellDef="let element">
+    <span [ngClass]="{'red-bold': !element.GradeEntryDate}">
+      {{ element.GradeEntryDate ? (element.GradeEntryDate | date: 'dd/MM/yyyy') : 'לא בוצע' }}
+    </span>
+  </mat-cell>
+</ng-container>
     
       <!-- דליריום - PatientWithDelirium -->
       <ng-container matColumnDef="PatientWithDelirium">
@@ -165,19 +168,22 @@
         </mat-cell>
       </ng-container>
     
-      <!-- ציון CAM בקבלה - AdmissionCAMGrade -->
-      <ng-container matColumnDef="AdmissionCAMGrade">
-        <mat-header-cell *matHeaderCellDef mat-sort-header>ציון CAM בקבלה</mat-header-cell>
-        <mat-cell *matCellDef="let element">
-          <span>{{ element.AdmissionCAMGrade !== null ? element.AdmissionCAMGrade : 'לא בוצע' }}</span>
-        </mat-cell>
-      </ng-container>
+<!-- ציון CAM בקבלה - AdmissionCAMGrade -->
+<ng-container matColumnDef="AdmissionCAMGrade">
+  <mat-header-cell *matHeaderCellDef mat-sort-header>ציון CAM בקבלה</mat-header-cell>
+  <mat-cell *matCellDef="let element">
+    <span [ngClass]="{'red-bold': element.AdmissionCAMGrade === null || element.AdmissionCAMGrade === 'לא בוצע'}">
+      {{ element.AdmissionCAMGrade !== null ? element.AdmissionCAMGrade : 'לא בוצע' }}
+    </span>
+  </mat-cell>
+</ng-container>
+
     
       <!-- טיפול תרופתי לדליריום - DrugForDelirium -->
       <ng-container matColumnDef="DrugForDelirium">
         <mat-header-cell *matHeaderCellDef mat-sort-header>טיפול תרופתי לדליריום</mat-header-cell>
         <mat-cell *matCellDef="let element">
-          <span>{{ element.DrugForDelirium ? 'כן' : 'לא' }}</span>
+          <span>{{ element.DrugForDelirium }}</span>
         </mat-cell>
       </ng-container>
     
@@ -230,13 +236,18 @@
         </mat-cell>
       </ng-container>
     
-      <!-- מניעה/התערבות - PreventionORInterventionCAM -->
-      <ng-container matColumnDef="PreventionORInterventionCAM">
-        <mat-header-cell *matHeaderCellDef mat-sort-header>מניעה/התערבות</mat-header-cell>
-        <mat-cell *matCellDef="let element">
-          <span>{{ element.PreventionORInterventionCAM || 'לא זמין' }}</span>
-        </mat-cell>
-      </ng-container>
+<!-- מניעה/התערבות - PreventionORInterventionCAM -->
+<ng-container matColumnDef="PreventionORInterventionCAM">
+  <mat-header-cell *matHeaderCellDef mat-sort-header>מניעה/התערבות</mat-header-cell>
+  <mat-cell *matCellDef="let element">
+    <span [ngClass]="{'red-bold': !element.PreventionORInterventionCAM || element.PreventionORInterventionCAM === 'לא בוצע'}">
+      {{ element.PreventionORInterventionCAM || 'לא זמין' }}
+    </span>
+  </mat-cell>
+</ng-container>
+
+
+      
     
       <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
       <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
