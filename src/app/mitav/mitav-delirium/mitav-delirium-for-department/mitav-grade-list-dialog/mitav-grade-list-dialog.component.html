@@ -11,14 +11,20 @@
   
   <!-- ✅ Data Table -->
   <div mat-dialog-content class="dialog-content" *ngIf="!isLoading">
-    <table mat-table [dataSource]="gradesList" class="mat-elevation-z8 grade-table">
+    <table mat-table [dataSource]="gradesList" class="mat-elevation-z8 grade-table" dir="rtl">
   
       <!-- Medical Record Column
       <ng-container matColumnDef="Medical_Record">
         <mat-header-cell *matHeaderCellDef>רישום רפואי</mat-header-cell>
         <mat-cell *matCellDef="let element">{{ element.Medical_Record }}</mat-cell>
       </ng-container> -->
-  
+      <!-- ✅ Auto Number Column -->
+      <ng-container matColumnDef="index">
+        <mat-header-cell *matHeaderCellDef>#</mat-header-cell>
+        <mat-cell *matCellDef="let element; let i = index">
+          {{ i + 1 }}
+        </mat-cell>
+      </ng-container>
       <!-- Grade Column -->
       <ng-container matColumnDef="Grade">
         <mat-header-cell *matHeaderCellDef>ציון אומדן</mat-header-cell>
@@ -35,8 +41,9 @@
         <mat-cell *matCellDef="let element">{{ element.Entry_Date | date: 'dd/MM/yyyy' }}</mat-cell>
       </ng-container>
   
-      <mat-header-row *matHeaderRowDef="[ 'Grade', 'Entry_Date']"></mat-header-row>
-      <mat-row *matRowDef="let row; columns: [ 'Grade', 'Entry_Date'];"></mat-row>
+      <mat-header-row *matHeaderRowDef="['index', 'Grade', 'Entry_Date']"></mat-header-row>
+      <mat-row *matRowDef="let row; columns: ['index', 'Grade', 'Entry_Date'];"></mat-row>
+      
     </table>
   </div>
   
