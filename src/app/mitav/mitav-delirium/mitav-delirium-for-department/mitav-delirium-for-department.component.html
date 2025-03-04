@@ -126,14 +126,15 @@
       </ng-container>
     
    <!-- ציון אומדן - Grade -->
-<ng-container matColumnDef="Grade">
-  <mat-header-cell *matHeaderCellDef mat-sort-header>ציון CAM באשפוז</mat-header-cell>
-  <mat-cell *matCellDef="let element">
-    <span [ngClass]="{'red-bold': element.Grade === null || element.Grade === 'לא בוצע'}">
-      {{ element.Grade !== null ? element.Grade : 'לא בוצע' }}
-    </span>
-  </mat-cell>
-</ng-container>
+   <ng-container matColumnDef="Grade">
+    <mat-header-cell *matHeaderCellDef mat-sort-header>ציון CAM באשפוז</mat-header-cell>
+    <mat-cell *matCellDef="let element">
+      <span [ngClass]="{'red-bold': element.Grade === null || element.Grade === 'לא בוצע' }">
+        {{ element.Grade === 99 ? 'מולא רק בקבלה' : (element.Grade !== null ? element.Grade : 'לא בוצע') }}
+      </span>
+    </mat-cell>
+  </ng-container>
+  
     <!-- תאריך אומדן - GradeEntryDate -->
 <ng-container matColumnDef="GradeEntryDate">
   <mat-header-cell *matHeaderCellDef mat-sort-header>תאריך אומדן</mat-header-cell>
