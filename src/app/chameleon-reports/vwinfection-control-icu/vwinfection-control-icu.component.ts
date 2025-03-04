@@ -171,37 +171,46 @@ export class VWInfectionControlICUComponent implements OnInit {
       formControls[column] = new FormControl('');
     });
     formControls['globalFilter'] = new FormControl('');
+    formControls['startDate'] = new FormControl(null);  // ✅ Start Date
+    formControls['endDate'] = new FormControl(null);    // ✅ End Date
     return this.fb.group(formControls);
   }
-
+  
   applyFilters() {
     const filters = this.filterForm.value;
-    const globalFilter = (filters['globalFilter'] || '').toLowerCase();
-
-    this.filteredData = this.dataSource.filter((item) =>
-      this.columns.every((column) => {
-        const value = item[column];
-        const filterValue = filters[column];
-
-        const stringValue = typeof value === 'string' ? value.toLowerCase() : String(value).toLowerCase();
-        const filterString = typeof filterValue === 'string' ? filterValue.toLowerCase() : filterValue;
-
-        return (!filterString || stringValue.includes(filterString)) &&
-               (!globalFilter || this.columns.some((col) => String(item[col]).toLowerCase().includes(globalFilter)));
-      })
-    );
-
+    const startDate = filters['startDate'] ? new Date(filters['startDate']) : null;
+    const endDate = filters['endDate'] ? new Date(filters['endDate']) : null;
+    
+    this.filteredData = this.dataSource.filter(item => {
+      const itemDate = new Date(item.DateOfFill);
+  
+      // ✅ Remove time component
+      const itemDateOnly = new Date(itemDate.getFullYear(), itemDate.getMonth(), itemDate.getDate());
+      const startDateOnly = startDate ? new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate()) : null;
+      const endDateOnly = endDate ? new Date(endDate.getFullYear(), endDate.getMonth(), endDate.getDate()) : null;
+  
+      return (
+        (!startDateOnly || itemDateOnly >= startDateOnly) &&
+        (!endDateOnly || itemDateOnly <= endDateOnly)
+      );
+    });
+  
     this.totalResults = this.filteredData.length;
     this.matTableDataSource.data = this.filteredData;
     this.matTableDataSource.paginator = this.paginator;
   }
+  
+  
+  
 
   resetFilters() {
-    this.filterForm.reset();
+    this.filterForm.reset();  // ✅ Reset all filters
     this.filterForm.get('globalFilter')?.setValue('');
-    this.applyFilters();
+    this.filterForm.get('startDate')?.setValue(null);  // ✅ Reset Start Date
+    this.filterForm.get('endDate')?.setValue(null);    // ✅ Reset End Date
+    this.applyFilters();  // ✅ Reapply the filters
   }
-
+  
   exportToExcel() {
     const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(this.filteredData);
     const workbook: XLSX.WorkBook = { Sheets: { data: worksheet }, SheetNames: ['data'] };

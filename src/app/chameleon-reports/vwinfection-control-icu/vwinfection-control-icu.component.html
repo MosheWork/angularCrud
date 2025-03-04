@@ -17,11 +17,29 @@
         <mat-label>חיפוש</mat-label>
         <input matInput [formControlName]="'globalFilter'" />
       </mat-form-field>
+    
+      <!-- ✅ Start Date -->
+      <mat-form-field>
+        <mat-label>תאריך התחלה</mat-label>
+        <input matInput [matDatepicker]="pickerStart" formControlName="startDate">
+        <mat-datepicker-toggle matSuffix [for]="pickerStart"></mat-datepicker-toggle>
+        <mat-datepicker #pickerStart></mat-datepicker>
+      </mat-form-field>
+    
+      <!-- ✅ End Date -->
+      <mat-form-field>
+        <mat-label>תאריך סיום</mat-label>
+        <input matInput [matDatepicker]="pickerEnd" formControlName="endDate">
+        <mat-datepicker-toggle matSuffix [for]="pickerEnd"></mat-datepicker-toggle>
+        <mat-datepicker #pickerEnd></mat-datepicker>
+      </mat-form-field>
+    
       <button mat-button (click)="resetFilters()" mat-raised-button color="primary">
         איפוס מסננים
       </button>
       <img src="../../assets/excel.png" alt="Download" (click)="exportToExcel()" class="download-icon" width="50px" />
     </form>
+    
 
     <!-- Scrollable Table Container -->
     <div class="table-responsive">
