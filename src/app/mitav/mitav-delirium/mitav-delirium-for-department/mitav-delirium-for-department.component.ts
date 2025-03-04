@@ -8,6 +8,8 @@ import { environment } from '../../../../environments/environment';
 import * as XLSX from 'xlsx';
 import { jsPDF } from 'jspdf';
 import html2canvas from 'html2canvas';
+import { MatDialog } from '@angular/material/dialog';
+import { MitavGradeListDialogComponent } from '../mitav-delirium-for-department/mitav-grade-list-dialog/mitav-grade-list-dialog.component';
 
 @Component({
   selector: 'app-mitav-delirium-for-department',
@@ -71,7 +73,7 @@ export class MitavDeliriumForDepartmentComponent implements OnInit {
 
   filterForm: FormGroup;
 
-  constructor(private http: HttpClient, private fb: FormBuilder) {
+  constructor(private http: HttpClient, private fb: FormBuilder, public dialog: MatDialog) {
     this.filterForm = this.fb.group({
       globalFilter: [''],
       unitFilter: ['']
@@ -258,6 +260,16 @@ loadData(): void {
     return hoursPassed >= 72; // ✅ Return true if more than 72 hours have passed
   }
   
-  
+  openGradeListDialog(row: any): void {
+    this.dialog.open(MitavGradeListDialogComponent, {
+      width: '600px',
+      data: {
+        Admission_Medical_Record: row.Admission_Medical_Record,
+        FollowUp_Medical_Record: row.FollowUp_Medical_Record,
+        Release_Medical_Record: row.Release_Medical_Record
+      }
+    });
+  }
+    
 }
 

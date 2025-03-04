@@ -145,6 +145,7 @@ import { HospPhoneByDepartmentComponent } from './chameleon-reports/hosp-phone-b
 import { DepartmentSummaryDialogComponent } from './mitav/mitav-delirium/department-summary-dialog/department-summary-dialog.component';
 import { MitavDeliriumForDepartmentComponent } from './mitav/mitav-delirium/mitav-delirium-for-department/mitav-delirium-for-department.component';
 import { HeaderNewComponent } from './header-new/header-new.component';
+import { MitavGradeListDialogComponent } from './mitav/mitav-delirium/mitav-delirium-for-department/mitav-grade-list-dialog/mitav-grade-list-dialog.component';
 
 @NgModule({
   declarations: [
@@ -256,7 +257,8 @@ import { HeaderNewComponent } from './header-new/header-new.component';
     HospPhoneByDepartmentComponent,
     DepartmentSummaryDialogComponent,
     MitavDeliriumForDepartmentComponent,
-    HeaderNewComponent
+    HeaderNewComponent,
+    MitavGradeListDialogComponent
   
   ],
   imports: [

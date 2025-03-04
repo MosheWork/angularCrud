@@ -1,0 +1,47 @@
+<!-- ✅ Dialog Title (Styled) -->
+<h2 mat-dialog-title class="dialog-title">
+רשימת ציוני אומדן 
+  </h2>
+  
+  <!-- ✅ Loader -->
+  <div mat-dialog-content class="loading-container" *ngIf="isLoading">
+    <mat-spinner diameter="40"></mat-spinner>
+    <p class="loading-text">טוען נתונים...</p>
+  </div>
+  
+  <!-- ✅ Data Table -->
+  <div mat-dialog-content class="dialog-content" *ngIf="!isLoading">
+    <table mat-table [dataSource]="gradesList" class="mat-elevation-z8 grade-table">
+  
+      <!-- Medical Record Column
+      <ng-container matColumnDef="Medical_Record">
+        <mat-header-cell *matHeaderCellDef>רישום רפואי</mat-header-cell>
+        <mat-cell *matCellDef="let element">{{ element.Medical_Record }}</mat-cell>
+      </ng-container> -->
+  
+      <!-- Grade Column -->
+      <ng-container matColumnDef="Grade">
+        <mat-header-cell *matHeaderCellDef>ציון אומדן</mat-header-cell>
+        <mat-cell *matCellDef="let element">
+          <span [ngClass]="{'highlight-red': element.Grade === null}">
+            {{ element.Grade ?? 'לא בוצע' }}
+          </span>
+        </mat-cell>
+      </ng-container>
+  
+      <!-- Entry Date Column -->
+      <ng-container matColumnDef="Entry_Date">
+        <mat-header-cell *matHeaderCellDef>תאריך</mat-header-cell>
+        <mat-cell *matCellDef="let element">{{ element.Entry_Date | date: 'dd/MM/yyyy' }}</mat-cell>
+      </ng-container>
+  
+      <mat-header-row *matHeaderRowDef="[ 'Grade', 'Entry_Date']"></mat-header-row>
+      <mat-row *matRowDef="let row; columns: [ 'Grade', 'Entry_Date'];"></mat-row>
+    </table>
+  </div>
+  
+  <!-- ✅ Dialog Footer -->
+  <div mat-dialog-actions class="dialog-actions">
+    <button mat-button color="primary" (click)="closeDialog()">סגור</button>
+  </div>
+  
