@@ -18,7 +18,10 @@ export class MitavGeriatricForDepartmentComponent implements OnInit {
   isLoading: boolean = true;
   dataSource: MatTableDataSource<any> = new MatTableDataSource();
   unitOptions: string[] = [];
-
+  camAssessmentGauge: number = 0;
+  validCAMCount: number = 0;
+  invalidCAMCount: number = 0;
+  totalCAMCases: number = 0;
   displayedColumns: string[] = [
     'ATD_Admission_Date', 'Admission_No', 'Age_Years', 'PrimaryUnit_Name', 'GeriatricConsultation'
   ];
@@ -55,6 +58,8 @@ export class MitavGeriatricForDepartmentComponent implements OnInit {
       (data) => {
         this.dataSource = new MatTableDataSource(data);
         this.totalResults = data.length;
+        this.calculateCAMStats();
+
         this.unitOptions = [...new Set(data.map((item) => item.PrimaryUnit_Name))].sort();
         setTimeout(() => {
           this.dataSource.paginator = this.paginator;
@@ -89,6 +94,8 @@ export class MitavGeriatricForDepartmentComponent implements OnInit {
 
     this.dataSource.filter = JSON.stringify({ global: globalFilterValue, unit: unitFilterValue });
     this.totalResults = this.dataSource.filteredData.length;
+
+    this.calculateCAMStats(); // ✅ Update gauge on filter
   }
 
   resetFilters(): void {
@@ -111,6 +118,24 @@ export class MitavGeriatricForDepartmentComponent implements OnInit {
     XLSX.writeFile(workbook, 'דו"ח_גריאטריה.xlsx');
   }
 
-
-
+  calculateCAMStats(): void {
+    const total = this.dataSource.filteredData.length;
+    const valid = this.dataSource.filteredData.filter((row) => row.GeriatricConsultation === 'כן').length;
+    const invalid = total - valid;
+  
+    this.validCAMCount = valid;
+    this.invalidCAMCount = invalid;
+    this.totalCAMCases = total;
+  
+    this.camAssessmentGauge = total > 0 ? (valid / total) * 100 : 0;
+  }
+  
+  camAssessmentGaugeColor(): string {
+    return this.camAssessmentGauge >= 50 ? 'green' : 'red';
+  }
+  isDateColumn(column: string): boolean {
+    const dateColumns = ['ATD_Admission_Date']; // ✅ Add all date column names here
+    return dateColumns.includes(column);
+  }
+  
 }
