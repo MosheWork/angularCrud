@@ -14,7 +14,7 @@ import { NgxGaugeModule } from 'ngx-gauge';
   styleUrls: ['./mitav-geriatric.component.scss'],
 })
 export class MitavGeriatricComponent implements OnInit {
-  title: string = 'דו"ח גריאטריה במחלקות';
+  title: string = 'דאשבורד גריאטריה ';
   totalResults: number = 0;
   isLoading: boolean = true;
   dataSource: MatTableDataSource<any> = new MatTableDataSource();
