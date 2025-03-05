@@ -388,17 +388,17 @@
     width: 100% !important;
     table-layout: auto !important; // Auto-adjust column width
     border-collapse: collapse; // Prevent spacing issues
-    overflow: hidden !important; // Prevent content from being cut off
+   overflow: hidden !important; // Prevent content from being cut off
   }
   
-  mat-header-cell, mat-cell {
-    white-space: normal !important; // Allow text wrapping
-    overflow: visible !important; // Ensure text is visible
-    text-overflow: ellipsis !important; // Add "..." for overflow text
-    word-wrap: break-word !important; // Ensure wrapping
-    padding: 10px; // Improve spacing
-    max-width: 200px; // Prevent excessive text from shrinking cells
-  }
+  // mat-header-cell, mat-cell {
+  //   white-space: normal !important; // Allow text wrapping
+  //   overflow: visible !important; // Ensure text is visible
+  //   text-overflow: ellipsis !important; // Add "..." for overflow text
+  //   word-wrap: break-word !important; // Ensure wrapping
+  //   padding: 10px; // Improve spacing
+  //   max-width: 200px; // Prevent excessive text from shrinking cells
+  // }
   
   mat-header-row {
     background-color: rgb(245, 242, 242); /* Background color */
