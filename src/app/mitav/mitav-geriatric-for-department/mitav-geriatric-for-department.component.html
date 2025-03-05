@@ -2,7 +2,20 @@
     <div class="nine">
       <h1>{{ title }}<span> סה"כ תוצאות :{{ totalResults }}</span></h1>
     </div>
-  
+    <div class="gauge-item">
+      <div class="gauge-title"> ייעוץ גריאטרי</div>
+      <ngx-gauge
+        [value]="camAssessmentGauge"
+        [min]="0"
+        [max]="100"
+        [label]="''"
+        [append]="'%'"
+        [foregroundColor]="camAssessmentGaugeColor()"> 
+      </ngx-gauge>
+      <div class="gauge-info">
+        <strong> תקין {{ validCAMCount }} / לא תקין {{ invalidCAMCount }} / סה"כ - {{ totalCAMCases }} </strong>
+      </div>
+    </div>
     <form [formGroup]="filterForm" class="filter-form" dir="rtl">
       <mat-form-field class="long-search-bar">
         <mat-label>חיפוש</mat-label>
@@ -20,20 +33,7 @@
       <button mat-raised-button color="primary" (click)="resetFilters()">איפוס</button>
       <img src="../../assets/excel.png" alt="Download" (click)="exportToExcel()" class="download-icon" width="50px" />
     </form>
-    <div class="gauge-item">
-        <div class="gauge-title">אומדן CAM</div>
-        <ngx-gauge
-          [value]="camAssessmentGauge"
-          [min]="0"
-          [max]="100"
-          [label]="''"
-          [append]="'%'"
-          [foregroundColor]="camAssessmentGaugeColor()"> 
-        </ngx-gauge>
-        <div class="gauge-info">
-          <strong> תקין {{ validCAMCount }} / לא תקין {{ invalidCAMCount }} / סה"כ - {{ totalCAMCases }} </strong>
-        </div>
-      </div>
+   
       <mat-table #pdfTable [dataSource]="dataSource" matSort dir="rtl" class="mat-elevation-z8">
         <ng-container *ngFor="let column of displayedColumns" [matColumnDef]="column">
           <mat-header-cell *matHeaderCellDef mat-sort-header>{{ columnLabels[column] }}</mat-header-cell>

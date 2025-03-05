@@ -1,0 +1,131 @@
+<app-spinner [isLoading]="isLoading"></app-spinner>
+
+
+<div *ngIf="!isLoading" class="body">
+    <div class="nine">
+      <h1>דו"ח גריאטריה במחלקות</h1>
+    </div>
+  
+    <!-- ✅ Wrap filters inside a form with [formGroup]="filterForm" -->
+ <!-- Filters Section -->
+<div class="filter-card">
+    <div dir="rtl" class="card mat-elevation-z8">
+      <div class="card-body">
+        <div class="filter-container">
+  
+          <!-- Global Search -->
+          <mat-form-field appearance="outline">
+            <mat-label>Search</mat-label>
+            <input matInput (keyup)="applyGlobalFilter($event)" placeholder="Search across all columns">
+          </mat-form-field>
+  
+          <!-- Department Multi-Select -->
+          <mat-form-field class="filter-field">
+            <mat-label>בחר מחלקות</mat-label>
+            <mat-select [(ngModel)]="selectedDepartments" multiple (selectionChange)="applyFilters()">
+              <mat-option *ngFor="let department of departmentList" [value]="department">
+                {{ department }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+  
+          <!-- Start Date Filter -->
+          <mat-form-field class="filter-field">
+            <mat-label>תאריך התחלה</mat-label>
+            <input matInput [matDatepicker]="startDatePicker" [(ngModel)]="startDate" (ngModelChange)="applyFilters()" />
+            <mat-datepicker-toggle matSuffix [for]="startDatePicker"></mat-datepicker-toggle>
+            <mat-datepicker #startDatePicker></mat-datepicker>
+          </mat-form-field>
+  
+          <!-- End Date Filter -->
+          <mat-form-field class="filter-field">
+            <mat-label>תאריך סיום</mat-label>
+            <input matInput [matDatepicker]="endDatePicker" [(ngModel)]="endDate" (ngModelChange)="applyFilters()" />
+            <mat-datepicker-toggle matSuffix [for]="endDatePicker"></mat-datepicker-toggle>
+            <mat-datepicker #endDatePicker></mat-datepicker>
+          </mat-form-field>
+  
+          <!-- Year Filter -->
+          <mat-form-field class="filter-field">
+            <mat-label>בחר שנה</mat-label>
+            <mat-select [(ngModel)]="selectedYear" (selectionChange)="applyFilters()">
+              <mat-option *ngFor="let year of yearList" [value]="year">
+                {{ year }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+  
+          <!-- Quarter Filter -->
+          <mat-form-field class="filter-field">
+            <mat-label>בחר רבעון</mat-label>
+            <mat-select [(ngModel)]="selectedQuarter" (selectionChange)="applyFilters()">
+              <mat-option *ngFor="let quarter of ['רבעון 1', 'רבעון 2', 'רבעון 3', 'רבעון 4']" [value]="quarter">
+                {{ quarter }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+  
+          <!-- Filter Buttons -->
+          <div class="filter-buttons" style="margin-top: 10px; text-align: right;">
+            <button mat-raised-button color="warn" (click)="resetFilters()">איפוס</button>
+          </div>
+  
+        </div>
+      </div>
+    </div>
+  </div>
+  
+
+  
+    <!-- ✅ Gauge -->
+    <div class="gauge-item">
+        <div class="gauge-title">אומדן CAM</div>
+        <ngx-gauge
+          [value]="geriatricAssessmentGauge"
+          [min]="0"
+          [max]="100"
+          [label]="''"
+          [append]="'%'"
+          [foregroundColor]="geriatricAssessmentGaugeColor()"> 
+        </ngx-gauge>
+        <div class="gauge-info">
+          <strong> תקין {{ validGeriatricCount }} / לא תקין {{ invalidGeriatricCount }} / סה"כ - {{ totalGeriatricCases }} </strong>
+        </div>
+      </div>
+      
+  
+    <!-- ✅ Data Table -->
+    <mat-table [dataSource]="dataSource" matSort class="mat-elevation-z8" dir="rtl">
+      
+      <ng-container matColumnDef="ATD_Admission_Date">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>תאריך קבלה</mat-header-cell>
+        <mat-cell *matCellDef="let element"> {{ element.ATD_Admission_Date | date: 'dd/MM/yyyy HH:mm' }} </mat-cell>
+      </ng-container>
+  
+      <ng-container matColumnDef="Admission_No">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>מספר מקרה</mat-header-cell>
+        <mat-cell *matCellDef="let element"> {{ element.Admission_No }} </mat-cell>
+      </ng-container>
+  
+      <ng-container matColumnDef="Age_Years">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>גיל</mat-header-cell>
+        <mat-cell *matCellDef="let element"> {{ element.Age_Years }} </mat-cell>
+      </ng-container>
+  
+      <ng-container matColumnDef="PrimaryUnit_Name">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>מחלקה</mat-header-cell>
+        <mat-cell *matCellDef="let element"> {{ element.PrimaryUnit_Name }} </mat-cell>
+      </ng-container>
+  
+      <ng-container matColumnDef="GeriatricConsultation">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>ייעוץ גריאטרי</mat-header-cell>
+        <mat-cell *matCellDef="let element"> {{ element.GeriatricConsultation }} </mat-cell>
+      </ng-container>
+  
+      <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+      <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+    </mat-table>
+  
+    <mat-paginator [pageSizeOptions]="[5, 25, 50]" showFirstLastButtons></mat-paginator>
+  </div>
+  

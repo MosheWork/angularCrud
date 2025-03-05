@@ -71,6 +71,7 @@ import { MosheOnlineLogsComponent } from './chameleon-reports/moshe-online-logs/
 import { HospPhoneByDepartmentComponent } from './chameleon-reports/hosp-phone-by-department/hosp-phone-by-department.component';
 import { MitavDeliriumForDepartmentComponent } from './mitav/mitav-delirium/mitav-delirium-for-department/mitav-delirium-for-department.component';
 import { MitavGeriatricForDepartmentComponent } from './mitav/mitav-geriatric-for-department/mitav-geriatric-for-department.component';
+import { MitavGeriatricComponent } from './mitav/mitav-geriatric/mitav-geriatric.component';
 
 const routes: Routes = [
   { path: 'users', component: UsersComponent },
@@ -171,6 +172,7 @@ const routes: Routes = [
    { path: 'MitavDelirium', component: MitavDeliriumComponent },
    { path: 'mitav-delirium-for-department', component: MitavDeliriumForDepartmentComponent , data: { title: ' דו"ח דליריום למחלקה' }},
    { path: 'mitav-geriatric-for-department', component: MitavGeriatricForDepartmentComponent , data: { title: ' דו"ח גריאטריה למחלקה' }},
+   { path: 'mitav-geriatric', component: MitavGeriatricComponent , data: { title: ' מיתב דאשבורד גריאטריה' }},
 
 
 

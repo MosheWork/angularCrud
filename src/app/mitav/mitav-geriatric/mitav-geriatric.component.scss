@@ -1,0 +1,589 @@
+#rolesDetailsBtn {
+    position: fixed;
+    bottom: 50px;
+    left: 125px;
+    z-index: 10;
+  }
+  table {
+    width: 95%; /* Keep the existing width */
+    margin: 0 auto; /* Center the table horizontally */
+    border: 2px solid #ccc; /* Add a visible border */
+    border-radius: 8px; /* Optional: Add rounded corners */
+    overflow: hidden; /* Remove potential scrollbars */
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* Optional: Add subtle shadow */
+  }
+  .mat-table-container {
+    max-height: calc(100vh - 300px); /* Adjust based on your layout */
+    overflow-y: auto; /* Enable vertical scrolling */
+    overflow-x: hidden; /* Prevent horizontal scrolling unless necessary */
+    display: block;
+  }
+  .spinner {
+    left: 50%;
+    display: unset;
+  }
+
+  .container {
+    min-width: 100%;
+  }
+  mat-card:hover {
+    cursor: pointer;
+  }
+  mat-card {
+    width: 48%;
+    margin-top: 10%;
+    text-align: center;
+    margin-right: 2%;
+    background: burlywood;
+  }
+  mat-card-content {
+    font-size: 30px;
+    font-weight: bold;
+  }
+  a {
+    cursor: pointer;
+  }
+  
+  .filter-form {
+    width: 100%; /* Set the width to 100% to match the table's width */
+    padding: 10px; /* Add padding for spacing */
+    box-sizing: border-box; /* Include padding in the width calculation */
+  }
+  
+  /* Style the 'name' select box */
+  .name-select {
+    /* Set a fixed width to match other input fields */
+    width: auto; /* or specify a width in pixels or percentage */
+    display: flex;
+    align-items: center;
+  }
+  
+  /* Add this CSS to your stylesheet */
+  .name-select .mat-select-arrow {
+    position: absolute !important;
+    top: 5px !important; /* Adjust this value to position the arrow vertically as needed */
+    left: 5px !important; /* Adjust this value to position the arrow horizontally as needed */
+  }
+  /* Add this CSS to your stylesheet */
+  .name-select {
+    width: 170px; /* Adjust the width to your desired size */
+    height: 0px;
+  }
+  /* Add margin to the mat-form-field elements */
+  .filter-field {
+    margin-right: 5px; /* Adjust the margin as needed */
+  }
+  /* Set a fixed width and height for the mat-form-field elements */
+  .filter-field {
+    width: 315px; /* Adjust the width as needed */
+    height: 80px; /* Adjust the height as needed */
+   // width: calc(25% - 20px); /* 25% to fit four filters in a row with spacing */
+    padding-top: 5px; /* Adjust this value to control the vertical spacing */
+    //padding-left: -15px;
+    //padding-right: 0px;
+  }
+  
+  // /* Add this CSS to your stylesheet */
+  // .name-select {
+  //   width: 170px !important; /* Adjust the width to your desired size */
+  //   display: flex !important;
+  //   align-items: center !important;
+  //   position: relative !important; /* Add this line to make it a positioned container */
+  // }
+  
+  // /* Adjust the position of the select arrow */
+  // .name-select {
+  //   position: absolute !important;
+  //   top: 70% !important; /* Center vertically */
+  //   left: 1px !important; /* Adjust this value to position the arrow to the right */
+  //   transform: translateY(
+  //     -50%
+  //   ) !important; /* Center vertically using translation */
+  // }
+  
+  /* Change the font family, color, and font size of the filter labels */
+  .filter-field mat-label {
+    font-family: Arial, sans-serif; /* Change to your desired font family */
+    color: black; /* Change to your desired color */
+    font-size: 16px;
+    //padding-right: none;
+  }
+
+  .filter-container {
+    display: flex;
+    justify-content: space-between; /* Horizontal distribution */
+    align-items: center; /* Vertically center elements */
+    flex-wrap: wrap; /* Allow wrapping for smaller screens */
+    gap: 3px; /* Reduce spacing between filters */
+  }
+  
+  .filter-field {
+    //flex: 1 1 calc(33% - 16px); /* Allow three filters in a row */
+   // max-width: 300px; /* Prevent filters from becoming too wide */
+    margin-bottom: 0; /* Remove unnecessary bottom margin */
+  }
+  
+  /* Add this CSS to ensure proper alignment of name-select */
+  .name-select {
+    width: 100%;
+  }
+  
+  /* Remove the width and height of name-select */
+  .name-select-wrapper .mat-select-arrow {
+    position: absolute !important;
+    top: 5px !important;
+    left: 5px !important;
+    /* Adjust this value to position the arrow horizontally as needed */
+  }
+  
+  /* Move the reset button to the bottom-left corner of the card-body */
+  .reset-button-container {
+    position: absolute;
+    bottom: 10px; /* Adjust the bottom position as needed */
+    left: 10px; /* Adjust the left position as needed */
+  }
+  
+  /* Adjust the padding of the card-body to make space for the reset button */
+  .card-body {
+    padding: 8px; /* Minimal padding inside the card body */
+    display: flex;
+    flex-direction: row; /* Align elements horizontally */
+    justify-content: flex-start; /* Push all content to the right */
+    align-items: center; /* Vertically center elements */
+    gap: 8px; /* Small gap between elements */
+  }
+  /* Add space between the end of the search bar and the start of the Excel icon */
+  .icon {
+    margin-right: 50px; /* Adjust the margin as needed for spacing */
+  }
+  /* Add this CSS to your stylesheet */
+  .filter-input {
+    text-align: right; /* Align the input text to the right */
+    direction: rtl; /* Set the text direction to right-to-left */
+  }
+  /* Add this CSS to your stylesheet */
+  .name-select .mat-select-value {
+    text-align: right; /* Align the selected text to the right */
+    direction: rtl; /* Set the text direction to righninet-to-left */
+  }
+  /* Use ::ng-deep to override Angular's View Encapsulation */
+  ::ng-deep .mat-select-trigger {
+    text-align: right !important;
+    direction: rtl !important;
+  }
+  
+  .nine h1 {
+    flex: 0 0 10%; /* 10% height */
+
+    text-align: center;
+    font-size: 50px;
+    text-transform: uppercase;
+    color: rgb(54, 10, 214);
+    letter-spacing: 1px;
+    font-family: "Playfair Display", serif;
+    font-weight: 400;
+  }
+  .nine h1 span {
+    margin-top: 5px;
+    font-size: 15px;
+    color: rgb(159, 52, 235);
+    word-spacing: 1px;
+    font-weight: normal;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    font-family: "Raleway", sans-serif;
+    font-weight: 500;
+  
+    display: grid;
+    grid-template-columns: 1fr max-content 1fr;
+    grid-template-rows: 27px 0;
+    grid-gap: 20px;
+    align-items: center;
+  }
+  
+  .nine h1 span:after,
+  .nine h1 span:before {
+    content: " ";
+    display: block;
+    // border-bottom: 1px solid rgb(60, 15, 223);
+    // border-top: 1px solid rgb(60, 15, 223);
+    //height: 5px;
+    //background-color: rgb(187, 215, 254);
+  }
+  /* Adjust the position of the date picker icon */
+  ::ng-deep .mat-datepicker-toggle {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    align-items: center;
+    justify-content: flex-start;
+    padding-left: 5px; /* Adjust as needed for positioning */
+  }
+  
+  /* Adjust the input padding to avoid overlap with the icon */
+  ::ng-deep .mat-form-field-infix {
+    padding-left: 30px; /* Adjust the padding to accommodate the icon size */
+  }
+  
+  /* If needed, adjust the alignment of the datepicker input text */
+  ::ng-deep .mat-input-element {
+    text-align: right; /* or 'left' depending on your layout */
+  }
+  .top-right-container {
+    display: flex;
+    justify-content: flex-end; /* Aligns horizontally to the right */
+    padding: 10px; /* Add some padding */
+  }
+
+
+  ngx-gauge .value {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 16px; /* Adjust font size to fit */
+    font-weight: bold;
+    color: black; /* Ensure contrast for visibility */
+    white-space: nowrap; /* Prevent text wrapping */
+  }
+
+  ::ng-deep ngx-gauge .reading-block {
+    font-size: 25px !important; /* Desired font size */
+    transform: translateY(78px) !important;
+    font-weight: 400;
+    color: black !important;
+    margin-top: 0; /* Ensure no gap between the title and gauge */
+
+  }
+
+  .gauge-card {
+    flex: 1;
+    width: 23%; /* Ensures 4 cards fit horizontally with spacing */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    border-radius: 10px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    padding: 5px;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    margin: 0; /* Remove margin to prevent extra spacing */
+  }
+  
+ 
+  .gauge-title {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #333;
+    margin: 5px 0; /* Adjust spacing between title and gauge */
+  }
+  ngx-gauge {
+    flex: 2; /* Allow gauge to take up more space */
+    margin-top: 0; /* Ensure no gap between the title and gauge */
+
+  }
+
+  .gauge-content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    margin: 0; /* Remove any default margin */
+  }
+  .body {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    overflow-y: auto; /* Enable vertical scrolling */
+    overflow-x: hidden; /* Disable horizontal scrolling */
+    
+  }
+  .gauge-section {
+    flex: 0 0 30%; /* 30% height */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0; /* Remove padding to align closer to the title */
+    margin: 0; /* Remove margin to align closer to the title */
+  }
+  .gauge-row {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    width: 95%; /* Match table width */
+  }
+  mat-tab-group {
+    width: 95%; /* Keep consistent width with the table */
+    margin: 0 auto; /* Center the tab group horizontally */
+    border: 2px solid #ccc; /* Add a border */
+    border-radius: 8px; /* Optional: Add rounded corners */
+    padding: 10px; /* Add padding inside the tab group */
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* Optional: Add subtle shadow */
+    background-color: #fff; /* Ensure tabs have a distinct background */
+    overflow: hidden; /* Prevent overflow */
+
+  }
+  
+  table {
+    width: 90%;
+  }
+
+  .table-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start; /* Push the table to the top */
+    width: 100%;
+  }
+  
+  .table-section .mat-paginator {
+    margin-top: 10px; /* Add space above the paginator */
+  }
+  
+  ::ng-deep .mat-table .mat-row:nth-child(odd) {
+    background-color: white !important;
+}
+::ng-deep .mat-table .mat-row:nth-child(even) {
+    background-color: aliceblue !important;
+}
+::ng-deep .mat-table .mat-row:hover {
+    background-color: darkgray !important;
+    cursor: pointer;
+}
+
+  .mat-cell {
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap; /* Prevent text wrapping */
+  }
+  /* Default light mode styles */
+  body {
+    background-color: #ffffff;
+    color: #000000;
+    transition: background-color 0.3s, color 0.3s;
+  }
+  
+  body.dark-mode {
+    background-color: #121212; /* Dark background */
+    color: #ffffff; /* Light text */
+  }
+  
+  body.dark-mode ::ng-deep .mat-card {
+    background-color: #1e1e1e;
+    color: #ffffff;
+  }
+  
+  body.dark-mode ::ng-deep .mat-toolbar {
+    background-color: #333333;
+    color: #ffffff;
+  }
+  
+  .mat-paginator {
+    position: sticky; /* Keeps paginator visible */
+    bottom: 0;
+    background: white; /* Ensure the background matches your layout */
+    z-index: 1; /* Ensures it's above the table content */
+    padding: 10px 0;
+  }
+  /* Add more overrides as needed */
+  ::ng-deep .mdc-tab__text-label {
+    font-family: Arial, sans-serif; /* Change font */
+    font-size: 16px; /* Increase font size */
+    font-weight: bold; /* Make text bold */
+    color: #4a90e2; /* Change text color */
+    text-transform: uppercase; /* Make the text uppercase */
+    padding: 5px; /* Add spacing around the text */
+}
+
+.filter-card {
+    width: 100%; /* Ensure it spans the full width of the container */
+    max-width: 100%; /* Matches table width */
+    //padding: 10px;
+    margin: 0 auto; /* Center the tab group horizontally */
+
+    //border: 2px solid #ccc; /* Add a border */
+    border-radius: 8px; /* Optional: Add rounded corners */
+    //background-color: #fff;
+    margin: 0 auto; /* Center the tab group horizontally */
+    //box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+    padding: 0; /* Remove padding to align closer to the title */
+    margin: 0; /* Remove margin to align closer to the title */
+  }
+  
+  .card {
+    width: 100%;
+  }
+
+  .filter-card-container {
+    display: flex;
+    justify-content: flex-end; /* Align the entire card to the right */
+    align-items: flex-start;
+    width: 95%; /* Matches table and other card widths */
+    margin: 0 auto; /* Center horizontally */
+    margin-bottom: 20px; /* Space below the card */
+  }
+  .custom-toggle-group {
+    display: flex;
+    justify-content: flex-end; /* Align buttons to the right */
+    gap: 8px; /* Add spacing between buttons */
+  }
+  
+  .mat-button-toggle {
+    background-color: #f5f5f5; /* Light gray background */
+    border: 1px solid #ccc; /* Add a border */
+    border-radius: 8px; /* Rounded corners */
+    padding: 4px 14px; /* Padding for a better click area */
+    font-family: Arial, sans-serif; /* Change font */
+    font-size: 14px; /* Adjust font size */
+    font-weight: bold; /* Bold text */
+    color: #333; /* Dark text */
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+    transition: all 0.3s ease; /* Smooth transitions for hover/focus */
+  }
+  
+  .mat-button-toggle:hover {
+   // background-color: #e0e0e0; /* Slightly darker on hover */
+    border-color: #bdbdbd; /* Darker border on hover */
+    //box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2); /* Enhanced shadow on hover */
+  }
+  
+  .mat-button-toggle.mat-button-toggle-checked {
+    background-color: #4caf50; /* Green for the selected button */
+    color: #fff; /* White text */
+    border-color: #4caf50; /* Match border color */
+   // box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2); /* Enhanced shadow */
+  }
+  
+  .mat-button-toggle.mat-button-toggle-checked:hover {
+    background-color: #43a047; /* Slightly darker green on hover */
+  }
+  
+  .mat-button-toggle.mat-button-toggle-checked:focus {
+    outline: none;
+    box-shadow: 0px 0px 8px rgba(76, 175, 80, 0.6); /* Focus shadow effect */
+  }
+  
+  .mat-button-toggle .mat-button-toggle-label-content {
+    text-transform: none; /* Prevent uppercase text */
+  }
+  .bed-doctor-loader {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    text-align: center;
+  }
+  
+  .animation {
+    font-size: 1.8rem;
+    animation: moveBeds 2s infinite linear;
+    white-space: nowrap;
+  }
+  
+  @keyframes moveBeds {
+    0% { transform: translateX(-20px); }
+    100% { transform: translateX(20px); }
+  }
+  
+  .bed-doctor-loader p {
+    font-size: 1.5rem;
+    margin-top: 10px;
+    color: #555;
+  }
+  
+  .body {
+    display: none;
+  }
+  
+  .body:not(.loading) {
+    display: block;
+  }
+  .chart-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 450px; /* Fixed height to prevent sliding */
+    max-height: 450px;
+    width: 100%;
+    padding: 10px;
+  }
+  
+  canvas {
+    max-width: 400px !important;
+    max-height: 400px !important;
+    width: 100%;
+    height: auto;
+  }
+  
+  .chart-tags {
+    display: flex;
+    flex-wrap: wrap;
+    margin-top: 10px;
+    justify-content: center;
+  
+    .tag {
+      background-color: #f0f0f0;
+      color: #444;
+      padding: 5px 10px;
+      margin: 5px;
+      border-radius: 10px;
+      font-size: 12px;
+      font-weight: bold;
+    }
+  }
+  
+  //gauge
+  .gauge-item {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  
+  .gauge-title {
+    font-weight: bold;
+    font-size: 16px;
+    margin-bottom: 10px;
+  }
+  
+  .gauge-info {
+    margin-top: 10px;
+    font-size: 14px;
+  }
+  ngx-gauge .value {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 14px; /* Adjust font size to fit */
+    font-weight: bold;
+    color: black; /* Ensure contrast for visibility */
+    white-space: nowrap; /* Prevent text wrapping */
+  }
+
+  ::ng-deep ngx-gauge .reading-block {
+    font-size: 20px !important; /* Desired font size */
+    transform: translateY(78px) !important;
+    font-weight: 400;
+    color: black !important;
+    margin-top: 0; /* Ensure no gap between the title and gauge */
+
+  }
+  .chart-container {
+    width: 95vw; /* ✅ Make the chart take full screen width */
+    height: 80vh; /* ✅ Adjust the height as needed */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  canvas {
+    width: 100% !important;
+    height: 100% !important;
+    max-width: none !important;
+    max-height: none !important;
+  }
+  
+  
