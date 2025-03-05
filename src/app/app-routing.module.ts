@@ -70,6 +70,7 @@ import { CameleonNoCaseNumberReasonsComponent } from './chameleon-reports/camele
 import { MosheOnlineLogsComponent } from './chameleon-reports/moshe-online-logs/moshe-online-logs.component';
 import { HospPhoneByDepartmentComponent } from './chameleon-reports/hosp-phone-by-department/hosp-phone-by-department.component';
 import { MitavDeliriumForDepartmentComponent } from './mitav/mitav-delirium/mitav-delirium-for-department/mitav-delirium-for-department.component';
+import { MitavGeriatricForDepartmentComponent } from './mitav/mitav-geriatric-for-department/mitav-geriatric-for-department.component';
 
 const routes: Routes = [
   { path: 'users', component: UsersComponent },
@@ -169,6 +170,7 @@ const routes: Routes = [
    { path: 'MitavMobility', component: MitavMobilityComponent },
    { path: 'MitavDelirium', component: MitavDeliriumComponent },
    { path: 'mitav-delirium-for-department', component: MitavDeliriumForDepartmentComponent , data: { title: ' דו"ח דליריום למחלקה' }},
+   { path: 'mitav-geriatric-for-department', component: MitavGeriatricForDepartmentComponent , data: { title: ' דו"ח גריאטריה למחלקה' }},
 
 
 

@@ -113,8 +113,41 @@ export class DementiaPatientsComponent implements OnInit {
   }
 
   exportToExcel() {
-    const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(this.dataSource.data);
-    const workbook: XLSX.WorkBook = { Sheets: { 'Dementia Patients': worksheet }, SheetNames: ['Dementia Patients'] };
-    XLSX.writeFile(workbook, 'Dementia_Patients.xlsx');
+    const filteredData = this.dataSource.filteredData;
+  
+    if (filteredData.length === 0) {
+      alert('אין נתונים לייצוא!');
+      return;
+    }
+  
+    // ✅ Define column mappings (English → Hebrew)
+    const columnMappings: { [key: string]: string } = {
+      EntryDate: 'תאריך דיווח',
+      UnitName: 'שם מחלקה',
+      ICD9: 'קוד ICD9',
+      DiagnosisName: 'אבחנה',
+      IdNum: 'ת.ז',
+      AdmissionNo: 'מספר אשפוז',
+      FirstName: 'שם פרטי',
+      LastName: 'שם משפחה',
+      DescriptionEntryDate: 'תאריך דיווח'
+    };
+  
+    // ✅ Convert data with Hebrew column names
+    const dataForExport = filteredData.map(row => {
+      const translatedRow: { [key: string]: any } = {};
+      Object.keys(columnMappings).forEach(key => {
+        translatedRow[columnMappings[key]] = row[key]; // Map data to Hebrew column names
+      });
+      return translatedRow;
+    });
+  
+    // ✅ Create the Excel sheet
+    const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(dataForExport);
+    const workbook: XLSX.WorkBook = { Sheets: { 'מטופלים דימנטים' : worksheet }, SheetNames: ['מטופלים דימנטים'] };
+  
+    // ✅ Download the file with Hebrew name
+    XLSX.writeFile(workbook, 'מטופלים_דימנטים.xlsx');
   }
+  
 }
