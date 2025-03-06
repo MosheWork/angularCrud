@@ -6,6 +6,8 @@ import { MatTableDataSource } from '@angular/material/table';
 import { MatSort } from '@angular/material/sort';
 import * as XLSX from 'xlsx';
 import { environment } from '../../../environments/environment';
+import { DementiaPatientDialogComponent } from '../dementia-patients/dementia-patient-dialog/dementia-patient-dialog.component';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-dementia-patients',
@@ -19,9 +21,14 @@ export class DementiaPatientsComponent implements OnInit {
   Title2: string = '';    
 
   displayedColumns: string[] = [
-    'EntryDate', 'UnitName', 'ICD9', 'DiagnosisName', 'IdNum', 'AdmissionNo', 'FirstName',
-     'LastName','DescriptionEntryDate'
+    'Admission_Date',  'UnitName', 'IdNum', 'AdmissionNo', 'FirstName', 'LastName','DataStatus'
   ];
+  
+  // ✅ Columns only for the dialog
+  dialogColumns: string[] = [
+    'EntryDate', 'ICD9', 'DiagnosisName', 'DescriptionEntryDate','heading', 'DescriptionCognitive',
+  ];
+  
   dataSource: MatTableDataSource<any> = new MatTableDataSource<any>([]);
   originalData: any[] = [];
 
@@ -31,7 +38,7 @@ export class DementiaPatientsComponent implements OnInit {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
-  constructor(private http: HttpClient, private fb: FormBuilder) {
+  constructor(private http: HttpClient, private fb: FormBuilder, public dialog: MatDialog) {
     this.filterForm = this.fb.group({
       startEntryDate: [null],  // ✅ Start empty
       endEntryDate: [null],    // ✅ Start empty
@@ -149,5 +156,10 @@ export class DementiaPatientsComponent implements OnInit {
     // ✅ Download the file with Hebrew name
     XLSX.writeFile(workbook, 'מטופלים_דימנטים.xlsx');
   }
-  
+  openPatientDialog(patient: any): void {
+    this.dialog.open(DementiaPatientDialogComponent, {
+      width: '1200px',
+      data: patient
+    });
+  }
 }

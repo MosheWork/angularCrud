@@ -227,4 +227,11 @@
     justify-content: flex-end; /* Aligns horizontally to the right */
     padding: 10px; /* Add some padding */
   }
+  .clickable-row {
+    cursor: pointer;
+    transition: background-color 0.2s ease-in-out;
+  }
   
+  .clickable-row:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+  }

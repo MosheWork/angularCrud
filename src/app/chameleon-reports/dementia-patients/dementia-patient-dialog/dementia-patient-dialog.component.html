@@ -1,0 +1,19 @@
+<h2 mat-dialog-title>פרטי המטופל</h2>
+<mat-dialog-content class="dialog-content">
+  <table mat-table [dataSource]="[data]" class="mat-elevation-z8">
+    
+    <ng-container *ngFor="let column of dialogColumns" [matColumnDef]="column">
+      <mat-header-cell *matHeaderCellDef> {{ columnLabels[column] }} </mat-header-cell>
+      <mat-cell *matCellDef="let element"> 
+        {{ element[column] || 'אין נתונים' }} 
+      </mat-cell>
+    </ng-container>
+
+    <mat-header-row *matHeaderRowDef="dialogColumns"></mat-header-row>
+    <mat-row *matRowDef="let row; columns: dialogColumns;"></mat-row>
+
+  </table>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-button (click)="closeDialog()">סגור</button>
+</mat-dialog-actions>

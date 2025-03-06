@@ -13,8 +13,8 @@ export class MItavMainPageComponent implements OnInit {
   }
 
   cards = [
-    { title: 'Shiba Inu', subtitle: 'Dog Breed', img: 'https://material.angular.io/assets/img/examples/shiba2.jpg', link: 'http://localhost:4200/#/MitavMobility', external: true },
-    { title: 'Golden Retriever', subtitle: 'Friendly Dog', img: 'https://example.com/golden.jpg', link: '/golden', external: false },
+    { title: 'Shiba Inu', subtitle: 'Dog Breed', img: '\assets\דאשבורד מיתב ניידות.png', link: 'http://localhost:4200/#/MitavMobility', external: true },
+    { title: ' דאשבורד מיתב ניידות', subtitle: '', img:'../../../assets/דאשבורד מיתב ניידות.png' , link:'http://localhost:4200/#/MitavMobility', external: false },
     { title: 'Persian Cat', subtitle: 'Fluffy Cat', img: 'https://example.com/persian.jpg', link: 'https://en.wikipedia.org/wiki/Persian_cat', external: true }
   ];
 

@@ -149,6 +149,7 @@ import { MitavGradeListDialogComponent } from './mitav/mitav-delirium/mitav-deli
 import { MitavGeriatricForDepartmentComponent } from './mitav/mitav-geriatric-for-department/mitav-geriatric-for-department.component';
 import { MitavGeriatricComponent } from './mitav/mitav-geriatric/mitav-geriatric.component';
 import { MItavMainPageComponent } from './mitav/mitav-main-page/mitav-main-page.component';
+import { DementiaPatientDialogComponent } from './chameleon-reports/dementia-patients/dementia-patient-dialog/dementia-patient-dialog.component';
 
 @NgModule({
   declarations: [
@@ -264,7 +265,8 @@ import { MItavMainPageComponent } from './mitav/mitav-main-page/mitav-main-page.
     MitavGradeListDialogComponent,
     MitavGeriatricForDepartmentComponent,
     MitavGeriatricComponent,
-    MItavMainPageComponent
+    MItavMainPageComponent,
+    DementiaPatientDialogComponent
   
   ],
   imports: [
