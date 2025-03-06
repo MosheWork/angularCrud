@@ -1,11 +1,31 @@
-<h2 mat-dialog-title>פרטי המטופל</h2>
+<h2 mat-dialog-title class="dialog-title">פרטי המטופל</h2>
+
 <mat-dialog-content class="dialog-content">
-  <table mat-table [dataSource]="[data]" class="mat-elevation-z8">
-    
+  <table mat-table [dataSource]="[data]" class="mat-elevation-z8 custom-table" dir="rtl">
+
+    <!-- Dynamic Columns -->
     <ng-container *ngFor="let column of dialogColumns" [matColumnDef]="column">
-      <mat-header-cell *matHeaderCellDef> {{ columnLabels[column] }} </mat-header-cell>
-      <mat-cell *matCellDef="let element"> 
-        {{ element[column] || 'אין נתונים' }} 
+      <mat-header-cell *matHeaderCellDef class="header-cell"> 
+        {{ columnLabels[column] }} 
+      </mat-header-cell>
+      <mat-cell *matCellDef="let element" [ngClass]="{'wide-column': column === 'DescriptionCognitive'}">
+        
+        <!-- Special Handling for DescriptionCognitive -->
+        <ng-container *ngIf="column === 'DescriptionCognitive'; else normalCell">
+          <textarea class="cognitive-textarea" readonly>{{ element[column] || 'אין נתונים' }}</textarea>
+        </ng-container>
+
+        <!-- Default Cells -->
+        <ng-template #normalCell>
+          <ng-container *ngIf="column === 'EntryDate' || column === 'DescriptionEntryDate'; else normalText">
+            {{ element[column] | date: 'dd/MM/yyyy HH:mm' }}
+          </ng-container>
+          
+          <ng-template #normalText>
+            {{ element[column] || 'אין נתונים' }}
+          </ng-template>
+        </ng-template>
+
       </mat-cell>
     </ng-container>
 
@@ -14,6 +34,7 @@
 
   </table>
 </mat-dialog-content>
-<mat-dialog-actions align="end">
-  <button mat-button (click)="closeDialog()">סגור</button>
+
+<mat-dialog-actions align="end" class="dialog-actions">
+  <button mat-button color="primary" class="close-button" (click)="closeDialog()">סגור</button>
 </mat-dialog-actions>

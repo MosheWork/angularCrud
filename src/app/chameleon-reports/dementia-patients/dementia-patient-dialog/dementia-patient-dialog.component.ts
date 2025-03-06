@@ -15,7 +15,7 @@ export class DementiaPatientDialogComponent {
     'DiagnosisName': 'אבחנה',
     'DescriptionEntryDate': 'תאריך תיעוד',
     'heading': ' שם הרכיב',
-    'DescriptionCognitive': 'תיאור קוגניטיבי'
+    'DescriptionCognitive': ' מלל'
   };
 
   constructor(

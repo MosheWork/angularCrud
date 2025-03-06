@@ -8,6 +8,10 @@ import * as XLSX from 'xlsx';
 import { environment } from '../../../environments/environment';
 import { DementiaPatientDialogComponent } from '../dementia-patients/dementia-patient-dialog/dementia-patient-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
+import jsPDF from 'jspdf';
+import html2canvas from 'html2canvas';
+import autoTable from 'jspdf-autotable';
+
 
 @Component({
   selector: 'app-dementia-patients',
@@ -129,15 +133,15 @@ export class DementiaPatientsComponent implements OnInit {
   
     // ✅ Define column mappings (English → Hebrew)
     const columnMappings: { [key: string]: string } = {
-      EntryDate: 'תאריך דיווח',
+      //EntryDate: 'תאריך דיווח',
       UnitName: 'שם מחלקה',
-      ICD9: 'קוד ICD9',
-      DiagnosisName: 'אבחנה',
-      IdNum: 'ת.ז',
-      AdmissionNo: 'מספר אשפוז',
+     // ICD9: 'קוד ICD9',
+      //DiagnosisName: 'אבחנה',
+     // IdNum: 'ת.ז',
+      //AdmissionNo: 'מספר אשפוז',
       FirstName: 'שם פרטי',
       LastName: 'שם משפחה',
-      DescriptionEntryDate: 'תאריך דיווח'
+      DataStatus: 'מקור רשומה '
     };
   
     // ✅ Convert data with Hebrew column names
@@ -162,4 +166,119 @@ export class DementiaPatientsComponent implements OnInit {
       data: patient
     });
   }
+  exportAsPDF(): void {
+    if (this.dataSource.data.length === 0) {
+      alert('אין נתונים להדפסה');
+      return;
+    }
+  
+    const now = new Date();
+    const releaseDate = now.toLocaleDateString('he-IL');
+    const releaseTime = now.toLocaleTimeString('he-IL', { hour: '2-digit', minute: '2-digit' });
+  
+    const rowsPerPage = 12; // ✅ Keep 12 rows per page
+    const totalPages = Math.ceil(this.dataSource.data.length / rowsPerPage);
+  
+    const pdf = new jsPDF({
+      orientation: 'p', // Portrait mode
+      unit: 'mm',
+      format: 'a4'
+    });
+  
+    for (let page = 0; page < totalPages; page++) {
+      const startRow = page * rowsPerPage;
+      const selectedRows = this.dataSource.data.slice(startRow, startRow + rowsPerPage);
+  
+      const tempTable = document.createElement('div');
+      tempTable.innerHTML = `
+        <div dir="rtl" style="font-family: Arial, sans-serif; padding: 10px; font-size: 9px; width: 100%; height: 100%;">
+          <!-- Header -->
+          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 5px;">
+            <div style="text-align: right; font-size: 9px;">
+              <p><strong>תאריך הפקה:</strong> ${releaseDate} ${releaseTime}</p>
+            </div>
+            <img src="assets/poria icon.jpg" alt="Icon" style="width: 60px; height: 35px;">
+          </div>
+  
+          <!-- Title -->
+          <h2 style="text-align: center; font-size: 12px; margin-bottom: 5px;">
+            דוח מטופלים דימנטים
+          </h2>
+  
+          <!-- Table -->
+          <table style="width: 100%; border-collapse: collapse; font-size: 9px; border: 1px solid #000;">
+          <thead>
+              <tr>
+                <th style="padding: 8px; border: 1px solid #000; font-size: 10px;">#</th>
+                <th style="padding: 8px; border: 1px solid #000; font-size: 10px;">שם מחלקה</th>
+                <th style="padding: 8px; border: 1px solid #000; font-size: 10px;">שם פרטי</th>
+                <th style="padding: 8px; border: 1px solid #000; font-size: 10px;">שם משפחה</th>
+                <th style="padding: 8px; border: 1px solid #000; font-size: 10px;">מקור רשומה</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${selectedRows
+                .map(
+                  (row, index) => `
+                  <tr style="height: auto;">                    <td style="padding: 8px; border: 1px solid #000;">${startRow + index + 1}</td>
+                    <td style="padding: 8px; border: 1px solid #000;">${row.UnitName || 'אין נתונים'}</td>
+                    <td style="padding: 8px; border: 1px solid #000;">${row.FirstName || 'אין נתונים'}</td>
+                    <td style="padding: 8px; border: 1px solid #000;">${row.LastName || 'אין נתונים'}</td>
+                    <td style="padding: 8px; border: 1px solid #000;">${row.DataStatus || 'אין נתונים'}</td>
+                  </tr>
+                `
+                )
+                .join('')}
+            </tbody>
+          </table>
+  
+          <!-- Bottom Margin -->
+          <div style="margin-bottom: 20px;"></div>
+        </div>
+      `;
+  
+      tempTable.style.position = 'absolute';
+      tempTable.style.top = '-9999px';
+      tempTable.style.width = '100%';
+      tempTable.style.height = '100%';
+      document.body.appendChild(tempTable);
+  
+      html2canvas(tempTable, {
+        scale: 1, // ✅ High scale for better rendering
+        height: pdf.internal.pageSize.getHeight(), // ✅ Force full page height
+        width: pdf.internal.pageSize.getWidth(),
+        useCORS: true,
+        allowTaint: false,
+      })
+        .then((canvas) => {
+          const imgWidth = pdf.internal.pageSize.getWidth();
+          const imgHeight = pdf.internal.pageSize.getHeight(); // ✅ Ensure it takes full page height
+  
+          pdf.addImage(canvas.toDataURL('image/png'), 'PNG', 0, 0, imgWidth, imgHeight);
+  
+          // ✅ Add a new page if there are more rows
+          if (page < totalPages - 1) {
+            pdf.addPage();
+          }
+  
+          tempTable.remove();
+  
+          // ✅ If it's the last page, save the PDF
+          if (page === totalPages - 1) {
+            pdf.save('DementiaPatients_Report.pdf');
+          }
+        })
+        .catch((error) => {
+          console.error('Error rendering table to canvas:', error);
+          tempTable.remove();
+        });
+    }
+  }
+  
+  
+  
+  
+  
+  
+  
 }

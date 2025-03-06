@@ -1,0 +1,101 @@
+/* Dialog Container */
+.mat-dialog-container {
+    background: #ffffff;  // White background
+    border-radius: 12px;  // Rounded corners
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);  // Soft shadow
+    padding: 20px;
+  }
+  
+  /* Dialog Title */
+  .dialog-title {
+    font-size: 22px;
+    font-weight: bold;
+    color: #333;
+    text-align: center;
+    padding-bottom: 10px;
+  }
+  
+  /* Dialog Content */
+  .dialog-content {
+    min-width: 800px;
+    max-width: 1200px;
+    padding: 20px;
+  }
+  
+  /* Table */
+  .custom-table {
+    width: 100%;
+    table-layout: fixed;  /* Ensure columns keep their width */
+    border-collapse: collapse;
+  }
+  
+  .header-cell {
+    font-weight: bold;
+    text-align: right;
+    padding: 10px;
+    background: #f5f5f5;  /* Light grey background */
+    border-bottom: 2px solid #ddd;
+  }
+  
+  .table-cell {
+    padding: 12px;
+    text-align: right;
+    vertical-align: middle;
+    border-bottom: 1px solid #ddd;
+    word-wrap: break-word;
+  }
+  
+  /* Make DescriptionCognitive Column WIDER */
+  .mat-column-DescriptionCognitive, .wide-column {
+    width: 50% !important;
+    max-width: 600px !important;
+    word-wrap: break-word;
+  }
+  
+  /* Other Columns Fixed Width */
+  .mat-column-EntryDate, 
+  .mat-column-ICD9, 
+  .mat-column-DiagnosisName, 
+  .mat-column-DescriptionEntryDate, 
+  .mat-column-heading {
+    width: 10% !important;
+    max-width: 150px !important;
+  }
+  
+  /* Textarea for Long Text */
+  .cognitive-textarea {
+    width: 100%;
+    min-height: 200px;
+    max-height: 350px;
+    overflow-y: auto;
+    resize: none;
+    border: 1px solid #ccc;
+    padding: 10px;
+    font-family: inherit;
+    background: #f9f9f9;
+    color: #333;
+    font-size: 16px;
+    border-radius: 8px;  /* Rounded edges */
+  }
+  
+  /* Dialog Actions */
+  .dialog-actions {
+    display: flex;
+    justify-content: flex-start;
+    padding-top: 15px;
+  }
+  
+  /* Close Button */
+  .close-button {
+    background-color: #1976d2; /* Material Primary Color */
+    color: white;
+    font-weight: bold;
+    padding: 8px 20px;
+    border-radius: 6px;
+    transition: all 0.3s ease-in-out;
+  }
+  
+  .close-button:hover {
+    background-color: #115293; /* Darker on hover */
+  }
+  
