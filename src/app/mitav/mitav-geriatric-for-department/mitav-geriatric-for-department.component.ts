@@ -13,7 +13,7 @@ import * as XLSX from 'xlsx';
   styleUrls: ['./mitav-geriatric-for-department.component.scss'],
 })
 export class MitavGeriatricForDepartmentComponent implements OnInit {
-  title: string = 'דו"ח גריאטריה במחלקות';
+  title: string = 'דו"ח גריאטריה למחלקות';
   totalResults: number = 0;
   isLoading: boolean = true;
   dataSource: MatTableDataSource<any> = new MatTableDataSource();

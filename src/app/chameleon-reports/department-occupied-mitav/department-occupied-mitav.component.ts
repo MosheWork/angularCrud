@@ -19,7 +19,7 @@ import html2canvas from 'html2canvas';
 export class DepartmentOccupiedMitavComponent implements OnInit {
   Title1: string = '  ';
   Title2: string = 'סה"כ מטופלים: ';
-  titleUnit: string = 'תפוסת מחלקה לדוח מיתב ';
+  titleUnit: string = 'דוח מיתב למחלקה - ניידות';
   totalResults: number = 0;
   isLoading: boolean = true;
   filteredData: any[] = [];

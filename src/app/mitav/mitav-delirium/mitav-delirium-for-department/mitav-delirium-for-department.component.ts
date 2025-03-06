@@ -17,7 +17,7 @@ import { MitavGradeListDialogComponent } from '../mitav-delirium-for-department/
   styleUrls: ['./mitav-delirium-for-department.component.scss'],
 })
 export class MitavDeliriumForDepartmentComponent implements OnInit {
-  title: string = 'דו"ח דליריום במחלקה ';
+  title: string = 'דו"ח דליריום למחלקה ';
   totalResults: number = 0;
   isLoading: boolean = true;
   dataSource: MatTableDataSource<any> = new MatTableDataSource();

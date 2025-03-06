@@ -148,6 +148,7 @@ import { HeaderNewComponent } from './header-new/header-new.component';
 import { MitavGradeListDialogComponent } from './mitav/mitav-delirium/mitav-delirium-for-department/mitav-grade-list-dialog/mitav-grade-list-dialog.component';
 import { MitavGeriatricForDepartmentComponent } from './mitav/mitav-geriatric-for-department/mitav-geriatric-for-department.component';
 import { MitavGeriatricComponent } from './mitav/mitav-geriatric/mitav-geriatric.component';
+import { MItavMainPageComponent } from './mitav/mitav-main-page/mitav-main-page.component';
 
 @NgModule({
   declarations: [
@@ -262,7 +263,8 @@ import { MitavGeriatricComponent } from './mitav/mitav-geriatric/mitav-geriatric
     HeaderNewComponent,
     MitavGradeListDialogComponent,
     MitavGeriatricForDepartmentComponent,
-    MitavGeriatricComponent
+    MitavGeriatricComponent,
+    MItavMainPageComponent
   
   ],
   imports: [
