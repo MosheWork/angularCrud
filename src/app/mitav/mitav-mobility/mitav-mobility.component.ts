@@ -188,9 +188,16 @@ invalidFunctionalCases: number = 0;
 
         this.yearList = Array.from(
           new Set(
-            data.map((item) => new Date(item.AdmissionDate).getFullYear()).filter((y) => !isNaN(y))
+            this.originalData
+              .map((item: any) => [
+                item.AdmissionDate ? new Date(item.AdmissionDate).getFullYear() : null,
+                item.ReleaseDate ? new Date(item.ReleaseDate).getFullYear() : null
+              ])
+              .reduce((acc, val) => acc.concat(val), []) // ✅ Replace flatMap with reduce
+              .filter((year: number | null): year is number => year !== null) // ✅ Ensure valid numbers
           )
-        ).sort((a, b) => b - a);
+        ).sort((a, b) => b - a); // ✅ Ensure sorting works
+        
 
         this.departmentList = Array.from(new Set(data.map((item) => item.UnitName || 'Unknown')));
       },
@@ -203,63 +210,83 @@ invalidFunctionalCases: number = 0;
 
   
   
-  applyFilters(): void {
-    let filteredData = [...this.originalData];
-  
-    // ✅ Apply Date Filter based on AdmissionDate
-    if (this.startDate || this.endDate) {
-      filteredData = filteredData.filter((item) => {
-        const admissionDate = new Date(item.AdmissionDate);
-        return (!this.startDate || admissionDate >= this.startDate) &&
-               (!this.endDate || admissionDate <= this.endDate);
-      });
-    }
-  
-    // ✅ Apply Department Filter
-    if (this.selectedDepartments.length > 0) {
-      filteredData = filteredData.filter((item) =>
-        this.selectedDepartments.includes(item.UnitName)
-      );
-    }
-  
-    // ✅ Apply Year Filter
-    if (this.selectedYear) {
-      filteredData = filteredData.filter(
-        (item) => new Date(item.AdmissionDate).getFullYear() === this.selectedYear
-      );
-    }
-  
-    // ✅ Apply Quarter Filter
-    if (this.selectedQuarter) {
-      filteredData = filteredData.filter((item) => {
-        const month = new Date(item.AdmissionDate).getMonth() + 1;
-        if (this.selectedQuarter === 'Q1') return month >= 1 && month <= 3;
-        if (this.selectedQuarter === 'Q2') return month >= 4 && month <= 6;
-        if (this.selectedQuarter === 'Q3') return month >= 7 && month <= 9;
-        if (this.selectedQuarter === 'Q4') return month >= 10 && month <= 12;
-        return false;
-      });
-    }
-  
-    this.filteredData = filteredData; // ✅ Assign filtered data
-  this.dataSource.data = filteredData;
-  
-     // ✅ Recalculate Gauges based on filtered data
-     this.calculateGaugeValue(filteredData);
-     this.calculateRecommendationForWalking(filteredData);
-     this.calculateConsultationPercentage(filteredData);
-     this.calculateCognitiveStatePercentage(filteredData);
-     this.calculateMobilityStatePercentage(filteredData);
-     this.calculateFunctionalStatePercentage(filteredData);
- 
-     // ✅ Update the count values in the gauges
-     this.calculateMobilityCases(filteredData);
-    //  this.calculateRecommendationCases(filteredData);
-     this.calculateConsultationCases(filteredData);
-     this.calculateCognitiveCases(filteredData);
-     this.calculateMobilityStateCases(filteredData);
+applyFilters(): void {
+  let filteredData = [...this.originalData];
 
+  // ✅ Apply Date Filter (Check Admission and Release Dates)
+  if (this.startDate || this.endDate) {
+    filteredData = filteredData.filter((item) => {
+      const admissionDate = item.AdmissionDate ? new Date(item.AdmissionDate) : null;
+      const releaseDate = item.ReleaseDate ? new Date(item.ReleaseDate) : null;
+      return (
+        (!this.startDate || (admissionDate && admissionDate >= this.startDate) || (releaseDate && releaseDate >= this.startDate)) &&
+        (!this.endDate || (admissionDate && admissionDate <= this.endDate) || (releaseDate && releaseDate <= this.endDate))
+      );
+    });
   }
+
+  // ✅ Apply Department Filter
+  if (this.selectedDepartments.length > 0) {
+    filteredData = filteredData.filter((item) =>
+      this.selectedDepartments.includes(item.UnitName)
+    );
+  }
+
+  // ✅ Apply Year Filter (Check Both Dates)
+  if (this.selectedYear) {
+    filteredData = filteredData.filter((item) => {
+      const admissionYear = item.AdmissionDate ? new Date(item.AdmissionDate).getFullYear() : null;
+      const releaseYear = item.ReleaseDate ? new Date(item.ReleaseDate).getFullYear() : null;
+      return (admissionYear === this.selectedYear) || (releaseYear === this.selectedYear);
+    });
+  }
+
+  // ✅ Apply Quarter Filter (Fix Quarter Mapping)
+  if (this.selectedQuarter) {
+    const quarterMapping: { [key: string]: number[] } = {
+      'רבעון 1': [1, 2, 3],
+      'רבעון 2': [4, 5, 6],
+      'רבעון 3': [7, 8, 9],
+      'רבעון 4': [10, 11, 12]
+    };
+
+    const selectedQuarterMonths = quarterMapping[this.selectedQuarter];
+
+    filteredData = filteredData.filter((item) => {
+      const admissionMonth = item.AdmissionDate ? new Date(item.AdmissionDate).getMonth() + 1 : null;
+      const releaseMonth = item.ReleaseDate ? new Date(item.ReleaseDate).getMonth() + 1 : null;
+
+      return (
+        (admissionMonth && selectedQuarterMonths.includes(admissionMonth)) ||
+        (releaseMonth && selectedQuarterMonths.includes(releaseMonth))
+      );
+    });
+  }
+
+  // ✅ Assign Filtered Data
+  this.filteredData = filteredData;
+  this.dataSource.data = filteredData;
+
+  // ✅ Debugging Logs
+  console.log('📌 Selected Year:', this.selectedYear);
+  console.log('📌 Selected Quarter:', this.selectedQuarter);
+  console.log('📌 Filtered Data:', this.dataSource.data.length);
+
+  // ✅ Update Gauges
+  this.calculateGaugeValue(filteredData);
+  this.calculateRecommendationForWalking(filteredData);
+  this.calculateConsultationPercentage(filteredData);
+  this.calculateCognitiveStatePercentage(filteredData);
+  this.calculateMobilityStatePercentage(filteredData);
+  this.calculateFunctionalStatePercentage(filteredData);
+
+  // ✅ Update Counts
+  this.calculateMobilityCases(filteredData);
+  this.calculateConsultationCases(filteredData);
+  this.calculateCognitiveCases(filteredData);
+  this.calculateMobilityStateCases(filteredData);
+}
+
   
   
   calculateGaugeValue(data: any[]): void {
@@ -681,12 +708,15 @@ prepareChartData(): void {
 
 
 calculateRecommendationForWalking(data: any[]): void {
-  
   console.log('🔄 Calculating מרשם הליכה (Recommendation for Walking)...');
 
-  // ✅ Step 1: Filter only cases where MobilityGrade is 2 or 3
-  const filteredData = data.filter(item => Number(item.MobilityGrade) === 2 || Number(item.MobilityGrade) === 3);
+  // ✅ Step 1: Filter only cases where MobilityGrade is 'מאוד מוגבל - 2' or 'מעט לקויה - 3'
+  const filteredData = data.filter(item => 
+    item.MobilityGrade === 'מאוד מוגבל - 2' || item.MobilityGrade === 'מעט לקויה - 3'
+  );
+
   const totalCases = filteredData.length;
+  console.log(`📌 Found ${totalCases} cases with MobilityGrade 'מאוד מוגבל - 2' or 'מעט לקויה - 3'`);
 
   if (totalCases === 0) {
     this.validWalkingCases = 0;
@@ -704,17 +734,15 @@ calculateRecommendationForWalking(data: any[]): void {
   this.invalidWalkingCases = totalCases - this.validWalkingCases;
 
   // ✅ Step 3: Calculate percentage
-  this.recommendationForWalkingGauge = totalCases > 0
-    ? (this.validWalkingCases / totalCases) * 100
-    : 0;
+  this.recommendationForWalkingGauge = (this.validWalkingCases / totalCases) * 100;
 
-  console.log(`📌 מרשם הליכה - תקין: ${this.validWalkingCases} / לא תקין: ${this.invalidWalkingCases} - ${this.recommendationForWalkingGauge.toFixed(1)}%`);
+  console.log(`✅ Valid Walking Cases: ${this.validWalkingCases}`);
+  console.log(`❌ Invalid Walking Cases: ${this.invalidWalkingCases}`);
+  console.log(`📊 Recommendation Gauge: ${this.recommendationForWalkingGauge.toFixed(1)}%`);
 
-  // 🔥 Force Change Detection
-  setTimeout(() => {
-    this.cdr.detectChanges();
-  });
+  this.cdr.detectChanges();
 }
+
 
 
 
