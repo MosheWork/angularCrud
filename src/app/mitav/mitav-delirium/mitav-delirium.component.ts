@@ -109,11 +109,20 @@ constructor(private http: HttpClient, public dialog: MatDialog) {
       (data) => {
         console.log('Mitav Delirium Report Data:', data);
         this.dataSource.data = data;
+        // Convert Grade to string to prevent .trim() errors
+      this.dataSource.data = data.map(item => ({
+        ...item,
+        Grade: item.Grade !== null && item.Grade !== undefined ? String(item.Grade) : 'אין תיעוד'
+      }));
         this.originalData = data;
 // Calculate Gauge Data
 this.totalCAMCases = data.length;
-this.validCAMCount = data.filter(item => item.Grade && item.Grade.trim() !== '' && item.Grade !== 'אין תיעוד').length;
+this.validCAMCount = data.filter(item => 
+  String(item.Grade).trim() !== '' && String(item.Grade) !== 'אין תיעוד'
+).length;
 this.invalidCAMCount = this.totalCAMCases - this.validCAMCount;
+
+
 this.calculateDepartmentWiseCAMData(data);
 
 // Calculate percentage
