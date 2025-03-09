@@ -145,7 +145,19 @@ this.camAssessmentGauge = this.totalCAMCases > 0 ? (this.validCAMCount / this.to
 
       
   
-        this.yearList = Array.from(years).sort((a, b) => b - a); // Sort years descending
+// ✅ Extract Unique Years from ATD_Admission_Date & Release_Date
+this.yearList = Array.from(
+  new Set(
+    this.originalData
+      .map((item: any) => [
+        item.ATD_Admission_Date ? new Date(item.ATD_Admission_Date).getFullYear() : null,
+        item.Release_Date ? new Date(item.Release_Date).getFullYear() : null,
+        item.DeliriumConsiliumsDate ? new Date(item.DeliriumConsiliumsDate).getFullYear() : null
+      ])
+      .reduce((acc, val) => acc.concat(val), []) // ✅ Fix flatMap() issue
+      .filter((year: number | null): year is number => year !== null) // ✅ Ensure only numbers
+  )
+).sort((a, b) => b - a); // ✅ Sort in descending order
   
         // ✅ Populate Department List
         this.departmentList = Array.from(new Set(data.map((item) => item.Name || 'Unknown')));
@@ -213,22 +225,19 @@ this.camAssessmentGauge = this.totalCAMCases > 0 ? (this.validCAMCount / this.to
         'רבעון 3': [7, 8, 9],
         'רבעון 4': [10, 11, 12]
       };
-  
-      const selectedQuarterKey = this.selectedQuarter ? this.selectedQuarter.trim() : '';
-  
-      if (quarterMapping[selectedQuarterKey]) {
+    
+      const selectedMonths = quarterMapping[this.selectedQuarter.trim()];
+      
+      if (selectedMonths) {
         filteredData = filteredData.filter((item) => {
           const admissionMonth = item.ATD_Admission_Date ? new Date(item.ATD_Admission_Date).getMonth() + 1 : null;
-          const releaseMonth = item.Release_Date ? new Date(item.Release_Date).getMonth() + 1 : null;
-  
-          return (
-            (admissionMonth && quarterMapping[selectedQuarterKey].includes(admissionMonth)) ||
-            (releaseMonth && quarterMapping[selectedQuarterKey].includes(releaseMonth))
-          );
+    
+          return admissionMonth && selectedMonths.includes(admissionMonth); // ✅ Apply only on ATD_Admission_Date
         });
       }
     }
-  
+    
+    
     // ✅ Update the filtered data
     this.dataSource.data = filteredData;
   

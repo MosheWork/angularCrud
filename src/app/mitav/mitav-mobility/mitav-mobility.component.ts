@@ -249,19 +249,18 @@ applyFilters(): void {
       'רבעון 3': [7, 8, 9],
       'רבעון 4': [10, 11, 12]
     };
-
+  
     const selectedQuarterMonths = quarterMapping[this.selectedQuarter];
-
-    filteredData = filteredData.filter((item) => {
-      const admissionMonth = item.AdmissionDate ? new Date(item.AdmissionDate).getMonth() + 1 : null;
-      const releaseMonth = item.ReleaseDate ? new Date(item.ReleaseDate).getMonth() + 1 : null;
-
-      return (
-        (admissionMonth && selectedQuarterMonths.includes(admissionMonth)) ||
-        (releaseMonth && selectedQuarterMonths.includes(releaseMonth))
-      );
-    });
+  
+    if (selectedQuarterMonths) {
+      filteredData = filteredData.filter((item) => {
+        const admissionMonth = item.AdmissionDate ? new Date(item.AdmissionDate).getMonth() + 1 : null;
+  
+        return admissionMonth && selectedQuarterMonths.includes(admissionMonth); // ✅ Apply only to AdmissionDate
+      });
+    }
   }
+  
 
   // ✅ Assign Filtered Data
   this.filteredData = filteredData;

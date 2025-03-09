@@ -1,13 +1,6 @@
 <!-- Loader (Full Page) -->
-<div *ngIf="isLoading" class="loading-screen">
-  <div class="bed-doctor-loader">
-    <div class="animation">
-      🏥 ➡️ 🏥 ➡️ 🏥 ➡️ 👨‍⚕️
-    </div>
-    <mat-progress-bar mode="indeterminate" color="accent"></mat-progress-bar>
-    <p>מעבד מידע רפואי...</p>
-  </div>  <p>אוסף נתונים לדוח מיתב....</p>
-</div>
+<app-spinner [isLoading]="isLoading"></app-spinner>
+
 
 <!-- Entire Page (Hidden Until Data is Loaded) -->
 <div *ngIf="!isLoading" class="body">

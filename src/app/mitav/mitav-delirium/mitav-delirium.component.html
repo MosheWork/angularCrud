@@ -54,9 +54,10 @@
           </mat-form-field>
   
           <!-- Year Filter -->
+        
           <mat-form-field class="filter-field">
             <mat-label>בחר שנה</mat-label>
-            <mat-select [(ngModel)]="selectedYear" (selectionChange)="applyFilters()">
+            <mat-select [(ngModel)]="selectedYear" (selectionChange)="selectedQuarter = null; applyFilters()">
               <mat-option *ngFor="let year of yearList" [value]="year">
                 {{ year }}
               </mat-option>
