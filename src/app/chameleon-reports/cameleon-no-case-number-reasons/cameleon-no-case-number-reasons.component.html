@@ -66,11 +66,13 @@
           <ng-container *ngIf="column === 'RecordDate'; else defaultColumn">
             {{ element[column] | date:'dd/MM/yyyy HH:mm' }}
           </ng-container>
+         
           <ng-template #defaultColumn>
             {{ element[column] || '-' }}
           </ng-template>
         </mat-cell>
       </ng-container>
+      
       
       <mat-header-row *matHeaderRowDef="columns"></mat-header-row>
       <mat-row *matRowDef="let row; columns: columns" (click)="openDialog(row)"></mat-row>
@@ -98,7 +100,7 @@
     </mat-dialog-content>
     <mat-dialog-actions class="dialog-actions">
         <button mat-button (click)="closeDialog()" class="cancel-button">ביטול</button>
-        <button mat-button color="primary" (click)="submitReason(dialogData.IdNum)" class="submit-button">שלח</button>
+        <button mat-button color="primary" (click)="submitReason(dialogData.IdNum, dialogData.RecordDate)" class="submit-button">שלח</button>
       </mat-dialog-actions>
       
   </ng-template>

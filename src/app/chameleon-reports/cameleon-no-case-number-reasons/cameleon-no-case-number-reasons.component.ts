@@ -21,6 +21,7 @@ export class CameleonNoCaseNumberReasonsComponent implements OnInit {
   Title2: string = '';
 
   columns: string[] = [
+    'Id', // ✅ Add new Id column
     'IdNum',
     'ReasonForNoCaseNumber',
     'Comments',
@@ -31,8 +32,10 @@ export class CameleonNoCaseNumberReasonsComponent implements OnInit {
     'RecordDate',
     'MedicalRecord'
   ];
+  
 
   columnHeaders: { [key: string]: string } = {
+    Id: 'מספר מזהה', // ✅ Add Id
     IdNum: 'תעודת זהות',
     ReasonForNoCaseNumber: 'סיבת היעדר מספר מקרה',
     Comments: 'הערות',
@@ -43,6 +46,8 @@ export class CameleonNoCaseNumberReasonsComponent implements OnInit {
     RecordDate: 'תאריך רישום',
     MedicalRecord: 'רשומה רפואית'
   };
+  
+  
   dialogData: any;
 
   dataSource: any[] = [];
@@ -144,6 +149,7 @@ gaugeBackgroundColor = '#e0e0e0'; // Grey background
   
     // ✅ Hebrew column headers mapping
     const columnHeaders: { [key: string]: string } = {
+      Id: 'מספר מזהה', // ✅ Add Id column
       IdNum: 'תעודת זהות',
       ReasonForNoCaseNumber: 'סיבת היעדר מספר מקרה',
       Comments: 'הערות',
@@ -154,6 +160,7 @@ gaugeBackgroundColor = '#e0e0e0'; // Grey background
       RecordDate: 'תאריך רישום',
       MedicalRecord: 'רשומה רפואית'
     };
+    
   
     // ✅ Format data with Hebrew headers
     const formattedData = this.filteredData.map(item => {
@@ -203,14 +210,17 @@ gaugeBackgroundColor = '#e0e0e0'; // Grey background
     this.dialog.closeAll();
   }
 
-  submitReason(idNum: string) {
+  submitReason(idNum: string, recordDate: string) { 
     if (!this.dialogForm.valid) return; // Validate form
   
     const requestData = {
       IdNum: idNum,
+      RecordDate: recordDate, // ✅ Include RecordDate
       ReasonForNoCaseNumber: this.dialogForm.value.ReasonForNoCaseNumber,
       Comments: this.dialogForm.value.Comments
     };
+    
+    
   
     const requestUrl = environment.apiUrl + `CameleonNoCaseNumberReasonsMM/save`;
   
@@ -222,8 +232,10 @@ gaugeBackgroundColor = '#e0e0e0'; // Grey background
         this.dialog.closeAll(); // Close dialog
   
         // ✅ Check if the record already exists in dataSource
-        const existingRecord = this.dataSource.find(record => record.IdNum === idNum);
-  
+        const existingRecord = this.dataSource.find(record => 
+          record.IdNum === idNum && record.RecordDate === requestData.RecordDate // ✅ Match both IdNum and RecordDate
+        );
+          
         if (existingRecord) {
           // ✅ Update existing record in the table
           existingRecord.ReasonForNoCaseNumber = requestData.ReasonForNoCaseNumber;
