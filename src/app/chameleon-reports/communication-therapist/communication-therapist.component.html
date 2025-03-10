@@ -46,17 +46,16 @@
     <div class="dashboard-wrapper">
       <div class="dashboard-container">
         <!-- Daily Follow-Up Summary Table -->
-        <mat-card class="dashboard-card">
+        <!-- <mat-card class="dashboard-card">
           <div class="card-title"><h3>סיכום רכיב -מעקב קלינאית תקשורת</h3></div>
           <img src="../../assets/excel.png" alt="Download" (click)="exportDailyFollowUpToExcel()" class="download-icon" width="50px" />
 
           <mat-table [dataSource]="dailyFollowUpDataSource" matSort class="mat-elevation-z8">
             <ng-container *ngFor="let column of dailyFollowUpColumns" [matColumnDef]="column">
-              <!-- Display Hebrew column name in the header -->
               <mat-header-cell *matHeaderCellDef mat-sort-header>
                 {{ columnDisplayNames[column] }}
               </mat-header-cell>
-              <!-- Display table data -->
+               Display table data 
               <mat-cell *matCellDef="let element">
                 {{ element[column] }}
               </mat-cell>
@@ -65,7 +64,7 @@
             <mat-row *matRowDef="let row; columns: dailyFollowUpColumns"></mat-row>
           </mat-table>
           <mat-paginator #dailyFollowUpPaginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
-        </mat-card>
+        </mat-card> -->
   
         <!-- Anamnesis Results Table -->
         <mat-card class="dashboard-card">
@@ -76,7 +75,7 @@
             <ng-container *ngFor="let column of anamnesisResultsColumns" [matColumnDef]="column">
               <!-- Display Hebrew column name in the header -->
               <mat-header-cell *matHeaderCellDef mat-sort-header>
-                {{ columnDisplayNames[column] }}
+                {{ columnDisplayNames2[column] }}
               </mat-header-cell>
               <!-- Display table data -->
               <mat-cell *matCellDef="let element">
@@ -108,8 +107,8 @@
         
             <!-- Display formatted data -->
             <mat-cell *matCellDef="let element">
-              <ng-container *ngIf="column === 'EntryDate'; else defaultCell">
-                {{ element[column] | date: 'dd/MM/yyyy HH:mm' }}
+              <ng-container *ngIf="column === 'Entry_Date'; else defaultCell">
+                {{ element[column] | date: 'dd/MM/yyyy' }}
               </ng-container>
               <ng-template #defaultCell>
                 {{ element[column] }}

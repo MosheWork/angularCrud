@@ -140,20 +140,20 @@ const routes: Routes = [
 { path: 'ssri-protocol', component: SSRIProtocolComponent, data: { title: 'צטופלים שהופעלה להם הוראה קלינית SSRI' }}, // צטופלים שהופעלה להם הוראה קלינית SSRI
 { path: 'hemo-dialysis', component: HemoDialysisReportComponent, data: { title: 'דוח לדיאליזה' }}, // דוח לדיאליזה
 { path: 'SearchByCaseNumber', component: SearchByCaseNumberComponent, data: { title: 'חיפוש על פי מספרי מקרה-מחלקה משחררת' }}, // חיפוש על פי מספרי מקרה-מחלקה משחררת
-{ path: 'palliative-patients-report', component: PalliativePatientsReportComponent, data: { title: 'מטופלים פליאטים לרווטיל' }}, // מטופלים פליאטים לרווטיל
-{ path: 'GeriatricsDrugsOnVacation', component: GeriatricsDrugsOnVacationComponent, data: { title: 'דוח תרופות לחולים גריאטרים שיוצאים לחופשה - עוד לא אושר' }}, // דוח תרופות לחולים גריאטרים שיוצאים לחופשה - עוד לא אושר
+{ path: 'palliative-patients-report', component: PalliativePatientsReportComponent, data: { title: 'מטופלים פליאטים ' }}, // מטופלים פליאטים לרווטיל
+{ path: 'GeriatricsDrugsOnVacation', component: GeriatricsDrugsOnVacationComponent, data: { title: 'דוח תרופות לחולים גריאטרים שיוצאים לחופשה ' }}, // דוח תרופות לחולים גריאטרים שיוצאים לחופשה - עוד לא אושר
 { path: 'stazerim', component: StazerimComponent, data: { title: 'דוח הרשאות לסטזארים' }}, // דוח הרשאות לסטזארים
 { path: 'dynamicTable', component: DynamicTablesComponent, data: { title: 'רשימת טבלאות דינמאיות של הקמיליון' }}, // רשימת טבלאות דינמאיות של הקמיליון
 { path: 'medicalDevices', component: MedicalDevicesComponent, data: { title: 'רשימת מכשירים בקמיליון' }}, // רשימת מכשירים בקמיליון
 { path: 'ComponentsListInUnits', component: ComponentsListInUnitsComponent, data: { title: 'רכיבים בקמיליון' }}, // רכיבים בקמיליון
-{ path: 'DrugsReport', component: DrugsReportComponent, data: { title: 'לורדית דוח של מטופלות עם תרופות קבועות או פעילות על פי קודים של יולדות' }}, // לורדית דוח של מטופלות עם תרופות קבועות או פעילות על פי קודים של יולדות
+{ path: 'DrugsReport', component: DrugsReportComponent, data: { title: ' דוח של מטופלות עם תרופות קבועות או פעילות על פי קודים של יולדות' }}, // לורדית דוח של מטופלות עם תרופות קבועות או פעילות על פי קודים של יולדות
 { path: 'epidemiological-investigation', component: EpidemiologicalInvestigationComponent, data: { title: 'חקירה אפידמיולוגית ליחידה למניעת זיהומים' }}, // חקירה אפידמיולוגית ליחידה למניעת זיהומים
-{ path: 'drug2h-review', component: Drug2hReviewComponent, data: { title: 'דוח לקרן בדיקה אם כל שעתיים אחות עשתה בקרה על תרופה ברת סיכון' }}, // דוח לקרן בדיקה אם כל שעתיים אחות עשתה בקרה על תרופה ברת סיכון
-{ path: 'diabetes-consultation', component: DiabetesConsultationComponent, data: { title: 'דוח סכרת לליך שביט' }}, // דוח סכרת לליך שביט
-{ path: 'er-info', component: ERInfoComponent, data: { title: 'דוח מיון לעידן' }}, // דוח מיון לעידן
-{ path: 'CommunicationTherapist', component: CommunicationTherapistComponent, data: { title: 'דוח קלינאית תקשורת לבתאל' }}, // דוח קלינאית תקשורת לבתאל
-{ path: 'vwinfection-control-icu', component: VWInfectionControlICUComponent, data: { title: 'דוח להיבה מחלות זיהומיות שאילתא מאופיר' }}, // דוח להיבה מחלות זיהומיות שאילתא מאופיר
-{ path: 'DepartmentOccupiedMitav', component: DepartmentOccupiedMitavComponent, data: { title: 'מחלקות תפוסה מיטבית' }}, // דוח תפוסה מיטבית
+{ path: 'drug2h-review', component: Drug2hReviewComponent, data: { title: 'דוח בקרת תרופות ברות סיכון' }}, // דוח לקרן בדיקה אם כל שעתיים אחות עשתה בקרה על תרופה ברת סיכון
+{ path: 'diabetes-consultation', component: DiabetesConsultationComponent, data: { title: 'דאשבורד סכרת' }}, // דוח סכרת לליך שביט
+{ path: 'er-info', component: ERInfoComponent, data: { title: 'דוח מיון ' }}, // דוח מיון לעידן
+{ path: 'CommunicationTherapist', component: CommunicationTherapistComponent, data: { title: 'דוח קלינאית תקשורת ' }}, // דוח קלינאית תקשורת לבתאל
+{ path: 'vwinfection-control-icu', component: VWInfectionControlICUComponent, data: { title: 'דוח  מחלות זיהומיות  ' }}, // דוח להיבה מחלות זיהומיות שאילתא מאופיר
+{ path: 'DepartmentOccupiedMitav', component: DepartmentOccupiedMitavComponent, data: { title: 'דוח תפוסה ניידות' }}, // דוח תפוסה מיטבית
 
    { path: 'TraumaPatients', component: TraumaPatientsComponent , data: { title: 'מטופלי טראומה' }},// מטופלי טרואמה מאופיר
    { path: 'ERdashboard', component: ERdashboardComponent , data: { title: 'דאשבורד למיון' }},// דאשבורד למיון

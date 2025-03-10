@@ -47,15 +47,21 @@ export class CommunicationTherapistComponent implements OnInit {
     'IdNum',
     'FirstName',
     'LastName',
-    'Code',
+    //'Code',
     'EmployeeName',
-    'MedicalRecord',
-    'EntryDate',
+    //'MedicalRecord',
+    'Entry_Date',
     'AnswerType',
     'FreeText'
   ];
 
-
+  columnDisplayNames2: { [key: string]: string } = {
+    'EmployeeName': 'שם עובד',
+    'Simple': 'טיפול פשוט',
+    'Complex': 'טיפול מורכב',
+    'VeryComplex': 'טיפול מאוד מורכב'
+  };
+  
 // Define Hebrew display names for the columns
 columnDisplayNames: { [key: string]: string } = {
   AdmissionNo: 'מספר מקרה',
@@ -65,7 +71,7 @@ columnDisplayNames: { [key: string]: string } = {
   Code: 'קוד משתמש',
   EmployeeName: 'שם העובד',
   MedicalRecord: 'תיק רפואי',
-  EntryDate: 'תאריך כניסה',
+  Entry_Date: 'תאריך כניסה',
   AnswerType: 'סוג תשובה',
   FreeText: 'טקסט חופשי'
 };
@@ -300,29 +306,27 @@ columnDisplayNames: { [key: string]: string } = {
   }
 
   exportDailyFollowUpToExcel(): void {
-    this.exportToExcel(
-      this.dailyFollowUpDataSource.data,
-      'Daily_Follow_Up_Data.xlsx'
-    );
+    this.exportToExcel(this.dailyFollowUpDataSource, 'Daily_Follow_Up_Data.xlsx');
   }
-
+  
   exportAnamnesisResultsToExcel(): void {
-    this.exportToExcel(
-      this.anamnesisResultsDataSource.data,
-      'Anamnesis_Results_Data.xlsx'
-    );
+    this.exportToExcel(this.anamnesisResultsDataSource, 'Anamnesis_Results_Data.xlsx');
   }
-
+  
   exportFullListToExcel(): void {
-    this.exportToExcel(
-      this.fullListDataSource.data,
-      'Full_List_Daily_Follow_Up_Data.xlsx'
-    );
+    this.exportToExcel(this.fullListDataSource, 'Full_List_Daily_Follow_Up_Data.xlsx');
   }
-
-  private exportToExcel(data: any[], fileName: string): void {
-    const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(data);
+  private exportToExcel(dataSource: MatTableDataSource<any>, fileName: string): void {
+    const filteredData = dataSource.filteredData; // ✅ Get only filtered data
+  
+    if (!filteredData.length) {
+      console.warn('No filtered data available for export.');
+      return; // Stop export if no data is available
+    }
+  
+    const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(filteredData);
     const workbook: XLSX.WorkBook = { Sheets: { data: worksheet }, SheetNames: ['data'] };
     XLSX.writeFile(workbook, fileName);
   }
+  
 }
