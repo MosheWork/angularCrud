@@ -1,0 +1,62 @@
+<app-spinner [isLoading]="isLoading"></app-spinner>
+
+<div *ngIf="!isLoading" class="body">
+  <div class="nine">
+    <h1>סיכום פצעי לחץ לפי מחלקות</h1>
+  </div>
+
+  <div class="table-container">
+    <div class="filter-card">
+      <div dir="rtl" class="card mat-elevation-z8">
+        <div class="card-body">
+          <div class="filter-container">
+           
+            <mat-form-field class="filter-field">
+              <mat-label>בחר מחלקות</mat-label>
+              <mat-select [(ngModel)]="selectedDepartments" multiple (selectionChange)="applyFilters()">
+                <mat-option *ngFor="let department of departmentList" [value]="department">
+                  {{ department }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+            <mat-form-field appearance="outline">
+                <mat-label>חיפוש</mat-label>
+                <input matInput (keyup)="applyGlobalFilter($event)" placeholder="חפש בכל העמודות">
+              </mat-form-field>
+  
+            <div class="filter-buttons">
+              <button mat-raised-button color="warn" (click)="resetFilters()">איפוס</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div *ngIf="!showGraph" class="table-section">
+        <mat-table [dataSource]="dataSource" class="mat-elevation-z8" matSort>
+
+            <!-- Table Headers -->
+            <ng-container *ngFor="let column of displayedColumns" [matColumnDef]="column">
+              <mat-header-cell *matHeaderCellDef mat-sort-header>
+                {{ columnHeaderMap[column] || column }}
+              </mat-header-cell>
+              <mat-cell *matCellDef="let element">
+                {{ element[column] }}
+              </mat-cell>
+            </ng-container>
+          
+            <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+            <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+          
+          </mat-table>
+          
+
+      <!-- 🔹 Add paginator below the table -->
+      <mat-paginator 
+        [pageSizeOptions]="[5, 10, 25, 50]" 
+        showFirstLastButtons
+        aria-label="בחירת עמוד">
+      </mat-paginator>
+    </div>
+  </div>
+</div>

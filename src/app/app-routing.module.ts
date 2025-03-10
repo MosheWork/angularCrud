@@ -73,6 +73,7 @@ import { MitavDeliriumForDepartmentComponent } from './mitav/mitav-delirium/mita
 import { MitavGeriatricForDepartmentComponent } from './mitav/mitav-geriatric-for-department/mitav-geriatric-for-department.component';
 import { MitavGeriatricComponent } from './mitav/mitav-geriatric/mitav-geriatric.component';
 import { MItavMainPageComponent } from './mitav/mitav-main-page/mitav-main-page.component';
+import { SkinIntegrityDashboardComponent } from './chameleon-reports/skin-integrity-dashboard/skin-integrity-dashboard.component';
 
 const routes: Routes = [
   { path: 'users', component: UsersComponent },
@@ -158,7 +159,8 @@ const routes: Routes = [
    { path: 'CameleonNoCaseNumberReasons', component: CameleonNoCaseNumberReasonsComponent },// מטופלים  ללא מספרי מקרה לדלאשה   
    { path: 'MosheOnlineLogs', component: MosheOnlineLogsComponent },// מטופלים  ללא מספרי מקרה לדלאשה  
    { path: 'HospPhoneByDepartment', component: HospPhoneByDepartmentComponent },// מטופלים  ללא מספרי מקרה לדלאשה   
- 
+   { path: 'SkinIntegrityDashboard', component: SkinIntegrityDashboardComponent },// דאשבורד לדיאנה לאומדן שלמות העור  
+
 
 
 
