@@ -17,3 +17,36 @@ body {
 }
 
 
+/* ✅ Ensure the entire page takes full height */
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ✅ Main container ensures footer stays at the bottom */
+.app-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh; /* Full height */
+}
+
+/* ✅ Main content expands dynamically */
+.main-content {
+  flex-grow: 1; /* Pushes footer down */
+  padding-bottom: 50px; /* Ensures space for footer */
+}
+
+/* ✅ Footer stays at the bottom but does NOT overlap */
+.global-footer {
+  background: #1976d2;
+  color: white;
+  text-align: center;
+  font-size: 14px;
+  height: 50px;
+  line-height: 50px;
+  width: 100%;
+  margin-top: auto; /* ✅ Pushes footer to the bottom */
+}

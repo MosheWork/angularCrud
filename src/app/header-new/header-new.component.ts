@@ -9,7 +9,7 @@ import { filter, map } from 'rxjs/operators';
   styleUrls: ['./header-new.component.scss']
 })
 export class HeaderNewComponent implements OnInit {
-  pageTitle: string = 'ברוך הבא'; // Default title
+  pageTitle: string = ''; // Default title
 
   constructor(private router: Router, private activatedRoute: ActivatedRoute) {
     // Listen to route changes and update the title
