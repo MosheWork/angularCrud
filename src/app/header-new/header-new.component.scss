@@ -1,47 +1,70 @@
 .header {
-    background: #1976d2;
-    color: white;
     position: fixed;
     top: 0;
     left: 0;
     right: 0;
-    height: 50px; /* ✅ Adjusted height */
+    height: 60px; /* Adjust height */
+    background: #1976d2 !important; /* Primary background color */
+    color: white;
     display: flex;
-    align-items: center;
-    padding: 0 20px;
-    z-index: 1000;
+    align-items: center; /* ✅ Centers vertically */
+    justify-content: center; /* ✅ Centers text horizontally */
+    box-shadow: 0 0 6px 0 #000; /* ✅ Adds shadow effect */
+    z-index: 999; /* ✅ Keeps it above other elements */
 }
 
 .header-container {
     display: flex;
     align-items: center;
+    justify-content: space-between; /* ✅ Spaces elements correctly */
     width: 100%;
-    justify-content: space-between; /* ✅ Align elements */
+    padding: 0 20px;
+}
+#logo {
+    position: absolute;
+    left: 12px; /* Adjust based on your layout */
+    top: 2px; /* Adjust to align properly */
+    width: 80px; /* Adjust logo size */
+    background: #fff; /* White background */
+    padding: 15px; /* Spacing inside */
+    border-radius: 40%; /* Circular shape */
+    box-shadow: 0 2px 5px 0 #000; /* Soft shadow */
 }
 
-.header-logo {
-    width: 50px; /* ✅ Adjust logo size */
-    height: 50px;
-    border-radius: 50%; /* ✅ Makes the logo round */
-    object-fit: cover; /* ✅ Ensures image fits properly */
-    background: white; /* ✅ Adds background */
-    padding: 5px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
+/* ✅ Title Styles */
 .header-title {
-    flex-grow: 1; /* ✅ Center title */
+    flex-grow: 1;
     text-align: center;
-    font-size: 20px;
+    font-size: 24px;
     font-weight: bold;
 }
-
+.logo-container {
+    position: absolute;
+    top: 5px; /* Adjust to align it properly */
+    left: 10px; /* Adjust if needed */
+    background: white; /* White background */
+    border-radius: 50%; /* Circular shape */
+    padding: 8px; /* Spacing inside */
+    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2); /* Soft shadow */
+    width: 70px; /* Adjust size */
+    height: 70px; /* Keep it circular */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden; /* Prevents overflow */
+  }
+  /* ✅ Navigation Button (Menu) */
 .menu-icon {
     font-size: 24px;
     cursor: pointer;
     margin-left: auto;
 }
-
+  .logo-container img {
+    width: 100%; /* Make sure image fits */
+    height: auto;
+    border-radius: 50%; /* Ensures circular effect */
+  }
+  
 
 //for copy paste 
 

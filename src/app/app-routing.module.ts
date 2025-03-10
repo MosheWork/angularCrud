@@ -127,39 +127,41 @@ const routes: Routes = [
   { path: 'guideList', component: GuideListComponent },
   { path: 'NewGuide', component: UploadGuideComponent },
 
-   //Reports report
-   { path: 'PalliativePatients', component: PalliativePatientsComponent },// לא בשימוש
-   { path: 'med-execution-table', component: MedExecutionTableComponent },// דוח ביצוע תרופות לבית מרקחת
-   { path: 'SkinIntegrityReport', component:SkinIntegrityReportComponent },//אומדן שלמות העור
-   { path: 'patient-guidance-report', component: PatientGuidanceReportComponent },//דוח הנחיות למטופלים
-   { path: 'user-report', component: UsersReportComponent },//רשימת עובדים עם תאריך התחברות אחרונה
-   { path: 'SeniorDoctorNotSighned', component: SeniorDoctorNotSighnedComponent },// לא בשימוש -  דוח רופאים בכירים שלא חתמו
-   { path: 'UserLogPerCaseNumberReport', component: UserLogPerCaseNumberReportComponent },//בטיחות הטיפול - לוגים קמיליון
-   { path: 'icd9-report', component: Icd9ReportComponent },// חיפוש מטופלים על פי קוד ICD 9
-   { path: 'ssri-protocol', component: SSRIProtocolComponent },// צטופלים שהופעלה להם הוראה קלינית SSRI
-   { path: 'hemo-dialysis', component: HemoDialysisReportComponent },// דוח לדיאליזה
-   { path: 'SearchByCaseNumber', component: SearchByCaseNumberComponent },//חיפוש על פי מספרי מקרה-מחלקה משחררת
-   { path: 'palliative-patients-report', component: PalliativePatientsReportComponent },// מטופלים פליאטים לרווטיל
-   { path: 'GeriatricsDrugsOnVacation', component: GeriatricsDrugsOnVacationComponent },//דוח תרופות לחולים גריאטרים שיוצאים לחופשה - עוד לא אושר
-   { path: 'stazerim', component: StazerimComponent },//דוח הרשאות לסטזארים
-   { path: 'dynamicTable', component: DynamicTablesComponent },//רשימת טבלאות דינמאיות של הקמיליון
-   { path: 'medicalDevices', component: MedicalDevicesComponent },//רשימת מכשירים בקמיליון
-   { path: 'ComponentsListInUnits', component: ComponentsListInUnitsComponent },//רכיבים בקמיליון
-   { path: 'DrugsReport', component: DrugsReportComponent },//לורדית דוח של מטופלות עם תרופות קבועות או פעילות על פי קודים של יולדות
-   { path: 'epidemiological-investigation', component: EpidemiologicalInvestigationComponent },//חקירה אפידמיולוגית ליחידה למניעת זיהומים
-   { path: 'drug2h-review', component: Drug2hReviewComponent },//דוח לקרן בדיקה אם כל שעתיים אחות עשתה בקרה על תרופה ברת סיכון
-   { path: 'diabetes-consultation', component: DiabetesConsultationComponent },//דוח סכרת לליך שביט
-   { path: 'er-info', component: ERInfoComponent },//דוח מיון לעידן
-   { path: 'CommunicationTherapist', component: CommunicationTherapistComponent },//דוח קלינאית תקשורת לבתאל
-   { path: 'vwinfection-control-icu', component: VWInfectionControlICUComponent },//דוח  להיבה מחלות זיהומיות שאילתא מאופיר
-   { path: 'DepartmentOccupiedMitav', component: DepartmentOccupiedMitavComponent },// מסך תפוסה למחלקות של דוח מיתב לקרן
-   { path: 'TraumaPatients', component: TraumaPatientsComponent },// מטופלי טרואמה מאופיר
-   { path: 'ERdashboard', component: ERdashboardComponent },// דאשבורד למיון
-   { path: 'dementia-patients', component: DementiaPatientsComponent },// מטופלים דימנטים לרויטל
-   { path: 'CameleonNoCaseNumberReasons', component: CameleonNoCaseNumberReasonsComponent },// מטופלים  ללא מספרי מקרה לדלאשה   
-   { path: 'MosheOnlineLogs', component: MosheOnlineLogsComponent },// מטופלים  ללא מספרי מקרה לדלאשה  
-   { path: 'HospPhoneByDepartment', component: HospPhoneByDepartmentComponent },// מטופלים  ללא מספרי מקרה לדלאשה   
-   { path: 'SkinIntegrityDashboard', component: SkinIntegrityDashboardComponent },// דאשבורד לדיאנה לאומדן שלמות העור  
+  
+// Reports report
+{ path: 'PalliativePatients', component: PalliativePatientsComponent, data: { title: 'לא בשימוש' }}, // לא בשימוש
+{ path: 'med-execution-table', component: MedExecutionTableComponent, data: { title: 'דוח ביצוע תרופות לבית מרקחת' }}, // דוח ביצוע תרופות לבית מרקחת
+{ path: 'SkinIntegrityReport', component: SkinIntegrityReportComponent, data: { title: 'אומדן שלמות העור' }}, // אומדן שלמות העור
+{ path: 'patient-guidance-report', component: PatientGuidanceReportComponent, data: { title: 'דוח הנחיות למטופלים' }}, // דוח הנחיות למטופלים
+{ path: 'user-report', component: UsersReportComponent, data: { title: 'רשימת עובדים עם תאריך התחברות אחרונה' }}, // רשימת עובדים עם תאריך התחברות אחרונה
+{ path: 'SeniorDoctorNotSighned', component: SeniorDoctorNotSighnedComponent, data: { title: 'לא בשימוש - דוח רופאים בכירים שלא חתמו' }}, // לא בשימוש - דוח רופאים בכירים שלא חתמו
+{ path: 'UserLogPerCaseNumberReport', component: UserLogPerCaseNumberReportComponent, data: { title: 'בטיחות הטיפול - לוגים קמיליון' }}, // בטיחות הטיפול - לוגים קמיליון
+{ path: 'icd9-report', component: Icd9ReportComponent, data: { title: 'חיפוש מטופלים על פי קוד ICD 9' }}, // חיפוש מטופלים על פי קוד ICD 9
+{ path: 'ssri-protocol', component: SSRIProtocolComponent, data: { title: 'צטופלים שהופעלה להם הוראה קלינית SSRI' }}, // צטופלים שהופעלה להם הוראה קלינית SSRI
+{ path: 'hemo-dialysis', component: HemoDialysisReportComponent, data: { title: 'דוח לדיאליזה' }}, // דוח לדיאליזה
+{ path: 'SearchByCaseNumber', component: SearchByCaseNumberComponent, data: { title: 'חיפוש על פי מספרי מקרה-מחלקה משחררת' }}, // חיפוש על פי מספרי מקרה-מחלקה משחררת
+{ path: 'palliative-patients-report', component: PalliativePatientsReportComponent, data: { title: 'מטופלים פליאטים לרווטיל' }}, // מטופלים פליאטים לרווטיל
+{ path: 'GeriatricsDrugsOnVacation', component: GeriatricsDrugsOnVacationComponent, data: { title: 'דוח תרופות לחולים גריאטרים שיוצאים לחופשה - עוד לא אושר' }}, // דוח תרופות לחולים גריאטרים שיוצאים לחופשה - עוד לא אושר
+{ path: 'stazerim', component: StazerimComponent, data: { title: 'דוח הרשאות לסטזארים' }}, // דוח הרשאות לסטזארים
+{ path: 'dynamicTable', component: DynamicTablesComponent, data: { title: 'רשימת טבלאות דינמאיות של הקמיליון' }}, // רשימת טבלאות דינמאיות של הקמיליון
+{ path: 'medicalDevices', component: MedicalDevicesComponent, data: { title: 'רשימת מכשירים בקמיליון' }}, // רשימת מכשירים בקמיליון
+{ path: 'ComponentsListInUnits', component: ComponentsListInUnitsComponent, data: { title: 'רכיבים בקמיליון' }}, // רכיבים בקמיליון
+{ path: 'DrugsReport', component: DrugsReportComponent, data: { title: 'לורדית דוח של מטופלות עם תרופות קבועות או פעילות על פי קודים של יולדות' }}, // לורדית דוח של מטופלות עם תרופות קבועות או פעילות על פי קודים של יולדות
+{ path: 'epidemiological-investigation', component: EpidemiologicalInvestigationComponent, data: { title: 'חקירה אפידמיולוגית ליחידה למניעת זיהומים' }}, // חקירה אפידמיולוגית ליחידה למניעת זיהומים
+{ path: 'drug2h-review', component: Drug2hReviewComponent, data: { title: 'דוח לקרן בדיקה אם כל שעתיים אחות עשתה בקרה על תרופה ברת סיכון' }}, // דוח לקרן בדיקה אם כל שעתיים אחות עשתה בקרה על תרופה ברת סיכון
+{ path: 'diabetes-consultation', component: DiabetesConsultationComponent, data: { title: 'דוח סכרת לליך שביט' }}, // דוח סכרת לליך שביט
+{ path: 'er-info', component: ERInfoComponent, data: { title: 'דוח מיון לעידן' }}, // דוח מיון לעידן
+{ path: 'CommunicationTherapist', component: CommunicationTherapistComponent, data: { title: 'דוח קלינאית תקשורת לבתאל' }}, // דוח קלינאית תקשורת לבתאל
+{ path: 'vwinfection-control-icu', component: VWInfectionControlICUComponent, data: { title: 'דוח להיבה מחלות זיהומיות שאילתא מאופיר' }}, // דוח להיבה מחלות זיהומיות שאילתא מאופיר
+{ path: 'DepartmentOccupiedMitav', component: DepartmentOccupiedMitavComponent, data: { title: 'מחלקות תפוסה מיטבית' }}, // דוח תפוסה מיטבית
+
+   { path: 'TraumaPatients', component: TraumaPatientsComponent , data: { title: 'מטופלי טראומה' }},// מטופלי טרואמה מאופיר
+   { path: 'ERdashboard', component: ERdashboardComponent , data: { title: 'דאשבורד למיון' }},// דאשבורד למיון
+   { path: 'dementia-patients', component: DementiaPatientsComponent , data: { title: 'מטופלים דימנטים ' }},// מטופלים דימנטים לרויטל
+   { path: 'CameleonNoCaseNumberReasons', component: CameleonNoCaseNumberReasonsComponent , data: { title: 'מטופלים ללא מספר מקרה' }},// מטופלים  ללא מספרי מקרה לדלאשה   
+   { path: 'MosheOnlineLogs', component: MosheOnlineLogsComponent , data: { title: ' לוגים' }},// פרויקט אישי לוגים
+   { path: 'HospPhoneByDepartment', component: HospPhoneByDepartmentComponent , data: { title: 'רשימת טלפונים' }},// טלפונים של מאושפזים למאיר  
+   { path: 'SkinIntegrityDashboard', component: SkinIntegrityDashboardComponent , data: { title: ' דאשבורד שלמות העור' }},// דאשבורד לדיאנה לאומדן שלמות העור  
 
 
 
@@ -171,8 +173,8 @@ const routes: Routes = [
    { path: 'shift-calendar', component: ShiftCalendarComponent },
 
    // דוח מיתב
-   { path: 'MitavMobility', component: MitavMobilityComponent },
-   { path: 'MitavDelirium', component: MitavDeliriumComponent },
+   { path: 'MitavMobility', component: MitavMobilityComponent , data: { title: 'מיתב ניידות' }},
+   { path: 'MitavDelirium', component: MitavDeliriumComponent , data: { title: 'מיתב דליריום' }},
    { path: 'mitav-delirium-for-department', component: MitavDeliriumForDepartmentComponent , data: { title: ' דו"ח דליריום למחלקה' }},
    { path: 'mitav-geriatric-for-department', component: MitavGeriatricForDepartmentComponent , data: { title: ' דו"ח גריאטריה למחלקה' }},
    { path: 'mitav-geriatric', component: MitavGeriatricComponent , data: { title: ' מיתב דאשבורד גריאטריה' }},

@@ -1,7 +1,4 @@
-footer p{
-    margin: auto;
-}
-footer{
+footer {
     position: fixed;
     bottom: 0;
     left: 0;
@@ -10,4 +7,13 @@ footer{
     background: #1976d2;
     color: #fff;
     display: flex;
+    justify-content: center; /* ✅ Centers text horizontally */
+    align-items: center; /* ✅ Centers text vertically */
+    z-index: 999; /* ✅ Ensures it stays above other content */
+}
+
+footer p {
+    margin: 0; /* ✅ Removes default margin */
+    text-align: center;
+    font-size: 14px; /* ✅ Adjust font size */
 }
