@@ -153,6 +153,7 @@ import { DementiaPatientDialogComponent } from './chameleon-reports/dementia-pat
 import { SkinIntegrityDashboardComponent } from './chameleon-reports/skin-integrity-dashboard/skin-integrity-dashboard.component';
 import { UserCRMComponent } from './ServiceCRM/user-crm/user-crm.component';
 import { PhoneCallDialogComponent } from './ServiceCRM/phone-call-dialog/phone-call-dialog.component';
+import { MitavSummaryComponent } from './mitav/mitav-summary/mitav-summary.component';
 
 
 @NgModule({
@@ -274,6 +275,7 @@ import { PhoneCallDialogComponent } from './ServiceCRM/phone-call-dialog/phone-c
     SkinIntegrityDashboardComponent,
     UserCRMComponent,
     PhoneCallDialogComponent,
+    MitavSummaryComponent,
      
   
   ],
