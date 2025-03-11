@@ -4,6 +4,9 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
+import { PhoneCallDialogComponent } from '../phone-call-dialog/phone-call-dialog.component';
+import { MatDialog } from '@angular/material/dialog';
+
 
 @Component({
   selector: 'app-user-crm',
@@ -23,7 +26,7 @@ export class UserCRMComponent implements OnInit, AfterViewInit {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private dialog: MatDialog) {}
 
   ngOnInit(): void {
     this.fetchData();
@@ -53,5 +56,22 @@ export class UserCRMComponent implements OnInit, AfterViewInit {
     if (this.dataSource.paginator) {
       this.dataSource.paginator.firstPage();
     }
+  }
+
+  openPhoneCallDialog(row: any) {
+    const dialogRef = this.dialog.open(PhoneCallDialogComponent, {
+      width: '600px',
+      data: row
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        row.CaseManagerStatus = result.caseManagerStatus;
+        row.CaseManagerCategory = result.caseManagerCategory;
+        row.CaseManagerUpdate = result.caseManagerUpdate;
+        row.CaseManagerRemarks = result.caseManagerRemarks;
+        // You can also call an API to update this on the backend
+      }
+    });
   }
 }

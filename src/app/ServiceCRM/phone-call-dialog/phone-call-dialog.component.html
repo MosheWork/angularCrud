@@ -1,0 +1,79 @@
+<mat-dialog-content class="dialog-container" dir="rtl">
+  
+    <!-- Avatar Image -->
+    <div class="avatar-container">
+      <img src="assets/headphone.webp" alt="Customer Support" class="avatar-image">
+    </div>
+  
+    <!-- Patient Details Card -->
+    <mat-card class="patient-card">
+      <mat-card-content>
+        <!-- Patient Name Centered -->
+        <div class="patient-header">
+          <h2>
+            <mat-icon class="user-icon">person</mat-icon>
+            <span class="name">{{ data.FirstName }} {{ data.LastName }}</span>
+          </h2>
+        </div>
+  
+        <!-- Contact Info (2 per row) -->
+        <div class="contact-info">
+          <div class="contact-item">
+            <mat-icon class="icon">local_hospital</mat-icon>
+            <span>{{ data.DepartmentName }}</span>
+          </div>
+          <div class="contact-item">
+            <mat-icon class="icon">event</mat-icon>
+            <span>{{ data.EnterDepartDate | date:'dd/MM/yyyy' }}</span>
+          </div>
+          
+          <div class="contact-item">
+            <mat-icon class="icon">smartphone</mat-icon>
+            <span>{{ data.Mobile }}</span>
+          </div>
+          <div class="contact-item">
+            <mat-icon class="icon">phone</mat-icon>
+            <span>{{ data.Telephone }}</span>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  
+    <!-- Call Form -->
+    <form [formGroup]="callForm">
+      <mat-form-field appearance="outline">
+        <mat-label>סטטוס מנהל תיק</mat-label>
+        <mat-select formControlName="caseManagerStatus">
+          <mat-option value="פתוח">פתוח</mat-option>
+          <mat-option value="סגור">סגור</mat-option>
+          <mat-option value="ממתין">ממתין</mat-option>
+        </mat-select>
+      </mat-form-field>
+  
+      <mat-form-field appearance="outline">
+        <mat-label>קטגוריה</mat-label>
+        <mat-select formControlName="caseManagerCategory">
+          <mat-option value="מכירה">מכירה</mat-option>
+          <mat-option value="שירות">שירות</mat-option>
+          <mat-option value="תמיכה">תמיכה</mat-option>
+        </mat-select>
+      </mat-form-field>
+  
+      <mat-form-field appearance="outline">
+        <mat-label>עדכון מנהל תיק</mat-label>
+        <input matInput formControlName="caseManagerUpdate" type="date">
+      </mat-form-field>
+  
+      <mat-form-field appearance="outline">
+        <mat-label>הערות</mat-label>
+        <textarea matInput formControlName="caseManagerRemarks"></textarea>
+      </mat-form-field>
+    </form>
+  
+  </mat-dialog-content>
+  
+  <mat-dialog-actions align="end">
+    <button mat-button (click)="close()">ביטול</button>
+    <button mat-flat-button color="primary" (click)="save()">שמור</button>
+  </mat-dialog-actions>
+  

@@ -152,6 +152,7 @@ import { MItavMainPageComponent } from './mitav/mitav-main-page/mitav-main-page.
 import { DementiaPatientDialogComponent } from './chameleon-reports/dementia-patients/dementia-patient-dialog/dementia-patient-dialog.component';
 import { SkinIntegrityDashboardComponent } from './chameleon-reports/skin-integrity-dashboard/skin-integrity-dashboard.component';
 import { UserCRMComponent } from './ServiceCRM/user-crm/user-crm.component';
+import { PhoneCallDialogComponent } from './ServiceCRM/phone-call-dialog/phone-call-dialog.component';
 
 
 @NgModule({
@@ -272,6 +273,7 @@ import { UserCRMComponent } from './ServiceCRM/user-crm/user-crm.component';
     DementiaPatientDialogComponent,
     SkinIntegrityDashboardComponent,
     UserCRMComponent,
+    PhoneCallDialogComponent,
      
   
   ],
