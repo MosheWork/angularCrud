@@ -33,23 +33,35 @@ export class UserCRMComponent implements OnInit, AfterViewInit {
 
   }
 
-  ngAfterViewInit(): void {
-    this.dataSource.paginator = this.paginator;
-    this.dataSource.sort = this.sort;
-  }
+ 
 
   fetchData(): void {
     this.isLoading = true;
+  
     this.http.get<any[]>(`${environment.apiUrl}ServiceCRM`).subscribe(data => {
-      this.dataSource.data = data;
+      // ✅ Convert date fields to actual Date objects for sorting
+      this.dataSource.data = data.map(item => ({
+        ...item,
+        EnterDepartDate: item.EnterDepartDate ? new Date(item.EnterDepartDate) : null,
+        CaseManagerUpdate: item.CaseManagerUpdate ? new Date(item.CaseManagerUpdate) : null
+      }));
+  
       this.isLoading = false;
-
-      // ✅ Ensure paginator & sort are set only after data is loaded
+  
+      // ✅ Ensure sort & paginator are applied AFTER data is loaded
+      setTimeout(() => {
+        this.dataSource.paginator = this.paginator;
+        this.dataSource.sort = this.sort;
+      });
+    });
+  }
+  
+  ngAfterViewInit(): void {
+    setTimeout(() => {
       this.dataSource.paginator = this.paginator;
       this.dataSource.sort = this.sort;
     });
   }
-
   applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value.trim().toLowerCase();
     this.dataSource.filter = filterValue;
