@@ -1,7 +1,9 @@
 <app-spinner [isLoading]="isLoading"></app-spinner>
 
-<div class="body">
-    <table mat-table [dataSource]="tableData" class="mat-elevation-z8" *ngIf="!isLoading">
+<div *ngIf="!isLoading" class="body" >
+    <!-- <h2 class="table-title">1. אוכלוסיות בגיליון</h2> -->
+
+    <table mat-table [dataSource]="tableData" class="mat-elevation-z8" *ngIf="!isLoading" dir="rtl">
   
       <!-- Define Columns -->
   
