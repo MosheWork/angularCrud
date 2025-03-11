@@ -74,6 +74,7 @@ import { MitavGeriatricForDepartmentComponent } from './mitav/mitav-geriatric-fo
 import { MitavGeriatricComponent } from './mitav/mitav-geriatric/mitav-geriatric.component';
 import { MItavMainPageComponent } from './mitav/mitav-main-page/mitav-main-page.component';
 import { SkinIntegrityDashboardComponent } from './chameleon-reports/skin-integrity-dashboard/skin-integrity-dashboard.component';
+import { UserCRMComponent } from './ServiceCRM/user-crm/user-crm.component';
 
 const routes: Routes = [
   { path: 'users', component: UsersComponent },
@@ -180,6 +181,9 @@ const routes: Routes = [
    { path: 'mitav-geriatric', component: MitavGeriatricComponent , data: { title: ' מיתב דאשבורד גריאטריה' }},
    { path: 'mitav-main-page', component: MItavMainPageComponent , data: { title: ' מיתב דף הבית' }},
 
+
+   //CRM למיכל
+   { path: 'UserCRM', component: UserCRMComponent , data: { title: ' דאשבורד שיחות - CRM  ' }},
 
 
    //amin

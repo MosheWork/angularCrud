@@ -1,0 +1,60 @@
+.crm-container {
+    direction: rtl;
+    text-align: right;
+    padding: 20px;
+    background: linear-gradient(to bottom right, #eceff1, #cfd8dc); // Light gray gradient
+  
+    mat-card {
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      padding: 20px;
+    }
+  
+    mat-card-title {
+      font-size: 22px;
+      font-weight: bold;
+      color: #3f51b5; // Blue color for emphasis
+    }
+  
+    .filter-section {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 15px;
+  
+      mat-form-field {
+        width: 100%;
+        background: white;
+        border-radius: 5px;
+      }
+    }
+  
+    .table-container {
+      overflow: auto;
+      max-height: 500px;
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      padding: 10px;
+    }
+  
+    table {
+      width: 100%;
+      border-radius: 8px;
+    }
+  
+    th {
+      background: #3f51b5;
+      color: white;
+      font-weight: bold;
+    }
+  
+    td {
+      color: #333;
+    }
+  
+    mat-paginator {
+      margin-top: 15px;
+    }
+  }
+  
