@@ -10,6 +10,7 @@ import { environment } from '../../../environments/environment';
 export class MitavSummaryComponent implements OnInit {
   isLoading = true;
   tableData: any[] = [];
+  departmentTableData: any[] = [];
 
   constructor(private http: HttpClient) {}
 
@@ -24,6 +25,7 @@ export class MitavSummaryComponent implements OnInit {
         console.log("✅ API Response Data:", data);
         this.isLoading = false;
 
+        // First Table Data
         const transformedData = {
           totalPatients: data.length,
           internalAndSurgicalPatients: data.filter(row =>
@@ -38,8 +40,23 @@ export class MitavSummaryComponent implements OnInit {
           ).length
         };
 
-        // Convert object into an array with a single row
         this.tableData = [transformedData];
+
+        // Second Table Data (Grouped by Department)
+        this.departmentTableData = [
+          {
+            departmentType: "פנימית",
+            departmentName: "מחלקת פנימית ב",
+            totalPatients: data.filter(row => row.UnitName === 'מחלקת פנימית ב').length,
+            walkingParticipants: data.filter(row => row.UnitName === 'מחלקת פנימית ב' && row.TotalPercentage >= 70).length
+          },
+          {
+            departmentType: "כירורגית",
+            departmentName: "מחלקת כירורגיה",
+            totalPatients: data.filter(row => row.UnitName === 'מחלקת כירורגיה').length,
+            walkingParticipants: data.filter(row => row.UnitName === 'מחלקת כירורגיה' && row.TotalPercentage >= 70).length
+          }
+        ];
       },
       (error) => {
         console.error('❌ API Error:', error);

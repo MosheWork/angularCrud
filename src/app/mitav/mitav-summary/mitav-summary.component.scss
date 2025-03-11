@@ -13,7 +13,12 @@
     margin-bottom: 15px;
   }
   
-
+  .table-title {
+    font-size: 18px;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 10px;
+  }
 
   td {
     padding: 10px;
@@ -47,5 +52,15 @@
     text-align: right;
     padding: 10px;
     border-bottom: 2px solid #ccc;
+  }
+  .tables-container {
+    display: block;  /* Stacks tables vertically */
+    width: 100%;
+    padding: 20px;
+  }
+  
+  .table-wrapper {
+    width: 100%; /* Make tables take full width */
+    margin-bottom: 30px; /* Add spacing between tables */
   }
   
