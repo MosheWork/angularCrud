@@ -30,6 +30,7 @@ export class UserCRMComponent implements OnInit, AfterViewInit {
 
   ngOnInit(): void {
     this.fetchData();
+
   }
 
   ngAfterViewInit(): void {
