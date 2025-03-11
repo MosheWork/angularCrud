@@ -47,9 +47,7 @@ export class CommunicationTherapistComponent implements OnInit {
     'IdNum',
     'FirstName',
     'LastName',
-    //'Code',
     'EmployeeName',
-    //'MedicalRecord',
     'Entry_Date',
     'AnswerType',
     'FreeText'
@@ -68,9 +66,7 @@ columnDisplayNames: { [key: string]: string } = {
   IdNum: 'מספר זהות',
   FirstName: 'שם פרטי',
   LastName: 'שם משפחה',
-  Code: 'קוד משתמש',
   EmployeeName: 'שם העובד',
-  MedicalRecord: 'תיק רפואי',
   Entry_Date: 'תאריך כניסה',
   AnswerType: 'סוג תשובה',
   FreeText: 'טקסט חופשי'
@@ -317,16 +313,47 @@ columnDisplayNames: { [key: string]: string } = {
     this.exportToExcel(this.fullListDataSource, 'Full_List_Daily_Follow_Up_Data.xlsx');
   }
   private exportToExcel(dataSource: MatTableDataSource<any>, fileName: string): void {
-    const filteredData = dataSource.filteredData; // ✅ Get only filtered data
+    // ✅ Convert MatTableDataSource to an array
+    const data = dataSource.data;
   
-    if (!filteredData.length) {
-      console.warn('No filtered data available for export.');
-      return; // Stop export if no data is available
-    }
+    // ✅ Hebrew column names mapping
+    const hebrewColumnNames: { [key: string]: string } = {
+      AdmissionNo: 'מספר מקרה',
+      IdNum: 'מספר זהות',
+      FirstName: 'שם פרטי',
+      LastName: 'שם משפחה',
+      EmployeeName: 'שם העובד',
+      Entry_Date: 'תאריך כניסה',
+      AnswerType: 'סוג תשובה',
+      FreeText: 'טקסט חופשי'
+    };
   
-    const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(filteredData);
-    const workbook: XLSX.WorkBook = { Sheets: { data: worksheet }, SheetNames: ['data'] };
+    // ✅ Transform data to use Hebrew column headers
+    const transformedData = data.map(row => {
+      let newRow: any = {};
+      Object.keys(row).forEach(key => {
+        const hebrewKey = hebrewColumnNames[key] || key; // Use Hebrew name if available
+        newRow[hebrewKey] = row[key];
+      });
+      return newRow;
+    });
+  
+    // ✅ Create worksheet without `origin`
+    const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(transformedData);
+  
+    // ✅ Set right-to-left formatting (RTL)
+    worksheet['!cols'] = [{ width: 20 }]; // Adjust column width
+    worksheet['!dir'] = 'rtl'; // Set direction to right-to-left
+  
+    // ✅ Create workbook
+    const workbook: XLSX.WorkBook = {
+      Sheets: { 'נתונים': worksheet },
+      SheetNames: ['נתונים']
+    };
+  
+    // ✅ Save the file
     XLSX.writeFile(workbook, fileName);
   }
+  
   
 }
