@@ -4,63 +4,110 @@
     padding: 20px;
     text-align: right;
     background-color: #fff;
-  }
-  
-  mat-card-title {
+}
+
+mat-card-title {
     font-size: 20px;
     font-weight: bold;
     text-align: center;
     margin-bottom: 15px;
-  }
-  
-  .table-title {
+}
+
+.table-title {
     font-size: 18px;
     font-weight: bold;
     text-align: center;
     margin-bottom: 10px;
-  }
+}
 
-  td {
+td {
     padding: 10px;
     text-align: center;
-  }
-  
-  .loading-spinner {
+}
+
+.loading-spinner {
     display: flex;
     justify-content: center;
     padding: 20px;
-  }
-  
-  .body {
-    margin-top: 100px; /* Push down from header */
-    margin-bottom: 50px; /* Stay above footer */
+}
+
+.body {
+    margin-top: 100px;
+    margin-bottom: 50px;
     padding: 20px;
     display: flex;
     justify-content: center;
-  }
-  
-  table {
-    width: 80%;
+}
+
+table {
+    width: 100%;
+    max-width: 1200px;
     background: white;
     border-radius: 10px;
     padding: 10px;
-  }
-  
-  th {
-    background: #f5f5f5; /* Light grey background for visibility */
-    font-weight: bold;
-    text-align: right;
+    border-collapse: collapse;
+}
+
+/* 🔹 Fix Header Row Spacing */
+th, td {
     padding: 10px;
-    border-bottom: 2px solid #ccc;
-  }
-  .tables-container {
-    display: block;  /* Stacks tables vertically */
+    text-align: center;
+    border: 1px solid #ddd;
+}
+
+.tables-container {
+    display: block;
     width: 100%;
     padding: 20px;
-  }
-  
-  .table-wrapper {
-    width: 100%; /* Make tables take full width */
-    margin-bottom: 30px; /* Add spacing between tables */
-  }
-  
+}
+
+.table-wrapper {
+    width: 100%;
+    margin-bottom: 30px;
+}
+
+.full-width-table {
+    width: 100%;
+}
+
+/* 🔹 Fix Group Header Row */
+.group-header-row {
+    background-color: #e0e0e0;
+    font-weight: bold;
+    text-align: center;
+    height: 50px;
+}
+
+/* 🔹 Fix Text Alignment for Headers */
+th.mat-header-cell {
+    text-align: center;
+    font-weight: bold;
+    vertical-align: middle;
+}
+
+/* 🔹 Ensure Nested Headers Align Properly */
+th[colspan] {
+    text-align: center;
+    background-color: #f5f5f5;
+}
+
+/* 🔹 Improve Table Spacing */
+.tables-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    padding: 20px;
+}
+
+/* 🔹 Responsive Table */
+@media screen and (max-width: 768px) {
+    table {
+        width: 100%;
+        font-size: 14px;
+    }
+
+    th, td {
+        padding: 8px;
+    }
+}

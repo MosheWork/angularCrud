@@ -96,53 +96,70 @@
 
   <h2 class="table-title">4. מספר מאושפזים לפי קבוצת גיל ומין</h2>
 
-  <table mat-table [dataSource]="ageGenderTableData" class="mat-elevation-z8">
-
-    <!-- Age Group Column -->
+  <table mat-table [dataSource]="ageGenderTableData" class="mat-elevation-z8" dir="rtl">
+  
+    <!-- First Header Row (Grouped Headers) -->
+    <ng-container matColumnDef="header-row-group4">
+        <th mat-header-cell *matHeaderCellDef [attr.colspan]="1" class="group-header"> אוכלוסיית מאושפזים
+        </th>
+      </ng-container>
+    
+    <ng-container matColumnDef="header-row-group1">
+      <th mat-header-cell *matHeaderCellDef [attr.colspan]="2" class="group-header"> סה"כ מאושפזים בגיל 65+ במחלקות פנימיות וכירורגיות (יעד 2) </th>
+    </ng-container>
+  
+    <ng-container matColumnDef="header-row-group2">
+      <th mat-header-cell *matHeaderCellDef [attr.colspan]="2" class="group-header"> מאושפזים בגיל 65+ בכלל המחלקות המשתתפות בתכנית הליכה </th>
+    </ng-container>
+  
+    <ng-container matColumnDef="header-row-group3">
+      <th mat-header-cell *matHeaderCellDef [attr.colspan]="2" class="group-header"> סה"כ המאושפזים בגיל 65+ שהשתתפו בתכנית הליכה (יעד 1) </th>
+    </ng-container>
+  
+    <!-- Second Header Row (Columns) -->
     <ng-container matColumnDef="ageGroup">
       <th mat-header-cell *matHeaderCellDef> גיל / מין </th>
       <td mat-cell *matCellDef="let row"> {{ row.ageGroup }} </td>
     </ng-container>
   
-    <!-- Total Male Column -->
     <ng-container matColumnDef="totalMale">
       <th mat-header-cell *matHeaderCellDef> זכר </th>
       <td mat-cell *matCellDef="let row"> {{ row.totalMale }} </td>
     </ng-container>
   
-    <!-- Total Female Column -->
     <ng-container matColumnDef="totalFemale">
       <th mat-header-cell *matHeaderCellDef> נקבה </th>
       <td mat-cell *matCellDef="let row"> {{ row.totalFemale }} </td>
     </ng-container>
   
-    <!-- Walking Program Male Column -->
     <ng-container matColumnDef="walkingMale">
       <th mat-header-cell *matHeaderCellDef> זכר </th>
       <td mat-cell *matCellDef="let row"> {{ row.walkingMale }} </td>
     </ng-container>
   
-    <!-- Walking Program Female Column -->
     <ng-container matColumnDef="walkingFemale">
       <th mat-header-cell *matHeaderCellDef> נקבה </th>
       <td mat-cell *matCellDef="let row"> {{ row.walkingFemale }} </td>
     </ng-container>
   
-    <!-- Achieved 70% Male Column -->
     <ng-container matColumnDef="achieved70Male">
       <th mat-header-cell *matHeaderCellDef> זכר </th>
       <td mat-cell *matCellDef="let row"> {{ row.achieved70Male }} </td>
     </ng-container>
   
-    <!-- Achieved 70% Female Column -->
     <ng-container matColumnDef="achieved70Female">
       <th mat-header-cell *matHeaderCellDef> נקבה </th>
       <td mat-cell *matCellDef="let row"> {{ row.achieved70Female }} </td>
     </ng-container>
   
-    <!-- Header and Row Definitions -->
-    <tr mat-header-row *matHeaderRowDef="tableColumns"></tr>
-    <tr mat-row *matRowDef="let row; columns: tableColumns;"></tr>
+    <!-- First Row: Grouped Headers -->
+    <tr mat-header-row *matHeaderRowDef="['header-row-group4','header-row-group1', 'header-row-group2', 'header-row-group3']"></tr>
+  
+    <!-- Second Row: Column Headers -->
+    <tr mat-header-row *matHeaderRowDef="['ageGroup', 'totalMale', 'totalFemale', 'walkingMale', 'walkingFemale', 'achieved70Male', 'achieved70Female']"></tr>
+  
+    <!-- Data Rows -->
+    <tr mat-row *matRowDef="let row; columns: ['ageGroup', 'totalMale', 'totalFemale', 'walkingMale', 'walkingFemale', 'achieved70Male', 'achieved70Female'];"></tr>
   
   </table>
   
