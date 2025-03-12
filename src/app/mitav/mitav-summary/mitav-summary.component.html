@@ -72,6 +72,82 @@
   </table>
 </div>
 
+<div class="table-wrapper">
+    <h2 class="table-title">3. תכנית הליכה - שאלות כלליות</h2>
+  
+    <table mat-table [dataSource]="generalQuestionsData" class="mat-elevation-z8" dir="rtl">
+      
+      <!-- First Question Row -->
+      <ng-container matColumnDef="question">
+        <th mat-header-cell *matHeaderCellDef> </th>
+        <td mat-cell *matCellDef="let row"> {{ row.question }} </td>
+      </ng-container>
+  
+      <ng-container matColumnDef="answer">
+        <th mat-header-cell *matHeaderCellDef> </th>
+        <td mat-cell *matCellDef="let row"> {{ row.answer }} </td>
+      </ng-container>
+  
+      <tr mat-header-row *matHeaderRowDef="['question', 'answer']"></tr>
+      <tr mat-row *matRowDef="let row; columns: ['question', 'answer'];"></tr>
+  
+    </table>
+  </div>
+
+  <h2 class="table-title">4. מספר מאושפזים לפי קבוצת גיל ומין</h2>
+
+  <table mat-table [dataSource]="ageGenderTableData" class="mat-elevation-z8">
+
+    <!-- Age Group Column -->
+    <ng-container matColumnDef="ageGroup">
+      <th mat-header-cell *matHeaderCellDef> גיל / מין </th>
+      <td mat-cell *matCellDef="let row"> {{ row.ageGroup }} </td>
+    </ng-container>
+  
+    <!-- Total Male Column -->
+    <ng-container matColumnDef="totalMale">
+      <th mat-header-cell *matHeaderCellDef> זכר </th>
+      <td mat-cell *matCellDef="let row"> {{ row.totalMale }} </td>
+    </ng-container>
+  
+    <!-- Total Female Column -->
+    <ng-container matColumnDef="totalFemale">
+      <th mat-header-cell *matHeaderCellDef> נקבה </th>
+      <td mat-cell *matCellDef="let row"> {{ row.totalFemale }} </td>
+    </ng-container>
+  
+    <!-- Walking Program Male Column -->
+    <ng-container matColumnDef="walkingMale">
+      <th mat-header-cell *matHeaderCellDef> זכר </th>
+      <td mat-cell *matCellDef="let row"> {{ row.walkingMale }} </td>
+    </ng-container>
+  
+    <!-- Walking Program Female Column -->
+    <ng-container matColumnDef="walkingFemale">
+      <th mat-header-cell *matHeaderCellDef> נקבה </th>
+      <td mat-cell *matCellDef="let row"> {{ row.walkingFemale }} </td>
+    </ng-container>
+  
+    <!-- Achieved 70% Male Column -->
+    <ng-container matColumnDef="achieved70Male">
+      <th mat-header-cell *matHeaderCellDef> זכר </th>
+      <td mat-cell *matCellDef="let row"> {{ row.achieved70Male }} </td>
+    </ng-container>
+  
+    <!-- Achieved 70% Female Column -->
+    <ng-container matColumnDef="achieved70Female">
+      <th mat-header-cell *matHeaderCellDef> נקבה </th>
+      <td mat-cell *matCellDef="let row"> {{ row.achieved70Female }} </td>
+    </ng-container>
+  
+    <!-- Header and Row Definitions -->
+    <tr mat-header-row *matHeaderRowDef="tableColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: tableColumns;"></tr>
+  
+  </table>
+  
+  
+
 
   </div>
   
