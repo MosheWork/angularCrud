@@ -13,6 +13,7 @@ export class MitavSummaryComponent implements OnInit {
   departmentTableData: any[] = [];
   ageGenderTableData: any[] = [];
   hospitalizationTableData: any[] = [];
+  mobilityAdmissionTableData: any[] = []; 
 
 
   tableColumns: string[] = [
@@ -271,6 +272,60 @@ achieved4to5Days: this.hospitalizationTableData.reduce((sum, row) => sum + row.a
 achieved6PlusDays: this.hospitalizationTableData.reduce((sum, row) => sum + row.achieved6PlusDays, 0)
 });
 
+//6. פרמטר ניידות בקבלה			
+// ✅ Function to count patients by MobilityOnAdmissionText
+const countByMobilityText = (group: any[], mobilityText: string) =>
+  group.filter(row => row.MobilityOnAdmissionText.trim() === mobilityText).length;
+
+// ✅ Define Mobility Categories
+const mobilityCategories = [
+  { text: "לא נייד - 1", label: "1 (אינו נייד כלל)" },
+  { text: "מאוד מוגבל - 2", label: "2" },
+  { text: "מעט לקויה - 3", label: "3" },
+  { text: "מלאה - 4", label: "4 (עצמאי)" }
+];
+
+// ✅ New Table: Mobility Parameter at Admission
+this.mobilityAdmissionTableData = mobilityCategories.map(category => ({
+  parameter: category.label,
+  internalAndSurgical: countByMobilityText(
+    data.filter(row => internalAndSurgicalDepartments.includes(row.UnitName)),
+    category.text
+  ),
+  walkingProgram: countByMobilityText(
+    data.filter(row => walkingProgramDepartments.includes(row.UnitName)),
+    category.text
+  ),
+  walkingProgramAchieved70: countByMobilityText(
+    filteredData.filter(row => walkingProgramDepartments.includes(row.UnitName)),
+    category.text
+  )
+}));
+
+// ✅ Add "Unknown" Category
+this.mobilityAdmissionTableData.push({
+  parameter: "לא ידוע",
+  internalAndSurgical: data.filter(row =>
+    internalAndSurgicalDepartments.includes(row.UnitName) &&
+    !mobilityCategories.some(cat => row.MobilityOnAdmissionText.trim() === cat.text)
+  ).length,
+  walkingProgram: data.filter(row =>
+    walkingProgramDepartments.includes(row.UnitName) &&
+    !mobilityCategories.some(cat => row.MobilityOnAdmissionText.trim() === cat.text)
+  ).length,
+  walkingProgramAchieved70: filteredData.filter(row =>
+    walkingProgramDepartments.includes(row.UnitName) &&
+    !mobilityCategories.some(cat => row.MobilityOnAdmissionText.trim() === cat.text)
+  ).length
+});
+
+// ✅ Add "Total" Row
+this.mobilityAdmissionTableData.push({
+  parameter: "סה\"כ",
+  internalAndSurgical: this.mobilityAdmissionTableData.reduce((sum, row) => sum + row.internalAndSurgical, 0),
+  walkingProgram: this.mobilityAdmissionTableData.reduce((sum, row) => sum + row.walkingProgram, 0),
+  walkingProgramAchieved70: this.mobilityAdmissionTableData.reduce((sum, row) => sum + row.walkingProgramAchieved70, 0)
+});
 
       },
       (error) => {
