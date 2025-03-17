@@ -76,6 +76,7 @@ import { MItavMainPageComponent } from './mitav/mitav-main-page/mitav-main-page.
 import { SkinIntegrityDashboardComponent } from './chameleon-reports/skin-integrity-dashboard/skin-integrity-dashboard.component';
 import { UserCRMComponent } from './ServiceCRM/user-crm/user-crm.component';
 import { MitavSummaryComponent } from './mitav/mitav-summary/mitav-summary.component';
+import { AdminCrmComponent } from './ServiceCRM/admin-crm/admin-crm.component';
 
 const routes: Routes = [
   { path: 'users', component: UsersComponent },
@@ -131,22 +132,22 @@ const routes: Routes = [
 
   
 // Reports report
-{ path: 'PalliativePatients', component: PalliativePatientsComponent, data: { title: 'לא בשימוש' }}, // לא בשימוש
-{ path: 'med-execution-table', component: MedExecutionTableComponent, data: { title: 'דוח ביצוע תרופות לבית מרקחת' }}, // דוח ביצוע תרופות לבית מרקחת
-{ path: 'SkinIntegrityReport', component: SkinIntegrityReportComponent, data: { title: 'אומדן שלמות העור' }}, // אומדן שלמות העור
-{ path: 'patient-guidance-report', component: PatientGuidanceReportComponent, data: { title: 'דוח הנחיות למטופלים' }}, // דוח הנחיות למטופלים
-{ path: 'user-report', component: UsersReportComponent, data: { title: 'רשימת עובדים עם תאריך התחברות אחרונה' }}, // רשימת עובדים עם תאריך התחברות אחרונה
-{ path: 'SeniorDoctorNotSighned', component: SeniorDoctorNotSighnedComponent, data: { title: 'לא בשימוש - דוח רופאים בכירים שלא חתמו' }}, // לא בשימוש - דוח רופאים בכירים שלא חתמו
-{ path: 'UserLogPerCaseNumberReport', component: UserLogPerCaseNumberReportComponent, data: { title: 'בטיחות הטיפול - לוגים קמיליון' }}, // בטיחות הטיפול - לוגים קמיליון
-{ path: 'icd9-report', component: Icd9ReportComponent, data: { title: 'חיפוש מטופלים על פי קוד ICD 9' }}, // חיפוש מטופלים על פי קוד ICD 9
-{ path: 'ssri-protocol', component: SSRIProtocolComponent, data: { title: 'צטופלים שהופעלה להם הוראה קלינית SSRI' }}, // צטופלים שהופעלה להם הוראה קלינית SSRI
-{ path: 'hemo-dialysis', component: HemoDialysisReportComponent, data: { title: 'דוח לדיאליזה' }}, // דוח לדיאליזה
-{ path: 'SearchByCaseNumber', component: SearchByCaseNumberComponent, data: { title: 'חיפוש על פי מספרי מקרה-מחלקה משחררת' }}, // חיפוש על פי מספרי מקרה-מחלקה משחררת
-{ path: 'palliative-patients-report', component: PalliativePatientsReportComponent, data: { title: 'מטופלים פליאטים ' }}, // מטופלים פליאטים לרווטיל
-{ path: 'GeriatricsDrugsOnVacation', component: GeriatricsDrugsOnVacationComponent, data: { title: 'דוח תרופות לחולים גריאטרים שיוצאים לחופשה ' }}, // דוח תרופות לחולים גריאטרים שיוצאים לחופשה - עוד לא אושר
-{ path: 'stazerim', component: StazerimComponent, data: { title: 'דוח הרשאות לסטזארים' }}, // דוח הרשאות לסטזארים
-{ path: 'dynamicTable', component: DynamicTablesComponent, data: { title: 'רשימת טבלאות דינמאיות של הקמיליון' }}, // רשימת טבלאות דינמאיות של הקמיליון
-{ path: 'medicalDevices', component: MedicalDevicesComponent, data: { title: 'רשימת מכשירים בקמיליון' }}, // רשימת מכשירים בקמיליון
+  { path: 'PalliativePatients', component: PalliativePatientsComponent, data: { title: 'לא בשימוש' }}, // לא בשימוש
+  { path: 'med-execution-table', component: MedExecutionTableComponent, data: { title: 'דוח ביצוע תרופות לבית מרקחת' }}, // דוח ביצוע תרופות לבית מרקחת
+  { path: 'SkinIntegrityReport', component: SkinIntegrityReportComponent, data: { title: 'אומדן שלמות העור' }}, // אומדן שלמות העור
+  { path: 'patient-guidance-report', component: PatientGuidanceReportComponent, data: { title: 'דוח הנחיות למטופלים' }}, // דוח הנחיות למטופלים
+  { path: 'user-report', component: UsersReportComponent, data: { title: 'רשימת עובדים עם תאריך התחברות אחרונה' }}, // רשימת עובדים עם תאריך התחברות אחרונה
+  { path: 'SeniorDoctorNotSighned', component: SeniorDoctorNotSighnedComponent, data: { title: 'לא בשימוש - דוח רופאים בכירים שלא חתמו' }}, // לא בשימוש - דוח רופאים בכירים שלא חתמו
+  { path: 'UserLogPerCaseNumberReport', component: UserLogPerCaseNumberReportComponent, data: { title: 'בטיחות הטיפול - לוגים קמיליון' }}, // בטיחות הטיפול - לוגים קמיליון
+  { path: 'icd9-report', component: Icd9ReportComponent, data: { title: 'חיפוש מטופלים על פי קוד ICD 9' }}, // חיפוש מטופלים על פי קוד ICD 9
+  { path: 'ssri-protocol', component: SSRIProtocolComponent, data: { title: 'צטופלים שהופעלה להם הוראה קלינית SSRI' }}, // צטופלים שהופעלה להם הוראה קלינית SSRI
+  { path: 'hemo-dialysis', component: HemoDialysisReportComponent, data: { title: 'דוח לדיאליזה' }}, // דוח לדיאליזה
+  { path: 'SearchByCaseNumber', component: SearchByCaseNumberComponent, data: { title: 'חיפוש על פי מספרי מקרה-מחלקה משחררת' }}, // חיפוש על פי מספרי מקרה-מחלקה משחררת
+  { path: 'palliative-patients-report', component: PalliativePatientsReportComponent, data: { title: 'מטופלים פליאטים ' }}, // מטופלים פליאטים לרווטיל
+  { path: 'GeriatricsDrugsOnVacation', component: GeriatricsDrugsOnVacationComponent, data: { title: 'דוח תרופות לחולים גריאטרים שיוצאים לחופשה ' }}, // דוח תרופות לחולים גריאטרים שיוצאים לחופשה - עוד לא אושר
+  { path: 'stazerim', component: StazerimComponent, data: { title: 'דוח הרשאות לסטזארים' }}, // דוח הרשאות לסטזארים
+  { path: 'dynamicTable', component: DynamicTablesComponent, data: { title: 'רשימת טבלאות דינמאיות של הקמיליון' }}, // רשימת טבלאות דינמאיות של הקמיליון
+  { path: 'medicalDevices', component: MedicalDevicesComponent, data: { title: 'רשימת מכשירים בקמיליון' }}, // רשימת מכשירים בקמיליון
 { path: 'ComponentsListInUnits', component: ComponentsListInUnitsComponent, data: { title: 'רכיבים בקמיליון' }}, // רכיבים בקמיליון
 { path: 'DrugsReport', component: DrugsReportComponent, data: { title: ' דוח של מטופלות עם תרופות קבועות או פעילות על פי קודים של יולדות' }}, // לורדית דוח של מטופלות עם תרופות קבועות או פעילות על פי קודים של יולדות
 { path: 'epidemiological-investigation', component: EpidemiologicalInvestigationComponent, data: { title: 'חקירה אפידמיולוגית ליחידה למניעת זיהומים' }}, // חקירה אפידמיולוגית ליחידה למניעת זיהומים
@@ -169,7 +170,7 @@ const routes: Routes = [
 
 
 //chemelondashboard
-{ path: 'DepartmentCapacity', component: DepartmentCapacityComponent }, // פרוייקט אישי
+   { path: 'DepartmentCapacity', component: DepartmentCapacityComponent }, // פרוייקט אישי
 //shift-table
    { path: 'shift-table', component: ShiftTableComponent },
    { path: 'shift-calendar', component: ShiftCalendarComponent },
@@ -186,7 +187,8 @@ const routes: Routes = [
 
 
    //CRM למיכל
-   { path: 'UserCRM', component: UserCRMComponent , data: { title: ' דאשבורד שיחות - CRM  ' }},
+   { path: 'UserCRM', component: UserCRMComponent , data: { title: ' דאשבורד נציג - CRM  ' }},
+   { path: 'AdminCrm', component: AdminCrmComponent , data: { title: ' דאשבורד מנהל - CRM  ' }},
 
 
    //amin

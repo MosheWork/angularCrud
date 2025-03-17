@@ -1,0 +1,175 @@
+.crm-container {
+    direction: rtl;
+    text-align: right;
+    padding: 20px;
+    background: linear-gradient(to bottom right, #eceff1, #cfd8dc); // Light gray gradient
+  
+    mat-card {
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      //padding: 20px;
+    }
+  
+    mat-card-title {
+      font-size: 22px;
+      font-weight: bold;
+      color: #3f51b5; // Blue color for emphasis
+    }
+  
+    .filter-section {
+        display: flex;
+        justify-content: flex-end; // Align search bar to the right for Hebrew layout
+        align-items: center;
+        padding: 10px;
+        background-color: #f5f5f5;
+        border-radius: 8px;
+        margin-bottom: 15px;
+        box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+        direction: rtl; // Ensure right-to-left text alignment
+      
+        mat-form-field {
+          width: 100%;
+          max-width: 300px;
+          margin-right: auto; // Pushes the input to align properly
+      
+          input {
+            font-size: 16px;
+            padding: 10px;
+            text-align: right; // Ensures text starts from right side
+          }
+        }
+      }
+      
+      
+  
+    .table-container {
+      overflow: auto;
+      max-height: 500px;
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      padding: 10px;
+    }
+  
+    table {
+      width: 100%;
+      border-radius: 8px;
+    }
+  
+    th {
+      background: #3f51b5;
+      color: white;
+      font-weight: bold;
+    }
+  
+    td {
+      color: #333;
+    }
+  
+    mat-paginator {
+      margin-top: 15px;
+    }
+  }
+
+
+  .crm-container {
+    direction: rtl;
+    text-align: right;
+   // padding: 20px;
+    background-color: #f5f5f5;
+    border-radius: 8px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
+  .crm-card {
+    width: 100%;
+    height: 200px; // Adjust as needed
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 8px;
+    overflow: hidden;
+    padding: 0;
+    margin-bottom: 15px; // Add spacing below card
+    background: white;
+}
+
+  .table-container {
+    overflow-x: auto;
+    background: white;
+    border-radius: 8px;
+    padding: 10px;
+    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);
+  }
+
+  .clickable-row {
+    cursor: pointer;
+    transition: background 0.2s ease-in-out;
+  }
+  
+  .clickable-row:hover {
+    background: #e3f2fd; // Light blue hover effect
+  }
+
+  .gauge-section {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+  }
+  
+  .gauge-card {
+    width: 100%;
+    padding: 20px;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+  }
+  
+  .gauge-title {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 15px;
+    text-align: center;
+    color: #3f51b5;
+  }
+  
+  .gauge-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+    gap: 20px;
+    justify-content: center;
+  }
+  
+  .gauge-item {
+    background: #f9f9f9;
+    border-radius: 8px;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  ngx-gauge {
+    flex: 1;
+    margin-top: 10px;
+    width: 100%;
+  }
+  
+  ::ng-deep ngx-gauge .reading-block {
+    font-size: 20px !important; /* Desired font size */
+    transform: translateY(78px) !important;
+    font-weight: 400;
+    color: black !important;
+    margin-top: 0; /* Ensure no gap between the title and gauge */
+
+  }
+
+
+
+  mat-paginator {
+    margin-top: 15px;
+    direction: ltr; /* force paginator arrows to stay on correct side for RTL tables */
+  }

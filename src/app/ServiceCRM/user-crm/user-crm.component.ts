@@ -20,6 +20,8 @@ export class UserCRMComponent implements OnInit, AfterViewInit {
     'IsBirthday', 'CaseManagerStatus', 'CaseManagerCategory', 'CaseManagerUpdate' ,'CaseManagerRemarks',
   ];
   
+  summary: any;
+  summaryWithCaseManager: any;
   dataSource = new MatTableDataSource<any>([]);
   isLoading: boolean = true;
 
@@ -30,10 +32,19 @@ export class UserCRMComponent implements OnInit, AfterViewInit {
 
   ngOnInit(): void {
     this.fetchData();
+    this.fetchSummaries();
 
   }
 
- 
+  fetchSummaries(): void {
+    this.http.get<any>(`${environment.apiUrl}ServiceCRM/summary`).subscribe(data => {
+      this.summary = data;
+    });
+
+    this.http.get<any>(`${environment.apiUrl}ServiceCRM/summaryWithCaseManager`).subscribe(data => {
+      this.summaryWithCaseManager = data;
+    });
+  }
 
   fetchData(): void {
     this.isLoading = true;

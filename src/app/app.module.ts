@@ -154,6 +154,7 @@ import { SkinIntegrityDashboardComponent } from './chameleon-reports/skin-integr
 import { UserCRMComponent } from './ServiceCRM/user-crm/user-crm.component';
 import { PhoneCallDialogComponent } from './ServiceCRM/phone-call-dialog/phone-call-dialog.component';
 import { MitavSummaryComponent } from './mitav/mitav-summary/mitav-summary.component';
+import { AdminCrmComponent } from './ServiceCRM/admin-crm/admin-crm.component';
 
 
 @NgModule({
@@ -276,6 +277,7 @@ import { MitavSummaryComponent } from './mitav/mitav-summary/mitav-summary.compo
     UserCRMComponent,
     PhoneCallDialogComponent,
     MitavSummaryComponent,
+    AdminCrmComponent,
      
   
   ],
