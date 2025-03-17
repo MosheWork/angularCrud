@@ -175,24 +175,43 @@ export class VWInfectionControlICUComponent implements OnInit {
     formControls['endDate'] = new FormControl(null);    // ✅ End Date
     return this.fb.group(formControls);
   }
-  
   applyFilters() {
     const filters = this.filterForm.value;
     const startDate = filters['startDate'] ? new Date(filters['startDate']) : null;
     const endDate = filters['endDate'] ? new Date(filters['endDate']) : null;
-    
+    const globalFilter = filters['globalFilter'] ? filters['globalFilter'].toLowerCase() : '';
+  
     this.filteredData = this.dataSource.filter(item => {
       const itemDate = new Date(item.DateOfFill);
-  
-      // ✅ Remove time component
       const itemDateOnly = new Date(itemDate.getFullYear(), itemDate.getMonth(), itemDate.getDate());
       const startDateOnly = startDate ? new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate()) : null;
       const endDateOnly = endDate ? new Date(endDate.getFullYear(), endDate.getMonth(), endDate.getDate()) : null;
   
-      return (
-        (!startDateOnly || itemDateOnly >= startDateOnly) &&
-        (!endDateOnly || itemDateOnly <= endDateOnly)
-      );
+      // Filter by date range
+      if (startDateOnly && itemDateOnly < startDateOnly) return false;
+      if (endDateOnly && itemDateOnly > endDateOnly) return false;
+  
+      // Filter by global text search
+      if (globalFilter) {
+        const found = this.columns.some(column => {
+          const value = item[column] ? item[column].toString().toLowerCase() : '';
+          return value.includes(globalFilter);
+        });
+        if (!found) return false;
+      }
+  
+      // Filter by individual columns
+      for (const column of this.columns) {
+        const columnFilter = filters[column];
+        if (columnFilter) {
+          const itemValue = item[column] ? item[column].toString().toLowerCase() : '';
+          if (!itemValue.includes(columnFilter.toLowerCase())) {
+            return false;
+          }
+        }
+      }
+  
+      return true;
     });
   
     this.totalResults = this.filteredData.length;

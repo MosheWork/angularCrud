@@ -26,6 +26,7 @@ interface PalliativePatientsReportModel {
 export class PalliativePatientsReportComponent implements OnInit, AfterViewInit {
   displayedColumns: string[] = [
     'PatientName',
+    'name',
     'IdNum',
     'AdmissionNo',
     'AdmissionDate',
@@ -37,6 +38,7 @@ export class PalliativePatientsReportComponent implements OnInit, AfterViewInit 
 
   columnHeaders: { [key: string]: string } = {
     PatientName: 'שם המטופל',
+    name: 'מחלקה',
     IdNum: 'תעודת זהות',
     AdmissionNo: 'מספר מקרה',
     AdmissionDate: 'תאריך קבלה',
