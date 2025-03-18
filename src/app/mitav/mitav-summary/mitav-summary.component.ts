@@ -483,14 +483,13 @@ this.mobilityBasicFunctionTableData = basicFunctionCategories.map(category => ({
 }));
 
 // ✅ Add TOTAL Row
-const totalRow = {
+const totalRowBasicFunction = {
   parameter: "סה\"כ",
   internalAndSurgical: this.mobilityBasicFunctionTableData.reduce((sum: number, row: any) => sum + row.internalAndSurgical, 0),
   walkingProgram: this.mobilityBasicFunctionTableData.reduce((sum: number, row: any) => sum + row.walkingProgram, 0),
   walkingProgramAchieved70: this.mobilityBasicFunctionTableData.reduce((sum: number, row: any) => sum + row.walkingProgramAchieved70, 0)
 };
-this.mobilityBasicFunctionTableData.push(totalRow);
-
+this.mobilityBasicFunctionTableData.push(totalRowBasicFunction);
 
 
       },
