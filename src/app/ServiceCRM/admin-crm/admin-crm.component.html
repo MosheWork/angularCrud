@@ -13,54 +13,119 @@
             <!-- Gauge 1 -->
             <div class="gauge-item">
               <div class="gauge-title">סה״כ היום (הכל)</div>
-              <ngx-gauge [value]="summary.TotalToday || 0" [type]="'full'" ></ngx-gauge>
+              <ngx-gauge
+                [value]="summary.TotalToday || 0"
+                [label]="'מטופלים'"
+                [type]="'full'"
+                [thick]="5"
+                [foregroundColor]="'#0d47a1'"
+                [backgroundColor]="'#e0e0e0'"
+                [cap]="'round'">
+              </ngx-gauge>
             </div>
       
             <!-- Gauge 2 -->
             <div class="gauge-item">
               <div class="gauge-title">סה״כ החודש (הכל)</div>
-              <ngx-gauge [value]="summary.TotalThisMonth || 0" [type]="'full'" ></ngx-gauge>
+              <ngx-gauge
+                [value]="summary.TotalThisMonth || 0"
+                [label]="'מטופלים'"
+                [type]="'full'"
+                [thick]="5"
+                [foregroundColor]="'#0d47a1'"
+                [backgroundColor]="'#e0e0e0'"
+                [cap]="'round'">
+              </ngx-gauge>
             </div>
       
             <!-- Gauge 3 -->
             <div class="gauge-item">
               <div class="gauge-title">סה״כ השנה (הכל)</div>
-              <ngx-gauge [value]="summary.TotalThisYear || 0" [type]="'full'" ></ngx-gauge>
+              <ngx-gauge
+                [value]="summary.TotalThisYear || 0"
+                [label]="'מטופלים'"
+                [type]="'full'"
+                [thick]="5"
+                [foregroundColor]="'#0d47a1'"
+                [backgroundColor]="'#e0e0e0'"
+                [cap]="'round'">
+              </ngx-gauge>
             </div>
       
             <!-- Gauge 4 -->
             <div class="gauge-item">
               <div class="gauge-title">סה״כ כל הזמנים (הכל)</div>
-              <ngx-gauge [value]="summary.TotalAllTime || 0" [type]="'full'" ></ngx-gauge>
+              <ngx-gauge
+                [value]="summary.TotalAllTime || 0"
+                [label]="'מטופלים'"
+                [type]="'full'"
+                [thick]="5"
+                [foregroundColor]="'#0d47a1'"
+                [backgroundColor]="'#e0e0e0'"
+                [cap]="'round'">
+              </ngx-gauge>
             </div>
       
             <!-- Gauge 5 -->
             <div class="gauge-item">
               <div class="gauge-title">סה״כ היום (מנהל תיק)</div>
-              <ngx-gauge [value]="summaryWithCaseManager.TotalToday || 0" [type]="'full'" ></ngx-gauge>
+              <ngx-gauge
+                [value]="summaryWithCaseManager.TotalToday || 0"
+                [label]="'מטופלים'"
+                [type]="'full'"
+                [thick]="5"
+                [foregroundColor]="'#0d47a1'"
+                [backgroundColor]="'#e0e0e0'"
+                [cap]="'round'">
+              </ngx-gauge>
             </div>
       
             <!-- Gauge 6 -->
             <div class="gauge-item">
               <div class="gauge-title">סה״כ החודש (מנהל תיק)</div>
-              <ngx-gauge [value]="summaryWithCaseManager.TotalThisMonth || 0" [type]="'full'" ></ngx-gauge>
+              <ngx-gauge
+                [value]="summaryWithCaseManager.TotalThisMonth || 0"
+                [label]="'מטופלים'"
+                [type]="'full'"
+                [thick]="5"
+                [foregroundColor]="'#0d47a1'"
+                [backgroundColor]="'#e0e0e0'"
+                [cap]="'round'">
+              </ngx-gauge>
             </div>
       
             <!-- Gauge 7 -->
             <div class="gauge-item">
               <div class="gauge-title">סה״כ השנה (מנהל תיק)</div>
-              <ngx-gauge [value]="summaryWithCaseManager.TotalThisYear || 0" [type]="'full'" ></ngx-gauge>
+              <ngx-gauge
+                [value]="summaryWithCaseManager.TotalThisYear || 0"
+                [label]="'מטופלים'"
+                [type]="'full'"
+                [thick]="5"
+                [foregroundColor]="'#0d47a1'"
+                [backgroundColor]="'#e0e0e0'"
+                [cap]="'round'">
+              </ngx-gauge>
             </div>
       
             <!-- Gauge 8 -->
             <div class="gauge-item">
               <div class="gauge-title">סה״כ כל הזמנים (מנהל תיק)</div>
-              <ngx-gauge [value]="summaryWithCaseManager.TotalAllTime || 0" [type]="'full'" ></ngx-gauge>
+              <ngx-gauge
+                [value]="summaryWithCaseManager.TotalAllTime || 0"
+                [label]="'מטופלים'"
+                [type]="'full'"
+                [thick]="5"
+                [foregroundColor]="'#0d47a1'"
+                [backgroundColor]="'#e0e0e0'"
+                [cap]="'round'">
+              </ngx-gauge>
             </div>
       
           </div>
         </mat-card>
       </div>
+      
       
 
   <!-- 🟢 Search Filter -->
