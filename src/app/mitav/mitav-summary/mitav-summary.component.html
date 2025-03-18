@@ -317,6 +317,40 @@
   <tr mat-row *matRowDef="let row; columns: ['parameter', 'internalAndSurgical', 'walkingProgram', 'walkingProgramAchieved70'];"></tr>
 
 </table>
+<!-- 8. שינוי בפרמטר הניידות בין קבלה לשחרור -->
+<h2 class="table-title">8. השינוי בפרמטר הניידות בין קבלה לשחרור</h2>
+
+<table mat-table [dataSource]="mobilityChangeTableData" class="mat-elevation-z8" dir="rtl">
+
+  <!-- Parameter Column -->
+  <ng-container matColumnDef="parameter">
+    <th mat-header-cell *matHeaderCellDef> שינוי פרמטר ניידות / אוכלוסיית מאושפזים </th>
+    <td mat-cell *matCellDef="let row"> {{ row.parameter }} </td>
+  </ng-container>
+
+  <!-- Internal and Surgical Departments Column -->
+  <ng-container matColumnDef="internalAndSurgical">
+    <th mat-header-cell *matHeaderCellDef> סה"כ מאושפזים בני 65+ במחלקות פנימיות וכירורגיות (יעד 2) </th>
+    <td mat-cell *matCellDef="let row"> {{ row.internalAndSurgical }} </td>
+  </ng-container>
+
+  <!-- Walking Program Column -->
+  <ng-container matColumnDef="walkingProgram">
+    <th mat-header-cell *matHeaderCellDef> מאושפזים בגיל 65+ בכלל המחלקות המשתתפות בתכנית הליכה </th>
+    <td mat-cell *matCellDef="let row"> {{ row.walkingProgram }} </td>
+  </ng-container>
+
+  <!-- Walking Program Achieved 70% Column -->
+  <ng-container matColumnDef="walkingProgramAchieved70">
+    <th mat-header-cell *matHeaderCellDef> סה"כ המאושפזים בגיל 65 + שהשתתפו בתכנית הליכה (יעד 1) </th>
+    <td mat-cell *matCellDef="let row"> {{ row.walkingProgramAchieved70 }} </td>
+  </ng-container>
+
+  <!-- Table Header and Data Rows -->
+  <tr mat-header-row *matHeaderRowDef="['parameter', 'internalAndSurgical', 'walkingProgram', 'walkingProgramAchieved70']"></tr>
+  <tr mat-row *matRowDef="let row; columns: ['parameter', 'internalAndSurgical', 'walkingProgram', 'walkingProgramAchieved70'];"></tr>
+
+</table>
 
 
   </div>

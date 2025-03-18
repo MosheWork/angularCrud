@@ -15,6 +15,9 @@ export class MitavSummaryComponent implements OnInit {
   hospitalizationTableData: any[] = [];
   mobilityAdmissionTableData: any[] = []; 
   mobilityDischargeTableData: any[] = [];
+  mobilityStatusTableData: any[] = [];
+  mobilityChangeTableData: any[] = [];
+  mobilityBasicFunctionTableData: any[] = [];
 
 
 
@@ -48,7 +51,7 @@ export class MitavSummaryComponent implements OnInit {
 
   fetchData(): void {
     this.isLoading = true;
-    this.http.get<any[]>(`${environment.apiUrl}/MitavSummary`).subscribe(
+    this.http.get<any[]>(`${environment.apiUrl}MitavSummary`).subscribe(
       (data) => {
         console.log("✅ API Response Data:", data);
         this.isLoading = false;
@@ -402,9 +405,40 @@ const unknownRow = {
     (!row.MobilityAssessmentAtDischarge || row.MobilityAssessmentAtDischarge === 'לא בוצעה הערכת ניידות בשחרור')
   ).length
 };
-console.log('🟡 Unknown row:', unknownRow);
 this.mobilityDischargeTableData.push(unknownRow);
 
+// ✅ Add TOTAL Row with logs
+
+//8. השינוי בפרמטר הניידות בין קבלה לשחרור			
+const mobilityChangeCategories = [
+  { status: "שיפור", label: "שיפור" },
+  { status: "ללא שינוי", label: "ללא שינוי" },
+  { status: "הדרדרות", label: "הדרדרות" },
+  { status: "לא ידוע", label: "לא ידוע" }
+];
+
+this.mobilityChangeTableData = mobilityChangeCategories.map(category => ({
+  parameter: category.label,
+  internalAndSurgical: data.filter(row =>
+    internalAndSurgicalDepartments.includes(row.UnitName) &&
+    row.MobilityStatus === category.status
+  ).length,
+  walkingProgram: data.filter(row =>
+    walkingProgramDepartments.includes(row.UnitName) &&
+    row.MobilityStatus === category.status
+  ).length,
+  walkingProgramAchieved70: filteredData.filter(row =>
+    walkingProgramDepartments.includes(row.UnitName) &&
+    row.MobilityStatus === category.status
+  ).length
+}));
+
+this.mobilityChangeTableData.push({
+  parameter: 'סה"כ',
+  internalAndSurgical: this.mobilityChangeTableData.reduce((sum, row) => sum + row.internalAndSurgical, 0),
+  walkingProgram: this.mobilityChangeTableData.reduce((sum, row) => sum + row.walkingProgram, 0),
+  walkingProgramAchieved70: this.mobilityChangeTableData.reduce((sum, row) => sum + row.walkingProgramAchieved70, 0)
+});
 // ✅ Add TOTAL Row with logs
 const totalRow = {
   parameter: "סה\"כ",
@@ -412,11 +446,56 @@ const totalRow = {
   walkingProgram: this.mobilityDischargeTableData.reduce((sum: number, row: any) => sum + row.walkingProgram, 0),
   walkingProgramAchieved70: this.mobilityDischargeTableData.reduce((sum: number, row: any) => sum + row.walkingProgramAchieved70, 0)
 };
-console.log('🔴 Total row:', totalRow);
+
 this.mobilityDischargeTableData.push(totalRow);
+console.log('📊 mobilityChangeTableData', this.mobilityChangeTableData);
+
+
+//9. פרמטר הניידות כפי שדיווח המטופל או משפחתו, טרם המצב הרפואי שהוביל לאשפוז 			
+const basicFunctionCategories = [
+  { value: "מרותק", label: "1 (אינו נייד כלל)" },
+  { value: "נייד ללא עזרת אדם אחר", label: "2" },
+  { value: "נייד עם כיסא גלגלים (ללא עזרת אדם)", label: "3" },
+  { value: "נייד עם עזרה", label: "4 (עצמאי)" },
+  { value: "אין תיעוד", label: "לא ידוע" }
+];
+
+this.mobilityBasicFunctionTableData = basicFunctionCategories.map(category => ({
+  parameter: category.label,
+
+  // Column 1: Internal & Surgical
+  internalAndSurgical: data.filter(row =>
+    internalAndSurgicalDepartments.includes(row.UnitName) &&
+    row.BasicFunctionBeforeHospitalization?.trim() === category.value
+  ).length,
+
+  // Column 2: Walking Program Departments
+  walkingProgram: data.filter(row =>
+    walkingProgramDepartments.includes(row.UnitName) &&
+    row.BasicFunctionBeforeHospitalization?.trim() === category.value
+  ).length,
+
+  // Column 3: Walking Program + Achieved >=70%
+  walkingProgramAchieved70: filteredData.filter(row =>
+    walkingProgramDepartments.includes(row.UnitName) &&
+    row.BasicFunctionBeforeHospitalization?.trim() === category.value
+  ).length
+}));
+
+// ✅ Add TOTAL Row
+const totalRow = {
+  parameter: "סה\"כ",
+  internalAndSurgical: this.mobilityBasicFunctionTableData.reduce((sum: number, row: any) => sum + row.internalAndSurgical, 0),
+  walkingProgram: this.mobilityBasicFunctionTableData.reduce((sum: number, row: any) => sum + row.walkingProgram, 0),
+  walkingProgramAchieved70: this.mobilityBasicFunctionTableData.reduce((sum: number, row: any) => sum + row.walkingProgramAchieved70, 0)
+};
+this.mobilityBasicFunctionTableData.push(totalRow);
+
 
 
       },
+      
+
       (error) => {
         console.error('❌ API Error:', error);
         this.isLoading = false;
