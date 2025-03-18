@@ -14,6 +14,8 @@ export class MitavSummaryComponent implements OnInit {
   ageGenderTableData: any[] = [];
   hospitalizationTableData: any[] = [];
   mobilityAdmissionTableData: any[] = []; 
+  mobilityDischargeTableData: any[] = [];
+
 
 
   tableColumns: string[] = [
@@ -326,6 +328,93 @@ this.mobilityAdmissionTableData.push({
   walkingProgram: this.mobilityAdmissionTableData.reduce((sum, row) => sum + row.walkingProgram, 0),
   walkingProgramAchieved70: this.mobilityAdmissionTableData.reduce((sum, row) => sum + row.walkingProgramAchieved70, 0)
 });
+
+//7.פרמטר ניידות בשחרור			
+
+const mobilityDischargeCategories = [
+  { text: "לא נייד - 1", label: "1 (אינו נייד כלל)" },
+  { text: "מאוד מוגבל - 2", label: "2" },
+  { text: "מעט לקויה - 3", label: "3" },
+  { text: "מלאה - 4", label: "4 (עצמאי)" }
+];
+
+// ✅ Build the data with debugging
+this.mobilityDischargeTableData = mobilityDischargeCategories.map(category => {
+  console.log(`🔍 Processing category: ${category.text}`);
+
+  const internalAndSurgical = data.filter(row => {
+    const match = internalAndSurgicalDepartments.includes(row.UnitName) &&
+      row.MobilityAssessmentAtDischarge &&
+      row.MobilityAssessmentAtDischarge.trim().includes(category.text);
+    if (match) {
+      console.log(`✅ internalAndSurgical MATCH: Unit=${row.UnitName}, Discharge=${row.MobilityAssessmentAtDischarge}`);
+    }
+    return match;
+  }).length;
+
+  const walkingProgram = data.filter(row => {
+    const match = walkingProgramDepartments.includes(row.UnitName) &&
+      row.MobilityAssessmentAtDischarge &&
+      row.MobilityAssessmentAtDischarge.trim().includes(category.text);
+    if (match) {
+      console.log(`✅ walkingProgram MATCH: Unit=${row.UnitName}, Discharge=${row.MobilityAssessmentAtDischarge}`);
+    }
+    return match;
+  }).length;
+
+  const walkingProgramAchieved70 = filteredData.filter(row => {
+    const match = walkingProgramDepartments.includes(row.UnitName) &&
+      row.MobilityAssessmentAtDischarge &&
+      row.MobilityAssessmentAtDischarge.trim().includes(category.text);
+    if (match) {
+      console.log(`✅ walkingProgramAchieved70 MATCH: Unit=${row.UnitName}, Discharge=${row.MobilityAssessmentAtDischarge}`);
+    }
+    return match;
+  }).length;
+
+  console.log(`👉 Totals for "${category.text}": internalAndSurgical=${internalAndSurgical}, walkingProgram=${walkingProgram}, walkingProgramAchieved70=${walkingProgramAchieved70}`);
+
+  return {
+    parameter: category.label,
+    internalAndSurgical,
+    walkingProgram,
+    walkingProgramAchieved70
+  };
+});
+
+
+
+// ✅ Add "Unknown" Row with logs
+const unknownRow = {
+  parameter: "לא ידוע",
+  internalAndSurgical: data.filter(row => 
+    internalAndSurgicalDepartments.includes(row.UnitName) &&
+    (!row.MobilityAssessmentAtDischarge || row.MobilityAssessmentAtDischarge === 'לא בוצעה הערכת ניידות בשחרור')
+  ).length,
+
+  walkingProgram: data.filter(row => 
+    walkingProgramDepartments.includes(row.UnitName) &&
+    (!row.MobilityAssessmentAtDischarge || row.MobilityAssessmentAtDischarge === 'לא בוצעה הערכת ניידות בשחרור')
+  ).length,
+
+  walkingProgramAchieved70: filteredData.filter(row => 
+    walkingProgramDepartments.includes(row.UnitName) &&
+    (!row.MobilityAssessmentAtDischarge || row.MobilityAssessmentAtDischarge === 'לא בוצעה הערכת ניידות בשחרור')
+  ).length
+};
+console.log('🟡 Unknown row:', unknownRow);
+this.mobilityDischargeTableData.push(unknownRow);
+
+// ✅ Add TOTAL Row with logs
+const totalRow = {
+  parameter: "סה\"כ",
+  internalAndSurgical: this.mobilityDischargeTableData.reduce((sum: number, row: any) => sum + row.internalAndSurgical, 0),
+  walkingProgram: this.mobilityDischargeTableData.reduce((sum: number, row: any) => sum + row.walkingProgram, 0),
+  walkingProgramAchieved70: this.mobilityDischargeTableData.reduce((sum: number, row: any) => sum + row.walkingProgramAchieved70, 0)
+};
+console.log('🔴 Total row:', totalRow);
+this.mobilityDischargeTableData.push(totalRow);
+
 
       },
       (error) => {
