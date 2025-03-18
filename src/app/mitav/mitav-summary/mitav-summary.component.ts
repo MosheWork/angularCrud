@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
+import * as XLSX from 'xlsx';
 
 @Component({
   selector: 'app-mitav-summary',
@@ -500,6 +501,97 @@ this.mobilityBasicFunctionTableData.push(totalRowBasicFunction);
         this.isLoading = false;
       }
     );
+  }
+  
+  exportAllTables(): void {
+    const wb: XLSX.WorkBook = XLSX.utils.book_new();
+    const ws: XLSX.WorkSheet = XLSX.utils.aoa_to_sheet([]);
+    let rowOffset = 0;
+  
+    const addSection = (title: string, headers: string[], data: any[], columns: string[]) => {
+      XLSX.utils.sheet_add_aoa(ws, [[title]], { origin: { r: rowOffset, c: 0 } });
+      rowOffset += 1;
+      XLSX.utils.sheet_add_aoa(ws, [headers], { origin: { r: rowOffset, c: 0 } });
+      rowOffset += 1;
+      const rows = data.map(row => columns.map(col => row[col]));
+      XLSX.utils.sheet_add_aoa(ws, rows, { origin: { r: rowOffset, c: 0 } });
+      rowOffset += rows.length + 2;
+    };
+  
+    // 1. General Data
+    addSection(
+      "1. נתונים כלליים",
+      ["סה\"כ מאושפזים בגיל 65+ בכלל המחלקות", "בפנימיות וכירורגיות", "במחלקות תכנית הליכה", "תכנית הליכה 70%+"],
+      this.tableData,
+      ["totalPatients", "internalAndSurgicalPatients", "walkingProgramPatients", "walkingProgramAchieved70"]
+    );
+  
+    // 2. Departments
+    addSection(
+      "2. התפלגות לפי מחלקה",
+      ["סוג מחלקה", "שם מחלקה", "סה\"כ מאושפזים", "הליכה 70%+"],
+      this.departmentTableData,
+      ["departmentType", "departmentName", "totalPatients", "walkingParticipants"]
+    );
+  
+    // 3. Age & Gender
+    addSection(
+      "3. גיל ומגדר",
+      ["קבוצת גיל", "זכרים סה\"כ", "נקבות סה\"כ", "זכרים הליכה", "נקבות הליכה", "זכרים 70%+", "נקבות 70%+"],
+      this.ageGenderTableData,
+      ["ageGroup", "totalMale", "totalFemale", "walkingMale", "walkingFemale", "achieved70Male", "achieved70Female"]
+    );
+  
+    // 4. Age vs Hospitalization Days
+    addSection(
+      "4. גיל מול משך אשפוז",
+      ["קבוצת גיל", "פנימיות 0-3 ימים", "פנימיות 4-5 ימים", "פנימיות 6+ ימים", "הליכה 0-3 ימים", "הליכה 4-5 ימים", "הליכה 6+ ימים", "70%+ 0-3 ימים", "70%+ 4-5 ימים", "70%+ 6+ ימים"],
+      this.hospitalizationTableData,
+      ["ageGroup", "internal3Days", "internal4to5Days", "internal6PlusDays", "walking3Days", "walking4to5Days", "walking6PlusDays", "achieved3Days", "achieved4to5Days", "achieved6PlusDays"]
+    );
+  
+    // 5. Mobility on Admission
+    addSection(
+      "5. ניידות בקבלה",
+      ["פרמטר", "פנימיות וכירורגיות", "תכנית הליכה", "תכנית הליכה 70%+"],
+      this.mobilityAdmissionTableData,
+      ["parameter", "internalAndSurgical", "walkingProgram", "walkingProgramAchieved70"]
+    );
+  
+    // 6. Mobility at Discharge
+    addSection(
+      "6. ניידות בשחרור",
+      ["פרמטר", "פנימיות וכירורגיות", "תכנית הליכה", "תכנית הליכה 70%+"],
+      this.mobilityDischargeTableData,
+      ["parameter", "internalAndSurgical", "walkingProgram", "walkingProgramAchieved70"]
+    );
+  
+    // 7. Mobility Change
+    addSection(
+      "7. שינוי ניידות בין קבלה לשחרור",
+      ["פרמטר", "פנימיות וכירורגיות", "תכנית הליכה", "תכנית הליכה 70%+"],
+      this.mobilityChangeTableData,
+      ["parameter", "internalAndSurgical", "walkingProgram", "walkingProgramAchieved70"]
+    );
+  
+    // 8. Basic Function Before Hospitalization
+    addSection(
+      "8. תפקוד בסיסי לפני אשפוז",
+      ["פרמטר", "פנימיות וכירורגיות", "תכנית הליכה", "תכנית הליכה 70%+"],
+      this.mobilityBasicFunctionTableData,
+      ["parameter", "internalAndSurgical", "walkingProgram", "walkingProgramAchieved70"]
+    );
+  
+    // 9. General Questions
+    addSection(
+      "9. שאלות כלליות",
+      ["שאלה", "תשובה"],
+      this.generalQuestionsData,
+      ["question", "answer"]
+    );
+  
+    XLSX.utils.book_append_sheet(wb, ws, 'דו״ח מיטב');
+    XLSX.writeFile(wb, 'MitavSummary.xlsx');
   }
   
 }

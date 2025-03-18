@@ -1,6 +1,9 @@
 <app-spinner [isLoading]="isLoading"></app-spinner>
 
 <div *ngIf="!isLoading" class="body" >
+  <button mat-raised-button color="primary" (click)="exportAllTables()">
+    יצוא לאקסל
+  </button>
     <div class="tables-container">
         <div class="table-wrapper">
     <h2 class="table-title">1. אוכלוסיות בגיליון</h2>
