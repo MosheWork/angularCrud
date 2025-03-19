@@ -19,20 +19,14 @@ export class MitavSummaryComponent implements OnInit {
   mobilityStatusTableData: any[] = [];
   mobilityChangeTableData: any[] = [];
   mobilityBasicFunctionTableData: any[] = [];
-  selectedYear: number = new Date().getFullYear();
-  selectedQuarter: number = 1;
-  
-  availableYears: number[] = [2024, 2025, 2026];
-  quarters = [
-    { label: 'רבעון 1 (ינואר-מרץ)', value: 1 },
-    { label: 'רבעון 2 (אפריל-יוני)', value: 2 },
-    { label: 'רבעון 3 (יולי-ספטמבר)', value: 3 },
-    { label: 'רבעון 4 (אוקטובר-דצמבר)', value: 4 },
-  ];
-  
+  availableYears: { label: string, value: number | string | null }[] = [];
+  availableQuarters: { label: string, value: number | string | null }[] = [];
+  selectedYear: number | null = null;
+  selectedQuarter: number | null = null;
   // Original data from API
   originalData: any[] = [];
-  
+  quartersByYear: { [year: number]: { label: string, value: number }[] } = {};
+
   // Filtered data based on quarter/year
   filteredData: any[] = [];
 
@@ -65,18 +59,7 @@ export class MitavSummaryComponent implements OnInit {
     const today = new Date();
     this.selectedYear = today.getFullYear();
   
-    const month = today.getMonth() + 1; // month is 0-indexed
-    if (month >= 1 && month <= 3) {
-      this.selectedQuarter = 1;
-    } else if (month >= 4 && month <= 6) {
-      this.selectedQuarter = 2;
-    } else if (month >= 7 && month <= 9) {
-      this.selectedQuarter = 3;
-    } else if (month >= 10 && month <= 12) {
-      this.selectedQuarter = 4;
-    }
-    this.applyFilter(); // load data immediately with default values
-
+ 
   }
 
   fetchData(): void {
@@ -88,6 +71,9 @@ export class MitavSummaryComponent implements OnInit {
         this.isLoading = false;
         this.originalData = data;
        // this.filteredData = data;
+       this.extractYearsAndQuarters(data);
+
+       
         this.applyFilter();
 //         this.recalculateTables();
 //         // Global department arrays for reuse
@@ -606,20 +592,23 @@ export class MitavSummaryComponent implements OnInit {
     XLSX.writeFile(wb, 'MitavSummary.xlsx');
   }
   applyFilter(): void {
-    const startMonth = (this.selectedQuarter - 1) * 3 + 1;
-    const endMonth = startMonth + 2;
+    const data = this.originalData;
   
-    this.filteredData = this.originalData.filter((row: any) => {
+    this.filteredData = data.filter((row: any) => {
       if (!row.AdmissionDate) return false;
-            const date = new Date(row.AdmissionDate);
-      return (
-        date.getFullYear() === this.selectedYear &&
-        date.getMonth() + 1 >= startMonth &&
-        date.getMonth() + 1 <= endMonth
-      );
+  
+      const date = new Date(row.AdmissionDate);
+      const year = date.getFullYear();
+      const month = date.getMonth() + 1;
+      const quarter = Math.ceil(month / 3);
+  
+      const yearPass = (this.selectedYear === -1 || this.selectedYear === null) ? true : year === this.selectedYear;
+      const quarterPass = (this.selectedQuarter === -1 || this.selectedQuarter === null) ? true : quarter === this.selectedQuarter;
+  
+      return yearPass && quarterPass;
     });
   
-    this.recalculateTables(); // Refresh tables after filtering
+    this.recalculateTables();
   }
   
   recalculateTables(): void {
@@ -1063,6 +1052,89 @@ const totalRowBasicFunction = {
 this.mobilityBasicFunctionTableData.push(totalRowBasicFunction);
 
   }
+  extractYearsAndQuarters(data: any[]) {
+    const yearsSet = new Set<number>();
   
+    this.quartersByYear = {};
+  
+    data.forEach(row => {
+      const date = new Date(row.AdmissionDate);
+      const year = date.getFullYear();
+      const month = date.getMonth() + 1;
+  
+      yearsSet.add(year);
+  
+      let quarter = 1;
+      if (month >= 1 && month <= 3) quarter = 1;
+      else if (month >= 4 && month <= 6) quarter = 2;
+      else if (month >= 7 && month <= 9) quarter = 3;
+      else if (month >= 10 && month <= 12) quarter = 4;
+  
+      if (!this.quartersByYear[year]) {
+        this.quartersByYear[year] = [];
+      }
+  
+      if (!this.quartersByYear[year].find(q => q.value === quarter)) {
+        this.quartersByYear[year].push({
+          value: quarter,
+          label:
+            quarter === 1 ? 'רבעון 1 (ינואר-מרץ)' :
+            quarter === 2 ? 'רבעון 2 (אפריל-יוני)' :
+            quarter === 3 ? 'רבעון 3 (יולי-ספטמבר)' :
+            'רבעון 4 (אוקטובר-דצמבר)'
+        });
+      }
+    });
+  
+    // Add "הכל" & "ללא"
+    const yearsArray = Array.from(yearsSet).sort((a, b) => a - b);
+    this.availableYears = [
+      { value: null, label: 'ללא' },
+      { value: -1, label: 'הכל' },
+      ...yearsArray.map(y => ({ value: y, label: y.toString() }))
+    ];
+  
+    // Set default
+    this.selectedYear = -1; // default "הכל"
+    this.updateQuartersForYear();
+  }
+  
+  updateQuartersForYear() {
+    if (this.selectedYear === null) {
+      this.availableQuarters = [];
+      this.selectedQuarter = null;
+    } else if (this.selectedYear === -1) {
+      // For "הכל"
+      const allQuarters = new Set<number>();
+      Object.values(this.quartersByYear).forEach((qArr: any) => {
+        qArr.forEach((q: any) => allQuarters.add(q.value));
+      });
+  
+      this.availableQuarters = [
+        { value: null, label: 'ללא' },
+        { value: -1, label: 'הכל' },
+        ...Array.from(allQuarters).sort().map(q => ({
+          value: q,
+          label:
+            q === 1 ? 'רבעון 1 (ינואר-מרץ)' :
+            q === 2 ? 'רבעון 2 (אפריל-יוני)' :
+            q === 3 ? 'רבעון 3 (יולי-ספטמבר)' :
+            'רבעון 4 (אוקטובר-דצמבר)'
+        }))
+      ];
+      this.selectedQuarter = -1;
+    } else {
+      this.availableQuarters = [
+        { value: null, label: 'ללא' },
+        { value: -1, label: 'הכל' },
+        ...(this.quartersByYear[this.selectedYear] || [])
+      ];
+      this.selectedQuarter = -1;
+    }
+  }
+  
+  onYearChange() {
+    this.updateQuartersForYear();
+  }
   
 }
