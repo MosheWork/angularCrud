@@ -30,7 +30,9 @@ export class CameleonNoCaseNumberReasonsComponent implements OnInit {
     'FirstName',
     'LastName',
     'RecordDate',
-    'MedicalRecord'
+    'MedicalRecord',
+    'EmployeePhone',
+    'EmplyeeName'
   ];
   
 
@@ -44,7 +46,9 @@ export class CameleonNoCaseNumberReasonsComponent implements OnInit {
     FirstName: 'שם פרטי',
     LastName: 'שם משפחה',
     RecordDate: 'תאריך רישום',
-    MedicalRecord: 'רשומה רפואית'
+    MedicalRecord: 'רשומה רפואית',
+    EmployeePhone: 'טלפון ',
+    EmplyeeName: ' שם העובד'
   };
   
   

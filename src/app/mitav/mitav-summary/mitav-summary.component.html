@@ -4,6 +4,24 @@
   <button mat-raised-button color="primary" (click)="exportAllTables()">
     יצוא לאקסל
   </button>
+  <div class="filters">
+    <mat-form-field>
+      <mat-label>שנה</mat-label>
+      <mat-select [(ngModel)]="selectedYear" (selectionChange)="applyFilter()">
+        <mat-option *ngFor="let y of availableYears" [value]="y">{{ y }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+  
+    <mat-form-field>
+      <mat-label>רבעון</mat-label>
+      <mat-select [(ngModel)]="selectedQuarter" (selectionChange)="applyFilter()">
+        <mat-option *ngFor="let q of quarters" [value]="q.value">{{ q.label }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+  
+  
+
     <div class="tables-container">
         <div class="table-wrapper">
     <h2 class="table-title">1. אוכלוסיות בגיליון</h2>
