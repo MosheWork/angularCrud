@@ -34,6 +34,7 @@ export class DiabetesConsultationComponent implements OnInit, AfterViewInit {
   NullReleaseDateCount: number = 0;
   NonNullReleaseDateCount: number = 0;
   labResultBelow70Percentage: number = 0;
+  labResultsWithoutInsulinPercentage: number = 0;
 
 
   sugar180DiabetesPercentage: number = 0; // סוכר 180 וחולה סוכרת
@@ -41,6 +42,7 @@ sugar70DiabetesPercentage: number = 0; // סוכר 70 וחולה סוכרת
   labResultsPercentage: number = 0; // For בדיקות מעבדה
 below70Percentage: number = 0; // For סוכר מתחת ל-70
 diabeticFootEstimationPercentage: number = 0;
+sugar180AllPercentage: number = 0; 
 
   CurrentHospitalizations: number = 0; // Total with non-null Release_Date
   TotalHospitalizations: number = 0;  // Total with null Release_Date
@@ -70,6 +72,7 @@ diabeticFootEstimationPercentage: number = 0;
   originalDataSourceAllConsiliums: any[] = [];
   originalDataSourceBelow70: any[] = [];
   originalDiabeticFootEstimation: any[] = [];
+  originalLabResultsWithoutInsulin: any[] = [];
 
 
   selectedSourceFilter: string = 'All'; // Temporary storage for selected toggle
@@ -147,7 +150,15 @@ diabeticFootEstimationPercentage: number = 0;
     'Count_Less_70_Less_48h',
     'Release_Date', // Use unique identifier
   ];
-
+  displayedColumnsLabResultsWithoutInsulin: string[] = [
+    'Admission_No',
+    'Admission_Date',
+    'First_Name',
+    'Last_Name',
+    'Count_Above_180_Less_48h',
+    'Release_Date'
+  ];
+  
   DiabeticFootEstimationOnlHosDataSource = new MatTableDataSource<any>();
 displayedColumnsDiabeticFootEstimationOnlHos: string[] = [
   'Admission_No',
@@ -168,6 +179,7 @@ displayedColumnsDiabeticFootEstimationOnlHos: string[] = [
   dataSourceAllConsiliums = new MatTableDataSource<any>();
   dataSourceBelow70 = new MatTableDataSource<any>();
   DiabeticFootEstimationDataSource = new MatTableDataSource<any>();
+  LabResultsWithoutInsulinDataSource = new MatTableDataSource<any>();
 
 
   filterForm: FormGroup = new FormGroup({
@@ -182,7 +194,8 @@ displayedColumnsDiabeticFootEstimationOnlHos: string[] = [
   @ViewChild('paginatorBelow70') paginatorBelow70!: MatPaginator;
   @ViewChild('paginatorDiabeticFootEstimation', { static: true }) paginatorDiabeticFootEstimation!: MatPaginator;
   @ViewChild('sortDiabeticFootEstimation', { static: true }) sortDiabeticFootEstimation!: MatSort;
-
+  @ViewChild('paginatorWithoutInsulin') paginatorWithoutInsulin!: MatPaginator;
+  @ViewChild('sortWithoutInsulin') sortWithoutInsulin!: MatSort;
 
   @ViewChild('sort1') sort1!: MatSort;
   @ViewChild('sort3', { static: false }) sort3!: MatSort;
@@ -206,6 +219,7 @@ displayedColumnsDiabeticFootEstimationOnlHos: string[] = [
     this.fetchLabResultsBelow70();
     this.fetchDiabeticFootEstimation(); // Fetch Diabetic Foot Estimation data
     this.fetchDiabeticFootEstimationOnlHos();
+    this.fetchLabResultsWithoutInsulin();
 
   
     // Fetch initial hospitalization counts
@@ -256,7 +270,27 @@ displayedColumnsDiabeticFootEstimationOnlHos: string[] = [
    
     this.DiabeticFootEstimationDataSource.paginator = this.paginatorDiabeticFootEstimation;
     this.DiabeticFootEstimationDataSource.sort = this.sortDiabeticFootEstimation;
+
+    this.LabResultsWithoutInsulinDataSource.paginator = this.paginatorWithoutInsulin;
+    this.LabResultsWithoutInsulinDataSource.sort = this.sortWithoutInsulin;
   }
+
+  // Add the new fetch method
+fetchLabResultsWithoutInsulin(): void {
+  this.http
+    .get<any[]>(`${environment.apiUrl}/DiabetesConsultation/LabResultsExcludingInsulinPatients`)
+    .subscribe(
+      (data) => {
+        this.originalLabResultsWithoutInsulin = data;
+        this.LabResultsWithoutInsulinDataSource.data = data;
+        this.applyGlobalSourceTableFilter();
+        this.applyGlobalDateFilter();
+      },
+      (error) => {
+        console.error('Error fetching LabResultsWithoutInsulin:', error);
+      }
+    );
+}
 // Fetch data from the new endpoint
 fetchDiabeticFootEstimationOnlHos(): void {
   this.http
@@ -488,6 +522,23 @@ fetchDiagnosisData(): void {
   
     // Recalculate percentage for gauges (if applicable)
     this.recalculateLabResultsPercentage();
+
+    // Calculate percentage without insulin patients relative to sugerAbove180
+const withoutInsulinCount = this.LabResultsWithoutInsulinDataSource.data.length;
+const sugar180Count = this.sugerAbove180.data.length;
+this.labResultsWithoutInsulinPercentage = sugar180Count > 0 ? (withoutInsulinCount / sugar180Count) * 100 : 0;
+
+console.log('ללא אינסולין מתוך סוכר מעל 180:', {
+  Numerator: withoutInsulinCount,
+  Denominator: sugar180Count,
+  Percentage: this.labResultsWithoutInsulinPercentage,
+});
+this.InsulinDataSource.data =
+  filter === 'All'
+    ? this.originalDataSource3
+    : filter === 'CurrentHospitalizations'
+    ? this.originalDataSource3.filter((item) => item.Release_Date === null)
+    : this.originalDataSource3.filter((item) => item.Release_Date !== null);
   }
   
   
@@ -565,6 +616,17 @@ console.log('Diabetic Foot Estimation Percentage:', this.diabeticFootEstimationP
       Percentage: this.Icd9Percentage,
     });
   
+
+    // 180suger and all not just icd9
+    const sugar180TableLength = this.sugerAbove180.data.length;
+const sugar180Denominator = this.globalSourceTableFilter === 'מאושפזים' ? this.NullReleaseDateCount : this.NonNullReleaseDateCount;
+this.sugar180AllPercentage = sugar180Denominator > 0 ? (sugar180TableLength/sugar180Denominator) * 100 : 0;
+
+console.log('סוכר 180 מתוך כלל האשפוזים:', {
+  TableLength: sugar180TableLength,
+  Denominator: sugar180Denominator,
+  Percentage: this.sugar180AllPercentage,
+});
     // Calculate Sugar 180 and Diabetes Percentage
     this.sugar180DiabetesPercentage =
       this.DiagnosisICD9dataSource.data.length > 0
@@ -589,16 +651,17 @@ console.log('Diabetic Foot Estimation Percentage:', this.diabeticFootEstimationP
       Percentage: this.sugar70DiabetesPercentage,
     });
   
-    // Calculate Insulin Percentage
-    const insulinTableLength = this.InsulinDataSource.data.length; // Data length for מקבל אינסולין
-    const insulinDenominator = this.globalSourceTableFilter === 'מאושפזים' ? this.NullReleaseDateCount : this.NonNullReleaseDateCount;
-    this.insulinPercentage = insulinDenominator > 0 ? (insulinTableLength / insulinDenominator) * 100 : 0;
-  
-    console.log('מקבל אינסולין:', {
-      TableLength: insulinTableLength,
-      Denominator: insulinDenominator,
-      Percentage: this.insulinPercentage,
-    });
+// Calculate Insulin Percentage with sugar180 as denominator
+const insulinTableLength = this.InsulinDataSource.data.length; // Data length for מקבל אינסולין
+const sugar180TableLengthForInsulin = this.sugerAbove180.data.length; // This becomes the denominator
+this.insulinPercentage = sugar180TableLengthForInsulin > 0 ? (insulinTableLength / sugar180TableLengthForInsulin) * 100 : 0;
+
+console.log('מקבל אינסולין (מתוך סוכר מעל 180):', {
+  Numerator: insulinTableLength,
+  Denominator: sugar180TableLengthForInsulin,
+  Percentage: this.insulinPercentage,
+});
+
   }
   
   
@@ -664,6 +727,11 @@ console.log('Filtered DiabeticFootEstimationDataSource after date filter:', this
     // Recalculate counts and percentages
     this.recalculateLabResultsPercentage();
     console.log('Global Date Filter Applied:', this.globalDateFilter);
+
+    this.LabResultsWithoutInsulinDataSource.data = this.originalLabResultsWithoutInsulin.filter(
+      (item) => isWithinDateRange(item.Admission_Date)
+    );
+    
   }
   
   
@@ -766,6 +834,9 @@ console.log('Filtered DiabeticFootEstimationDataSource after date filter:', this
       const filteredDiabeticFootEstimation = this.originalDiabeticFootEstimation.filter((item) =>
       this.isWithinDateRange(item.Admission_Date)
     );
+    const filteredWithoutInsulin = this.originalLabResultsWithoutInsulin.filter((item) =>
+  this.isWithinDateRange(item.Admission_Date)
+);
     
       if (this.globalSourceTableFilter === 'מאושפזים') {
         // Filter for "מאושפזים" (current hospitalizations)
@@ -784,12 +855,17 @@ console.log('Filtered DiabeticFootEstimationDataSource after date filter:', this
         this.DiabeticFootEstimationDataSource.data = filteredDiabeticFootEstimation;
 
       }
+      if (this.globalSourceTableFilter === 'מאושפזים') {
+        this.LabResultsWithoutInsulinDataSource.data = filteredWithoutInsulin.filter((item) => item.Release_Date === null);
+      } else {
+        this.LabResultsWithoutInsulinDataSource.data = filteredWithoutInsulin;
+      }
+
     
       // Update gauge values
       this.updateGaugeValues();
     
-      console.log('Filters applied successfully!');
-      console.log('Filtered Insulin Data:', this.InsulinDataSource.data);
+      
     }
     
     
@@ -805,10 +881,8 @@ console.log('Filtered DiabeticFootEstimationDataSource after date filter:', this
     // Update the selected source filter when a toggle is clicked
     onSourceFilterChange(filter: string): void {
       this.tempGlobalSourceTableFilter = filter;
-      console.log('Temporary Source Filter Updated:', this.tempGlobalSourceTableFilter);
     }
     resetFilters(): void {
-      console.log('Resetting filters...');
     
       // Reset date range
       this.globalDateFilter = { start: null, end: null };
@@ -827,6 +901,8 @@ console.log('Filtered DiabeticFootEstimationDataSource after date filter:', this
       this.dataSourceHemoglobin.data = [...this.originalDataSourceHemoglobin];
       this.dataSourceAllConsiliums.data = [...this.originalDataSourceAllConsiliums];
       this.dataSourceBelow70.data = [...this.originalDataSourceBelow70];
+      this.LabResultsWithoutInsulinDataSource.data = [...this.originalLabResultsWithoutInsulin];
+
     
       // Recalculate gauge values
       this.updateGaugeValues();
