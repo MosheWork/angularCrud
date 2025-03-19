@@ -72,7 +72,8 @@ export class MitavSummaryComponent implements OnInit {
         console.log("✅ API Response Data:", data);
         this.isLoading = false;
         this.originalData = data;
-        this.filteredData = data;
+       // this.filteredData = data;
+        this.applyFilter();
 //         this.recalculateTables();
 //         // Global department arrays for reuse
 //         const internalAndSurgicalDepartments = [
@@ -594,8 +595,8 @@ export class MitavSummaryComponent implements OnInit {
     const endMonth = startMonth + 2;
   
     this.filteredData = this.originalData.filter((row: any) => {
-      if (!row.Admission_Date) return false;
-      const date = new Date(row.Admission_Date);
+      if (!row.AdmissionDate) return false;
+            const date = new Date(row.AdmissionDate);
       return (
         date.getFullYear() === this.selectedYear &&
         date.getMonth() + 1 >= startMonth &&
