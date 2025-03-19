@@ -62,6 +62,21 @@ export class MitavSummaryComponent implements OnInit {
 
   ngOnInit(): void {
     this.fetchData();
+    const today = new Date();
+    this.selectedYear = today.getFullYear();
+  
+    const month = today.getMonth() + 1; // month is 0-indexed
+    if (month >= 1 && month <= 3) {
+      this.selectedQuarter = 1;
+    } else if (month >= 4 && month <= 6) {
+      this.selectedQuarter = 2;
+    } else if (month >= 7 && month <= 9) {
+      this.selectedQuarter = 3;
+    } else if (month >= 10 && month <= 12) {
+      this.selectedQuarter = 4;
+    }
+    this.applyFilter(); // load data immediately with default values
+
   }
 
   fetchData(): void {

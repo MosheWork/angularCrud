@@ -1,24 +1,29 @@
 <app-spinner [isLoading]="isLoading"></app-spinner>
 
 <div *ngIf="!isLoading" class="body" >
-  <button mat-raised-button color="primary" (click)="exportAllTables()">
-    יצוא לאקסל
-  </button>
-  <div class="filters">
-    <mat-form-field>
-      <mat-label>שנה</mat-label>
-      <mat-select [(ngModel)]="selectedYear" (selectionChange)="applyFilter()">
-        <mat-option *ngFor="let y of availableYears" [value]="y">{{ y }}</mat-option>
-      </mat-select>
-    </mat-form-field>
+  <mat-card class="filter-card" dir="rtl">
+    <mat-card-content class="filters">
+      <div class="filter-fields">
+        <mat-form-field appearance="outline">
+          <mat-label>שנה</mat-label>
+          <mat-select [(ngModel)]="selectedYear" (selectionChange)="applyFilter()">
+            <mat-option *ngFor="let y of availableYears" [value]="y">{{ y }}</mat-option>
+          </mat-select>
+        </mat-form-field>
   
-    <mat-form-field>
-      <mat-label>רבעון</mat-label>
-      <mat-select [(ngModel)]="selectedQuarter" (selectionChange)="applyFilter()">
-        <mat-option *ngFor="let q of quarters" [value]="q.value">{{ q.label }}</mat-option>
-      </mat-select>
-    </mat-form-field>
-  </div>
+        <mat-form-field appearance="outline">
+          <mat-label>רבעון</mat-label>
+          <mat-select [(ngModel)]="selectedQuarter" (selectionChange)="applyFilter()">
+            <mat-option *ngFor="let q of quarters" [value]="q.value">{{ q.label }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+  
+        <button mat-raised-button color="primary" (click)="exportAllTables()">
+          יצוא לאקסל
+        </button>
+      </div>
+    </mat-card-content>
+  </mat-card>
   
   
 
