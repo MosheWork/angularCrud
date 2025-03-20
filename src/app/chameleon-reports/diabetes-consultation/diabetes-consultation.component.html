@@ -243,30 +243,30 @@ class="custom-toggle-group"
 </mat-card> -->
 <mat-card class="gauge-card">
   <div class="gauge-title">
-    אומדן רגל סוכרתית
-    <span
-      matTooltip="מונה: סך מטופלים עם אומדן רגל סוכרתית | מכנה: סך מטופלים עם אבחנת סכרת ב ICD9"
-      matTooltipPosition="above"
-      style="cursor: pointer; font-size: 16px; margin-left: 5px;"
-    >
-      <mat-icon style="color: #007BFF;">help_outline</mat-icon>
-    </span>
+מאובחנים ללא אומדן    <span
+    matTooltip="מונה: מטופלים עם אבחנת ICD9 אך ללא אומדן סוכרת | מכנה: סך מטופלים עם אבחנת סכרת ב-ICD9"
+    matTooltipPosition="above"
+    style="cursor: pointer; font-size: 16px; margin-left: 5px;"
+  >
+    <mat-icon style="color: #007BFF;">help_outline</mat-icon>
+  </span>
   </div>
 
   <div class="gauge-content">
     <ngx-gauge
-      [value]="diabeticFootEstimationPercentage"
+      [value]="icd9WithoutEstimationPercentage"
       [min]="0"
       [max]="100"
-      [label]=""
+      [label]="''"
       [append]="'%'"
-      [foregroundColor]="'#3498db'"
-    ></ngx-gauge>
+      [foregroundColor]="'#3498db'">
+    </ngx-gauge>
     <div class="gauge-info">
-      <strong>{{ DiagnosisICD9dataSource.data.length  }}</strong>/
-      <strong>{{ DiabeticFootEstimationDataSource.data.length}} </strong>
+      <strong>{{ PatientWithICD9AndDontHaveDiabetesEstimationDataSource.data.length }}</strong> /
+      <strong>{{ DiagnosisICD9dataSource.data.length }}</strong>
     </div>
   </div>
+  
 </mat-card>
 
 
@@ -283,98 +283,50 @@ class="custom-toggle-group"
   >
     <mat-tab-group >
       <!-- First Tab -->
-      <mat-tab class="tabtitle" label=" הערכת רגל סוכרתית (מאושפזים בלבד) ">
-        <ng-template mat-tab-label>
-          <span matTooltip="רשימת מטופלים מאושפזים בלבד עם הערכת רגל סוכרתית" matTooltipPosition="above">
-            -  מאושפזים הערכת רגל סוכרתית
-          </span>
-        </ng-template>
-        <table
-          mat-table
-          [dataSource]="DiabeticFootEstimationOnlHosDataSource"
-          class="mat-elevation-z8"
-          matSort
-          style="table-layout: fixed; width: 100%"
-        >
+      <mat-tab label="ICD9 ללא אומדן סכרת">
+        <table mat-table [dataSource]="PatientWithICD9AndDontHaveDiabetesEstimationDataSource"  class="mat-elevation-z8"
+        matSort
+        style="table-layout: fixed; width: 100%">
           <ng-container matColumnDef="Admission_No">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>
-              Admission No
-            </th>
-            <td mat-cell *matCellDef="let element">
-              {{ element.Admission_No }}
-            </td>
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>מספר אשפוז</th>
+            <td mat-cell *matCellDef="let element">{{ element.Admission_No }}</td>
           </ng-container>
           <ng-container matColumnDef="Admission_Date">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>
-              Admission Date
-            </th>
-            <td mat-cell *matCellDef="let element">
-              {{ element.Admission_Date | date }}
-            </td>
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>תאריך קבלה</th>
+            <td mat-cell *matCellDef="let element">{{ element.Admission_Date | date }}</td>
           </ng-container>
           <ng-container matColumnDef="First_Name">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>
-              First Name
-            </th>
-            <td mat-cell *matCellDef="let element">
-              {{ element.First_Name }}
-            </td>
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>שם פרטי</th>
+            <td mat-cell *matCellDef="let element">{{ element.First_Name }}</td>
           </ng-container>
           <ng-container matColumnDef="Last_Name">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>
-              Last Name
-            </th>
-            <td mat-cell *matCellDef="let element">
-              {{ element.Last_Name }}
-            </td>
-          </ng-container>
-          <ng-container matColumnDef="Id_Num">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>
-              ID Number
-            </th>
-            <td mat-cell *matCellDef="let element">
-              {{ element.Id_Num }}
-            </td>
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>שם משפחה</th>
+            <td mat-cell *matCellDef="let element">{{ element.Last_Name }}</td>
           </ng-container>
           <ng-container matColumnDef="Admission_Medical_Record">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>
-              Medical Record
-            </th>
-            <td mat-cell *matCellDef="let element">
-              {{ element.Admission_Medical_Record }}
-            </td>
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>מספר תיק קבלה</th>
+            <td mat-cell *matCellDef="let element">{{ element.Admission_Medical_Record }}</td>
           </ng-container>
           <ng-container matColumnDef="UnitName">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>
-              Unit Name
-            </th>
-            <td mat-cell *matCellDef="let element">
-              {{ element.UnitName }}
-            </td>
-          </ng-container>
-          <ng-container matColumnDef="Unit">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>
-              Unit ID
-            </th>
-            <td mat-cell *matCellDef="let element">
-              {{ element.Unit }}
-            </td>
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>מחלקה</th>
+            <td mat-cell *matCellDef="let element">{{ element.UnitName }}</td>
           </ng-container>
           <ng-container matColumnDef="Release_Date">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>
-              Release Date
-            </th>
-            <td mat-cell *matCellDef="let element">
-              {{ element.Release_Date | date }}
-            </td>
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>תאריך שחרור</th>
+            <td mat-cell *matCellDef="let element">{{ element.Release_Date | date }}</td>
           </ng-container>
       
-          <tr mat-header-row *matHeaderRowDef="displayedColumnsDiabeticFootEstimationOnlHos"></tr>
-          <tr mat-row *matRowDef="let row; columns: displayedColumnsDiabeticFootEstimationOnlHos"></tr>
+          <tr mat-header-row *matHeaderRowDef="displayedColumnsPatientWithICD9AndDontHaveDiabetesEstimation"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumnsPatientWithICD9AndDontHaveDiabetesEstimation;"></tr>
         </table>
-        <mat-paginator #paginatorDiabeticFootEstimationOnlHos [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
-
+      
+        <mat-paginator
+          #paginatorICD9NoEstimation
+          [pageSizeOptions]="[5, 10, 20]"
+          showFirstLastButtons>
+        </mat-paginator>
       </mat-tab>
+      
       
       <mat-tab class="tabtitle" label="הערכת כף רגל סוכרתית">
         <ng-template mat-tab-label>
@@ -896,7 +848,9 @@ class="custom-toggle-group"
         ></mat-paginator>
       </mat-tab>
       <mat-tab label="ללא אינסולין סוכר מעל 180">
-        <table mat-table [dataSource]="LabResultsWithoutInsulinDataSource" matSort>
+        <table mat-table [dataSource]="LabResultsWithoutInsulinDataSource"  class="mat-elevation-z8"
+        matSort
+        style="table-layout: fixed; width: 100%">
           <ng-container matColumnDef="Admission_No">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>מספר אשפוז</th>
             <td mat-cell *matCellDef="let element">{{ element.Admission_No }}</td>
@@ -933,7 +887,65 @@ class="custom-toggle-group"
         </mat-paginator>
       </mat-tab>
       
-    
+      <mat-tab label="מטופלים סוכרתיים עם קטטר והוראה 14615">
+        <table mat-table [dataSource]="DiabeticPatientsWithCatheterOrdersDataSource" matSort class="mat-elevation-z8"  style="table-layout: fixed; width: 100% " >
+      
+          <ng-container matColumnDef="Admission_No">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>מספר אשפוז</th>
+            <td mat-cell *matCellDef="let element">{{ element.Admission_No }}</td>
+          </ng-container>
+      
+          <ng-container matColumnDef="Admission_Date">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>תאריך קבלה</th>
+            <td mat-cell *matCellDef="let element">{{ element.Admission_Date | date }}</td>
+          </ng-container>
+      
+          <ng-container matColumnDef="First_Name">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>שם פרטי</th>
+            <td mat-cell *matCellDef="let element">{{ element.First_Name }}</td>
+          </ng-container>
+      
+          <ng-container matColumnDef="Last_Name">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>שם משפחה</th>
+            <td mat-cell *matCellDef="let element">{{ element.Last_Name }}</td>
+          </ng-container>
+      
+          <ng-container matColumnDef="ICD9">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>ICD9</th>
+            <td mat-cell *matCellDef="let element">{{ element.ICD9 }}</td>
+          </ng-container>
+      
+          <ng-container matColumnDef="DiagnosisName">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>שם אבחנה</th>
+            <td mat-cell *matCellDef="let element">{{ element.DiagnosisName }}</td>
+          </ng-container>
+      
+          <!-- <ng-container matColumnDef="Entry_Date">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>תאריך אבחנה</th>
+            <td mat-cell *matCellDef="let element">{{ element.Entry_Date | date }}</td>
+          </ng-container> -->
+      
+          <ng-container matColumnDef="Parameter">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>פרמטר</th>
+            <td mat-cell *matCellDef="let element">{{ element.Parameter }}</td>
+          </ng-container>
+      
+          <ng-container matColumnDef="Release_Date">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>תאריך שחרור</th>
+            <td mat-cell *matCellDef="let element">{{ element.Release_Date | date }}</td>
+          </ng-container>
+      
+          <tr mat-header-row *matHeaderRowDef="displayedColumnsDiabeticPatientsWithCatheterOrders"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumnsDiabeticPatientsWithCatheterOrders;"></tr>
+        </table>
+      
+        <mat-paginator
+          #paginatorCatheterOrders
+          [pageSizeOptions]="[4, 10, 20]"
+          showFirstLastButtons>
+        </mat-paginator>
+      </mat-tab>
+      
     </mat-tab-group>
   </div>
 </div>

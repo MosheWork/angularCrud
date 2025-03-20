@@ -35,6 +35,7 @@ export class DiabetesConsultationComponent implements OnInit, AfterViewInit {
   NonNullReleaseDateCount: number = 0;
   labResultBelow70Percentage: number = 0;
   labResultsWithoutInsulinPercentage: number = 0;
+ 
 
 
   sugar180DiabetesPercentage: number = 0; // סוכר 180 וחולה סוכרת
@@ -43,7 +44,7 @@ sugar70DiabetesPercentage: number = 0; // סוכר 70 וחולה סוכרת
 below70Percentage: number = 0; // For סוכר מתחת ל-70
 diabeticFootEstimationPercentage: number = 0;
 sugar180AllPercentage: number = 0; 
-
+icd9WithoutEstimationPercentage: number = 0;
   CurrentHospitalizations: number = 0; // Total with non-null Release_Date
   TotalHospitalizations: number = 0;  // Total with null Release_Date
   FilteredCurrentHospitalizations: number = 0; // Temporary filtered count for CurrentHospitalizations
@@ -172,6 +173,31 @@ displayedColumnsDiabeticFootEstimationOnlHos: string[] = [
   'UnitName',
   'Unit',
 ];
+
+displayedColumnsPatientWithICD9AndDontHaveDiabetesEstimation: string[] = [
+  'Admission_No',
+  'Admission_Date',
+  
+  //'Admission_Medical_Record',
+  //'Id_Num',
+  'First_Name',
+  'Last_Name',
+  'UnitName',
+  'Release_Date',
+ // 'Unit',
+];
+displayedColumnsDiabeticPatientsWithCatheterOrders: string[] = [
+  'Admission_No',
+  'Admission_Date',
+  //'Id_Num',
+  'First_Name',
+  'Last_Name',
+  'ICD9',
+  'DiagnosisName',
+  //'Entry_Date',
+  'Release_Date',
+  'Parameter'
+];
   sugerAbove180 = new MatTableDataSource<any>();
   InsulinDataSource = new MatTableDataSource<any>();
   DiagnosisICD9dataSource = new MatTableDataSource<any>();
@@ -180,6 +206,8 @@ displayedColumnsDiabeticFootEstimationOnlHos: string[] = [
   dataSourceBelow70 = new MatTableDataSource<any>();
   DiabeticFootEstimationDataSource = new MatTableDataSource<any>();
   LabResultsWithoutInsulinDataSource = new MatTableDataSource<any>();
+  PatientWithICD9AndDontHaveDiabetesEstimationDataSource = new MatTableDataSource<any>();
+  DiabeticPatientsWithCatheterOrdersDataSource = new MatTableDataSource<any>();
 
 
   filterForm: FormGroup = new FormGroup({
@@ -196,6 +224,10 @@ displayedColumnsDiabeticFootEstimationOnlHos: string[] = [
   @ViewChild('sortDiabeticFootEstimation', { static: true }) sortDiabeticFootEstimation!: MatSort;
   @ViewChild('paginatorWithoutInsulin') paginatorWithoutInsulin!: MatPaginator;
   @ViewChild('sortWithoutInsulin') sortWithoutInsulin!: MatSort;
+  @ViewChild('paginatorICD9NoEstimation', { static: true }) paginatorICD9NoEstimation!: MatPaginator;
+  @ViewChild('sortICD9NoEstimation', { static: true }) sortICD9NoEstimation!: MatSort;
+  @ViewChild('paginatorCatheterOrders', { static: true }) paginatorCatheterOrders!: MatPaginator;
+@ViewChild('sortCatheterOrders', { static: true }) sortCatheterOrders!: MatSort;
 
   @ViewChild('sort1') sort1!: MatSort;
   @ViewChild('sort3', { static: false }) sort3!: MatSort;
@@ -220,6 +252,9 @@ displayedColumnsDiabeticFootEstimationOnlHos: string[] = [
     this.fetchDiabeticFootEstimation(); // Fetch Diabetic Foot Estimation data
     this.fetchDiabeticFootEstimationOnlHos();
     this.fetchLabResultsWithoutInsulin();
+    this.fetchPatientsWithICD9AndNoEstimation();
+    this.fetchDiabeticPatientsWithCatheterOrders();
+
 
   
     // Fetch initial hospitalization counts
@@ -273,8 +308,39 @@ displayedColumnsDiabeticFootEstimationOnlHos: string[] = [
 
     this.LabResultsWithoutInsulinDataSource.paginator = this.paginatorWithoutInsulin;
     this.LabResultsWithoutInsulinDataSource.sort = this.sortWithoutInsulin;
+    this.PatientWithICD9AndDontHaveDiabetesEstimationDataSource.paginator = this.paginatorICD9NoEstimation;
+this.PatientWithICD9AndDontHaveDiabetesEstimationDataSource.sort = this.sortICD9NoEstimation;
+this.DiabeticPatientsWithCatheterOrdersDataSource.paginator = this.paginatorCatheterOrders;
+this.DiabeticPatientsWithCatheterOrdersDataSource.sort = this.sortCatheterOrders;
   }
 
+  fetchDiabeticPatientsWithCatheterOrders(): void {
+    this.http
+      .get<any[]>(`${environment.apiUrl}/DiabetesConsultation/DiabeticPatientsWithCatheterOrders`)
+      .subscribe(
+        (data) => {
+          this.DiabeticPatientsWithCatheterOrdersDataSource.data = data;
+          console.log('Fetched Diabetic Patients With Catheter Orders:', data);
+        },
+        (error) => {
+          console.error('Error fetching Diabetic Patients With Catheter Orders:', error);
+        }
+      );
+  }
+  fetchPatientsWithICD9AndNoEstimation(): void {
+    this.http
+      .get<any[]>(`${environment.apiUrl}/DiabetesConsultation/PatientWithICD9AndDontHaveDiabetesEstimation`)
+      .subscribe(
+        (data) => {
+          this.PatientWithICD9AndDontHaveDiabetesEstimationDataSource.data = data;
+          console.log('Fetched Patients with ICD9 but no Diabetes Estimation:', data);
+        },
+        (error) => {
+          console.error('Error fetching Patients with ICD9 but no Diabetes Estimation:', error);
+        }
+      );
+  }
+  
   // Add the new fetch method
 fetchLabResultsWithoutInsulin(): void {
   this.http
@@ -291,7 +357,13 @@ fetchLabResultsWithoutInsulin(): void {
       }
     );
 }
-// Fetch data from the new endpoint
+// Fetch data from the new endpoint   >> 📊 Result:
+// You’ll get current inpatients who:
+
+// Have been hospitalized for more than 24 hours,
+// Belong to units not in the excluded list,
+// Do not have an active Estimation Grade record of type 263,
+// And are not test/dummy patients.
 fetchDiabeticFootEstimationOnlHos(): void {
   this.http
     .get<any[]>(`${environment.apiUrl}/DiabetesConsultation/DiabeticFootEstimationOnlHos`)
@@ -661,6 +733,14 @@ console.log('מקבל אינסולין (מתוך סוכר מעל 180):', {
   Denominator: sugar180TableLengthForInsulin,
   Percentage: this.insulinPercentage,
 });
+
+this.icd9WithoutEstimationPercentage =
+  this.DiagnosisICD9dataSource.data.length > 0
+    ? (this.PatientWithICD9AndDontHaveDiabetesEstimationDataSource.data.length /
+       this.DiagnosisICD9dataSource.data.length) * 100
+    : 0;
+
+console.log('ICD9 without Diabetic Estimation %:', this.icd9WithoutEstimationPercentage);
 
   }
   
