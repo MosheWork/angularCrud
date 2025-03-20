@@ -74,7 +74,8 @@ icd9WithoutEstimationPercentage: number = 0;
   originalDataSourceBelow70: any[] = [];
   originalDiabeticFootEstimation: any[] = [];
   originalLabResultsWithoutInsulin: any[] = [];
-
+  originalPatientWithICD9AndDontHaveDiabetesEstimation: any[] = [];
+  originalDiabeticPatientsWithCatheterOrders: any[] = [];
 
   selectedSourceFilter: string = 'All'; // Temporary storage for selected toggle
 
@@ -320,6 +321,8 @@ this.DiabeticPatientsWithCatheterOrdersDataSource.sort = this.sortCatheterOrders
       .subscribe(
         (data) => {
           this.DiabeticPatientsWithCatheterOrdersDataSource.data = data;
+          this.originalDiabeticPatientsWithCatheterOrders = data;
+
           console.log('Fetched Diabetic Patients With Catheter Orders:', data);
         },
         (error) => {
@@ -333,6 +336,8 @@ this.DiabeticPatientsWithCatheterOrdersDataSource.sort = this.sortCatheterOrders
       .subscribe(
         (data) => {
           this.PatientWithICD9AndDontHaveDiabetesEstimationDataSource.data = data;
+          this.originalPatientWithICD9AndDontHaveDiabetesEstimation = data;
+
           console.log('Fetched Patients with ICD9 but no Diabetes Estimation:', data);
         },
         (error) => {
@@ -611,6 +616,28 @@ this.InsulinDataSource.data =
     : filter === 'CurrentHospitalizations'
     ? this.originalDataSource3.filter((item) => item.Release_Date === null)
     : this.originalDataSource3.filter((item) => item.Release_Date !== null);
+
+    this.DiabeticFootEstimationDataSource.data =
+    filter === 'All'
+      ? this.originalDiabeticFootEstimation
+      : filter === 'CurrentHospitalizations'
+      ? this.originalDiabeticFootEstimation.filter((item) => item.Release_Date === null)
+      : this.originalDiabeticFootEstimation.filter((item) => item.Release_Date !== null);
+
+      this.PatientWithICD9AndDontHaveDiabetesEstimationDataSource.data =
+      filter === 'All'
+        ? this.originalPatientWithICD9AndDontHaveDiabetesEstimation
+        : filter === 'CurrentHospitalizations'
+        ? this.originalPatientWithICD9AndDontHaveDiabetesEstimation.filter((item) => item.Release_Date === null)
+        : this.originalPatientWithICD9AndDontHaveDiabetesEstimation.filter((item) => item.Release_Date !== null);
+    
+    this.DiabeticPatientsWithCatheterOrdersDataSource.data =
+      filter === 'All'
+        ? this.originalDiabeticPatientsWithCatheterOrders
+        : filter === 'CurrentHospitalizations'
+        ? this.originalDiabeticPatientsWithCatheterOrders.filter((item) => item.Release_Date === null)
+        : this.originalDiabeticPatientsWithCatheterOrders.filter((item) => item.Release_Date !== null);
+    
   }
   
   
@@ -811,7 +838,15 @@ console.log('Filtered DiabeticFootEstimationDataSource after date filter:', this
     this.LabResultsWithoutInsulinDataSource.data = this.originalLabResultsWithoutInsulin.filter(
       (item) => isWithinDateRange(item.Admission_Date)
     );
-    
+    this.PatientWithICD9AndDontHaveDiabetesEstimationDataSource.data = 
+  this.PatientWithICD9AndDontHaveDiabetesEstimationDataSource.data.filter((item) =>
+    isWithinDateRange(item.Admission_Date)
+);
+
+this.DiabeticPatientsWithCatheterOrdersDataSource.data = 
+  this.DiabeticPatientsWithCatheterOrdersDataSource.data.filter((item) =>
+    isWithinDateRange(item.Admission_Date)
+);
   }
   
   
@@ -917,6 +952,12 @@ console.log('Filtered DiabeticFootEstimationDataSource after date filter:', this
     const filteredWithoutInsulin = this.originalLabResultsWithoutInsulin.filter((item) =>
   this.isWithinDateRange(item.Admission_Date)
 );
+const filteredICD9NoEstimation = this.originalPatientWithICD9AndDontHaveDiabetesEstimation.filter((item) =>
+  this.isWithinDateRange(item.Admission_Date)
+);
+const filteredCatheterOrders = this.originalDiabeticPatientsWithCatheterOrders.filter((item) =>
+  this.isWithinDateRange(item.Admission_Date)
+);
     
       if (this.globalSourceTableFilter === 'מאושפזים') {
         // Filter for "מאושפזים" (current hospitalizations)
@@ -941,7 +982,14 @@ console.log('Filtered DiabeticFootEstimationDataSource after date filter:', this
         this.LabResultsWithoutInsulinDataSource.data = filteredWithoutInsulin;
       }
 
-    
+      if (this.globalSourceTableFilter === 'מאושפזים') {
+        // Existing filtering...
+        this.PatientWithICD9AndDontHaveDiabetesEstimationDataSource.data = filteredICD9NoEstimation.filter((item) => item.Release_Date === null);
+        this.DiabeticPatientsWithCatheterOrdersDataSource.data = filteredCatheterOrders.filter((item) => item.Release_Date === null);
+      } else {
+        this.PatientWithICD9AndDontHaveDiabetesEstimationDataSource.data = filteredICD9NoEstimation;
+        this.DiabeticPatientsWithCatheterOrdersDataSource.data = filteredCatheterOrders;
+      }
       // Update gauge values
       this.updateGaugeValues();
     
@@ -982,7 +1030,9 @@ console.log('Filtered DiabeticFootEstimationDataSource after date filter:', this
       this.dataSourceAllConsiliums.data = [...this.originalDataSourceAllConsiliums];
       this.dataSourceBelow70.data = [...this.originalDataSourceBelow70];
       this.LabResultsWithoutInsulinDataSource.data = [...this.originalLabResultsWithoutInsulin];
-
+      this.PatientWithICD9AndDontHaveDiabetesEstimationDataSource.data = [...this.originalPatientWithICD9AndDontHaveDiabetesEstimation];
+      this.DiabeticPatientsWithCatheterOrdersDataSource.data = [...this.originalDiabeticPatientsWithCatheterOrders];
+      
     
       // Recalculate gauge values
       this.updateGaugeValues();
