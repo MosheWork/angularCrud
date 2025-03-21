@@ -46,7 +46,12 @@ class="custom-toggle-group"
                   <mat-datepicker-toggle matSuffix [for]="endDatePicker"></mat-datepicker-toggle>
                   <mat-datepicker #endDatePicker></mat-datepicker>
                 </mat-form-field>
-                
+                <mat-form-field appearance="outline" class="filter-field">
+                  <mat-label>סנן לפי מחלקות</mat-label>
+                  <mat-select [(value)]="selectedDepartments" multiple (selectionChange)="applyGlobalSourceTableFilter()">
+                    <mat-option *ngFor="let dept of departments" [value]="dept">{{ dept }}</mat-option>
+                  </mat-select>
+                </mat-form-field>
       
               <!-- Filter Buttons -->
 <div class="filter-buttons" style="margin-top: 10px; text-align: right;">

@@ -199,6 +199,21 @@ displayedColumnsDiabeticPatientsWithCatheterOrders: string[] = [
   'Release_Date',
   'Parameter'
 ];
+
+departments: string[] = [
+  'אשפוז יום כירורגי', 'מחלקת שיקום ילדים', 'מחלקת ילדים', 'מחלקת פנימית ב', 
+  'מחלקת פנימית א', 'מחלקת נוירולוגיה ושבץ מוחי', 'המחלקה לגריאטריה שיקומית',
+  'מחלקת אורתופדיה', 'מחלקת נשים', 'מחלקת עיניים', 'מחלקת אף אוזן גרון',
+  'מחלקת פה ולסת', 'טיפול נמרץ כללי', 'מחלקת קרדיולוגיה', 'טיפול נמרץ לב',
+  'מחלקת כירורגית ילדים', 'מחלקת כירורגיה', 'מחלקת אורולוגיה', 'כירורגית לב',
+  'כירורגית חזה', 'כירורגית כלי דם', 'טיפול נמרץ כירורגית לב', 
+  'טיפול נמרץ כירורגית כלי דם', 'טיפול נמרץ כירורגית חזה', 'מחלקת יולדות',
+  'המחלקה לרפואת האם והעובר', 'טיפול נמרץ בפג ובילוד', 'מחלקת ילודים', 
+  'טיפול נמרץ ילדים', 'מחלקת שיקום כללי'
+];
+
+selectedDepartments: string[] = []; // for user selection
+
   sugerAbove180 = new MatTableDataSource<any>();
   InsulinDataSource = new MatTableDataSource<any>();
   DiagnosisICD9dataSource = new MatTableDataSource<any>();
@@ -543,102 +558,78 @@ fetchDiagnosisData(): void {
 
   applyGlobalSourceTableFilter(): void {
     const filter = this.globalSourceTableFilter;
+    const departments = this.selectedDepartments;
+    const { start, end } = this.globalDateFilter;
   
-    // Filter data for the ICD9 table
-    this.DiabeticFootEstimationDataSource.data =
-    filter === 'All'
-      ? this.originalDiabeticFootEstimation
-      : filter === 'CurrentHospitalizations'
-      ? this.originalDiabeticFootEstimation.filter((item) => item.Release_Date === null)
-      : this.originalDiabeticFootEstimation.filter((item) => item.Release_Date !== null);
-
-  console.log('Filtered DiabeticFootEstimationDataSource:', this.DiabeticFootEstimationDataSource.data);
-    this.DiagnosisICD9dataSource.data =
-      filter === 'All'
-        ? this.originalDataSourceDiagnosisICD9
-        : filter === 'CurrentHospitalizations'
-        ? this.originalDataSourceDiagnosisICD9.filter((item) => item.Release_Date === null)
-        : this.originalDataSourceDiagnosisICD9.filter((item) => item.Release_Date !== null);
+      // ✅ Add debug here:
+  console.log('selectedDepartments:', this.selectedDepartments);
+  console.log('Example UnitName from data:', this.originalPatientWithICD9AndDontHaveDiabetesEstimation.map(x => x.UnitName));
   
-    console.log('Filtered DiagnosisICD9dataSource after hospitalization filter:', this.DiagnosisICD9dataSource.data);
+    const matchesHospitalization = (item: any) =>
+      filter === 'All' ||
+      (filter === 'CurrentHospitalizations' && item.Release_Date === null) ||
+      (filter === 'PastHospitalizations' && item.Release_Date !== null);
   
-    // Filter data for the Below 70 table
-    this.sugerAbove180.data =
-      filter === 'All'
-        ? this.originalSugerAbove180
-        : filter === 'CurrentHospitalizations'
-        ? this.originalSugerAbove180.filter((item) => item.Release_Date === null)
-        : this.originalSugerAbove180.filter((item) => item.Release_Date !== null);
+    const matchesDepartment = (item: any) =>
+      departments.length === 0 || departments.includes(item.UnitName);
   
-    // Filter data for the Insulin table (InsulinDataSource)
-    this.InsulinDataSource.data =
-      filter === 'All'
-        ? this.originalDataSource3
-        : filter === 'CurrentHospitalizations'
-        ? this.originalDataSource3.filter((item) => item.Release_Date === null)
-        : this.originalDataSource3.filter((item) => item.Release_Date !== null);
+    const matchesDate = (item: any) => {
+      const dateField = item.Admission_Date || item.Entry_Date || null;
+      if (!dateField) return true; // If no date, include by default
+      const recordDate = new Date(dateField);
+      if (start && recordDate < start) return false;
+      if (end && recordDate > end) return false;
+      return true;
+    };
   
-    console.log('Filtered InsulinDataSource after hospitalization filter:', this.InsulinDataSource.data);
+    // Apply all filters to ALL tables
+    this.DiabeticFootEstimationDataSource.data = this.originalDiabeticFootEstimation.filter(item =>
+      matchesHospitalization(item) && matchesDepartment(item) && matchesDate(item)
+    );
   
-    // Update hospitalization counts based on the filtered data
-    this.CurrentHospitalizations = this.sugerAbove180.data.filter(
-      (item) => item.Release_Date === null
-    ).length;
+    this.DiagnosisICD9dataSource.data = this.originalDataSourceDiagnosisICD9.filter(item =>
+      matchesHospitalization(item) && matchesDepartment(item) && matchesDate(item)
+    );
   
-    this.TotalHospitalizations = this.originalSugerAbove180.length;
+    this.sugerAbove180.data = this.originalSugerAbove180.filter(item =>
+      matchesHospitalization(item) && matchesDepartment(item) && matchesDate(item)
+    );
   
-    // Add any Insulin-specific counts or metrics here (if needed)
-    const insulinCurrentCount = this.InsulinDataSource.data.filter(
-      (item) => item.Release_Date === null
-    ).length;
+    this.InsulinDataSource.data = this.originalDataSource3.filter(item =>
+      matchesHospitalization(item) && matchesDepartment(item) && matchesDate(item)
+    );
   
-    const insulinTotalCount = this.originalDataSource3.length;
+    this.LabResultsWithoutInsulinDataSource.data = this.originalLabResultsWithoutInsulin.filter(item =>
+      matchesHospitalization(item) && matchesDepartment(item) && matchesDate(item)
+    );
   
-    console.log('Insulin Current Count:', insulinCurrentCount);
-    console.log('Insulin Total Count:', insulinTotalCount);
+    this.dataSourceBelow70.data = this.originalDataSourceBelow70.filter(item =>
+      matchesHospitalization(item) && matchesDepartment(item) && matchesDate(item)
+    );
   
-    // Recalculate percentage for gauges (if applicable)
-    this.recalculateLabResultsPercentage();
-
-    // Calculate percentage without insulin patients relative to sugerAbove180
-const withoutInsulinCount = this.LabResultsWithoutInsulinDataSource.data.length;
-const sugar180Count = this.sugerAbove180.data.length;
-this.labResultsWithoutInsulinPercentage = sugar180Count > 0 ? (withoutInsulinCount / sugar180Count) * 100 : 0;
-
-console.log('ללא אינסולין מתוך סוכר מעל 180:', {
-  Numerator: withoutInsulinCount,
-  Denominator: sugar180Count,
-  Percentage: this.labResultsWithoutInsulinPercentage,
-});
-this.InsulinDataSource.data =
-  filter === 'All'
-    ? this.originalDataSource3
-    : filter === 'CurrentHospitalizations'
-    ? this.originalDataSource3.filter((item) => item.Release_Date === null)
-    : this.originalDataSource3.filter((item) => item.Release_Date !== null);
-
-    this.DiabeticFootEstimationDataSource.data =
-    filter === 'All'
-      ? this.originalDiabeticFootEstimation
-      : filter === 'CurrentHospitalizations'
-      ? this.originalDiabeticFootEstimation.filter((item) => item.Release_Date === null)
-      : this.originalDiabeticFootEstimation.filter((item) => item.Release_Date !== null);
-
-      this.PatientWithICD9AndDontHaveDiabetesEstimationDataSource.data =
-      filter === 'All'
-        ? this.originalPatientWithICD9AndDontHaveDiabetesEstimation
-        : filter === 'CurrentHospitalizations'
-        ? this.originalPatientWithICD9AndDontHaveDiabetesEstimation.filter((item) => item.Release_Date === null)
-        : this.originalPatientWithICD9AndDontHaveDiabetesEstimation.filter((item) => item.Release_Date !== null);
-    
+    this.dataSourceHemoglobin.data = this.originalDataSourceHemoglobin.filter(item =>
+      matchesHospitalization(item) && matchesDepartment(item) && matchesDate(item)
+    );
+  
+    this.dataSourceAllConsiliums.data = this.originalDataSourceAllConsiliums.filter(item =>
+      matchesHospitalization(item) && matchesDepartment(item) && matchesDate(item)
+    );
+  
+    this.PatientWithICD9AndDontHaveDiabetesEstimationDataSource.data =
+      this.originalPatientWithICD9AndDontHaveDiabetesEstimation.filter(item =>
+        matchesHospitalization(item) && matchesDepartment(item) && matchesDate(item)
+      );
+  
     this.DiabeticPatientsWithCatheterOrdersDataSource.data =
-      filter === 'All'
-        ? this.originalDiabeticPatientsWithCatheterOrders
-        : filter === 'CurrentHospitalizations'
-        ? this.originalDiabeticPatientsWithCatheterOrders.filter((item) => item.Release_Date === null)
-        : this.originalDiabeticPatientsWithCatheterOrders.filter((item) => item.Release_Date !== null);
-    
+      this.originalDiabeticPatientsWithCatheterOrders.filter(item =>
+        matchesHospitalization(item) && matchesDepartment(item) && matchesDate(item)
+      );
+  
+    this.updateGaugeValues();
   }
+  
+  
+  
   
   
   
