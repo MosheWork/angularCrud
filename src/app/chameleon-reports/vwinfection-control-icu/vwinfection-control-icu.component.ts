@@ -20,6 +20,7 @@ export class VWInfectionControlICUComponent implements OnInit {
   titleUnit: string = 'דוח זיהומים טיפול נמרץ';
   Title1: string = ' סה"כ תוצאות: ';
   Title2: string = '';
+  uniqueDepartments: string[] = [];
 
   // Updated columns list based on the new SQL View
   columns: string[] = [
@@ -66,6 +67,7 @@ export class VWInfectionControlICUComponent implements OnInit {
     'CultureGrowWound',
     'StartAntibuticTritment',
     'StartAntibuticTritmentType',
+    'Department'
   ];
 
   columnHeaders: { [key: string]: string } = {
@@ -112,6 +114,7 @@ export class VWInfectionControlICUComponent implements OnInit {
     CultureGrowWound: 'צמיחה תרבית מהפצע',
     StartAntibuticTritment: 'התחלת טיפול אנטיביוטי טיפולי',
     StartAntibuticTritmentType: 'התחלת טיפול אנטיביוטי וסוג',
+    Department: 'מחלקה'
   };
 
   dataSource: any[] = [];
@@ -144,6 +147,7 @@ export class VWInfectionControlICUComponent implements OnInit {
         });
 
         this.loading = false;
+        this.uniqueDepartments = Array.from(new Set(data.map(item => item.Department))).filter(d => d);
 
         this.columns.forEach((column) => {
           this.filterForm.get(column)?.valueChanges
@@ -173,6 +177,8 @@ export class VWInfectionControlICUComponent implements OnInit {
     formControls['globalFilter'] = new FormControl('');
     formControls['startDate'] = new FormControl(null);  // ✅ Start Date
     formControls['endDate'] = new FormControl(null);    // ✅ End Date
+    formControls['DepartmentFilter'] = new FormControl([]);
+
     return this.fb.group(formControls);
   }
   applyFilters() {
@@ -186,7 +192,8 @@ export class VWInfectionControlICUComponent implements OnInit {
       const itemDateOnly = new Date(itemDate.getFullYear(), itemDate.getMonth(), itemDate.getDate());
       const startDateOnly = startDate ? new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate()) : null;
       const endDateOnly = endDate ? new Date(endDate.getFullYear(), endDate.getMonth(), endDate.getDate()) : null;
-  
+      const departmentFilter = filters['DepartmentFilter'];
+
       // Filter by date range
       if (startDateOnly && itemDateOnly < startDateOnly) return false;
       if (endDateOnly && itemDateOnly > endDateOnly) return false;
@@ -199,7 +206,11 @@ export class VWInfectionControlICUComponent implements OnInit {
         });
         if (!found) return false;
       }
-  
+   // Department multi-select filter
+   if (departmentFilter && departmentFilter.length > 0) {
+    if (!departmentFilter.includes(item.Department)) return false;
+  }
+
       // Filter by individual columns
       for (const column of this.columns) {
         const columnFilter = filters[column];
@@ -227,6 +238,8 @@ export class VWInfectionControlICUComponent implements OnInit {
     this.filterForm.get('globalFilter')?.setValue('');
     this.filterForm.get('startDate')?.setValue(null);  // ✅ Reset Start Date
     this.filterForm.get('endDate')?.setValue(null);    // ✅ Reset End Date
+    this.filterForm.get('DepartmentFilter')?.setValue([]);
+
     this.applyFilters();  // ✅ Reapply the filters
   }
   

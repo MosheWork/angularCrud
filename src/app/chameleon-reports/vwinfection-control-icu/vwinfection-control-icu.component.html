@@ -17,7 +17,13 @@
         <mat-label>חיפוש</mat-label>
         <input matInput [formControlName]="'globalFilter'" />
       </mat-form-field>
-    
+    <!-- Department Multi-Select Filter -->
+<mat-form-field class="multi-select-department">
+  <mat-label>בחר מחלקה</mat-label>
+  <mat-select formControlName="DepartmentFilter" multiple>
+    <mat-option *ngFor="let dept of uniqueDepartments" [value]="dept">{{ dept || '-' }}</mat-option>
+  </mat-select>
+</mat-form-field>
       <!-- ✅ Start Date -->
       <mat-form-field>
         <mat-label>תאריך התחלה</mat-label>
