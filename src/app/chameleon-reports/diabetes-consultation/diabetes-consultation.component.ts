@@ -153,7 +153,8 @@ icd9WithoutEstimationPercentage: number = 0;
     'First_Name',
     'Last_Name',
     'Count_Less_70_Less_48h',
-    'Release_Date', // Use unique identifier
+    'Release_Date', 
+    'UnitName',
   ];
   displayedColumnsLabResultsWithoutInsulin: string[] = [
     'Admission_No',
