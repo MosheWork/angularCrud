@@ -155,6 +155,7 @@ import { UserCRMComponent } from './ServiceCRM/user-crm/user-crm.component';
 import { PhoneCallDialogComponent } from './ServiceCRM/phone-call-dialog/phone-call-dialog.component';
 import { MitavSummaryComponent } from './mitav/mitav-summary/mitav-summary.component';
 import { AdminCrmComponent } from './ServiceCRM/admin-crm/admin-crm.component';
+import { LabResultsDetailDialogComponent } from './chameleon-reports/diabetes-consultation/lab-results-detail-dialog/lab-results-detail-dialog.component';
 
 
 @NgModule({
@@ -278,6 +279,7 @@ import { AdminCrmComponent } from './ServiceCRM/admin-crm/admin-crm.component';
     PhoneCallDialogComponent,
     MitavSummaryComponent,
     AdminCrmComponent,
+    LabResultsDetailDialogComponent,
      
   
   ],

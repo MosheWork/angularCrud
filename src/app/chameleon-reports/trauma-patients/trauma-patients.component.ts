@@ -121,6 +121,7 @@ export class TraumaPatientsComponent implements OnInit {
   Title1: string = ' סה"כ תוצאות: ';
   Title2: string = '';
   originalData: TraumaPatient[] = []; // ✅ Store the original dataset
+  isLoading:boolean=true;
 
   selectedPatient: any | null = null;
   dataSource = new MatTableDataSource<TraumaPatient>([]);
@@ -167,6 +168,8 @@ export class TraumaPatientsComponent implements OnInit {
 
 
   fetchTraumaPatients() {
+    this.isLoading = true;
+
     this.http.get<TraumaPatient[]>(environment.apiUrl + 'Trauma/GetTraumaPatients').subscribe(
       (data) => {
         this.originalData = [...data]; // ✅ Store the original data
@@ -184,6 +187,8 @@ export class TraumaPatientsComponent implements OnInit {
        this.uniqueTransfers = [...new Set(data.map(item => item.TransferToOtherInstitution).filter(Boolean))].sort();
        this.uniqueReceiveCauses = [...new Set(data.map(item => item.ReceiveCauseDescription).filter(Boolean))].sort();
   // ✅ Apply initial filters automatically
+  this.isLoading = false;
+
   setTimeout(() => this.applyFilters(), 100);
         // ✅ Initialize forms for each row
         data.forEach(patient => {
@@ -204,7 +209,7 @@ export class TraumaPatientsComponent implements OnInit {
   private createFilterForm(): FormGroup {
     return this.fb.group({
       globalFilter: new FormControl(''),
-      relevantFilter: new FormControl('לא עודכן'), // ✅ Default value is "לא עודכן"
+      relevantFilter: new FormControl(''), // ✅ Default value is "לא עודכן"
       YearFilter: new FormControl([]),
       MonthFilter: new FormControl([]),
       WeekFilter: new FormControl([]),
@@ -371,5 +376,8 @@ export class TraumaPatientsComponent implements OnInit {
   closeDialog() {
     this.selectedPatient = null;
   }
-  
+  isDefaultDate(value: any): boolean {
+    const date = new Date(value);
+    return date.getFullYear() === 1900;
+  }
 }

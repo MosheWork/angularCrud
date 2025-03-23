@@ -7,7 +7,8 @@ import { FormGroup, FormControl } from '@angular/forms';
 import * as XLSX from 'xlsx';
 import { environment } from '../../../environments/environment';
 import { Renderer2 } from '@angular/core';
-import { MatTabChangeEvent } from '@angular/material/tabs';
+import { MatDialog } from '@angular/material/dialog';
+import { LabResultsDetailDialogComponent } from '../diabetes-consultation/lab-results-detail-dialog/lab-results-detail-dialog.component'; // adjust path
 
 @Component({
   selector: 'app-diabetes-consultation',
@@ -76,6 +77,8 @@ icd9WithoutEstimationPercentage: number = 0;
   originalLabResultsWithoutInsulin: any[] = [];
   originalPatientWithICD9AndDontHaveDiabetesEstimation: any[] = [];
   originalDiabeticPatientsWithCatheterOrders: any[] = [];
+  isLoading:boolean=true;
+
 
   selectedSourceFilter: string = 'All'; // Temporary storage for selected toggle
 
@@ -262,7 +265,7 @@ selectedDepartments: string[] = []; // for user selection
 
 
 
-  constructor(private http: HttpClient, private renderer: Renderer2) {}
+  constructor(private http: HttpClient, private renderer: Renderer2,private dialog: MatDialog) {}
 
   ngOnInit(): void {
     this.fetchLabResultsAboveThreshold();
@@ -369,6 +372,8 @@ this.DiabeticPatientsWithCatheterOrdersDataSource.sort = this.sortCatheterOrders
   
   // Add the new fetch method
 fetchLabResultsWithoutInsulin(): void {
+ 
+
   this.http
     .get<any[]>(`${environment.apiUrl}/DiabetesConsultation/LabResultsExcludingInsulinPatients`)
     .subscribe(
@@ -377,6 +382,8 @@ fetchLabResultsWithoutInsulin(): void {
         this.LabResultsWithoutInsulinDataSource.data = data;
         this.applyGlobalSourceTableFilter();
         this.applyGlobalDateFilter();
+      
+
       },
       (error) => {
         console.error('Error fetching LabResultsWithoutInsulin:', error);
@@ -766,6 +773,18 @@ this.icd9WithoutEstimationPercentage =
 
 console.log('ICD9 without Diabetic Estimation %:', this.icd9WithoutEstimationPercentage);
 
+// Add this inside updateGaugeValues()
+const withoutInsulinTableLength = this.LabResultsWithoutInsulinDataSource.data.length;
+const withoutInsulinDenominator = this.globalSourceTableFilter === 'מאושפזים' ? this.NullReleaseDateCount : this.NonNullReleaseDateCount;
+
+this.labResultsWithoutInsulinPercentage =
+  withoutInsulinDenominator > 0 ? (withoutInsulinTableLength / withoutInsulinDenominator) * 100 : 0;
+
+console.log('Lab Results without Insulin %:', {
+  TableLength: withoutInsulinTableLength,
+  Denominator: withoutInsulinDenominator,
+  Percentage: this.labResultsWithoutInsulinPercentage,
+});
   }
   
   
@@ -1057,7 +1076,17 @@ const filteredCatheterOrders = this.originalDiabeticPatientsWithCatheterOrders.f
     }
     
   
+    openDialog(row: any): void {
+      const data = {
+        Patient: row.Hospitalization_Patient || row.Patient,
+        AdmissionDate: row.Admission_Date
+      };
     
+      this.dialog.open(LabResultsDetailDialogComponent, {
+        width: '1200px',
+        data: data
+      });
+    }
     
     
     

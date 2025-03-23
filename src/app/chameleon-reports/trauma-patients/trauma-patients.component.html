@@ -1,4 +1,6 @@
-<div class="body" >
+<app-spinner [isLoading]="isLoading"></app-spinner>
+
+<div class="body" *ngIf="!isLoading" >
     <div class="nine">
       <h1>{{ titleUnit }}<span>{{ Title1 }}{{ Title2 }}{{ totalResults }}</span></h1>
     </div>
@@ -113,7 +115,10 @@
               <!-- Date Formatting -->
               <ng-template #defaultColumn>
                 <ng-container *ngIf="isDateColumn(column); else textContent">
-                  {{ element[column] | date:'dd/MM/yyyy HH:mm' }}
+                  <ng-container *ngIf="!isDefaultDate(element[column]); else emptyDate">
+                    {{ element[column] | date:'dd/MM/yyyy HH:mm' }}
+                  </ng-container>
+                  <ng-template #emptyDate> </ng-template>
                 </ng-container>
                 <ng-template #textContent>
                   {{ element[column] }}

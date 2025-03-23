@@ -1,0 +1,43 @@
+<h2 mat-dialog-title>תוצאות מעבדה עבור המטופל</h2>
+<mat-dialog-content>
+  <ng-container *ngIf="!loading; else loadingSpinner">
+    <table mat-table [dataSource]="labResults" class="mat-elevation-z8">
+
+      <ng-container matColumnDef="TestDate">
+        <th mat-header-cell *matHeaderCellDef>תאריך בדיקה</th>
+        <td mat-cell *matCellDef="let element">{{ element.TestDate | date:'short' }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="Sender_Name">
+        <th mat-header-cell *matHeaderCellDef>נשלח מ</th>
+        <td mat-cell *matCellDef="let element">{{ element.Sender_Name }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="TestName">
+        <th mat-header-cell *matHeaderCellDef>בדיקה</th>
+        <td mat-cell *matCellDef="let element">{{ element.TestName }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="Result">
+        <th mat-header-cell *matHeaderCellDef>תוצאה</th>
+        <td mat-cell *matCellDef="let element">{{ element.Result }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="ResultDate">
+        <th mat-header-cell *matHeaderCellDef>תאריך תוצאה</th>
+        <td mat-cell *matCellDef="let element">{{ element.ResultDate | date:'short' }}</td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="['TestDate', 'Sender_Name', 'TestName', 'Result', 'ResultDate']"></tr>
+      <tr mat-row *matRowDef="let row; columns: ['TestDate', 'Sender_Name', 'TestName', 'Result', 'ResultDate']"></tr>
+    </table>
+  </ng-container>
+
+  <ng-template #loadingSpinner>
+    <mat-spinner></mat-spinner>
+  </ng-template>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button mat-dialog-close>סגור</button>
+</mat-dialog-actions>

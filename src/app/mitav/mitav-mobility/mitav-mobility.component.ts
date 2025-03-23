@@ -104,8 +104,8 @@ validFunctionalCases: number = 0;
 invalidFunctionalCases: number = 0;
 
   
-  validMobilityCasesAboveThreshold: number = 0;
-  invalidMobilityCasesBelowThreshold: number = 0;
+validMobilityCasesAboveThreshold: number = 0;
+invalidMobilityCasesBelowThreshold: number = 0;
 
 
   constructor(private http: HttpClient, private dialog: MatDialog,private cdr: ChangeDetectorRef) {    Chart.register(...registerables); // Register Chart.js components

@@ -21,6 +21,7 @@ export class VWInfectionControlICUComponent implements OnInit {
   Title1: string = ' סה"כ תוצאות: ';
   Title2: string = '';
   uniqueDepartments: string[] = [];
+  isLoading:boolean=true;
 
   // Updated columns list based on the new SQL View
   columns: string[] = [

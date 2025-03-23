@@ -1,10 +1,4 @@
-<!-- Loading Spinner (Centered) -->
-<div class="loading-container" *ngIf="loading">
-  <div class="spinner-wrapper">
-    <mat-spinner></mat-spinner>
-    <p class="loading-text">Loading...</p>
-  </div>
-</div>
+<app-spinner [isLoading]="isLoading"></app-spinner>
 
 <!-- Main Content (Hidden While Loading) -->
 <div class="body" *ngIf="!loading">

@@ -242,14 +242,14 @@
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    font-size: 16px; /* Adjust font size to fit */
+    font-size: 14px; /* Adjust font size to fit */
     font-weight: bold;
     color: black; /* Ensure contrast for visibility */
     white-space: nowrap; /* Prevent text wrapping */
   }
 
   ::ng-deep ngx-gauge .reading-block {
-    font-size: 25px !important; /* Desired font size */
+    font-size: 20px !important; /* Desired font size */
     transform: translateY(78px) !important;
     font-weight: 400;
     color: black !important;
