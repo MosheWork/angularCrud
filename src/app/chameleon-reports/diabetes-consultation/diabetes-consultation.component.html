@@ -402,7 +402,10 @@ class="custom-toggle-group"
             <th mat-header-cell *matHeaderCellDef mat-sort-header>Grade</th>
             <td mat-cell *matCellDef="let element">{{ element.Grade }}</td>
           </ng-container>
-      
+          <ng-container matColumnDef="UnitName">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>מחלקה </th>
+            <td mat-cell *matCellDef="let element">{{ element.UnitName }}</td>
+          </ng-container>
           <tr mat-header-row *matHeaderRowDef="displayedColumnsDiabeticFootEstimation"></tr>
           <tr mat-row *matRowDef="let row; columns: displayedColumnsDiabeticFootEstimation"></tr>
         </table>
@@ -464,6 +467,10 @@ class="custom-toggle-group"
           <ng-container matColumnDef="Release_Date">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>Release Date</th>
             <td mat-cell *matCellDef="let element">{{ element.Release_Date | date }}</td>
+          </ng-container>
+          <ng-container matColumnDef="UnitName">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header> מחלקה</th>
+            <td mat-cell *matCellDef="let element">{{ element.UnitName }}</td>
           </ng-container>
 
           <tr mat-header-row *matHeaderRowDef="sugerAbove180Columns"></tr>
@@ -527,7 +534,10 @@ class="custom-toggle-group"
             <th mat-header-cell *matHeaderCellDef mat-sort-header>Release Date</th>
             <td mat-cell *matCellDef="let element">{{ element.Release_Date | date }}</td>
           </ng-container>
-      
+          <ng-container matColumnDef="UnitName">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>מחלקה </th>
+            <td mat-cell *matCellDef="let element">{{ element.UnitName }}</td>
+          </ng-container>
           <tr mat-header-row *matHeaderRowDef="displayedColumnsBelow70"></tr>
           <tr mat-row *matRowDef="let row; columns: displayedColumnsBelow70"></tr>
         </table>
@@ -613,7 +623,10 @@ class="custom-toggle-group"
               {{ element.Release_Date | date }}
             </td>
           </ng-container>
-
+          <ng-container matColumnDef="UnitName">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>מחלקה </th>
+            <td mat-cell *matCellDef="let element">{{ element.UnitName }}</td>
+          </ng-container>
           <tr mat-header-row *matHeaderRowDef="insulinColumns"></tr>
           <tr mat-row *matRowDef="let row; columns: insulinColumns"></tr>
         </table>
@@ -690,6 +703,10 @@ class="custom-toggle-group"
             <th mat-header-cell *matHeaderCellDef mat-sort-header>Release Date</th>
             <td mat-cell *matCellDef="let element">{{ element.Release_Date | date }}</td>
           </ng-container>
+          <ng-container matColumnDef="UnitName">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>מחלקה </th>
+            <td mat-cell *matCellDef="let element">{{ element.UnitName }}</td>
+          </ng-container>
           <tr mat-header-row *matHeaderRowDef="DiagnosisICD9"></tr>
           <tr mat-row *matRowDef="let row; columns: DiagnosisICD9"></tr>
         </table>
@@ -700,7 +717,7 @@ class="custom-toggle-group"
         ></mat-paginator>
       </mat-tab>
 
-      <mat-tab label="">
+      <!-- <mat-tab label="">
         <ng-template mat-tab-label>
           <span matTooltip="" matTooltipPosition="above">
             Hemoglobin A1C Results
@@ -759,13 +776,13 @@ class="custom-toggle-group"
             mat-row
             *matRowDef="let row; columns: displayedColumnsHemoglobin"
           ></tr>
-        </table>
+        </table> 
         <mat-paginator
           #paginatorHemoglobin
           [pageSizeOptions]="[5, 10, 20]"
           showFirstLastButtons
         ></mat-paginator>
-      </mat-tab>
+      </mat-tab> -->
       <mat-tab label="ייעוצים">
         <table mat-table [dataSource]="dataSourceAllConsiliums" matSort>
           <ng-container matColumnDef="Id_Num">
@@ -834,6 +851,7 @@ class="custom-toggle-group"
               {{ element.Answer_Date | date }}
             </td>
           </ng-container>
+          
           <!-- Add other columns similarly -->
 
           <tr
@@ -880,7 +898,10 @@ class="custom-toggle-group"
             <th mat-header-cell *matHeaderCellDef mat-sort-header>תאריך שחרור</th>
             <td mat-cell *matCellDef="let element">{{ element.Release_Date | date }}</td>
           </ng-container>
-      
+          <ng-container matColumnDef="UnitName">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>מחלקה </th>
+            <td mat-cell *matCellDef="let element">{{ element.UnitName }}</td>
+          </ng-container>
           <tr mat-header-row *matHeaderRowDef="displayedColumnsLabResultsWithoutInsulin"></tr>
           <tr mat-row *matRowDef="let row; columns: displayedColumnsLabResultsWithoutInsulin;"></tr>
         </table>
@@ -940,6 +961,10 @@ class="custom-toggle-group"
             <td mat-cell *matCellDef="let element">{{ element.Release_Date | date }}</td>
           </ng-container>
       
+          <ng-container matColumnDef="UnitName">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header> מחלקה</th>
+            <td mat-cell *matCellDef="let element">{{ element.UnitName }}</td>
+          </ng-container>
           <tr mat-header-row *matHeaderRowDef="displayedColumnsDiabeticPatientsWithCatheterOrders"></tr>
           <tr mat-row *matRowDef="let row; columns: displayedColumnsDiabeticPatientsWithCatheterOrders;"></tr>
         </table>

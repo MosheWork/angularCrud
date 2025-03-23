@@ -89,6 +89,7 @@ icd9WithoutEstimationPercentage: number = 0;
     'First_Name',
     'Last_Name',
     'Grade',
+    'UnitName',
   ];
 
   sugerAbove180Columns: string[] = [
@@ -98,6 +99,7 @@ icd9WithoutEstimationPercentage: number = 0;
     'Last_Name',
     'Count_Above_180_Less_48h',
     'Release_Date', 
+    'UnitName'
   ];
   insulinColumns: string[] = [
     'Admission_No',
@@ -109,6 +111,7 @@ icd9WithoutEstimationPercentage: number = 0;
     'Main_Drug',
     'Entry_Date',
     'Release_Date',
+    'UnitName',
   ];
   DiagnosisICD9: string[] = [
   
@@ -119,8 +122,8 @@ icd9WithoutEstimationPercentage: number = 0;
     'Last_Name',
     'ICD9',
     'Name',
-    'Release_Date'
-    //'Entry_Date',
+    'Release_Date',
+    'UnitName',
   ];
   displayedColumnsHemoglobin: string[] = [
     'Admission_Date',
@@ -158,7 +161,8 @@ icd9WithoutEstimationPercentage: number = 0;
     'First_Name',
     'Last_Name',
     'Count_Above_180_Less_48h',
-    'Release_Date'
+    'Release_Date',
+    'UnitName'
   ];
   
   DiabeticFootEstimationOnlHosDataSource = new MatTableDataSource<any>();
@@ -197,7 +201,8 @@ displayedColumnsDiabeticPatientsWithCatheterOrders: string[] = [
   'DiagnosisName',
   //'Entry_Date',
   'Release_Date',
-  'Parameter'
+  'Parameter',
+  'UnitName'
 ];
 
 departments: string[] = [
@@ -564,7 +569,7 @@ fetchDiagnosisData(): void {
       // ✅ Add debug here:
   console.log('selectedDepartments:', this.selectedDepartments);
   console.log('Example UnitName from data:', this.originalPatientWithICD9AndDontHaveDiabetesEstimation.map(x => x.UnitName));
-  
+
     const matchesHospitalization = (item: any) =>
       filter === 'All' ||
       (filter === 'CurrentHospitalizations' && item.Release_Date === null) ||
