@@ -48,7 +48,7 @@ class="custom-toggle-group"
                   <mat-datepicker-toggle matSuffix [for]="endDatePicker"></mat-datepicker-toggle>
                   <mat-datepicker #endDatePicker></mat-datepicker>
                 </mat-form-field>
-                <mat-form-field appearance="outline" class="filter-field">
+                <mat-form-field  class="filter-field">
                   <mat-label>סנן לפי מחלקות</mat-label>
                   <mat-select [(value)]="selectedDepartments" multiple (selectionChange)="applyGlobalSourceTableFilter()">
                     <mat-option *ngFor="let dept of departments" [value]="dept">{{ dept }}</mat-option>
@@ -229,8 +229,8 @@ class="custom-toggle-group"
       </div>
     </div>
   </mat-card>
-<!-- Gauge for סוכר 70 וחולה סוכרת -->
-<!-- <mat-card class="gauge-card">
+<!-- <--Gauge for סוכר 70 וחולה סוכרת --> 
+<mat-card class="gauge-card">
   <div class="gauge-title">סוכר 70 וחולה סוכרת</div>
   <div class="gauge-content">
     <ngx-gauge
@@ -247,7 +247,7 @@ class="custom-toggle-group"
       <strong>{{ dataSourceBelow70.data.length }}</strong>
     </div>
   </div>
-</mat-card> -->
+</mat-card>
 <mat-card class="gauge-card">
   <div class="gauge-title">
 מאובחנים ללא אומדן    <span
@@ -475,6 +475,7 @@ class="custom-toggle-group"
             <th mat-header-cell *matHeaderCellDef mat-sort-header> מחלקה</th>
             <td mat-cell *matCellDef="let element">{{ element.UnitName }}</td>
           </ng-container>
+          <tr mat-header-row *matHeaderRowDef="sugerAbove180Columns"></tr>
 
           <tr 
           mat-row 
@@ -547,7 +548,13 @@ class="custom-toggle-group"
             <td mat-cell *matCellDef="let element">{{ element.UnitName }}</td>
           </ng-container>
           <tr mat-header-row *matHeaderRowDef="displayedColumnsBelow70"></tr>
-          <tr mat-row *matRowDef="let row; columns: displayedColumnsBelow70"></tr>
+
+          <tr 
+          mat-row 
+          *matRowDef="let row; columns: displayedColumnsBelow70" 
+          (click)="openDialog(row)"
+          style="cursor: pointer;">
+        </tr>
         </table>
         <mat-paginator
           #paginatorBelow70
@@ -725,7 +732,7 @@ class="custom-toggle-group"
         ></mat-paginator>
       </mat-tab>
 
-      <!-- <mat-tab label="">
+      <mat-tab label="">
         <ng-template mat-tab-label>
           <span matTooltip="" matTooltipPosition="above">
             Hemoglobin A1C Results
@@ -778,19 +785,21 @@ class="custom-toggle-group"
             <th mat-header-cell *matHeaderCellDef mat-sort-header>Last Name</th>
             <td mat-cell *matCellDef="let element">{{ element.Last_Name }}</td>
           </ng-container>
-
           <tr mat-header-row *matHeaderRowDef="displayedColumnsHemoglobin"></tr>
-          <tr
-            mat-row
-            *matRowDef="let row; columns: displayedColumnsHemoglobin"
-          ></tr>
+          <tr 
+          mat-row 
+          *matRowDef="let row; columns: displayedColumnsHemoglobin" 
+          (click)="openDialog(row)"
+          style="cursor: pointer;">
+        </tr>
+
         </table> 
         <mat-paginator
           #paginatorHemoglobin
           [pageSizeOptions]="[5, 10, 20]"
           showFirstLastButtons
         ></mat-paginator>
-      </mat-tab> -->
+      </mat-tab>
       <mat-tab label="ייעוצים">
         <table mat-table [dataSource]="dataSourceAllConsiliums" matSort>
           <ng-container matColumnDef="Id_Num">
