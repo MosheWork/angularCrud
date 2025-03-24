@@ -67,4 +67,48 @@
       padding: 0.3rem;
     }
   }
-  
+  .high-sugar {
+    background-color: rgba(255, 0, 0, 0.1); /* Light red background */
+}
+
+.low-sugar {
+  background-color: rgba(255, 0, 0, 0.1); /* Light red background */
+}
+
+.high-sugar:hover, .low-sugar:hover {
+    background-color: rgba(0, 0, 0, 0.05); /* Slight dark on hover */
+}
+.normal-range {
+  background-color: rgba(0, 200, 0, 0.05); /* softer green for normal */
+}
+::ng-deep .mat-dialog-container {
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+}
+
+mat-dialog-content {
+  background: #fafafa;
+  border-radius: 8px;
+}
+
+.mat-dialog-actions {
+  padding: 10px 0;
+}
+td.mat-cell {
+  color: #333;
+}
+
+.high-sugar td.mat-cell:nth-child(4) { /* Result column */
+  color: red;
+  font-weight: bold;
+}
+
+.low-sugar td.mat-cell:nth-child(4) {
+  color: red;
+  font-weight: bold;
+}
+.normal-range td.mat-cell:nth-child(4) {
+  color: darkgreen;
+  font-weight: bold;
+}
