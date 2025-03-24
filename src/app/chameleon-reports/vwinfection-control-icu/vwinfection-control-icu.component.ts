@@ -134,7 +134,7 @@ export class VWInfectionControlICUComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.loading = true;
+    this.isLoading = true;
 
     this.http.get<any[]>(environment.apiUrl + 'VWInfectionControlICU').subscribe({
       next: (data) => {
@@ -147,7 +147,7 @@ export class VWInfectionControlICUComponent implements OnInit {
           this.matTableDataSource.sort = this.sort;
         });
 
-        this.loading = false;
+        this.isLoading = false;
         this.uniqueDepartments = Array.from(new Set(data.map(item => item.Department))).filter(d => d);
 
         this.columns.forEach((column) => {

@@ -257,41 +257,74 @@
 
   }
 
+  .filter-card-container {
+    margin-bottom: 0; /* REMOVE big space below filters */
+}
+
+.gauge-section {
+    margin-top: 0; /* REMOVE top space above gauges */
+    padding-top: 5px; /* Tiny breathing room */
+}
+
+.gauge-row {
+    gap: 8px;
+    justify-content: flex-start; /* Align to the start like filters */
+}
+
+.gauge-card {
+    background-color: #fff !important; /* keep white */
+    margin: 0; /* kill internal spacing */
+}
+
+
   .gauge-card {
     flex: 1;
-    width: 23%; /* Ensures 4 cards fit horizontally with spacing */
+    width: 23%;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
     align-items: center;
     border-radius: 10px;
-    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-    padding: 5px;
-    background-color: #fff;
+    padding: 10px;
     border: 1px solid #ccc;
-    margin: 0; /* Remove margin to prevent extra spacing */
+    min-height: 280px; /* Make all cards same height */
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    background-color: #ffffff !important; /* White background */
+
   }
   
+  
  
-  .gauge-title {
-    font-size: 1.2rem;
-    font-weight: bold;
-    color: #333;
-    margin: 5px 0; /* Adjust spacing between title and gauge */
-  }
-  ngx-gauge {
-    flex: 2; /* Allow gauge to take up more space */
-    margin-top: 0; /* Ensure no gap between the title and gauge */
+/* Make gauge-info block uniform */
+.gauge-info {
+  margin-top: 5px;
+  font-size: 14px;
+  text-align: center;
+  min-height: 40px; /* Ensure consistent spacing */
+}
 
+/* Title alignment fix */
+.gauge-title {
+  font-size: 1.1rem;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 5px;
+}
+
+  ngx-gauge {
+    width: 120px; /* or try 140px */
+    height: 120px;
+    margin: 0 auto;
   }
 
   .gauge-content {
+    flex: 1;
     display: flex;
-    align-items: center;
-    justify-content: center;
     flex-direction: column;
-    margin: 0; /* Remove any default margin */
+    justify-content: center;
+    align-items: center;
   }
+  
   .body {
     display: flex;
     flex-direction: column;
@@ -307,6 +340,8 @@
     align-items: center;
     padding: 0; /* Remove padding to align closer to the title */
     margin: 0; /* Remove margin to align closer to the title */
+    margin-top: 20px; /* Add spacing below filters */
+
   }
   .gauge-row {
     display: flex;

@@ -1,7 +1,7 @@
 <app-spinner [isLoading]="isLoading"></app-spinner>
 
 <!-- Main Content (Hidden While Loading) -->
-<div class="body" *ngIf="!loading">
+<div class="body" *ngIf="!isLoading">
     <div class="nine">
       <h1>{{ titleUnit }}<span>{{ Title1 }}{{ Title2 }}{{ totalResults }}</span></h1>
     </div>

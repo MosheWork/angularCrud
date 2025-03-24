@@ -138,7 +138,7 @@ class="custom-toggle-group"
             [foregroundColor]="'#00c0ef'"
           ></ngx-gauge>
           <div class="gauge-info">
-            סה"כ מקבלי אינסולין: <strong>{{ InsulinDataSource.data.length }}</strong>
+            סה"כ מטופלים: <strong>{{ InsulinDataSource.data.length }}</strong>
             מתוך <strong>{{ sugerAbove180.data.length }}</strong>
           </div>
         </div>
@@ -242,9 +242,8 @@ class="custom-toggle-group"
       [foregroundColor]="'#3498db'"
     ></ngx-gauge>
     <div class="gauge-info">
-      חולי סוכרת עם סוכר מתחת ל-70:
-      <strong>{{ sugerAbove180.data.length }}</strong> מתוך
-      <strong>{{ dataSourceBelow70.data.length }}</strong>
+      סה"כ מטופלים: <strong>{{ sugerAbove180.data.length}}</strong>
+      מתוך <strong>{{ dataSourceBelow70.data.length }}</strong>
     </div>
   </div>
 </mat-card>
@@ -269,9 +268,9 @@ class="custom-toggle-group"
       [foregroundColor]="'#3498db'">
     </ngx-gauge>
     <div class="gauge-info">
-      <strong>{{ DiagnosisICD9dataSource.data.length }}</strong>
-      /<strong>{{ PatientWithICD9AndDontHaveDiabetesEstimationDataSource.data.length }}</strong> 
-   
+    
+      סה"כ מטופלים: <strong>{{ DiagnosisICD9dataSource.data.length }}</strong>
+      מתוך <strong>{{ PatientWithICD9AndDontHaveDiabetesEstimationDataSource.data.length }}</strong>
     </div>
   </div>
   
