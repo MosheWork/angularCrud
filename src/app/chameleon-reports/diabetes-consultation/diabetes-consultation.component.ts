@@ -78,6 +78,7 @@ icd9WithoutEstimationPercentage: number = 0;
   originalPatientWithICD9AndDontHaveDiabetesEstimation: any[] = [];
   originalDiabeticPatientsWithCatheterOrders: any[] = [];
   isLoading:boolean=true;
+icd9WithEstimationPercentage: number = 0;
 
 
   selectedSourceFilter: string = 'All'; // Temporary storage for selected toggle
@@ -208,7 +209,14 @@ displayedColumnsDiabeticPatientsWithCatheterOrders: string[] = [
   'Parameter',
   'UnitName'
 ];
-
+displayedColumnsPatientWithICD9AndHaveDiabetesEstimation: string[] = [
+  'Admission_No',
+  'Admission_Date',
+  'First_Name',
+  'Last_Name',
+  'UnitName',
+  'Release_Date',
+];
 departments: string[] = [
   'אשפוז יום כירורגי', 'מחלקת שיקום ילדים', 'מחלקת ילדים', 'מחלקת פנימית ב', 
   'מחלקת פנימית א', 'מחלקת נוירולוגיה ושבץ מוחי', 'המחלקה לגריאטריה שיקומית',
@@ -233,7 +241,8 @@ selectedDepartments: string[] = []; // for user selection
   LabResultsWithoutInsulinDataSource = new MatTableDataSource<any>();
   PatientWithICD9AndDontHaveDiabetesEstimationDataSource = new MatTableDataSource<any>();
   DiabeticPatientsWithCatheterOrdersDataSource = new MatTableDataSource<any>();
-
+  PatientWithICD9AndHaveDiabetesEstimationDataSource = new MatTableDataSource<any>();
+  originalPatientWithICD9AndHaveDiabetesEstimation: any[] = [];
 
   filterForm: FormGroup = new FormGroup({
     globalFilter: new FormControl(''),
@@ -262,7 +271,8 @@ selectedDepartments: string[] = []; // for user selection
   @ViewChild('sortBelow70') sortBelow70!: MatSort;
   @ViewChild('paginatorDiabeticFootEstimationOnlHos', { static: true }) paginatorDiabeticFootEstimationOnlHos!: MatPaginator;
   @ViewChild('sortDiabeticFootEstimationOnlHos', { static: true }) sortDiabeticFootEstimationOnlHos!: MatSort;
-
+  @ViewChild('paginatorICD9HaveEstimation', { static: true }) paginatorICD9HaveEstimation!: MatPaginator;
+  @ViewChild('sortICD9HaveEstimation', { static: true }) sortICD9HaveEstimation!: MatSort;
 
 
   constructor(private http: HttpClient, private renderer: Renderer2,private dialog: MatDialog) {}
@@ -279,6 +289,8 @@ selectedDepartments: string[] = []; // for user selection
     this.fetchLabResultsWithoutInsulin();
     this.fetchPatientsWithICD9AndNoEstimation();
     this.fetchDiabeticPatientsWithCatheterOrders();
+    this.fetchPatientsWithICD9AndHaveDiabetesEstimation();
+
 
 
   
@@ -337,8 +349,24 @@ selectedDepartments: string[] = []; // for user selection
 this.PatientWithICD9AndDontHaveDiabetesEstimationDataSource.sort = this.sortICD9NoEstimation;
 this.DiabeticPatientsWithCatheterOrdersDataSource.paginator = this.paginatorCatheterOrders;
 this.DiabeticPatientsWithCatheterOrdersDataSource.sort = this.sortCatheterOrders;
-  }
 
+this.PatientWithICD9AndHaveDiabetesEstimationDataSource.paginator = this.paginatorICD9HaveEstimation;
+this.PatientWithICD9AndHaveDiabetesEstimationDataSource.sort = this.sortICD9HaveEstimation;
+  }
+  fetchPatientsWithICD9AndHaveDiabetesEstimation(): void {
+    this.http
+      .get<any[]>(`${environment.apiUrl}/DiabetesConsultation/PatientWithICD9AndHaveDiabetesEstimation`)
+      .subscribe(
+        (data) => {
+          this.PatientWithICD9AndHaveDiabetesEstimationDataSource.data = data;
+          this.originalPatientWithICD9AndHaveDiabetesEstimation = data;
+          console.log('Fetched Patients with ICD9 AND have Diabetes Estimation:', data);
+        },
+        (error) => {
+          console.error('Error fetching Patients with ICD9 AND have Diabetes Estimation:', error);
+        }
+      );
+  }
   fetchDiabeticPatientsWithCatheterOrders(): void {
     this.http
       .get<any[]>(`${environment.apiUrl}/DiabetesConsultation/DiabeticPatientsWithCatheterOrders`)
@@ -637,7 +665,10 @@ fetchDiagnosisData(): void {
       this.originalDiabeticPatientsWithCatheterOrders.filter(item =>
         matchesHospitalization(item) && matchesDepartment(item) && matchesDate(item)
       );
-  
+      this.PatientWithICD9AndHaveDiabetesEstimationDataSource.data =
+      this.originalPatientWithICD9AndHaveDiabetesEstimation.filter(item =>
+        matchesHospitalization(item) && matchesDepartment(item) && matchesDate(item)
+      );
     this.updateGaugeValues();
   }
   
@@ -745,7 +776,7 @@ console.log('סוכר 180 מתוך כלל האשפוזים:', {
     // Calculate Sugar 70 and Diabetes Percentage
     this.sugar70DiabetesPercentage =
       this.dataSourceBelow70.data.length > 0
-        ? (this.sugerAbove180.data.length / this.dataSourceBelow70.data.length) * 100
+        ? (this.dataSourceBelow70.data.length / this.sugerAbove180.data.length) * 100
         : 0;
   
     console.log('סוכר 70 וחולה סוכרת:', {
@@ -785,6 +816,16 @@ console.log('Lab Results without Insulin %:', {
   Denominator: withoutInsulinDenominator,
   Percentage: this.labResultsWithoutInsulinPercentage,
 });
+
+// Calculate ICD9 WITH Estimation Percentage
+this.icd9WithEstimationPercentage =
+  this.DiagnosisICD9dataSource.data.length > 0
+    ? (this.PatientWithICD9AndHaveDiabetesEstimationDataSource.data.length /
+       this.DiagnosisICD9dataSource.data.length) * 100
+    : 0;
+
+console.log('ICD9 WITH Diabetic Estimation %:', this.icd9WithEstimationPercentage);
+
   }
   
   
@@ -863,6 +904,10 @@ this.DiabeticPatientsWithCatheterOrdersDataSource.data =
   this.DiabeticPatientsWithCatheterOrdersDataSource.data.filter((item) =>
     isWithinDateRange(item.Admission_Date)
 );
+this.PatientWithICD9AndHaveDiabetesEstimationDataSource.data =
+  this.originalPatientWithICD9AndHaveDiabetesEstimation.filter((item) =>
+    isWithinDateRange(item.Admission_Date)
+  );
   }
   
   
@@ -974,6 +1019,9 @@ const filteredICD9NoEstimation = this.originalPatientWithICD9AndDontHaveDiabetes
 const filteredCatheterOrders = this.originalDiabeticPatientsWithCatheterOrders.filter((item) =>
   this.isWithinDateRange(item.Admission_Date)
 );
+const filteredICD9HaveEstimation = this.originalPatientWithICD9AndHaveDiabetesEstimation.filter((item) =>
+this.isWithinDateRange(item.Admission_Date)
+);
     
       if (this.globalSourceTableFilter === 'מאושפזים') {
         // Filter for "מאושפזים" (current hospitalizations)
@@ -1005,6 +1053,11 @@ const filteredCatheterOrders = this.originalDiabeticPatientsWithCatheterOrders.f
       } else {
         this.PatientWithICD9AndDontHaveDiabetesEstimationDataSource.data = filteredICD9NoEstimation;
         this.DiabeticPatientsWithCatheterOrdersDataSource.data = filteredCatheterOrders;
+      }
+      if (this.globalSourceTableFilter === 'מאושפזים') {
+        this.PatientWithICD9AndHaveDiabetesEstimationDataSource.data = filteredICD9HaveEstimation.filter((item) => item.Release_Date === null);
+      } else {
+        this.PatientWithICD9AndHaveDiabetesEstimationDataSource.data = filteredICD9HaveEstimation;
       }
       // Update gauge values
       this.updateGaugeValues();
@@ -1048,7 +1101,8 @@ const filteredCatheterOrders = this.originalDiabeticPatientsWithCatheterOrders.f
       this.LabResultsWithoutInsulinDataSource.data = [...this.originalLabResultsWithoutInsulin];
       this.PatientWithICD9AndDontHaveDiabetesEstimationDataSource.data = [...this.originalPatientWithICD9AndDontHaveDiabetesEstimation];
       this.DiabeticPatientsWithCatheterOrdersDataSource.data = [...this.originalDiabeticPatientsWithCatheterOrders];
-      
+      this.PatientWithICD9AndHaveDiabetesEstimationDataSource.data = [...this.originalPatientWithICD9AndHaveDiabetesEstimation];
+
     
       // Recalculate gauge values
       this.updateGaugeValues();

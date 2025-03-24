@@ -5,7 +5,7 @@
     z-index: 10;
   }
   table {
-    width: 95%; /* Keep the existing width */
+    width: 100%; /* Keep the existing width */
     margin: 0 auto; /* Center the table horizontally */
     border: 2px solid #ccc; /* Add a visible border */
     border-radius: 8px; /* Optional: Add rounded corners */
@@ -279,8 +279,8 @@
 
 
   .gauge-card {
-    flex: 1;
-    width: 23%;
+    flex: 1 1 calc(9% - 4px); /* Now each card will be slimmer */
+    //width: 23%;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -313,8 +313,8 @@
 }
 
   ngx-gauge {
-    width: 120px; /* or try 140px */
-    height: 120px;
+    width: 65px; /* or try 140px */
+    height: 65px;
     margin: 0 auto;
   }
 
@@ -346,9 +346,11 @@
   }
   .gauge-row {
     display: flex;
-    justify-content: space-around;
-    align-items: center;
-    width: 95%; /* Match table width */
+    justify-content: flex-start;
+    gap: 4px;
+    flex-wrap: nowrap;
+    width: 95%; /* shared with table */
+    margin: 0 auto; /* center both gauge-row and table */
   }
   mat-tab-group {
     width: 95%; /* Keep consistent width with the table */
@@ -363,15 +365,20 @@
   }
   
   table {
-    width: 90%;
+    width: 95%; /* match gauge cards */
+    margin: 0 auto;
+    border: 2px solid #ccc;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
   }
 
   .table-section {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: flex-start; /* Push the table to the top */
-    width: 100%;
+    width: 100%; /* inside shared-container */
+    box-sizing: border-box;
+  }
+  .mat-tab-group {
+    width: 100%; /* inside shared-container */
   }
   
   .table-section .mat-paginator {
@@ -504,4 +511,66 @@
   .mat-button-toggle .mat-button-toggle-label-content {
     text-transform: none; /* Prevent uppercase text */
   }
-  
+  /* Define a shared container width */
+  .shared-container {
+    width: 95%;
+    margin: 0 auto;
+    box-sizing: border-box;
+  }
+/* Apply it to all main blocks */
+.filter-card-container,
+.gauge-row,
+.mat-tab-group,
+table {
+  width: 100%; /* Full width inside shared-container */
+  box-sizing: border-box; /* Make sure padding/borders don't overflow */
+}
+
+/* Optional: fine-tune the gap between cards */
+.gauge-row {
+  display: flex;
+  gap: 8px;
+  justify-content: space-between;
+  flex-wrap: nowrap;
+}
+
+/* Ensure cards flex consistently */
+.gauge-card {
+  flex: 1 1 10%; /* All cards same flex sizing */
+  min-width: 100px; /* Prevent too small */
+}
+
+/* Filter card */
+.filter-card-container {
+  display: flex;
+  justify-content: flex-end;
+  padding: 0;
+  margin-bottom: 15px;
+}
+
+/* Table + tab */
+.mat-tab-group {
+  padding: 0;
+  border: none;
+  box-shadow: none;
+  background: none;
+}
+table {
+  border: 2px solid #ccc;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+/* Remove extra padding on mat-tab-body */
+::ng-deep .mat-tab-body-content {
+  padding: 0 !important;
+}/* The table itself */
+.table-section table {
+  width: 100%; /* take 100% inside shared-container */
+  margin: 0;
+  box-sizing: border-box;
+  border: 2px solid #ccc;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}
