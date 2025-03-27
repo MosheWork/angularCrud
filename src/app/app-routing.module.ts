@@ -77,6 +77,7 @@ import { SkinIntegrityDashboardComponent } from './chameleon-reports/skin-integr
 import { UserCRMComponent } from './ServiceCRM/user-crm/user-crm.component';
 import { MitavSummaryComponent } from './mitav/mitav-summary/mitav-summary.component';
 import { AdminCrmComponent } from './ServiceCRM/admin-crm/admin-crm.component';
+import { MitavSummaryDeliriumComponent } from './mitav/mitav-summary-delirium/mitav-summary-delirium.component';
 
 const routes: Routes = [
   { path: 'users', component: UsersComponent },
@@ -182,7 +183,8 @@ const routes: Routes = [
    { path: 'mitav-geriatric-for-department', component: MitavGeriatricForDepartmentComponent , data: { title: ' דו"ח גריאטריה למחלקה' }},
    { path: 'mitav-geriatric', component: MitavGeriatricComponent , data: { title: ' מיתב דאשבורד גריאטריה' }},
    { path: 'mitav-main-page', component: MItavMainPageComponent , data: { title: ' מיתב דף הבית' }},
-   { path: 'mitav-summary', component: MitavSummaryComponent , data: { title: ' מיתב סיכום ' }},
+   { path: 'mitav-summary', component: MitavSummaryComponent , data: { title: ' ניידות סיכום ' }},
+   { path: 'MitavSummaryDelirium', component: MitavSummaryDeliriumComponent , data: { title: ' דליריום סיכום ' }},
 
 
 

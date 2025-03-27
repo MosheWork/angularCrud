@@ -1,0 +1,50 @@
+<app-spinner [isLoading]="isLoading"></app-spinner>
+
+<div *ngIf="!isLoading" class="body">
+  <mat-card class="filter-card" dir="rtl">
+    <mat-card-content class="filters">
+      <div class="filter-fields">
+        <h2>דו"ח דליריום - מטופלים 75+</h2>
+      </div>
+    </mat-card-content>
+  </mat-card>
+
+  <!-- 🔹 Summary Section -->
+  <mat-card class="summary-card" dir="rtl">
+    <mat-card-content>
+      <h3>1. סיקור דליריום וטיפול בו</h3>
+      <table class="summary-table">
+        <tr>
+          <th>תיאור</th>
+          <th>לוגיקה</th>
+        </tr>
+        <tr>
+          <td>סה"כ המאושפזים בגיל 75+</td>
+          <td>{{ totalPatients75Plus }}</td>
+        </tr>
+        <tr>
+          <td>סה"כ המאושפזים בגיל 75+ שעברו סיקור לדליריום</td>
+          <td>{{ screenedForDelirium }}</td>
+        </tr>
+        <tr>
+          <td>סה"כ המאושפזים בגיל 75+ שאובחנו עם דליריום</td>
+          <td>{{ diagnosedWithDelirium }}</td>
+        </tr>
+        <tr>
+          <td>סה"כ שקיבלו טיפול לדליריום (כולל לא-תרופתי)</td>
+          <td>{{ treatedDelirium }}</td>
+        </tr>
+        <tr>
+          <td>סה"כ שקיבלו טיפול תרופתי לדליריום</td>
+          <td>{{ treatedWithDrug }}</td>
+        </tr>
+        <tr>
+          <td>סה"כ שקיבלו טיפול לא-תרופתי לדליריום</td>
+          <td>{{ treatedWithoutDrug }}</td>
+        </tr>
+      </table>
+    </mat-card-content>
+  </mat-card>
+
+
+</div>
