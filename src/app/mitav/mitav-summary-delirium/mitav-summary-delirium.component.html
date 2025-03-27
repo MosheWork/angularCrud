@@ -123,6 +123,69 @@
   
   </table>
   
+  <div class="table-wrapper">
+    <h2 class="table-title">3. א. משתתפים בתכנית למניעה, איתור וטיפול בדיליריום, לפי גיל ומשך האשפוז</h2>
+  
+    <table mat-table [dataSource]="lengthOfStaySummary" class="mat-elevation-z8" dir="rtl">
+  
+      <!-- GROUP HEADERS -->
+      <ng-container matColumnDef="group-header1">
+        <th mat-header-cell *matHeaderCellDef colspan="1" class="group-header">אוכלוסיית מאושפזים</th>
+      </ng-container>
+  
+      <ng-container matColumnDef="group-header2">
+        <th mat-header-cell *matHeaderCellDef colspan="3" class="group-header">סה"כ מאושפזים בני 75+ בבית החולים</th>
+      </ng-container>
+  
+      <ng-container matColumnDef="group-header3">
+        <th mat-header-cell *matHeaderCellDef colspan="3" class="group-header">סה"כ מאושפזים שעברו סיקור לדיליריום</th>
+      </ng-container>
+  
+      <!-- DATA COLUMNS -->
+      <ng-container matColumnDef="ageGroup">
+        <th mat-header-cell *matHeaderCellDef> גיל / משך אשפוז </th>
+        <td mat-cell *matCellDef="let row"> {{ row.ageGroup }} </td>
+      </ng-container>
+  
+      <ng-container matColumnDef="totalDays3">
+        <th mat-header-cell *matHeaderCellDef> עד 3 ימים </th>
+        <td mat-cell *matCellDef="let row"> {{ row.totalDays3 }} </td>
+      </ng-container>
+  
+      <ng-container matColumnDef="totalDays4to5">
+        <th mat-header-cell *matHeaderCellDef> 4-5 ימים </th>
+        <td mat-cell *matCellDef="let row"> {{ row.totalDays4to5 }} </td>
+      </ng-container>
+  
+      <ng-container matColumnDef="totalDays6plus">
+        <th mat-header-cell *matHeaderCellDef> 6 ימים ומעלה </th>
+        <td mat-cell *matCellDef="let row"> {{ row.totalDays6plus }} </td>
+      </ng-container>
+  
+      <ng-container matColumnDef="screenedDays3">
+        <th mat-header-cell *matHeaderCellDef> עד 3 ימים </th>
+        <td mat-cell *matCellDef="let row"> {{ row.screenedDays3 }} </td>
+      </ng-container>
+  
+      <ng-container matColumnDef="screenedDays4to5">
+        <th mat-header-cell *matHeaderCellDef> 4-5 ימים </th>
+        <td mat-cell *matCellDef="let row"> {{ row.screenedDays4to5 }} </td>
+      </ng-container>
+  
+      <ng-container matColumnDef="screenedDays6plus">
+        <th mat-header-cell *matHeaderCellDef> 6 ימים ומעלה </th>
+        <td mat-cell *matCellDef="let row"> {{ row.screenedDays6plus }} </td>
+      </ng-container>
+  
+      <!-- HEADER ROWS -->
+      <tr mat-header-row *matHeaderRowDef="['group-header1', 'group-header2', 'group-header3']"></tr>
+      <tr mat-header-row *matHeaderRowDef="['ageGroup', 'totalDays3', 'totalDays4to5', 'totalDays6plus', 'screenedDays3', 'screenedDays4to5', 'screenedDays6plus']"></tr>
+  
+      <!-- DATA ROWS -->
+      <tr mat-row *matRowDef="let row; columns: ['ageGroup', 'totalDays3', 'totalDays4to5', 'totalDays6plus', 'screenedDays3', 'screenedDays4to5', 'screenedDays6plus'];"></tr>
+  
+    </table>
+  </div>
   
   
 

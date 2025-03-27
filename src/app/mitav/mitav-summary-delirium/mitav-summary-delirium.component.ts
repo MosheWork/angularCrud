@@ -19,6 +19,7 @@ export class MitavSummaryDeliriumComponent implements OnInit {
   treatedWithDrug = 0;
   treatedWithoutDrug = 0;
   genderAgeSummary: any[] = [];
+  lengthOfStaySummary: any[] = [];
 
   constructor(private http: HttpClient) {}
 
@@ -33,6 +34,7 @@ export class MitavSummaryDeliriumComponent implements OnInit {
         console.log("✅ Delirium API Response:", data);
         this.deliriumData = data;
         this.calculateSummary();
+        this.calculateLengthOfStaySummary();
         this.isLoading = false;
       },
       (error) => {
@@ -112,6 +114,63 @@ export class MitavSummaryDeliriumComponent implements OnInit {
   }
   
   
+  calculateLengthOfStaySummary(): void {
+    const summary: any = {
+      '75-84': {
+        total: { days3: 0, days4to5: 0, days6plus: 0 },
+        screened: { days3: 0, days4to5: 0, days6plus: 0 },
+      },
+      '85+': {
+        total: { days3: 0, days4to5: 0, days6plus: 0 },
+        screened: { days3: 0, days4to5: 0, days6plus: 0 },
+      }
+    };
+  
+    this.deliriumData.forEach((p: any) => {
+      const ageGroup = p.Age_Years >= 85 ? '85+' : '75-84';
+      const days = p.TotalHospDays;
+  
+      let category = '';
+      if (days <= 3) category = 'days3';
+      else if (days >= 4 && days <= 5) category = 'days4to5';
+      else category = 'days6plus';
+  
+      summary[ageGroup].total[category]++;
+      if (p.Grade !== null) {
+        summary[ageGroup].screened[category]++;
+      }
+    });
+  
+    this.lengthOfStaySummary = [
+      {
+        ageGroup: '75-84',
+        totalDays3: summary['75-84'].total.days3,
+        totalDays4to5: summary['75-84'].total.days4to5,
+        totalDays6plus: summary['75-84'].total.days6plus,
+        screenedDays3: summary['75-84'].screened.days3,
+        screenedDays4to5: summary['75-84'].screened.days4to5,
+        screenedDays6plus: summary['75-84'].screened.days6plus,
+      },
+      {
+        ageGroup: '85 ומעלה',
+        totalDays3: summary['85+'].total.days3,
+        totalDays4to5: summary['85+'].total.days4to5,
+        totalDays6plus: summary['85+'].total.days6plus,
+        screenedDays3: summary['85+'].screened.days3,
+        screenedDays4to5: summary['85+'].screened.days4to5,
+        screenedDays6plus: summary['85+'].screened.days6plus,
+      },
+      {
+        ageGroup: 'סה"כ',
+        totalDays3: summary['75-84'].total.days3 + summary['85+'].total.days3,
+        totalDays4to5: summary['75-84'].total.days4to5 + summary['85+'].total.days4to5,
+        totalDays6plus: summary['75-84'].total.days6plus + summary['85+'].total.days6plus,
+        screenedDays3: summary['75-84'].screened.days3 + summary['85+'].screened.days3,
+        screenedDays4to5: summary['75-84'].screened.days4to5 + summary['85+'].screened.days4to5,
+        screenedDays6plus: summary['75-84'].screened.days6plus + summary['85+'].screened.days6plus,
+      }
+    ];
+  }
   
   
 }
