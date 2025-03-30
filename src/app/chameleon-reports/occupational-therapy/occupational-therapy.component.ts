@@ -19,31 +19,31 @@ export class OccupationalTherapyComponent implements OnInit {
   filterForm: FormGroup;
   availableYears: number[] = [2023, 2024, 2025];
   months = [
-    { name: 'January', value: 1 },
-    { name: 'February', value: 2 },
-    { name: 'March', value: 3 },
-    { name: 'April', value: 4 },
-    { name: 'May', value: 5 },
-    { name: 'June', value: 6 },
-    { name: 'July', value: 7 },
-    { name: 'August', value: 8 },
-    { name: 'September', value: 9 },
-    { name: 'October', value: 10 },
-    { name: 'November', value: 11 },
-    { name: 'December', value: 12 },
+    { name: 'ינואר', value: 1 },
+    { name: 'פברואר', value: 2 },
+    { name: 'מרץ', value: 3 },
+    { name: 'אפריל', value: 4 },
+    { name: 'מאי', value: 5 },
+    { name: 'יוני', value: 6 },
+    { name: 'יולי', value: 7 },
+    { name: 'אוגוסט', value: 8 },
+    { name: 'ספטמבר', value: 9 },
+    { name: 'אוקטובר', value: 10 },
+    { name: 'נובמבר', value: 11 },
+    { name: 'דצמבר', value: 12 }
   ];
 
   anamnesisResultsDataSource = new MatTableDataSource<any>([]);
   fullListDataSource = new MatTableDataSource<any>([]);
 
-  anamnesisResultsColumns: string[] = ['EmployeeName', 'Simple', 'Complex', 'VeryComplex'];
+  anamnesisResultsColumns: string[] = ['EmployeeName', 'Simple', 'Complex', 'Group'];
   fullListColumns: string[] = ['AdmissionNo', 'IdNum', 'FirstName', 'LastName', 'EmployeeName', 'Entry_Date', 'AnswerType'];
 
   columnDisplayNames2: { [key: string]: string } = {
     'EmployeeName': 'שם עובד',
     'Simple': 'טיפול פשוט',
     'Complex': 'טיפול מורכב',
-    'VeryComplex': 'טיפול קבוצתי'
+    'Group': 'טיפול קבוצתי'
   };
 
   columnDisplayNames: { [key: string]: string } = {
