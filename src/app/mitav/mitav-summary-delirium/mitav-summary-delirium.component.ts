@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
+import * as XLSX from 'xlsx';
 
 @Component({
   selector: 'app-mitav-summary-delirium',
@@ -361,5 +362,57 @@ onDateRangeChange(): void {
   this.fetchData2(); // refetch Geriatric summary when filter changes
 }
 
+exportAllTables(): void {
+  const wb: XLSX.WorkBook = XLSX.utils.book_new();
+  const ws: XLSX.WorkSheet = XLSX.utils.aoa_to_sheet([]);
+  let rowOffset = 0;
 
+  const addSection = (title: string, headers: string[], data: any[], columns: string[]) => {
+    XLSX.utils.sheet_add_aoa(ws, [[title]], { origin: { r: rowOffset, c: 0 } });
+    rowOffset += 1;
+    XLSX.utils.sheet_add_aoa(ws, [headers], { origin: { r: rowOffset, c: 0 } });
+    rowOffset += 1;
+    const rows = data.map(row => columns.map(col => row[col]));
+    XLSX.utils.sheet_add_aoa(ws, rows, { origin: { r: rowOffset, c: 0 } });
+    rowOffset += rows.length + 2;
+  };
+
+  addSection("1. סיקור דליריום וטיפול בו", [
+    "תיאור", "ערך"
+  ], [
+    { תיאור: 'סה"כ המאושפזים בגיל 75+', ערך: this.totalPatients75Plus },
+    { תיאור: 'סה"כ המאושפזים בגיל 75+ שעברו סיקור לדליריום', ערך: this.screenedForDelirium },
+    { תיאור: 'סה"כ המאושפזים בגיל 75+ שאובחנו עם דליריום', ערך: this.diagnosedWithDelirium },
+    { תיאור: 'סה"כ שקיבלו טיפול לדליריום (כולל לא-תרופתי)', ערך: this.treatedDelirium },
+    { תיאור: 'סה"כ שקיבלו טיפול תרופתי לדליריום', ערך: this.treatedWithDrug },
+    { תיאור: 'סה"כ שקיבלו טיפול לא-תרופתי לדליריום', ערך: this.treatedWithoutDrug }
+  ], ['תיאור', 'ערך']);
+
+  addSection("2. משתתפים לפי מין וגיל", [
+    "קבוצת גיל", "זכר סה\"כ", "נקבה סה\"כ", "זכר נבדקו", "נקבה נבדקו", "זכר דליריום", "נקבה דליריום", "זכר טופלו", "נקבה טופלו"
+  ], this.genderAgeSummary, ["ageGroup", "totalMale", "totalFemale", "screenedMale", "screenedFemale", "deliriumMale", "deliriumFemale", "treatedMale", "treatedFemale"]);
+
+  addSection("3. א. לפי גיל ומשך האשפוז - נבדקו", [
+    "קבוצת גיל", "סה\"כ עד 3 ימים", "סה\"כ 4-5 ימים", "סה\"כ 6+ ימים", "נבדקו עד 3 ימים", "נבדקו 4-5 ימים", "נבדקו 6+ ימים"
+  ], this.lengthOfStaySummary, ["ageGroup", "totalDays3", "totalDays4to5", "totalDays6plus", "screenedDays3", "screenedDays4to5", "screenedDays6plus"]);
+
+  addSection("3. ב. לפי גיל ומשך אשפוז - דליריום וטופלו", [
+    "קבוצת גיל", "דליריום עד 3 ימים", "דליריום 4-5 ימים", "דליריום 6+ ימים", "טופלו עד 3 ימים", "טופלו 4-5 ימים", "טופלו 6+ ימים"
+  ], this.lengthOfStayDeliriumTable, ["ageGroup", "deliriumDays3", "deliriumDays4to5", "deliriumDays6plus", "treatedDays3", "treatedDays4to5", "treatedDays6plus"]);
+
+  if (this.geriatricSummary) {
+    addSection("4. ייעוצים גריאטרים", [
+      "סה\"כ מאושפזים 75+", "סה\"כ ייעוצים", "ייעוצים ע\"י רופא/ה גריאטר/ית", "ייעוצים ע\"י אח/ות קליני/ת"
+    ], [{
+      "סה\"כ מאושפזים 75+": this.geriatricSummary.UniquePatients,
+      "סה\"כ ייעוצים": this.geriatricSummary.TotalPatientDateRows,
+      "ייעוצים ע\"י רופא/ה גריאטר/ית": this.geriatricSummary.TotalPatientDateRows,
+      "ייעוצים ע\"י אח/ות קליני/ת": 0
+    }], ["סה\"כ מאושפזים 75+", "סה\"כ ייעוצים", "ייעוצים ע\"י רופא/ה גריאטר/ית", "ייעוצים ע\"י אח/ות קליני/ת"]);
+  }
+
+  ws['!dir'] = 'rtl';
+  XLSX.utils.book_append_sheet(wb, ws, 'דו"ח דליריום');
+  XLSX.writeFile(wb, 'MitavDeliriumSummary.xlsx');
+}
 }
