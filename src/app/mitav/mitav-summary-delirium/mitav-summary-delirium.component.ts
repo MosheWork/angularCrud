@@ -10,7 +10,26 @@ import { environment } from '../../../environments/environment';
 export class MitavSummaryDeliriumComponent implements OnInit {
   isLoading = true;
   deliriumData: any[] = [];
-
+  selectedYear: number | null = null;
+  selectedQuarter: number | null = null;
+  
+  availableYears = [
+    { value: 2023, label: '2023' },
+    { value: 2024, label: '2024' },
+    { value: 2025, label: '2025' },
+  ];
+  
+  availableQuarters = [
+    { value: 1, label: 'רבעון 1' },
+    { value: 2, label: 'רבעון 2' },
+    { value: 3, label: 'רבעון 3' },
+    { value: 4, label: 'רבעון 4' },
+  ];
+  
+  
+  originalData: any[] = []; // Full data before filter
+  filteredData: any[] = []; // Data after filter
+  
   // Summary variables
   totalPatients75Plus = 0;
   screenedForDelirium = 0;
@@ -22,23 +41,35 @@ export class MitavSummaryDeliriumComponent implements OnInit {
   lengthOfStaySummary: any[] = [];
   lengthOfStayDeliriumTable: any[] = [];
   geriatricSummary: any = null;
+  dateFrom: Date | null = null;
+dateTo: Date | null = null;
+
+
   constructor(private http: HttpClient) {}
 
   ngOnInit(): void {
     this.fetchData();
     this.fetchData2();
   }
-
   fetchData(): void {
     this.isLoading = true;
-    this.http.get<any[]>(`${environment.apiUrl}MitavSummary/Delirium`).subscribe(
+  
+    const params: any = {};
+    if (this.selectedYear != null) params.year = this.selectedYear;
+    if (this.selectedQuarter != null) params.quarter = this.selectedQuarter;
+  
+    this.http.get<any[]>(`${environment.apiUrl}MitavSummary/Delirium`, { params }).subscribe(
       (data) => {
         console.log("✅ Delirium API Response:", data);
+        this.originalData = data;
+        this.filteredData = data;
         this.deliriumData = data;
+  
+        // Only call calculations here
         this.calculateSummary();
         this.calculateLengthOfStaySummary();
         this.calculateSummaryByStay();
-
+  
         this.isLoading = false;
       },
       (error) => {
@@ -47,27 +78,61 @@ export class MitavSummaryDeliriumComponent implements OnInit {
       }
     );
   }
+  
+  
+  
+  
 
   fetchData2(): void {
     this.isLoading = true;
-    this.http.get(`${environment.apiUrl}MitavSummary/GeriatricConsiliumsCounts`, {
-      params: {
-        fromDate: '2024-10-01',
-        toDate: '2025-01-01'
+  
+    this.http.get<any[]>(`${environment.apiUrl}MitavSummary/GeriatricConsiliumsRaw`).subscribe(
+      (res: any[]) => {
+        const filtered = res.filter(entry => {
+          const date = new Date(entry.Entry_Date);
+          if (!date || isNaN(date.getTime())) return false;
+  
+          const year = date.getFullYear();
+          const quarter = Math.ceil((date.getMonth() + 1) / 3);
+  
+          const yearPass = !this.selectedYear || year === this.selectedYear;
+          const quarterPass = !this.selectedQuarter || quarter === this.selectedQuarter;
+  
+          return yearPass && quarterPass;
+        });
+  
+        // Unique Patients
+        const uniquePatients = new Set(filtered.map(row => row.Patient)).size;
+  
+        // Unique Patient + Date combination (formatted)
+        const uniquePatientDatePairs = new Set(
+          filtered.map(row => `${row.Patient}|${new Date(row.Entry_Date).toISOString().split('T')[0]}`)
+        ).size;
+  
+        this.geriatricSummary = {
+          UniquePatients: uniquePatients,
+          TotalPatientDateRows: uniquePatientDatePairs
+        };
+  
+        this.isLoading = false;
+      },
+      err => {
+        console.error('Error fetching raw geriatric summary:', err);
+        this.isLoading = false;
       }
-    }).subscribe((res: any) => {
-      this.geriatricSummary = res;
-      this.isLoading = false;
-    }, err => {
-      console.error('Error fetching geriatric summary:', err);
-      this.isLoading = false;
-    });
+    );
   }
-
-
+  
+  
+  formatDate(date: Date): string {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  }
   calculateSummary(): void {
     const data = this.deliriumData;
-  
+    console.log('📊 Delirium Data sample:', this.deliriumData.slice(0, 5));
     this.totalPatients75Plus = data.length;
     this.screenedForDelirium = data.filter(p => p.Grade !== null).length;
     this.diagnosedWithDelirium = data.filter(p => p.PatientWithDelirium === 'כן').length;
@@ -257,5 +322,44 @@ calculateSummaryByStay(): void {
     }
   ];
 }
+applyFilter(): void {
+  if (!this.originalData) return;
+
+  const data = this.originalData;
+
+  this.filteredData = data.filter((row: any) => {
+    if (!row.ATD_Admission_Date) return false;
+
+    const date = new Date(row.ATD_Admission_Date);
+    if (isNaN(date.getTime())) return false;
+
+    const year = date.getFullYear();
+    const quarter = Math.ceil((date.getMonth() + 1) / 3);
+
+    const yearPass = !this.selectedYear || year === this.selectedYear;
+    const quarterPass = !this.selectedQuarter || quarter === this.selectedQuarter;
+
+    return yearPass && quarterPass;
+  });
+
+  console.log("📦 Filtered data from API:", this.filteredData);
+
+  this.deliriumData = this.filteredData;
+  this.calculateSummary();
+  this.calculateLengthOfStaySummary();
+  this.calculateSummaryByStay();
+
+  // only fetch Geriatric data
+  this.fetchData2(); 
+}
+
+
+
+
+onDateRangeChange(): void {
+  this.applyFilter();
+  this.fetchData2(); // refetch Geriatric summary when filter changes
+}
+
 
 }

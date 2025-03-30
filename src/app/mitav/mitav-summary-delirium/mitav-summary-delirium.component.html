@@ -8,7 +8,34 @@
       </div>
     </mat-card-content>
   </mat-card>
-
+  <mat-card class="filter-card" dir="rtl">
+    <mat-card-content class="filters">
+      <div class="filter-fields">
+  
+        <mat-form-field>
+          <mat-label>שנה</mat-label>
+          <mat-select [(value)]="selectedYear">
+            <mat-option [value]="null">הכל</mat-option>
+            <mat-option *ngFor="let y of availableYears" [value]="y.value">{{ y.label }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+  
+        <mat-form-field>
+          <mat-label>רבעון</mat-label>
+          <mat-select [(value)]="selectedQuarter">
+            <mat-option [value]="null">הכל</mat-option>
+            <mat-option *ngFor="let q of availableQuarters" [value]="q.value">{{ q.label }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+  
+        <button mat-raised-button color="primary" (click)="applyFilter()">סנן</button>
+  
+        <!-- <img src="../../assets/excel.png" alt="Download" (click)="exportAllTables()" class="download-icon icon" width="50px" style="margin-right: 10px;" /> -->
+  
+      </div>
+    </mat-card-content>
+  </mat-card>
+  
   <!-- 🔹 Summary Section -->
   <mat-card class="summary-card" dir="rtl">
     <mat-card-content>

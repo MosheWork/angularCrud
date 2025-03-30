@@ -167,7 +167,7 @@ const routes: Routes = [
    { path: 'MosheOnlineLogs', component: MosheOnlineLogsComponent , data: { title: ' לוגים' }},// פרויקט אישי לוגים
    { path: 'HospPhoneByDepartment', component: HospPhoneByDepartmentComponent , data: { title: 'רשימת טלפונים' }},// טלפונים של מאושפזים למאיר  
    { path: 'SkinIntegrityDashboard', component: SkinIntegrityDashboardComponent , data: { title: ' דאשבורד שלמות העור' }},// דאשבורד לדיאנה לאומדן שלמות העור  
-   { path: 'occupational-therapy', component: OccupationalTherapyComponent , data: { title: ' דאשבורד ריפוי ועיסוק' }},// - לוצ רך חישוב פרמייה דאשבורד לרוני צור סהר ריפוי ועיסוק     
+   { path: 'occupational-therapy', component: OccupationalTherapyComponent , data: { title: ' דאשבורד ריפוי בעיסוק' }},// - לוצ רך חישוב פרמייה דאשבורד לרוני צור סהר ריפוי ועיסוק     
 
 
 
