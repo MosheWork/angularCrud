@@ -26,6 +26,7 @@ export class MitavSummaryDeliriumComponent implements OnInit {
 
   ngOnInit(): void {
     this.fetchData();
+    this.fetchData2();
   }
 
   fetchData(): void {
@@ -46,6 +47,19 @@ export class MitavSummaryDeliriumComponent implements OnInit {
       }
     );
   }
+
+  fetchData2(): void {
+    this.isLoading = true;
+    this.http.get(`${environment.apiUrl}MitavSummary/GeriatricConsiliumsCounts`, {
+      params: {
+        fromDate: '2024-10-01',
+        toDate: '2025-01-01'
+      }
+    }).subscribe(res => {
+      console.log(res);
+    });
+  }
+
 
   calculateSummary(): void {
     const data = this.deliriumData;
