@@ -250,6 +250,28 @@
   </table>
 </div>
 
+<h3 class="table-title">
+    4. ייעוצים גריאטרים למאושפזים בני 75+ בבית החולים
+  </h3>
+  
+  <table mat-table class="mat-elevation-z8 summary-table">
+    <thead>
+      <tr>
+        <th mat-header-cell *matHeaderCellDef> סה"כ מאושפזים 75+ בבית החולים שקיבלו ייעוץ גריאטרי </th>
+        <th mat-header-cell *matHeaderCellDef> סה"כ ייעוצים גריאטרים שניתנו </th>
+        <th mat-header-cell *matHeaderCellDef> כמות הייעוצים שבוצעו ע"י רופא/ה מומחה/ית בגריאטריה </th>
+        <th mat-header-cell *matHeaderCellDef> כמות הייעוצים שבוצעו ע"י אח/ות מומחה קליני בסיעוד גריאטרי </th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td mat-cell>{{ geriatricSummary?.UniquePatients || 0 }}</td>
+        <td mat-cell>{{ geriatricSummary?.TotalPatientDateRows || 0 }}</td>
+        <td mat-cell>{{ geriatricSummary?.TotalPatientDateRows || 0 }}</td>
+        <td mat-cell>0</td>
+      </tr>
+    </tbody>
+  </table>
   
 
 </div>

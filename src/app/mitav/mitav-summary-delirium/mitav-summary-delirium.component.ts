@@ -21,7 +21,7 @@ export class MitavSummaryDeliriumComponent implements OnInit {
   genderAgeSummary: any[] = [];
   lengthOfStaySummary: any[] = [];
   lengthOfStayDeliriumTable: any[] = [];
-
+  geriatricSummary: any = null;
   constructor(private http: HttpClient) {}
 
   ngOnInit(): void {
@@ -55,8 +55,12 @@ export class MitavSummaryDeliriumComponent implements OnInit {
         fromDate: '2024-10-01',
         toDate: '2025-01-01'
       }
-    }).subscribe(res => {
-      console.log(res);
+    }).subscribe((res: any) => {
+      this.geriatricSummary = res;
+      this.isLoading = false;
+    }, err => {
+      console.error('Error fetching geriatric summary:', err);
+      this.isLoading = false;
     });
   }
 
