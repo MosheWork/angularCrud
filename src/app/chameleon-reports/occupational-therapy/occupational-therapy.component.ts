@@ -32,6 +32,7 @@ export class OccupationalTherapyComponent implements OnInit {
     { name: 'נובמבר', value: 11 },
     { name: 'דצמבר', value: 12 }
   ];
+  totalUniquePatientDays: number = 0;
 
   anamnesisResultsDataSource = new MatTableDataSource<any>([]);
   fullListDataSource = new MatTableDataSource<any>([]);
@@ -81,6 +82,8 @@ export class OccupationalTherapyComponent implements OnInit {
 
     this.fetchAnamnesisResultsData(year, month);
     this.fetchFullListData(year, month);
+    this.fetchUniquePatientDays(year, month); // <-- ✅ ADD THIS
+
   }
 
   resetFilters(): void {
@@ -90,7 +93,22 @@ export class OccupationalTherapyComponent implements OnInit {
     });
     this.applyFilters();
   }
-
+  fetchUniquePatientDays(year?: number, month?: number): void {
+    const params: any = {};
+    if (year) params.year = year;
+    if (month) params.month = month;
+  
+    this.http
+      .get<{ TotalUniquePatientDays: number }>(`${environment.apiUrl}OccupationalTherapy/CountUniquePatientDays`, { params })
+      .subscribe(
+        (res) => {
+          this.totalUniquePatientDays = res.TotalUniquePatientDays;
+        },
+        (error) => {
+          console.error('Error fetching unique patient days:', error);
+        }
+      );
+  }
   fetchAnamnesisResultsData(year?: number, month?: number): void {
     this.loading = true;
     const params: any = {};

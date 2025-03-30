@@ -13,6 +13,13 @@
   <!-- Main Content -->
   <div class="body" *ngIf="!loading">
     <div class="filter-card-container">
+                <!-- 📊 Summary Card -->
+  <mat-card class="summary-card" style="flex: 1; display: flex; align-items: center; justify-content: center; text-align: center;">
+    <mat-card-content>
+      <h3>סה״כ ימי טיפול ייחודיים</h3>
+      <h1>{{ totalUniquePatientDays }}</h1>
+    </mat-card-content>
+  </mat-card>
       <mat-card class="filter-card">
         <mat-card-content>
           <form [formGroup]="filterForm" class="filter-form" dir="rtl">
@@ -37,6 +44,7 @@
           </form>
         </mat-card-content>
       </mat-card>
+
     </div>
   
     <!-- Tables Section -->
