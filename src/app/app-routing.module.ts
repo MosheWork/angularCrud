@@ -78,6 +78,7 @@ import { UserCRMComponent } from './ServiceCRM/user-crm/user-crm.component';
 import { MitavSummaryComponent } from './mitav/mitav-summary/mitav-summary.component';
 import { AdminCrmComponent } from './ServiceCRM/admin-crm/admin-crm.component';
 import { MitavSummaryDeliriumComponent } from './mitav/mitav-summary-delirium/mitav-summary-delirium.component';
+import { OccupationalTherapyComponent } from './chameleon-reports/occupational-therapy/occupational-therapy.component';
 
 const routes: Routes = [
   { path: 'users', component: UsersComponent },
@@ -166,6 +167,7 @@ const routes: Routes = [
    { path: 'MosheOnlineLogs', component: MosheOnlineLogsComponent , data: { title: ' לוגים' }},// פרויקט אישי לוגים
    { path: 'HospPhoneByDepartment', component: HospPhoneByDepartmentComponent , data: { title: 'רשימת טלפונים' }},// טלפונים של מאושפזים למאיר  
    { path: 'SkinIntegrityDashboard', component: SkinIntegrityDashboardComponent , data: { title: ' דאשבורד שלמות העור' }},// דאשבורד לדיאנה לאומדן שלמות העור  
+   { path: 'occupational-therapy', component: OccupationalTherapyComponent , data: { title: ' דאשבורד ריפוי ועיסוק' }},// - לוצ רך חישוב פרמייה דאשבורד לרוני צור סהר ריפוי ועיסוק     
 
 
 

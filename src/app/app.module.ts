@@ -157,6 +157,7 @@ import { MitavSummaryComponent } from './mitav/mitav-summary/mitav-summary.compo
 import { AdminCrmComponent } from './ServiceCRM/admin-crm/admin-crm.component';
 import { LabResultsDetailDialogComponent } from './chameleon-reports/diabetes-consultation/lab-results-detail-dialog/lab-results-detail-dialog.component';
 import { MitavSummaryDeliriumComponent } from './mitav/mitav-summary-delirium/mitav-summary-delirium.component';
+import { OccupationalTherapyComponent } from './chameleon-reports/occupational-therapy/occupational-therapy.component';
 
 
 @NgModule({
@@ -282,6 +283,7 @@ import { MitavSummaryDeliriumComponent } from './mitav/mitav-summary-delirium/mi
     AdminCrmComponent,
     LabResultsDetailDialogComponent,
     MitavSummaryDeliriumComponent,
+    OccupationalTherapyComponent,
      
   
   ],
