@@ -20,6 +20,7 @@ export class MitavSummaryDeliriumComponent implements OnInit {
   treatedWithoutDrug = 0;
   genderAgeSummary: any[] = [];
   lengthOfStaySummary: any[] = [];
+  lengthOfStayDeliriumTable: any[] = [];
 
   constructor(private http: HttpClient) {}
 
@@ -35,6 +36,8 @@ export class MitavSummaryDeliriumComponent implements OnInit {
         this.deliriumData = data;
         this.calculateSummary();
         this.calculateLengthOfStaySummary();
+        this.calculateSummaryByStay();
+
         this.isLoading = false;
       },
       (error) => {
@@ -50,7 +53,7 @@ export class MitavSummaryDeliriumComponent implements OnInit {
     this.totalPatients75Plus = data.length;
     this.screenedForDelirium = data.filter(p => p.Grade !== null).length;
     this.diagnosedWithDelirium = data.filter(p => p.PatientWithDelirium === 'כן').length;
-    this.treatedDelirium = data.filter(p => p.PreventionAndInterventionCAM === 'כן' && p.PreventionORInterventionCAM !== 'לא בוצע').length;
+    this.treatedDelirium = data.filter(p => p.DrugForDelirium === 'כן').length;
     this.treatedWithDrug = data.filter(p => p.DrugForDelirium === 'כן').length;
     this.treatedWithoutDrug = this.treatedDelirium - this.treatedWithDrug;
   
@@ -71,8 +74,10 @@ export class MitavSummaryDeliriumComponent implements OnInit {
       summary[ageGroup][gender].total++;
       if (p.Grade !== null) summary[ageGroup][gender].screened++;
       if (p.PatientWithDelirium === 'כן') summary[ageGroup][gender].delirium++;
-      if (p.DrugForDelirium === 'כן') summary[ageGroup][gender].treated++;
-    });
+      if (p.PatientWithDelirium === 'כן' && p.DrugForDelirium === 'כן') {
+        summary[ageGroup][gender].treated++;
+      }
+          });
   
     this.genderAgeSummary = Object.entries(summary).map(([ageGroup, genders]: any) => ({
       ageGroup,
@@ -172,5 +177,67 @@ export class MitavSummaryDeliriumComponent implements OnInit {
     ];
   }
   
-  
+  // ---- TypeScript (in mitav-summary-delirium.component.ts)
+
+calculateSummaryByStay(): void {
+  const summary: any = {
+    '75-84': {
+      delirium: { days3: 0, days4to5: 0, days6plus: 0 },
+      treated: { days3: 0, days4to5: 0, days6plus: 0 }
+    },
+    '85+': {
+      delirium: { days3: 0, days4to5: 0, days6plus: 0 },
+      treated: { days3: 0, days4to5: 0, days6plus: 0 }
+    }
+  };
+
+  this.deliriumData.forEach(p => {
+    const ageGroup = p.Age_Years >= 85 ? '85+' : '75-84';
+    const days = p.TotalHospDays;
+    let category = '';
+    if (days <= 3) category = 'days3';
+    else if (days >= 4 && days <= 5) category = 'days4to5';
+    else if (days >= 6) category = 'days6plus';
+
+    if (!category) return;
+
+    if (p.PatientWithDelirium === 'כן') {
+      summary[ageGroup].delirium[category]++;
+    }
+    if (p.PatientWithDelirium === 'כן' && p.DrugForDelirium === 'כן') {
+      summary[ageGroup].treated[category]++;
+    }
+  });
+
+  this.lengthOfStayDeliriumTable = [
+    {
+      ageGroup: '75-84',
+      deliriumDays3: summary['75-84'].delirium.days3,
+      deliriumDays4to5: summary['75-84'].delirium.days4to5,
+      deliriumDays6plus: summary['75-84'].delirium.days6plus,
+      treatedDays3: summary['75-84'].treated.days3,
+      treatedDays4to5: summary['75-84'].treated.days4to5,
+      treatedDays6plus: summary['75-84'].treated.days6plus,
+    },
+    {
+      ageGroup: '85+',
+      deliriumDays3: summary['85+'].delirium.days3,
+      deliriumDays4to5: summary['85+'].delirium.days4to5,
+      deliriumDays6plus: summary['85+'].delirium.days6plus,
+      treatedDays3: summary['85+'].treated.days3,
+      treatedDays4to5: summary['85+'].treated.days4to5,
+      treatedDays6plus: summary['85+'].treated.days6plus,
+    },
+    {
+      ageGroup: 'סה\"כ',
+      deliriumDays3: summary['75-84'].delirium.days3 + summary['85+'].delirium.days3,
+      deliriumDays4to5: summary['75-84'].delirium.days4to5 + summary['85+'].delirium.days4to5,
+      deliriumDays6plus: summary['75-84'].delirium.days6plus + summary['85+'].delirium.days6plus,
+      treatedDays3: summary['75-84'].treated.days3 + summary['85+'].treated.days3,
+      treatedDays4to5: summary['75-84'].treated.days4to5 + summary['85+'].treated.days4to5,
+      treatedDays6plus: summary['75-84'].treated.days6plus + summary['85+'].treated.days6plus,
+    }
+  ];
+}
+
 }
