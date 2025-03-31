@@ -79,6 +79,7 @@ import { MitavSummaryComponent } from './mitav/mitav-summary/mitav-summary.compo
 import { AdminCrmComponent } from './ServiceCRM/admin-crm/admin-crm.component';
 import { MitavSummaryDeliriumComponent } from './mitav/mitav-summary-delirium/mitav-summary-delirium.component';
 import { OccupationalTherapyComponent } from './chameleon-reports/occupational-therapy/occupational-therapy.component';
+import { MainScreenComponent } from './ServiceCRM/main-screen/main-screen.component';
 
 const routes: Routes = [
   { path: 'users', component: UsersComponent },
@@ -193,6 +194,7 @@ const routes: Routes = [
    //CRM למיכל
    { path: 'UserCRM', component: UserCRMComponent , data: { title: ' דאשבורד נציג - CRM  ' }},
    { path: 'AdminCrm', component: AdminCrmComponent , data: { title: ' דאשבורד מנהל - CRM  ' }},
+   { path: 'CRMmain', component: MainScreenComponent , data: { title: 'מסך הבית ' }},
 
 
    //amin

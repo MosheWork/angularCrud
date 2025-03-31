@@ -23,89 +23,101 @@
   
     <div class="table-container">
       <table mat-table [dataSource]="dataSource" matSort class="mat-elevation-z8">
-  
-        <ng-container matColumnDef="CaseNumber">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>מספר תיק</th>
-          <td mat-cell *matCellDef="let element"> {{ element.CaseNumber }} </td>
+
+        <!-- AdmissionNo -->
+        <ng-container matColumnDef="AdmissionNo">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>מספר אשפוז</th>
+          <td mat-cell *matCellDef="let row">{{ row.AdmissionNo }}</td>
         </ng-container>
-  
-        <ng-container matColumnDef="DepartmentName">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>שם מחלקה</th>
-          <td mat-cell *matCellDef="let element"> {{ element.DepartmentName }} </td>
+    
+        <!-- UnitName -->
+        <ng-container matColumnDef="UnitName">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>מחלקה</th>
+          <td mat-cell *matCellDef="let row">{{ row.UnitName }}</td>
         </ng-container>
-  
-        <ng-container matColumnDef="EnterDepartDate">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>תאריך כניסה</th>
-          <td mat-cell *matCellDef="let element"> {{ element.EnterDepartDate | date:'dd/MM/yyyy' }} </td>
+    
+        <!-- AdmissionDate -->
+        <ng-container matColumnDef="AdmissionDate">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>תאריך קבלה</th>
+          <td mat-cell *matCellDef="let row">{{ row.AdmissionDate | date: 'dd/MM/yyyy HH:mm' }}</td>
         </ng-container>
-  
-        <ng-container matColumnDef="EnterDepartTime">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>שעת כניסה</th>
-          <td mat-cell *matCellDef="let element"> {{ element.EnterDepartTime }} </td>
-        </ng-container>
-  
-        <ng-container matColumnDef="ExitHospTime">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>שעת יציאה</th>
-          <td mat-cell *matCellDef="let element"> {{ element.ExitHospTime }} </td>
-        </ng-container>
-  
-        <ng-container matColumnDef="LastName">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>שם משפחה</th>
-          <td mat-cell *matCellDef="let element"> {{ element.LastName }} </td>
-        </ng-container>
-  
+    
+        <!-- FirstName -->
         <ng-container matColumnDef="FirstName">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>שם פרטי</th>
-          <td mat-cell *matCellDef="let element"> {{ element.FirstName }} </td>
+          <td mat-cell *matCellDef="let row">{{ row.FirstName }}</td>
         </ng-container>
-  
-        <ng-container matColumnDef="Telephone">
+    
+        <!-- LastName -->
+        <ng-container matColumnDef="LastName">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>שם משפחה</th>
+          <td mat-cell *matCellDef="let row">{{ row.LastName }}</td>
+        </ng-container>
+    
+        <!-- Phone -->
+        <ng-container matColumnDef="Phone">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>טלפון</th>
-          <td mat-cell *matCellDef="let element"> {{ element.Telephone }} </td>
+          <td mat-cell *matCellDef="let row">{{ row.Phone }}</td>
         </ng-container>
-  
-        <ng-container matColumnDef="Mobile">
+    
+        <!-- PhoneCell -->
+        <ng-container matColumnDef="PhoneCell">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>נייד</th>
-          <td mat-cell *matCellDef="let element"> {{ element.Mobile }} </td>
+          <td mat-cell *matCellDef="let row">{{ row.PhoneCell }}</td>
         </ng-container>
-  
-        <ng-container matColumnDef="BirthDate">
+    
+        <!-- AgeFormatted -->
+        <ng-container matColumnDef="AgeFormatted">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>גיל</th>
+          <td mat-cell *matCellDef="let row">{{ row.AgeFormatted }}</td>
+        </ng-container>
+    
+        <!-- BirthDateFormatted -->
+        <ng-container matColumnDef="BirthDateFormatted">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>תאריך לידה</th>
-          <td mat-cell *matCellDef="let element"> {{ element.BirthDate | date:'dd/MM/yyyy' }} </td>
+          <td mat-cell *matCellDef="let row">{{ row.BirthDateFormatted }}</td>
         </ng-container>
-  
-        <ng-container matColumnDef="DeathDate">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>תאריך פטירה</th>
-          <td mat-cell *matCellDef="let element"> {{ element.DeathDate | date:'dd/MM/yyyy' }} </td>
+    
+        <!-- IsBirthdayToday -->
+        <ng-container matColumnDef="IsBirthdayToday">
+          <th mat-header-cell *matHeaderCellDef>יום הולדת היום?</th>
+          <td mat-cell *matCellDef="let row">
+            <span [ngClass]="row.IsBirthdayToday ? 'birthday-yes' : 'birthday-no'">
+              {{ row.IsBirthdayToday ? 'כן' : 'לא' }}
+            </span>
+          </td>
         </ng-container>
-  
-        <ng-container matColumnDef="IsBirthday">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>יום הולדת</th>
-          <td mat-cell *matCellDef="let element"> {{ element.IsBirthday ? 'כן' : 'לא' }} </td>
+    
+        <!-- CallStatus -->
+        <ng-container matColumnDef="CallStatus">
+          <th mat-header-cell *matHeaderCellDef>סטטוס שיחה</th>
+          <td mat-cell *matCellDef="let row">{{ row.CallStatus }}</td>
         </ng-container>
-  
-        <ng-container matColumnDef="CaseManagerStatus">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>סטטוס מנהל תיק</th>
-          <td mat-cell *matCellDef="let element"> {{ element.CaseManagerStatus }} </td>
+    
+        <!-- Catagory -->
+        <ng-container matColumnDef="Catagory">
+          <th mat-header-cell *matHeaderCellDef>קטגוריה</th>
+          <td mat-cell *matCellDef="let row">{{ row.Catagory }}</td>
         </ng-container>
-  
-        <ng-container matColumnDef="CaseManagerRemarks">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>הערות</th>
-          <td mat-cell *matCellDef="let element"> {{ element.CaseManagerRemarks }} </td>
+    
+        <!-- FreeText -->
+        <ng-container matColumnDef="FreeText">
+          <th mat-header-cell *matHeaderCellDef>הערות</th>
+          <td mat-cell *matCellDef="let row">{{ row.FreeText }}</td>
         </ng-container>
-  
-        <ng-container matColumnDef="CaseManagerCategory">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>קטגוריה</th>
-          <td mat-cell *matCellDef="let element"> {{ element.CaseManagerCategory }} </td>
+    
+        <!-- BirthDayToggle -->
+        <ng-container matColumnDef="BirthDayToggle">
+          <th mat-header-cell *matHeaderCellDef>תזכורת יומולדת</th>
+          <td mat-cell *matCellDef="let row">{{ row.BirthDayToggle }}</td>
         </ng-container>
-  
-        <ng-container matColumnDef="CaseManagerUpdate">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>עדכון מנהל תיק</th>
-          <td mat-cell *matCellDef="let element"> {{ element.CaseManagerUpdate | date:'dd/MM/yyyy' }} </td>
-        </ng-container>
+    
+        <!-- Header & Row Declarations -->
         <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-        <tr mat-row *matRowDef="let row; columns: displayedColumns;" (click)="openPhoneCallDialog(row)" class="clickable-row"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
       </table>
+    
+      <mat-paginator [pageSizeOptions]="[5, 25, 50]" showFirstLastButtons></mat-paginator>
     </div>
   
 </mat-card>

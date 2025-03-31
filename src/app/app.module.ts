@@ -160,6 +160,7 @@ import { MitavSummaryDeliriumComponent } from './mitav/mitav-summary-delirium/mi
 import { OccupationalTherapyComponent } from './chameleon-reports/occupational-therapy/occupational-therapy.component';
 import { DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE, MatDateFormats } from '@angular/material/core';
 import { MomentDateAdapter, MAT_MOMENT_DATE_ADAPTER_OPTIONS } from '@angular/material-moment-adapter';
+import { MainScreenComponent } from './ServiceCRM/main-screen/main-screen.component';
 export const MY_DATE_FORMATS: MatDateFormats = {
   parse: {
     dateInput: 'DD/MM/YYYY',
@@ -296,6 +297,7 @@ export const MY_DATE_FORMATS: MatDateFormats = {
     LabResultsDetailDialogComponent,
     MitavSummaryDeliriumComponent,
     OccupationalTherapyComponent,
+    MainScreenComponent,
      
   
   ],

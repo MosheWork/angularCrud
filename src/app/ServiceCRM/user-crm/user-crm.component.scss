@@ -54,7 +54,8 @@
   
     table {
       width: 100%;
-      border-radius: 8px;
+      table-layout: fixed; // ✅ force consistent width distribution
+      border-collapse: collapse;
     }
   
     th {
@@ -71,7 +72,13 @@
       margin-top: 15px;
     }
   }
-
+  th, td {
+    padding: 8px;
+    text-align: right; // align text for Hebrew RTL
+    vertical-align: middle;
+    word-wrap: break-word;
+    white-space: normal;
+  }
 
   .crm-container {
     direction: rtl;
@@ -105,7 +112,7 @@
 }
   
   .table-container {
-    overflow-x: auto;
+   // overflow-x: auto;
     background: white;
     border-radius: 8px;
     padding: 10px;
@@ -120,3 +127,30 @@
   .clickable-row:hover {
     background: #e3f2fd; // Light blue hover effect
   }
+
+  mat-paginator {
+    direction: ltr;
+    text-align: right;
+    font-family: 'Arial', sans-serif;
+  
+    .mat-paginator-range-label {
+      direction: ltr;
+      unicode-bidi: plaintext; // ensures numbers flow right-to-left
+      font-weight: bold;
+      margin: 0 10px;
+    }
+  
+    .mat-paginator-page-size-label {
+      direction: ltr;
+      margin-left: 8px;
+    }
+  
+    .mat-select {
+      direction: ltr;
+    }
+  
+    .mat-icon-button {
+      transform: rotateY(180deg); // ✅ Flip the icons to match RTL
+    }
+  }
+  

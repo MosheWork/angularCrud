@@ -15,11 +15,10 @@ import { MatDialog } from '@angular/material/dialog';
 })
 export class UserCRMComponent implements OnInit, AfterViewInit {
   displayedColumns: string[] = [
-    'CaseNumber', 'DepartmentName', 'EnterDepartDate', 'EnterDepartTime', 'ExitHospTime',
-    'LastName', 'FirstName', 'Telephone', 'Mobile', 'BirthDate', 'DeathDate',
-    'IsBirthday', 'CaseManagerStatus', 'CaseManagerCategory', 'CaseManagerUpdate' ,'CaseManagerRemarks',
+    'AdmissionNo', 'UnitName', 'AdmissionDate', 'FirstName', 'LastName',
+    'Phone', 'PhoneCell', 'AgeFormatted', 'BirthDateFormatted',
+    'IsBirthdayToday', 'CallStatus', 'Catagory', 'FreeText', 'BirthDayToggle'
   ];
-  
   summary: any;
   summaryWithCaseManager: any;
   dataSource = new MatTableDataSource<any>([]);
@@ -49,23 +48,21 @@ export class UserCRMComponent implements OnInit, AfterViewInit {
   fetchData(): void {
     this.isLoading = true;
   
-    this.http.get<any[]>(`${environment.apiUrl}ServiceCRM`).subscribe(data => {
-      // ✅ Convert date fields to actual Date objects for sorting
+    this.http.get<any[]>(`${environment.apiUrl}ServiceCRM/CurrentPatients`).subscribe(data => {
       this.dataSource.data = data.map(item => ({
         ...item,
-        EnterDepartDate: item.EnterDepartDate ? new Date(item.EnterDepartDate) : null,
-        CaseManagerUpdate: item.CaseManagerUpdate ? new Date(item.CaseManagerUpdate) : null
+        AdmissionDate: item.AdmissionDate ? new Date(item.AdmissionDate) : null
       }));
   
       this.isLoading = false;
   
-      // ✅ Ensure sort & paginator are applied AFTER data is loaded
       setTimeout(() => {
         this.dataSource.paginator = this.paginator;
         this.dataSource.sort = this.sort;
       });
     });
   }
+  
   
   ngAfterViewInit(): void {
     setTimeout(() => {
