@@ -158,7 +158,19 @@ import { AdminCrmComponent } from './ServiceCRM/admin-crm/admin-crm.component';
 import { LabResultsDetailDialogComponent } from './chameleon-reports/diabetes-consultation/lab-results-detail-dialog/lab-results-detail-dialog.component';
 import { MitavSummaryDeliriumComponent } from './mitav/mitav-summary-delirium/mitav-summary-delirium.component';
 import { OccupationalTherapyComponent } from './chameleon-reports/occupational-therapy/occupational-therapy.component';
-
+import { DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE, MatDateFormats } from '@angular/material/core';
+import { MomentDateAdapter, MAT_MOMENT_DATE_ADAPTER_OPTIONS } from '@angular/material-moment-adapter';
+export const MY_DATE_FORMATS: MatDateFormats = {
+  parse: {
+    dateInput: 'DD/MM/YYYY',
+  },
+  display: {
+    dateInput: 'DD/MM/YYYY',
+    monthYearLabel: 'MMM YYYY',
+    dateA11yLabel: 'LL',
+    monthYearA11yLabel: 'MMMM YYYY',
+  },
+};
 
 @NgModule({
   declarations: [
@@ -327,8 +339,13 @@ import { OccupationalTherapyComponent } from './chameleon-reports/occupational-t
     CdkTableModule
 
   ],
-  providers: [DatePipe],
-  schemas: [CUSTOM_ELEMENTS_SCHEMA],
+  providers: [
+    DatePipe,
+    { provide: DateAdapter, useClass: MomentDateAdapter, deps: [MAT_DATE_LOCALE, MAT_MOMENT_DATE_ADAPTER_OPTIONS] },
+    { provide: MAT_DATE_FORMATS, useValue: MY_DATE_FORMATS },
+    { provide: MAT_DATE_LOCALE, useValue: 'he' } // Optional: set to Hebrew
+  ],  schemas: [CUSTOM_ELEMENTS_SCHEMA],
   bootstrap: [AppComponent],
 })
 export class AppModule { }
+

@@ -9,6 +9,9 @@ import { environment } from '../../../environments/environment';
 import { Renderer2 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { LabResultsDetailDialogComponent } from '../diabetes-consultation/lab-results-detail-dialog/lab-results-detail-dialog.component'; // adjust path
+import { DateAdapter } from '@angular/material/core';
+import { Inject } from '@angular/core';
+
 
 @Component({
   selector: 'app-diabetes-consultation',
@@ -275,8 +278,12 @@ selectedDepartments: string[] = []; // for user selection
   @ViewChild('sortICD9HaveEstimation', { static: true }) sortICD9HaveEstimation!: MatSort;
 
 
-  constructor(private http: HttpClient, private renderer: Renderer2,private dialog: MatDialog) {}
-
+  constructor(
+    private http: HttpClient,
+    private renderer: Renderer2,
+    private dialog: MatDialog,
+    @Inject(DateAdapter) private adapter: DateAdapter<any>
+  ) {}
   ngOnInit(): void {
     this.fetchLabResultsAboveThreshold();
     this.fetchInsulinData();
