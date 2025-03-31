@@ -173,7 +173,7 @@ class="custom-toggle-group"
       
       <!-- Lab Results Over 180 Percentage Card -->
   
-<mat-card class="gauge-card">
+<!-- <mat-card class="gauge-card">
   <div class="gauge-title">בדיקות מעבדה</div>
   <div class="gauge-content">
     <ngx-gauge
@@ -189,7 +189,7 @@ class="custom-toggle-group"
       מתוך <strong>{{ globalSourceTableFilter === 'מאושפזים' ? NullReleaseDateCount : NonNullReleaseDateCount }}</strong>
     </div>
   </div>
-</mat-card>
+</mat-card> -->
 
 <!-- Below 70 Gauge -->
 <mat-card class="gauge-card">
@@ -546,6 +546,10 @@ class="custom-toggle-group"
           <ng-container matColumnDef="UnitName">
             <th mat-header-cell *matHeaderCellDef mat-sort-header> מחלקה</th>
             <td mat-cell *matCellDef="let element">{{ element.UnitName }}</td>
+          </ng-container>
+          <ng-container matColumnDef="LastTestResult">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header> בדיקה אחרונה</th>
+            <td mat-cell *matCellDef="let element">{{ element.LastTestResult }}</td>
           </ng-container>
           <tr mat-header-row *matHeaderRowDef="sugerAbove180Columns"></tr>
 

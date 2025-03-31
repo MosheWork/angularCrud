@@ -106,7 +106,8 @@ icd9WithEstimationPercentage: number = 0;
     'Last_Name',
     'Count_Above_180_Less_48h',
     'Release_Date', 
-    'UnitName'
+    'UnitName',
+    'LastTestResult'
   ];
   insulinColumns: string[] = [
     'Admission_No',
