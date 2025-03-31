@@ -86,6 +86,21 @@
 
       <!-- Total Mobility Score Gauge -->
       <!-- Total Mobility Score Gauge -->
+      <div class="gauge-item">
+        <div class="gauge-title">הרעה בניידות</div>
+        <ngx-gauge
+          [value]="mobilityDeteriorationGauge"
+          [min]="0"
+          [max]="100"
+          [label]="''"
+          [append]="'%'"
+          [foregroundColor]="getGaugeColor()">
+        </ngx-gauge>
+        <div class="gauge-info">
+          <strong> הרעה {{ deterioratedMobilityCount }} / ללא הרעה {{ totalRowsCount - deterioratedMobilityCount }} / סה"כ - {{ totalRowsCount }} </strong>
+        </div>
+      </div>
+      
 <div class="gauge-item">
   <div class="gauge-title">הליכה בפועל </div>
   <ngx-gauge

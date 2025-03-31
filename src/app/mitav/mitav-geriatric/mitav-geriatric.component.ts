@@ -24,7 +24,13 @@ export class MitavGeriatricComponent implements OnInit {
   invalidGeriatricCount: number = 0;
   totalGeriatricCases: number = 0;
   geriatricAssessmentGauge: number = 0;
-  
+  // Additional gauges
+delayUnder24hPercentage: number = 0;
+delay24to48hPercentage: number = 0;
+delayOver48hPercentage: number = 0;
+under24Count: number = 0;
+from24to48Count: number = 0;
+over48Count: number = 0;
   displayedColumns: string[] = [
     'ATD_Admission_Date', 'Admission_No', 'Age_Years', 'PrimaryUnit_Name', 'GeriatricConsultation',
     'GeriatricConsultationOpenDate','Answer_Date','AnswerDelayInHours'
@@ -190,13 +196,44 @@ export class MitavGeriatricComponent implements OnInit {
   }
   updateGeriatricGauge(): void {
     this.totalGeriatricCases = this.dataSource.filteredData.length;
-    this.validGeriatricCount = this.dataSource.filteredData.filter(item => item.GeriatricConsultation === 'כן').length;
+  
+    // All patients with a consultation marked as 'כן'
+    const geriatricYesCases = this.dataSource.filteredData.filter(item => item.GeriatricConsultation === 'כן');
+  
+    this.validGeriatricCount = geriatricYesCases.length;
     this.invalidGeriatricCount = this.totalGeriatricCases - this.validGeriatricCount;
   
-    this.geriatricAssessmentGauge = this.totalGeriatricCases > 0 
-      ? (this.validGeriatricCount / this.totalGeriatricCases) * 100 
+    this.geriatricAssessmentGauge = this.totalGeriatricCases > 0
+      ? (this.validGeriatricCount / this.totalGeriatricCases) * 100
+      : 0;
+  
+    // ✅ Filter only those that have a numeric AnswerDelayInHours
+    const delayCases = geriatricYesCases.filter(item =>
+      item.AnswerDelayInHours !== 'אין ייעוץ' && !isNaN(Number(item.AnswerDelayInHours))
+    );
+  
+    // ✅ Count buckets
+    this.under24Count = delayCases.filter(item => Number(item.AnswerDelayInHours) < 24).length;
+    this.from24to48Count = delayCases.filter(item =>
+      Number(item.AnswerDelayInHours) >= 24 && Number(item.AnswerDelayInHours) <= 48
+    ).length;
+    this.over48Count = delayCases.filter(item => Number(item.AnswerDelayInHours) > 48).length;
+  
+    // ✅ Calculate percentages
+    this.delayUnder24hPercentage = this.validGeriatricCount > 0
+      ? (this.under24Count / this.validGeriatricCount) * 100
+      : 0;
+  
+    this.delay24to48hPercentage = this.validGeriatricCount > 0
+      ? (this.from24to48Count / this.validGeriatricCount) * 100
+      : 0;
+  
+    this.delayOver48hPercentage = this.validGeriatricCount > 0
+      ? (this.over48Count / this.validGeriatricCount) * 100
       : 0;
   }
+  
+  
   geriatricAssessmentGaugeColor(): string {
     if (this.geriatricAssessmentGauge >= 75) {
       return '#28a745'; // ✅ Green

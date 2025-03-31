@@ -586,4 +586,13 @@
     max-height: none !important;
   }
   
+  .gauge-container {
+    display: flex;
+    flex-direction: row; /* Force horizontal layout */
+    justify-content: center;
+    align-items: flex-start;
+    gap: 20px;
+    flex-wrap: nowrap; /* Keep them in one row */
+    width: 100%;
+  }
   

@@ -259,7 +259,7 @@
 
   .gauge-card {
     flex: 1;
-    width: 23%; /* Ensures 4 cards fit horizontally with spacing */
+    width: 15%; /* Ensures 4 cards fit horizontally with spacing */
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -272,7 +272,7 @@
     margin: 0; /* Remove margin to prevent extra spacing */
     text-align: center;
     width: 100%;
-  max-width: 1200px;
+  //max-width: 1200px;
   }
   .gauge-grid {
     display: grid;
@@ -282,7 +282,7 @@
     align-items: center;
   }
   .gauge-item {
-    flex: 1;
+    flex: 1 1 200px; /* Allows them to shrink/grow nicely */
     min-width: 200px; /* Ensures even spacing */
     max-width: 250px;
     display: flex;
@@ -337,9 +337,11 @@
   }
   .gauge-row {
     display: flex;
-    justify-content: space-between;
-    flex-wrap: wrap; /* Ensures responsiveness */
-    gap: 15px;
+    flex-wrap: nowrap;         /* 👈 Prevent wrapping */
+    overflow-x: auto;          /* 👈 Allow horizontal scroll */
+    justify-content: flex-start;
+    gap: 20px;
+    padding-bottom: 10px;      /* Optional: breathing room below */
   }
   // .gauge-row {
   //   display: flex;
@@ -369,6 +371,8 @@
     align-items: center;
     justify-content: flex-start; /* Push the table to the top */
     width: 100%;
+    padding-bottom: 80px; /* or more depending on your footer height */
+
   }
   
   .table-section .mat-paginator {

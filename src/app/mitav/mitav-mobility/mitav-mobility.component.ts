@@ -71,6 +71,10 @@ yearList: number[] = [];
 totalMobilityPercentage: number = 0; // Add a property to store the percentage
 mobilityGradeChartData: { name: string; value: number }[] = [];
 showGraph: boolean = false;
+mobilityDeteriorationGauge: number = 0;
+deterioratedMobilityCount: number = 0;
+totalRowsCount: number = 0;
+
 colorScheme = {
   domain: ['#5AA454', '#A10A28', '#C7B42C', '#AAAAAA'], // Example colors
 };
@@ -173,6 +177,8 @@ invalidMobilityCasesBelowThreshold: number = 0;
         this.calculateMobilityGradeAverage();
         this.calculateDepartmentPercentages();
         this.calculateGaugeValue(this.dataSource.data);
+        this.calculateMobilityDeteriorationGauge(this.dataSource.data); // or this.dataSource.data
+
 
         // ✅ Pass `this.dataSource.data` to all functions that require it
         this.calculateRecommendationForWalking(this.dataSource.data);
@@ -278,6 +284,7 @@ applyFilters(): void {
   this.calculateCognitiveStatePercentage(filteredData);
   this.calculateMobilityStatePercentage(filteredData);
   this.calculateFunctionalStatePercentage(filteredData);
+  this.calculateMobilityDeteriorationGauge(filteredData); // or this.dataSource.data
 
   // ✅ Update Counts
   this.calculateMobilityCases(filteredData);
@@ -326,7 +333,8 @@ applyFilters(): void {
     this.calculateCognitiveStatePercentage(this.filteredData);
     this.calculateMobilityStatePercentage(this.filteredData);
     this.calculateFunctionalStatePercentage(this.filteredData);
-  
+    this.calculateMobilityDeteriorationGauge(this.filteredData); // or this.dataSource.data
+
     // ✅ Reset Count Values
     this.calculateMobilityCases(this.filteredData);
     this.calculateConsultationCases(this.filteredData);
@@ -963,5 +971,12 @@ exportToExcel() {
   // ✅ Export file
   XLSX.writeFile(workbook, 'פילוח_מחלקתי.xlsx');
 }
+calculateMobilityDeteriorationGauge(data: any[]): void {
+  this.totalRowsCount = data.length;
+  this.deterioratedMobilityCount = data.filter(item => item.MobilityStatus === 'הרעה בניידות').length;
 
+  this.mobilityDeteriorationGauge = this.totalRowsCount > 0
+    ? (this.deterioratedMobilityCount / this.totalRowsCount) * 100
+    : 0;
+}
 }
