@@ -122,11 +122,23 @@
         <mat-header-cell *matHeaderCellDef mat-sort-header>ייעוץ גריאטרי</mat-header-cell>
         <mat-cell *matCellDef="let element"> {{ element.GeriatricConsultation }} </mat-cell>
       </ng-container>
-  
+      <ng-container matColumnDef="GeriatricConsultationOpenDate">
+        <mat-header-cell *matHeaderCellDef mat-sort-header> תאריך פתיחת הייעוץ</mat-header-cell>
+        <mat-cell *matCellDef="let element"> {{ element.GeriatricConsultationOpenDate }} </mat-cell>
+      </ng-container>
+      
+      <ng-container matColumnDef="Answer_Date">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>תאריך תשובה על הייעוץ</mat-header-cell>
+        <mat-cell *matCellDef="let element"> {{ element.Answer_Date }} </mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="AnswerDelayInHours">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>הפרש בשעות בין פתיחת לתשובה </mat-header-cell>
+        <mat-cell *matCellDef="let element"> {{ element.AnswerDelayInHours }} </mat-cell>
+      </ng-container>
       <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
       <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
     </mat-table>
   
     <mat-paginator [pageSizeOptions]="[5, 25, 50]" showFirstLastButtons></mat-paginator>
   </div>
-  
+  'GeriatricConsultationOpenDate','Answer_Date','AnswerDelayInHours'

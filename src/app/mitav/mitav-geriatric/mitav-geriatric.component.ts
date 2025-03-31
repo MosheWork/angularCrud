@@ -26,7 +26,9 @@ export class MitavGeriatricComponent implements OnInit {
   geriatricAssessmentGauge: number = 0;
   
   displayedColumns: string[] = [
-    'ATD_Admission_Date', 'Admission_No', 'Age_Years', 'PrimaryUnit_Name', 'GeriatricConsultation'
+    'ATD_Admission_Date', 'Admission_No', 'Age_Years', 'PrimaryUnit_Name', 'GeriatricConsultation',
+    'GeriatricConsultationOpenDate','Answer_Date','AnswerDelayInHours'
+
   ];
 
   columnLabels: { [key: string]: string } = {
@@ -34,7 +36,10 @@ export class MitavGeriatricComponent implements OnInit {
     Admission_No: 'מספר מקרה',
     Age_Years: 'גיל',
     PrimaryUnit_Name: 'מחלקה',
-    GeriatricConsultation: 'ייעוץ גריאטרי'
+    GeriatricConsultation: 'ייעוץ גריאטרי',
+    GeriatricConsultationOpenDate: 'ייעוץ גריאטרי',
+    Answer_Date: 'ייעוץ גריאטרי',
+    AnswerDelayInHours: 'ייעוץ גריאטרי',
   };
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
