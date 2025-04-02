@@ -161,6 +161,10 @@ import { OccupationalTherapyComponent } from './chameleon-reports/occupational-t
 import { DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE, MatDateFormats } from '@angular/material/core';
 import { MomentDateAdapter, MAT_MOMENT_DATE_ADAPTER_OPTIONS } from '@angular/material-moment-adapter';
 import { MainScreenComponent } from './ServiceCRM/main-screen/main-screen.component';
+import { BirthdayUpdateCRMComponent } from './ServiceCRM/birthday-update-crm/birthday-update-crm.component';
+import { LottieModule } from 'ngx-lottie';
+import player from 'lottie-web';
+
 export const MY_DATE_FORMATS: MatDateFormats = {
   parse: {
     dateInput: 'DD/MM/YYYY',
@@ -172,7 +176,9 @@ export const MY_DATE_FORMATS: MatDateFormats = {
     monthYearA11yLabel: 'MMMM YYYY',
   },
 };
-
+export function playerFactory() {
+  return player;
+}
 @NgModule({
   declarations: [
     AppComponent,
@@ -298,6 +304,7 @@ export const MY_DATE_FORMATS: MatDateFormats = {
     MitavSummaryDeliriumComponent,
     OccupationalTherapyComponent,
     MainScreenComponent,
+    BirthdayUpdateCRMComponent,
      
   
   ],
@@ -338,7 +345,9 @@ export const MY_DATE_FORMATS: MatDateFormats = {
     MatSlideToggleModule,
     DragDropModule,
     MatButtonToggleModule,
-    CdkTableModule
+    CdkTableModule,
+    LottieModule.forRoot({ player: playerFactory })
+
 
   ],
   providers: [

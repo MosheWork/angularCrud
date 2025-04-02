@@ -42,27 +42,48 @@
     <!-- Call Form -->
     <form [formGroup]="callForm">
       <mat-form-field appearance="outline">
-        <mat-label>סטטוס מנהל תיק</mat-label>
+        <mat-label>סטטוס שיחה</mat-label>
         <mat-select formControlName="caseManagerStatus">
-          <mat-option value="פתוח">פתוח</mat-option>
-          <mat-option value="סגור">סגור</mat-option>
-          <mat-option value="ממתין">ממתין</mat-option>
+          <mat-option value=""></mat-option>
+          <mat-option value="אין מענה">אין מענה</mat-option>
+          <mat-option value="פתוח">חיובי</mat-option>
+          <mat-option value="שלילי">שלילי</mat-option>
+          <mat-option value="טופל">טופל</mat-option>
+          <mat-option value="המשך טיפול ">המשך טיפול </mat-option>
         </mat-select>
       </mat-form-field>
   
       <mat-form-field appearance="outline">
         <mat-label>קטגוריה</mat-label>
-        <mat-select formControlName="caseManagerCategory">
-          <mat-option value="מכירה">מכירה</mat-option>
-          <mat-option value="שירות">שירות</mat-option>
-          <mat-option value="תמיכה">תמיכה</mat-option>
+        <mat-select formControlName="caseManagerCategory" required>
+          <mat-option value=""></mat-option>
+          <mat-option value="בירור חיובים">בירור חיובים</mat-option>
+          <mat-option value="דחיית/ ביטול ניתוח">דחיית/ ביטול ניתוח</mat-option>
+          <mat-option value="הבעת תודה">הבעת תודה</mat-option>
+          <mat-option value="היעדר מידע והסברים">היעדר מידע והסברים</mat-option>
+          <mat-option value="זמני המתנה לבדיקה רופא/ה">זמני המתנה לבדיקה רופא/ה</mat-option>
+          <mat-option value="זמני המתנה למועד התור">זמני המתנה למועד התור</mat-option>
+          <mat-option value="זמני המתנה לתוצאות בדיקה">זמני המתנה לתוצאות בדיקה</mat-option>
+          <mat-option value="חניה">חניה</mat-option>
+          <mat-option value="טיפול מקצועי לקוי (לכאורה)">טיפול מקצועי לקוי (לכאורה)</mat-option>
+          <mat-option value="יחס עובד - שלילי">יחס עובד - שלילי</mat-option>
+          <mat-option value="כשל במענה הטלפוני">כשל במענה הטלפוני</mat-option>
+          <mat-option value="ליקוי ברשומה רפואית">ליקוי ברשומה רפואית</mat-option>
+          <mat-option value="נושא חדש ממוקד">נושא חדש ממוקד</mat-option>
+          <mat-option value="שילוט">שילוט</mat-option>
+          <mat-option value="שפה">שפה</mat-option>
+          <mat-option value="תנאים פיזיים">תנאים פיזיים</mat-option>
+          <mat-option value="אובדן ציוד">אובדן ציוד</mat-option>
+          <mat-option value="אחר">אחר</mat-option>
         </mat-select>
+       
       </mat-form-field>
+      
   
-      <mat-form-field appearance="outline">
+      <!-- <mat-form-field appearance="outline">
         <mat-label>עדכון מנהל תיק</mat-label>
         <input matInput formControlName="caseManagerUpdate" type="date">
-      </mat-form-field>
+      </mat-form-field> -->
   
       <mat-form-field appearance="outline">
         <mat-label>הערות</mat-label>

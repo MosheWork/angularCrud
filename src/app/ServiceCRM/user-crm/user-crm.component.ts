@@ -7,7 +7,6 @@ import { environment } from '../../../environments/environment';
 import { PhoneCallDialogComponent } from '../phone-call-dialog/phone-call-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
 
-
 @Component({
   selector: 'app-user-crm',
   templateUrl: './user-crm.component.html',
@@ -15,14 +14,13 @@ import { MatDialog } from '@angular/material/dialog';
 })
 export class UserCRMComponent implements OnInit, AfterViewInit {
   displayedColumns: string[] = [
-    'AdmissionNo', 'UnitName', 'AdmissionDate', 'FirstName', 'LastName',
-    'Phone', 'PhoneCell', 'AgeFormatted', 'BirthDateFormatted',
-    'IsBirthdayToday', 'CallStatus', 'Catagory', 'FreeText', 'BirthDayToggle'
+    'CaseNumber', 'DepartmentName', 'EnterDepartDate', 'EnterDepartTime',
+    'ExitHospTime', 'FirstName', 'LastName', 'Telephone', 'Mobile',
+    'BirthDate',  'IsBirthday',
+    'CaseManagerStatus', 'CaseManagerCategory', 'CaseManagerUpdate', 'CaseManagerRemarks'
   ];
-  summary: any;
-  summaryWithCaseManager: any;
   dataSource = new MatTableDataSource<any>([]);
-  isLoading: boolean = true;
+  isLoading = true;
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
@@ -31,49 +29,37 @@ export class UserCRMComponent implements OnInit, AfterViewInit {
 
   ngOnInit(): void {
     this.fetchData();
-    this.fetchSummaries();
-
-  }
-
-  fetchSummaries(): void {
-    this.http.get<any>(`${environment.apiUrl}ServiceCRM/summary`).subscribe(data => {
-      this.summary = data;
-    });
-
-    this.http.get<any>(`${environment.apiUrl}ServiceCRM/summaryWithCaseManager`).subscribe(data => {
-      this.summaryWithCaseManager = data;
-    });
   }
 
   fetchData(): void {
     this.isLoading = true;
-  
-    this.http.get<any[]>(`${environment.apiUrl}ServiceCRM/CurrentPatients`).subscribe(data => {
+    this.http.get<any[]>(`${environment.apiUrl}ServiceCRM/HospPast72h`).subscribe(data => {
       this.dataSource.data = data.map(item => ({
         ...item,
-        AdmissionDate: item.AdmissionDate ? new Date(item.AdmissionDate) : null
+        EnterDepartDate: item.EnterDepartDate ? new Date(item.EnterDepartDate) : null,
+        BirthDate: item.BirthDate ? new Date(item.BirthDate) : null,
+        DeathDate: item.DeathDate ? new Date(item.DeathDate) : null,
+        CaseManagerUpdate: item.CaseManagerUpdate ? new Date(item.CaseManagerUpdate) : null
       }));
-  
       this.isLoading = false;
-  
+
       setTimeout(() => {
         this.dataSource.paginator = this.paginator;
         this.dataSource.sort = this.sort;
       });
     });
   }
-  
-  
+
   ngAfterViewInit(): void {
     setTimeout(() => {
       this.dataSource.paginator = this.paginator;
       this.dataSource.sort = this.sort;
     });
   }
+
   applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value.trim().toLowerCase();
     this.dataSource.filter = filterValue;
-
     if (this.dataSource.paginator) {
       this.dataSource.paginator.firstPage();
     }
@@ -84,15 +70,25 @@ export class UserCRMComponent implements OnInit, AfterViewInit {
       width: '600px',
       data: row
     });
-
+  
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        row.CaseManagerStatus = result.caseManagerStatus;
-        row.CaseManagerCategory = result.caseManagerCategory;
-        row.CaseManagerUpdate = result.caseManagerUpdate;
-        row.CaseManagerRemarks = result.caseManagerRemarks;
-        // You can also call an API to update this on the backend
+        // Attach the AdmissionNo
+        const payload = {
+          ...result,
+          CaseNumber: row.CaseNumber
+        };
+  
+        this.http.post(`${environment.apiUrl}ServiceCRM/UpdateCaseManagerInfo`, payload).subscribe(
+          () => {
+            this.fetchData(); // 🔄 Refresh table after successful update
+          },
+          error => {
+            console.error('❌ Failed to update case manager info:', error);
+          }
+        );
       }
     });
   }
+  
 }
