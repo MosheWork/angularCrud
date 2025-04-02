@@ -983,11 +983,13 @@ this.mobilityChangeTableData = mobilityChangeCategories.map(category => ({
     walkingProgramDepartments.includes(row.UnitName) &&
     row.MobilityStatus === category.status
   ).length,
-  walkingProgramAchieved70: this.filteredData.filter(row =>
+  walkingProgramAchieved70: data.filter(row =>
     walkingProgramDepartments.includes(row.UnitName) &&
+    row.TotalPercentage >= 70 &&
     row.MobilityStatus === category.status
   ).length
 }));
+
 
 this.mobilityChangeTableData.push({
   parameter: 'סה"כ',
