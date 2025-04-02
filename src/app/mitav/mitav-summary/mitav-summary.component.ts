@@ -839,8 +839,9 @@ achieved6PlusDays: this.hospitalizationTableData.reduce((sum, row) => sum + row.
 
 //6. פרמטר ניידות בקבלה			
 // ✅ Function to count patients by MobilityOnAdmissionText
-const countByMobilityText = (group: any[], mobilityText: string) =>
-  group.filter(row => row.MobilityOnAdmissionText.trim() === mobilityText).length;
+// ✅ Function to count patients by MobilityOnAdmissionText
+const countByMobilityText = (rows: any[], mobilityText: string) =>
+  rows.filter(row => row.MobilityOnAdmissionText?.trim() === mobilityText).length;
 
 // ✅ Define Mobility Categories
 const mobilityCategories = [
@@ -862,25 +863,25 @@ this.mobilityAdmissionTableData = mobilityCategories.map(category => ({
     category.text
   ),
   walkingProgramAchieved70: countByMobilityText(
-    data.filter(row => walkingProgramDepartments.includes(row.UnitName)),
+    filteredData70.filter(row => walkingProgramDepartments.includes(row.UnitName)),
     category.text
   )
 }));
 
-// ✅ Add "Unknown" Category
+// ✅ Add "Unknown" Row
 this.mobilityAdmissionTableData.push({
   parameter: "לא ידוע",
   internalAndSurgical: data.filter(row =>
     internalAndSurgicalDepartments.includes(row.UnitName) &&
-    !mobilityCategories.some(cat => row.MobilityOnAdmissionText.trim() === cat.text)
+    !mobilityCategories.some(cat => row.MobilityOnAdmissionText?.trim() === cat.text)
   ).length,
   walkingProgram: data.filter(row =>
     walkingProgramDepartments.includes(row.UnitName) &&
-    !mobilityCategories.some(cat => row.MobilityOnAdmissionText.trim() === cat.text)
+    !mobilityCategories.some(cat => row.MobilityOnAdmissionText?.trim() === cat.text)
   ).length,
-  walkingProgramAchieved70: this.filteredData.filter(row =>
+  walkingProgramAchieved70: filteredData70.filter(row =>
     walkingProgramDepartments.includes(row.UnitName) &&
-    !mobilityCategories.some(cat => row.MobilityOnAdmissionText.trim() === cat.text)
+    !mobilityCategories.some(cat => row.MobilityOnAdmissionText?.trim() === cat.text)
   ).length
 });
 
@@ -891,6 +892,7 @@ this.mobilityAdmissionTableData.push({
   walkingProgram: this.mobilityAdmissionTableData.reduce((sum, row) => sum + row.walkingProgram, 0),
   walkingProgramAchieved70: this.mobilityAdmissionTableData.reduce((sum, row) => sum + row.walkingProgramAchieved70, 0)
 });
+
 
 //7.פרמטר ניידות בשחרור			
 
