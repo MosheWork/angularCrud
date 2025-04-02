@@ -626,7 +626,7 @@ export class MitavSummaryComponent implements OnInit {
       'מחלקת פנימית ב', 'מחלקת כירורגיה'
     ];
   
-    const filteredData70 = data.filter(row => row.TotalPercentage >= 70);
+    const filteredData70 = this.filteredData.filter(row => row.TotalPercentage >= 70);
   
    
         // **📌 First Table Data (General Counts)**
@@ -777,11 +777,11 @@ data.filter(row =>
 
 // ✅ **Function to filter Walking Program Participants Who Achieved 70%**
 const getWalkingProgramAchievedData = (minAge: number, maxAge: number, daysMin: number, daysMax: number) =>
-this.filteredData.filter(row =>
-  row.AgeYears >= minAge && row.AgeYears <= maxAge &&
-  walkingProgramDepartments.includes(row.UnitName) &&
-  row.TotalDaysInHospital >= daysMin && row.TotalDaysInHospital <= daysMax
-).length;
+  filteredData70.filter(row =>
+    row.AgeYears >= minAge && row.AgeYears <= maxAge &&
+    walkingProgramDepartments.includes(row.UnitName) &&
+    row.TotalDaysInHospital >= daysMin && row.TotalDaysInHospital <= daysMax
+  ).length;
 
 // ✅ **Creating the Table Data**
 this.hospitalizationTableData = [
