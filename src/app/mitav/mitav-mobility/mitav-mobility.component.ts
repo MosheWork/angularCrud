@@ -191,7 +191,6 @@ invalidMobilityCasesBelowThreshold: number = 0;
         this.calculateConsultationCases(this.dataSource.data);
         this.calculateCognitiveCases(this.dataSource.data);
         this.calculateMobilityStateCases(this.dataSource.data);
-        this.calculateConsultationCases(this.dataSource.data); // ✅ Add this!
 
         this.yearList = Array.from(
           new Set(
@@ -292,7 +291,8 @@ applyFilters(): void {
   this.calculateConsultationCases(filteredData);
   this.calculateCognitiveCases(filteredData);
   this.calculateMobilityStateCases(filteredData);
-  
+  this.calculateConsultationCases(filteredData); // ✅ Make sure this runs!
+
 }
 
   
@@ -343,6 +343,8 @@ applyFilters(): void {
     this.calculateCognitiveCases(this.filteredData);
     this.calculateMobilityStateCases(this.filteredData);
     this.calculateConsultationCases(this.filteredData); // ✅ Add this!
+
+
 
     // ✅ Reset paginator
     setTimeout(() => {
@@ -870,21 +872,39 @@ calculateRecommendationCases(data: any[]): void {
   this.invalidWalkingCases = totalCases - this.validWalkingCases;
 }
 calculateConsultationCases(data: any[]): void {
-  const filteredData = data.filter(item => Number(item.MobilityGrade) === 2 || Number(item.MobilityGrade) === 3);
+  console.log('🔍 Starting calculateConsultationCases...');
+  
+  const filteredData = data.filter(item =>
+    item.MobilityGrade === 'מאוד מוגבל - 2' || item.MobilityGrade === 'מעט לקויה - 3'
+  );
+  
+
   const totalCases = filteredData.length;
+  console.log(`📊 Total Relevant Consultation Cases (Grade 2 or 3): ${totalCases}`);
 
   if (totalCases === 0) {
+    console.warn('⚠️ No relevant consultation cases.');
     this.validConsultationCases = 0;
     this.invalidConsultationCases = 0;
     this.consultationPercentageGauge = 0;
     return;
   }
 
-  this.validConsultationCases = filteredData.filter(item => item.ConsultationStatus === 'Yes').length;
-  this.invalidConsultationCases = totalCases - this.validConsultationCases;
+  this.validConsultationCases = filteredData.filter(item => {
+    const status = item.ConsultationStatus?.toString().trim().toLowerCase();
+    const isValid = status === 'yes';
+    console.log(`✔️ Checking status: "${item.ConsultationStatus}" => ${isValid ? '✅ valid' : '❌ invalid'}`);
+    return isValid;
+  }).length;
 
+  this.invalidConsultationCases = totalCases - this.validConsultationCases;
   this.consultationPercentageGauge = (this.validConsultationCases / totalCases) * 100;
+
+  console.log(`✅ validConsultationCases: ${this.validConsultationCases}`);
+  console.log(`❌ invalidConsultationCases: ${this.invalidConsultationCases}`);
+  console.log(`📈 consultationPercentageGauge: ${this.consultationPercentageGauge.toFixed(2)}%`);
 }
+
 
 
 calculateCognitiveCases(data: any[]): void {
