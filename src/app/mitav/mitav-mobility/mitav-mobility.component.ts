@@ -191,6 +191,7 @@ invalidMobilityCasesBelowThreshold: number = 0;
         this.calculateConsultationCases(this.dataSource.data);
         this.calculateCognitiveCases(this.dataSource.data);
         this.calculateMobilityStateCases(this.dataSource.data);
+        this.calculateConsultationCases(this.dataSource.data); // ✅ Add this!
 
         this.yearList = Array.from(
           new Set(
@@ -291,6 +292,7 @@ applyFilters(): void {
   this.calculateConsultationCases(filteredData);
   this.calculateCognitiveCases(filteredData);
   this.calculateMobilityStateCases(filteredData);
+  
 }
 
   
@@ -340,7 +342,8 @@ applyFilters(): void {
     this.calculateConsultationCases(this.filteredData);
     this.calculateCognitiveCases(this.filteredData);
     this.calculateMobilityStateCases(this.filteredData);
-  
+    this.calculateConsultationCases(this.filteredData); // ✅ Add this!
+
     // ✅ Reset paginator
     setTimeout(() => {
       if (this.paginator) {
@@ -867,22 +870,20 @@ calculateRecommendationCases(data: any[]): void {
   this.invalidWalkingCases = totalCases - this.validWalkingCases;
 }
 calculateConsultationCases(data: any[]): void {
-
-  // ✅ Step 1: Filter only cases where MobilityGrade is 2 or 3
   const filteredData = data.filter(item => Number(item.MobilityGrade) === 2 || Number(item.MobilityGrade) === 3);
-
   const totalCases = filteredData.length;
+
   if (totalCases === 0) {
     this.validConsultationCases = 0;
     this.invalidConsultationCases = 0;
+    this.consultationPercentageGauge = 0;
     return;
   }
 
-  // ✅ Step 2: Count "Yes" in ConsultationStatus
   this.validConsultationCases = filteredData.filter(item => item.ConsultationStatus === 'Yes').length;
   this.invalidConsultationCases = totalCases - this.validConsultationCases;
 
-  console.log(`📌 סטטוס התייעצות - תקין: ${this.validConsultationCases} / לא תקין: ${this.invalidConsultationCases}`);
+  this.consultationPercentageGauge = (this.validConsultationCases / totalCases) * 100;
 }
 
 

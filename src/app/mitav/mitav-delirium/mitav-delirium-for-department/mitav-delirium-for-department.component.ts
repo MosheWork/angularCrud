@@ -38,7 +38,7 @@ export class MitavDeliriumForDepartmentComponent implements OnInit {
 
 
   displayedColumns: string[] = [
-    'ATD_Admission_Date', 'AdmissionNo', 'AgeYears',  'TotalHospDays', 'AdmissionCAMGrade','PreventionORInterventionCAM',
+    'ATD_Admission_Date', 'Pname','AdmissionNo', 'AgeYears',   'AdmissionCAMGrade','PreventionORInterventionCAM',
     'Grade', 'GradeEntryDate', 'PatientWithDelirium', 'PatientWithDeliriumEntryDate',
     'DeliriumDaysCount',  'DrugForDelirium', 'TotalEstimationGradesCount',
     'GradeCount', 'DeliriumConsiliumsOpened', 'DeliriumConsiliumsDate', 'HoursDifference',
@@ -48,9 +48,10 @@ export class MitavDeliriumForDepartmentComponent implements OnInit {
   columnLabels: { [key: string]: string } = {
     ATD_Admission_Date: 'תאריך קבלה',
     AdmissionNo: 'מספר מקרה',
+    Pname: 'מספר מקרה',
     AgeYears: 'גיל',
     SystemUnitName: 'מחלקה',
-    TotalHospDays: 'סה"כ ימי אשפוז',
+    //TotalHospDays: 'סה"כ ימי אשפוז',
     Grade: 'ציון אומדן',
     GradeEntryDate: 'תאריך אומדן',
     PatientWithDelirium: 'דליריום',

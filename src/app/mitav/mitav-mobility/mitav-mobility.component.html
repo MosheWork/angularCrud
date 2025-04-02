@@ -87,7 +87,7 @@
       <!-- Total Mobility Score Gauge -->
       <!-- Total Mobility Score Gauge -->
       <div class="gauge-item">
-        <div class="gauge-title">הרעה בניידות</div>
+        <div class="gauge-title">התדרדרות בניידות</div>
         <ngx-gauge
           [value]="mobilityDeteriorationGauge"
           [min]="0"
@@ -104,7 +104,7 @@
 <div class="gauge-item">
   <div class="gauge-title">הליכה בפועל </div>
   <ngx-gauge
-    [value]="gaugeValue"
+  [value]="(validMobilityCasesAboveThreshold / totalMobilityCases) * 100"
     [min]="0"
     [max]="100"
     [label]="''"
