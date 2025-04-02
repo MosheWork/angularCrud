@@ -1024,8 +1024,9 @@ this.mobilityBasicFunctionTableData = basicFunctionCategories.map(category => ({
   ).length,
 
   // Column 3: Walking Program + Achieved >=70%
-  walkingProgramAchieved70: this.filteredData.filter(row =>
+  walkingProgramAchieved70: data.filter(row =>
     walkingProgramDepartments.includes(row.UnitName) &&
+    row.TotalPercentage >= 70 &&
     row.BasicFunctionBeforeHospitalization?.trim() === category.value
   ).length
 }));
