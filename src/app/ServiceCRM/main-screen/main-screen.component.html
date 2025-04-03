@@ -1,19 +1,39 @@
-<div class="crm-container">
-    <div class="overlay"></div>
-    <div class="content">
-      <img src="assets/logo.png" alt="Tzafon Logo" class="logo" />
-      <h1 class="title">מרכז רפואי צפון - CRM</h1>
-  
-      <div class="button-grid">
-        <button mat-raised-button color="primary" class="crm-button" routerLink="/UserCRM">מאושפזים</button>
-        <button mat-raised-button color="accent" class="crm-button" routerLink="/calls">שיחות מנהל</button>
-        <button mat-raised-button color="warn" class="crm-button" routerLink="/surveys">סקרי שביעות רצון</button>
-        <button mat-raised-button class="crm-button custom-green" routerLink="/feedback">משובים בזמן אמת</button>
-        <button mat-raised-button class="birthday-button" routerLink="/birthdays">
-          <span class="button-text">ימי הולדת</span>
-        </button>
-        
-      </div>
+<div
+  class="crm-container"
+  [ngStyle]="{
+    'background-image': 'url(' + backgroundImageUrl + ')',
+    'background-size': 'cover',
+    'background-position': 'center',
+    'background-repeat': 'no-repeat'
+  }"
+>
+  <div class="overlay"></div>
+  <div class="content">
+
+    <!-- 👤 Profile Section -->
+    <div class="user-info">
+      <img [src]="profilePictureUrl" alt="User Profile" class="profile-pic" />
+      <div class="welcome-text">ברוך הבא {{ userName }}</div>
+    </div>
+
+    <!-- 🔵 Logo + Title -->
+    <img src="assets/logo.png" alt="Tzafon Logo" class="logo" />
+    <h1 class="title">מרכז רפואי צפון - CRM</h1>
+
+    <!-- 🧩 Button Grid -->
+    <div class="button-grid">
+      <button mat-raised-button color="primary" class="crm-button" routerLink="/UserCRM">מאושפזים</button>
+      <button mat-raised-button color="accent" class="crm-button" routerLink="/calls">שיחות מנהל</button>
+      <button mat-raised-button color="warn" class="crm-button" routerLink="/surveys">סקרי שביעות רצון</button>
+      <button mat-raised-button class="crm-button custom-green" routerLink="/feedback">משובים בזמן אמת</button>
+      <button
+      mat-raised-button
+      class="birthday-button"
+      routerLink="/BirthdayUpdateCRM"
+      [ngStyle]="{ 'background-image': 'url(' + birthdayImageUrl + ')' }"
+    >
+      <span class="button-text">ימי הולדת</span>
+    </button>
     </div>
   </div>
-  
+</div>

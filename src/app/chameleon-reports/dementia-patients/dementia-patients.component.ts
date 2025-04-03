@@ -23,9 +23,10 @@ export class DementiaPatientsComponent implements OnInit {
   titleUnit: string = 'מטופלים דימנטים ';
   Title1: string = ' סה"כ תוצאות: ';
   Title2: string = '';    
+  showOnlyThreeOrMore: boolean = false;
 
   displayedColumns: string[] = [
-    'Admission_Date',  'UnitName', 'IdNum', 'AdmissionNo', 'FirstName', 'LastName','DataStatus'
+    'Admission_Date',  'UnitName', 'IdNum', 'AdmissionNo', 'FirstName', 'LastName','DataStatus','HospitalizationsLast6Months'
   ];
   
   // ✅ Columns only for the dialog
@@ -80,18 +81,13 @@ export class DementiaPatientsComponent implements OnInit {
   
   applyFilters() {
     const { startEntryDate, endEntryDate, globalFilter } = this.filterForm.value;
-    
-    // ✅ Convert selected dates to Date objects for comparison
     const startDate = startEntryDate ? new Date(startEntryDate) : null;
     const endDate = endEntryDate ? new Date(endEntryDate) : null;
   
-    console.log("Total API results:", this.originalData.length); // Debug API results
-  
-    // ✅ Apply Filters
     const filteredData = this.originalData.filter(patient => {
       const patientDate = patient.EntryDate ? new Date(patient.EntryDate) : null;
   
-      const isDateInRange = 
+      const isDateInRange =
         (!startDate || (patientDate && patientDate >= startDate)) &&
         (!endDate || (patientDate && patientDate <= endDate));
   
@@ -99,13 +95,13 @@ export class DementiaPatientsComponent implements OnInit {
         value?.toString().toLowerCase().includes(globalFilter.toLowerCase())
       );
   
-      return isDateInRange && isGlobalMatch;
+      const hasMinHospitalizations =
+        !this.showOnlyThreeOrMore || (patient.HospitalizationsLast6Months >= 3);
+  
+      return isDateInRange && isGlobalMatch && hasMinHospitalizations;
     });
   
-    console.log("Filtered results:", filteredData.length); // Debug filtered results
-    
-    // ✅ Ensure Angular Updates the UI
-    this.dataSource.data = [...filteredData]; // Force change detection
+    this.dataSource.data = [...filteredData];
     this.totalResults = this.dataSource.data.length;
   
     setTimeout(() => {
@@ -113,6 +109,7 @@ export class DementiaPatientsComponent implements OnInit {
       this.dataSource.sort = this.sort;
     });
   }
+  
   
   resetFilters() {
     this.filterForm.setValue({

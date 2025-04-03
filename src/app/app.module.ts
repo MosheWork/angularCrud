@@ -164,6 +164,7 @@ import { MainScreenComponent } from './ServiceCRM/main-screen/main-screen.compon
 import { BirthdayUpdateCRMComponent } from './ServiceCRM/birthday-update-crm/birthday-update-crm.component';
 import { LottieModule } from 'ngx-lottie';
 import player from 'lottie-web';
+import { AuthenticationService} from './services/authentication-service/authentication-service.component';
 
 export const MY_DATE_FORMATS: MatDateFormats = {
   parse: {
@@ -304,7 +305,8 @@ export function playerFactory() {
     MitavSummaryDeliriumComponent,
     OccupationalTherapyComponent,
     MainScreenComponent,
-    BirthdayUpdateCRMComponent,
+    BirthdayUpdateCRMComponent
+   
      
   
   ],

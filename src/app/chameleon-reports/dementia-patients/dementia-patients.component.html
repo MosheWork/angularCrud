@@ -22,7 +22,12 @@
       <mat-datepicker-toggle matSuffix [for]="endDatePicker"></mat-datepicker-toggle>
       <mat-datepicker #endDatePicker></mat-datepicker>
     </mat-form-field>
-
+    <mat-slide-toggle
+    [(ngModel)]="showOnlyThreeOrMore"
+    [ngModelOptions]="{ standalone: true }"
+    (change)="applyFilters()">
+    הצג רק 3 אשפוזים ומעלה
+  </mat-slide-toggle>
     <!-- Form Footer with Search, Reset, and Export Options -->
     <div dir="rtl" class="form-footer" style="display: flex; justify-content: space-between;" >
       <mat-form-field class="long-search-bar" style="flex: 1; margin-right: 10px;">
@@ -80,6 +85,10 @@
     <ng-container matColumnDef="DataStatus">
       <mat-header-cell *matHeaderCellDef mat-sort-header> מקור</mat-header-cell>
       <mat-cell *matCellDef="let element"> {{ element.DataStatus }} </mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="HospitalizationsLast6Months">
+      <mat-header-cell *matHeaderCellDef mat-sort-header> כמות אשפוזים בחצי שנה האחרונה</mat-header-cell>
+      <mat-cell *matCellDef="let element"> {{ element.HospitalizationsLast6Months }} </mat-cell>
     </ng-container>
     <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
     <mat-row *matRowDef="let row; columns: displayedColumns;" (click)="openPatientDialog(row)" class="clickable-row"></mat-row>
