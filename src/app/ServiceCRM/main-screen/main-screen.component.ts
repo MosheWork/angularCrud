@@ -9,7 +9,7 @@ import { environment } from '../../../environments/environment';
   styleUrls: ['./main-screen.component.scss']
 })
 export class MainScreenComponent implements OnInit {
-  userName: string = '';
+  UserName: string = '';
   profilePicture: string = ''; // URL or base64
   backgroundImageUrl: string = 'assets/back1.jpg';
   birthdayImageUrl: string = 'assets/birthday.jpg';
@@ -36,8 +36,8 @@ export class MainScreenComponent implements OnInit {
     this.http.get<any>(`${environment.apiUrl}ServiceCRM/GetEmployeeInfo?username=${username.toUpperCase()}`)
   .subscribe(
     (data) => {
-      this.userName = data.userName;
-      this.profilePictureUrl = `assets/profile/${data.ProfilePicture}`; // adjust path if needed
+      this.UserName = data.UserName;
+      this.profilePictureUrl = `${data.ProfilePicture}`; // adjust path if needed
     },
     (error) => {
       console.error('Error fetching employee info:', error);
