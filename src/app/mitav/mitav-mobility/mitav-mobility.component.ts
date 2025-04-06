@@ -993,8 +993,10 @@ exportToExcel() {
   XLSX.writeFile(workbook, 'פילוח_מחלקתי.xlsx');
 }
 calculateMobilityDeteriorationGauge(data: any[]): void {
-  this.totalRowsCount = data.length;
-  this.deterioratedMobilityCount = data.filter(item => item.MobilityStatus === 'הרעה בניידות').length;
+  const filtered = data.filter(item => item.MobilityStatus !== 'אין תיעוד'); // ✅ Exclude "לא ידוע"
+
+  this.totalRowsCount = filtered.length;
+  this.deterioratedMobilityCount = filtered.filter(item => item.MobilityStatus === 'הרעה בניידות').length;
 
   this.mobilityDeteriorationGauge = this.totalRowsCount > 0
     ? (this.deterioratedMobilityCount / this.totalRowsCount) * 100
