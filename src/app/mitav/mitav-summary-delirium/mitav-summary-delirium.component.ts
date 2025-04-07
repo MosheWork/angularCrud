@@ -136,8 +136,8 @@ dateTo: Date | null = null;
     console.log('📊 Delirium Data sample:', this.deliriumData.slice(0, 5));
     this.totalPatients75Plus = data.length;
     this.screenedForDelirium = data.filter(p => p.Grade !== null).length;
-    this.diagnosedWithDelirium = data.filter(p => p.PatientWithDelirium === 'כן').length;
-    this.treatedDelirium = data.filter(p => p.DrugForDelirium === 'כן').length;
+    this.diagnosedWithDelirium = data.filter(p => (p.PatientWithDelirium || '').trim() === 'כן').length;
+    this.treatedDelirium = data.filter(p => p.PreventionORInterventionCAM && p.PreventionORInterventionCAM.trim() !== 'לא בוצע').length;
     this.treatedWithDrug = data.filter(p => p.DrugForDelirium === 'כן').length;
     this.treatedWithoutDrug = this.treatedDelirium - this.treatedWithDrug;
   
