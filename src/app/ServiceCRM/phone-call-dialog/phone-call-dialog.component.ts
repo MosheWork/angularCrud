@@ -70,6 +70,7 @@ export class PhoneCallDialogComponent implements OnInit {
       (data) => {
         this.UserName = data.UserName;
         this.profilePictureUrl = data.ProfilePicture || 'assets/default-user.png';
+        console.log("pic :" + this.profilePictureUrl ) 
       },
       (error) => {
         console.error('Error fetching employee info:', error);
