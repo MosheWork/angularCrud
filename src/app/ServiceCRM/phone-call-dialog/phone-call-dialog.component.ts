@@ -14,9 +14,9 @@ import { AuthenticationService } from '../../services/authentication-service/aut
   styleUrls: ['./phone-call-dialog.component.scss']
 })
 export class PhoneCallDialogComponent implements OnInit {
-  profilePictureUrl: string = 'assets/default-user.png';
+  profilePictureUrl: string = '';
   UserName: string = '';
-  adUser: string = ''; // ✅ ADD THIS LINE
+  adUser: string = ''; 
 
 
   callForm: FormGroup;
@@ -58,27 +58,36 @@ export class PhoneCallDialogComponent implements OnInit {
   ngOnInit(): void {
     this.authenticationService.getAuthentication().subscribe(
       (response) => {
-        this.adUser = response.message.split('\\')[1].toUpperCase(); // ✅ Now this works
-        console.log("adUser :" + this.adUser)
+        this.adUser = response.message.split('\\')[1].toUpperCase();
+        console.log("🧑‍💼 AD User:", this.adUser);
+  
+        // ✅ Now only fetch user details AFTER adUser is available
+        this.getUserDetailsFromDBByUserName(this.adUser);
       },
       (error) => {
         console.error('❌ Authentication Failed:', error);
       }
     );
   }
-
+  
   getUserDetailsFromDBByUserName(username: string): void {
     this.http.get<any>(`${environment.apiUrl}ServiceCRM/GetEmployeeInfo?username=${username}`).subscribe(
       (data) => {
         this.UserName = data.UserName;
-        this.profilePictureUrl = data.ProfilePicture || 'assets/default-user.png';
-        console.log("pic :" + this.profilePictureUrl ) 
+        this.profilePictureUrl = data.ProfilePicture 
+          ? data.ProfilePicture.startsWith('http') 
+            ? data.ProfilePicture 
+            : `${environment.apiUrl}${data.ProfilePicture}`
+          : 'assets/default-user.png';
+        
+        console.log("📸 Profile Picture URL:", this.profilePictureUrl);
       },
       (error) => {
-        console.error('Error fetching employee info:', error);
+        console.error('❌ Error fetching employee info:', error);
       }
     );
   }
+  
   save() {
     const formValue = this.callForm.value;
     const payload = {
