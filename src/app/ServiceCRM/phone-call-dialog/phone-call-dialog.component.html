@@ -10,12 +10,13 @@
       <mat-card-content>
         <!-- Patient Name Centered -->
         <div class="patient-header">
+          <img [src]="profilePictureUrl" class="profile-pic" />
           <h2>
             <mat-icon class="user-icon">person</mat-icon>
             <span class="name">{{ data.FirstName }} {{ data.LastName }}</span>
+            
           </h2>
         </div>
-  
         <!-- Contact Info (2 per row) -->
         <div class="contact-info">
           <div class="contact-item">

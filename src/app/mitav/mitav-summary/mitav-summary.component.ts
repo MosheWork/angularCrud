@@ -971,23 +971,26 @@ const mobilityChangeCategories = [
   { status: "שיפור", label: "שיפור" },
   { status: "ללא שינוי", label: "ללא שינוי" },
   { status: "הדרדרות", label: "הדרדרות" },
-  { status: "לא ידוע", label: "לא ידוע" }
+  { status: "לא בוצעה הערכת ניידות בשחרור", label: "לא ידוע" }
 ];
 
 this.mobilityChangeTableData = mobilityChangeCategories.map(category => ({
   parameter: category.label,
   internalAndSurgical: data.filter(row =>
     internalAndSurgicalDepartments.includes(row.UnitName) &&
-    row.MobilityStatus === category.status
+    row.MobilityAssessmentAtDischarge
+    === category.status
   ).length,
   walkingProgram: data.filter(row =>
     walkingProgramDepartments.includes(row.UnitName) &&
-    row.MobilityStatus === category.status
+    row.MobilityAssessmentAtDischarge
+    === category.status
   ).length,
   walkingProgramAchieved70: data.filter(row =>
     walkingProgramDepartments.includes(row.UnitName) &&
     row.TotalPercentage >= 70 &&
-    row.MobilityStatus === category.status
+    row.MobilityAssessmentAtDischarge
+    === category.status
   ).length
 }));
 
