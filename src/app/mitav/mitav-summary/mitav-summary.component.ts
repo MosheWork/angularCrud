@@ -905,7 +905,7 @@ const mobilityDischargeCategories = [
 
 // 2. Function to count based on exact match
 const countByDischargeMobility = (group: any[], mobilityText: string) =>
-  group.filter(row => row.MobilityAssessmentAtDischarge?.trim() === mobilityText).length;
+  group.filter(row => row.ComboText15478?.trim() === mobilityText).length;
 
 // 3. Start with a clean array
 this.mobilityDischargeTableData = [];
@@ -934,18 +934,19 @@ const unknownRow = {
   parameter: "לא ידוע",
   internalAndSurgical: data.filter(row =>
     internalAndSurgicalDepartments.includes(row.UnitName) &&
-    !mobilityDischargeCategories.some(cat => row.MobilityAssessmentAtDischarge?.trim() === cat.text)
+    !mobilityDischargeCategories.some(cat => row.ComboText15478?.trim() === cat.text)
   ).length,
   walkingProgram: data.filter(row =>
     walkingProgramDepartments.includes(row.UnitName) &&
-    !mobilityDischargeCategories.some(cat => row.MobilityAssessmentAtDischarge?.trim() === cat.text)
+    !mobilityDischargeCategories.some(cat => row.ComboText15478?.trim() === cat.text)
   ).length,
   walkingProgramAchieved70: this.filteredData.filter(row =>
     walkingProgramDepartments.includes(row.UnitName) &&
     row.TotalPercentage >= 70 &&
-    !mobilityDischargeCategories.some(cat => row.MobilityAssessmentAtDischarge?.trim() === cat.text)
+    !mobilityDischargeCategories.some(cat => row.ComboText15478?.trim() === cat.text)
   ).length
 };
+
 this.mobilityDischargeTableData.push(unknownRow);
 
 const totalRowDischarge  = {
