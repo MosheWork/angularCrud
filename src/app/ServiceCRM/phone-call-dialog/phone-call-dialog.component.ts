@@ -78,12 +78,15 @@ export class PhoneCallDialogComponent implements OnInit {
     );
   }
   save() {
-  
     const formValue = this.callForm.value;
+  
     const payload = {
       ...formValue,
-      caseManagerUpdate: new Date(new Date().getTime() + (3 * 60 * 60 * 1000))
+      caseManagerUpdate: new Date(new Date().getTime() + (3 * 60 * 60 * 1000)), // with +3 hours
+      caseManagerUserName: this.UserName,
+      caseManagerProfilePicture: this.profilePictureUrl
     };
+  
     this.dialogRef.close(payload);
   }
 
