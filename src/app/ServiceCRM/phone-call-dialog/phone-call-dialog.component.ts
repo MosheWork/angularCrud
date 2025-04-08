@@ -16,6 +16,8 @@ import { AuthenticationService } from '../../services/authentication-service/aut
 export class PhoneCallDialogComponent implements OnInit {
   profilePictureUrl: string = 'assets/default-user.png';
   UserName: string = '';
+  adUser: string = ''; // ✅ ADD THIS LINE
+
 
   callForm: FormGroup;
   categories: string[] = [
@@ -56,8 +58,8 @@ export class PhoneCallDialogComponent implements OnInit {
   ngOnInit(): void {
     this.authenticationService.getAuthentication().subscribe(
       (response) => {
-        const user = response.message.split('\\')[1];
-        this.getUserDetailsFromDBByUserName(user.toUpperCase());
+        this.adUser = response.message.split('\\')[1].toUpperCase(); // ✅ Now this works
+        console.log("adUser :" + this.adUser)
       },
       (error) => {
         console.error('❌ Authentication Failed:', error);
@@ -79,18 +81,18 @@ export class PhoneCallDialogComponent implements OnInit {
   }
   save() {
     const formValue = this.callForm.value;
-  
     const payload = {
       ...formValue,
-      caseManagerUpdate: new Date(new Date().getTime() + (3 * 60 * 60 * 1000)), // with +3 hours
-      caseManagerUserName: this.UserName,
-      caseManagerProfilePicture: this.profilePictureUrl
+      caseManagerUpdate: new Date(new Date().getTime() + (3 * 60 * 60 * 1000)),
+      caseManagerUserName: this.adUser, // ✅ This will now be "MOSHEM"
+      CaseNumber: this.data.CaseNumber
     };
-  
     this.dialogRef.close(payload);
+    console.log("Payload:" + payload)
   }
 
   close() {
     this.dialogRef.close();
   }
+  
 }

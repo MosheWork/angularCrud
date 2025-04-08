@@ -5,6 +5,8 @@ import { MatSort } from '@angular/material/sort';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
 import { AnimationOptions } from 'ngx-lottie';
+import { AuthenticationService } from '../../services/authentication-service/authentication-service.component';
+
 
 
 
@@ -15,6 +17,8 @@ import { AnimationOptions } from 'ngx-lottie';
   styleUrls: ['./birthday-update-crm.component.scss']
 })
 export class BirthdayUpdateCRMComponent implements OnInit, AfterViewInit {
+
+  
   displayedColumns: string[] = [
     'CaseNumber', 'DepartmentName', 'EnterDepartDate', 'EnterDepartTime',
     'ExitHospTime', 'FirstName', 'LastName', 'Telephone', 'Mobile',
@@ -30,6 +34,9 @@ export class BirthdayUpdateCRMComponent implements OnInit, AfterViewInit {
     loop: true
   };
 
+  currentUsername: string = '';
+  UserName: string = ''; // 👈 ADD THIS LINE
+
 
   animationCreated(animationItem: any): void {
     console.log('🎉 Birthday Lottie animation started');
@@ -41,10 +48,23 @@ export class BirthdayUpdateCRMComponent implements OnInit, AfterViewInit {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private authService: AuthenticationService) {}
 
   ngOnInit(): void {
+    this.authService.getAuthentication().subscribe(
+      (response) => {
+        console.log('✅ Authentication Successful:', response.message);
+        let user = response.message.split('\\')[1];
+        console.log('🧑 User:', user);
+        this.currentUsername = user.toUpperCase(); // Save to use later when sending payload
+        this.fetchData();
+      },
+      (error) => {
+        console.error('❌ Authentication Failed:', error);
+      }
+    );
     this.fetchData();
+
   }
 
   fetchData(): void {
@@ -90,23 +110,20 @@ export class BirthdayUpdateCRMComponent implements OnInit, AfterViewInit {
     if (confirm(confirmMsg)) {
       const payload = {
         CaseNumber: row.CaseNumber,
-        BirthdayUpdate: isChecked ? 'yes' : null
+        BirthdayUpdate: isChecked ? 'yes' : null,
+        BirthdayUserUpdate: isChecked ? this.currentUsername : null // 👈 Send username!
       };
   
       this.http.post(`${environment.apiUrl}ServiceCRM/UpdateBirthday`, payload).subscribe(() => {
-        this.fetchData(); // ⬅️ re-fetch updated data
+        this.fetchData();
   
         if (isChecked) {
           console.log('🎉 Triggering balloon animation');
-
           this.showLottie = true;
-  
-          // Hide after 5 seconds
           setTimeout(() => this.showLottie = false, 5000);
         }
       });
     } else {
-      // ⬅️ revert UI toggle if canceled
       event.source.checked = !isChecked;
     }
   }
@@ -114,5 +131,15 @@ export class BirthdayUpdateCRMComponent implements OnInit, AfterViewInit {
   
   
   
+  getUserDetailsFromDBByUserName(username: string): void {
+    this.http.get<any>(`${environment.apiUrl}ServiceCRM/GetEmployeeInfo?username=${username}`).subscribe(
+      (data) => {
+        this.UserName = data.UserName;
+      },
+      (error) => {
+        console.error('Error fetching employee info:', error);
+      }
+    );
+  }
   
 }
