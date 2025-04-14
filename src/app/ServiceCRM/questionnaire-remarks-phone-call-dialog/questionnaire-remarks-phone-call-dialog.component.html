@@ -1,0 +1,72 @@
+<mat-dialog-content class="dialog-container" dir="rtl">
+
+    <div class="avatar-container">
+      <img [src]="profilePictureUrl" alt="User" class="avatar-image" />
+    </div>
+  
+     <!-- Patient Details Card -->
+  <mat-card class="patient-card">
+    <mat-card-content>
+      <div class="patient-header">
+        <h2>
+          <mat-icon class="user-icon">person</mat-icon>
+          <span class="name">{{ data.PatientName }}</span>
+        </h2>
+      </div>
+
+      <!-- Contact Info (2 per row) -->
+      <div class="contact-info">
+        <div class="contact-item">
+          <mat-icon class="icon">local_hospital</mat-icon>
+          <span>{{ data.DepartmentHebFullDesc }}</span>
+        </div>
+
+       
+        <div class="contact-item">
+          <mat-icon class="icon">smartphone</mat-icon>
+          <span>{{ data.CellNumber }}</span>
+        </div>
+
+     
+      </div>
+    </mat-card-content>
+  </mat-card>
+  
+    <form [formGroup]="form">
+      <mat-form-field appearance="outline">
+        <mat-label>סטטוס</mat-label>
+        <mat-select formControlName="caseManagerStatus">
+          <mat-option value=""></mat-option>
+          <mat-option value="אין מענה">אין מענה</mat-option>
+          <mat-option value="חיובי">חיובי</mat-option>
+          <mat-option value="שלילי">שלילי</mat-option>
+          <mat-option value="טופל">טופל</mat-option>
+          <mat-option value="המשך טיפול">המשך טיפול</mat-option>
+        </mat-select>
+      </mat-form-field>
+  
+      <mat-form-field appearance="outline">
+        <mat-label>קטגוריה</mat-label>
+        <mat-select formControlName="caseManagerCategory">
+          <mat-option *ngFor="let category of categories" [value]="category">{{ category }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+  
+      <mat-form-field appearance="outline">
+        <mat-label>הערות מנהל מקרה</mat-label>
+        <textarea matInput formControlName="caseManagerRemarks"></textarea>
+      </mat-form-field>
+  
+      <mat-form-field appearance="outline">
+        <mat-label>הערות מנהל</mat-label>
+        <textarea matInput formControlName="managerRemarks"></textarea>
+      </mat-form-field>
+    </form>
+  
+  </mat-dialog-content>
+  
+  <mat-dialog-actions align="end">
+    <button mat-button (click)="close()">ביטול</button>
+    <button mat-flat-button color="primary" (click)="save()">שמור</button>
+  </mat-dialog-actions>
+  

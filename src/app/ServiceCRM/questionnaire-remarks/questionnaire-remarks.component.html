@@ -1,0 +1,91 @@
+<app-spinner [isLoading]="isLoading"></app-spinner>
+
+<mat-card *ngIf="!isLoading" class="crm-container">
+  <mat-card-title>הערות סקרי שביעות רצון - 30 ימים אחרונים</mat-card-title>
+
+  <div class="filter-row">
+    <mat-form-field appearance="fill" class="filter-field">
+      <mat-label>חיפוש</mat-label>
+      <input matInput (input)="applyFilter($event)" placeholder="הזן ערך לחיפוש..." />
+    </mat-form-field>
+
+    <mat-form-field appearance="fill" class="filter-field">
+      <mat-label>שם המחלקה</mat-label>
+      <mat-select [(value)]="selectedDepartments" (selectionChange)="onDepartmentsChange()" multiple>
+        <mat-option *ngFor="let dept of departments" [value]="dept">{{ dept }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+
+  <div class="table-container">
+    <table mat-table [dataSource]="dataSource" matSort class="mat-elevation-z8">
+<!-- CaseNumber -->
+<ng-container matColumnDef="CaseNumber">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header>מספר מקרה</th>
+    <td mat-cell *matCellDef="let row">{{ row.CaseNumber }}</td>
+  </ng-container>
+  
+  <!-- CellNumber -->
+  <ng-container matColumnDef="CellNumber">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header>מספר טלפון</th>
+    <td mat-cell *matCellDef="let row">{{ row.CellNumber }}</td>
+  </ng-container>
+  
+  <!-- RemarkDate -->
+  <ng-container matColumnDef="RemarkDate">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header>תאריך הערה</th>
+    <td mat-cell *matCellDef="let row">{{ row.RemarkDate | date: 'dd/MM/yyyy' }}</td>
+  </ng-container>
+      <ng-container matColumnDef="PatientName">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>שם מטופל</th>
+        <td mat-cell *matCellDef="let row">{{ row.PatientName }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="DepartmentHebFullDesc">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>מחלקה</th>
+        <td mat-cell *matCellDef="let row">{{ row.DepartmentHebFullDesc }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="VisitDate">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>תאריך ביקור</th>
+        <td mat-cell *matCellDef="let row">{{ row.VisitDate | date: 'dd/MM/yyyy' }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="Remark">
+        <th mat-header-cell *matHeaderCellDef>הערה</th>
+        <td mat-cell *matCellDef="let row">{{ row.Remark }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="CaseManagerStatus">
+        <th mat-header-cell *matHeaderCellDef>סטטוס</th>
+        <td mat-cell *matCellDef="let row">{{ row.CaseManagerStatus }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="CaseManagerCategory">
+        <th mat-header-cell *matHeaderCellDef>קטגוריה</th>
+        <td mat-cell *matCellDef="let row">{{ row.CaseManagerCategory }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="CaseManagerRemarks">
+        <th mat-header-cell *matHeaderCellDef>הערות מנהל מקרה</th>
+        <td mat-cell *matCellDef="let row">{{ row.CaseManagerRemarks }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="ManagerRemarks">
+        <th mat-header-cell *matHeaderCellDef>הערות מנהל</th>
+        <td mat-cell *matCellDef="let row">{{ row.ManagerRemarks }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="EntryDate" sticky>
+        <th mat-header-cell *matHeaderCellDef>עודכן בתאריך</th>
+        <td mat-cell *matCellDef="let row">{{ row.EntryDate | date: 'dd/MM/yyyy HH:mm' }}</td>
+      </ng-container>
+
+      <!-- Row Definitions -->
+      <tr mat-header-row *matHeaderRowDef="displayedColumns" sticky></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;" (click)="openEditDialog(row)"></tr>
+    </table>
+
+    <mat-paginator [pageSizeOptions]="[5, 25, 50]" showFirstLastButtons></mat-paginator>
+  </div>
+</mat-card>
