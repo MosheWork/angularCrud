@@ -16,31 +16,7 @@
       font-weight: bold;
       color: #3f51b5; // Blue color for emphasis
     }
-  
-    .filter-section {
-        display: flex;
-        justify-content: flex-end; // Align search bar to the right for Hebrew layout
-        align-items: center;
-        padding: 10px;
-        background-color: #f5f5f5;
-        border-radius: 8px;
-        margin-bottom: 15px;
-        box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
-        direction: rtl; // Ensure right-to-left text alignment
-      
-        mat-form-field {
-          width: 100%;
-          max-width: 300px;
-          margin-right: auto; // Pushes the input to align properly
-      
-          input {
-            font-size: 16px;
-            padding: 10px;
-            text-align: right; // Ensures text starts from right side
-          }
-        }
-      }
-      
+
       
   
     .table-container {
@@ -145,12 +121,56 @@
       margin-left: 8px;
     }
   
-    .mat-select {
-      direction: ltr;
-    }
-  
+   
     .mat-icon-button {
       transform: rotateY(180deg); // ✅ Flip the icons to match RTL
     }
   }
+  .filter-section {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    padding: 10px;
+    direction: rtl;
+    background-color: #ffffff;
   
+    border-radius: 8px;
+  }
+  
+  .filter-field {
+
+    mat-label {
+      font-weight: bold;
+    }
+  
+    input {
+      text-align: right;
+    }
+  
+    ::ng-deep .mat-select-value {
+      text-align: right !important;
+    }
+  }
+  .filter-row {
+    display: flex;
+    flex-direction: row;
+    gap: 16px;
+    padding: 10px 20px;
+    direction: rtl;
+    align-items: flex-end; // aligns the bottom lines of form fields
+    flex-wrap: wrap; // allows wrapping on smaller screens
+  }
+  
+  .filter-field {
+    flex: 1 1 300px;
+    min-width: 250px;
+    max-width: 400px;
+  
+    input {
+      text-align: right;
+    }
+  
+    ::ng-deep .mat-select-value {
+      text-align: right !important;
+    }
+  }

@@ -21,6 +21,8 @@ export class UserCRMComponent implements OnInit, AfterViewInit {
   ];
   dataSource = new MatTableDataSource<any>([]);
   isLoading = true;
+  selectedDepartments: string[] = [];
+departments: string[] = [];
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
@@ -28,6 +30,14 @@ export class UserCRMComponent implements OnInit, AfterViewInit {
   constructor(private http: HttpClient, private dialog: MatDialog) {}
 
   ngOnInit(): void {
+    this.dataSource.filterPredicate = (data, filter) => {
+      const filters = JSON.parse(filter);
+      const deptMatch = !filters.departments.length || filters.departments.includes(data.DepartmentName?.trim());
+      const textMatch = !filters.text || Object.values(data).some(val =>
+        val?.toString().toLowerCase().includes(filters.text)
+      );
+      return deptMatch && textMatch;
+    };
     this.fetchData();
   }
 
@@ -41,6 +51,9 @@ export class UserCRMComponent implements OnInit, AfterViewInit {
         DeathDate: item.DeathDate ? new Date(item.DeathDate) : null,
         CaseManagerUpdate: item.CaseManagerUpdate ? new Date(item.CaseManagerUpdate) : null
       }));
+
+      this.departments = [...new Set(data.map(d => d.DepartmentName).filter(Boolean))].sort();
+
       this.isLoading = false;
 
       setTimeout(() => {
@@ -57,14 +70,17 @@ export class UserCRMComponent implements OnInit, AfterViewInit {
     });
   }
 
-  applyFilter(event: Event) {
-    const filterValue = (event.target as HTMLInputElement).value.trim().toLowerCase();
-    this.dataSource.filter = filterValue;
+  applyFilter(event?: Event): void {
+    const text = event ? (event.target as HTMLInputElement).value.trim().toLowerCase() : '';
+    this.dataSource.filter = JSON.stringify({ text, departments: this.selectedDepartments });
     if (this.dataSource.paginator) {
       this.dataSource.paginator.firstPage();
     }
   }
-
+  
+  onDepartmentsChange(): void {
+    this.applyFilter(); // reapply filter on department change
+  }
   openPhoneCallDialog(row: any) {
     const dialogRef = this.dialog.open(PhoneCallDialogComponent, {
       width: '600px',

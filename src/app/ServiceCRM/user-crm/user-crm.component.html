@@ -6,12 +6,22 @@
   <mat-card class="crm-card">
     <img src="assets/crm-data-entry-services.jpg" alt="CRM Data Entry Services">
   </mat-card>
-
-  <!-- Search Input -->
-  <mat-form-field class="long-search-bar" style="flex: 1; margin-right: 10px;">
-    <mat-label class="filters" style="color: blue">חיפוש</mat-label>
-    <input matInput (keyup)="applyFilter($event)" class="search-input" placeholder="הזן ערך לחיפוש..." />
+ <!-- 🔍 Global Search + Department Multi Filter (no formGroup) -->
+ <div class="filter-row">
+  <mat-form-field appearance="fill" class="filter-field">
+    <mat-label>חיפוש</mat-label>
+    <input matInput (input)="applyFilter($event)" placeholder="הזן ערך לחיפוש..." />
   </mat-form-field>
+
+  <mat-form-field appearance="fill" class="filter-field">
+    <mat-label>שם המחלקה</mat-label>
+    <mat-select [(value)]="selectedDepartments" (selectionChange)="onDepartmentsChange()" multiple>
+      <mat-option *ngFor="let dept of departments" [value]="dept">{{ dept }}</mat-option>
+    </mat-select>
+  </mat-form-field>
+</div>
+
+
 
   <div class="table-container">
     <table mat-table [dataSource]="dataSource" matSort class="mat-elevation-z8">
