@@ -198,7 +198,7 @@ const routes: Routes = [
    { path: 'AdminCrm', component: AdminCrmComponent , data: { title: ' דאשבורד מנהל - CRM  ' }},
    { path: 'CRMmain', component: MainScreenComponent , data: { title: 'מסך הבית ' }},
    { path: 'BirthdayUpdateCRM', component: BirthdayUpdateCRMComponent , data: { title: 'מסך יומלדת ' }},
-   { path: 'questionnaire-remarks', component: QuestionnaireRemarksComponent , data: { title: 'סקר שביעות רצון' }},
+   { path: 'questionnaire-remarks', component: QuestionnaireRemarksComponent , data: { title: 'מערכת ניהול תגובות' }},
 
 
 

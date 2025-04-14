@@ -15,10 +15,34 @@
         <mat-option *ngFor="let dept of departments" [value]="dept">{{ dept }}</mat-option>
       </mat-select>
     </mat-form-field>
+    <!-- סינון לפי סוג סקר -->
+<mat-form-field appearance="fill" class="filter-field">
+    <mat-label>סוג סקר</mat-label>
+    <mat-select [(value)]="selectedSurveyDescription" (selectionChange)="onFiltersChange()">
+      <mat-option *ngFor="let type of surveyDescriptions" [value]="type">{{ type }}</mat-option>
+    </mat-select>
+  </mat-form-field>
+  
+  <!-- סינון לפי סטטוס -->
+  <mat-form-field appearance="fill" class="filter-field">
+    <mat-label>סטטוס</mat-label>
+    <mat-select [(value)]="selectedStatus" (selectionChange)="onFiltersChange()">
+      <mat-option *ngFor="let status of caseManagerStatuses" [value]="status">
+        {{ status.trim() === '' ? 'ללא סטטוס' : status }}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+  
   </div>
 
   <div class="table-container">
     <table mat-table [dataSource]="dataSource" matSort class="mat-elevation-z8">
+        <!-- SurveyDescription -->
+<ng-container matColumnDef="SurveyDescription">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header>סוג סקר </th>
+    <td mat-cell *matCellDef="let row">{{ row.SurveyDescription }}</td>
+  </ng-container>
+  
 <!-- CaseNumber -->
 <ng-container matColumnDef="CaseNumber">
     <th mat-header-cell *matHeaderCellDef mat-sort-header>מספר מקרה</th>

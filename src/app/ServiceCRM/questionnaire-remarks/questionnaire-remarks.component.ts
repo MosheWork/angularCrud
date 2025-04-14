@@ -15,6 +15,7 @@ import { QuestionnaireRemarksPhoneCallDialogComponent } from '../questionnaire-r
 })
 export class QuestionnaireRemarksComponent implements OnInit, AfterViewInit {
   displayedColumns: string[] = [
+    'SurveyDescription',
     'CaseNumber',
     'CellNumber',
     'RemarkDate',
@@ -34,6 +35,11 @@ export class QuestionnaireRemarksComponent implements OnInit, AfterViewInit {
   selectedDepartments: string[] = [];
   departments: string[] = [];
 
+  selectedSurveyDescription: string = 'הכל';
+  selectedStatus: string = '';
+  surveyDescriptions: string[] = [];
+  caseManagerStatuses: string[] = [];
+
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
@@ -46,7 +52,14 @@ export class QuestionnaireRemarksComponent implements OnInit, AfterViewInit {
       const textMatch = !filters.text || Object.values(data).some(val =>
         val?.toString().toLowerCase().includes(filters.text)
       );
-      return deptMatch && textMatch;
+      const surveyMatch = filters.survey === 'הכל' || data.SurveyDescription === filters.survey;
+    
+      const statusMatch =
+      filters.status === ''
+        ? !data.CaseManagerStatus || data.CaseManagerStatus.trim() === ''
+        : data.CaseManagerStatus?.trim() === filters.status;
+    
+      return deptMatch && textMatch && surveyMatch && statusMatch;
     };
     this.fetchData();
   }
@@ -56,11 +69,15 @@ export class QuestionnaireRemarksComponent implements OnInit, AfterViewInit {
     this.http.get<any[]>(`${environment.apiUrl}ServiceCRM/QuestionnaireRemarksBI`).subscribe(data => {
       this.dataSource.data = data;
       this.departments = [...new Set(data.map(d => d.DepartmentHebFullDesc).filter(Boolean))].sort();
+      this.surveyDescriptions = ['הכל', ...new Set(data.map(d => d.SurveyDescription).filter(Boolean))];
+      this.caseManagerStatuses = ['', ...new Set(data.map(d => d.CaseManagerStatus?.trim()).filter(Boolean))];
+      
       this.isLoading = false;
 
       setTimeout(() => {
         this.dataSource.paginator = this.paginator;
         this.dataSource.sort = this.sort;
+        this.applyFilter();
       });
     });
   }
@@ -74,13 +91,22 @@ export class QuestionnaireRemarksComponent implements OnInit, AfterViewInit {
 
   applyFilter(event?: Event): void {
     const text = event ? (event.target as HTMLInputElement).value.trim().toLowerCase() : '';
-    this.dataSource.filter = JSON.stringify({ text, departments: this.selectedDepartments });
+    this.dataSource.filter = JSON.stringify({
+      text,
+      departments: this.selectedDepartments,
+      survey: this.selectedSurveyDescription,
+      status: this.selectedStatus
+    });
     if (this.dataSource.paginator) {
       this.dataSource.paginator.firstPage();
     }
   }
+  
 
   onDepartmentsChange(): void {
+    this.applyFilter();
+  }
+  onFiltersChange(): void {
     this.applyFilter();
   }
 
