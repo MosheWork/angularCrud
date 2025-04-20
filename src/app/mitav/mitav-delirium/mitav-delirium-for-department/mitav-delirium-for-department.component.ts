@@ -47,8 +47,8 @@ export class MitavDeliriumForDepartmentComponent implements OnInit {
 
   columnLabels: { [key: string]: string } = {
     ATD_Admission_Date: 'תאריך קבלה',
+    Pname: ' שם מטופל',
     AdmissionNo: 'מספר מקרה',
-    Pname: 'מספר מקרה',
     AgeYears: 'גיל',
     SystemUnitName: 'מחלקה',
     //TotalHospDays: 'סה"כ ימי אשפוז',
