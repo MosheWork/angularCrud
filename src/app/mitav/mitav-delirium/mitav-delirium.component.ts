@@ -4,8 +4,8 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatSort } from '@angular/material/sort';
 import { environment } from '../../../environments/environment';
-import { ElementRef } from '@angular/core'; // ✅ Fix ElementRef error
-import { Chart, ChartType, ChartData, registerables } from 'chart.js'; // ✅ Fix Chart error
+import { ElementRef } from '@angular/core'; 
+import { Chart, ChartType, ChartData, registerables } from 'chart.js'; 
 import { DepartmentSummaryDialogComponent } from '../mitav-delirium/department-summary-dialog/department-summary-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
 
@@ -126,8 +126,9 @@ this.invalidCAMCount = this.totalCAMCases - this.validCAMCount;
 this.calculateDepartmentWiseCAMData(data);
 
 // Calculate percentage
-this.camAssessmentGauge = this.totalCAMCases > 0 ? (this.validCAMCount / this.totalCAMCases) * 100 : 0;
-
+this.camAssessmentGauge = this.totalCAMCases > 0 
+  ? Math.round((this.validCAMCount / this.totalCAMCases) * 100)
+  : 0;
   
         // ✅ Extract Unique Years from ATD_Admission_Date & Release_Date
         const years = new Set<number>();

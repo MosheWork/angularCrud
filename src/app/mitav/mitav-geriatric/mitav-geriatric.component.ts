@@ -204,8 +204,9 @@ over48Count: number = 0;
     this.invalidGeriatricCount = this.totalGeriatricCases - this.validGeriatricCount;
   
     this.geriatricAssessmentGauge = this.totalGeriatricCases > 0
-      ? (this.validGeriatricCount / this.totalGeriatricCases) * 100
-      : 0;
+    ? Math.round((this.validGeriatricCount / this.totalGeriatricCases) * 100)
+    : 0;
+  
   
     // ✅ Filter only those that have a numeric AnswerDelayInHours
     const delayCases = geriatricYesCases.filter(item =>
@@ -221,16 +222,17 @@ over48Count: number = 0;
   
     // ✅ Calculate percentages
     this.delayUnder24hPercentage = this.validGeriatricCount > 0
-      ? (this.under24Count / this.validGeriatricCount) * 100
-      : 0;
+    ? Math.round((this.under24Count / this.validGeriatricCount) * 100)
+    : 0;
   
-    this.delay24to48hPercentage = this.validGeriatricCount > 0
-      ? (this.from24to48Count / this.validGeriatricCount) * 100
-      : 0;
+  this.delay24to48hPercentage = this.validGeriatricCount > 0
+    ? Math.round((this.from24to48Count / this.validGeriatricCount) * 100)
+    : 0;
   
-    this.delayOver48hPercentage = this.validGeriatricCount > 0
-      ? (this.over48Count / this.validGeriatricCount) * 100
-      : 0;
+  this.delayOver48hPercentage = this.validGeriatricCount > 0
+    ? Math.round((this.over48Count / this.validGeriatricCount) * 100)
+    : 0;
+  
   }
   
   
