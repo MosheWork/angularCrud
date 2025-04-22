@@ -746,7 +746,7 @@ calculateRecommendationForWalking(data: any[]): void {
   this.invalidWalkingCases = totalCases - this.validWalkingCases;
 
   // ✅ Step 3: Calculate percentage
-  this.recommendationForWalkingGauge = (this.validWalkingCases / totalCases) * 100;
+  this.recommendationForWalkingGauge = Math.round((this.validWalkingCases / totalCases) * 100);
 
   console.log(`✅ Valid Walking Cases: ${this.validWalkingCases}`);
   console.log(`❌ Invalid Walking Cases: ${this.invalidWalkingCases}`);
@@ -816,8 +816,8 @@ calculateMobilityStatePercentage(filteredData: any[]): void {
     .map(item => item.MobilityBeforeHospitalization)
     .filter(state => state && state !== 'אין תיעוד').length;
 
-  const mobilityStatePercentage = allCases > 0
-    ? (validMobilityStates / allCases) * 100
+    const mobilityStatePercentage = allCases > 0
+    ? Math.round((validMobilityStates / allCases) * 100)
     : 0;
 
   this.mobilityStateGauge = mobilityStatePercentage;
@@ -833,7 +833,7 @@ calculateFunctionalStatePercentage(data: any[]): void {
   }
 
   const validCases = data.filter(item => item.CognitiveFunctionBeforeHospitalization && item.CognitiveFunctionBeforeHospitalization !== 'אין תיעוד').length;
-  this.functionalStateGauge = (validCases / totalCases) * 100;
+  this.functionalStateGauge = Math.round((validCases / totalCases) * 100);
   this.validFunctionalCases = validCases;
   this.invalidFunctionalCases = totalCases - validCases;
 }
@@ -898,7 +898,7 @@ calculateConsultationCases(data: any[]): void {
   }).length;
 
   this.invalidConsultationCases = totalCases - this.validConsultationCases;
-  this.consultationPercentageGauge = (this.validConsultationCases / totalCases) * 100;
+  this.consultationPercentageGauge = Math.round((this.validConsultationCases / totalCases) * 100);
 
   console.log(`✅ validConsultationCases: ${this.validConsultationCases}`);
   console.log(`❌ invalidConsultationCases: ${this.invalidConsultationCases}`);
@@ -998,8 +998,11 @@ calculateMobilityDeteriorationGauge(data: any[]): void {
   this.totalRowsCount = filtered.length;
   this.deterioratedMobilityCount = filtered.filter(item => item.MobilityStatus === 'הרעה בניידות').length;
 
-  this.mobilityDeteriorationGauge = this.totalRowsCount > 0
-    ? (this.deterioratedMobilityCount / this.totalRowsCount) * 100
-    : 0;
+  this.mobilityDeteriorationGauge = Math.round((this.deterioratedMobilityCount / this.totalRowsCount) * 100);
+
+}
+
+roundPercent(value: number): number {
+  return Math.round(value);
 }
 }
