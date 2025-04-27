@@ -137,10 +137,21 @@ dateTo: Date | null = null;
     this.totalPatients75Plus = data.length;
     this.screenedForDelirium = data.filter(p => p.Grade !== null).length;
     this.diagnosedWithDelirium = data.filter(p => (p.PatientWithDelirium || '').trim() === 'כן').length;
-    this.treatedDelirium = data.filter(p => p.PreventionORInterventionCAM && p.PreventionORInterventionCAM.trim() !== 'לא בוצע').length;
-    this.treatedWithDrug = data.filter(p => p.DrugForDelirium === 'כן').length;
-    this.treatedWithoutDrug = this.treatedDelirium - this.treatedWithDrug;
-  
+    this.treatedDelirium = data.filter(p =>
+      p.PatientWithDelirium === 'כן' &&
+      p.PreventionORInterventionCAM &&
+      p.PreventionORInterventionCAM.trim() !== 'לא בוצע'
+    ).length;
+    this.treatedWithDrug = data.filter(p =>
+      p.PatientWithDelirium === 'כן' &&
+      typeof p.PreventionORInterventionCAM === 'string' &&
+      p.PreventionORInterventionCAM.includes('התערבות')
+    ).length;   
+    this.treatedWithoutDrug = data.filter(p =>
+      p.PatientWithDelirium === 'כן' &&
+      typeof p.PreventionORInterventionCAM === 'string' &&
+      p.PreventionORInterventionCAM.includes('מניעה')
+    ).length;  
     const summary: any = {
       '75-84': { זכר: { total: 0, screened: 0, delirium: 0, treated: 0 }, נקבה: { total: 0, screened: 0, delirium: 0, treated: 0 } },
       '85+': { זכר: { total: 0, screened: 0, delirium: 0, treated: 0 }, נקבה: { total: 0, screened: 0, delirium: 0, treated: 0 } },
