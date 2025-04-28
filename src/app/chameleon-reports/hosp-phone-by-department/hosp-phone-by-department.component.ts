@@ -28,6 +28,7 @@ export class HospPhoneByDepartmentComponent implements OnInit {
   UnitOptions: string[] = [];
 
   columns: string[] = [
+    'Admission_No',
     'UnitName',
     'PatientName',
     'IdNum',
@@ -98,6 +99,7 @@ export class HospPhoneByDepartmentComponent implements OnInit {
 
   exportToExcel() {
     const columnHeaders = {
+      Admission_No: 'מספר מקרה',
       UnitName: 'מחלקה',
       PatientName: 'שם מטופל',
       IdNum: 'תעודת זהות',
@@ -107,6 +109,7 @@ export class HospPhoneByDepartmentComponent implements OnInit {
     };
   
     const dataForExport = this.filteredData.map(item => ({
+      [columnHeaders.Admission_No]: item.Admission_No,
       [columnHeaders.UnitName]: item.UnitName,
       [columnHeaders.PatientName]: item.PatientName,
       [columnHeaders.IdNum]: item.IdNum,

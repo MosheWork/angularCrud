@@ -40,6 +40,12 @@ export class QuestionnaireRemarksComponent implements OnInit, AfterViewInit {
   surveyDescriptions: string[] = [];
   caseManagerStatuses: string[] = [];
 
+  selectedYears: number[] = [];
+selectedMonths: number[] = [];
+uniqueYears: number[] = [];
+uniqueMonths: number[] = [];
+
+
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
@@ -54,26 +60,33 @@ export class QuestionnaireRemarksComponent implements OnInit, AfterViewInit {
       );
       const surveyMatch = filters.survey === 'הכל' || data.SurveyDescription === filters.survey;
     
-      const statusMatch =
-      filters.status === ''
+      const statusMatch = filters.status === ''
         ? !data.CaseManagerStatus || data.CaseManagerStatus.trim() === ''
         : data.CaseManagerStatus?.trim() === filters.status;
     
-      return deptMatch && textMatch && surveyMatch && statusMatch;
+      const yearMatch = !filters.years.length || filters.years.includes(data.VYear);
+      const monthMatch = !filters.months.length || filters.months.includes(data.VMonth);
+    
+      return deptMatch && textMatch && surveyMatch && statusMatch && yearMatch && monthMatch;
     };
+    
     this.fetchData();
   }
-
   fetchData(): void {
     this.isLoading = true;
     this.http.get<any[]>(`${environment.apiUrl}ServiceCRM/QuestionnaireRemarksBI`).subscribe(data => {
       this.dataSource.data = data;
+      
       this.departments = [...new Set(data.map(d => d.DepartmentHebFullDesc).filter(Boolean))].sort();
       this.surveyDescriptions = ['הכל', ...new Set(data.map(d => d.SurveyDescription).filter(Boolean))];
       this.caseManagerStatuses = ['', ...new Set(data.map(d => d.CaseManagerStatus?.trim()).filter(Boolean))];
-      
+  
+      // ✅ New: Populate unique years and months
+      this.uniqueYears = [...new Set(data.map(d => d.VYear).filter(Boolean))].sort((a, b) => b - a);
+      this.uniqueMonths = [...new Set(data.map(d => d.VMonth).filter(Boolean))].sort((a, b) => a - b);
+  
       this.isLoading = false;
-
+  
       setTimeout(() => {
         this.dataSource.paginator = this.paginator;
         this.dataSource.sort = this.sort;
@@ -81,6 +94,7 @@ export class QuestionnaireRemarksComponent implements OnInit, AfterViewInit {
       });
     });
   }
+  
 
   ngAfterViewInit(): void {
     setTimeout(() => {
@@ -91,12 +105,16 @@ export class QuestionnaireRemarksComponent implements OnInit, AfterViewInit {
 
   applyFilter(event?: Event): void {
     const text = event ? (event.target as HTMLInputElement).value.trim().toLowerCase() : '';
+  
     this.dataSource.filter = JSON.stringify({
       text,
       departments: this.selectedDepartments,
       survey: this.selectedSurveyDescription,
-      status: this.selectedStatus
+      status: this.selectedStatus,
+      years: this.selectedYears,
+      months: this.selectedMonths
     });
+  
     if (this.dataSource.paginator) {
       this.dataSource.paginator.firstPage();
     }
@@ -131,4 +149,21 @@ export class QuestionnaireRemarksComponent implements OnInit, AfterViewInit {
       }
     });
   }
+
+  resetFilters(): void {
+    this.selectedDepartments = [];
+    this.selectedSurveyDescription = 'הכל';
+    this.selectedStatus = '';
+    this.selectedYears = [];
+    this.selectedMonths = [];
+  
+    // Clear text search manually (optional if user typed something)
+    const inputElement = document.querySelector('input[matInput]') as HTMLInputElement;
+    if (inputElement) {
+      inputElement.value = '';
+    }
+  
+    this.applyFilter();
+  }
+  
 }

@@ -32,7 +32,23 @@
       </mat-option>
     </mat-select>
   </mat-form-field>
-  
+  <!-- Filter by Year -->
+<mat-form-field appearance="fill" class="filter-field">
+  <mat-label>שנה</mat-label>
+  <mat-select [(value)]="selectedYears" (selectionChange)="onFiltersChange()" multiple>
+    <mat-option *ngFor="let year of uniqueYears" [value]="year">{{ year }}</mat-option>
+  </mat-select>
+</mat-form-field>
+
+<!-- Filter by Month -->
+<mat-form-field appearance="fill" class="filter-field">
+  <mat-label>חודש</mat-label>
+  <mat-select [(value)]="selectedMonths" (selectionChange)="onFiltersChange()" multiple>
+    <mat-option *ngFor="let month of uniqueMonths" [value]="month">{{ month }}</mat-option>
+  </mat-select>
+</mat-form-field>
+<button mat-raised-button color="warn" (click)="resetFilters()">איפוס סינונים</button>
+
   </div>
 
   <div class="table-container">

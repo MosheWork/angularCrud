@@ -224,6 +224,14 @@ export class TraumaPatientsComponent implements OnInit {
     const filters = this.filterForm.value;
     const globalFilter = (filters.globalFilter || '').toLowerCase();
     const relevantFilter = filters.relevantFilter;
+    
+    const selectedYears = filters.YearFilter || [];
+    const selectedMonths = filters.MonthFilter || [];
+    const selectedWeeks = filters.WeekFilter || [];
+    const selectedAdmissionDepartments = filters.AdmissionDepartmentFilter || [];
+    const selectedShockRooms = filters.ShockRoomFilter || [];
+    const selectedTransfers = filters.TransferFilter || [];
+    const selectedReceiveCauses = filters.ReceiveCauseDesFilter || [];
   
     this.filteredData = this.originalData.filter((item: TraumaPatient) => {
       const matchesGlobalFilter = globalFilter
@@ -231,19 +239,33 @@ export class TraumaPatientsComponent implements OnInit {
         : true;
   
       let matchesRelevantFilter = true;
-  
       if (relevantFilter === "לא עודכן") {
-        matchesRelevantFilter = item.Relevant === null; // ✅ Match NULL values only
+        matchesRelevantFilter = item.Relevant === null;
       } else if (relevantFilter === "1") {
-        matchesRelevantFilter = item.Relevant === 1; // ✅ Match "כן"
+        matchesRelevantFilter = item.Relevant === 1;
       } else if (relevantFilter === "2") {
-        matchesRelevantFilter = item.Relevant === 2; // ✅ Match "לא"
+        matchesRelevantFilter = item.Relevant === 2;
       } else if (relevantFilter === "") {
-        // ✅ "הכל" should include all records (yes, no, and null)
         matchesRelevantFilter = true;
       }
   
-      return matchesGlobalFilter && matchesRelevantFilter;
+      const matchesYear = selectedYears.length ? selectedYears.includes(item.Year) : true;
+      const matchesMonth = selectedMonths.length ? selectedMonths.includes(item.Month) : true;
+      const matchesWeek = selectedWeeks.length ? selectedWeeks.includes(item.Week) : true;
+      const matchesAdmissionDepartment = selectedAdmissionDepartments.length ? selectedAdmissionDepartments.includes(item.AdmissionDepartment) : true;
+      const matchesShockRoom = selectedShockRooms.length ? selectedShockRooms.includes(item.ShockRoom) : true;
+      const matchesTransfer = selectedTransfers.length ? selectedTransfers.includes(item.TransferToOtherInstitution) : true;
+      const matchesReceiveCause = selectedReceiveCauses.length ? selectedReceiveCauses.includes(item.ReceiveCauseDescription) : true;
+  
+      return matchesGlobalFilter &&
+             matchesRelevantFilter &&
+             matchesYear &&
+             matchesMonth &&
+             matchesWeek &&
+             matchesAdmissionDepartment &&
+             matchesShockRoom &&
+             matchesTransfer &&
+             matchesReceiveCause;
     });
   
     this.dataSource.data = this.filteredData;
@@ -256,6 +278,7 @@ export class TraumaPatientsComponent implements OnInit {
       }
     });
   }
+  
   
   
   

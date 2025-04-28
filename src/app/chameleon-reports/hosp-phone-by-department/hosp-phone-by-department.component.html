@@ -47,7 +47,8 @@
   <mat-table  [dataSource]="matTableDataSource" matSort dir="rtl" class="mat-elevation-z8">
     <ng-container *ngFor="let column of columns" [matColumnDef]="column">
       <mat-header-cell *matHeaderCellDef mat-sort-header>
-        {{ column === 'PatientName' ? 'שם מטופל' :
+        {{column === 'Admission_No' ? 'מספר מקרה ' :
+           column === 'PatientName' ? 'שם מטופל' :
            column === 'IdNum' ? 'תעודת זהות' :
            column === 'Phone' ? 'טלפון' :
            column === 'PhoneCell' ? 'טלפון נייד' :
