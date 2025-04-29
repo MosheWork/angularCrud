@@ -167,6 +167,7 @@ import player from 'lottie-web';
 import { AuthenticationService} from './services/authentication-service/authentication-service.component';
 import { QuestionnaireRemarksComponent } from './ServiceCRM/questionnaire-remarks/questionnaire-remarks.component';
 import { QuestionnaireRemarksPhoneCallDialogComponent } from './ServiceCRM/questionnaire-remarks-phone-call-dialog/questionnaire-remarks-phone-call-dialog.component';
+import { PhysiotherapyComponent } from './chameleon-reports/physiotherapy/physiotherapy.component';
 
 
 export const MY_DATE_FORMATS: MatDateFormats = {
@@ -310,7 +311,8 @@ export function playerFactory() {
     MainScreenComponent,
     BirthdayUpdateCRMComponent,
     QuestionnaireRemarksComponent,
-    QuestionnaireRemarksPhoneCallDialogComponent
+    QuestionnaireRemarksPhoneCallDialogComponent,
+    PhysiotherapyComponent
    
      
   

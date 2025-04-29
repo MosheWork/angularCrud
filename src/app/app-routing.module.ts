@@ -82,6 +82,7 @@ import { OccupationalTherapyComponent } from './chameleon-reports/occupational-t
 import { MainScreenComponent } from './ServiceCRM/main-screen/main-screen.component';
 import { BirthdayUpdateCRMComponent } from './ServiceCRM/birthday-update-crm/birthday-update-crm.component';
 import { QuestionnaireRemarksComponent } from './ServiceCRM/questionnaire-remarks/questionnaire-remarks.component';
+import { PhysiotherapyComponent } from './chameleon-reports/physiotherapy/physiotherapy.component';
 
 const routes: Routes = [
   { path: 'users', component: UsersComponent },
@@ -171,6 +172,7 @@ const routes: Routes = [
    { path: 'HospPhoneByDepartment', component: HospPhoneByDepartmentComponent , data: { title: 'רשימת טלפונים' }},// טלפונים של מאושפזים למאיר  
    { path: 'SkinIntegrityDashboard', component: SkinIntegrityDashboardComponent , data: { title: ' דאשבורד שלמות העור' }},// דאשבורד לדיאנה לאומדן שלמות העור  
    { path: 'occupational-therapy', component: OccupationalTherapyComponent , data: { title: ' דאשבורד ריפוי בעיסוק' }},// - לוצ רך חישוב פרמייה דאשבורד לרוני צור סהר ריפוי ועיסוק     
+   { path: 'Physiotherapy', component: PhysiotherapyComponent , data: { title: 'פיזותרפיה' }},// דוח תפוקות פיזותרפיה של עופר    
 
 
 
