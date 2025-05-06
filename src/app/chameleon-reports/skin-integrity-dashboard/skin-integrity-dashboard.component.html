@@ -51,6 +51,12 @@
     <!-- Tabs for Two Tables -->
     <mat-tab-group [(selectedIndex)]="selectedTab">
         <mat-tab label="סיכום סוגי פצעים">
+            <img src="../../assets/excel.png"
+     alt="Download"
+     (click)="exportToExcel()"
+     class="download-icon"
+     width="50px"
+     style="cursor: pointer; float: left; margin-bottom: 10px;" />
             <div class="table-container">
                 <table mat-table [dataSource]="woundDataSource" class="mat-elevation-z8" dir="rtl">
                     <ng-container *ngFor="let column of woundColumns" [matColumnDef]="column">
@@ -66,6 +72,12 @@
         </mat-tab>
 
         <mat-tab label="סיכום מזרונים">
+            <img src="../../assets/excel.png"
+     alt="Download"
+     (click)="exportToExcel()"
+     class="download-icon"
+     width="50px"
+     style="cursor: pointer; float: left; margin-bottom: 10px;" />
             <div class="table-container">
                 <table mat-table [dataSource]="mattressDataSource" class="mat-elevation-z8" dir="rtl">
                     <ng-container *ngFor="let column of mattressColumns" [matColumnDef]="column">

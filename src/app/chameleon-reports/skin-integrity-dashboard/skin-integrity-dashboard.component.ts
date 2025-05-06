@@ -4,6 +4,7 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatSort } from '@angular/material/sort';
 import { environment } from '../../../environments/environment';
+import * as XLSX from 'xlsx';
 
 @Component({
   selector: 'app-skin-integrity-dashboard',
@@ -162,4 +163,29 @@ export class SkinIntegrityDashboardComponent implements OnInit, AfterViewInit {
 
     return params;
   }
+  exportToExcel(): void {
+    const isWoundTab = this.selectedTab === 0;
+    const dataSource = isWoundTab ? this.woundDataSource.filteredData : this.mattressDataSource.filteredData;
+    const columns = isWoundTab ? this.woundColumns : this.mattressColumns;
+  
+    const dataForExport = dataSource.map(row => {
+      const exportRow: any = {};
+      columns.forEach(col => {
+        const header = this.columnHeaderMap[col] || col;
+        exportRow[header] = row[col];
+      });
+      return exportRow;
+    });
+  
+    const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(dataForExport);
+    const workbook: XLSX.WorkBook = {
+      Sheets: { 'סיכום': worksheet },
+      SheetNames: ['סיכום']
+    };
+  
+    const fileName = isWoundTab ? 'Wound_Summary.xlsx' : 'Mattress_Summary.xlsx';
+    XLSX.writeFile(workbook, fileName);
+  }
+  
+  
 }
