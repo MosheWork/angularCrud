@@ -83,6 +83,7 @@ import { MainScreenComponent } from './ServiceCRM/main-screen/main-screen.compon
 import { BirthdayUpdateCRMComponent } from './ServiceCRM/birthday-update-crm/birthday-update-crm.component';
 import { QuestionnaireRemarksComponent } from './ServiceCRM/questionnaire-remarks/questionnaire-remarks.component';
 import { PhysiotherapyComponent } from './chameleon-reports/physiotherapy/physiotherapy.component';
+import { ProductivityReportsComponent } from './chameleon-reports/productivity-reports/productivity-reports.component';
 
 const routes: Routes = [
   { path: 'users', component: UsersComponent },
@@ -174,6 +175,7 @@ const routes: Routes = [
    { path: 'occupational-therapy', component: OccupationalTherapyComponent , data: { title: ' דאשבורד ריפוי בעיסוק' }},// - לוצ רך חישוב פרמייה דאשבורד לרוני צור סהר ריפוי ועיסוק     
    { path: 'Physiotherapy', component: PhysiotherapyComponent , data: { title: 'פיזותרפיה' }},// דוח תפוקות פיזותרפיה של עופר    
 
+   { path: 'ProductivityReports', component: ProductivityReportsComponent , data: { title: 'דוח תפוקות' }},// דוח תפוקות  של פרא רפואי     
 
 
 

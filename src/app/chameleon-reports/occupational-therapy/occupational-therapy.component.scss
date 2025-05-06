@@ -432,6 +432,8 @@ html, body {
 .body {
   margin: 0;
   padding: 0;
+  margin-top: 50px; // ✅ Add this line
+
 }
 
 .dashboard-container {

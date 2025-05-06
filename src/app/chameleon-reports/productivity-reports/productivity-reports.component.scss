@@ -1,0 +1,50 @@
+.productivity-container {
+    padding: 40px;
+    text-align: center;
+    margin-top: 50px; // ✅ Add this line
+
+  
+    .header-title {
+      font-size: 36px;
+      color: #3f51b5;
+      margin-bottom: 40px;
+    }
+  
+    .link-grid {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 30px;
+    }
+  
+    .report-card {
+      width: 280px;
+      height: 160px;
+      cursor: pointer;
+      transition: transform 0.2s ease-in-out;
+      background-color: #f5f5f5;
+  
+      &:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+      }
+  
+      mat-card-content {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        height: 100%;
+  
+        h2 {
+          color: #3f51b5;
+          margin-bottom: 10px;
+        }
+  
+        p {
+          color: #555;
+          font-size: 14px;
+        }
+      }
+    }
+  }
+  

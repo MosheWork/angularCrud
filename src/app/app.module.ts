@@ -168,6 +168,7 @@ import { AuthenticationService} from './services/authentication-service/authenti
 import { QuestionnaireRemarksComponent } from './ServiceCRM/questionnaire-remarks/questionnaire-remarks.component';
 import { QuestionnaireRemarksPhoneCallDialogComponent } from './ServiceCRM/questionnaire-remarks-phone-call-dialog/questionnaire-remarks-phone-call-dialog.component';
 import { PhysiotherapyComponent } from './chameleon-reports/physiotherapy/physiotherapy.component';
+import { ProductivityReportsComponent } from './chameleon-reports/productivity-reports/productivity-reports.component';
 
 
 export const MY_DATE_FORMATS: MatDateFormats = {
@@ -312,7 +313,8 @@ export function playerFactory() {
     BirthdayUpdateCRMComponent,
     QuestionnaireRemarksComponent,
     QuestionnaireRemarksPhoneCallDialogComponent,
-    PhysiotherapyComponent
+    PhysiotherapyComponent,
+    ProductivityReportsComponent
    
      
   
