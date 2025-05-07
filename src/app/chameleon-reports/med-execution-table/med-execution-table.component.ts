@@ -371,16 +371,21 @@ aggregatedDisplayedColumns: string[] = [
     // 🔹 Fetch data for Main Table
     this.http.get<MedExecutionModel[]>(`${environment.apiUrl}MedExecutionAPI`, { params }).subscribe(
       data => {
-        this.originalData = data; // Save unfiltered data
-        this.dataSource.data = [...data]; // Initialize Main Table
+        this.originalData = data;
+        this.dataSource.data = [...data];
         this.totalResults = data.length;
         this.loading = false;
+    
+        // ✅ Extract unique Unit_Satellite_Name values
+        const uniqueUnitNames = [...new Set(data.map(item => item.Unit_Satellite_Name).filter(Boolean))];
+        this.unitSatelliteNameOptions = uniqueUnitNames.sort();
       },
       error => {
         console.error('Error loading data:', error);
         this.loading = false;
       }
     );
+    
   
     // 🔹 Fetch data for Aggregated Table
     this.http.get<AggregatedMedExecutionModel[]>(`${environment.apiUrl}MedExecutionAPI/GetAggregatedData`, { params }).subscribe(
