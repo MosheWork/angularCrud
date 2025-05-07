@@ -19,7 +19,7 @@ export class Drug2hReviewComponent implements OnInit, AfterViewInit {
   loading: boolean = false; // Spinner control
   unitNames: string[] = []; // To store unit names
   totalResults: number = 0;
-  titleUnit: string = ' דוח בקרת תרופות ברות סיכון';
+  titleUnit: string = ' דוח בקרת תרופות בנות סיכון';
   Title1: string = 'סה\"כ רשומות: ';
   Title2: string = '';
   public chartType: ChartType = 'bar';
@@ -36,7 +36,8 @@ export class Drug2hReviewComponent implements OnInit, AfterViewInit {
     'Next_Execution_Not_Null',
     'Count_Above_2_10H',
     'Count_Below_2_10H',
-    'Percent_Below_2_10H',
+    'Percent_Below_2_10H'
+    , 'Year', 'Quarter'
   ];
   dataSource: any[] = [];
   filteredData: any[] = [];
@@ -100,56 +101,22 @@ export class Drug2hReviewComponent implements OnInit, AfterViewInit {
 
   private createFilterForm(): FormGroup {
     return this.fb.group({
-      year: new FormControl(null), // Year filter
-      quarter: new FormControl(null), // Quarter filter
-      globalFilter: new FormControl(''), // Global filter
-      unitName: new FormControl(null), // Unit name filter
+      year: [[]],
+      quarter: [[]],
+      unitName: [[]],
+      half: [null],
+      globalFilter: ['']
     });
   }
+  
 
   applyFilters(): void {
-    this.loading = true; // Show loading spinner
-
     const filters = this.filterForm.value;
-    const globalFilter = filters.globalFilter ? filters.globalFilter.trim().toLowerCase() : '';
-    const year = filters.year;
-    const quarter = filters.quarter;
-    const unitName = filters.unitName;
-
-    console.log('Applying filters:', { globalFilter, year, quarter, unitName }); // Debug log
-
-    // If year or quarter filters are applied, fetch fresh data from the API
-    if (year || quarter || unitName) {
-      this.fetchData(year, quarter, unitName);
-      return; // Return early because fetchData will handle updating the table
-    }
-
-    // Apply other filters on the already loaded data
-    let filteredData = this.dataSource;
-
-    // Filter by unit name
-    if (unitName) {
-      filteredData = filteredData.filter((item) => item.Unit_Name === unitName);
-    }
-
-    // Apply global search filter
-    if (globalFilter) {
-      filteredData = filteredData.filter((item) =>
-        Object.values(item).some((value) =>
-          value ? value.toString().toLowerCase().includes(globalFilter) : false
-        )
-      );
-    }
-
-    // Update the data source for the table
-    this.matTableDataSource.data = filteredData;
-
-    // Recalculate metrics based on filtered data
-    this.calculateMetrics();
-
-    // Hide loading spinner
-    this.loading = false;
+    this.fetchData();
   }
+  
+  
+  
 
   resetFilters() {
     this.filterForm.reset();
@@ -168,36 +135,52 @@ export class Drug2hReviewComponent implements OnInit, AfterViewInit {
     link.click();
   }
 
-  fetchData(year?: number, quarter?: number, unitName?: string): void {
+  fetchData(): void {
     this.loading = true;
+  
+    const filters = this.filterForm.value;
     const params: any = {};
-    if (year) params.year = year;
-    if (quarter) params.quarter = quarter;
-    if (unitName) params.unitName = unitName; // Add unit name filter
-
+  
+    if (filters.year?.length) {
+      params.year = filters.year.join(','); // "2023,2024"
+    }
+  
+    if (filters.quarter?.length) {
+      params.quarter = filters.quarter.join(','); // "1,2"
+    }
+  
+    if (filters.unitName?.length) {
+      params.unitName = filters.unitName.join(','); // "Cardiology,ICU"
+    }
+  
     this.http.get<any[]>(`${environment.apiUrl}Drug2hReview`, { params }).subscribe(
       (data) => {
         this.dataSource = data;
         this.matTableDataSource.data = [...this.dataSource];
         this.unitNames = Array.from(new Set(data.map((item) => item.Unit_Name))).sort();
-
         this.updateChartData();
+  
         this.bestPerformers = [...this.dataSource]
           .sort((a, b) => b.Percent_Below_2_10H - a.Percent_Below_2_10H)
           .slice(0, 5);
-
+  
         this.worstPerformers = [...this.dataSource]
           .sort((a, b) => a.Percent_Below_2_10H - b.Percent_Below_2_10H)
           .slice(0, 5);
+  
         this.calculateMetrics();
         this.loading = false;
       },
       (error) => {
         console.error('Error fetching data:', error);
+        this.loading = false;
       }
     );
   }
-
+  
+  
+  
+  
   calculateMetrics(): void {
     const filteredData = this.matTableDataSource.data;
 

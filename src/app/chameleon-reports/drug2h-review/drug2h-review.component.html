@@ -13,25 +13,38 @@
         <mat-card class="filter-card">
           <mat-card-content>
             <form [formGroup]="filterForm">
-              <mat-form-field appearance="outline" class="filter-field">
-                <mat-label>יחידה</mat-label>
-                <mat-select formControlName="unitName" >
-                  <mat-option *ngFor="let unit of unitNames" [value]="unit">{{ unit }}</mat-option>
-                </mat-select>
-              </mat-form-field>
-                <mat-form-field appearance="outline" class="filter-field">
-                  <mat-label>שנה</mat-label>
-                  <mat-select formControlName="year">
-                    <mat-option *ngFor="let year of availableYears" [value]="year">{{ year }}</mat-option>
-                  </mat-select>
-                </mat-form-field>
-              
-                <mat-form-field appearance="outline" class="filter-field">
-                  <mat-label>רבעון</mat-label>
-                  <mat-select formControlName="quarter">
-                    <mat-option *ngFor="let quarter of availableQuarters" [value]="quarter">רבעון {{ quarter }}</mat-option>
-                  </mat-select>
-                </mat-form-field>
+       <!-- Multi-select for Unit -->
+  <mat-form-field appearance="outline" class="filter-field">
+    <mat-label>יחידות</mat-label>
+    <mat-select formControlName="unitName" multiple>
+      <mat-option *ngFor="let unit of unitNames" [value]="unit">{{ unit }}</mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <!-- Multi-select for Year -->
+  <mat-form-field appearance="outline" class="filter-field">
+    <mat-label>שנים</mat-label>
+    <mat-select formControlName="year" multiple>
+      <mat-option *ngFor="let year of availableYears" [value]="year">{{ year }}</mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <!-- Multi-select for Quarter -->
+  <mat-form-field appearance="outline" class="filter-field">
+    <mat-label>רבעונים</mat-label>
+    <mat-select formControlName="quarter" multiple>
+      <mat-option *ngFor="let quarter of availableQuarters" [value]="quarter">רבעון {{ quarter }}</mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <!-- New Filter: Half-Year -->
+  <mat-form-field appearance="outline" class="filter-field">
+    <mat-label>חציון</mat-label>
+    <mat-select formControlName="half">
+      <mat-option [value]="1">חציון ראשון</mat-option>
+      <mat-option [value]="2">חציון שני</mat-option>
+    </mat-select>
+  </mat-form-field>
               
                 <button mat-raised-button color="primary" (click)="applyFilters()">
                     החל סינון
@@ -206,7 +219,15 @@
     <mat-header-cell *matHeaderCellDef mat-sort-header> אחוז מתחת ל-2 שעות </mat-header-cell>
     <mat-cell *matCellDef="let element"> {{ element.Percent_Below_2_10H }}%</mat-cell>
   </ng-container>
-
+  <ng-container matColumnDef="Year">
+    <th mat-header-cell *matHeaderCellDef>שנה</th>
+    <td mat-cell *matCellDef="let row">{{ row.Year }}</td>
+  </ng-container>
+  
+  <ng-container matColumnDef="Quarter">
+    <th mat-header-cell *matHeaderCellDef>רבעון</th>
+    <td mat-cell *matCellDef="let row">{{ row.Quarter }}</td>
+  </ng-container>
   <mat-header-row *matHeaderRowDef="columns"></mat-header-row>
   <mat-row *matRowDef="let row; columns: columns" (click)="openDrugDetailsDialog(row.Unit_Name)">
   </mat-row>
