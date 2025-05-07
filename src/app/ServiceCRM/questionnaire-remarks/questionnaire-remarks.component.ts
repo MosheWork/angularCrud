@@ -5,6 +5,8 @@ import { MatSort } from '@angular/material/sort';
 import { HttpClient } from '@angular/common/http';
 import { MatDialog } from '@angular/material/dialog';
 import { environment } from '../../../environments/environment';
+import * as XLSX from 'xlsx';
+
 // You can create this edit dialog
 import { QuestionnaireRemarksPhoneCallDialogComponent } from '../questionnaire-remarks-phone-call-dialog/questionnaire-remarks-phone-call-dialog.component';
 
@@ -165,5 +167,37 @@ uniqueMonths: number[] = [];
   
     this.applyFilter();
   }
+  exportToExcelOnlyRowsWithRemarks(): void {
+    const rowsWithRemarks = this.dataSource.filteredData.filter(
+      row => row.CaseManagerRemarks && row.CaseManagerRemarks.trim() !== ''
+    );
+  
+    if (rowsWithRemarks.length === 0) {
+      alert('אין שורות עם הערות מנהל מקרה לייצוא.');
+      return;
+    }
+  
+    const exportData = rowsWithRemarks.map(row => ({
+      'מספר מקרה': row.CaseNumber,
+      'שם מטופל': row.PatientName,
+      'תאריך': row.RemarkDate,
+      'מחלקה': row.DepartmentHebFullDesc,
+      'הערות מנהל מקרה': row.CaseManagerRemarks,
+      'סטטוס': row.CaseManagerStatus,
+      'קטגוריה': row.CaseManagerCategory,
+      ' טלפון': row.CellNumber
+     
+    }));
+  
+    const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(exportData);
+    const workbook: XLSX.WorkBook = {
+      Sheets: { 'הערות מנהל מקרה': worksheet },
+      SheetNames: ['הערות מנהל מקרה']
+    };
+  
+    XLSX.writeFile(workbook, 'CaseManagerRemarks.xlsx');
+  }
+  
+    
   
 }

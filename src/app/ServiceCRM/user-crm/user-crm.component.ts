@@ -6,6 +6,7 @@ import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
 import { PhoneCallDialogComponent } from '../phone-call-dialog/phone-call-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
+import * as XLSX from 'xlsx';
 
 @Component({
   selector: 'app-user-crm',
@@ -106,5 +107,35 @@ departments: string[] = [];
       }
     });
   }
+  exportToExcelOnlyWithCaseManagerStatus(): void {
+    const rowsWithStatus = this.dataSource.filteredData.filter(
+      row => row.CaseManagerStatus && row.CaseManagerStatus.trim() !== ''
+    );
+  
+    if (rowsWithStatus.length === 0) {
+      alert('אין שורות עם סטטוס מנהל מקרה לייצוא.');
+      return;
+    }
+  
+    const exportData = rowsWithStatus.map(row => ({
+      'מספר מקרה': row.CaseNumber,
+      'מחלקה': row.DepartmentName,
+      'שם פרטי': row.FirstName,
+      'שם משפחה': row.LastName,
+      'סטטוס מנהל מקרה': row.CaseManagerStatus,
+      'קטגוריה': row.CaseManagerCategory,
+      'עדכון': row.CaseManagerUpdate ? new Date(row.CaseManagerUpdate).toLocaleDateString() : '',
+      'הערות': row.CaseManagerRemarks
+    }));
+  
+    const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(exportData);
+    const workbook: XLSX.WorkBook = {
+      Sheets: { 'סטטוס מנהל מקרה' : worksheet },
+      SheetNames: ['סטטוס מנהל מקרה']
+    };
+  
+    XLSX.writeFile(workbook, 'CaseManagerStatusOnly.xlsx');
+  }
+  
   
 }

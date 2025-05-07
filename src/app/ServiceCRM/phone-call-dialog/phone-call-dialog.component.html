@@ -56,7 +56,7 @@
   
       <mat-form-field appearance="outline">
         <mat-label>קטגוריה</mat-label>
-        <mat-select formControlName="caseManagerCategory" required>
+        <mat-select formControlName="caseManagerCategory" >
           <mat-option value=""></mat-option>
           <mat-option value="בירור חיובים">בירור חיובים</mat-option>
           <mat-option value="דחיית/ ביטול ניתוח">דחיית/ ביטול ניתוח</mat-option>
@@ -96,6 +96,7 @@
   
   <mat-dialog-actions align="end">
     <button mat-button (click)="close()">ביטול</button>
-    <button mat-flat-button color="primary" (click)="save()">שמור</button>
-  </mat-dialog-actions>
+    <button mat-raised-button color="primary" (click)="save()" [disabled]="callForm.invalid">
+      שמירה
+    </button>    </mat-dialog-actions>
 </div>

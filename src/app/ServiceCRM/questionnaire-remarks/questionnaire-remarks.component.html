@@ -2,37 +2,17 @@
 
 <mat-card *ngIf="!isLoading" class="crm-container">
   <mat-card-title>הערות סקרי שביעות רצון - 30 ימים אחרונים</mat-card-title>
-
-  <div class="filter-row">
-    <mat-form-field appearance="fill" class="filter-field">
-      <mat-label>חיפוש</mat-label>
-      <input matInput (input)="applyFilter($event)" placeholder="הזן ערך לחיפוש..." />
-    </mat-form-field>
-
-    <mat-form-field appearance="fill" class="filter-field">
-      <mat-label>שם המחלקה</mat-label>
-      <mat-select [(value)]="selectedDepartments" (selectionChange)="onDepartmentsChange()" multiple>
-        <mat-option *ngFor="let dept of departments" [value]="dept">{{ dept }}</mat-option>
-      </mat-select>
-    </mat-form-field>
-    <!-- סינון לפי סוג סקר -->
-<mat-form-field appearance="fill" class="filter-field">
+ <!-- סינון לפי סוג סקר -->
+ <div class="filter-row">
+  <mat-form-field appearance="fill" class="filter-field">
     <mat-label>סוג סקר</mat-label>
     <mat-select [(value)]="selectedSurveyDescription" (selectionChange)="onFiltersChange()">
       <mat-option *ngFor="let type of surveyDescriptions" [value]="type">{{ type }}</mat-option>
     </mat-select>
   </mat-form-field>
-  
-  <!-- סינון לפי סטטוס -->
-  <mat-form-field appearance="fill" class="filter-field">
-    <mat-label>סטטוס</mat-label>
-    <mat-select [(value)]="selectedStatus" (selectionChange)="onFiltersChange()">
-      <mat-option *ngFor="let status of caseManagerStatuses" [value]="status">
-        {{ status.trim() === '' ? 'ללא סטטוס' : status }}
-      </mat-option>
-    </mat-select>
-  </mat-form-field>
-  <!-- Filter by Year -->
+ 
+
+      <!-- Filter by Year -->
 <mat-form-field appearance="fill" class="filter-field">
   <mat-label>שנה</mat-label>
   <mat-select [(value)]="selectedYears" (selectionChange)="onFiltersChange()" multiple>
@@ -47,8 +27,38 @@
     <mat-option *ngFor="let month of uniqueMonths" [value]="month">{{ month }}</mat-option>
   </mat-select>
 </mat-form-field>
+    <mat-form-field appearance="fill" class="filter-field">
+      <mat-label>חיפוש</mat-label>
+      <input matInput (input)="applyFilter($event)" placeholder="הזן ערך לחיפוש..." />
+    </mat-form-field>
+
+    <mat-form-field appearance="fill" class="filter-field">
+      <mat-label>שם המחלקה</mat-label>
+      <mat-select [(value)]="selectedDepartments" (selectionChange)="onDepartmentsChange()" multiple>
+        <mat-option *ngFor="let dept of departments" [value]="dept">{{ dept }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+   
+
+  
+  <!-- סינון לפי סטטוס -->
+  <mat-form-field appearance="fill" class="filter-field">
+    <mat-label>סטטוס</mat-label>
+    <mat-select [(value)]="selectedStatus" (selectionChange)="onFiltersChange()">
+      <mat-option *ngFor="let status of caseManagerStatuses" [value]="status">
+        {{ status.trim() === '' ? 'ללא סטטוס' : status }}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+
 <button mat-raised-button color="warn" (click)="resetFilters()">איפוס סינונים</button>
 
+<img src="../../assets/excel.png"
+alt="Download"
+(click)="exportToExcelOnlyRowsWithRemarks()"
+class="download-icon"
+width="50px"
+style="cursor: pointer; float: left; margin-bottom: 10px;" />
   </div>
 
   <div class="table-container">

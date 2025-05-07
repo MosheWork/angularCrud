@@ -49,7 +49,7 @@ export class PhoneCallDialogComponent implements OnInit {
     private fb: FormBuilder
   ) {
     this.callForm = this.fb.group({
-      caseManagerStatus: [data.CaseManagerStatus || ''],
+      caseManagerStatus: [data.CaseManagerStatus || '', Validators.required],
       caseManagerCategory: [data.CaseManagerCategory || ''],
             caseManagerUpdate: [data.CaseManagerUpdate || new Date()],
       caseManagerRemarks: [data.CaseManagerRemarks || '']

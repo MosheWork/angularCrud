@@ -19,6 +19,13 @@
       <mat-option *ngFor="let dept of departments" [value]="dept">{{ dept }}</mat-option>
     </mat-select>
   </mat-form-field>
+
+  <img src="../../assets/excel.png"
+  alt="Download"
+  (click)="exportToExcelOnlyWithCaseManagerStatus()"
+  class="download-icon"
+  width="50px"
+  style="cursor: pointer; float: left; margin-bottom: 10px;" />
 </div>
 
 
