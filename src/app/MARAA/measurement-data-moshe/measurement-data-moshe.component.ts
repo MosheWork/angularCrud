@@ -46,8 +46,13 @@ measurementList: { id: string, desc: string }[] = [];
   measurementSummary: any[] = [];
   departmentDetailsMap: { [id: string]: any[] } = {};
   expandedElement: string | null = null;
-  
-
+  filteredDepartmentData: any[] = [];
+pagedDepartmentData: any[] = [];
+currentDepartmentPageIndex = 0;
+pageSize = 5;
+summaryDisplayedColumns: string[] = [
+  'MeasurementCode', 'MeasurementShortDesc', 'TotalMone', 'TotalMechane', 'Grade'
+];
   displayedColumns: string[] = [
     'Measurment_ID', 'Case_Number', 'Date', 'Mone', 'Mechane', 'Department'
   ];
@@ -212,6 +217,7 @@ this.filterForm.get('monthFilter')?.valueChanges.subscribe(() => this.applyFilte
   
     this.totalResults = this.dataSource.filteredData.length;
     this.calculateAllGauges();
+    this.updateFilteredDepartmentData();
 
     //this.calculateMoneToMechaneGauge(); // recalculate gauge after filter
   }
@@ -306,7 +312,51 @@ this.filterForm.get('monthFilter')?.valueChanges.subscribe(() => this.applyFilte
     this.mechaneMonth = monthSums.mechane;
     this.gaugeMonth = monthSums.mechane > 0 ? (monthSums.mone / monthSums.mechane) * 100 : 0;
   }
+  updateFilteredDepartmentData(): void {
+    const selectedMeasurementId = this.filterForm.get('measurmentIdFilter')?.value;
+    if (!selectedMeasurementId || !this.departmentDetailsMap[selectedMeasurementId]) {
+      this.filteredDepartmentData = [];
+      this.pagedDepartmentData = [];
+      return;
+    }
   
+    this.filteredDepartmentData = [...this.departmentDetailsMap[selectedMeasurementId]];
+    this.currentDepartmentPageIndex = 0;
+    this.updatePagedDepartmentData();
+  }
+  
+  updatePagedDepartmentData(): void {
+    const start = this.currentDepartmentPageIndex * this.pageSize;
+    const end = start + this.pageSize;
+    this.pagedDepartmentData = this.filteredDepartmentData.slice(start, end);
+  }
+
+  onDepartmentPageChange(event: any): void {
+    this.currentDepartmentPageIndex = event.pageIndex;
+    this.updatePagedDepartmentData();
+  }
+
+  getDepartmentSummaryForSelectedUnit(): any[] {
+    const selectedUnit = this.filterForm.get('unitFilter')?.value;
+    if (!selectedUnit) return [];
+  
+    const result: any[] = [];
+  
+    for (const [measurementCode, departments] of Object.entries(this.departmentDetailsMap)) {
+      const match = departments.find(dep => dep.Department === selectedUnit);
+      if (match) {
+        result.push({
+          MeasurementCode: measurementCode,
+          ...match
+        });
+      }
+    }
+  
+    return result;
+  }
+  
+
+  // mybe delete
   expandedRow: string | null = null;
 
   toggleExpandedRow(measurementCode: string): void {
@@ -317,8 +367,6 @@ this.filterForm.get('monthFilter')?.valueChanges.subscribe(() => this.applyFilte
   isExpandedRow = (index: number, row: any) => {
     return row.MeasurementCode === this.expandedRow;
   };
-  
-  summaryDisplayedColumns: string[] = [
-    'Expand', 'MeasurementCode', 'MeasurementShortDesc', 'TotalMone', 'TotalMechane', 'Grade'
-  ];
+  ///
+
 }
