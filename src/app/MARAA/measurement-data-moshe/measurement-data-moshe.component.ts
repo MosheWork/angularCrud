@@ -309,17 +309,16 @@ this.filterForm.get('monthFilter')?.valueChanges.subscribe(() => this.applyFilte
   
   expandedRow: string | null = null;
 
-  toggleExpandedRow(MeasurementCode : string): void {
-    console.log("button working ")
-    this.expandedRow = this.expandedRow === MeasurementCode  ? null : MeasurementCode ;
+  toggleExpandedRow(measurementCode: string): void {
+    console.log('Toggle for:', measurementCode);
+    this.expandedRow = this.expandedRow === measurementCode ? null : measurementCode;
   }
+  
   isExpandedRow = (index: number, row: any) => {
     return row.MeasurementCode === this.expandedRow;
   };
   
   summaryDisplayedColumns: string[] = [
-    'Expand', 'MeasurementCode', 'MeasurementShortDesc', 'TotalRows', 'TotalMone', 'TotalMechane', 'Grade'
+    'Expand', 'MeasurementCode', 'MeasurementShortDesc', 'TotalMone', 'TotalMechane', 'Grade'
   ];
-  
-  
 }

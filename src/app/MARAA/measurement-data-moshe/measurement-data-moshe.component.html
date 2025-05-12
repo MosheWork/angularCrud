@@ -125,90 +125,86 @@
     <mat-tab label="סיכום מדידה">
       <div class="body" *ngIf="measurementSummary?.length">
         <table mat-table [dataSource]="measurementSummary" class="mat-elevation-z8" dir="rtl">
-    
-          <!-- Expand Button -->
+  
+          <!-- Expand Button Column -->
           <ng-container matColumnDef="Expand">
             <th mat-header-cell *matHeaderCellDef></th>
             <td mat-cell *matCellDef="let row">
-              <button mat-icon-button (click)="toggleExpandedRow(row.MeasurementCode); $event.stopPropagation();">
+              <button mat-icon-button (click)="toggleExpandedRow(row.MeasurementCode)">
                 <mat-icon>{{ expandedRow === row.MeasurementCode ? 'expand_less' : 'expand_more' }}</mat-icon>
               </button>
             </td>
           </ng-container>
-    
+        
           <!-- Other Columns -->
           <ng-container matColumnDef="MeasurementCode">
             <th mat-header-cell *matHeaderCellDef> מזהה </th>
-            <td mat-cell *matCellDef="let row"> {{ row.MeasurementCode }} </td>
+            <td mat-cell *matCellDef="let row">{{ row.MeasurementCode }}</td>
           </ng-container>
-    
+        
           <ng-container matColumnDef="MeasurementShortDesc">
             <th mat-header-cell *matHeaderCellDef> תיאור קצר </th>
-            <td mat-cell *matCellDef="let row"> {{ row.MeasurementShortDesc }} </td>
+            <td mat-cell *matCellDef="let row">{{ row.MeasurementShortDesc }}</td>
           </ng-container>
-    
-          <ng-container matColumnDef="TotalRows">
-            <th mat-header-cell *matHeaderCellDef> סה"כ </th>
-            <td mat-cell *matCellDef="let row"> {{ row.TotalRows }} </td>
-          </ng-container>
-    
+        
           <ng-container matColumnDef="TotalMone">
             <th mat-header-cell *matHeaderCellDef> מונה </th>
-            <td mat-cell *matCellDef="let row"> {{ row.TotalMone }} </td>
+            <td mat-cell *matCellDef="let row">{{ row.TotalMone }}</td>
           </ng-container>
-    
+        
           <ng-container matColumnDef="TotalMechane">
             <th mat-header-cell *matHeaderCellDef> מכנה </th>
-            <td mat-cell *matCellDef="let row"> {{ row.TotalMechane }} </td>
+            <td mat-cell *matCellDef="let row">{{ row.TotalMechane }}</td>
           </ng-container>
-    
+        
           <ng-container matColumnDef="Grade">
             <th mat-header-cell *matHeaderCellDef> שיעור % </th>
-            <td mat-cell *matCellDef="let row"> {{ row.Grade | number:'1.0-2' }}%</td>
+            <td mat-cell *matCellDef="let row">{{ row.Grade | number:'1.0-2' }}%</td>
           </ng-container>
-    
-          <!-- Header & Rows -->
+        
+          <!-- Header and Data Rows -->
           <tr mat-header-row *matHeaderRowDef="summaryDisplayedColumns"></tr>
           <tr mat-row *matRowDef="let row; columns: summaryDisplayedColumns"></tr>
-    
-          <!-- Expanded Row (INSIDE the loop) -->
-          <tr *ngFor="let row of measurementSummary">
-            <td [attr.colspan]="summaryDisplayedColumns.length" *ngIf="expandedRow === row.MeasurementCode">
-              <table mat-table [dataSource]="departmentDetailsMap[row.MeasurementCode]" class="mat-elevation-z1 inner-table">
-    
-                <ng-container matColumnDef="Department">
-                  <th mat-header-cell *matHeaderCellDef> מחלקה </th>
-                  <td mat-cell *matCellDef="let d"> {{ d.Department }} </td>
-                </ng-container>
-    
-                <ng-container matColumnDef="TotalRows">
-                  <th mat-header-cell *matHeaderCellDef> סה"כ </th>
-                  <td mat-cell *matCellDef="let d"> {{ d.TotalRows }} </td>
-                </ng-container>
-    
-                <ng-container matColumnDef="TotalMone">
-                  <th mat-header-cell *matHeaderCellDef> מונה </th>
-                  <td mat-cell *matCellDef="let d"> {{ d.TotalMone }} </td>
-                </ng-container>
-    
-                <ng-container matColumnDef="TotalMechane">
-                  <th mat-header-cell *matHeaderCellDef> מכנה </th>
-                  <td mat-cell *matCellDef="let d"> {{ d.TotalMechane }} </td>
-                </ng-container>
-    
-                <ng-container matColumnDef="Grade">
-                  <th mat-header-cell *matHeaderCellDef> שיעור % </th>
-                  <td mat-cell *matCellDef="let d"> {{ d.Grade | number:'1.0-2' }}%</td>
-                </ng-container>
-    
-                <tr mat-header-row *matHeaderRowDef="['Department', 'TotalRows', 'TotalMone', 'TotalMechane', 'Grade']"></tr>
-                <tr mat-row *matRowDef="let d; columns: ['Department', 'TotalRows', 'TotalMone', 'TotalMechane', 'Grade']"></tr>
-              </table>
-            </td>
-          </tr>
+        
+          <!-- Expanded Row -->
+          <ng-container *ngFor="let row of measurementSummary">
+            <tr *ngIf="expandedRow === row.MeasurementCode">
+              <td [attr.colspan]="summaryDisplayedColumns.length">
+                <table mat-table [dataSource]="departmentDetailsMap[row.MeasurementCode]" class="mat-elevation-z1 inner-table">
+                  
+                  <ng-container matColumnDef="Department">
+                    <th mat-header-cell *matHeaderCellDef>מחלקה</th>
+                    <td mat-cell *matCellDef="let d">{{ d.Department }}</td>
+                  </ng-container>
+                  
+                  <ng-container matColumnDef="Mone">
+                    <th mat-header-cell *matHeaderCellDef>מונה</th>
+                    <td mat-cell *matCellDef="let d">{{ d.Mone }}</td>
+                  </ng-container>
+                  
+                  <ng-container matColumnDef="Mechane">
+                    <th mat-header-cell *matHeaderCellDef>מכנה</th>
+                    <td mat-cell *matCellDef="let d">{{ d.Mechane }}</td>
+                  </ng-container>
+                  
+                  <ng-container matColumnDef="Grade">
+                    <th mat-header-cell *matHeaderCellDef>שיעור %</th>
+                    <td mat-cell *matCellDef="let d">{{ d.Grade | number:'1.0-2' }}%</td>
+                  </ng-container>
+        
+                  <tr mat-header-row *matHeaderRowDef="['Department', 'Mone', 'Mechane', 'Grade']"></tr>
+                  <tr mat-row *matRowDef="let d; columns: ['Department', 'Mone', 'Mechane', 'Grade']"></tr>
+                </table>
+              </td>
+            </tr>
+          </ng-container>
+        
         </table>
+        
       </div>
     </mat-tab>
+    
+    
     
     
     
