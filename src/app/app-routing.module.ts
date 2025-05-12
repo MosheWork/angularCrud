@@ -84,6 +84,7 @@ import { BirthdayUpdateCRMComponent } from './ServiceCRM/birthday-update-crm/bir
 import { QuestionnaireRemarksComponent } from './ServiceCRM/questionnaire-remarks/questionnaire-remarks.component';
 import { PhysiotherapyComponent } from './chameleon-reports/physiotherapy/physiotherapy.component';
 import { ProductivityReportsComponent } from './chameleon-reports/productivity-reports/productivity-reports.component';
+import { MeasurementDataMosheComponent } from './MARAA/measurement-data-moshe/measurement-data-moshe.component';
 
 const routes: Routes = [
   { path: 'users', component: UsersComponent },
@@ -208,6 +209,10 @@ const routes: Routes = [
 
    //amin
    { path: 'aws', component: AwsClaudeInvocationComponent },
+
+   
+   //מערכת מראה
+   { path: 'measurement-data-moshe', component: MeasurementDataMosheComponent, data: { title: 'פרוייקט מרא"ה ' }},
 
 ];
 

@@ -1,0 +1,220 @@
+<div class="body" *ngIf="!isLoading">
+    <div class="nine">
+      <h1>{{ title }}<span> סה\"כ תוצאות :{{ totalResults }}</span></h1>
+    </div>
+  
+    <form [formGroup]="filterForm" class="filter-form" dir="rtl">
+      <mat-form-field class="long-search-bar">
+        <mat-label>חיפוש</mat-label>
+        <input matInput formControlName="globalFilter" />
+      </mat-form-field>
+  
+      <mat-form-field>
+        <mat-label>שם המחלקה</mat-label>
+        <mat-select formControlName="unitFilter">
+          <mat-option value="">הכל</mat-option>
+          <mat-option *ngFor="let unit of unitOptions" [value]="unit">{{ unit }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label>מדידה</mat-label>
+        <mat-select formControlName="measurmentIdFilter">
+          <mat-option value="">הכל</mat-option>
+          <mat-option *ngFor="let id of measurmentIdOptions" [value]="id">
+            {{ getShortDescForMeasurement(id) }} ({{ id }})
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+      
+      <mat-form-field>
+        <mat-label>שנה</mat-label>
+        <mat-select formControlName="yearFilter">
+          <mat-option value="">הכל</mat-option>
+          <mat-option *ngFor="let y of yearOptions" [value]="y">{{ y }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+      
+      <mat-form-field>
+        <mat-label>רבעון</mat-label>
+        <mat-select formControlName="quarterFilter">
+          <mat-option value="">הכל</mat-option>
+          <mat-option *ngFor="let q of quarterOptions" [value]="q">{{ q }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+      
+      <mat-form-field>
+        <mat-label>חודש</mat-label>
+        <mat-select formControlName="monthFilter">
+          <mat-option value="">הכל</mat-option>
+          <mat-option *ngFor="let m of monthOptions" [value]="m">{{ m }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+      <div class="gauge-container">
+        <div class="gauge-item">
+          <div class="gauge-title">שיעור לפי שנה</div>
+          <ngx-gauge
+            [value]="gaugeYear"
+            [min]="0"
+            [max]="100"
+            [label]="''"
+            [append]="'%'"
+            [foregroundColor]="gaugeYear >= 70 ? 'green' : 'red'">
+          </ngx-gauge>
+          <div class="gauge-info">
+            מונה {{ moneYear }} / מכנה {{ mechaneYear }}
+          </div>
+        </div>
+      
+        <div class="gauge-item">
+          <div class="gauge-title">שיעור לפי רבעון</div>
+          <ngx-gauge
+            [value]="gaugeQuarter"
+            [min]="0"
+            [max]="100"
+            [label]="''"
+            [append]="'%'"
+            [foregroundColor]="gaugeQuarter >= 70 ? 'green' : 'red'">
+          </ngx-gauge>
+          <div class="gauge-info">
+            מונה {{ moneQuarter }} / מכנה {{ mechaneQuarter }}
+          </div>
+        </div>
+      
+        <div class="gauge-item">
+          <div class="gauge-title">שיעור לפי חודש</div>
+          <ngx-gauge
+            [value]="gaugeMonth"
+            [min]="0"
+            [max]="100"
+            [label]="''"
+            [append]="'%'"
+            [foregroundColor]="gaugeMonth >= 70 ? 'green' : 'red'">
+          </ngx-gauge>
+          <div class="gauge-info">
+            מונה {{ moneMonth }} / מכנה {{ mechaneMonth }}
+          </div>
+        </div>
+      </div>
+      
+
+      
+      
+      <button mat-raised-button color="primary" (click)="resetFilters()">איפוס</button>
+      <img src="../../assets/excel.png" alt="Download" (click)="exportToExcel()" class="download-icon" width="50px" />
+    </form>
+    <!-- Tabs Section -->
+  <mat-tab-group>
+    <!-- Tab 1: Raw Data Table -->
+    <mat-tab label="נתונים גולמיים">
+      <mat-table #pdfTable [dataSource]="dataSource" matSort dir="rtl" class="mat-elevation-z8">
+        <ng-container *ngFor="let column of displayedColumns" [matColumnDef]="column">
+          <mat-header-cell *matHeaderCellDef mat-sort-header>{{ columnLabels[column] }}</mat-header-cell>
+          <mat-cell *matCellDef="let element">
+            <span *ngIf="isDateColumn(column); else textTemplate">{{ element[column] | date:'dd/MM/yyyy' }}</span>
+            <ng-template #textTemplate>{{ element[column] || 'לא זמין' }}</ng-template>
+          </mat-cell>
+        </ng-container>
+
+        <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+        <mat-row *matRowDef="let row; columns: displayedColumns;" class="clickable-row"></mat-row>
+      </mat-table>
+      <mat-paginator [pageSizeOptions]="[5, 25, 50]" showFirstLastButtons></mat-paginator>
+    </mat-tab>
+
+    <!-- Tab 2: Measurement Summary -->
+    <mat-tab label="סיכום מדידה">
+      <div class="body" *ngIf="measurementSummary?.length">
+        <table mat-table [dataSource]="measurementSummary" class="mat-elevation-z8" dir="rtl">
+    
+          <!-- Expand Button -->
+          <ng-container matColumnDef="Expand">
+            <th mat-header-cell *matHeaderCellDef></th>
+            <td mat-cell *matCellDef="let row">
+              <button mat-icon-button (click)="toggleExpandedRow(row.MeasurementCode); $event.stopPropagation();">
+                <mat-icon>{{ expandedRow === row.MeasurementCode ? 'expand_less' : 'expand_more' }}</mat-icon>
+              </button>
+            </td>
+          </ng-container>
+    
+          <!-- Other Columns -->
+          <ng-container matColumnDef="MeasurementCode">
+            <th mat-header-cell *matHeaderCellDef> מזהה </th>
+            <td mat-cell *matCellDef="let row"> {{ row.MeasurementCode }} </td>
+          </ng-container>
+    
+          <ng-container matColumnDef="MeasurementShortDesc">
+            <th mat-header-cell *matHeaderCellDef> תיאור קצר </th>
+            <td mat-cell *matCellDef="let row"> {{ row.MeasurementShortDesc }} </td>
+          </ng-container>
+    
+          <ng-container matColumnDef="TotalRows">
+            <th mat-header-cell *matHeaderCellDef> סה"כ </th>
+            <td mat-cell *matCellDef="let row"> {{ row.TotalRows }} </td>
+          </ng-container>
+    
+          <ng-container matColumnDef="TotalMone">
+            <th mat-header-cell *matHeaderCellDef> מונה </th>
+            <td mat-cell *matCellDef="let row"> {{ row.TotalMone }} </td>
+          </ng-container>
+    
+          <ng-container matColumnDef="TotalMechane">
+            <th mat-header-cell *matHeaderCellDef> מכנה </th>
+            <td mat-cell *matCellDef="let row"> {{ row.TotalMechane }} </td>
+          </ng-container>
+    
+          <ng-container matColumnDef="Grade">
+            <th mat-header-cell *matHeaderCellDef> שיעור % </th>
+            <td mat-cell *matCellDef="let row"> {{ row.Grade | number:'1.0-2' }}%</td>
+          </ng-container>
+    
+          <!-- Header & Rows -->
+          <tr mat-header-row *matHeaderRowDef="summaryDisplayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: summaryDisplayedColumns"></tr>
+    
+          <!-- Expanded Row (INSIDE the loop) -->
+          <tr *ngFor="let row of measurementSummary">
+            <td [attr.colspan]="summaryDisplayedColumns.length" *ngIf="expandedRow === row.MeasurementCode">
+              <table mat-table [dataSource]="departmentDetailsMap[row.MeasurementCode]" class="mat-elevation-z1 inner-table">
+    
+                <ng-container matColumnDef="Department">
+                  <th mat-header-cell *matHeaderCellDef> מחלקה </th>
+                  <td mat-cell *matCellDef="let d"> {{ d.Department }} </td>
+                </ng-container>
+    
+                <ng-container matColumnDef="TotalRows">
+                  <th mat-header-cell *matHeaderCellDef> סה"כ </th>
+                  <td mat-cell *matCellDef="let d"> {{ d.TotalRows }} </td>
+                </ng-container>
+    
+                <ng-container matColumnDef="TotalMone">
+                  <th mat-header-cell *matHeaderCellDef> מונה </th>
+                  <td mat-cell *matCellDef="let d"> {{ d.TotalMone }} </td>
+                </ng-container>
+    
+                <ng-container matColumnDef="TotalMechane">
+                  <th mat-header-cell *matHeaderCellDef> מכנה </th>
+                  <td mat-cell *matCellDef="let d"> {{ d.TotalMechane }} </td>
+                </ng-container>
+    
+                <ng-container matColumnDef="Grade">
+                  <th mat-header-cell *matHeaderCellDef> שיעור % </th>
+                  <td mat-cell *matCellDef="let d"> {{ d.Grade | number:'1.0-2' }}%</td>
+                </ng-container>
+    
+                <tr mat-header-row *matHeaderRowDef="['Department', 'TotalRows', 'TotalMone', 'TotalMechane', 'Grade']"></tr>
+                <tr mat-row *matRowDef="let d; columns: ['Department', 'TotalRows', 'TotalMone', 'TotalMechane', 'Grade']"></tr>
+              </table>
+            </td>
+          </tr>
+        </table>
+      </div>
+    </mat-tab>
+    
+    
+    
+    
+    
+    
+  </mat-tab-group>
+  </div>
+  
