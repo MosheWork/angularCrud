@@ -70,6 +70,12 @@ summaryDisplayedColumns: string[] = [
   @ViewChild(MatSort) sort!: MatSort;
   @ViewChild('pdfTable', { static: false }) pdfTable!: ElementRef;
 
+  @ViewChild('paginatorRawData') paginatorRawData!: MatPaginator;
+@ViewChild('paginatorSummary') paginatorSummary!: MatPaginator;
+@ViewChild('paginatorDepartmentFiltered') paginatorDepartmentFiltered!: MatPaginator;
+rawDataSource = new MatTableDataSource<any>();
+summaryDataSource = new MatTableDataSource<any>();
+departmentSummaryDataSource = new MatTableDataSource<any>();
   filterForm: FormGroup;
 
   constructor(private http: HttpClient, private fb: FormBuilder) {
@@ -91,12 +97,18 @@ summaryDisplayedColumns: string[] = [
 
 
   }
-
+  ngAfterViewInit() {
+    this.rawDataSource.paginator = this.paginatorRawData;
+    this.summaryDataSource.paginator = this.paginatorSummary;
+    this.departmentSummaryDataSource.paginator = this.paginatorDepartmentFiltered;
+  }
+  
   loadData(): void {
     this.isLoading = true;
     this.http.get<any[]>(`${environment.apiUrl}MeasurementDataMoshe`).subscribe(
       (data) => {
         this.dataSource = new MatTableDataSource(data);
+        this.rawDataSource.data = data; // ✅ for Raw Data tab
         this.totalResults = data.length;
 
         this.unitOptions = [...new Set(data.map((item) => item.Department))].sort();
@@ -137,6 +149,7 @@ this.monthOptions = [...new Set(dates.map(d => d.getMonth() + 1))].sort((a, b) =
   
     this.http.get<any[]>(`${environment.apiUrl}MeasurementDataMoshe/SummaryByMeasurement`).subscribe(summary => {
       this.measurementSummary = summary;
+      this.summaryDataSource.data = summary; // ✅ for Summary tab
   
       this.http.get<any[]>(`${environment.apiUrl}MeasurementDataMoshe/SummaryByDepartment`).subscribe(details => {
         this.departmentDetailsMap = details.reduce((acc, item) => {
@@ -218,6 +231,7 @@ this.filterForm.get('monthFilter')?.valueChanges.subscribe(() => this.applyFilte
     this.totalResults = this.dataSource.filteredData.length;
     this.calculateAllGauges();
     this.updateFilteredDepartmentData();
+    this.departmentSummaryDataSource.data = this.filteredDepartmentData; // ✅ for Department Filter tab
 
     //this.calculateMoneToMechaneGauge(); // recalculate gauge after filter
   }
