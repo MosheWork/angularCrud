@@ -102,8 +102,24 @@
       
       <button mat-raised-button color="primary" (click)="resetFilters()">איפוס</button>
       <img src="../../assets/excel.png" alt="Download" (click)="exportToExcel()" class="download-icon" width="50px" />
+      <img 
+      *ngIf="!isGraphVisible" 
+      (click)="toggleView()" 
+      src="../../assets/graphIcon.png" 
+      matTooltip="הצג גרף" 
+      width="50px" />
+    
+    <img 
+      *ngIf="isGraphVisible" 
+      (click)="toggleView()" 
+      src="../../assets/TableIcon.png" 
+      matTooltip="הצג טבלה" 
+      width="50px" />
+
     </form>
-    <!-- Tabs Section -->
+    
+    <ng-container *ngIf="!isGraphVisible; else graphTemplate">
+      <!-- Tabs Section -->
     <mat-tab-group>
       <!-- Tab 1: Raw Data Table -->
       <mat-tab label="נתונים גולמיים">
@@ -234,6 +250,13 @@
         </div>
       </mat-tab>
     </mat-tab-group>
-    
+  </ng-container>
+
+  <ng-template #graphTemplate>
+    <div style="max-width: 1000px; margin: auto; padding: 20px;">
+      <h2 style="text-align: center;">שיעור ביצוע לפי מחלקה</h2>
+      <canvas #departmentChart></canvas>
+    </div>
+  </ng-template>
   </div>
   

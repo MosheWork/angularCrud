@@ -6,6 +6,8 @@ import { MatTableDataSource } from '@angular/material/table';
 import { MatSort } from '@angular/material/sort';
 import { environment } from '../../../environments/environment';
 import * as XLSX from 'xlsx';
+import { Chart, ChartType, ChartData, registerables } from 'chart.js';
+
 
 @Component({
   selector: 'app-measurement-data-moshe',
@@ -29,6 +31,11 @@ export class MeasurementDataMosheComponent implements OnInit {
   mechaneQuarter = 0;
   moneMonth = 0;
   mechaneMonth = 0;
+  public chart: Chart | null = null;
+public chartType: ChartType = 'bar';
+
+isGraphVisible: boolean = false;
+showGraphView: boolean = false; // If you use both, define both
   
   camAssessmentGauge: number = 0;
   validCAMCount: number = 0;
@@ -73,6 +80,8 @@ summaryDisplayedColumns: string[] = [
   @ViewChild('paginatorRawData') paginatorRawData!: MatPaginator;
 @ViewChild('paginatorSummary') paginatorSummary!: MatPaginator;
 @ViewChild('paginatorDepartmentFiltered') paginatorDepartmentFiltered!: MatPaginator;
+@ViewChild('departmentChart') departmentChartRef!: ElementRef<HTMLCanvasElement>;
+
 rawDataSource = new MatTableDataSource<any>();
 summaryDataSource = new MatTableDataSource<any>();
 departmentSummaryDataSource = new MatTableDataSource<any>();
@@ -87,6 +96,8 @@ departmentSummaryDataSource = new MatTableDataSource<any>();
       quarterFilter: [''],
       monthFilter: ['']
     });
+
+    Chart.register(...registerables);
   }
 
   ngOnInit(): void {
@@ -337,6 +348,8 @@ this.filterForm.get('monthFilter')?.valueChanges.subscribe(() => this.applyFilte
     this.filteredDepartmentData = [...this.departmentDetailsMap[selectedMeasurementId]];
     this.currentDepartmentPageIndex = 0;
     this.updatePagedDepartmentData();
+    this.updateDepartmentChartData();
+
   }
   
   updatePagedDepartmentData(): void {
@@ -373,6 +386,116 @@ this.filterForm.get('monthFilter')?.valueChanges.subscribe(() => this.applyFilte
   // mybe delete
   expandedRow: string | null = null;
 
+  public departmentChartData: ChartData<'bar'> = {
+    labels: [],
+    datasets: [
+      {
+        label: 'אחוז מונה / מכנה',
+        data: [],
+        backgroundColor: [],
+        borderColor: [],
+        borderWidth: 1
+      }
+    ]
+  };
+  updateDepartmentChartData(): void {
+    const labels = this.filteredDepartmentData.map(dep => dep.Department);
+    const data = this.filteredDepartmentData.map(dep => {
+      const mone = +dep.Mone || 0;
+      const mechane = +dep.Mechane || 0;
+      return mechane > 0 ? +(100 * mone / mechane).toFixed(2) : 0;
+    });
+  
+    this.departmentChartData.labels = labels;
+    this.departmentChartData.datasets[0].data = data;
+    this.departmentChartData.datasets[0].backgroundColor = labels.map((_, i) => this.getColor(i));
+    this.departmentChartData.datasets[0].borderColor = labels.map((_, i) => this.getBorderColor(i));
+  
+    if (this.chart) {
+      this.chart.update();
+    }
+  }
+  getColor(index: number): string {
+    const colors = [
+      'rgba(255, 99, 132, 0.2)', 'rgba(54, 162, 235, 0.2)',
+      'rgba(255, 206, 86, 0.2)', 'rgba(75, 192, 192, 0.2)',
+      'rgba(153, 102, 255, 0.2)', 'rgba(255, 159, 64, 0.2)'
+    ];
+    return colors[index % colors.length];
+  }
+  
+  getBorderColor(index: number): string {
+    const borderColors = [
+      'rgba(255, 99, 132, 1)', 'rgba(54, 162, 235, 1)',
+      'rgba(255, 206, 86, 1)', 'rgba(75, 192, 192, 1)',
+      'rgba(153, 102, 255, 1)', 'rgba(255, 159, 64, 1)'
+    ];
+    return borderColors[index % borderColors.length];
+  }
+  toggleView(): void {
+    this.isGraphVisible = !this.isGraphVisible;
+  
+    if (this.isGraphVisible) {
+      setTimeout(() => this.renderChart(), 0); // Delay to let canvas render
+    }
+  }
+
+  renderChart(): void {
+    if (this.chart) this.chart.destroy();
+  
+    const ctx = this.departmentChartRef.nativeElement.getContext('2d');
+    if (!ctx) {
+      console.warn('❌ Canvas context not found');
+      return;
+    }
+  
+    const selectedMeasurementId = this.filterForm.get('measurmentIdFilter')?.value;
+    const data = this.departmentDetailsMap[selectedMeasurementId];
+  
+    if (!selectedMeasurementId || !data?.length) {
+      console.warn('❌ No measurement selected or no department data found');
+      return;
+    }
+  
+    console.log('✅ Rendering chart with data:', data);
+  
+    const labels = data.map(d => d.Department);
+    const values = data.map(d => (d.Mechane ? (d.Mone / d.Mechane) * 100 : 0));
+  
+    this.chart = new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels,
+        datasets: [{
+          label: 'שיעור ביצוע %',
+          data: values,
+          backgroundColor: 'rgba(63,81,181,0.6)',
+          borderColor: 'rgba(63,81,181,1)',
+          borderWidth: 1
+        }]
+      },
+      options: {
+        responsive: true,
+        scales: {
+          y: {
+            beginAtZero: true,
+            ticks: {
+              callback: value => `${value}%`
+            }
+          }
+        },
+        plugins: {
+          tooltip: {
+            callbacks: {
+              label: ctx => `${ctx.raw}%`
+            }
+          }
+        }
+      }
+    });
+  }
+  
+  
   toggleExpandedRow(measurementCode: string): void {
     console.log('Toggle for:', measurementCode);
     this.expandedRow = this.expandedRow === measurementCode ? null : measurementCode;
