@@ -1,262 +1,84 @@
-<div class="body" *ngIf="!isLoading">
-    <div class="nine">
-      <h1>{{ title }}<span> סה\"כ תוצאות :{{ totalResults }}</span></h1>
-    </div>
-  
-    <form [formGroup]="filterForm" class="filter-form" dir="rtl">
-      <mat-form-field class="long-search-bar">
-        <mat-label>חיפוש</mat-label>
-        <input matInput formControlName="globalFilter" />
-      </mat-form-field>
-  
-      <mat-form-field>
-        <mat-label>שם המחלקה</mat-label>
-        <mat-select formControlName="unitFilter">
-          <mat-option value="">הכל</mat-option>
-          <mat-option *ngFor="let unit of unitOptions" [value]="unit">{{ unit }}</mat-option>
-        </mat-select>
-      </mat-form-field>
-      <mat-form-field>
-        <mat-label>מדידה</mat-label>
-        <mat-select formControlName="measurmentIdFilter">
-          <mat-option value="">הכל</mat-option>
-          <mat-option *ngFor="let id of measurmentIdOptions" [value]="id">
-            {{ getShortDescForMeasurement(id) }} ({{ id }})
-          </mat-option>
-        </mat-select>
-      </mat-form-field>
-      
-      <mat-form-field>
-        <mat-label>שנה</mat-label>
-        <mat-select formControlName="yearFilter">
-          <mat-option value="">הכל</mat-option>
-          <mat-option *ngFor="let y of yearOptions" [value]="y">{{ y }}</mat-option>
-        </mat-select>
-      </mat-form-field>
-      
-      <mat-form-field>
-        <mat-label>רבעון</mat-label>
-        <mat-select formControlName="quarterFilter">
-          <mat-option value="">הכל</mat-option>
-          <mat-option *ngFor="let q of quarterOptions" [value]="q">{{ q }}</mat-option>
-        </mat-select>
-      </mat-form-field>
-      
-      <mat-form-field>
-        <mat-label>חודש</mat-label>
-        <mat-select formControlName="monthFilter">
-          <mat-option value="">הכל</mat-option>
-          <mat-option *ngFor="let m of monthOptions" [value]="m">{{ m }}</mat-option>
-        </mat-select>
-      </mat-form-field>
-      <div class="gauge-container">
-     
-      
-        <div class="gauge-item">
-          <div class="gauge-title">שיעור לפי שנה</div>
-          <ngx-gauge
-            [value]="gaugeYear"
-            [min]="0"
-            [max]="100"
-            [label]="''"
-            [append]="'%'"
-            [foregroundColor]="gaugeYear >= 70 ? 'green' : 'red'">
-          </ngx-gauge>
-          <div class="gauge-info">
-            מונה {{ moneYear }} / מכנה {{ mechaneYear }}
-          </div>
-        </div>
-      
-        <div class="gauge-item">
-          <div class="gauge-title">שיעור לפי רבעון</div>
-          <ngx-gauge
-            [value]="gaugeQuarter"
-            [min]="0"
-            [max]="100"
-            [label]="''"
-            [append]="'%'"
-            [foregroundColor]="gaugeQuarter >= 70 ? 'green' : 'red'">
-          </ngx-gauge>
-          <div class="gauge-info">
-            מונה {{ moneQuarter }} / מכנה {{ mechaneQuarter }}
-          </div>
-        </div>
-      
-        <div class="gauge-item">
-          <div class="gauge-title">שיעור לפי חודש</div>
-          <ngx-gauge
-            [value]="gaugeMonth"
-            [min]="0"
-            [max]="100"
-            [label]="''"
-            [append]="'%'"
-            [foregroundColor]="gaugeMonth >= 70 ? 'green' : 'red'">
-          </ngx-gauge>
-          <div class="gauge-info">
-            מונה {{ moneMonth }} / מכנה {{ mechaneMonth }}
-          </div>
-        </div>
-      </div>
+<mat-tab-group>
+  <!-- סיכום לפי מדד -->
+  <mat-tab label="סיכום לפי מדד">
+    <table mat-table [dataSource]="measurementDataSource" matSort #measurementSort="matSort" class="mat-elevation-z8">
 
-      
-      
-      <button mat-raised-button color="primary" (click)="resetFilters()">איפוס</button>
-      <img src="../../assets/excel.png" alt="Download" (click)="exportToExcel()" class="download-icon" width="50px" />
-      <img 
-      *ngIf="!isGraphVisible" 
-      (click)="toggleView()" 
-      src="../../assets/graphIcon.png" 
-      matTooltip="הצג גרף" 
-      width="50px" />
-    
-    <img 
-      *ngIf="isGraphVisible" 
-      (click)="toggleView()" 
-      src="../../assets/TableIcon.png" 
-      matTooltip="הצג טבלה" 
-      width="50px" />
+      <ng-container matColumnDef="MeasurementCode">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>קוד מדד</th>
+        <td mat-cell *matCellDef="let row">{{ row.MeasurementCode }}</td>
+      </ng-container>
 
-    </form>
-    
-    <ng-container *ngIf="!isGraphVisible; else graphTemplate">
-      <!-- Tabs Section -->
-    <mat-tab-group>
-      <!-- Tab 1: Raw Data Table -->
-      <mat-tab label="נתונים גולמיים">
-        <mat-table #pdfTable [dataSource]="rawDataSource" matSort dir="rtl" class="mat-elevation-z8">
-          <ng-container *ngFor="let column of displayedColumns" [matColumnDef]="column">
-            <mat-header-cell *matHeaderCellDef mat-sort-header>{{ columnLabels[column] }}</mat-header-cell>
-            <mat-cell *matCellDef="let element">
-              <span *ngIf="isDateColumn(column); else textTemplate">{{ element[column] | date:'dd/MM/yyyy' }}</span>
-              <ng-template #textTemplate>{{ element[column] || 'לא זמין' }}</ng-template>
-            </mat-cell>
-          </ng-container>
-    
-          <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-          <mat-row *matRowDef="let row; columns: displayedColumns;" class="clickable-row"></mat-row>
-        </mat-table>
-        <mat-paginator [pageSizeOptions]="[5, 25, 50]" showFirstLastButtons></mat-paginator>
-      </mat-tab>
-    
-      <!-- Tab 2: Measurement Summary -->
-      <mat-tab label="סיכום פר מדד ">
-        <div class="body" *ngIf="summaryDataSource?.data?.length">
-          <table mat-table [dataSource]="summaryDataSource" class="mat-elevation-z8" dir="rtl">
-            <ng-container matColumnDef="MeasurementCode">
-              <th mat-header-cell *matHeaderCellDef> מזהה </th>
-              <td mat-cell *matCellDef="let row">{{ row.MeasurementCode }}</td>
-            </ng-container>
-    
-            <ng-container matColumnDef="MeasurementShortDesc">
-              <th mat-header-cell *matHeaderCellDef> תיאור קצר </th>
-              <td mat-cell *matCellDef="let row">{{ row.MeasurementShortDesc }}</td>
-            </ng-container>
-    
-            <ng-container matColumnDef="TotalMone">
-              <th mat-header-cell *matHeaderCellDef> מונה </th>
-              <td mat-cell *matCellDef="let row">{{ row.TotalMone }}</td>
-            </ng-container>
-    
-            <ng-container matColumnDef="TotalMechane">
-              <th mat-header-cell *matHeaderCellDef> מכנה </th>
-              <td mat-cell *matCellDef="let row">{{ row.TotalMechane }}</td>
-            </ng-container>
-    
-            <ng-container matColumnDef="Grade">
-              <th mat-header-cell *matHeaderCellDef> שיעור % </th>
-              <td mat-cell *matCellDef="let row">{{ row.Grade | number:'1.0-2' }}%</td>
-            </ng-container>
-    
-            <tr mat-header-row *matHeaderRowDef="summaryDisplayedColumns"></tr>
-            <tr mat-row *matRowDef="let row; columns: summaryDisplayedColumns"></tr>
-          </table>
-          <mat-paginator [pageSize]="5" [pageSizeOptions]="[5, 10, 25]" showFirstLastButtons></mat-paginator>
-        </div>
-      </mat-tab>
-    
-      <!-- Tab 3: Department Summary by Measurement -->
-      <mat-tab label=" סיכום לפי מחלקה פר מדד">
-        <div class="body" *ngIf="pagedDepartmentData.length">
-          <h3 class="table-title">סיכום לפי מחלקה</h3>
-          <table mat-table [dataSource]="pagedDepartmentData" class="mat-elevation-z1 inner-table" dir="rtl">
-            <ng-container matColumnDef="Department">
-              <th mat-header-cell *matHeaderCellDef>מחלקה</th>
-              <td mat-cell *matCellDef="let d">{{ d.Department }}</td>
-            </ng-container>
-    
-            <ng-container matColumnDef="Mone">
-              <th mat-header-cell *matHeaderCellDef>מונה</th>
-              <td mat-cell *matCellDef="let d">{{ d.Mone }}</td>
-            </ng-container>
-    
-            <ng-container matColumnDef="Mechane">
-              <th mat-header-cell *matHeaderCellDef>מכנה</th>
-              <td mat-cell *matCellDef="let d">{{ d.Mechane }}</td>
-            </ng-container>
-    
-            <ng-container matColumnDef="Grade">
-              <th mat-header-cell *matHeaderCellDef>שיעור %</th>
-              <td mat-cell *matCellDef="let d">{{ d.Grade | number: '1.0-2' }}%</td>
-            </ng-container>
-    
-            <tr mat-header-row *matHeaderRowDef="['Department', 'Mone', 'Mechane', 'Grade']"></tr>
-            <tr mat-row *matRowDef="let d; columns: ['Department', 'Mone', 'Mechane', 'Grade']"></tr>
-          </table>
-    
-          <mat-paginator [length]="filteredDepartmentData.length"
-                         [pageSize]="pageSize"
-                         [pageSizeOptions]="[5]"
-                         (page)="onDepartmentPageChange($event)">
-          </mat-paginator>
-        </div>
-        <div *ngIf="!pagedDepartmentData.length" style="padding: 12px;">נא לבחור מדד</div>
-      </mat-tab>
-    
-      <!-- Tab 4: Department Summary by Unit Filter -->
-      <mat-tab label="סיכום לפי מחלקה ">
-        <div class="body">
-          <ng-container *ngIf="filterForm.get('unitFilter')?.value; else noDepartmentSelected">
-            <h3 class="table-title">סיכום עבור מחלקה: {{ filterForm.get('unitFilter')?.value }}</h3>
-    
-            <table mat-table [dataSource]="getDepartmentSummaryForSelectedUnit()" class="mat-elevation-z1 inner-table" dir="rtl">
-              <ng-container matColumnDef="MeasurementCode">
-                <th mat-header-cell *matHeaderCellDef>קוד מדידה</th>
-                <td mat-cell *matCellDef="let d">{{ d.MeasurementCode }}</td>
-              </ng-container>
-    
-              <ng-container matColumnDef="Mone">
-                <th mat-header-cell *matHeaderCellDef>מונה</th>
-                <td mat-cell *matCellDef="let d">{{ d.Mone }}</td>
-              </ng-container>
-    
-              <ng-container matColumnDef="Mechane">
-                <th mat-header-cell *matHeaderCellDef>מכנה</th>
-                <td mat-cell *matCellDef="let d">{{ d.Mechane }}</td>
-              </ng-container>
-    
-              <ng-container matColumnDef="Grade">
-                <th mat-header-cell *matHeaderCellDef>שיעור %</th>
-                <td mat-cell *matCellDef="let d">{{ d.Grade | number:'1.0-2' }}%</td>
-              </ng-container>
-    
-              <tr mat-header-row *matHeaderRowDef="['MeasurementCode', 'Mone', 'Mechane', 'Grade']"></tr>
-              <tr mat-row *matRowDef="let d; columns: ['MeasurementCode', 'Mone', 'Mechane', 'Grade']"></tr>
-            </table>
-          </ng-container>
-    
-          <ng-template #noDepartmentSelected>
-            <div style="padding: 16px;">יש לבחור מחלקה מהפילטר כדי לצפות בסיכום.</div>
-          </ng-template>
-        </div>
-      </mat-tab>
-    </mat-tab-group>
-  </ng-container>
+      <ng-container matColumnDef="MeasurementShortDesc">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>תיאור</th>
+        <td mat-cell *matCellDef="let row">{{ row.MeasurementShortDesc }}</td>
+      </ng-container>
 
-  <ng-template #graphTemplate>
-    <div style="max-width: 1000px; margin: auto; padding: 20px;">
-      <h2 style="text-align: center;">שיעור ביצוע לפי מחלקה</h2>
-      <canvas #departmentChart></canvas>
-    </div>
-  </ng-template>
-  </div>
-  
+      <ng-container matColumnDef="Mone">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>מונה</th>
+        <td mat-cell *matCellDef="let row">{{ row.Mone }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="Mechane">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>מכנה</th>
+        <td mat-cell *matCellDef="let row">{{ row.Mechane }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="Grade">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>אחוז</th>
+        <td mat-cell *matCellDef="let row">{{ row.Grade }}%</td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedMeasurementColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedMeasurementColumns;"></tr>
+    </table>
+
+    <mat-paginator
+      #measurementPaginator
+      [pageSizeOptions]="[5, 10, 20]"
+      showFirstLastButtons>
+    </mat-paginator>
+  </mat-tab>
+
+  <!-- סיכום לפי מחלקה -->
+  <mat-tab label="סיכום לפי מחלקה">
+    <table mat-table [dataSource]="departmentDataSource" matSort #departmentSort="matSort" class="mat-elevation-z8">
+
+      <ng-container matColumnDef="MeasurementCode">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>קוד מדד</th>
+        <td mat-cell *matCellDef="let row">{{ row.MeasurementCode }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="Department">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>מחלקה</th>
+        <td mat-cell *matCellDef="let row">{{ row.Department }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="Mone">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>מונה</th>
+        <td mat-cell *matCellDef="let row">{{ row.Mone }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="Mechane">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>מכנה</th>
+        <td mat-cell *matCellDef="let row">{{ row.Mechane }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="Grade">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>אחוז</th>
+        <td mat-cell *matCellDef="let row">{{ row.Grade }}%</td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedDepartmentColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedDepartmentColumns;"></tr>
+    </table>
+
+    <mat-paginator
+      #departmentPaginator
+      [pageSizeOptions]="[5, 10, 20]"
+      showFirstLastButtons>
+    </mat-paginator>
+  </mat-tab>
+</mat-tab-group>
+
+<!-- Optional Loading Spinner -->
+<mat-spinner *ngIf="isLoading" diameter="40"></mat-spinner>
