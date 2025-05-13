@@ -182,13 +182,14 @@ this.monthOptions = [...new Set(dates.map(d => d.getMonth() + 1))].sort((a, b) =
   }
   
   setupFilterListeners(): void {
-    this.filterForm.get('globalFilter')?.valueChanges.subscribe(() => this.applyFilter());
-    this.filterForm.get('unitFilter')?.valueChanges.subscribe(() => this.applyFilter());
-    this.filterForm.get('measurmentIdFilter')?.valueChanges.subscribe(() => this.applyFilter());
-    this.filterForm.get('yearFilter')?.valueChanges.subscribe(() => this.applyFilter());
-this.filterForm.get('quarterFilter')?.valueChanges.subscribe(() => this.applyFilter());
-this.filterForm.get('monthFilter')?.valueChanges.subscribe(() => this.applyFilter());
-
+    const filters = ['globalFilter', 'unitFilter', 'measurmentIdFilter', 'yearFilter', 'quarterFilter', 'monthFilter'];
+  
+    for (const field of filters) {
+      this.filterForm.get(field)?.valueChanges.subscribe(() => {
+        this.applyFilter();
+        this.updateFilteredDepartmentData(); // ✅ always keep department summary in sync
+      });
+    }
   }
 
   applyFilter(): void {
@@ -199,6 +200,7 @@ this.filterForm.get('monthFilter')?.valueChanges.subscribe(() => this.applyFilte
     const quarterFilter = +this.filterForm.get('quarterFilter')?.value || null;
     const monthFilter = +this.filterForm.get('monthFilter')?.value || null;
   
+    // 🔄 Apply to main table
     this.dataSource.filterPredicate = (data, filter) => {
       const filterObject = JSON.parse(filter);
   
@@ -206,28 +208,28 @@ this.filterForm.get('monthFilter')?.valueChanges.subscribe(() => this.applyFilte
         (value) => value && value.toString().toLowerCase().includes(filterObject.global)
       );
   
-      const matchesUnitFilter = !filterObject.unit || (data.Department && data.Department === filterObject.unit);
+      const matchesUnitFilter = !filterObject.unit || data.Department === filterObject.unit;
+      const matchesMeasurmentIdFilter = !filterObject.measurmentId || data.Measurment_ID === filterObject.measurmentId;
   
-      const matchesMeasurmentIdFilter = !filterObject.measurmentId || (data.Measurment_ID && data.Measurment_ID === filterObject.measurmentId);
+      let entryDate = data.Date ? new Date(data.Date) : null;
+      if (entryDate && isNaN(entryDate.getTime())) entryDate = null;
   
-      const matchesYear = !filterObject.year || (
-        data.Date && new Date(data.Date).getFullYear() === filterObject.year
+      const entryYear = entryDate?.getFullYear();
+      const entryQuarter = entryDate ? Math.floor(entryDate.getMonth() / 3) + 1 : null;
+      const entryMonth = entryDate ? entryDate.getMonth() + 1 : null;
+  
+      const matchesYear = !filterObject.year || entryYear === filterObject.year;
+      const matchesQuarter = !filterObject.quarter || entryQuarter === filterObject.quarter;
+      const matchesMonth = !filterObject.month || entryMonth === filterObject.month;
+  
+      return (
+        matchesGlobalFilter &&
+        matchesUnitFilter &&
+        matchesMeasurmentIdFilter &&
+        matchesYear &&
+        matchesQuarter &&
+        matchesMonth
       );
-  
-      const matchesQuarter = !filterObject.quarter || (
-        data.Date && Math.floor((new Date(data.Date).getMonth()) / 3) + 1 === filterObject.quarter
-      );
-  
-      const matchesMonth = !filterObject.month || (
-        data.Date && new Date(data.Date).getMonth() + 1 === filterObject.month
-      );
-  
-      return matchesGlobalFilter &&
-             matchesUnitFilter &&
-             matchesMeasurmentIdFilter &&
-             matchesYear &&
-             matchesQuarter &&
-             matchesMonth;
     };
   
     this.dataSource.filter = JSON.stringify({
@@ -240,19 +242,26 @@ this.filterForm.get('monthFilter')?.valueChanges.subscribe(() => this.applyFilte
     });
   
     this.totalResults = this.dataSource.filteredData.length;
+  
+    // ✅ Recalculate gauges
     this.calculateAllGauges();
+  
+    // ✅ Update department table and graph
     this.updateFilteredDepartmentData();
-    this.departmentSummaryDataSource.data = this.filteredDepartmentData; // ✅ for Department Filter tab
-
-    //this.calculateMoneToMechaneGauge(); // recalculate gauge after filter
+    this.departmentSummaryDataSource.data = this.filteredDepartmentData;
+  
+    // ✅ Update chart if visible
+    if (this.isGraphVisible) {
+      setTimeout(() => this.renderChart(), 0);
+    }
   }
+  
   
 
   resetFilters(): void {
     this.filterForm.reset();
     this.applyFilter();
     this.calculateAllGauges(); // optional safety
-
   }
 
   exportToExcel(): void {
@@ -345,12 +354,32 @@ this.filterForm.get('monthFilter')?.valueChanges.subscribe(() => this.applyFilte
       return;
     }
   
-    this.filteredDepartmentData = [...this.departmentDetailsMap[selectedMeasurementId]];
+    const year = +this.filterForm.get('yearFilter')?.value || null;
+    const quarter = +this.filterForm.get('quarterFilter')?.value || null;
+    const month = +this.filterForm.get('monthFilter')?.value || null;
+  
+    const departments = this.departmentDetailsMap[selectedMeasurementId];
+  
+    this.filteredDepartmentData = departments.filter(dep => {
+      const rawDate = dep.EntryDate || dep.Date || dep.Entry_Date;
+      if (!rawDate) return true; // include if no date
+      const entryDate = new Date(rawDate);
+      if (isNaN(entryDate.getTime())) return true;
+  
+      const entryYear = entryDate.getFullYear();
+      const entryQuarter = Math.floor(entryDate.getMonth() / 3) + 1;
+      const entryMonth = entryDate.getMonth() + 1;
+  
+      return (!year || entryYear === year) &&
+             (!quarter || entryQuarter === quarter) &&
+             (!month || entryMonth === month);
+    });
+  
     this.currentDepartmentPageIndex = 0;
     this.updatePagedDepartmentData();
-    this.updateDepartmentChartData();
-
   }
+  
+  
   
   updatePagedDepartmentData(): void {
     const start = this.currentDepartmentPageIndex * this.pageSize;
@@ -449,15 +478,11 @@ this.filterForm.get('monthFilter')?.valueChanges.subscribe(() => this.applyFilte
       return;
     }
   
-    const selectedMeasurementId = this.filterForm.get('measurmentIdFilter')?.value;
-    const data = this.departmentDetailsMap[selectedMeasurementId];
-  
-    if (!selectedMeasurementId || !data?.length) {
-      console.warn('❌ No measurement selected or no department data found');
+    const data = this.filteredDepartmentData;
+    if (!data.length) {
+      console.warn('⚠️ No data to show for the selected filters.');
       return;
     }
-  
-    console.log('✅ Rendering chart with data:', data);
   
     const labels = data.map(d => d.Department);
     const values = data.map(d => (d.Mechane ? (d.Mone / d.Mechane) * 100 : 0));
@@ -469,8 +494,8 @@ this.filterForm.get('monthFilter')?.valueChanges.subscribe(() => this.applyFilte
         datasets: [{
           label: 'שיעור ביצוע %',
           data: values,
-          backgroundColor: 'rgba(63,81,181,0.6)',
-          borderColor: 'rgba(63,81,181,1)',
+          backgroundColor: labels.map((_, i) => this.getColor(i)),
+          borderColor: labels.map((_, i) => this.getBorderColor(i)),
           borderWidth: 1
         }]
       },
@@ -494,6 +519,8 @@ this.filterForm.get('monthFilter')?.valueChanges.subscribe(() => this.applyFilte
       }
     });
   }
+  
+  
   
   
   toggleExpandedRow(measurementCode: string): void {
