@@ -1,7 +1,51 @@
-<mat-tab-group>
+<div class="measurement-wrapper">
+<mat-card class="filter-card" style="margin-bottom: 16px;">
+  <div class="filter-row" dir="rtl">
+    <mat-form-field >
+      <mat-label>שנה</mat-label>
+      <mat-select [(ngModel)]="selectedYear">
+        <mat-option *ngFor="let year of years" [value]="year">{{ year }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field >
+      <mat-label>רבעון</mat-label>
+      <mat-select [(ngModel)]="selectedQuarter">
+        <mat-option *ngFor="let quarter of quarters" [value]="quarter">{{ quarter }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field >
+      <mat-label>חודש</mat-label>
+      <mat-select [(ngModel)]="selectedMonth">
+        <mat-option *ngFor="let month of months" [value]="month">{{ month }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field >
+      <mat-label>מחלקה</mat-label>
+      <mat-select [(ngModel)]="selectedDepartment">
+        <mat-option *ngFor="let dept of departments" [value]="dept">{{ dept }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field >
+      <mat-label>מדד</mat-label>
+      <mat-select [(ngModel)]="selectedMeasurement">
+        <mat-option *ngFor="let m of measurements" [value]="m.split(' ')[0]">{{ m }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <button mat-raised-button color="primary" (click)="applyFilter()">סנן</button>
+    <button mat-button (click)="resetFilter()">איפוס</button>
+  </div>
+</mat-card>
+
+
+<mat-tab-group dir="rtl">
   <!-- סיכום לפי מדד -->
   <mat-tab label="סיכום לפי מדד">
-    <table mat-table [dataSource]="measurementDataSource" matSort #measurementSort="matSort" class="mat-elevation-z8">
+    <table mat-table [dataSource]="measurementDataSource" matSort #measurementSort="matSort" class="mat-elevation-z8" dir="rtl">
 
       <ng-container matColumnDef="MeasurementCode">
         <th mat-header-cell *matHeaderCellDef mat-sort-header>קוד מדד</th>
@@ -41,7 +85,7 @@
 
   <!-- סיכום לפי מחלקה -->
   <mat-tab label="סיכום לפי מחלקה">
-    <table mat-table [dataSource]="departmentDataSource" matSort #departmentSort="matSort" class="mat-elevation-z8">
+    <table mat-table [dataSource]="departmentDataSource" matSort #departmentSort="matSort" class="mat-elevation-z8"dir="rtl">
 
       <ng-container matColumnDef="MeasurementCode">
         <th mat-header-cell *matHeaderCellDef mat-sort-header>קוד מדד</th>
@@ -79,6 +123,7 @@
     </mat-paginator>
   </mat-tab>
 </mat-tab-group>
+</div>
 
 <!-- Optional Loading Spinner -->
 <mat-spinner *ngIf="isLoading" diameter="40"></mat-spinner>
