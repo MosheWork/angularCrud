@@ -22,19 +22,21 @@
       </mat-select>
     </mat-form-field>
 
-    <mat-form-field >
-      <mat-label>מחלקה</mat-label>
-      <mat-select [(ngModel)]="selectedDepartment">
-        <mat-option *ngFor="let dept of departments" [value]="dept">{{ dept }}</mat-option>
-      </mat-select>
-    </mat-form-field>
+   <!-- מחלקה -->
+<mat-form-field>
+  <mat-label>מחלקה</mat-label>
+  <mat-select [(ngModel)]="selectedDepartments" multiple>
+    <mat-option *ngFor="let dept of departments" [value]="dept">{{ dept }}</mat-option>
+  </mat-select>
+</mat-form-field>
 
-    <mat-form-field >
-      <mat-label>מדד</mat-label>
-      <mat-select [(ngModel)]="selectedMeasurement">
-        <mat-option *ngFor="let m of measurements" [value]="m.split(' ')[0]">{{ m }}</mat-option>
-      </mat-select>
-    </mat-form-field>
+<!-- מדד -->
+<mat-form-field>
+  <mat-label>מדד</mat-label>
+  <mat-select [(ngModel)]="selectedMeasurements" multiple>
+    <mat-option *ngFor="let m of measurements" [value]="m.split(' ')[0]">{{ m }}</mat-option>
+  </mat-select>
+</mat-form-field>
 
     <button mat-raised-button color="primary" (click)="applyFilter()">סנן</button>
     <button mat-button (click)="resetFilter()">איפוס</button>

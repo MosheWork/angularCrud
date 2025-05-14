@@ -48,6 +48,8 @@ quarters: string[] = ['Q1', 'Q2', 'Q3', 'Q4'];
 months: string[] = ['ינואר', 'פברואר', 'מרץ', 'אפריל', 'מאי', 'יוני', 'יולי', 'אוגוסט', 'ספטמבר', 'אוקטובר', 'נובמבר', 'דצמבר'];
 departments: string[] = [];
 measurements: string[] = [];
+selectedDepartments: string[] = [];
+selectedMeasurements: string[] = [];
 quarterlyDisplayedColumns: string[] = ['Measurement']; // will be populated dynamically
 
 selectedYear: number | null = null;
@@ -261,7 +263,8 @@ failedCasesDisplayedColumns: string[] = ['Measurment_ID', 'MeasurementShortDesc'
     this.monthGaugeValue = null;
     this.applyFilter();
     this.fetchMonthlyPivot();
-
+    this.selectedDepartments = [];
+    this.selectedMeasurements = [];
   }
 
   applyFilter(): void {
@@ -301,13 +304,13 @@ failedCasesDisplayedColumns: string[] = ['Measurment_ID', 'MeasurementShortDesc'
     }
   
     // Department filter
-    if (this.selectedDepartment) {
-      params['departments'] = this.selectedDepartment;
+    if (this.selectedDepartments.length > 0) {
+      params['departments'] = this.selectedDepartments.join(',');
     }
   
     // Measurement filter
-    if (this.selectedMeasurement) {
-      params['measurement'] = this.selectedMeasurement;
+    if (this.selectedMeasurements.length > 0) {
+      params['measurement'] = this.selectedMeasurements.join(',');
     }
   
     // Request updated summary by measurement
