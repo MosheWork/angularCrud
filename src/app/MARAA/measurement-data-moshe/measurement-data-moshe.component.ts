@@ -20,6 +20,11 @@ export interface QuarterlyPivotFlatModel {
   Measurement: string;
   [key: string]: string | number | null; // dynamic quarter columns like '2024_Q1'
 }
+export interface MonthlyPivotModel {
+  Measurement: string;
+  [key: string]: any; // for dynamic month columns like 2024_05, 2024_06
+}
+
 @Component({
   selector: 'app-measurement-data-moshe',
   templateUrl: './measurement-data-moshe.component.html',
@@ -45,14 +50,20 @@ selectedMeasurement: string | null = null;
   measurementDataSource = new MatTableDataSource<MeasurementSummaryModel>();
   departmentDataSource = new MatTableDataSource<MeasurementSummaryModel>();
   quarterlyDataSource = new MatTableDataSource<QuarterlyPivotFlatModel>();
-
+  monthlyDataSource = new MatTableDataSource<MonthlyPivotModel>();
+  monthlyDisplayedColumns: string[] = []; // Will be filled dynamically
   isLoading = true;
-
+  @ViewChild('quarterlyPaginator') quarterlyPaginator!: MatPaginator;
+  @ViewChild('quarterlySort') quarterlySort!: MatSort;
+  
   @ViewChild('measurementPaginator') measurementPaginator!: MatPaginator;
   @ViewChild('departmentPaginator') departmentPaginator!: MatPaginator;
 
   @ViewChild('measurementSort') measurementSort!: MatSort;
   @ViewChild('departmentSort') departmentSort!: MatSort;
+
+  @ViewChild('monthlyPaginator') monthlyPaginator!: MatPaginator;
+@ViewChild('monthlySort') monthlySort!: MatSort;
 
   constructor(private http: HttpClient) {}
   getLastDayOfMonth(year: number, month: number): number {
@@ -66,16 +77,26 @@ selectedMeasurement: string | null = null;
     this.years = [currentYear - 1, currentYear, currentYear + 1];
     this.fetchMeasurement()
     this.fetchQuarterlyPivot()
+    this.fetchMonthlyPivot();
+
   }
 
   ngAfterViewInit(): void {
     setTimeout(() => {
       this.measurementDataSource.paginator = this.measurementPaginator;
       this.measurementDataSource.sort = this.measurementSort;
-  
+    
       this.departmentDataSource.paginator = this.departmentPaginator;
       this.departmentDataSource.sort = this.departmentSort;
+    
+      this.quarterlyDataSource.paginator = this.quarterlyPaginator;
+      this.quarterlyDataSource.sort = this.quarterlySort;
+
+      
+    this.monthlyDataSource.paginator = this.monthlyPaginator;
+    this.monthlyDataSource.sort = this.monthlySort;
     });
+    
   }
   
   fetchSummaryByMeasurement(): void {
@@ -140,6 +161,22 @@ selectedMeasurement: string | null = null;
         },
         error: err => {
           console.error('❌ Error loading quarterly pivot data', err);
+        }
+      });
+  }
+  fetchMonthlyPivot(): void {
+    this.http.get<MonthlyPivotModel[]>(`${environment.apiUrl}/MeasurementDataMoshe/GetMonthlyPivot`)
+      .subscribe({
+        next: data => {
+          this.monthlyDataSource.data = data;
+  
+          // Get column keys dynamically
+          if (data.length > 0) {
+            this.monthlyDisplayedColumns = Object.keys(data[0]);
+          }
+        },
+        error: err => {
+          console.error('❌ Error loading monthly pivot data', err);
         }
       });
   }
