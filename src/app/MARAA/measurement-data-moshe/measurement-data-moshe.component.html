@@ -39,8 +39,43 @@
     <button mat-raised-button color="primary" (click)="applyFilter()">סנן</button>
     <button mat-button (click)="resetFilter()">איפוס</button>
   </div>
-
-
+  <div class="gauge-container">
+    <ngx-gauge 
+      [value]="yearGaugeValue ?? 0"
+      [label]="'שנה'"
+      [append]="'%'"
+      [type]="'semi'"
+      [size]="180"
+      [thick]="6"
+      [valueText]="yearGaugeValue !== null ? (yearGaugeValue | number : '1.0-0') + '%' : 'אין נתונים'"
+      [foregroundColor]="getGaugeColor(yearGaugeValue)">
+    </ngx-gauge>
+  
+    <ngx-gauge 
+      [value]="quarterGaugeValue ?? 0"
+      [label]="'רבעון'"
+      [append]="'%'"
+      [type]="'semi'"
+      [size]="180"
+      [thick]="6"
+      [valueText]="quarterGaugeValue !== null ? (quarterGaugeValue | number : '1.0-0') + '%' : 'אין נתונים'"
+      [foregroundColor]="getGaugeColor(quarterGaugeValue)">
+    </ngx-gauge>
+  
+    <ngx-gauge 
+      [value]="monthGaugeValue ?? 0"
+      [label]="'חודש'"
+      [append]="'%'"
+      [type]="'semi'"
+      [size]="180"
+      [thick]="6"
+      [valueText]="monthGaugeValue !== null ? (monthGaugeValue | number : '1.0-0') + '%' : 'אין נתונים'"
+      [foregroundColor]="getGaugeColor(monthGaugeValue)">
+    </ngx-gauge>
+  </div>
+  
+  
+  
 <mat-tab-group dir="rtl">
   <!-- סיכום לפי מדד -->
   <mat-tab label="סיכום לפי מדד">
@@ -185,7 +220,55 @@
       </div>
     </mat-card>
   </mat-tab>
-  
+  <!-- ❌ סיכום תקלות במדדים -->
+<mat-tab label="תקלות במדדים">
+  <mat-card class="failed-cases-card" dir="rtl">
+    <mat-card-title>רשימת מדדים עם מונה שונה מ-1</mat-card-title>
+
+    <table mat-table [dataSource]="failedCasesDataSource" class="mat-elevation-z8" matSort>
+
+      <ng-container matColumnDef="Measurment_ID">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>קוד מדד</th>
+        <td mat-cell *matCellDef="let row">{{ row.Measurment_ID }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="MeasurementShortDesc">
+        <th mat-header-cell *matHeaderCellDef>תיאור</th>
+        <td mat-cell *matCellDef="let row">{{ row.MeasurementShortDesc }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="Date">
+        <th mat-header-cell *matHeaderCellDef>תאריך</th>
+        <td mat-cell *matCellDef="let row">{{ row.Date | date:'dd/MM/yyyy' }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="Mone">
+        <th mat-header-cell *matHeaderCellDef>מונה</th>
+        <td mat-cell *matCellDef="let row">{{ row.Mone }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="Mechane">
+        <th mat-header-cell *matHeaderCellDef>מכנה</th>
+        <td mat-cell *matCellDef="let row">{{ row.Mechane }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="Department">
+        <th mat-header-cell *matHeaderCellDef>מחלקה</th>
+        <td mat-cell *matCellDef="let row">{{ row.Department }}</td>
+      </ng-container>
+      <ng-container matColumnDef="Case_Number">
+        <th mat-header-cell *matHeaderCellDef>מספר מקרה</th>
+        <td mat-cell *matCellDef="let row">{{ row.Case_Number }}</td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="failedCasesDisplayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: failedCasesDisplayedColumns;"></tr>
+    </table>
+
+    <mat-paginator #failedPaginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
+  </mat-card>
+</mat-tab>
+
   </mat-tab-group>
 
 

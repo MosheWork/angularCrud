@@ -12,3 +12,32 @@
   color: green;
   font-weight: bold;
 }
+.gauge-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 32px; // space between gauges
+  flex-wrap: wrap;
+  margin-top: 20px;
+}
+
+ngx-gauge {
+  display: inline-block;
+  text-align: center;
+
+  ::ng-deep .gauge .text {
+    font-size: 8px !important; // reduce text size inside gauge
+  }
+
+  ::ng-deep .gauge .label {
+    font-size: 13px !important;
+  }
+}
+::ng-deep ngx-gauge .reading-block {
+  font-size: 20px !important; /* Desired font size */
+  transform: translateY(78px) !important;
+  font-weight: 400;
+  color: black !important;
+  margin-top: 0; /* Ensure no gap between the title and gauge */
+
+}

@@ -5,6 +5,7 @@ import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { environment } from '../../../environments/environment';
 import { HttpParams } from '@angular/common/http';
+import { NgxGaugeModule } from 'ngx-gauge';
 
 
 
@@ -24,7 +25,15 @@ export interface MonthlyPivotModel {
   Measurement: string;
   [key: string]: any; // for dynamic month columns like 2024_05, 2024_06
 }
-
+export interface FailedMeasurementCaseModel {
+  MeasurementCode: string;
+  MeasurementShortDesc?: string;
+  Department: string;
+  CaseNumber: string;
+  Date: string;
+  Mone: number;
+  Mechane: number;
+}
 @Component({
   selector: 'app-measurement-data-moshe',
   templateUrl: './measurement-data-moshe.component.html',
@@ -46,7 +55,9 @@ selectedQuarter: string | null = null;
 selectedMonth: string | null = null;
 selectedDepartment: string | null = null;
 selectedMeasurement: string | null = null;
-
+yearGaugeValue: number | null = 0;
+quarterGaugeValue: number | null = 0;
+monthGaugeValue: number | null = 0;
   measurementDataSource = new MatTableDataSource<MeasurementSummaryModel>();
   departmentDataSource = new MatTableDataSource<MeasurementSummaryModel>();
   quarterlyDataSource = new MatTableDataSource<QuarterlyPivotFlatModel>();
@@ -64,6 +75,12 @@ selectedMeasurement: string | null = null;
 
   @ViewChild('monthlyPaginator') monthlyPaginator!: MatPaginator;
 @ViewChild('monthlySort') monthlySort!: MatSort;
+failedCasesDataSource = new MatTableDataSource<FailedMeasurementCaseModel>();
+failedCasesDisplayedColumns: string[] = ['Measurment_ID', 'MeasurementShortDesc', 'Date', 'Mone', 'Mechane', 'Department','Case_Number'];
+
+@ViewChild('failedPaginator') failedPaginator!: MatPaginator;
+
+
 
   constructor(private http: HttpClient) {}
   getLastDayOfMonth(year: number, month: number): number {
@@ -78,6 +95,7 @@ selectedMeasurement: string | null = null;
     this.fetchMeasurement()
     this.fetchQuarterlyPivot()
     this.fetchMonthlyPivot();
+    this.fetchFailedCases(); // ✅ fetch failed cases here
 
   }
 
@@ -180,7 +198,13 @@ selectedMeasurement: string | null = null;
         }
       });
   }
-  
+  fetchFailedCases(): void {
+    this.http.get<FailedMeasurementCaseModel[]>(`${environment.apiUrl}MeasurementDataMoshe/GetFailedCases`)
+      .subscribe(data => {
+        this.failedCasesDataSource.data = data;
+        this.failedCasesDataSource.paginator = this.failedPaginator;
+      });
+  }
   
   
   resetFilter(): void {
@@ -189,7 +213,13 @@ selectedMeasurement: string | null = null;
     this.selectedMonth = null;
     this.selectedDepartment = null;
     this.selectedMeasurement = null;
+      // Reset gauge values
+    this.yearGaugeValue = null;
+    this.quarterGaugeValue = null;
+    this.monthGaugeValue = null;
     this.applyFilter();
+    this.fetchMonthlyPivot();
+
   }
 
   applyFilter(): void {
@@ -253,7 +283,69 @@ selectedMeasurement: string | null = null;
       this.departmentDataSource.data = data;
       this.departmentDataSource.filter = ''; // ✅ refresh filter
     });
+
+    this.fetchGaugeValues();
+
   }
+  
+  fetchGaugeValues(): void {
+    const baseMeasurementParam: any = {};
+    if (!this.selectedMeasurement) return;
+  
+    baseMeasurementParam.measurement = this.selectedMeasurement;
+  
+    const today = new Date();
+    const currentYear = today.getFullYear();
+    const currentMonth = today.getMonth() + 1;
+    const currentQuarter = Math.floor((currentMonth - 1) / 3) + 1;
+  
+    // Year: last full year
+    const lastYear = currentYear - 1;
+    const yearParams = {
+      ...baseMeasurementParam,
+      fromDate: `${lastYear}-01-01`,
+      toDate: `${lastYear}-12-31`
+    };
+    this.http.get<MeasurementSummaryModel[]>(`${environment.apiUrl}/MeasurementDataMoshe/GetSummaryByMeasurement`, { params: yearParams })
+      .subscribe(data => this.yearGaugeValue = data[0]?.Grade ?? null);
+  
+    // Quarter: last full quarter
+    let qYear = currentYear;
+    let q = currentQuarter - 1;
+    if (q === 0) {
+      q = 4;
+      qYear -= 1;
+    }
+  
+    const quarterMap = { 1: [1, 3], 2: [4, 6], 3: [7, 9], 4: [10, 12] };
+    const [qStart, qEnd] = quarterMap[q as 1 | 2 | 3 | 4];
+    const lastDayOfQuarter = new Date(qYear, qEnd, 0).getDate();
+    const quarterParams = {
+      ...baseMeasurementParam,
+      fromDate: `${qYear}-${String(qStart).padStart(2, '0')}-01`,
+      toDate: `${qYear}-${String(qEnd).padStart(2, '0')}-${lastDayOfQuarter}`
+    };
+    this.http.get<MeasurementSummaryModel[]>(`${environment.apiUrl}/MeasurementDataMoshe/GetSummaryByMeasurement`, { params: quarterParams })
+      .subscribe(data => this.quarterGaugeValue = data[0]?.Grade ?? null);
+  
+    // Month: last full month
+    let mYear = currentYear;
+    let m = currentMonth - 1;
+    if (m === 0) {
+      m = 12;
+      mYear -= 1;
+    }
+    const lastDay = new Date(mYear, m, 0).getDate();
+    const monthParams = {
+      ...baseMeasurementParam,
+      fromDate: `${mYear}-${String(m).padStart(2, '0')}-01`,
+      toDate: `${mYear}-${String(m).padStart(2, '0')}-${lastDay}`
+    };
+    this.http.get<MeasurementSummaryModel[]>(`${environment.apiUrl}/MeasurementDataMoshe/GetSummaryByMeasurement`, { params: monthParams })
+      .subscribe(data => this.monthGaugeValue = data[0]?.Grade ?? null);
+  }
+  
+  
   
   
   getCellClass(value: any): string {
@@ -262,6 +354,9 @@ selectedMeasurement: string | null = null;
     return num < 50 ? 'low-percentage' : 'high-percentage';
   }
   
-  
+  getGaugeColor(value: number | null): string {
+    if (value === null || value === undefined) return '#ccc'; // gray fallback
+    return value >= 50 ? '#4caf50' : '#f44336'; // green or red
+  }
   
 }
