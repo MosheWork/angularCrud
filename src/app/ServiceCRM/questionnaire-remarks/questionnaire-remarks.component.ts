@@ -19,7 +19,7 @@ export class QuestionnaireRemarksComponent implements OnInit, AfterViewInit {
   displayedColumns: string[] = [
     'SurveyDescription',
     'CaseNumber',
-    'CellNumber',
+    'CellNumber2',
     'RemarkDate',
     'PatientName',
     'DepartmentHebFullDesc',
@@ -185,7 +185,7 @@ uniqueMonths: number[] = [];
       'הערות מנהל מקרה': row.CaseManagerRemarks,
       'סטטוס': row.CaseManagerStatus,
       'קטגוריה': row.CaseManagerCategory,
-      ' טלפון': row.CellNumber
+      ' טלפון': row.CellNumber2
      
     }));
   

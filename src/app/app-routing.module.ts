@@ -85,6 +85,7 @@ import { QuestionnaireRemarksComponent } from './ServiceCRM/questionnaire-remark
 import { PhysiotherapyComponent } from './chameleon-reports/physiotherapy/physiotherapy.component';
 import { ProductivityReportsComponent } from './chameleon-reports/productivity-reports/productivity-reports.component';
 import { MeasurementDataMosheComponent } from './MARAA/measurement-data-moshe/measurement-data-moshe.component';
+import { MeasurementTargetManagerComponent } from './MARAA/measurement-target-manager/measurement-target-manager.component';
 
 const routes: Routes = [
   { path: 'users', component: UsersComponent },
@@ -213,6 +214,8 @@ const routes: Routes = [
    
    //מערכת מראה
    { path: 'measurement-data-moshe', component: MeasurementDataMosheComponent, data: { title: 'פרוייקט מרא"ה ' }},
+   { path: 'measurement-targets', component: MeasurementTargetManagerComponent , data: { title: 'פרוייקט מרא"ה - עדכון יעדים ' }}
+
 
 ];
 

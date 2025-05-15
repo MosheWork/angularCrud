@@ -38,6 +38,12 @@ export interface FailedMeasurementCaseModel {
   ID: number; // added
 
 }
+
+export interface MeasurementTarget {
+  MeasurementCode: string;
+  MYear: number;
+  MTarget: number | null;
+}
 @Component({
   selector: 'app-measurement-data-moshe',
   templateUrl: './measurement-data-moshe.component.html',
@@ -55,6 +61,7 @@ measurements: string[] = [];
 selectedDepartments: string[] = [];
 selectedMeasurements: string[] = [];
 quarterlyDisplayedColumns: string[] = ['Measurement']; // will be populated dynamically
+gaugeTargetValue: number | null = null;
 
 selectedYear: number[] = [];
 selectedQuarter: string[] = [];
@@ -304,7 +311,7 @@ failedCasesDisplayedColumns: string[] = [
   }
   
   
-  
+
   
   resetFilter(): void {
     this.selectedYears = [];
@@ -418,7 +425,35 @@ failedCasesDisplayedColumns: string[] = [
       baseParams.measurement = this.selectedMeasurements.join(',');
     }
   
-    // Year-level gauge (average of all selected years)
+    // 🔹 Load target for selected measurement & year (used under the gauge)
+    if (this.selectedMeasurements.length === 1 && this.selectedYears.length === 1) {
+      const selectedMeasurementCode = this.selectedMeasurements[0].split(' ')[0];
+      const selectedYear = this.selectedYears[0];
+    
+      console.log('🔍 Looking for target with:');
+      console.log('MeasurementCode:', selectedMeasurementCode);
+      console.log('MYear:', selectedYear);
+    
+      this.http.get<MeasurementTarget[]>(`${environment.apiUrl}/MeasurementDataMoshe/GetMeasurementTargets`)
+        .subscribe(targets => {
+          console.log('🎯 Available targets:', targets);
+    
+          const match = targets.find(t =>
+            t.MeasurementCode === selectedMeasurementCode && t.MYear === selectedYear
+          );
+    
+          if (match) {
+            console.log('✅ Found target:', match);
+            this.gaugeTargetValue = match.MTarget ?? null;
+          } else {
+            console.warn('❌ No matching target found.');
+            this.gaugeTargetValue = null;
+          }
+        });
+    }
+    
+  
+    // 🔹 Year-level gauge (average of all selected years)
     if (this.selectedYears?.length) {
       const fromDates: string[] = [];
       const toDates: string[] = [];
@@ -435,7 +470,7 @@ failedCasesDisplayedColumns: string[] = [
       this.yearGaugeValue = 0;
     }
   
-    // Quarter gauge — first selected year + all selected quarters
+    // 🔹 Quarter gauge
     if (this.selectedYears.length && this.selectedQuarters.length) {
       const fromDates: string[] = [];
       const toDates: string[] = [];
@@ -457,7 +492,7 @@ failedCasesDisplayedColumns: string[] = [
       this.quarterGaugeValue = 0;
     }
   
-    // Month gauge — all selected months and years
+    // 🔹 Month gauge
     if (this.selectedYears.length && this.selectedMonths.length) {
       const fromDates: string[] = [];
       const toDates: string[] = [];
@@ -485,6 +520,7 @@ failedCasesDisplayedColumns: string[] = [
   
   
   
+  
   getCellClass(value: any): string {
     if (value === null || value === undefined || isNaN(value)) return '';
     const num = +value;
@@ -492,8 +528,14 @@ failedCasesDisplayedColumns: string[] = [
   }
   
   getGaugeColor(value: number | null): string {
-    if (value === null || value === undefined) return '#ccc'; // gray fallback
-    return value >= 50 ? '#4caf50' : '#f44336'; // green or red
+    if (value === null || value === undefined) return '#ccc';
+  
+    if (this.gaugeTargetValue !== null) {
+      return value >= this.gaugeTargetValue ? '#4caf50' : '#f44336';
+    }
+  
+    // fallback if no target
+    return value >= 50 ? '#4caf50' : '#f44336';
   }
   exportExcelFromTable(data: any[], fileName: string, headersMap: { [key: string]: string }) {
     const exportData = data.map(row => {

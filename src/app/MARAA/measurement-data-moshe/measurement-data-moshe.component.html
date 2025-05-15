@@ -41,39 +41,76 @@
     <button mat-raised-button color="primary" (click)="applyFilter()">סנן</button>
     <button mat-button (click)="resetFilter()">איפוס</button>
   </div>
-  <div class="gauge-container">
-    <ngx-gauge 
-      [value]="yearGaugeValue ?? 0"
-      [label]="'שנה'"
-      [append]="'%'"
-      [type]="'semi'"
-      [size]="180"
-      [thick]="6"
-      [valueText]="yearGaugeValue !== null ? (yearGaugeValue | number : '1.0-0') + '%' : 'אין נתונים'"
-      [foregroundColor]="getGaugeColor(yearGaugeValue)">
-    </ngx-gauge>
+  <div class="gauge-section">
+    <div class="gauge-row">
   
-    <ngx-gauge 
-      [value]="quarterGaugeValue ?? 0"
-      [label]="'רבעון'"
-      [append]="'%'"
-      [type]="'semi'"
-      [size]="180"
-      [thick]="6"
-      [valueText]="quarterGaugeValue !== null ? (quarterGaugeValue | number : '1.0-0') + '%' : 'אין נתונים'"
-      [foregroundColor]="getGaugeColor(quarterGaugeValue)">
-    </ngx-gauge>
+      <!-- Year Gauge -->
+      <mat-card class="gauge-card">
+        <div class="gauge-title">שנה</div>
+        <div class="gauge-content">
+          <ngx-gauge
+            [value]="yearGaugeValue ?? 0"
+            [min]="0"
+            [max]="100"
+            [label]="''"
+            [append]="'%'"
+            [type]="'semi'"
+            [thick]="6"
+            [size]="180"
+            [foregroundColor]="getGaugeColor(yearGaugeValue)"
+            [valueText]="yearGaugeValue !== null ? (yearGaugeValue | number : '1.0-0') + '%' : 'אין נתונים'">
+          </ngx-gauge>
+          <div class="gauge-target">
+            יעד: {{ gaugeTargetValue !== null ? gaugeTargetValue + '%' : 'אין מידע' }}
+          </div>
+        </div>
+      </mat-card>
   
-    <ngx-gauge 
-      [value]="monthGaugeValue ?? 0"
-      [label]="'חודש'"
-      [append]="'%'"
-      [type]="'semi'"
-      [size]="180"
-      [thick]="6"
-      [valueText]="monthGaugeValue !== null ? (monthGaugeValue | number : '1.0-0') + '%' : 'אין נתונים'"
-      [foregroundColor]="getGaugeColor(monthGaugeValue)">
-    </ngx-gauge>
+      <!-- Quarter Gauge -->
+      <mat-card class="gauge-card">
+        <div class="gauge-title">רבעון</div>
+        <div class="gauge-content">
+          <ngx-gauge
+            [value]="quarterGaugeValue ?? 0"
+            [min]="0"
+            [max]="100"
+            [label]="''"
+            [append]="'%'"
+            [type]="'semi'"
+            [thick]="6"
+            [size]="180"
+            [foregroundColor]="getGaugeColor(quarterGaugeValue)"
+            [valueText]="quarterGaugeValue !== null ? (quarterGaugeValue | number : '1.0-0') + '%' : 'אין נתונים'">
+          </ngx-gauge>
+          <div class="gauge-target">
+            יעד: {{ gaugeTargetValue !== null ? gaugeTargetValue + '%' : 'אין מידע' }}
+          </div>
+        </div>
+      </mat-card>
+  
+      <!-- Month Gauge -->
+      <mat-card class="gauge-card">
+        <div class="gauge-title">חודש</div>
+        <div class="gauge-content">
+          <ngx-gauge
+            [value]="monthGaugeValue ?? 0"
+            [min]="0"
+            [max]="100"
+            [label]="''"
+            [append]="'%'"
+            [type]="'semi'"
+            [thick]="6"
+            [size]="180"
+            [foregroundColor]="getGaugeColor(monthGaugeValue)"
+            [valueText]="monthGaugeValue !== null ? (monthGaugeValue | number : '1.0-0') + '%' : 'אין נתונים'">
+          </ngx-gauge>
+          <div class="gauge-target">
+            יעד: {{ gaugeTargetValue !== null ? gaugeTargetValue + '%' : 'אין מידע' }}
+          </div>
+        </div>
+      </mat-card>
+  
+    </div>
   </div>
   
   

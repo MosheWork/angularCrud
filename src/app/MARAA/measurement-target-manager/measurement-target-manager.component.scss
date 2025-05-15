@@ -1,0 +1,38 @@
+.measurement-wrapper {
+    
+    font-family: 'Assistant', sans-serif;
+    padding: 24px;
+    padding-top: 80px; // adjust based on your header height
+    padding-left: 16px;
+    padding-right: 16px;
+    table {
+      width: 100%;
+      background: #fff;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+  
+    mat-header-cell, mat-cell {
+      padding: 12px;
+      text-align: right;
+    }
+  
+    mat-form-field {
+      width: 100%;
+      margin: 0;
+    }
+  
+    .actions {
+      display: flex;
+      justify-content: center;
+    }
+  
+    .add-button-container {
+      margin-bottom: 16px;
+      text-align: left;
+    }
+  
+    
+ 
+}
+  

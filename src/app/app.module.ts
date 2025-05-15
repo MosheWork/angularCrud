@@ -171,6 +171,7 @@ import { PhysiotherapyComponent } from './chameleon-reports/physiotherapy/physio
 import { ProductivityReportsComponent } from './chameleon-reports/productivity-reports/productivity-reports.component';
 import { MeasurementDataMosheComponent } from './MARAA/measurement-data-moshe/measurement-data-moshe.component';
 import { MeasurementRemarksDialogComponent } from './MARAA/measurement-remarks-dialog/measurement-remarks-dialog.component';
+import { MeasurementTargetManagerComponent } from './MARAA/measurement-target-manager/measurement-target-manager.component';
 
 
 export const MY_DATE_FORMATS: MatDateFormats = {
@@ -318,7 +319,8 @@ export function playerFactory() {
     PhysiotherapyComponent,
     ProductivityReportsComponent,
     MeasurementDataMosheComponent,
-    MeasurementRemarksDialogComponent
+    MeasurementRemarksDialogComponent,
+    MeasurementTargetManagerComponent
    
      
   
