@@ -177,8 +177,11 @@ failedCasesDisplayedColumns: string[] = ['Measurment_ID', 'MeasurementShortDesc'
             return quarterOrder[qA as keyof typeof quarterOrder] - quarterOrder[qB as keyof typeof quarterOrder];
           });
   
-          this.quarterlyDisplayedColumns = ['Measurement', ...sortedKeys];
-        },
+          this.quarterlyDisplayedColumns = [
+            'קוד מדד',
+            'שם מדד',
+            ...sortedKeys.filter(k => k !== 'קוד מדד' && k !== 'שם מדד')
+          ];      },
         error: err => {
           console.error('❌ Error loading quarterly pivot data', err);
         }
@@ -190,9 +193,16 @@ failedCasesDisplayedColumns: string[] = ['Measurment_ID', 'MeasurementShortDesc'
         next: data => {
           this.monthlyDataSource.data = data;
   
-          // Get column keys dynamically
           if (data.length > 0) {
-            this.monthlyDisplayedColumns = Object.keys(data[0]);
+            const allKeys = Object.keys(data[0]);
+  
+            // Eliminate duplicates safely
+            const staticKeys = ['קוד מדד', 'שם מדד'];
+            const uniqueDynamicKeys = allKeys.filter((k, i, arr) => 
+              !staticKeys.includes(k) && arr.indexOf(k) === i
+            ).sort();
+  
+            this.monthlyDisplayedColumns = [...staticKeys, ...uniqueDynamicKeys];
           }
         },
         error: err => {
@@ -200,6 +210,8 @@ failedCasesDisplayedColumns: string[] = ['Measurment_ID', 'MeasurementShortDesc'
         }
       });
   }
+  
+  
   fetchFailedCases(): void {
     const params: { [key: string]: string } = {};
   
