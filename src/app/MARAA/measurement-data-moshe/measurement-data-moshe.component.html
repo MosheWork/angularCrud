@@ -81,6 +81,8 @@
 <mat-tab-group dir="rtl">
   <!-- סיכום לפי מדד -->
   <mat-tab label="סיכום לפי מדד">
+    <img src="../../assets/excel.png" alt="Download" (click)="exportMeasurementSummary()" class="download-icon icon" width="50px" style="margin-left: 10px;" />
+
     <table mat-table [dataSource]="measurementDataSource" matSort #measurementSort="matSort" class="mat-elevation-z8" dir="rtl">
 
       <ng-container matColumnDef="MeasurementCode">
@@ -121,6 +123,8 @@
 
   <!-- סיכום לפי מחלקה -->
   <mat-tab label="סיכום לפי מחלקה">
+    <img src="../../assets/excel.png" alt="Download" (click)="exportDepartmentSummary()" class="download-icon icon" width="50px" style="margin-left: 10px;" />
+
     <table mat-table [dataSource]="departmentDataSource" matSort #departmentSort="matSort" class="mat-elevation-z8"dir="rtl">
 
       <ng-container matColumnDef="MeasurementCode">
@@ -158,7 +162,9 @@
       showFirstLastButtons>
     </mat-paginator>
   </mat-tab>
-  <mat-tab label="סיכום שנתי/רבעוני">
+  <mat-tab label="סיכום שנתי/רבעוני"> 
+    <img src="../../assets/excel.png" alt="Download" (click)="exportQuarterly()" class="download-icon icon" width="50px" style="margin-left: 10px;" />
+
     <mat-card class="quarterly-table-card" dir="rtl">
       <mat-card-title>דוח רבעוני לפי מדד</mat-card-title>
       <div class="mat-elevation-z4">
@@ -193,6 +199,8 @@
   </mat-tab>
   
   <mat-tab label="סיכום חודשי לפי מדד">
+    <img src="../../assets/excel.png" alt="Download" (click)="exportMonthly()" class="download-icon icon" width="50px" style="margin-left: 10px;" />
+
     <mat-card class="monthly-table-card" dir="rtl">
       <mat-card-title>סיכום חודשי לפי מדד</mat-card-title>
       <div class="mat-elevation-z4">
@@ -228,6 +236,8 @@
   
   <!-- ❌ סיכום תקלות במדדים -->
 <mat-tab label="לא עמדו במדד">
+  <img src="../../assets/excel.png" alt="Download" (click)="exportFailed()" class="download-icon icon" width="50px" style="margin-left: 10px;" />
+
   <mat-card class="failed-cases-card" dir="rtl">
     <mat-card-title>רשימת מדדים עם מונה שונה מ-1</mat-card-title>
 

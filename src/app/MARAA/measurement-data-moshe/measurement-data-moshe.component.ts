@@ -6,6 +6,7 @@ import { MatTableDataSource } from '@angular/material/table';
 import { environment } from '../../../environments/environment';
 import { HttpParams } from '@angular/common/http';
 import { NgxGaugeModule } from 'ngx-gauge';
+import * as XLSX from 'xlsx';
 
 
 
@@ -417,5 +418,76 @@ failedCasesDisplayedColumns: string[] = ['Measurment_ID', 'MeasurementShortDesc'
     if (value === null || value === undefined) return '#ccc'; // gray fallback
     return value >= 50 ? '#4caf50' : '#f44336'; // green or red
   }
+  exportExcelFromTable(data: any[], fileName: string, headersMap: { [key: string]: string }) {
+    const exportData = data.map(row => {
+      const newRow: any = {};
+      for (const key in headersMap) {
+        newRow[headersMap[key]] = row[key];
+      }
+      return newRow;
+    });
+  
+    const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(exportData);
+    const workbook: XLSX.WorkBook = { Sheets: { 'Sheet1': worksheet }, SheetNames: ['Sheet1'] };
+    const excelBuffer: ArrayBuffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
+  
+    const blob = new Blob([excelBuffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+    const url = window.URL.createObjectURL(blob);
+  
+    const anchor = document.createElement('a');
+    anchor.href = url;
+    anchor.download = `${fileName}.xlsx`;
+    anchor.click();
+  
+    window.URL.revokeObjectURL(url); // Clean up
+  }
+  exportQuarterly(): void {
+    const headersMap: { [key: string]: string } = {};
+    this.quarterlyDisplayedColumns.forEach(col => headersMap[col] = col);
+    this.exportExcelFromTable(this.quarterlyDataSource.filteredData, 'סיכום_רבעוני', headersMap);
+  }
+  
+  exportMonthly(): void {
+    const headersMap: { [key: string]: string } = {};
+    this.monthlyDisplayedColumns.forEach(col => headersMap[col] = col);
+    this.exportExcelFromTable(this.monthlyDataSource.filteredData, 'סיכום_חודשי', headersMap);
+  }
+  
+  exportFailed(): void {
+    const headersMap: { [key: string]: string } = {
+      Measurment_ID: 'קוד מדד',
+      MeasurementShortDesc: 'תיאור',
+      Date: 'תאריך',
+      Mone: 'מונה',
+      Mechane: 'מכנה',
+      Department: 'מחלקה',
+      Case_Number: 'מספר מקרה'
+    };
+    this.exportExcelFromTable(this.failedCasesDataSource.filteredData, 'מדדים_שלא_בוצעו', headersMap);
+  }
+  exportMeasurementSummary(): void {
+    const headersMap: { [key: string]: string } = {
+      MeasurementCode: 'קוד מדד',
+      MeasurementShortDesc: 'תיאור',
+      Mone: 'מונה',
+      Mechane: 'מכנה',
+      Grade: 'אחוז'
+    };
+  
+    this.exportExcelFromTable(this.measurementDataSource.filteredData, 'סיכום_לפי_מדד', headersMap);
+  }
+  
+  exportDepartmentSummary(): void {
+    const headersMap: { [key: string]: string } = {
+      MeasurementCode: 'קוד מדד',
+      Department: 'מחלקה',
+      Mone: 'מונה',
+      Mechane: 'מכנה',
+      Grade: 'אחוז'
+    };
+  
+    this.exportExcelFromTable(this.departmentDataSource.filteredData, 'סיכום_לפי_מחלקה', headersMap);
+  }
+  
   
 }
