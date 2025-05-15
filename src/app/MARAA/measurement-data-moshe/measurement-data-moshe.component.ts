@@ -62,6 +62,7 @@ selectedDepartments: string[] = [];
 selectedMeasurements: string[] = [];
 quarterlyDisplayedColumns: string[] = ['Measurement']; // will be populated dynamically
 gaugeTargetValue: number | null = null;
+measurementTargets: MeasurementTarget[] = [];
 
 selectedYear: number[] = [];
 selectedQuarter: string[] = [];
@@ -125,6 +126,7 @@ failedCasesDisplayedColumns: string[] = [
     this.fetchQuarterlyPivot()
     this.fetchMonthlyPivot();
     this.fetchFailedCases(); // ✅ fetch failed cases here
+    this.fetchTargets(); 
 
   }
 
@@ -142,6 +144,10 @@ failedCasesDisplayedColumns: string[] = [
       
     this.monthlyDataSource.paginator = this.monthlyPaginator;
     this.monthlyDataSource.sort = this.monthlySort;
+
+    this.failedCasesDataSource.paginator = this.failedPaginator;
+    this.failedCasesDataSource.sort = this.failedSort;
+
     });
     
   }
@@ -300,7 +306,7 @@ failedCasesDisplayedColumns: string[] = [
     }
   
     this.http.get<FailedMeasurementCaseModel[]>(
-      `${environment.apiUrl}/MeasurementDataMoshe/GetFailedCases`,
+      `${environment.apiUrl}MeasurementDataMoshe/GetFailedCases`,
       { params: new HttpParams({ fromObject: params }) }
     ).subscribe(data => {
       this.failedCasesDataSource.data = data;
@@ -310,7 +316,12 @@ failedCasesDisplayedColumns: string[] = [
     });
   }
   
-  
+  fetchTargets(): void {
+    this.http.get<MeasurementTarget[]>(`${environment.apiUrl}/MeasurementDataMoshe/GetMeasurementTargets`)
+      .subscribe(data => {
+        this.measurementTargets = data;
+      });
+  }
 
   
   resetFilter(): void {
@@ -521,10 +532,19 @@ failedCasesDisplayedColumns: string[] = [
   
   
   
-  getCellClass(value: any): string {
+  getCellClass(value: any, measurementCode: string): string {
     if (value === null || value === undefined || isNaN(value)) return '';
+  
+    const year = this.selectedYears.length === 1 ? this.selectedYears[0] : null;
+  
+    const target = this.measurementTargets.find(t =>
+      t.MeasurementCode === measurementCode && (year ? t.MYear === year : true)
+    )?.MTarget;
+  
+    if (target === undefined || target === null) return ''; // No target info
+  
     const num = +value;
-    return num < 50 ? 'low-percentage' : 'high-percentage';
+    return num < target ? 'low-percentage' : 'high-percentage';
   }
   
   getGaugeColor(value: number | null): string {

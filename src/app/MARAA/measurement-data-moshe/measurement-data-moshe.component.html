@@ -215,7 +215,7 @@
                 {{ element[col] }}
               </ng-container>
               <ng-template #percentageCell>
-                <span [ngClass]="getCellClass(element[col])">
+                <span [ngClass]="getCellClass(element[col], element['קוד מדד'])">
                   {{ element[col] !== null && element[col] !== undefined ? (element[col] | number:'1.0-2') + '%' : '' }}
                 </span>
               </ng-template>
@@ -251,7 +251,7 @@
                 {{ element[col] }}
               </ng-container>
               <ng-template #gradeCell>
-                <span [ngClass]="getCellClass(element[col])">
+                <span [ngClass]="getCellClass(element[col], element['קוד מדד'])">
                   {{ element[col] !== null && element[col] !== undefined ? (element[col] | number:'1.0-2') + '%' : '' }}
                 </span>
               </ng-template>
