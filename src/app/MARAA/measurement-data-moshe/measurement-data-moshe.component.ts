@@ -171,10 +171,10 @@ failedCasesDisplayedColumns: string[] = ['Measurment_ID', 'MeasurementShortDesc'
           const sortedKeys = allKeys.sort((a, b) => {
             const [yearA, qA] = a.split('_');
             const [yearB, qB] = b.split('_');
-  
-            const yearDiff = +yearA - +yearB;
+          
+            const yearDiff = +yearB - +yearA;
             if (yearDiff !== 0) return yearDiff;
-            return quarterOrder[qA as keyof typeof quarterOrder] - quarterOrder[qB as keyof typeof quarterOrder];
+            return quarterOrder[qB as keyof typeof quarterOrder] - quarterOrder[qA as keyof typeof quarterOrder];
           });
   
           this.quarterlyDisplayedColumns = [
@@ -198,9 +198,9 @@ failedCasesDisplayedColumns: string[] = ['Measurment_ID', 'MeasurementShortDesc'
   
             // Eliminate duplicates safely
             const staticKeys = ['קוד מדד', 'שם מדד'];
-            const uniqueDynamicKeys = allKeys.filter((k, i, arr) => 
-              !staticKeys.includes(k) && arr.indexOf(k) === i
-            ).sort();
+            const uniqueDynamicKeys = allKeys.filter((k, i, arr) =>
+  !staticKeys.includes(k) && arr.indexOf(k) === i
+).sort((a, b) => b.localeCompare(a)); // newer months first
   
             this.monthlyDisplayedColumns = [...staticKeys, ...uniqueDynamicKeys];
           }
