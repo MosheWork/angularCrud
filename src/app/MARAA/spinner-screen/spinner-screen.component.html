@@ -1,0 +1,33 @@
+<div
+  class="crm-container"
+  [ngStyle]="{
+    'background-image': 'url(' + backgroundImageUrl + ')',
+    'background-size': 'cover',
+    'background-position': 'center',
+    'background-repeat': 'no-repeat'
+  }"
+>
+  <div class="overlay"></div>
+  <div class="content">
+
+    <!-- 👤 Profile Section -->
+    <div class="user-info">
+      <img [src]="profilePictureUrl" alt="User Profile" class="profile-pic" />
+      <div class="welcome-text">ברוך הבא {{ UserName }}</div>
+    </div>
+
+    <!-- 🔵 Logo + Title -->
+    <img src="assets/logo.png" alt="Tzafon Logo" class="logo" />
+    <h1 class="title">  פרוייקט מרא"ה"</h1>
+
+    <!-- 🧩 Button Grid -->
+    <div class="button-grid">
+      <button mat-raised-button color="primary" class="crm-button" routerLink="/measurement-data-moshe">נתוני מרא"ה</button>
+      <button mat-raised-button color="warn" class="crm-button" routerLink="/measurement-targets">עדכון יעדים  </button>
+      <!-- <button mat-raised-button color="accent" class="crm-button" routerLink="/calls">שיחות מנהל</button>
+     
+      <button mat-raised-button class="crm-button custom-green" routerLink="/feedback">משובים בזמן אמת</button> -->
+    
+    </div>
+  </div>
+</div>

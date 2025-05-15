@@ -9,6 +9,7 @@ import { NgxGaugeModule } from 'ngx-gauge';
 import * as XLSX from 'xlsx';
 import { MatDialog } from '@angular/material/dialog';
 import { MeasurementRemarksDialogComponent } from '../measurement-remarks-dialog/measurement-remarks-dialog.component';
+import { AuthenticationService } from '../../services/authentication-service/authentication-service.component';
 
 
 export interface MeasurementSummaryModel {
@@ -110,25 +111,66 @@ failedCasesDisplayedColumns: string[] = [
 @ViewChild('failedPaginator') failedPaginator!: MatPaginator;
 @ViewChild('failedSort') failedSort!: MatSort;
 
+loginUserName: string = '';
+UserName: string = '';
+profilePictureUrl: string = 'assets/default-user.png';
 
-
-  constructor(private http: HttpClient, private dialog: MatDialog) {}
+  constructor(private http: HttpClient, private dialog: MatDialog , private authenticationService: AuthenticationService) {}
   getLastDayOfMonth(year: number, month: number): number {
     return new Date(year, month, 0).getDate();
   }
-  ngOnInit(): void {
-    this.fetchSummaryByMeasurement();
-    this.fetchSummaryByDepartment();
-    this.loadDepartments();
-    const currentYear = new Date().getFullYear();
-    this.years = [currentYear - 1, currentYear, currentYear + 1];
-    this.fetchMeasurement()
-    this.fetchQuarterlyPivot()
-    this.fetchMonthlyPivot();
-    this.fetchFailedCases(); // ✅ fetch failed cases here
-    this.fetchTargets(); 
 
-  }
+ ngOnInit(): void {
+  this.isLoading = true;
+
+  const currentYear = new Date().getFullYear();
+  this.years = [currentYear - 1, currentYear, currentYear + 1];
+
+  // Spinner will be visible for at least 5 seconds
+  const spinnerTimeout = setTimeout(() => {
+    this.isLoading = false;
+  }, 5000);
+
+  // 1. Get authenticated user
+  this.authenticationService.getAuthentication().subscribe(
+    (response) => {
+      const user = response.message.split('\\')[1].toUpperCase();
+      this.loginUserName = user;
+      console.log('✅ Authenticated user:', user);
+
+      // Get user details (name + profile picture)
+      this.getUserDetailsFromDBByUserName(user);
+    },
+    (error) => {
+      console.error('❌ Failed to authenticate user:', error);
+    }
+  );
+
+  // 2. Load other dashboard data
+  this.fetchSummaryByMeasurement();
+  this.fetchSummaryByDepartment();
+  this.loadDepartments();
+  this.fetchMeasurement();
+  this.fetchQuarterlyPivot();
+  this.fetchMonthlyPivot();
+  this.fetchFailedCases();
+
+  // 3. Load gauge targets and hide spinner after both complete
+  this.fetchTargets();
+}
+
+getUserDetailsFromDBByUserName(username: string): void {
+  this.http.get<any>(`${environment.apiUrl}ServiceCRM/GetEmployeeInfo?username=${username}`)
+    .subscribe(
+      (data) => {
+        this.UserName = data.UserName;
+        this.profilePictureUrl = data.ProfilePicture || 'assets/default-user.png';
+      },
+      (error) => {
+        console.error('❌ Error fetching employee info:', error);
+      }
+    );
+}
 
   ngAfterViewInit(): void {
     setTimeout(() => {

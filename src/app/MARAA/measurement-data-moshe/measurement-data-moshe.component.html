@@ -1,4 +1,14 @@
-<div class="measurement-wrapper">
+
+
+<app-spinner-screen *ngIf="isLoading"
+[userName]="loginUserName"
+[profilePictureUrl]="profilePictureUrl">
+</app-spinner-screen>
+
+
+<div class="measurement-wrapper" *ngIf="!isLoading">
+
+
 <mat-card class="filter-card" style="margin-bottom: 16px;">
   <div class="filter-row" dir="rtl">
     <mat-form-field >
@@ -341,5 +351,3 @@
 
 
 
-<!-- Optional Loading Spinner -->
-<mat-spinner *ngIf="isLoading" diameter="40"></mat-spinner>

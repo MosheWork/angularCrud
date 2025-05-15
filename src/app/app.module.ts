@@ -172,6 +172,7 @@ import { ProductivityReportsComponent } from './chameleon-reports/productivity-r
 import { MeasurementDataMosheComponent } from './MARAA/measurement-data-moshe/measurement-data-moshe.component';
 import { MeasurementRemarksDialogComponent } from './MARAA/measurement-remarks-dialog/measurement-remarks-dialog.component';
 import { MeasurementTargetManagerComponent } from './MARAA/measurement-target-manager/measurement-target-manager.component';
+import { SpinnerScreenComponent } from './MARAA/spinner-screen/spinner-screen.component';
 
 
 export const MY_DATE_FORMATS: MatDateFormats = {
@@ -320,7 +321,8 @@ export function playerFactory() {
     ProductivityReportsComponent,
     MeasurementDataMosheComponent,
     MeasurementRemarksDialogComponent,
-    MeasurementTargetManagerComponent
+    MeasurementTargetManagerComponent,
+    SpinnerScreenComponent
    
      
   
