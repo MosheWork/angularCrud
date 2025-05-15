@@ -324,6 +324,10 @@ failedCasesDisplayedColumns: string[] = [
   
 
   applyFilter(): void {
+    if (this.selectedQuarters.length > 0 && this.selectedMonths.length > 0) {
+      alert("לא ניתן לבחור גם רבעון וגם חודש בו זמנית. אנא בחר אחד מהם בלבד.");
+      return; // stop execution
+    }
     const params: { [key: string]: string } = {};
     const fromDates: string[] = [];
     const toDates: string[] = [];
