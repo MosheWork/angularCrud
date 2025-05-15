@@ -1,0 +1,30 @@
+.field-wrapper {
+    padding: 0 16px; // Add horizontal padding to prevent clipping
+  }
+  
+  ::ng-deep .mat-dialog-container {
+    overflow: visible !important; // Prevent border from being hidden
+    padding: 0 !important;        // Let our content control spacing
+    border-radius: 12px;
+  }
+  
+  mat-form-field.full-width {
+    width: 100%;
+  }
+  
+  textarea {
+    min-height: 120px;
+    padding: 12px;
+    resize: vertical;
+  }
+  .dialog-title {
+    font-size: 20px;
+    font-weight: bold;
+    color: #3f51b5;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px 16px;
+    border-bottom: 1px solid #e0e0e0;
+  }

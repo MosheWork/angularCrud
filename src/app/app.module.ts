@@ -170,6 +170,7 @@ import { QuestionnaireRemarksPhoneCallDialogComponent } from './ServiceCRM/quest
 import { PhysiotherapyComponent } from './chameleon-reports/physiotherapy/physiotherapy.component';
 import { ProductivityReportsComponent } from './chameleon-reports/productivity-reports/productivity-reports.component';
 import { MeasurementDataMosheComponent } from './MARAA/measurement-data-moshe/measurement-data-moshe.component';
+import { MeasurementRemarksDialogComponent } from './MARAA/measurement-remarks-dialog/measurement-remarks-dialog.component';
 
 
 export const MY_DATE_FORMATS: MatDateFormats = {
@@ -316,7 +317,8 @@ export function playerFactory() {
     QuestionnaireRemarksPhoneCallDialogComponent,
     PhysiotherapyComponent,
     ProductivityReportsComponent,
-    MeasurementDataMosheComponent
+    MeasurementDataMosheComponent,
+    MeasurementRemarksDialogComponent
    
      
   

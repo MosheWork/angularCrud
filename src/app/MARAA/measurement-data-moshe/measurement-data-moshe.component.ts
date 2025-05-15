@@ -7,7 +7,8 @@ import { environment } from '../../../environments/environment';
 import { HttpParams } from '@angular/common/http';
 import { NgxGaugeModule } from 'ngx-gauge';
 import * as XLSX from 'xlsx';
-
+import { MatDialog } from '@angular/material/dialog';
+import { MeasurementRemarksDialogComponent } from '../measurement-remarks-dialog/measurement-remarks-dialog.component';
 
 
 export interface MeasurementSummaryModel {
@@ -34,6 +35,8 @@ export interface FailedMeasurementCaseModel {
   Date: string;
   Mone: number;
   Mechane: number;
+  ID: number; // added
+
 }
 @Component({
   selector: 'app-measurement-data-moshe',
@@ -79,13 +82,24 @@ monthGaugeValue: number | null = 0;
   @ViewChild('monthlyPaginator') monthlyPaginator!: MatPaginator;
 @ViewChild('monthlySort') monthlySort!: MatSort;
 failedCasesDataSource = new MatTableDataSource<FailedMeasurementCaseModel>();
-failedCasesDisplayedColumns: string[] = ['Measurment_ID', 'MeasurementShortDesc', 'Date', 'Mone', 'Mechane', 'Department','Case_Number'];
+failedCasesDisplayedColumns: string[] = [
+  'Measurment_ID',
+  'MeasurementShortDesc',
+  'Date',
+  'Mone',
+  'Mechane',
+  'Department',
+  'Case_Number',
+  'Remarks',
+  'EntryUser',
+  'EntryDate'
+];
 @ViewChild('failedPaginator') failedPaginator!: MatPaginator;
 @ViewChild('failedSort') failedSort!: MatSort;
 
 
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private dialog: MatDialog) {}
   getLastDayOfMonth(year: number, month: number): number {
     return new Date(year, month, 0).getDate();
   }
@@ -488,6 +502,20 @@ failedCasesDisplayedColumns: string[] = ['Measurment_ID', 'MeasurementShortDesc'
   
     this.exportExcelFromTable(this.departmentDataSource.filteredData, 'סיכום_לפי_מחלקה', headersMap);
   }
+  openRemarksDialog(row: any): void {
+    const dialogRef = this.dialog.open(MeasurementRemarksDialogComponent, {
+      width: '800px',
+      data: { 
+        id: row.ID, 
+        remarks: row.Remarks || '' // Pass current remarks
+      }
+    });
   
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.fetchFailedCases(); // ✅ Refresh table if needed
+      }
+    });
+  }
   
 }

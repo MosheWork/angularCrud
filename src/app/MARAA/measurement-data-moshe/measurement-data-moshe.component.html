@@ -276,9 +276,23 @@
         <th mat-header-cell *matHeaderCellDef mat-sort-header>מספר מקרה</th>
         <td mat-cell *matCellDef="let row">{{ row.Case_Number }}</td>
       </ng-container>
+      <ng-container matColumnDef="Remarks">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>הערות</th>
+        <td mat-cell *matCellDef="let row">{{ row.Remarks }}</td>
+      </ng-container>
+      
+      <ng-container matColumnDef="EntryUser">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>נרשם ע"י</th>
+        <td mat-cell *matCellDef="let row">{{ row.EntryUser }}</td>
+      </ng-container>
+      
+      <ng-container matColumnDef="EntryDate">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>תאריך רישום</th>
+        <td mat-cell *matCellDef="let row">{{ row.EntryDate | date:'dd/MM/yyyy HH:mm' }}</td>
+      </ng-container>
 
       <tr mat-header-row *matHeaderRowDef="failedCasesDisplayedColumns"></tr>
-      <tr mat-row *matRowDef="let row; columns: failedCasesDisplayedColumns;"></tr>
+      <tr mat-row *matRowDef="let row; columns: failedCasesDisplayedColumns;" (click)="openRemarksDialog(row)"></tr>
     </table>
 
     <mat-paginator #failedPaginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>

@@ -1,0 +1,15 @@
+<div mat-dialog-title class="dialog-title" >✏️ הוספת הערה</div>
+
+<mat-dialog-content class="dialog-content padded-content" >
+    <div class="field-wrapper">
+      <mat-form-field appearance="outline" class="full-width" dir="rtl">
+        <mat-label>הערה</mat-label>
+        <textarea matInput [(ngModel)]="remarks" rows="4" placeholder="כתוב כאן את ההערה שלך..."></textarea>
+      </mat-form-field>
+    </div>
+  </mat-dialog-content>
+
+<mat-dialog-actions align="end" class="dialog-actions">
+  <button mat-button mat-dialog-close>ביטול</button>
+  <button mat-raised-button color="primary" (click)="submit()">שמור</button>
+</mat-dialog-actions>
