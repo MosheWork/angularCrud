@@ -231,7 +231,7 @@
   <mat-card class="failed-cases-card" dir="rtl">
     <mat-card-title>רשימת מדדים עם מונה שונה מ-1</mat-card-title>
 
-    <table mat-table [dataSource]="failedCasesDataSource" class="mat-elevation-z8" matSort>
+    <table mat-table [dataSource]="failedCasesDataSource" class="mat-elevation-z8" matSort #failedSort="matSort">
 
       <ng-container matColumnDef="Measurment_ID">
         <th mat-header-cell *matHeaderCellDef mat-sort-header>קוד מדד</th>
@@ -239,31 +239,31 @@
       </ng-container>
 
       <ng-container matColumnDef="MeasurementShortDesc">
-        <th mat-header-cell *matHeaderCellDef>תיאור</th>
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>תיאור</th>
         <td mat-cell *matCellDef="let row">{{ row.MeasurementShortDesc }}</td>
       </ng-container>
 
       <ng-container matColumnDef="Date">
-        <th mat-header-cell *matHeaderCellDef>תאריך</th>
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>תאריך</th>
         <td mat-cell *matCellDef="let row">{{ row.Date | date:'dd/MM/yyyy' }}</td>
       </ng-container>
 
-      <ng-container matColumnDef="Mone">
-        <th mat-header-cell *matHeaderCellDef>מונה</th>
+      <ng-container matColumnDef="Mone" >
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>מונה</th>
         <td mat-cell *matCellDef="let row">{{ row.Mone }}</td>
       </ng-container>
 
       <ng-container matColumnDef="Mechane">
-        <th mat-header-cell *matHeaderCellDef>מכנה</th>
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>מכנה</th>
         <td mat-cell *matCellDef="let row">{{ row.Mechane }}</td>
       </ng-container>
 
       <ng-container matColumnDef="Department">
-        <th mat-header-cell *matHeaderCellDef>מחלקה</th>
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>מחלקה</th>
         <td mat-cell *matCellDef="let row">{{ row.Department }}</td>
       </ng-container>
       <ng-container matColumnDef="Case_Number">
-        <th mat-header-cell *matHeaderCellDef>מספר מקרה</th>
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>מספר מקרה</th>
         <td mat-cell *matCellDef="let row">{{ row.Case_Number }}</td>
       </ng-container>
 
