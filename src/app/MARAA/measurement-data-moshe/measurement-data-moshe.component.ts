@@ -56,9 +56,14 @@ selectedDepartments: string[] = [];
 selectedMeasurements: string[] = [];
 quarterlyDisplayedColumns: string[] = ['Measurement']; // will be populated dynamically
 
-selectedYear: number | null = null;
-selectedQuarter: string | null = null;
-selectedMonth: string | null = null;
+selectedYear: number[] = [];
+selectedQuarter: string[] = [];
+selectedMonth: string[] = [];
+
+selectedYears: number[] = [];
+selectedQuarters: string[] = [];
+selectedMonths: string[] = [];
+
 selectedDepartment: string | null = null;
 selectedMeasurement: string | null = null;
 yearGaugeValue: number | null = 0;
@@ -229,39 +234,62 @@ failedCasesDisplayedColumns: string[] = [
   
   fetchFailedCases(): void {
     const params: { [key: string]: string } = {};
+    const fromDates: string[] = [];
+    const toDates: string[] = [];
   
-    if (this.selectedYear) {
-      params['year'] = this.selectedYear.toString();
+    const getLastDayOfMonth = (year: number, month: number): number => {
+      return new Date(year, month, 0).getDate();
+    };
+  
+    if (this.selectedYears?.length) {
+      for (const year of this.selectedYears) {
+        if (this.selectedQuarters?.length) {
+          const quarterMap: { [key: string]: [number, number] } = {
+            Q1: [1, 3],
+            Q2: [4, 6],
+            Q3: [7, 9],
+            Q4: [10, 12]
+          };
+  
+          for (const quarter of this.selectedQuarters) {
+            const range = quarterMap[quarter];
+            if (range) {
+              const [startMonth, endMonth] = range;
+              const endDay = getLastDayOfMonth(year, endMonth);
+              fromDates.push(`${year}-${String(startMonth).padStart(2, '0')}-01`);
+              toDates.push(`${year}-${String(endMonth).padStart(2, '0')}-${endDay}`);
+            }
+          }
+  
+        } else if (this.selectedMonths?.length) {
+          for (const monthName of this.selectedMonths) {
+            const monthIndex = this.months.indexOf(monthName) + 1;
+            if (monthIndex > 0) {
+              const endDay = getLastDayOfMonth(year, monthIndex);
+              const paddedMonth = String(monthIndex).padStart(2, '0');
+              fromDates.push(`${year}-${paddedMonth}-01`);
+              toDates.push(`${year}-${paddedMonth}-${endDay}`);
+            }
+          }
+  
+        } else {
+          fromDates.push(`${year}-01-01`);
+          toDates.push(`${year}-12-31`);
+        }
+      }
     }
   
-    if (this.selectedQuarter) {
-      const quarterMap = {
-        Q1: [1, 3],
-        Q2: [4, 6],
-        Q3: [7, 9],
-        Q4: [10, 12]
-      };
-      const [startMonth, endMonth] = quarterMap[this.selectedQuarter as 'Q1' | 'Q2' | 'Q3' | 'Q4'];
-      const endDay = new Date(this.selectedYear!, endMonth, 0).getDate();
-      params['fromDate'] = `${this.selectedYear}-${startMonth.toString().padStart(2, '0')}-01`;
-      params['toDate'] = `${this.selectedYear}-${endMonth.toString().padStart(2, '0')}-${endDay}`;
-    } else if (this.selectedMonth) {
-      const monthIndex = this.months.indexOf(this.selectedMonth) + 1;
-      const lastDay = new Date(this.selectedYear!, monthIndex, 0).getDate();
-      const monthStr = monthIndex.toString().padStart(2, '0');
-      params['fromDate'] = `${this.selectedYear}-${monthStr}-01`;
-      params['toDate'] = `${this.selectedYear}-${monthStr}-${lastDay}`;
-    } else if (this.selectedYear && !this.selectedQuarter && !this.selectedMonth) {
-      params['fromDate'] = `${this.selectedYear}-01-01`;
-      params['toDate'] = `${this.selectedYear}-12-31`;
+    if (fromDates.length > 0 && toDates.length > 0) {
+      params['fromDates'] = fromDates.join(',');
+      params['toDates'] = toDates.join(',');
     }
   
-    if (this.selectedDepartment) {
-      params['departments'] = this.selectedDepartment;
+    if (this.selectedDepartments?.length > 0) {
+      params['departments'] = this.selectedDepartments.join(',');
     }
   
-    if (this.selectedMeasurement) {
-      params['measurement'] = this.selectedMeasurement;
+    if (this.selectedMeasurements?.length > 0) {
+      params['measurement'] = this.selectedMeasurements.join(',');
     }
   
     this.http.get<FailedMeasurementCaseModel[]>(
@@ -273,150 +301,181 @@ failedCasesDisplayedColumns: string[] = [
       this.failedCasesDataSource.sort = this.failedSort;
       this.failedCasesDataSource.filter = ''; // refresh
     });
-    
   }
+  
   
   
   
   resetFilter(): void {
-    this.selectedYear = null;
-    this.selectedQuarter = null;
-    this.selectedMonth = null;
-    this.selectedDepartment = null;
-    this.selectedMeasurement = null;
-      // Reset gauge values
+    this.selectedYears = [];
+    this.selectedQuarters = [];
+    this.selectedMonths = [];
+    this.selectedDepartments = [];
+    this.selectedMeasurements = [];
+  
     this.yearGaugeValue = null;
     this.quarterGaugeValue = null;
     this.monthGaugeValue = null;
+  
     this.applyFilter();
     this.fetchMonthlyPivot();
-    this.selectedDepartments = [];
-    this.selectedMeasurements = [];
+    this.fetchQuarterlyPivot();
   }
+  
 
   applyFilter(): void {
     const params: { [key: string]: string } = {};
+    const fromDates: string[] = [];
+    const toDates: string[] = [];
   
-    // Year always added if selected
-    if (this.selectedYear) {
-      params['year'] = this.selectedYear.toString();
-    }
-  
-    // Calculate fromDate and toDate
     const getLastDayOfMonth = (year: number, month: number): number => {
-      return new Date(year, month, 0).getDate(); // 0th day of next month = last of current
+      return new Date(year, month, 0).getDate();
     };
   
-    if (this.selectedQuarter) {
-      const quarterMap = {
-        Q1: [1, 3],
-        Q2: [4, 6],
-        Q3: [7, 9],
-        Q4: [10, 12]
-      };
-      const [startMonth, endMonth] = quarterMap[this.selectedQuarter as 'Q1' | 'Q2' | 'Q3' | 'Q4'];
-      const endDay = getLastDayOfMonth(this.selectedYear!, endMonth);
-      params['fromDate'] = `${this.selectedYear}-${startMonth.toString().padStart(2, '0')}-01`;
-      params['toDate'] = `${this.selectedYear}-${endMonth.toString().padStart(2, '0')}-${endDay}`;
-    } else if (this.selectedMonth) {
-      const monthIndex = this.months.indexOf(this.selectedMonth) + 1;
-      const lastDay = getLastDayOfMonth(this.selectedYear!, monthIndex);
-      const monthStr = monthIndex.toString().padStart(2, '0');
-      params['fromDate'] = `${this.selectedYear}-${monthStr}-01`;
-      params['toDate'] = `${this.selectedYear}-${monthStr}-${lastDay}`;
-    } else if (this.selectedYear && !this.selectedQuarter && !this.selectedMonth) {
-      // Whole year
-      params['fromDate'] = `${this.selectedYear}-01-01`;
-      params['toDate'] = `${this.selectedYear}-12-31`;
+    if (this.selectedYears?.length) {
+      for (const year of this.selectedYears) {
+        if (this.selectedQuarters?.length) {
+          const quarterMap: { [key: string]: [number, number] } = {
+            Q1: [1, 3],
+            Q2: [4, 6],
+            Q3: [7, 9],
+            Q4: [10, 12]
+          };
+  
+          for (const quarter of this.selectedQuarters) {
+            const range = quarterMap[quarter];
+            if (range) {
+              const [startMonth, endMonth] = range;
+              const endDay = getLastDayOfMonth(year, endMonth);
+              fromDates.push(`${year}-${String(startMonth).padStart(2, '0')}-01`);
+              toDates.push(`${year}-${String(endMonth).padStart(2, '0')}-${endDay}`);
+            }
+          }
+  
+        } else if (this.selectedMonths?.length) {
+          for (const monthName of this.selectedMonths) {
+            const monthIndex = this.months.indexOf(monthName) + 1;
+            if (monthIndex > 0) {
+              const endDay = getLastDayOfMonth(year, monthIndex);
+              const paddedMonth = String(monthIndex).padStart(2, '0');
+              fromDates.push(`${year}-${paddedMonth}-01`);
+              toDates.push(`${year}-${paddedMonth}-${endDay}`);
+            }
+          }
+  
+        } else {
+          // Whole year fallback
+          fromDates.push(`${year}-01-01`);
+          toDates.push(`${year}-12-31`);
+        }
+      }
     }
   
-    // Department filter
-    if (this.selectedDepartments.length > 0) {
+    if (fromDates.length > 0 && toDates.length > 0) {
+      params['fromDates'] = fromDates.join(',');
+      params['toDates'] = toDates.join(',');
+    }
+  
+    if (this.selectedDepartments?.length > 0) {
       params['departments'] = this.selectedDepartments.join(',');
     }
   
-    // Measurement filter
-    if (this.selectedMeasurements.length > 0) {
+    if (this.selectedMeasurements?.length > 0) {
       params['measurement'] = this.selectedMeasurements.join(',');
     }
   
-    // Request updated summary by measurement
-    this.http.get<MeasurementSummaryModel[]>(
-      `${environment.apiUrl}/MeasurementDataMoshe/GetSummaryByMeasurement`, { params }
-    ).subscribe(data => {
-      this.measurementDataSource.data = data;
-      this.measurementDataSource.filter = ''; // ✅ refresh filter
-    });
+    // Load data with filters
+    this.http.get<MeasurementSummaryModel[]>(`${environment.apiUrl}/MeasurementDataMoshe/GetSummaryByMeasurement`, { params })
+      .subscribe(data => {
+        this.measurementDataSource.data = data;
+        this.measurementDataSource.filter = '';
+      });
   
-    // Request updated summary by department
-    this.http.get<MeasurementSummaryModel[]>(
-      `${environment.apiUrl}/MeasurementDataMoshe/GetSummaryByDepartment`, { params }
-    ).subscribe(data => {
-      this.departmentDataSource.data = data;
-      this.departmentDataSource.filter = ''; // ✅ refresh filter
-    });
-
+    this.http.get<MeasurementSummaryModel[]>(`${environment.apiUrl}/MeasurementDataMoshe/GetSummaryByDepartment`, { params })
+      .subscribe(data => {
+        this.departmentDataSource.data = data;
+        this.departmentDataSource.filter = '';
+      });
+  
+    this.http.get<FailedMeasurementCaseModel[]>(`${environment.apiUrl}/MeasurementDataMoshe/GetFailedCases`, { params })
+      .subscribe(data => {
+        this.failedCasesDataSource.data = data;
+        this.failedCasesDataSource.filter = '';
+      });
+  
     this.fetchGaugeValues();
-    this.http.get<FailedMeasurementCaseModel[]>(
-      `${environment.apiUrl}/MeasurementDataMoshe/GetFailedCases`,
-      { params }
-    ).subscribe(data => {
-      this.failedCasesDataSource.data = data;
-      this.failedCasesDataSource.filter = ''; // לרענון
-    });
-    
   }
+  
+  
   
   fetchGaugeValues(): void {
     const baseParams: any = {};
-    if (this.selectedMeasurement) baseParams.measurement = this.selectedMeasurement;
+    if (this.selectedMeasurements?.length) {
+      baseParams.measurement = this.selectedMeasurements.join(',');
+    }
   
-    // Year gauge (independent of quarter/month)
-    if (this.selectedYear) {
-      const yearParams = {
-        ...baseParams,
-        fromDate: `${this.selectedYear}-01-01`,
-        toDate: `${this.selectedYear}-12-31`
-      };
-      this.http.get<MeasurementSummaryModel[]>(`${environment.apiUrl}/MeasurementDataMoshe/GetSummaryByMeasurement`, { params: yearParams })
+    // Year-level gauge (average of all selected years)
+    if (this.selectedYears?.length) {
+      const fromDates: string[] = [];
+      const toDates: string[] = [];
+  
+      for (const year of this.selectedYears) {
+        fromDates.push(`${year}-01-01`);
+        toDates.push(`${year}-12-31`);
+      }
+  
+      const params = { ...baseParams, fromDates: fromDates.join(','), toDates: toDates.join(',') };
+      this.http.get<MeasurementSummaryModel[]>(`${environment.apiUrl}/MeasurementDataMoshe/GetSummaryByMeasurement`, { params })
         .subscribe(data => this.yearGaugeValue = data[0]?.Grade ?? 0);
     } else {
       this.yearGaugeValue = 0;
     }
   
-    // Quarter gauge
-    if (this.selectedQuarter && this.selectedYear) {
-      const quarterMap = {
-        Q1: [1, 3], Q2: [4, 6], Q3: [7, 9], Q4: [10, 12]
-      };
-      const [startMonth, endMonth] = quarterMap[this.selectedQuarter as keyof typeof quarterMap];
-      const endDay = new Date(this.selectedYear, endMonth, 0).getDate();
-      const quarterParams = {
-        ...baseParams,
-        fromDate: `${this.selectedYear}-${startMonth.toString().padStart(2, '0')}-01`,
-        toDate: `${this.selectedYear}-${endMonth.toString().padStart(2, '0')}-${endDay}`
-      };
-      this.http.get<MeasurementSummaryModel[]>(`${environment.apiUrl}/MeasurementDataMoshe/GetSummaryByMeasurement`, { params: quarterParams })
+    // Quarter gauge — first selected year + all selected quarters
+    if (this.selectedYears.length && this.selectedQuarters.length) {
+      const fromDates: string[] = [];
+      const toDates: string[] = [];
+      const quarterMap = { Q1: [1, 3], Q2: [4, 6], Q3: [7, 9], Q4: [10, 12] };
+  
+      for (const year of this.selectedYears) {
+        for (const quarter of this.selectedQuarters) {
+          const [startMonth, endMonth] = quarterMap[quarter as keyof typeof quarterMap];
+          const endDay = new Date(year, endMonth, 0).getDate();
+          fromDates.push(`${year}-${String(startMonth).padStart(2, '0')}-01`);
+          toDates.push(`${year}-${String(endMonth).padStart(2, '0')}-${endDay}`);
+        }
+      }
+  
+      const params = { ...baseParams, fromDates: fromDates.join(','), toDates: toDates.join(',') };
+      this.http.get<MeasurementSummaryModel[]>(`${environment.apiUrl}/MeasurementDataMoshe/GetSummaryByMeasurement`, { params })
         .subscribe(data => this.quarterGaugeValue = data[0]?.Grade ?? 0);
     } else {
       this.quarterGaugeValue = 0;
     }
   
-    // Month gauge
-    if (this.selectedMonth && this.selectedYear) {
-      const monthIndex = this.months.indexOf(this.selectedMonth) + 1;
-      const lastDay = new Date(this.selectedYear, monthIndex, 0).getDate();
-      const monthParams = {
-        ...baseParams,
-        fromDate: `${this.selectedYear}-${monthIndex.toString().padStart(2, '0')}-01`,
-        toDate: `${this.selectedYear}-${monthIndex.toString().padStart(2, '0')}-${lastDay}`
-      };
-      this.http.get<MeasurementSummaryModel[]>(`${environment.apiUrl}/MeasurementDataMoshe/GetSummaryByMeasurement`, { params: monthParams })
+    // Month gauge — all selected months and years
+    if (this.selectedYears.length && this.selectedMonths.length) {
+      const fromDates: string[] = [];
+      const toDates: string[] = [];
+  
+      for (const year of this.selectedYears) {
+        for (const month of this.selectedMonths) {
+          const monthIndex = this.months.indexOf(month) + 1;
+          const lastDay = new Date(year, monthIndex, 0).getDate();
+          const monthStr = String(monthIndex).padStart(2, '0');
+          fromDates.push(`${year}-${monthStr}-01`);
+          toDates.push(`${year}-${monthStr}-${lastDay}`);
+        }
+      }
+  
+      const params = { ...baseParams, fromDates: fromDates.join(','), toDates: toDates.join(',') };
+      this.http.get<MeasurementSummaryModel[]>(`${environment.apiUrl}/MeasurementDataMoshe/GetSummaryByMeasurement`, { params })
         .subscribe(data => this.monthGaugeValue = data[0]?.Grade ?? 0);
     } else {
       this.monthGaugeValue = 0;
     }
   }
+  
   
   
   

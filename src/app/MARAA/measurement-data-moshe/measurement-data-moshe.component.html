@@ -3,21 +3,21 @@
   <div class="filter-row" dir="rtl">
     <mat-form-field >
       <mat-label>שנה</mat-label>
-      <mat-select [(ngModel)]="selectedYear">
+      <mat-select [(ngModel)]="selectedYears" multiple>
         <mat-option *ngFor="let year of years" [value]="year">{{ year }}</mat-option>
       </mat-select>
     </mat-form-field>
 
     <mat-form-field >
       <mat-label>רבעון</mat-label>
-      <mat-select [(ngModel)]="selectedQuarter">
+      <mat-select [(ngModel)]="selectedQuarters" multiple>
         <mat-option *ngFor="let quarter of quarters" [value]="quarter">{{ quarter }}</mat-option>
       </mat-select>
     </mat-form-field>
 
     <mat-form-field >
       <mat-label>חודש</mat-label>
-      <mat-select [(ngModel)]="selectedMonth">
+      <mat-select [(ngModel)]="selectedMonths" multiple>
         <mat-option *ngFor="let month of months" [value]="month">{{ month }}</mat-option>
       </mat-select>
     </mat-form-field>
