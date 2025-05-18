@@ -247,10 +247,15 @@ getUserDetailsFromDBByUserName(username: string): void {
             const [yearA, qA] = a.split('_');
             const [yearB, qB] = b.split('_');
           
-            const yearDiff = +yearB - +yearA;
+            const yearADigit: number = +yearA;
+            const yearBDigit: number = +yearB;
+            const yearDiff: number = yearBDigit - yearADigit;
+          
             if (yearDiff !== 0) return yearDiff;
+          
             return quarterOrder[qB as keyof typeof quarterOrder] - quarterOrder[qA as keyof typeof quarterOrder];
           });
+          
   
           this.quarterlyDisplayedColumns = [
             'קוד מדד',
