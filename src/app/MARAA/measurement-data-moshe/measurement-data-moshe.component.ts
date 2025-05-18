@@ -126,10 +126,6 @@ profilePictureUrl: string = 'assets/default-user.png';
   const currentYear = new Date().getFullYear();
   this.years = [currentYear - 1, currentYear, currentYear + 1];
 
-  // Spinner will be visible for at least 5 seconds
-  const spinnerTimeout = setTimeout(() => {
-    this.isLoading = false;
-  }, 5000);
 
   // 1. Get authenticated user
   this.authenticationService.getAuthentication().subscribe(
@@ -147,13 +143,13 @@ profilePictureUrl: string = 'assets/default-user.png';
   );
 
   // 2. Load other dashboard data
-  this.fetchSummaryByMeasurement();
-  this.fetchSummaryByDepartment();
-  this.loadDepartments();
-  this.fetchMeasurement();
-  this.fetchQuarterlyPivot();
-  this.fetchMonthlyPivot();
-  this.fetchFailedCases();
+  // this.fetchSummaryByMeasurement();
+  // this.fetchSummaryByDepartment();
+  // this.loadDepartments();
+  // this.fetchMeasurement();
+  // this.fetchQuarterlyPivot();
+  // this.fetchMonthlyPivot();
+  // this.fetchFailedCases();
 
   // 3. Load gauge targets and hide spinner after both complete
   this.fetchTargets();
@@ -174,6 +170,13 @@ getUserDetailsFromDBByUserName(username: string): void {
 
   ngAfterViewInit(): void {
     setTimeout(() => {
+      this.fetchSummaryByMeasurement();
+      this.fetchSummaryByDepartment();
+      this.fetchQuarterlyPivot();
+      this.fetchMonthlyPivot();
+      this.fetchFailedCases();
+      console.log('✅ ViewChildren initialized');
+
       this.measurementDataSource.paginator = this.measurementPaginator;
       this.measurementDataSource.sort = this.measurementSort;
     
@@ -198,21 +201,45 @@ getUserDetailsFromDBByUserName(username: string): void {
     this.http.get<MeasurementSummaryModel[]>(`${environment.apiUrl}/MeasurementDataMoshe/GetSummaryByMeasurement`)
       .subscribe({
         next: data => {
-          this.measurementDataSource.data = data;
-          this.isLoading = false;
-        },
-        error: err => {
-          console.error('Error loading summary by measurement', err);
+          this.measurementDataSource = new MatTableDataSource(data);
+  
+          // Only assign paginator/sort if ViewChild is available
+          if (this.measurementPaginator && this.measurementSort) {
+            this.measurementDataSource.paginator = this.measurementPaginator;
+            this.measurementDataSource.sort = this.measurementSort;
+          } else {
+            // Retry once view is ready
+            setTimeout(() => {
+              this.measurementDataSource.paginator = this.measurementPaginator;
+              this.measurementDataSource.sort = this.measurementSort;
+            });
+          }
+  
           this.isLoading = false;
         }
       });
   }
-
+  
+  
   fetchSummaryByDepartment(): void {
     this.http.get<MeasurementSummaryModel[]>(`${environment.apiUrl}/MeasurementDataMoshe/GetSummaryByDepartment`)
       .subscribe({
         next: data => {
-          this.departmentDataSource.data = data;
+          // Create new data source instance
+          this.departmentDataSource = new MatTableDataSource(data);
+  
+          // Try to assign paginator/sort immediately if available
+          if (this.departmentPaginator && this.departmentSort) {
+            this.departmentDataSource.paginator = this.departmentPaginator;
+            this.departmentDataSource.sort = this.departmentSort;
+          } else {
+            // If not yet available (due to timing), defer assignment
+            setTimeout(() => {
+              if (this.departmentPaginator) this.departmentDataSource.paginator = this.departmentPaginator;
+              if (this.departmentSort) this.departmentDataSource.sort = this.departmentSort;
+            });
+          }
+  
           this.isLoading = false;
         },
         error: err => {
@@ -221,6 +248,7 @@ getUserDetailsFromDBByUserName(username: string): void {
         }
       });
   }
+  
 
   loadDepartments(): void {
     this.http.get<string[]>(`${environment.apiUrl}/MeasurementDataMoshe/GetDepartments`)
@@ -236,51 +264,64 @@ getUserDetailsFromDBByUserName(username: string): void {
     this.http.get<QuarterlyPivotFlatModel[]>(`${environment.apiUrl}/MeasurementDataMoshe/GetQuarterlyPivot`)
       .subscribe({
         next: data => {
-          this.quarterlyDataSource.data = data;
+          this.quarterlyDataSource = new MatTableDataSource(data);
   
-          // Extract dynamic keys like "2024_Q1"
+          if (this.quarterlyPaginator && this.quarterlySort) {
+            this.quarterlyDataSource.paginator = this.quarterlyPaginator;
+            this.quarterlyDataSource.sort = this.quarterlySort;
+          } else {
+            setTimeout(() => {
+              if (this.quarterlyPaginator) this.quarterlyDataSource.paginator = this.quarterlyPaginator;
+              if (this.quarterlySort) this.quarterlyDataSource.sort = this.quarterlySort;
+            });
+          }
+  
           const allKeys = Object.keys(data[0] || {}).filter(k => k !== 'Measurement');
-  
-          // Sort: by year ASC, then quarter Q1–Q4
           const quarterOrder = { Q1: 1, Q2: 2, Q3: 3, Q4: 4 };
           const sortedKeys = allKeys.sort((a, b) => {
             const [yearA, qA] = a.split('_');
             const [yearB, qB] = b.split('_');
-          
             const yearADigit: number = +yearA;
             const yearBDigit: number = +yearB;
             const yearDiff: number = yearBDigit - yearADigit;
-          
             if (yearDiff !== 0) return yearDiff;
-          
             return quarterOrder[qB as keyof typeof quarterOrder] - quarterOrder[qA as keyof typeof quarterOrder];
           });
-          
   
           this.quarterlyDisplayedColumns = [
             'קוד מדד',
             'שם מדד',
             ...sortedKeys.filter(k => k !== 'קוד מדד' && k !== 'שם מדד')
-          ];      },
+          ];
+        },
         error: err => {
           console.error('❌ Error loading quarterly pivot data', err);
         }
       });
   }
+  
   fetchMonthlyPivot(): void {
     this.http.get<MonthlyPivotModel[]>(`${environment.apiUrl}/MeasurementDataMoshe/GetMonthlyPivot`)
       .subscribe({
         next: data => {
-          this.monthlyDataSource.data = data;
+          this.monthlyDataSource = new MatTableDataSource(data);
+  
+          if (this.monthlyPaginator && this.monthlySort) {
+            this.monthlyDataSource.paginator = this.monthlyPaginator;
+            this.monthlyDataSource.sort = this.monthlySort;
+          } else {
+            setTimeout(() => {
+              if (this.monthlyPaginator) this.monthlyDataSource.paginator = this.monthlyPaginator;
+              if (this.monthlySort) this.monthlyDataSource.sort = this.monthlySort;
+            });
+          }
   
           if (data.length > 0) {
             const allKeys = Object.keys(data[0]);
-  
-            // Eliminate duplicates safely
             const staticKeys = ['קוד מדד', 'שם מדד'];
             const uniqueDynamicKeys = allKeys.filter((k, i, arr) =>
-  !staticKeys.includes(k) && arr.indexOf(k) === i
-).sort((a, b) => b.localeCompare(a)); // newer months first
+              !staticKeys.includes(k) && arr.indexOf(k) === i
+            ).sort((a, b) => b.localeCompare(a));
   
             this.monthlyDisplayedColumns = [...staticKeys, ...uniqueDynamicKeys];
           }
@@ -310,7 +351,6 @@ getUserDetailsFromDBByUserName(username: string): void {
             Q3: [7, 9],
             Q4: [10, 12]
           };
-  
           for (const quarter of this.selectedQuarters) {
             const range = quarterMap[quarter];
             if (range) {
@@ -320,7 +360,6 @@ getUserDetailsFromDBByUserName(username: string): void {
               toDates.push(`${year}-${String(endMonth).padStart(2, '0')}-${endDay}`);
             }
           }
-  
         } else if (this.selectedMonths?.length) {
           for (const monthName of this.selectedMonths) {
             const monthIndex = this.months.indexOf(monthName) + 1;
@@ -331,7 +370,6 @@ getUserDetailsFromDBByUserName(username: string): void {
               toDates.push(`${year}-${paddedMonth}-${endDay}`);
             }
           }
-  
         } else {
           fromDates.push(`${year}-01-01`);
           toDates.push(`${year}-12-31`);
@@ -343,11 +381,9 @@ getUserDetailsFromDBByUserName(username: string): void {
       params['fromDates'] = fromDates.join(',');
       params['toDates'] = toDates.join(',');
     }
-  
     if (this.selectedDepartments?.length > 0) {
       params['departments'] = this.selectedDepartments.join(',');
     }
-  
     if (this.selectedMeasurements?.length > 0) {
       params['measurement'] = this.selectedMeasurements.join(',');
     }
@@ -356,12 +392,20 @@ getUserDetailsFromDBByUserName(username: string): void {
       `${environment.apiUrl}MeasurementDataMoshe/GetFailedCases`,
       { params: new HttpParams({ fromObject: params }) }
     ).subscribe(data => {
-      this.failedCasesDataSource.data = data;
-      this.failedCasesDataSource.paginator = this.failedPaginator;
-      this.failedCasesDataSource.sort = this.failedSort;
-      this.failedCasesDataSource.filter = ''; // refresh
+      this.failedCasesDataSource = new MatTableDataSource(data);
+  
+      if (this.failedPaginator && this.failedSort) {
+        this.failedCasesDataSource.paginator = this.failedPaginator;
+        this.failedCasesDataSource.sort = this.failedSort;
+      } else {
+        setTimeout(() => {
+          if (this.failedPaginator) this.failedCasesDataSource.paginator = this.failedPaginator;
+          if (this.failedSort) this.failedCasesDataSource.sort = this.failedSort;
+        });
+      }
     });
   }
+  
   
   fetchTargets(): void {
     this.http.get<MeasurementTarget[]>(`${environment.apiUrl}/MeasurementDataMoshe/GetMeasurementTargets`)
