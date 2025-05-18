@@ -153,6 +153,8 @@ profilePictureUrl: string = 'assets/default-user.png';
 
   // 3. Load gauge targets and hide spinner after both complete
   this.fetchTargets();
+  this.loadDepartments();
+this.fetchMeasurement();
 }
 
 getUserDetailsFromDBByUserName(username: string): void {
@@ -259,77 +261,165 @@ getUserDetailsFromDBByUserName(username: string): void {
     this.http.get<string[]>(`${environment.apiUrl}/MeasurementDataMoshe/GetMeasurements`)
     .subscribe(data => this.measurements = data);
   }
-
   fetchQuarterlyPivot(): void {
-    this.http.get<QuarterlyPivotFlatModel[]>(`${environment.apiUrl}/MeasurementDataMoshe/GetQuarterlyPivot`)
-      .subscribe({
-        next: data => {
-          this.quarterlyDataSource = new MatTableDataSource(data);
+    const params: { [key: string]: string } = {};
+    const fromDates: string[] = [];
+    const toDates: string[] = [];
   
-          if (this.quarterlyPaginator && this.quarterlySort) {
-            this.quarterlyDataSource.paginator = this.quarterlyPaginator;
-            this.quarterlyDataSource.sort = this.quarterlySort;
-          } else {
-            setTimeout(() => {
-              if (this.quarterlyPaginator) this.quarterlyDataSource.paginator = this.quarterlyPaginator;
-              if (this.quarterlySort) this.quarterlyDataSource.sort = this.quarterlySort;
-            });
+    const getLastDayOfMonth = (year: number, month: number): number => {
+      return new Date(year, month, 0).getDate();
+    };
+  
+    if (this.selectedYears?.length) {
+      for (const year of this.selectedYears) {
+        if (this.selectedQuarters?.length) {
+          const quarterMap: { [key: string]: [number, number] } = {
+            Q1: [1, 3],
+            Q2: [4, 6],
+            Q3: [7, 9],
+            Q4: [10, 12],
+          };
+          for (const quarter of this.selectedQuarters) {
+            const [startMonth, endMonth] = quarterMap[quarter];
+            const endDay = getLastDayOfMonth(year, endMonth);
+            fromDates.push(`${year}-${String(startMonth).padStart(2, '0')}-01`);
+            toDates.push(`${year}-${String(endMonth).padStart(2, '0')}-${endDay}`);
           }
-  
-          const allKeys = Object.keys(data[0] || {}).filter(k => k !== 'Measurement');
-          const quarterOrder = { Q1: 1, Q2: 2, Q3: 3, Q4: 4 };
-          const sortedKeys = allKeys.sort((a, b) => {
-            const [yearA, qA] = a.split('_');
-            const [yearB, qB] = b.split('_');
-            const yearADigit: number = +yearA;
-            const yearBDigit: number = +yearB;
-            const yearDiff: number = yearBDigit - yearADigit;
-            if (yearDiff !== 0) return yearDiff;
-            return quarterOrder[qB as keyof typeof quarterOrder] - quarterOrder[qA as keyof typeof quarterOrder];
-          });
-  
-          this.quarterlyDisplayedColumns = [
-            'קוד מדד',
-            'שם מדד',
-            ...sortedKeys.filter(k => k !== 'קוד מדד' && k !== 'שם מדד')
-          ];
-        },
-        error: err => {
-          console.error('❌ Error loading quarterly pivot data', err);
+        } else {
+          fromDates.push(`${year}-01-01`);
+          toDates.push(`${year}-12-31`);
         }
-      });
+      }
+    }
+  
+    if (fromDates.length > 0 && toDates.length > 0) {
+      params['fromDates'] = fromDates.join(',');
+      params['toDates'] = toDates.join(',');
+    }
+  
+    if (this.selectedDepartments?.length > 0) {
+      params['departments'] = this.selectedDepartments.join(',');
+    }
+  
+    if (this.selectedMeasurements?.length > 0) {
+      params['measurement'] = this.selectedMeasurements.join(',');
+    }
+  
+    this.http.get<QuarterlyPivotFlatModel[]>(`${environment.apiUrl}/MeasurementDataMoshe/GetQuarterlyPivot`, {
+      params: new HttpParams({ fromObject: params }),
+    }).subscribe({
+      next: (data) => {
+        this.quarterlyDataSource = new MatTableDataSource(data);
+  
+        if (this.quarterlyPaginator) this.quarterlyDataSource.paginator = this.quarterlyPaginator;
+        if (this.quarterlySort) this.quarterlyDataSource.sort = this.quarterlySort;
+  
+        const staticCols = ['קוד מדד', 'שם מדד'];
+        const dynamicKeys = Object.keys(data[0] || {}).filter(k => !staticCols.includes(k));
+  
+        const quarterOrder = { Q1: 1, Q2: 2, Q3: 3, Q4: 4 };
+        const sortedKeys = dynamicKeys.sort((a, b) => {
+          const [yearA, qA] = a.split('_');
+          const [yearB, qB] = b.split('_');
+          const yearDiff = +yearB - +yearA;
+          if (yearDiff !== 0) return yearDiff;
+          return quarterOrder[qB as keyof typeof quarterOrder] - quarterOrder[qA as keyof typeof quarterOrder];
+        });
+  
+        this.quarterlyDisplayedColumns = [...staticCols, ...sortedKeys];
+      },
+      error: (err) => {
+        console.error('❌ Error loading quarterly pivot data', err);
+      },
+    });
   }
   
+  
+  
   fetchMonthlyPivot(): void {
-    this.http.get<MonthlyPivotModel[]>(`${environment.apiUrl}/MeasurementDataMoshe/GetMonthlyPivot`)
-      .subscribe({
-        next: data => {
-          this.monthlyDataSource = new MatTableDataSource(data);
+    const params: { [key: string]: string } = {};
+    const fromDates: string[] = [];
+    const toDates: string[] = [];
   
-          if (this.monthlyPaginator && this.monthlySort) {
-            this.monthlyDataSource.paginator = this.monthlyPaginator;
-            this.monthlyDataSource.sort = this.monthlySort;
-          } else {
-            setTimeout(() => {
-              if (this.monthlyPaginator) this.monthlyDataSource.paginator = this.monthlyPaginator;
-              if (this.monthlySort) this.monthlyDataSource.sort = this.monthlySort;
-            });
+    const getLastDayOfMonth = (year: number, month: number): number => {
+      return new Date(year, month, 0).getDate();
+    };
+  
+    if (this.selectedYears?.length) {
+      for (const year of this.selectedYears) {
+        if (this.selectedQuarters?.length) {
+          const quarterMap: { [key: string]: [number, number] } = {
+            Q1: [1, 3],
+            Q2: [4, 6],
+            Q3: [7, 9],
+            Q4: [10, 12]
+          };
+          for (const quarter of this.selectedQuarters) {
+            const range = quarterMap[quarter];
+            if (range) {
+              const [startMonth, endMonth] = range;
+              const endDay = getLastDayOfMonth(year, endMonth);
+              fromDates.push(`${year}-${String(startMonth).padStart(2, '0')}-01`);
+              toDates.push(`${year}-${String(endMonth).padStart(2, '0')}-${endDay}`);
+            }
           }
-  
-          if (data.length > 0) {
-            const allKeys = Object.keys(data[0]);
-            const staticKeys = ['קוד מדד', 'שם מדד'];
-            const uniqueDynamicKeys = allKeys.filter((k, i, arr) =>
-              !staticKeys.includes(k) && arr.indexOf(k) === i
-            ).sort((a, b) => b.localeCompare(a));
-  
-            this.monthlyDisplayedColumns = [...staticKeys, ...uniqueDynamicKeys];
+        } else if (this.selectedMonths?.length) {
+          for (const monthName of this.selectedMonths) {
+            const monthIndex = this.months.indexOf(monthName) + 1;
+            if (monthIndex > 0) {
+              const endDay = getLastDayOfMonth(year, monthIndex);
+              const paddedMonth = String(monthIndex).padStart(2, '0');
+              fromDates.push(`${year}-${paddedMonth}-01`);
+              toDates.push(`${year}-${paddedMonth}-${endDay}`);
+            }
           }
-        },
-        error: err => {
-          console.error('❌ Error loading monthly pivot data', err);
+        } else {
+          fromDates.push(`${year}-01-01`);
+          toDates.push(`${year}-12-31`);
         }
-      });
+      }
+    }
+  
+    if (fromDates.length > 0 && toDates.length > 0) {
+      params['fromDates'] = fromDates.join(',');
+      params['toDates'] = toDates.join(',');
+    }
+  
+    if (this.selectedDepartments?.length > 0) {
+      params['departments'] = this.selectedDepartments.join(',');
+    }
+  
+    if (this.selectedMeasurements?.length > 0) {
+      params['measurement'] = this.selectedMeasurements.join(',');
+    }
+  
+    this.http.get<MonthlyPivotModel[]>(`${environment.apiUrl}/MeasurementDataMoshe/GetMonthlyPivot`, {
+      params: new HttpParams({ fromObject: params })
+    }).subscribe({
+      next: data => {
+        this.monthlyDataSource = new MatTableDataSource(data);
+        if (data.length > 0) {
+          const allKeys = Object.keys(data[0]);
+          const staticKeys = ['קוד מדד', 'שם מדד'];
+          const dynamicKeys = allKeys.filter(k => !staticKeys.includes(k)).sort((a, b) => b.localeCompare(a));
+          this.monthlyDisplayedColumns = [...staticKeys, ...dynamicKeys];
+        }
+  
+        // ✅ paginator and sort setup
+        if (this.monthlyPaginator && this.monthlySort) {
+          this.monthlyDataSource.paginator = this.monthlyPaginator;
+          this.monthlyDataSource.sort = this.monthlySort;
+        } else {
+          setTimeout(() => {
+            if (this.monthlyPaginator) this.monthlyDataSource.paginator = this.monthlyPaginator;
+            if (this.monthlySort) this.monthlyDataSource.sort = this.monthlySort;
+          });
+        }
+      },
+      error: err => {
+        console.error('❌ Error loading monthly pivot data', err);
+      }
+    });
   }
   
   
@@ -496,7 +586,9 @@ getUserDetailsFromDBByUserName(username: string): void {
     if (this.selectedMeasurements?.length > 0) {
       params['measurement'] = this.selectedMeasurements.join(',');
     }
-  
+    // ✅ This will apply the filter to the quarterly pivot
+    this.fetchQuarterlyPivot();
+    this.fetchMonthlyPivot();
     // Load data with filters
     this.http.get<MeasurementSummaryModel[]>(`${environment.apiUrl}/MeasurementDataMoshe/GetSummaryByMeasurement`, { params })
       .subscribe(data => {
