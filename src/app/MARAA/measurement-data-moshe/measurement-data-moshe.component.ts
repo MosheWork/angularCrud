@@ -52,7 +52,7 @@ export interface MeasurementTarget {
 })
 export class MeasurementDataMosheComponent implements OnInit, AfterViewInit {
   displayedMeasurementColumns: string[] = ['MeasurementCode', 'MeasurementShortDesc', 'Mone', 'Mechane', 'Grade'];
-  displayedDepartmentColumns: string[] = ['MeasurementCode', 'Department', 'Mone', 'Mechane', 'Grade'];
+  displayedDepartmentColumns: string[] = ['MeasurementCode', 'MeasurementShortDesc','Department', 'Mone', 'Mechane', 'Grade'];
 
   years: number[] = [];
 quarters: string[] = ['Q1', 'Q2', 'Q3', 'Q4'];
