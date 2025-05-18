@@ -12,7 +12,7 @@ export class MeasurementRemarksDialogComponent {
   remarks: string = '';
 
   constructor(
-    @Inject(MAT_DIALOG_DATA) public data: { id: number, remarks: string },
+    @Inject(MAT_DIALOG_DATA) public data: { id: number, remarks: string, entryUser: string },
     private dialogRef: MatDialogRef<MeasurementRemarksDialogComponent>,
     private http: HttpClient
   ) {
@@ -21,7 +21,7 @@ export class MeasurementRemarksDialogComponent {
 
   submit(): void {
     this.http.post(`${environment.apiUrl}/MeasurementDataMoshe/UpdateRemarks?id=${this.data.id}`, this.remarks, {
-      headers: { 'Content-Type': 'application/json' }
+      headers: { 'Content-Type': 'text/plain' }  // important!
     }).subscribe({
       next: () => this.dialogRef.close(true),
       error: err => {
@@ -30,4 +30,5 @@ export class MeasurementRemarksDialogComponent {
       }
     });
   }
+  
 }

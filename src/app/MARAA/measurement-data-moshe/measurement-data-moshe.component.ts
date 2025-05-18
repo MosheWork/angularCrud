@@ -815,15 +815,17 @@ getUserDetailsFromDBByUserName(username: string): void {
       width: '800px',
       data: { 
         id: row.ID, 
-        remarks: row.Remarks || '' // Pass current remarks
+        remarks: row.Remarks || '',
+        entryUser: this.loginUserName  // ✅ pass the authenticated user
       }
     });
   
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        this.fetchFailedCases(); // ✅ Refresh table if needed
+        this.fetchFailedCases(); // Refresh after save
       }
     });
   }
+  
   
 }
