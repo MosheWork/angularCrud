@@ -1,15 +1,31 @@
-<div mat-dialog-title class="dialog-title" >✏️ הוספת הערה</div>
+<h2 mat-dialog-title class="dialog-title">פרטי מקרה</h2>
 
-<mat-dialog-content class="dialog-content padded-content" >
-    <div class="field-wrapper">
-      <mat-form-field appearance="outline" class="full-width" dir="rtl">
-        <mat-label>הערה</mat-label>
-        <textarea matInput [(ngModel)]="remarks" rows="4" placeholder="כתוב כאן את ההערה שלך..."></textarea>
-      </mat-form-field>
-    </div>
-  </mat-dialog-content>
+<mat-dialog-content class="dialog-content" dir="rtl">
+  <mat-card class="info-card">
+    <mat-card-content>
+      <div class="info-grid">
+        <div><strong>קוד מדד:</strong> {{ data.Measurment_ID }}</div>
+        <div><strong>תיאור:</strong> {{ data.MeasurementShortDesc }}</div>
+        <div><strong>מספר מקרה:</strong> {{ data.Case_Number }}</div>
+        <div><strong>תאריך:</strong> {{ data.Date | date: 'dd/MM/yyyy' }}</div>
+        <div><strong>מונה:</strong> {{ data.Mone }}</div>
+        <div><strong>מכנה:</strong> {{ data.Mechane }}</div>
+        <div><strong>מחלקה:</strong> {{ data.Department }}</div>
+      </div>
+    </mat-card-content>
+  </mat-card>
 
-<mat-dialog-actions align="end" class="dialog-actions">
-  <button mat-button mat-dialog-close>ביטול</button>
+  <mat-form-field appearance="outline" class="remarks-field" floatLabel="always">
+    <mat-label>הערות</mat-label>
+    <textarea matInput [(ngModel)]="remarks" rows="3"></textarea>
+  </mat-form-field>
+
+  <mat-checkbox [(ngModel)]="subtract" class="checkbox">בקשה לגרוע</mat-checkbox>
+  <mat-checkbox [(ngModel)]="aprovedMabar" class="checkbox">אושר מבר</mat-checkbox>
+
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="dialogRef.close()">ביטול</button>
   <button mat-raised-button color="primary" (click)="submit()">שמור</button>
 </mat-dialog-actions>

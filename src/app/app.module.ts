@@ -173,6 +173,7 @@ import { MeasurementDataMosheComponent } from './MARAA/measurement-data-moshe/me
 import { MeasurementRemarksDialogComponent } from './MARAA/measurement-remarks-dialog/measurement-remarks-dialog.component';
 import { MeasurementTargetManagerComponent } from './MARAA/measurement-target-manager/measurement-target-manager.component';
 import { SpinnerScreenComponent } from './MARAA/spinner-screen/spinner-screen.component';
+import { MeasurementDefComponent } from './MARAA/measurement-def/measurement-def.component';
 
 
 export const MY_DATE_FORMATS: MatDateFormats = {
@@ -322,7 +323,8 @@ export function playerFactory() {
     MeasurementDataMosheComponent,
     MeasurementRemarksDialogComponent,
     MeasurementTargetManagerComponent,
-    SpinnerScreenComponent
+    SpinnerScreenComponent,
+    MeasurementDefComponent
    
      
   

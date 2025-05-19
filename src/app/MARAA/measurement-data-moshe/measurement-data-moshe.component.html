@@ -38,15 +38,14 @@
 </mat-form-field>
 
 <!-- מדד -->
-<mat-form-field>
+<mat-form-field  class="wide-select">
   <mat-label>מדד</mat-label>
   <mat-select [(ngModel)]="selectedMeasurements" multiple>
-    <mat-option *ngFor="let m of measurements" [value]="m.split(' ')[0]">{{ m }}</mat-option>
+    <mat-option *ngFor="let m of measurements" [value]="m">{{ m }}</mat-option>
   </mat-select>
 </mat-form-field>
-
     <button mat-raised-button color="primary" (click)="applyFilter()">סנן</button>
-    <button mat-button (click)="resetFilter()">איפוס</button>
+    <button mat-raised-button color="warn"  (click)="resetFilter()">איפוס</button>
   </div>
   <div class="gauge-section">
     <div class="gauge-row">
@@ -337,6 +336,14 @@
       <ng-container matColumnDef="EntryDate">
         <th mat-header-cell *matHeaderCellDef mat-sort-header>תאריך רישום</th>
         <td mat-cell *matCellDef="let row">{{ row.EntryDate | date:'dd/MM/yyyy HH:mm' }}</td>
+      </ng-container>
+      <ng-container matColumnDef="Subtract">
+        <th mat-header-cell *matHeaderCellDef>בקשה לגרוע</th>
+        <td mat-cell *matCellDef="let row">{{ row.Subtract ? 'כן' : '' }}</td>
+      </ng-container>
+      <ng-container matColumnDef="AprovedMabar">
+        <th mat-header-cell *matHeaderCellDef> מאושר מבר</th>
+        <td mat-cell *matCellDef="let row">{{ row.AprovedMabar ? 'כן' : '' }}</td>
       </ng-container>
 
       <tr mat-header-row *matHeaderRowDef="failedCasesDisplayedColumns"></tr>

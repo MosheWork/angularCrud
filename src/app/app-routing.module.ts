@@ -87,6 +87,7 @@ import { ProductivityReportsComponent } from './chameleon-reports/productivity-r
 import { MeasurementDataMosheComponent } from './MARAA/measurement-data-moshe/measurement-data-moshe.component';
 import { MeasurementTargetManagerComponent } from './MARAA/measurement-target-manager/measurement-target-manager.component';
 import { SpinnerScreenComponent } from './MARAA/spinner-screen/spinner-screen.component';
+import { MeasurementDefComponent } from './MARAA/measurement-def/measurement-def.component';
 
 const routes: Routes = [
   { path: 'users', component: UsersComponent },
@@ -216,7 +217,9 @@ const routes: Routes = [
    //מערכת מראה
    { path: 'measurement-data-moshe', component: MeasurementDataMosheComponent, data: { title: 'פרוייקט מרא"ה ' }},
    { path: 'measurement-targets', component: MeasurementTargetManagerComponent , data: { title: 'פרוייקט מרא"ה - עדכון יעדים ' }},
-   { path: 'SpinnerScreen', component: SpinnerScreenComponent , data: { title: 'פרוייקט מרא"ה   ' }}
+   { path: 'SpinnerScreen', component: SpinnerScreenComponent , data: { title: 'פרוייקט מרא"ה   ' }},
+   { path: 'MeasurementDef', component: MeasurementDefComponent , data: { title: 'פרוייקט מרא"ה - עדכון מדדים   ' }}
+
 
 
 ];

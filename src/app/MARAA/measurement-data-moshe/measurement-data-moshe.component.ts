@@ -37,7 +37,8 @@ export interface FailedMeasurementCaseModel {
   Mone: number;
   Mechane: number;
   ID: number; // added
-
+  Subtract?: boolean;
+  AprovedMabar?: boolean;
 }
 
 export interface MeasurementTarget {
@@ -106,7 +107,11 @@ failedCasesDisplayedColumns: string[] = [
   'Case_Number',
   'Remarks',
   'EntryUser',
-  'EntryDate'
+  'EntryDate',
+  'Subtract',
+  'AprovedMabar',
+
+
 ];
 @ViewChild('failedPaginator') failedPaginator!: MatPaginator;
 @ViewChild('failedSort') failedSort!: MatSort;
@@ -814,9 +819,16 @@ getUserDetailsFromDBByUserName(username: string): void {
     const dialogRef = this.dialog.open(MeasurementRemarksDialogComponent, {
       width: '800px',
       data: { 
-        id: row.ID, 
-        remarks: row.Remarks || '',
-        entryUser: this.loginUserName  // ✅ pass the authenticated user
+        Measurment_ID: row.Measurment_ID,
+        Case_Number: row.Case_Number,
+        Remarks: row.Remarks || '',
+        Subtract: row.Subtract ?? false,
+        AprovedMabar: row.AprovedMabar ?? false,
+        MeasurementShortDesc: row.MeasurementShortDesc,
+        Date: row.Date,
+        Department: row.Department,
+        Mone: row.Mone,
+        Mechane: row.Mechane
       }
     });
   

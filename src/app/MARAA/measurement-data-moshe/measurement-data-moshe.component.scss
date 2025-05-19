@@ -111,3 +111,19 @@ ngx-gauge {
 
 }
 
+.wide-select {
+  min-width: 400px; // or try 350px, 400px as needed
+  max-width: 100%;
+}
+
+.filter-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px; // spacing between all child elements
+  align-items: center;
+
+  mat-form-field,
+  button {
+    margin-bottom: 8px;
+  }
+}

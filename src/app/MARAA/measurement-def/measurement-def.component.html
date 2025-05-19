@@ -1,0 +1,65 @@
+<mat-card class="measurement-def-card" dir="rtl">
+    <mat-card-title>הגדרות מדדים</mat-card-title>
+  
+    <!-- ➕ Add New Row Button -->
+    <div class="add-button-container">
+      <button mat-raised-button color="accent" (click)="addNewRow()">➕ הוסף שורה חדשה</button>
+    </div>
+  
+    <div class="table-container">
+      <table mat-table [dataSource]="dataSource" class="mat-elevation-z8" matSort>
+  
+        <!-- MeasurementCode Column -->
+        <ng-container matColumnDef="MeasurementCode">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>קוד מדד</th>
+          <td mat-cell *matCellDef="let row">
+            <input matInput [(ngModel)]="row.MeasurementCode" [readonly]="!row.isNew">
+          </td>
+        </ng-container>
+  
+        <!-- MeasurementShortDesc Column -->
+        <ng-container matColumnDef="MeasurementShortDesc">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>תיאור</th>
+          <td mat-cell *matCellDef="let row">
+            <input matInput [(ngModel)]="row.MeasurementShortDesc">
+          </td>
+        </ng-container>
+  
+        <!-- Date Column -->
+        <ng-container matColumnDef="date">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>תאריך</th>
+          <td mat-cell *matCellDef="let row">
+            <input matInput [(ngModel)]="row.date" placeholder="שם עמודת תאריך">
+          </td>
+        </ng-container>
+  
+        <!-- Department Column -->
+        <ng-container matColumnDef="department">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>מחלקה</th>
+          <td mat-cell *matCellDef="let row">
+            <input matInput [(ngModel)]="row.department" placeholder="מחלקה">
+          </td>
+        </ng-container>
+  
+        <!-- Actions -->
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef>פעולות</th>
+          <td mat-cell *matCellDef="let row">
+            <button mat-button color="primary" (click)="save(row)">שמור</button>
+            <button mat-button color="warn" (click)="deleteRow(row.MeasurementCode)">מחק</button>
+
+          </td>
+
+        </ng-container>
+  
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+      </table>
+      <mat-paginator
+  [pageSizeOptions]="[5, 10, 20]"
+  showFirstLastButtons
+  [pageSize]="10">
+</mat-paginator>
+    </div>
+  </mat-card>
+  

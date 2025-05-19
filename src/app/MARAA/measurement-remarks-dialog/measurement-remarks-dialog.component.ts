@@ -10,25 +10,53 @@ import { environment } from '../../../environments/environment';
 })
 export class MeasurementRemarksDialogComponent {
   remarks: string = '';
+  subtract: boolean = false;
+  aprovedMabar: boolean = false;
+
 
   constructor(
-    @Inject(MAT_DIALOG_DATA) public data: { id: number, remarks: string, entryUser: string },
-    private dialogRef: MatDialogRef<MeasurementRemarksDialogComponent>,
+    @Inject(MAT_DIALOG_DATA)  public data: {
+      Measurment_ID: string;
+      Case_Number: string;
+      Remarks: string;
+      Subtract: boolean;
+      AprovedMabar: boolean;
+  
+      MeasurementShortDesc?: string;
+      Date?: string;
+      Mone?: number;
+      Mechane?: number;
+      Department?: string;
+    },
+    public dialogRef: MatDialogRef<MeasurementRemarksDialogComponent>,
     private http: HttpClient
   ) {
-    this.remarks = data.remarks || '';
-  }
-
-  submit(): void {
-    this.http.post(`${environment.apiUrl}/MeasurementDataMoshe/UpdateRemarks?id=${this.data.id}`, this.remarks, {
-      headers: { 'Content-Type': 'text/plain' }  // important!
-    }).subscribe({
-      next: () => this.dialogRef.close(true),
-      error: err => {
-        console.error('Failed to update remarks', err);
-        alert('שגיאה בשמירת ההערה');
-      }
-    });
+    this.remarks = data.Remarks || '';
+    this.subtract = data.Subtract || false;
+    this.aprovedMabar = data.AprovedMabar ?? false; // ✅ this is missing
   }
   
+
+  submit(): void {
+    const payload = {
+      Measurment_ID: this.data.Measurment_ID,
+      Case_Number: this.data.Case_Number,
+      Remarks: this.remarks,
+      Subtract: this.subtract,
+      AprovedMabar: this.aprovedMabar
+    };
+
+    this.http.post(`${environment.apiUrl}/MeasurementDataMoshe/UpdateRemarks`, payload)
+      .subscribe({
+        
+        next: () => this.dialogRef.close(true),
+        error: err => {
+          console.error('❌ Failed to update remarks', err);
+          alert('שגיאה בשמירת ההערה');
+        }
+
+        
+      });
+  }
 }
+
