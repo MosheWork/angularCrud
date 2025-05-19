@@ -7,13 +7,18 @@ import { environment } from '../../../environments/environment';
 import { MatPaginator } from '@angular/material/paginator';
 import { AfterViewInit, ViewChild } from '@angular/core';
 import { MatSort } from '@angular/material/sort';
+import { AuthenticationService } from '../../services/authentication-service/authentication-service.component'; // adjust path if needed
+
 
 export interface MeasurementDefModel {
   MeasurementCode: string;
   MeasurementShortDesc?: string;
   date: string;
   department: string;
+  EntryUser?: string;
+  EntryDate?: string;
 }
+
 
 @Component({
   selector: 'app-measurement-def',
@@ -21,16 +26,21 @@ export interface MeasurementDefModel {
   styleUrls: ['./measurement-def.component.scss']
 })
 export class MeasurementDefComponent implements OnInit,AfterViewInit  {
-  displayedColumns: string[] = ['MeasurementCode', 'MeasurementShortDesc', 'date', 'department', 'actions'];
+  displayedColumns: string[] = ['MeasurementCode', 'MeasurementShortDesc', 'date', 'department', 'EntryUser', 'EntryDate', 'actions'];
   dataSource = new MatTableDataSource<MeasurementDefModel>();
   formMap: { [code: string]: FormGroup } = {};
 
-  constructor(private http: HttpClient, private fb: FormBuilder) {}
+  constructor(private http: HttpClient, private fb: FormBuilder,private authenticationService: AuthenticationService) {}
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
+  loginUserName: string = '';
 
   ngOnInit(): void {
     this.loadData();
+
+    this.authenticationService.getAuthentication().subscribe(res => {
+      this.loginUserName = res.message.split('\\')[1].toUpperCase();
+    });
   }
 
   loadData(): void {
@@ -53,25 +63,17 @@ export class MeasurementDefComponent implements OnInit,AfterViewInit  {
 
   }
   save(row: MeasurementDefModel): void {
-    const isNew = !this.existingCodes.has(row.MeasurementCode); // treat as new if code not in original list
+    const payload = {
+      ...row,
+      EntryUser: this.loginUserName
+    };
   
-    if (isNew) {
-      const duplicateInTable = this.dataSource.data.filter(
-        r => r.MeasurementCode === row.MeasurementCode
-      ).length > 1;
-  
-      if (duplicateInTable) {
-        alert('⚠️ קוד מדד זה כבר קיים בטבלה. אנא בחר קוד ייחודי.');
-        return;
-      }
-    }
-  
-    // Proceed to save
-    this.http.post(`${environment.apiUrl}/MeasurementDataMoshe/UpsertMeasurementColDef`, row)
+    this.http.post(`${environment.apiUrl}/MeasurementDataMoshe/UpsertMeasurementColDef`, payload)
       .subscribe({
         next: () => {
           alert('✅ נשמר בהצלחה');
           this.existingCodes.add(row.MeasurementCode);
+          this.loadData(); // refresh to show updated EntryUser + EntryDate
         },
         error: err => {
           console.error('❌ שגיאה בשמירה:', err);
@@ -99,7 +101,7 @@ export class MeasurementDefComponent implements OnInit,AfterViewInit  {
     const confirmDelete = confirm(`האם אתה בטוח שברצונך למחוק את המדד ${measurementCode}?`);
     if (!confirmDelete) return;
   
-    this.http.delete(`${environment.apiUrl}/MeasurementDataMoshe/DeleteMeasurementColDef`, {
+    this.http.delete(`${environment.apiUrl}/MeasurementDataMoshe/ClearMeasurementColDef`, {
       params: { measurementCode }
     }).subscribe({
       next: () => {

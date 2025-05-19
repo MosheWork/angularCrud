@@ -6,21 +6,31 @@
     </div>
   
     <!-- Measurement Target Table -->
-    <table mat-table [dataSource]="dataSource" class="mat-elevation-z2" dir="rtl">
+    <table mat-table [dataSource]="dataSource" matSort class="mat-elevation-z2" dir="rtl">
   
-      <!-- MeasurementCode Column -->
-      <ng-container matColumnDef="MeasurementCode">
-        <th mat-header-cell *matHeaderCellDef>קוד מדד</th>
-        <td mat-cell *matCellDef="let row">
-          <mat-form-field appearance="outline">
-            <input matInput [(ngModel)]="row.MeasurementCode" placeholder="קוד מדד">
-          </mat-form-field>
-        </td>
-      </ng-container>
-  
+  <!-- MeasurementCode Column -->
+<ng-container matColumnDef="MeasurementCode">
+  <th mat-header-cell *matHeaderCellDef mat-sort-header>קוד מדד</th>
+  <td mat-cell *matCellDef="let row">
+    <mat-form-field appearance="outline">
+      <mat-select [(ngModel)]="row.MeasurementCode" placeholder="בחר קוד מדד">
+        <mat-option *ngFor="let option of measurementOptions" [value]="option.MeasurementCode">
+          {{ option.Label }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+  </td>
+</ng-container>
+  <!-- MeasurementShortDesc Column -->
+<ng-container matColumnDef="MeasurementShortDesc">
+  <th mat-header-cell *matHeaderCellDef mat-sort-header>שם מדד</th>
+  <td mat-cell *matCellDef="let row">
+    {{ getShortDesc(row.MeasurementCode) }}
+  </td>
+</ng-container>
       <!-- MYear Column -->
       <ng-container matColumnDef="MYear">
-        <th mat-header-cell *matHeaderCellDef>שנה</th>
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>שנה</th>
         <td mat-cell *matCellDef="let row">
           <mat-form-field appearance="outline">
             <input matInput type="number" [(ngModel)]="row.MYear" placeholder="שנה">
@@ -30,14 +40,24 @@
   
       <!-- MTarget Column -->
       <ng-container matColumnDef="MTarget">
-        <th mat-header-cell *matHeaderCellDef>יעד</th>
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>יעד</th>
         <td mat-cell *matCellDef="let row">
           <mat-form-field appearance="outline">
             <input matInput type="number" [(ngModel)]="row.MTarget" placeholder="יעד">
           </mat-form-field>
         </td>
       </ng-container>
-  
+  <!-- EntryUser Column -->
+<ng-container matColumnDef="EntryUser">
+  <th mat-header-cell *matHeaderCellDef>נכנס על ידי</th>
+  <td mat-cell *matCellDef="let row">{{ row.EntryUser }}</td>
+</ng-container>
+
+<!-- EntryDate Column -->
+<ng-container matColumnDef="EntryDate">
+  <th mat-header-cell *matHeaderCellDef>תאריך כניסה</th>
+  <td mat-cell *matCellDef="let row">{{ row.EntryDate | date:'dd/MM/yyyy HH:mm' }}</td>
+</ng-container>
       <!-- Actions Column -->
       <ng-container matColumnDef="actions" >
         <th mat-header-cell *matHeaderCellDef>פעולות</th>

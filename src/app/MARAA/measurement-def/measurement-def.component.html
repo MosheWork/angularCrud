@@ -2,10 +2,10 @@
     <mat-card-title>הגדרות מדדים</mat-card-title>
   
     <!-- ➕ Add New Row Button -->
-    <div class="add-button-container">
+    <!-- <div class="add-button-container">
       <button mat-raised-button color="accent" (click)="addNewRow()">➕ הוסף שורה חדשה</button>
     </div>
-  
+   -->
     <div class="table-container">
       <table mat-table [dataSource]="dataSource" class="mat-elevation-z8" matSort>
   
@@ -27,7 +27,7 @@
   
         <!-- Date Column -->
         <ng-container matColumnDef="date">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>תאריך</th>
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>תאריך עמודה</th>
           <td mat-cell *matCellDef="let row">
             <input matInput [(ngModel)]="row.date" placeholder="שם עמודת תאריך">
           </td>
@@ -35,12 +35,23 @@
   
         <!-- Department Column -->
         <ng-container matColumnDef="department">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>מחלקה</th>
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>מחלקה עמודה</th>
           <td mat-cell *matCellDef="let row">
             <input matInput [(ngModel)]="row.department" placeholder="מחלקה">
           </td>
         </ng-container>
-  
+  <!-- EntryUser Column -->
+<ng-container matColumnDef="EntryUser">
+  <th mat-header-cell *matHeaderCellDef mat-sort-header>משתמש</th>
+  <td mat-cell *matCellDef="let row">{{ row.EntryUser }}</td>
+</ng-container>
+
+<!-- EntryDate Column -->
+<ng-container matColumnDef="EntryDate">
+  <th mat-header-cell *matHeaderCellDef mat-sort-header>תאריך עדכון</th>
+  <td mat-cell *matCellDef="let row">{{ row.EntryDate | date: 'dd/MM/yyyy HH:mm' }}</td>
+</ng-container>
+
         <!-- Actions -->
         <ng-container matColumnDef="actions">
           <th mat-header-cell *matHeaderCellDef>פעולות</th>

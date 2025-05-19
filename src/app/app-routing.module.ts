@@ -215,7 +215,7 @@ const routes: Routes = [
 
    
    //מערכת מראה
-   { path: 'measurement-data-moshe', component: MeasurementDataMosheComponent, data: { title: 'פרוייקט מרא"ה ' }},
+   { path: 'measurement-data', component: MeasurementDataMosheComponent, data: { title: 'פרוייקט מרא"ה ' }},
    { path: 'measurement-targets', component: MeasurementTargetManagerComponent , data: { title: 'פרוייקט מרא"ה - עדכון יעדים ' }},
    { path: 'SpinnerScreen', component: SpinnerScreenComponent , data: { title: 'פרוייקט מרא"ה   ' }},
    { path: 'MeasurementDef', component: MeasurementDefComponent , data: { title: 'פרוייקט מרא"ה - עדכון מדדים   ' }}
