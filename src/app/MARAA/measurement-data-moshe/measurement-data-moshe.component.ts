@@ -306,8 +306,9 @@ getUserDetailsFromDBByUserName(username: string): void {
       params['departments'] = this.selectedDepartments.join(',');
     }
   
-    if (this.selectedMeasurements?.length > 0) {
-      params['measurement'] = this.selectedMeasurements.join(',');
+    const measurementCodes = this.extractMeasurementCodes();
+    if (measurementCodes.length > 0) {
+      params['measurement'] = measurementCodes.join(',');
     }
   
     this.http.get<QuarterlyPivotFlatModel[]>(`${environment.apiUrl}/MeasurementDataMoshe/GetQuarterlyPivot`, {
@@ -394,9 +395,11 @@ getUserDetailsFromDBByUserName(username: string): void {
       params['departments'] = this.selectedDepartments.join(',');
     }
   
-    if (this.selectedMeasurements?.length > 0) {
-      params['measurement'] = this.selectedMeasurements.join(',');
+    const measurementCodes = this.extractMeasurementCodes();
+    if (measurementCodes.length > 0) {
+      params['measurement'] = measurementCodes.join(',');
     }
+    
   
     this.http.get<MonthlyPivotModel[]>(`${environment.apiUrl}/MeasurementDataMoshe/GetMonthlyPivot`, {
       params: new HttpParams({ fromObject: params })
@@ -479,8 +482,9 @@ getUserDetailsFromDBByUserName(username: string): void {
     if (this.selectedDepartments?.length > 0) {
       params['departments'] = this.selectedDepartments.join(',');
     }
-    if (this.selectedMeasurements?.length > 0) {
-      params['measurement'] = this.selectedMeasurements.join(',');
+    const measurementCodes = this.extractMeasurementCodes();
+    if (measurementCodes.length > 0) {
+      params['measurement'] = measurementCodes.join(',');
     }
   
     this.http.get<FailedMeasurementCaseModel[]>(
@@ -588,8 +592,9 @@ getUserDetailsFromDBByUserName(username: string): void {
       params['departments'] = this.selectedDepartments.join(',');
     }
   
-    if (this.selectedMeasurements?.length > 0) {
-      params['measurement'] = this.selectedMeasurements.join(',');
+    const measurementCodes = this.extractMeasurementCodes();
+    if (measurementCodes.length > 0) {
+      params['measurement'] = measurementCodes.join(',');
     }
     // ✅ This will apply the filter to the quarterly pivot
     this.fetchQuarterlyPivot();
@@ -620,8 +625,9 @@ getUserDetailsFromDBByUserName(username: string): void {
   
   fetchGaugeValues(): void {
     const baseParams: any = {};
-    if (this.selectedMeasurements?.length) {
-      baseParams.measurement = this.selectedMeasurements.join(',');
+    const measurementCodes = this.extractMeasurementCodes();
+    if (measurementCodes.length > 0) {
+      baseParams.measurement = measurementCodes.join(',');
     }
   
     // 🔹 Load target for selected measurement & year (used under the gauge)
@@ -838,6 +844,8 @@ getUserDetailsFromDBByUserName(username: string): void {
       }
     });
   }
-  
+  private extractMeasurementCodes(): string[] {
+    return this.selectedMeasurements.map(label => label.split(' ')[0]);
+  } 
   
 }
