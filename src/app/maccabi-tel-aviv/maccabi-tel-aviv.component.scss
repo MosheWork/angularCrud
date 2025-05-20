@@ -1,0 +1,69 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #fffcdb;
+    color: #0033a0;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    min-height: 100vh;
+    text-align: center;
+  }
+  
+  header {
+    background-color: #0033a0;
+    color: #ffea00;
+    padding: 20px;
+    width: 100%;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding-top: 100px;
+  }
+  
+  header img {
+    border-radius: 50%;
+    height: 120px;
+    margin-bottom: 10px;
+  }
+  
+  h1 {
+    margin: 0;
+    font-size: 2em;
+  }
+  
+  .section {
+    padding: 20px;
+    margin-top: 20px;
+  }
+  
+  .songs audio {
+    margin: 10px auto;
+    display: block;
+  }
+  
+  .matches table {
+    width: 90%;
+    margin: auto;
+    border-collapse: collapse;
+  }
+  
+  .matches th, .matches td {
+    padding: 10px;
+    border: 1px solid #0033a0;
+  }
+  
+  .matches th {
+    background-color: #0033a0;
+    color: white;
+  }
+  .team-logo {
+    width: 150px;
+    margin: 20px auto; /* center horizontally */
+    display: block;    /* ensures margin: auto works */
+  }
