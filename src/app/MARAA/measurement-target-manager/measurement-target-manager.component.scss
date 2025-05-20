@@ -24,9 +24,10 @@
   
     .actions {
       display: flex;
+      align-items: center;
       justify-content: center;
+      padding: 0 !important;
     }
-  
     .add-button-container {
       margin-bottom: 16px;
       text-align: left;

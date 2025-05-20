@@ -67,7 +67,19 @@ export class MeasurementTargetManagerComponent implements OnInit {
       .subscribe(data => {
         this.measurementOptions = data;
       });
-
+      this.dataSource.filterPredicate = (data: MeasurementTarget, filter: string): boolean => {
+        const shortDesc = this.getShortDesc(data.MeasurementCode);
+        const combined = (
+          data.MeasurementCode +
+          shortDesc +
+          (data.MYear ?? '') +
+          (data.MTarget ?? '') +
+          (data.EntryUser ?? '')
+        ).toString().toLowerCase();
+      
+        return combined.includes(filter.trim().toLowerCase());
+      };
+      
       
   }
   
@@ -112,10 +124,11 @@ export class MeasurementTargetManagerComponent implements OnInit {
   }
 
   addNewRow(): void {
-    const newRow: MeasurementTarget = {
+    const newRow: MeasurementTarget & { isNew?: boolean } = {
       MeasurementCode: '',
       MYear: new Date().getFullYear(),
-      MTarget: null
+      MTarget: null,
+      isNew: true // ✅ custom flag
     };
     this.dataSource.data = [newRow, ...this.dataSource.data];
     this.paginator.firstPage();
