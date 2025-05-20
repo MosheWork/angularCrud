@@ -181,7 +181,7 @@
 
       <ng-container matColumnDef="Department">
         <th mat-header-cell *matHeaderCellDef mat-sort-header>מחלקה</th>
-        <td mat-cell *matCellDef="let row">{{ row.Department }}</td>
+        <td mat-cell *matCellDef="let row">{{ row.Department || 'אין נתונים' }}</td>
       </ng-container>
 
       <ng-container matColumnDef="Mone">
@@ -317,7 +317,7 @@
 
       <ng-container matColumnDef="Department">
         <th mat-header-cell *matHeaderCellDef mat-sort-header>מחלקה</th>
-        <td mat-cell *matCellDef="let row">{{ row.Department }}</td>
+        <td mat-cell *matCellDef="let row">{{ row.Department || 'אין נתונים' }}</td>
       </ng-container>
       <ng-container matColumnDef="Case_Number">
         <th mat-header-cell *matHeaderCellDef mat-sort-header>מספר מקרה</th>

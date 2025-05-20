@@ -1,7 +1,7 @@
 .measurement-def-card {
     padding: 24px;
     margin: 20px auto;
-    max-width: 1100px;
+    max-width: Auto;
   
     mat-card-title {
       font-size: 24px;
@@ -15,7 +15,7 @@
   
       table {
         width: 100%;
-        min-width: 800px;
+        min-width: 1200px;
         border-spacing: 0;
         border-collapse: collapse;
   
