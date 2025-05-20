@@ -4,21 +4,26 @@
     <div class="add-button-container">
       <button mat-raised-button color="primary" (click)="addNewRow()">הוסף שורה חדשה</button>
     </div>
-  
+<!-- 🔍 Global Search -->
+<mat-form-field appearance="outline" class="search-box" style="width: 300px; margin: 10px 0;">
+  <mat-label>חיפוש</mat-label>
+  <input matInput [(ngModel)]="filterValue" (keyup)="applyFilter()" placeholder="חפש בטבלה">
+</mat-form-field>
     <!-- Measurement Target Table -->
     <table mat-table [dataSource]="dataSource" matSort class="mat-elevation-z2" dir="rtl">
   
-  <!-- MeasurementCode Column -->
+<!-- MeasurementCode Column -->
 <ng-container matColumnDef="MeasurementCode">
   <th mat-header-cell *matHeaderCellDef mat-sort-header>קוד מדד</th>
   <td mat-cell *matCellDef="let row">
-    <mat-form-field appearance="outline">
+    <mat-form-field appearance="outline" *ngIf="!row.EntryUser">
       <mat-select [(ngModel)]="row.MeasurementCode" placeholder="בחר קוד מדד">
         <mat-option *ngFor="let option of measurementOptions" [value]="option.MeasurementCode">
           {{ option.Label }}
         </mat-option>
       </mat-select>
     </mat-form-field>
+    <span *ngIf="row.EntryUser">{{ row.MeasurementCode }}</span>
   </td>
 </ng-container>
   <!-- MeasurementShortDesc Column -->

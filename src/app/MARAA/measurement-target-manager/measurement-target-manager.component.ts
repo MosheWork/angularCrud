@@ -5,7 +5,8 @@ import { MatTableDataSource } from '@angular/material/table';
 import { environment } from '../../../environments/environment';
 import { MatSort } from '@angular/material/sort';
 import { AuthenticationService } from '../../services/authentication-service/authentication-service.component'; // adjust path if needed
-
+import { MatTableModule } from '@angular/material/table';
+import { MatPaginatorModule } from '@angular/material/paginator';
 
 export interface MeasurementTarget {
   MeasurementCode: string;
@@ -36,6 +37,8 @@ export class MeasurementTargetManagerComponent implements OnInit {
   measurementDescriptions: { [code: string]: string } = {};
   measurementOptions: MeasurementOption[] = [];
   loginUserName: string = '';
+  filterValue: string = '';
+
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
@@ -64,6 +67,8 @@ export class MeasurementTargetManagerComponent implements OnInit {
       .subscribe(data => {
         this.measurementOptions = data;
       });
+
+      
   }
   
   
@@ -114,5 +119,12 @@ export class MeasurementTargetManagerComponent implements OnInit {
     };
     this.dataSource.data = [newRow, ...this.dataSource.data];
     this.paginator.firstPage();
+  }
+  ngAfterViewInit(): void {
+    this.dataSource.paginator = this.paginator;
+    this.dataSource.sort = this.sort;
+  }
+  applyFilter(): void {
+    this.dataSource.filter = this.filterValue.trim().toLowerCase();
   }
 }
