@@ -20,8 +20,26 @@
     <textarea matInput [(ngModel)]="remarks" rows="3"></textarea>
   </mat-form-field>
 
-  <mat-checkbox [(ngModel)]="subtract" class="checkbox">בקשה לגרוע</mat-checkbox>
-  <mat-checkbox [(ngModel)]="aprovedMabar" class="checkbox">אושר מבר</mat-checkbox>
+  <mat-checkbox [(ngModel)]="subtract" (change)="onSubtractChange()">בקשה לגרוע</mat-checkbox>
+  <div class="meta">
+    <span *ngIf="data.EntryUserSubtract">
+      נרשם על ידי: {{ data.EntryUserSubtract }}
+    </span>
+    <span *ngIf="data.EntryDateSubtract">
+      בתאריך {{ data.EntryDateSubtract | date:'dd/MM/yyyy HH:mm' }}
+    </span>
+  </div>
+  
+  <mat-checkbox [(ngModel)]="aprovedMabar" (change)="onApproveChange()">מאושר מבר</mat-checkbox>
+  <div class="meta">
+    <span *ngIf="data.EntryUserAprovedMabar">
+      נרשם על ידי: {{ data.EntryUserAprovedMabar }}
+    </span>
+    <span *ngIf="data.EntryDateAprovedMabar">
+      בתאריך {{ data.EntryDateAprovedMabar | date:'dd/MM/yyyy HH:mm' }}
+    </span>
+  </div>
+  
 
 </mat-dialog-content>
 

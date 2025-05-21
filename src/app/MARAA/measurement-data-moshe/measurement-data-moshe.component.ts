@@ -39,6 +39,10 @@ export interface FailedMeasurementCaseModel {
   ID: number; // added
   Subtract?: boolean;
   AprovedMabar?: boolean;
+  EntryUserSubtract?: string;
+EntryDateSubtract?: Date | null;
+EntryUserAprovedMabar?: string;
+EntryDateAprovedMabar?: Date | null;
 }
 
 export interface MeasurementTarget {
@@ -117,7 +121,7 @@ failedCasesDisplayedColumns: string[] = [
 @ViewChild('failedSort') failedSort!: MatSort;
 
 loginUserName: string = '';
-UserName: string = '';
+
 profilePictureUrl: string = 'assets/default-user.png';
 
   constructor(private http: HttpClient, private dialog: MatDialog , private authenticationService: AuthenticationService) {}
@@ -166,7 +170,7 @@ getUserDetailsFromDBByUserName(username: string): void {
   this.http.get<any>(`${environment.apiUrl}ServiceCRM/GetEmployeeInfo?username=${username}`)
     .subscribe(
       (data) => {
-        this.UserName = data.UserName;
+        this.loginUserName = data.UserName;
         this.profilePictureUrl = data.ProfilePicture || 'assets/default-user.png';
       },
       (error) => {
@@ -834,7 +838,13 @@ getUserDetailsFromDBByUserName(username: string): void {
         Date: row.Date,
         Department: row.Department,
         Mone: row.Mone,
-        Mechane: row.Mechane
+        Mechane: row.Mechane,
+  
+        // ✅ New fields
+        EntryUserSubtract: row.EntryUserSubtract,
+        EntryDateSubtract: row.EntryDateSubtract,
+        EntryUserAprovedMabar: row.EntryUserAprovedMabar,
+        EntryDateAprovedMabar: row.EntryDateAprovedMabar
       }
     });
   
@@ -844,6 +854,7 @@ getUserDetailsFromDBByUserName(username: string): void {
       }
     });
   }
+  
   private extractMeasurementCodes(): string[] {
     return this.selectedMeasurements.map(label => label.split(' ')[0]);
   } 
