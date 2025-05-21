@@ -11,7 +11,6 @@ import { MatDialog } from '@angular/material/dialog';
 import { MeasurementRemarksDialogComponent } from '../measurement-remarks-dialog/measurement-remarks-dialog.component';
 import { AuthenticationService } from '../../services/authentication-service/authentication-service.component';
 
-
 export interface MeasurementSummaryModel {
   MeasurementCode: string;
   MeasurementShortDesc?: string; // only for per-measurement
@@ -124,7 +123,8 @@ loginUserName: string = '';
 
 profilePictureUrl: string = 'assets/default-user.png';
 
-  constructor(private http: HttpClient, private dialog: MatDialog , private authenticationService: AuthenticationService) {}
+  constructor(private http: HttpClient, private dialog: MatDialog , private authenticationService: AuthenticationService
+    ) {}
   getLastDayOfMonth(year: number, month: number): number {
     return new Date(year, month, 0).getDate();
   }
@@ -134,7 +134,7 @@ profilePictureUrl: string = 'assets/default-user.png';
 
   const currentYear = new Date().getFullYear();
   this.years = [currentYear - 1, currentYear, currentYear + 1];
-
+ 
 
   // 1. Get authenticated user
   this.authenticationService.getAuthentication().subscribe(
@@ -798,10 +798,18 @@ getUserDetailsFromDBByUserName(username: string): void {
       Mone: 'מונה',
       Mechane: 'מכנה',
       Department: 'מחלקה',
-      Case_Number: 'מספר מקרה'
+      Case_Number: 'מספר מקרה',
+      Subtract: 'הפחתה',
+      AprovedMabar: 'מאושר מעבר',
+      EntryUserSubtract: 'משתמש שהפחית',
+      EntryDateSubtract: 'תאריך הפחתה',
+      EntryUserAprovedMabar: 'משתמש שאישר מעבר',
+      EntryDateAprovedMabar: 'תאריך אישור מעבר'
     };
+  
     this.exportExcelFromTable(this.failedCasesDataSource.filteredData, 'מדדים_שלא_בוצעו', headersMap);
   }
+  
   exportMeasurementSummary(): void {
     const headersMap: { [key: string]: string } = {
       MeasurementCode: 'קוד מדד',
