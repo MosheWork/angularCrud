@@ -104,7 +104,7 @@ export class MeasurementDefComponent implements OnInit, AfterViewInit {
     const confirmDelete = confirm(`האם אתה בטוח שברצונך למחוק את המדד ${measurementCode}?`);
     if (!confirmDelete) return;
 
-    this.http.delete(`${environment.apiUrl}/MeasurementDataMoshe/ClearMeasurementColDef`, {
+    this.http.delete(`${environment.apiUrl}MeasurementDataMoshe/ClearMeasurementColDef`, {
       params: { measurementCode }
     }).subscribe({
       next: () => {

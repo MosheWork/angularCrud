@@ -11,6 +11,8 @@ import { MatDialog } from '@angular/material/dialog';
 import { LabResultsDetailDialogComponent } from '../diabetes-consultation/lab-results-detail-dialog/lab-results-detail-dialog.component'; // adjust path
 import { DateAdapter } from '@angular/material/core';
 import { Inject } from '@angular/core';
+import { MatTabChangeEvent } from '@angular/material/tabs';
+
 
 
 @Component({
@@ -360,7 +362,16 @@ this.DiabeticPatientsWithCatheterOrdersDataSource.sort = this.sortCatheterOrders
 
 this.PatientWithICD9AndHaveDiabetesEstimationDataSource.paginator = this.paginatorICD9HaveEstimation;
 this.PatientWithICD9AndHaveDiabetesEstimationDataSource.sort = this.sortICD9HaveEstimation;
-  }
+
+console.log('📦 sortICD9HaveEstimation:', this.sortICD9HaveEstimation);
+console.log('📦 PatientWithICD9AndHaveDiabetesEstimationDataSource:', this.PatientWithICD9AndHaveDiabetesEstimationDataSource);
+
+// נסה לאלץ את החיבור כאן
+setTimeout(() => {
+  this.PatientWithICD9AndHaveDiabetesEstimationDataSource.sort = this.sortICD9HaveEstimation;
+  console.log('✅ Sort assigned in timeout');
+}, 0);
+}
   fetchPatientsWithICD9AndHaveDiabetesEstimation(): void {
     this.http
       .get<any[]>(`${environment.apiUrl}/DiabetesConsultation/PatientWithICD9AndHaveDiabetesEstimation`)
@@ -1150,10 +1161,17 @@ this.isWithinDateRange(item.Admission_Date)
       });
     }
     
-    
-    
-    
-    
-     
+    onTabChange(event: MatTabChangeEvent): void {
+      if (event.index === 0) { // הטאב הראשון
+        setTimeout(() => {
+          this.PatientWithICD9AndHaveDiabetesEstimationDataSource.sort = this.sortICD9HaveEstimation;
+        });
+      } else if (event.index === 1) { // טאב שני – ICD9 ללא אומדן
+        setTimeout(() => {
+          this.PatientWithICD9AndDontHaveDiabetesEstimationDataSource.sort = this.sortICD9NoEstimation;
+        });
+      }
+      // תוסיף עוד if לפי הצורך עבור טאבים נוספים
+    }
     
 }
