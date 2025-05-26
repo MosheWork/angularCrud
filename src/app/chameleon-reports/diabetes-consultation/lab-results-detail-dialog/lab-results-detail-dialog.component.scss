@@ -112,3 +112,12 @@ td.mat-cell {
   color: darkgreen;
   font-weight: bold;
 }
+
+.dialog-title-bar {
+  background-color: #f5f5f5;
+  padding: 8px 16px;
+  cursor: move;
+  border-radius: 4px 4px 0 0;
+  font-weight: bold;
+  border-bottom: 1px solid #ccc;
+}

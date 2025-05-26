@@ -13,7 +13,14 @@ export class LabResultsDetailDialogComponent implements OnInit {
   loading = true;
 
   constructor(
-    @Inject(MAT_DIALOG_DATA) public data: { Patient: number; AdmissionDate: string },
+    @Inject(MAT_DIALOG_DATA) public data: {
+      Patient: number;
+      AdmissionDate: string;
+      FirstName: string;
+      LastName: string;
+      IdNum: string;
+      Admission_No: string;
+    },
     private http: HttpClient
   ) {}
 

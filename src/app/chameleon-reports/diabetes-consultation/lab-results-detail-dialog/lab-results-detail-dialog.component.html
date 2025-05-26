@@ -1,11 +1,18 @@
 <!-- <h2 mat-dialog-title>תוצאות מעבדה עבור המטופל</h2> -->
-<mat-dialog-content dir="rtl">
+<!-- Add draggable handle -->
+<mat-dialog-content cdkDrag cdkDragRootElement=".cdk-overlay-pane" dir="rtl">
+  <div cdkDragHandle class="dialog-title-bar">
+    <h2 mat-dialog-title dir="rtl">
+      תוצאות מעבדה עבור: {{ data.FirstName }} {{ data.LastName }} (ת"ז: {{ data.IdNum }}) (מספקר מקרה: {{ data.Admission_No }})
+    </h2>  </div>
+
   <ng-container *ngIf="!loading; else loadingSpinner">
     <table mat-table [dataSource]="labResults" class="mat-elevation-z8">
 
       <ng-container matColumnDef="TestDate">
         <th mat-header-cell *matHeaderCellDef>תאריך בדיקה</th>
-        <td mat-cell *matCellDef="let element">{{ element.TestDate | date:'short' }}</td>
+        <td mat-cell *matCellDef="let element">{{ element.TestDate | date:'dd/MM/yyyy HH:mm' }}
+        </td>
       </ng-container>
 
       <ng-container matColumnDef="Sender_Name">
@@ -25,17 +32,17 @@
 
       <ng-container matColumnDef="ResultDate">
         <th mat-header-cell *matHeaderCellDef>תאריך תוצאה</th>
-        <td mat-cell *matCellDef="let element">{{ element.ResultDate | date:'short' }}</td>
+        <td mat-cell *matCellDef="let element">{{ element.ResultDate | date:'dd/MM/yyyy HH:mm' }}</td>
       </ng-container>
 
       <tr mat-row 
-      *matRowDef="let row; columns: ['TestDate', 'Sender_Name', 'TestName', 'Result', 'ResultDate']"
-      [ngClass]="{
+        *matRowDef="let row; columns: ['TestDate', 'Sender_Name', 'TestName', 'Result', 'ResultDate']"
+        [ngClass]="{
           'high-sugar': row.Result >= 180, 
           'low-sugar': row.Result < 70, 
           'normal-range': row.Result >= 70 && row.Result < 180
-      }">
-  </tr>
+        }">
+      </tr>
     </table>
   </ng-container>
 

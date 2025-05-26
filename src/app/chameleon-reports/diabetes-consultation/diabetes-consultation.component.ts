@@ -1152,7 +1152,11 @@ this.isWithinDateRange(item.Admission_Date)
     openDialog(row: any): void {
       const data = {
         Patient: row.Hospitalization_Patient || row.Patient,
-        AdmissionDate: row.Admission_Date
+        AdmissionDate: row.Admission_Date,
+        FirstName: row.First_Name,
+        LastName: row.Last_Name,
+        IdNum: row.Id_Num,
+        Admission_No:row.Admission_No
       };
     
       this.dialog.open(LabResultsDetailDialogComponent, {
@@ -1160,7 +1164,6 @@ this.isWithinDateRange(item.Admission_Date)
         data: data
       });
     }
-    
     onTabChange(event: MatTabChangeEvent): void {
       if (event.index === 0) { // הטאב הראשון
         setTimeout(() => {
