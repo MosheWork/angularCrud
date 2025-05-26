@@ -522,6 +522,10 @@ class="custom-toggle-group"
             <th mat-header-cell *matHeaderCellDef mat-sort-header>Last Name</th>
             <td mat-cell *matCellDef="let element">{{ element.Last_Name }}</td>
           </ng-container>
+          <ng-container matColumnDef="Age_Years">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>גיל</th>
+            <td mat-cell *matCellDef="let element">{{ element.Age_Years }}</td>
+          </ng-container>
           <ng-container matColumnDef="Count_Above_180_Less_48h">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>
               Count > 180
@@ -586,6 +590,10 @@ class="custom-toggle-group"
               First Name
             </th>
             <td mat-cell *matCellDef="let element">{{ element.First_Name }}</td>
+          </ng-container>
+          <ng-container matColumnDef="Age_Years">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>גיל</th>
+            <td mat-cell *matCellDef="let element">{{ element.Age_Years }}</td>
           </ng-container>
           <ng-container matColumnDef="Last_Name">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>

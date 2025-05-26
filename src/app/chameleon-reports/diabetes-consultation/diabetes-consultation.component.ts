@@ -109,7 +109,8 @@ icd9WithEstimationPercentage: number = 0;
     'Count_Above_180_Less_48h',
     'Release_Date', 
     'UnitName',
-    'LastTestResult'
+    'LastTestResult',
+    'Age_Years'
   ];
   insulinColumns: string[] = [
     'Admission_No',
@@ -165,6 +166,7 @@ icd9WithEstimationPercentage: number = 0;
     'Count_Less_70_Less_48h',
     'Release_Date', 
     'UnitName',
+    'Age_Years'
   ];
   displayedColumnsLabResultsWithoutInsulin: string[] = [
     'Admission_No',
