@@ -45,4 +45,14 @@ export class LabResultsDetailDialogComponent implements OnInit {
         }
       });
   }
+
+  copyAdmissionNo(): void {
+    if (this.data.Admission_No) {
+      navigator.clipboard.writeText(this.data.Admission_No.toString()).then(() => {
+        console.log('Admission_No copied:', this.data.Admission_No);
+      }).catch(err => {
+        console.error('Failed to copy Admission_No:', err);
+      });
+    }
+  }
 }

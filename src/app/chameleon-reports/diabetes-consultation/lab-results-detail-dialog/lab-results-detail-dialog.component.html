@@ -5,7 +5,11 @@
     <h2 mat-dialog-title dir="rtl">
       תוצאות מעבדה עבור: {{ data.FirstName }} {{ data.LastName }} (ת"ז: {{ data.IdNum }}) (מספקר מקרה: {{ data.Admission_No }})
     </h2>  </div>
-
+<!-- Show Admission Number and copy it on click -->
+<div (click)="copyAdmissionNo()" style="cursor: pointer; color: #007BFF;" matTooltip="העתק מספר אשפוז">
+  מספר אשפוז: <strong>{{ data.Admission_No }}</strong>
+  <mat-icon style="font-size: 18px; vertical-align: middle;">content_copy</mat-icon>
+</div>
   <ng-container *ngIf="!loading; else loadingSpinner">
     <table mat-table [dataSource]="labResults" class="mat-elevation-z8">
 

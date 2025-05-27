@@ -81,7 +81,7 @@ export class SkinIntegrityDashboardComponent implements OnInit, AfterViewInit {
   ngOnInit(): void {
     this.initializeYearList();
     this.fetchWoundSummary();
-    this.fetchMattressSummary();
+ 
   }
 
   ngAfterViewInit(): void {
@@ -101,19 +101,30 @@ export class SkinIntegrityDashboardComponent implements OnInit, AfterViewInit {
 
   // ✅ Fetch Wound Summary Data
   fetchWoundSummary(): void {
-    let params = this.buildQueryParams();
+    const params = this.buildQueryParams();
+  
     this.http.get<any[]>(`${environment.apiUrl}/SkinIntegrityReportAPI/TypeOfWoundSummary`, { params }).subscribe(
       (data) => {
-        console.log('Fetched Wound Data:', data);
         this.woundDataSource.data = data;
-        this.extractUniqueDepartments(data);
+        this.extractUniqueDepartments(data); // populate department dropdown
       },
       (error) => console.error('Error fetching wound data:', error)
     );
   }
-
-  // ✅ Fetch Mattress Summary Data
+  
   fetchMattressSummary(): void {
+    const params = this.buildQueryParams();
+  
+    this.http.get<any[]>(`${environment.apiUrl}/SkinIntegrityReportAPI/MattressesSummary`, { params }).subscribe(
+      (data) => {
+        this.mattressDataSource.data = data;
+      },
+      (error) => console.error('Error fetching mattress data:', error)
+    );
+  }
+  
+  // ✅ Fetch Mattress Summary Data
+   and(): void {
     let params = this.buildQueryParams();
     this.http.get<any[]>(`${environment.apiUrl}/SkinIntegrityReportAPI/MattressesSummary`, { params }).subscribe(
       (data) => {
@@ -132,19 +143,26 @@ export class SkinIntegrityDashboardComponent implements OnInit, AfterViewInit {
   // ✅ Apply Filters
   applyFilters(): void {
     this.fetchWoundSummary();
-    this.fetchMattressSummary();
+    this.fetchMattressSummary(); 
+
   }
+  
 
   // ✅ Reset Filters
   resetFilters(): void {
     this.selectedDepartments = [];
     this.startDate = null;
     this.endDate = null;
-    this.selectedYear = null;
-    this.selectedQuarter = null;
+  
+    // Optionally reset the search input too
+    this.woundDataSource.filter = '';
+    this.mattressDataSource.filter = '';
+  
+    // Now re-fetch with empty filters
     this.fetchWoundSummary();
     this.fetchMattressSummary();
   }
+  
 
   // ✅ Search Across All Columns
   applyGlobalFilter(event: Event): void {
@@ -156,13 +174,27 @@ export class SkinIntegrityDashboardComponent implements OnInit, AfterViewInit {
   // ✅ Build Query Params for API Requests
   private buildQueryParams(): HttpParams {
     let params = new HttpParams();
-
-    if (this.startDate) params = params.set('startDate', this.startDate.toISOString().split('T')[0]);
-    if (this.endDate) params = params.set('endDate', this.endDate.toISOString().split('T')[0]);
-    if (this.selectedDepartments.length > 0) params = params.set('departments', this.selectedDepartments.join(','));
-
+  
+    if (this.startDate && this.startDate instanceof Date && !isNaN(this.startDate.getTime())) {
+      const formattedStart = this.startDate.toISOString().split('T')[0];
+      params = params.set('startDate', formattedStart);
+    }
+  
+    if (this.endDate && this.endDate instanceof Date && !isNaN(this.endDate.getTime())) {
+      const formattedEnd = this.endDate.toISOString().split('T')[0];
+      params = params.set('endDate', formattedEnd);
+    }
+  
+    if (this.selectedDepartments && this.selectedDepartments.length > 0) {
+      params = params.set('departments', this.selectedDepartments.join(','));
+    }
+  
+    console.log('📦 Final HttpParams:', params.keys().map(k => `${k}=${params.get(k)}`));
     return params;
   }
+  
+  
+  
   exportToExcel(): void {
     const isWoundTab = this.selectedTab === 0;
     const dataSource = isWoundTab ? this.woundDataSource.filteredData : this.mattressDataSource.filteredData;
@@ -186,6 +218,16 @@ export class SkinIntegrityDashboardComponent implements OnInit, AfterViewInit {
     const fileName = isWoundTab ? 'Wound_Summary.xlsx' : 'Mattress_Summary.xlsx';
     XLSX.writeFile(workbook, fileName);
   }
+  fetchSummaryByDepartment(): void {
+    let params = this.buildQueryParams();
   
-  
+    this.http.get<any[]>(`${environment.apiUrl}/SkinIntegrityReportAPI/SummaryByDepartment`, { params }).subscribe(
+      (data) => {
+        console.log('Fetched Combined Wound + Mattress Summary:', data);
+        // Handle this data however you want (e.g., display it in a third table)
+      },
+      (error) => console.error('Error fetching summary by department:', error)
+    );
+  }
+    
 }

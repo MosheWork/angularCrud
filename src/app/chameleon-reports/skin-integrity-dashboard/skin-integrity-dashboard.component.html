@@ -16,7 +16,7 @@
                     <!-- Department Multi-Select -->
                     <mat-form-field class="filter-field">
                         <mat-label>בחר מחלקות</mat-label>
-                        <mat-select [(ngModel)]="selectedDepartments" multiple (selectionChange)="applyFilters()">
+                        <mat-select [(ngModel)]="selectedDepartments" multiple >
                             <mat-option *ngFor="let department of departmentList" [value]="department">
                                 {{ department }}
                             </mat-option>
@@ -26,7 +26,7 @@
                     <!-- Start Date Filter -->
                     <mat-form-field class="filter-field">
                         <mat-label>תאריך התחלה</mat-label>
-                        <input matInput [matDatepicker]="startDatePicker" [(ngModel)]="startDate" (ngModelChange)="applyFilters()" />
+                        <input matInput [matDatepicker]="startDatePicker" >
                         <mat-datepicker-toggle matSuffix [for]="startDatePicker"></mat-datepicker-toggle>
                         <mat-datepicker #startDatePicker></mat-datepicker>
                     </mat-form-field>
@@ -34,11 +34,14 @@
                     <!-- End Date Filter -->
                     <mat-form-field class="filter-field">
                         <mat-label>תאריך סיום</mat-label>
-                        <input matInput [matDatepicker]="endDatePicker" [(ngModel)]="endDate" (ngModelChange)="applyFilters()" />
+                        <input matInput [matDatepicker]="endDatePicker" />
                         <mat-datepicker-toggle matSuffix [for]="endDatePicker"></mat-datepicker-toggle>
                         <mat-datepicker #endDatePicker></mat-datepicker>
                     </mat-form-field>
-
+<!-- ✅ Search button to trigger both data fetches -->
+<button mat-raised-button color="primary" (click)="applyFilters()">
+    חפש
+  </button>
                     <!-- Reset Filters Button -->
                     <div class="filter-buttons" style="margin-top: 10px; text-align: right;">
                         <button mat-raised-button color="warn" (click)="resetFilters()">איפוס</button>

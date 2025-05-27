@@ -29,7 +29,8 @@ export class QuestionnaireRemarksComponent implements OnInit, AfterViewInit {
     'CaseManagerCategory',
     'CaseManagerRemarks',
     'ManagerRemarks',
-    'EntryDate'
+    'EntryDate',
+    'UserName'
   ];
   
   dataSource = new MatTableDataSource<any>([]);
