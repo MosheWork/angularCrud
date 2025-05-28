@@ -29,18 +29,18 @@
                   <input matInput [formControl]="getFormControl('AdmissionNo')" />
                 </mat-form-field>
             
-                <mat-form-field class="filter-field">
-                    <mat-label>תאריך קבלה</mat-label>
-                    <input matInput [matDatepicker]="picker1" [formControl]="getFormControl('AdmissionDate')" />
-                    <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
-                    <mat-datepicker #picker1></mat-datepicker>
+                <mat-form-field>
+                    <mat-label>מתאריך קבלה</mat-label>
+                    <input matInput [matDatepicker]="pickerFrom" [formControl]="getFormControl('AdmissionDateFrom')">
+                    <mat-datepicker-toggle matSuffix [for]="pickerFrom"></mat-datepicker-toggle>
+                    <mat-datepicker #pickerFrom></mat-datepicker>
                   </mat-form-field>
                   
-                  <mat-form-field class="filter-field">
-                    <mat-label>תאריך שחרור</mat-label>
-                    <input matInput [matDatepicker]="picker2" [formControl]="getFormControl('ReleaseDate')" />
-                    <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
-                    <mat-datepicker #picker2></mat-datepicker>
+                  <mat-form-field>
+                    <mat-label>עד תאריך קבלה</mat-label>
+                    <input matInput [matDatepicker]="pickerTo" [formControl]="getFormControl('AdmissionDateTo')">
+                    <mat-datepicker-toggle matSuffix [for]="pickerTo"></mat-datepicker-toggle>
+                    <mat-datepicker #pickerTo></mat-datepicker>
                   </mat-form-field>
                   
               </div>

@@ -9,6 +9,8 @@ import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
 import { tap } from 'rxjs/operators';
+import * as moment from 'moment';
+
 
 import * as XLSX from 'xlsx';
 import { environment } from '../../../environments/environment';
@@ -28,7 +30,9 @@ export class PhysioEquipmentReportComponent implements OnInit {
   titleUnit: string = 'דוח ציוד פיזיותרפיה';
   totalResults: number = 0;
   uniqueDepartments: string[] = [];
-
+  data: any[] = []; // This holds all the original data
+  filteredData: any[] = []; // This holds filtered data for display
+  filters: { [key: string]: any } = {}; // Active filters by column name
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
@@ -36,7 +40,7 @@ export class PhysioEquipmentReportComponent implements OnInit {
   graphData!: any[];
 
   dataSource: any[] = [];
-  filteredData: any[] = [];
+
 
   matTableDataSource: MatTableDataSource<any>;
 
@@ -114,6 +118,7 @@ export class PhysioEquipmentReportComponent implements OnInit {
     this.autoLogin();
     this.http.get<any[]>(environment.apiUrl + 'physioEquipmentReport').subscribe((data) => {
       this.dataSource = data;
+      
       this.filteredData = [...data];
       this.matTableDataSource = new MatTableDataSource(this.filteredData);
       this.matTableDataSource.paginator = this.paginator;
@@ -235,33 +240,54 @@ export class PhysioEquipmentReportComponent implements OnInit {
     const formControls: FormControls = {};
     this.columns.forEach((column) => {
       formControls[column] = new FormControl('');
+      formControls['AdmissionDateFrom'] = new FormControl('');
+formControls['AdmissionDateTo'] = new FormControl('');
     });
     return this.fb.group(formControls);
   }
-  
-  applyFilters() {
+
+  applyFilters(): void {
     const filters = this.filterForm.value;
   
-    this.filteredData = this.dataSource.filter(item =>
-      this.columns.every(column => {
-        const filterVal = filters[column];
-        const itemVal = item[column];
+    const from = filters['AdmissionDateFrom'] ? moment(filters['AdmissionDateFrom']).startOf('day') : null;
+    const to = filters['AdmissionDateTo'] ? moment(filters['AdmissionDateTo']).endOf('day') : null;
   
+    this.filteredData = this.dataSource.filter(row => {
+      // AdmissionDate range filter
+      if (from || to) {
+        const rowDate = moment(row['AdmissionDate']);
+        if ((from && rowDate.isBefore(from)) || (to && rowDate.isAfter(to))) {
+          return false;
+        }
+      }
+  
+      // Other column filters
+      return this.columns.every(column => {
+        const filterVal = filters[column];
+        const rowVal = row[column];
+  
+        // Skip if no filter applied
         if (!filterVal) return true;
   
-        if (itemVal instanceof Date || filterVal instanceof Date) {
-          return (
-            new Date(itemVal).toDateString() === new Date(filterVal).toDateString()
-          );
+        // Date filters (except AdmissionDate which is handled above)
+        if (column.toLowerCase().includes('date')) {
+          const rowDate = moment(rowVal);
+          const filterDate = moment(filterVal);
+          return rowDate.isSame(filterDate, 'day');
         }
   
-        return itemVal?.toString().toLowerCase().includes(filterVal.toString().toLowerCase());
-      })
-    );
+        // Text match
+        return rowVal?.toString().toLowerCase().includes(filterVal.toString().toLowerCase());
+      });
+    });
   
     this.totalResults = this.filteredData.length;
     this.matTableDataSource.data = this.filteredData;
+    console.log('✅ Filtered data:', this.filteredData);
   }
+  
+  
+
   
   
   exportToExcel() {
