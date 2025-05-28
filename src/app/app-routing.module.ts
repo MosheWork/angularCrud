@@ -89,6 +89,7 @@ import { MeasurementTargetManagerComponent } from './MARAA/measurement-target-ma
 import { SpinnerScreenComponent } from './MARAA/spinner-screen/spinner-screen.component';
 import { MeasurementDefComponent } from './MARAA/measurement-def/measurement-def.component';
 import { MaccabiTelAvivComponent } from './maccabi-tel-aviv/maccabi-tel-aviv.component';
+import { PhysioEquipmentReportComponent } from './chameleon-reports/physio-equipment-report/physio-equipment-report.component';
 
 const routes: Routes = [
   { path: 'users', component: UsersComponent },
@@ -182,6 +183,7 @@ const routes: Routes = [
 
    { path: 'ProductivityReports', component: ProductivityReportsComponent , data: { title: 'דוח תפוקות' }},// דוח תפוקות  של פרא רפואי     
 
+   { path: 'physio-equipment-report', component: PhysioEquipmentReportComponent , data: { title: 'פיזותרפיה השאלת ציוד ' }},// דוח תפוקות  של פרא רפואי     
 
 
 //chemelondashboard

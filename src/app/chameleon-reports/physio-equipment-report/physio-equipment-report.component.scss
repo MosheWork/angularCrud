@@ -1,0 +1,20 @@
+.table-scroll-wrapper {
+    overflow-x: auto;
+    width: 100%;
+    margin-top: 20px;
+    border: 1px solid #ccc; /* optional */
+  }
+  
+  .full-width-table {
+    width: max-content; /* forces the table to be as wide as needed */
+    min-width: 100%;     /* ensures it doesn't shrink smaller than screen */
+  }
+  
+  mat-header-cell, mat-cell {
+    min-width: 150px;     /* ensures wide columns */
+    white-space: nowrap;  /* prevents wrapping */
+    text-align: center;
+    padding: 8px;
+    font-size: 13px;
+  }
+  

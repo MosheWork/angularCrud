@@ -1,0 +1,80 @@
+
+<div class="body">
+  <div class="top-right-container">
+    <button mat-icon-button (click)="navigateToGraphPage()" matTooltip="מעבר לגרף">
+      <mat-icon>bar_chart</mat-icon>
+    </button>
+    <button mat-icon-button (click)="exportToExcel()" matTooltip="הורד לאקסל">
+      <mat-icon>download</mat-icon>
+    </button>
+  </div>
+
+
+  <form [formGroup]="filterForm" dir="rtl" class="filter-form">
+    <div class="container-fluid mb-2">
+      <div class="row search-count">
+        <div class="col">
+          <div dir="rtl" class="card">
+            <div class="filter-row">
+                <mat-form-field class="filter-field">
+                  <mat-label>מחלקה</mat-label>
+                  <input matInput [formControl]="getFormControl('Department')" />
+                </mat-form-field>
+            
+                <mat-form-field class="filter-field">
+                  <mat-label>מספר אשפוז</mat-label>
+                  <input matInput [formControl]="getFormControl('AdmissionNo')" />
+                </mat-form-field>
+            
+                <mat-form-field class="filter-field">
+                  <mat-label>תאריך קבלה</mat-label>
+                  <input matInput [formControl]="getFormControl('AdmissionDate')" />
+                </mat-form-field>
+            
+                <mat-form-field class="filter-field">
+                  <mat-label>תאריך שחרור</mat-label>
+                  <input matInput [formControl]="getFormControl('ReleaseDate')" />
+                </mat-form-field>
+              </div>
+
+            <div class="reset-button-container">
+              <button mat-button (click)="resetFilters()" color="primary" class="custom-button" matTooltip="איפוס סינונים">
+                <i class="material-icons">refresh</i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div dir="rtl" style="display: flex; justify-content: space-between; align-items: center">
+      <mat-form-field class="long-search-bar" style="flex: 1; padding-right: 10px">
+        <mat-label class="filters" style="color: blue">חיפוש חופשי</mat-label>
+        <input matInput formControlName="globalFilter" class="search-input" />
+      </mat-form-field>
+    </div>
+  </form>
+
+  <app-sys-graph *ngIf="showGraph" [graphData]="filteredData"></app-sys-graph>
+  <div class="table-scroll-wrapper">
+    <mat-table *ngIf="!showGraph" [dataSource]="matTableDataSource" matSort dir="rtl" class="mat-elevation-z8 full-width-table">
+        <ng-container *ngFor="let column of columns" [matColumnDef]="column">
+            <mat-header-cell *matHeaderCellDef>{{ getColumnLabel(column) }}</mat-header-cell>
+            <mat-cell *matCellDef="let row">
+                {{ isDateColumn(column) ? displayDate(row[column]) : row[column] }}
+              </mat-cell>
+          </ng-container>
+  
+      <mat-header-row *matHeaderRowDef="columns"></mat-header-row>
+      <mat-row *matRowDef="let row; columns: columns" class="mat-row"></mat-row>
+    </mat-table>
+
+    <mat-paginator
+  [length]="matTableDataSource.data.length"
+  [pageSize]="10"
+  [pageSizeOptions]="[10, 50, 100]"
+  showFirstLastButtons
+>
+</mat-paginator>
+  </div>
+  
