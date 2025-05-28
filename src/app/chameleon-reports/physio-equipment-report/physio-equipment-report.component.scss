@@ -17,4 +17,63 @@
     padding: 8px;
     font-size: 13px;
   }
+  mat-header-cell, mat-cell, mat-footer-cell {
+    border: 1px solid #ccc;
+    padding: 8px;
+    text-align: center;
+    white-space: normal !important;   // מאפשר ירידת שורה
+    word-break: break-word;           // שובר מילים ארוכות
+    vertical-align: middle;           // ממרכז אנכית
+  }
+
+  .highlight-cell {
+    background-color: #d0f5d0 !important; // ירוק בהיר
+  }
+
+  .table-scroll-container {
+    overflow-x: auto;
+    direction: rtl; // מוודא ש־scroll יופיע מימין
+  }
+  
+  .mat-table-wrapper {
+    min-width: 100%;
+   display: inline-block;
+  }
+  
+  .full-width-table {
+    min-width: 1500px; // שים ערך שמתאים לעמודות שלך
+  }
+  
+  mat-header-cell, mat-cell {
+    white-space: nowrap;
+    text-align: center;
+    padding: 8px;
+    font-size: 13px;
+    border: 1px solid #ccc;
+  }
+  
+  ::ng-deep .mat-mdc-paginator {
+    display: flex !important;
+    justify-content: flex-end !important;
+    flex-direction: row-reverse; // ⬅️ זה הפתרון החכם
+    padding-left: 10px;
+  }
+  
+  ::ng-deep .mat-mdc-paginator-range-actions {
+    direction: rtl; // מונע היפוך כפתורי ניווט
+  }
+  mat-header-cell {
+    font-weight: bold;
+    font-size: 14px;
+  }
+  
+  .mat-sort-header-container {
+    display: flex;
+    cursor: pointer;
+    align-items: center;
+    letter-spacing: normal;
+    outline: 0;
+    font-weight: bold;
+    font-size: 14px;
+  }
   

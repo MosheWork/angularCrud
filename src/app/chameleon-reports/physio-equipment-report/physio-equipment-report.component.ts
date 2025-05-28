@@ -27,6 +27,7 @@ export class PhysioEquipmentReportComponent implements OnInit {
   showGraph: boolean = false;
   titleUnit: string = 'דוח ציוד פיזיותרפיה';
   totalResults: number = 0;
+  uniqueDepartments: string[] = [];
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
@@ -117,6 +118,7 @@ export class PhysioEquipmentReportComponent implements OnInit {
       this.matTableDataSource = new MatTableDataSource(this.filteredData);
       this.matTableDataSource.paginator = this.paginator;
       this.matTableDataSource.sort = this.sort;
+      this.uniqueDepartments = [...new Set(data.map(item => item.Department).filter(d => !!d))];
 
       this.columns.forEach((column) => {
         this.filterForm.get(column)?.valueChanges.pipe(debounceTime(300), distinctUntilChanged()).subscribe(() => this.applyFilters());
@@ -236,19 +238,32 @@ export class PhysioEquipmentReportComponent implements OnInit {
     });
     return this.fb.group(formControls);
   }
-
+  
   applyFilters() {
     const filters = this.filterForm.value;
-    this.filteredData = this.dataSource.filter((item) =>
-      this.columns.every((column) => {
-        const value = String(item[column] || '').toLowerCase();
-        return !filters[column] || value.includes(filters[column].toLowerCase());
+  
+    this.filteredData = this.dataSource.filter(item =>
+      this.columns.every(column => {
+        const filterVal = filters[column];
+        const itemVal = item[column];
+  
+        if (!filterVal) return true;
+  
+        if (itemVal instanceof Date || filterVal instanceof Date) {
+          return (
+            new Date(itemVal).toDateString() === new Date(filterVal).toDateString()
+          );
+        }
+  
+        return itemVal?.toString().toLowerCase().includes(filterVal.toString().toLowerCase());
       })
     );
+  
     this.totalResults = this.filteredData.length;
     this.matTableDataSource.data = this.filteredData;
   }
-
+  
+  
   exportToExcel() {
     const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(this.filteredData);
     const workbook: XLSX.WorkBook = {
