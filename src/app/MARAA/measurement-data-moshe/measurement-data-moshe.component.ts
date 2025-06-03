@@ -188,11 +188,11 @@ getUserDetailsFromDBByUserName(username: string): void {
       this.fetchFailedCases();
       console.log('✅ ViewChildren initialized');
 
-      this.measurementDataSource.paginator = this.measurementPaginator;
-      this.measurementDataSource.sort = this.measurementSort;
+      // this.measurementDataSource.paginator = this.measurementPaginator;
+      // this.measurementDataSource.sort = this.measurementSort;
     
-      this.departmentDataSource.paginator = this.departmentPaginator;
-      this.departmentDataSource.sort = this.departmentSort;
+      // this.departmentDataSource.paginator = this.departmentPaginator;
+      // this.departmentDataSource.sort = this.departmentSort;
     
       this.quarterlyDataSource.paginator = this.quarterlyPaginator;
       this.quarterlyDataSource.sort = this.quarterlySort;
@@ -210,53 +210,39 @@ getUserDetailsFromDBByUserName(username: string): void {
   
   fetchSummaryByMeasurement(): void {
     this.http.get<MeasurementSummaryModel[]>(`${environment.apiUrl}/MeasurementDataMoshe/GetSummaryByMeasurement`)
-      .subscribe({
-        next: data => {
-          this.measurementDataSource = new MatTableDataSource(data);
+      .subscribe(data => {
+        this.measurementDataSource.data = data;
   
-          // Only assign paginator/sort if ViewChild is available
+        // ✅ Re-assign paginator/sort inside setTimeout
+        setTimeout(() => {
           if (this.measurementPaginator && this.measurementSort) {
             this.measurementDataSource.paginator = this.measurementPaginator;
             this.measurementDataSource.sort = this.measurementSort;
+            console.log('Paginator:', this.measurementPaginator);
+console.log('Sort:', this.measurementSort);
+            console.log('✅ Paginator and Sort assigned');
           } else {
-            // Retry once view is ready
-            setTimeout(() => {
-              this.measurementDataSource.paginator = this.measurementPaginator;
-              this.measurementDataSource.sort = this.measurementSort;
-            });
+            console.warn('❌ Paginator or Sort not available');
           }
-  
-          this.isLoading = false;
-        }
+        });
       });
   }
-  
   
   fetchSummaryByDepartment(): void {
     this.http.get<MeasurementSummaryModel[]>(`${environment.apiUrl}/MeasurementDataMoshe/GetSummaryByDepartment`)
       .subscribe({
         next: data => {
-          // Create new data source instance
-          this.departmentDataSource = new MatTableDataSource(data);
+          this.departmentDataSource.data = data;
   
-          // Try to assign paginator/sort immediately if available
-          if (this.departmentPaginator && this.departmentSort) {
+          // ✅ Move paginator + sort here:
+          setTimeout(() => {
             this.departmentDataSource.paginator = this.departmentPaginator;
             this.departmentDataSource.sort = this.departmentSort;
-          } else {
-            // If not yet available (due to timing), defer assignment
-            setTimeout(() => {
-              if (this.departmentPaginator) this.departmentDataSource.paginator = this.departmentPaginator;
-              if (this.departmentSort) this.departmentDataSource.sort = this.departmentSort;
-            });
-          }
+          });
   
           this.isLoading = false;
         },
-        error: err => {
-          console.error('Error loading summary by department', err);
-          this.isLoading = false;
-        }
+        error: () => this.isLoading = false
       });
   }
   
