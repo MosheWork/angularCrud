@@ -26,7 +26,7 @@ export interface MeasurementDefModel {
   styleUrls: ['./measurement-def.component.scss']
 })
 export class MeasurementDefComponent implements OnInit, AfterViewInit {
-  displayedColumns: string[] = ['MeasurementCode', 'MeasurementShortDesc', 'date', 'department', 'DefaultDepartment',  'Active','CountRecords','EntryUser', 'EntryDate', 'actions'];
+  displayedColumns: string[] = ['MeasurementCode', 'MeasurementShortDesc', 'date', 'department', 'DefaultDepartment',  'Active','CountRecords','EntryUser', 'EntryDate','pdf',  'actions'];
   dataSource = new MatTableDataSource<MeasurementDefModel>();
   formMap: { [code: string]: FormGroup } = {};
   loginUserName: string = '';
@@ -124,4 +124,45 @@ export class MeasurementDefComponent implements OnInit, AfterViewInit {
         this.existingCodes = new Set(data.map(row => row.MeasurementCode));
       });
   }
+
+  uploadPDF(event: any, measurementCode: string): void {
+    const file: File = event.target.files[0];
+    if (!file || !measurementCode) return;
+  
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('measurementCode', measurementCode);
+  
+    this.http.post(`${environment.apiUrl}/MeasurementDataMoshe/UploadMeasurementPDF`, formData)
+      .subscribe({
+        next: () => {
+          alert('✅ הקובץ הועלה בהצלחה');
+        },
+        error: err => {
+          console.error('❌ שגיאה בהעלאת הקובץ:', err);
+          alert('שגיאה בהעלאת הקובץ');
+        }
+      });
+  }
+  viewPDF(code: string): void {
+    window.open(`${environment.pdfBaseUrl}${code}.pdf`, '_blank');
+  }
+  deletePDF(code: string): void {
+    if (!code) return;
+    const confirmDelete = confirm(`האם אתה בטוח שברצונך למחוק את הקובץ עבור המדד ${code}?`);
+    if (!confirmDelete) return;
+  
+    this.http.delete(`${environment.apiUrl}MeasurementDataMoshe/DeleteMeasurementPDF`, {
+      params: { measurementCode: code }
+    }).subscribe({
+      next: () => {
+        alert('✅ הקובץ נמחק בהצלחה');
+      },
+      error: err => {
+        console.error('❌ שגיאה במחיקת קובץ:', err);
+        alert('שגיאה במחיקת הקובץ');
+      }
+    });
+  }
+  
 }

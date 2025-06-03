@@ -55,7 +55,7 @@ export interface MeasurementTarget {
   styleUrls: ['./measurement-data-moshe.component.scss']
 })
 export class MeasurementDataMosheComponent implements OnInit, AfterViewInit {
-  displayedMeasurementColumns: string[] = ['MeasurementCode', 'MeasurementShortDesc', 'Mone', 'Mechane', 'Grade'];
+  displayedMeasurementColumns: string[] = ['MeasurementCode', 'MeasurementShortDesc', 'Mone', 'Mechane', 'Grade', 'pdf'];
   displayedDepartmentColumns: string[] = ['MeasurementCode', 'MeasurementShortDesc','Department', 'Mone', 'Mechane', 'Grade'];
 
   years: number[] = [];
@@ -866,5 +866,9 @@ getUserDetailsFromDBByUserName(username: string): void {
   private extractMeasurementCodes(): string[] {
     return this.selectedMeasurements.map(label => label.split(' ')[0]);
   } 
-  
+  viewPDF(code: string): void {
+    if (!code) return;
+    const url = `${environment.pdfBaseUrl}${code}.pdf`;
+    window.open(url, '_blank');
+  }
 }

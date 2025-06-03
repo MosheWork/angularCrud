@@ -67,15 +67,43 @@
         <th mat-header-cell *matHeaderCellDef mat-sort-header>תאריך עדכון</th>
         <td mat-cell *matCellDef="let row">{{ row.EntryDate | date: 'dd/MM/yyyy HH:mm' }}</td>
       </ng-container>
+<!-- PDF Column -->
+<ng-container matColumnDef="pdf">
+  <th mat-header-cell *matHeaderCellDef>PDF</th>
+  <td mat-cell *matCellDef="let row">
+    <!-- View PDF -->
+    <button mat-icon-button color="primary"
+            matTooltip="צפה בקובץ PDF"
+            (click)="viewPDF(row.MeasurementCode)">
+      <mat-icon>visibility</mat-icon>
+    </button>
 
-      <!-- Actions Column -->
-      <ng-container matColumnDef="actions">
-        <th mat-header-cell *matHeaderCellDef>פעולות</th>
-        <td mat-cell *matCellDef="let row">
-          <button mat-button color="primary" (click)="save(row)">שמור</button>
-          <button mat-button color="warn" (click)="deleteRow(row.MeasurementCode)">מחק</button>
-        </td>
-      </ng-container>
+    <!-- Upload PDF -->
+    <input type="file" accept="application/pdf" hidden #fileInput (change)="uploadPDF($event, row.MeasurementCode)">
+    <button mat-icon-button color="accent"
+            matTooltip="העלה קובץ PDF"
+            (click)="fileInput.click()">
+      <mat-icon>upload_file</mat-icon>
+    </button>
+
+    <!-- Delete PDF -->
+    <button mat-icon-button color="warn"
+            matTooltip="מחק קובץ PDF"
+            (click)="deletePDF(row.MeasurementCode)">
+      <mat-icon>delete</mat-icon>
+    </button>
+  </td>
+</ng-container>
+
+<!-- Actions Column -->
+<ng-container matColumnDef="actions">
+  <th mat-header-cell *matHeaderCellDef>פעולות</th>
+  <td mat-cell *matCellDef="let row">
+    <button mat-button color="primary" (click)="save(row)">שמור</button>
+    <button mat-button color="warn" (click)="deleteRow(row.MeasurementCode)">מחק</button>
+  
+  </td>
+</ng-container>
 
       <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
       <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>

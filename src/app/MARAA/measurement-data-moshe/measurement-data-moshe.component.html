@@ -152,7 +152,16 @@
         <th mat-header-cell *matHeaderCellDef mat-sort-header>אחוז</th>
         <td mat-cell *matCellDef="let row">{{ row.Grade }}%</td>
       </ng-container>
-
+      <ng-container matColumnDef="pdf">
+        <th mat-header-cell *matHeaderCellDef>פירוט המדד</th>
+        <td mat-cell *matCellDef="let row">
+          <img src="assets/pdf.png"
+               alt="צפה בקובץ PDF"
+               matTooltip="צפה בקובץ PDF"
+               style="cursor: pointer; width: 30px;"
+               (click)="viewPDF(row.MeasurementCode)" />
+        </td>
+      </ng-container>
       <tr mat-header-row *matHeaderRowDef="displayedMeasurementColumns"></tr>
       <tr mat-row *matRowDef="let row; columns: displayedMeasurementColumns;"></tr>
     </table>
