@@ -240,50 +240,52 @@ export class PhysioEquipmentReportComponent implements OnInit {
     const formControls: FormControls = {};
     this.columns.forEach((column) => {
       formControls[column] = new FormControl('');
-      formControls['AdmissionDateFrom'] = new FormControl('');
-formControls['AdmissionDateTo'] = new FormControl('');
     });
+  
+    // Add hospitalization status filter
+    formControls['HospitalizationStatus'] = new FormControl('הכל'); // default value
+  
+    // Date range filters (if not already added)
+    formControls['AdmissionDateFrom'] = new FormControl('');
+    formControls['AdmissionDateTo'] = new FormControl('');
+  
     return this.fb.group(formControls);
   }
-
+  
   applyFilters(): void {
     const filters = this.filterForm.value;
   
     const from = filters['AdmissionDateFrom'] ? moment(filters['AdmissionDateFrom']).startOf('day') : null;
     const to = filters['AdmissionDateTo'] ? moment(filters['AdmissionDateTo']).endOf('day') : null;
+    const statusFilter = filters['HospitalizationStatus'];
   
     this.filteredData = this.dataSource.filter(row => {
-      // AdmissionDate range filter
-      if (from || to) {
-        const rowDate = moment(row['AdmissionDate']);
-        if ((from && rowDate.isBefore(from)) || (to && rowDate.isAfter(to))) {
-          return false;
-        }
-      }
+      // Filter by hospitalization status
+      if (statusFilter === 'מאושפזים' && row['ReleaseDate']) return false;
+      if (statusFilter === 'משוחררים' && !row['ReleaseDate']) return false;
   
-      // Other column filters
+      // Filter by date range
+      if (from && moment(row.AdmissionDate).isBefore(from)) return false;
+      if (to && moment(row.AdmissionDate).isAfter(to)) return false;
+  
+      // Filter by individual columns
       return this.columns.every(column => {
         const filterVal = filters[column];
-        const rowVal = row[column];
-  
-        // Skip if no filter applied
         if (!filterVal) return true;
   
-        // Date filters (except AdmissionDate which is handled above)
-        if (column.toLowerCase().includes('date')) {
+        const rowVal = row[column];
+        if (this.isDateColumn(column)) {
           const rowDate = moment(rowVal);
           const filterDate = moment(filterVal);
           return rowDate.isSame(filterDate, 'day');
         }
   
-        // Text match
         return rowVal?.toString().toLowerCase().includes(filterVal.toString().toLowerCase());
       });
     });
   
     this.totalResults = this.filteredData.length;
     this.matTableDataSource.data = this.filteredData;
-    console.log('✅ Filtered data:', this.filteredData);
   }
   
   

@@ -42,7 +42,14 @@
                     <mat-datepicker-toggle matSuffix [for]="pickerTo"></mat-datepicker-toggle>
                     <mat-datepicker #pickerTo></mat-datepicker>
                   </mat-form-field>
-                  
+                  <div class="hospitalization-filter" style="margin-bottom: 10px; direction: rtl;">
+                    <label>סטטוס אשפוז:</label>
+                    <mat-radio-group [formControl]="getFormControl('HospitalizationStatus')" style="margin-right: 10px;">
+                      <mat-radio-button value="הכל">הכל</mat-radio-button>
+                      <mat-radio-button value="מאושפזים">מאושפזים</mat-radio-button>
+                      <mat-radio-button value="משוחררים">משוחררים</mat-radio-button>
+                    </mat-radio-group>
+                  </div>
               </div>
 
             <div class="reset-button-container">
