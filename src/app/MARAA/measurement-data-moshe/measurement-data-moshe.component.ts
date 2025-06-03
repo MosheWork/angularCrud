@@ -867,8 +867,6 @@ getUserDetailsFromDBByUserName(username: string): void {
     return this.selectedMeasurements.map(label => label.split(' ')[0]);
   } 
   viewPDF(code: string): void {
-    if (!code) return;
-    const url = `${environment.pdfBaseUrl}${code}.pdf`;
-    window.open(url, '_blank');
+    window.open(`${environment.apiUrl}MeasurementDataMoshe/GetMeasurementPDF?code=${code}`, '_blank');
   }
 }

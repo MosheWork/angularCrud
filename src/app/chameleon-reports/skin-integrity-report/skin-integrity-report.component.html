@@ -28,6 +28,14 @@
       <mat-datepicker-toggle matSuffix [for]="entryDatePicker"></mat-datepicker-toggle>
       <mat-datepicker #entryDatePicker></mat-datepicker>
     </mat-form-field>
+    <mat-form-field appearance="fill" style="min-width: 200px; margin-left: 10px;">
+      <mat-label>סטטוס אשפוז</mat-label>
+      <mat-select formControlName="ReleaseStatus">
+        <mat-option value="">הכל</mat-option>
+        <mat-option value="discharged">משוחררים</mat-option>
+        <mat-option value="hospitalized">מאושפזים</mat-option>
+      </mat-select>
+    </mat-form-field>
     <!-- Form Footer with Search, Reset, and Export Options -->
     <div dir="rtl" class="form-footer" style="display: flex; justify-content: space-between;">
       <!-- Global Search Input with Full Width -->
@@ -140,7 +148,10 @@
       <mat-header-cell *matHeaderCellDef mat-sort-header> התקן תמיכה </mat-header-cell>
       <mat-cell *matCellDef="let element"> {{ element.Support_Device_Text }} </mat-cell>
     </ng-container>
-
+    <ng-container matColumnDef="Release_Date">
+      <mat-header-cell *matHeaderCellDef mat-sort-header> תאריך שחרור </mat-header-cell>
+      <mat-cell *matCellDef="let element"> {{ element.Release_Date | date: 'dd/MM/yyyy' }} </mat-cell>
+    </ng-container>
     <!-- Table Header Row Definition -->
     <mat-header-row *matHeaderRowDef="columns"></mat-header-row>
 

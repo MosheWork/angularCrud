@@ -54,7 +54,8 @@ export class SkinIntegrityReportComponent implements OnInit {
     'Degree_Text',
     'Location_Text',
     'Made_In_Text',
-    'Support_Device_Text'
+    'Support_Device_Text',
+    'Release_Date'
   ];
 
   dataSource: any[] = [];
@@ -101,46 +102,56 @@ export class SkinIntegrityReportComponent implements OnInit {
   private createFilterForm(): FormGroup {
     const formControls: FormControls = {};
     this.columns.forEach((column) => {
-      formControls[column] = new FormControl(''); // Add form controls for each column
+      formControls[column] = new FormControl('');
     });
-    formControls['globalFilter'] = new FormControl(''); // Add the global filter form control
+  
+    formControls['globalFilter'] = new FormControl('');
+    formControls['ReleaseStatus'] = new FormControl(''); // ✅ Add this line
+  
     return this.fb.group(formControls);
   }
+  
 
   // Apply the filters to the data source
   applyFilters() {
     const filters = this.filterForm.value;
     const globalFilter = (filters['globalFilter'] || '').toLowerCase();
+    const releaseStatus = filters['ReleaseStatus'];
   
-    // Apply filters to the data source
-    this.filteredData = this.dataSource.filter((item) =>
-      this.columns.every((column) => {
+    this.filteredData = this.dataSource.filter((item) => {
+      const matchesColumns = this.columns.every((column) => {
         const value = item[column];
         const filterValue = filters[column];
   
         if (column === 'Record_Date' || column === 'Entry_Date') {
-          // Handle date-specific filter
-          if (!filterValue) return true; // If no date filter is applied
+          if (!filterValue) return true;
           const formattedDate = this.formatDate(new Date(value));
           const filterDate = this.formatDate(new Date(filterValue));
-          return formattedDate === filterDate; // Compare dates in DD/MM/YYYY format
+          return formattedDate === filterDate;
         }
   
         const stringValue = typeof value === 'string' ? value.toLowerCase() : String(value).toLowerCase();
         const filterString = typeof filterValue === 'string' ? filterValue.toLowerCase() : filterValue;
   
-        // Filter based on individual column filters and the global search filter
         return (!filterString || stringValue.includes(filterString)) &&
                (!globalFilter || this.columns.some((col) => String(item[col]).toLowerCase().includes(globalFilter)));
-      })
-    );
+      });
   
-    // Update total results and table data
+      // ✅ NEW ReleaseStatus Filter
+      const matchesReleaseStatus =
+        releaseStatus === '' ||  // הכל
+        (releaseStatus === 'discharged' && item.Release_Date) ||
+        (releaseStatus === 'hospitalized' && !item.Release_Date);
+  
+      return matchesColumns && matchesReleaseStatus;
+    });
+  
     this.totalResults = this.filteredData.length;
     this.matTableDataSource.data = this.filteredData;
     this.matTableDataSource.paginator = this.paginator;
-    this.graphData = this.filteredData;  // Update graph data
+    this.graphData = this.filteredData;
   }
+  
   
   // Utility method to format the date in DD/MM/YYYY format
   formatDate(date: Date): string {

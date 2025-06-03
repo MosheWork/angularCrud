@@ -145,7 +145,7 @@ export class MeasurementDefComponent implements OnInit, AfterViewInit {
       });
   }
   viewPDF(code: string): void {
-    window.open(`${environment.pdfBaseUrl}${code}.pdf`, '_blank');
+    window.open(`${environment.apiUrl}MeasurementDataMoshe/GetMeasurementPDF?code=${code}`, '_blank');
   }
   deletePDF(code: string): void {
     if (!code) return;
