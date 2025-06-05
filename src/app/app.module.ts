@@ -176,6 +176,7 @@ import { SpinnerScreenComponent } from './MARAA/spinner-screen/spinner-screen.co
 import { MeasurementDefComponent } from './MARAA/measurement-def/measurement-def.component';
 import { MaccabiTelAvivComponent } from './maccabi-tel-aviv/maccabi-tel-aviv.component';
 import { PhysioEquipmentReportComponent } from './chameleon-reports/physio-equipment-report/physio-equipment-report.component';
+import { NutritionistReportComponent } from './chameleon-reports/nutritionist-report/nutritionist-report.component';
 
 
 export const MY_DATE_FORMATS: MatDateFormats = {
@@ -328,7 +329,8 @@ export function playerFactory() {
     SpinnerScreenComponent,
     MeasurementDefComponent,
     MaccabiTelAvivComponent,
-    PhysioEquipmentReportComponent
+    PhysioEquipmentReportComponent,
+    NutritionistReportComponent
    
      
   
