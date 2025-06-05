@@ -55,9 +55,10 @@ export interface MeasurementTarget {
   styleUrls: ['./measurement-data-moshe.component.scss']
 })
 export class MeasurementDataMosheComponent implements OnInit, AfterViewInit {
-  displayedMeasurementColumns: string[] = ['MeasurementCode', 'MeasurementShortDesc', 'Mone', 'Mechane', 'Grade', 'pdf'];
-  displayedDepartmentColumns: string[] = ['MeasurementCode', 'MeasurementShortDesc','Department', 'Mone', 'Mechane', 'Grade'];
-
+  displayedMeasurementColumns: string[] = ['MeasurementCode', 'MeasurementShortDesc', 'Mone', 'Mechane', 'Grade', 'Target',  'AllUnitsGrade', 
+  'pdf'];
+  displayedDepartmentColumns: string[] = ['MeasurementCode', 'MeasurementShortDesc','Department', 'Mone', 'Mechane', 'Grade', 'Target','AllUnitsGrade'];
+  
   years: number[] = [];
 quarters: string[] = ['Q1', 'Q2', 'Q3', 'Q4'];
 months: string[] = ['ינואר', 'פברואר', 'מרץ', 'אפריל', 'מאי', 'יוני', 'יולי', 'אוגוסט', 'ספטמבר', 'אוקטובר', 'נובמבר', 'דצמבר'];
@@ -76,6 +77,7 @@ selectedMonth: string[] = [];
 selectedYears: number[] = [];
 selectedQuarters: string[] = [];
 selectedMonths: string[] = [];
+allUnitsGradeMap: { [code: string]: number | null } = {};
 
 selectedDepartment: string | null = null;
 selectedMeasurement: string | null = null;
@@ -113,8 +115,6 @@ failedCasesDisplayedColumns: string[] = [
   'EntryDate',
   'Subtract',
   'AprovedMabar',
-
-
 ];
 @ViewChild('failedPaginator') failedPaginator!: MatPaginator;
 @ViewChild('failedSort') failedSort!: MatSort;
@@ -164,6 +164,7 @@ profilePictureUrl: string = 'assets/default-user.png';
   this.fetchTargets();
   this.loadDepartments();
 this.fetchMeasurement();
+this.fetchAllUnitsGrades()
 }
 
 getUserDetailsFromDBByUserName(username: string): void {
@@ -609,6 +610,8 @@ console.log('Sort:', this.measurementSort);
       });
   
     this.fetchGaugeValues();
+    this.fetchAllUnitsGrades(); 
+
   }
   
   
@@ -855,4 +858,51 @@ console.log('Sort:', this.measurementSort);
   viewPDF(code: string): void {
     window.open(`${environment.apiUrl}MeasurementDataMoshe/GetMeasurementPDF?code=${code}`, '_blank');
   }
+  getTargetValue(measurementCode: string): number | null {
+    const years = this.measurementTargets
+      .filter(t => t.MeasurementCode === measurementCode)
+      .map(t => t.MYear);
+  
+    if (years.length === 0) return null;
+  
+    const latestYear = Math.max(...years);
+    const target = this.measurementTargets.find(
+      t => t.MeasurementCode === measurementCode && t.MYear === latestYear
+    );
+  
+    return target?.MTarget ?? null;
+  }
+  fetchAllUnitsGrades(): void {
+    const params: any = {};
+  
+    if (this.selectedYears?.length) {
+      const fromDates: string[] = [];
+      const toDates: string[] = [];
+  
+      for (const year of this.selectedYears) {
+        fromDates.push(`${year}-01-01`);
+        toDates.push(`${year}-12-31`);
+      }
+  
+      params['fromDates'] = fromDates.join(',');
+      params['toDates'] = toDates.join(',');
+    }
+  
+    const measurementCodes = this.extractMeasurementCodes();
+    if (measurementCodes.length > 0) {
+      params['measurement'] = measurementCodes.join(',');
+    }
+  
+    // ❌ DO NOT include departments here
+  
+    this.http.get<MeasurementSummaryModel[]>(`${environment.apiUrl}/MeasurementDataMoshe/GetSummaryByMeasurement`, {
+      params: new HttpParams({ fromObject: params })
+    }).subscribe(data => {
+      this.allUnitsGradeMap = {};
+      data.forEach(item => {
+        this.allUnitsGradeMap[item.MeasurementCode] = item.Grade ?? null;
+      });
+    });
+  }
+  
 }

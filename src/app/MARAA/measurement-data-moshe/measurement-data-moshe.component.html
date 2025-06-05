@@ -152,6 +152,21 @@
         <th mat-header-cell *matHeaderCellDef mat-sort-header>אחוז</th>
         <td mat-cell *matCellDef="let row">{{ row.Grade }}%</td>
       </ng-container>
+      <ng-container matColumnDef="Target">
+        <th mat-header-cell *matHeaderCellDef>יעד</th>
+        <td mat-cell *matCellDef="let row">
+          {{ getTargetValue(row.MeasurementCode) ?? '-' }}%
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="AllUnitsGrade">
+        <th mat-header-cell *matHeaderCellDef>כלל היחידות</th>
+        <td mat-cell *matCellDef="let row">
+          <span [ngClass]="getCellClass(allUnitsGradeMap[row.MeasurementCode], row.MeasurementCode)">
+            {{ allUnitsGradeMap[row.MeasurementCode] !== null ? (allUnitsGradeMap[row.MeasurementCode] | number:'1.2-2') + '%' : '-' }}
+          </span>
+        </td>
+      </ng-container>
+      
       <ng-container matColumnDef="pdf">
         <th mat-header-cell *matHeaderCellDef>פירוט המדד</th>
         <td mat-cell *matCellDef="let row">
@@ -207,7 +222,21 @@
         <th mat-header-cell *matHeaderCellDef mat-sort-header>אחוז</th>
         <td mat-cell *matCellDef="let row">{{ row.Grade }}%</td>
       </ng-container>
-
+      <ng-container matColumnDef="AllUnitsGrade">
+        <th mat-header-cell *matHeaderCellDef>כלל היחידות</th>
+        <td mat-cell *matCellDef="let row">
+          <span [ngClass]="getCellClass(allUnitsGradeMap[row.MeasurementCode], row.MeasurementCode)">
+            {{ allUnitsGradeMap[row.MeasurementCode] !== null ? (allUnitsGradeMap[row.MeasurementCode] | number:'1.2-2') + '%' : '-' }}
+          </span>
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="Target">
+        <th mat-header-cell *matHeaderCellDef>יעד</th>
+        <td mat-cell *matCellDef="let row">
+          {{ getTargetValue(row.MeasurementCode) ?? '-' }}%
+        </td>
+      </ng-container>
+      
       <tr mat-header-row *matHeaderRowDef="displayedDepartmentColumns"></tr>
       <tr mat-row *matRowDef="let row; columns: displayedDepartmentColumns;"></tr>
     </table>
