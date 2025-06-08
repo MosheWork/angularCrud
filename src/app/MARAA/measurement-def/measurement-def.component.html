@@ -1,6 +1,9 @@
 <mat-card class="measurement-def-card" dir="rtl">
   <mat-card-title>הגדרות מדדים</mat-card-title>
-
+  <mat-form-field appearance="outline" style="width: 300px; margin: 16px 0;">
+    <mat-label>חיפוש גלובלי</mat-label>
+    <input matInput (keyup)="applyGlobalFilter($event)" placeholder="חפש...">
+  </mat-form-field>
   <div class="table-container">
     <table mat-table [dataSource]="dataSource" class="mat-elevation-z8" matSort>
 
@@ -67,6 +70,14 @@
         <th mat-header-cell *matHeaderCellDef mat-sort-header>תאריך עדכון</th>
         <td mat-cell *matCellDef="let row">{{ row.EntryDate | date: 'dd/MM/yyyy HH:mm' }}</td>
       </ng-container>
+      <!-- HasPDF Column -->
+<ng-container matColumnDef="HasPDF">
+  <th mat-header-cell *matHeaderCellDef>קובץ קיים?</th>
+  <td mat-cell *matCellDef="let row">
+    <mat-icon *ngIf="row.HasPDF" color="primary">check_circle</mat-icon>
+    <mat-icon *ngIf="!row.HasPDF" color="warn">cancel</mat-icon>
+  </td>
+</ng-container>
 <!-- PDF Column -->
 <ng-container matColumnDef="pdf">
   <th mat-header-cell *matHeaderCellDef>PDF</th>

@@ -150,7 +150,7 @@
 
       <ng-container matColumnDef="Grade">
         <th mat-header-cell *matHeaderCellDef mat-sort-header>אחוז</th>
-        <td mat-cell *matCellDef="let row">{{ row.Grade }}%</td>
+        <td mat-cell *matCellDef="let row">{{ row.Grade | number:'1.0-0' }}%</td>
       </ng-container>
       <ng-container matColumnDef="Target">
         <th mat-header-cell *matHeaderCellDef>יעד</th>
@@ -162,7 +162,7 @@
         <th mat-header-cell *matHeaderCellDef>כלל היחידות</th>
         <td mat-cell *matCellDef="let row">
           <span [ngClass]="getCellClass(allUnitsGradeMap[row.MeasurementCode], row.MeasurementCode)">
-            {{ allUnitsGradeMap[row.MeasurementCode] !== null ? (allUnitsGradeMap[row.MeasurementCode] | number:'1.2-2') + '%' : '-' }}
+            {{ allUnitsGradeMap[row.MeasurementCode] !== null ? (allUnitsGradeMap[row.MeasurementCode] | number:'1.0-0') + '%' : '-' }}
           </span>
         </td>
       </ng-container>
@@ -220,14 +220,15 @@
 
       <ng-container matColumnDef="Grade">
         <th mat-header-cell *matHeaderCellDef mat-sort-header>אחוז</th>
-        <td mat-cell *matCellDef="let row">{{ row.Grade }}%</td>
+        <td mat-cell *matCellDef="let row">{{ row.Grade | number:'1.0-0' }}%</td>
       </ng-container>
       <ng-container matColumnDef="AllUnitsGrade">
         <th mat-header-cell *matHeaderCellDef>כלל היחידות</th>
         <td mat-cell *matCellDef="let row">
           <span [ngClass]="getCellClass(allUnitsGradeMap[row.MeasurementCode], row.MeasurementCode)">
-            {{ allUnitsGradeMap[row.MeasurementCode] !== null ? (allUnitsGradeMap[row.MeasurementCode] | number:'1.2-2') + '%' : '-' }}
+            {{ allUnitsGradeMap[row.MeasurementCode] !== null ? (allUnitsGradeMap[row.MeasurementCode] | number:'1.0-0') + '%' : '-' }}
           </span>
+          
         </td>
       </ng-container>
       <ng-container matColumnDef="Target">
@@ -264,7 +265,7 @@
               </ng-container>
               <ng-template #percentageCell>
                 <span [ngClass]="getCellClass(element[col], element['קוד מדד'])">
-                  {{ element[col] !== null && element[col] !== undefined ? (element[col] | number:'1.0-2') + '%' : '' }}
+                  {{ element[col] !== null && element[col] !== undefined ? (element[col] | number:'1.0-0') + '%' : '' }}
                 </span>
               </ng-template>
             </td>
@@ -300,7 +301,7 @@
               </ng-container>
               <ng-template #gradeCell>
                 <span [ngClass]="getCellClass(element[col], element['קוד מדד'])">
-                  {{ element[col] !== null && element[col] !== undefined ? (element[col] | number:'1.0-2') + '%' : '' }}
+                  {{ element[col] !== null && element[col] !== undefined ? (element[col] | number:'1.0-0') + '%' : '' }}
                 </span>
               </ng-template>
             </td>

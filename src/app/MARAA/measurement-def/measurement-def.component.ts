@@ -18,15 +18,17 @@ export interface MeasurementDefModel {
   EntryUser?: string;
   EntryDate?: string;
   isNew?: boolean;
+  CountRecords?: number;
+  Active?: boolean;
+  HasPDF?: boolean; // 👈 add this
 }
-
 @Component({
   selector: 'app-measurement-def',
   templateUrl: './measurement-def.component.html',
   styleUrls: ['./measurement-def.component.scss']
 })
 export class MeasurementDefComponent implements OnInit, AfterViewInit {
-  displayedColumns: string[] = ['MeasurementCode', 'MeasurementShortDesc', 'date', 'department', 'DefaultDepartment',  'Active','CountRecords','EntryUser', 'EntryDate','pdf',  'actions'];
+  displayedColumns: string[] = ['MeasurementCode', 'MeasurementShortDesc', 'date', 'department', 'DefaultDepartment',  'Active','CountRecords','EntryUser', 'EntryDate' , 'HasPDF','pdf',  'actions'];
   dataSource = new MatTableDataSource<MeasurementDefModel>();
   formMap: { [code: string]: FormGroup } = {};
   loginUserName: string = '';
@@ -39,6 +41,10 @@ export class MeasurementDefComponent implements OnInit, AfterViewInit {
 
   ngOnInit(): void {
     this.loadData();
+    this.dataSource.filterPredicate = (data: MeasurementDefModel, filter: string) => {
+      const dataStr = Object.values(data).join(' ').toLowerCase();
+      return dataStr.includes(filter);
+    };
     this.authenticationService.getAuthentication().subscribe(res => {
       this.loginUserName = res.message.split('\\')[1].toUpperCase();
     });
@@ -164,5 +170,9 @@ export class MeasurementDefComponent implements OnInit, AfterViewInit {
       }
     });
   }
-  
+  applyGlobalFilter(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const filterValue = input.value.trim().toLowerCase();
+    this.dataSource.filter = filterValue;
+  }
 }
