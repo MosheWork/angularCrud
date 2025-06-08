@@ -35,14 +35,16 @@ export class NutritionistReportComponent implements OnInit, AfterViewInit {
   summaryDataSource = new MatTableDataSource<any>([]);
   detailedDataSource = new MatTableDataSource<any>([]);
 
-  summaryColumns: string[] = ['EmployeeName', 'Simple', 'Complex', 'VeryComplex'];
+  summaryColumns: string[] = ['EmployeeName', 'Simple', 'Complex', 'VeryComplex', 'Team'];
   detailedColumns: string[] = ['AdmissionNo', 'IdNum', 'FirstName', 'LastName', 'EmployeeName', 'Entry_Date', 'AnswerType'];
 
   columnDisplayNamesSummary: { [key: string]: string } = {
     EmployeeName: 'שם עובד',
     Simple: 'טיפול פשוט',
     Complex: 'טיפול מורכב',
-    VeryComplex: 'טיפול קבוצתי'
+    VeryComplex: 'טיפול מורכב מאוד',
+     Team: 'טיפול קבוצתי'
+
   };
 
   columnDisplayNamesDetail: { [key: string]: string } = {
