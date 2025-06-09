@@ -714,7 +714,6 @@ console.log('Sort:', this.measurementSort);
   }
   
   
-  
   fetchGaugeValues(): void {
     const baseParams: any = {};
     const measurementCodes = this.extractMeasurementCodes();
@@ -726,31 +725,17 @@ console.log('Sort:', this.measurementSort);
     if (this.selectedMeasurements.length === 1 && this.selectedYears.length === 1) {
       const selectedMeasurementCode = this.selectedMeasurements[0].split(' ')[0];
       const selectedYear = this.selectedYears[0];
-    
-      console.log('🔍 Looking for target with:');
-      console.log('MeasurementCode:', selectedMeasurementCode);
-      console.log('MYear:', selectedYear);
-    
+  
       this.http.get<MeasurementTarget[]>(`${environment.apiUrl}/MeasurementDataMoshe/GetMeasurementTargets`)
         .subscribe(targets => {
-          console.log('🎯 Available targets:', targets);
-    
           const match = targets.find(t =>
             t.MeasurementCode === selectedMeasurementCode && t.MYear === selectedYear
           );
-    
-          if (match) {
-            console.log('✅ Found target:', match);
-            this.gaugeTargetValue = match.MTarget ?? null;
-          } else {
-            console.warn('❌ No matching target found.');
-            this.gaugeTargetValue = null;
-          }
+          this.gaugeTargetValue = match ? match.MTarget ?? null : null;
         });
     }
-    
   
-    // 🔹 Year-level gauge (average of all selected years)
+    // 🔹 Year-level gauge
     if (this.selectedYears?.length) {
       const fromDates: string[] = [];
       const toDates: string[] = [];
@@ -762,12 +747,14 @@ console.log('Sort:', this.measurementSort);
   
       const params = { ...baseParams, fromDates: fromDates.join(','), toDates: toDates.join(',') };
       this.http.get<MeasurementSummaryModel[]>(`${environment.apiUrl}/MeasurementDataMoshe/GetSummaryByMeasurement`, { params })
-        .subscribe(data => this.yearGaugeValue = data[0]?.Grade ?? 0);
+        .subscribe(data => {
+          this.yearGaugeValue = data[0]?.Grade !== null ? Math.round(data[0].Grade) : 0;
+        });
     } else {
       this.yearGaugeValue = 0;
     }
   
-    // 🔹 Quarter gauge
+    // 🔹 Quarter-level gauge
     if (this.selectedYears.length && this.selectedQuarters.length) {
       const fromDates: string[] = [];
       const toDates: string[] = [];
@@ -784,12 +771,14 @@ console.log('Sort:', this.measurementSort);
   
       const params = { ...baseParams, fromDates: fromDates.join(','), toDates: toDates.join(',') };
       this.http.get<MeasurementSummaryModel[]>(`${environment.apiUrl}/MeasurementDataMoshe/GetSummaryByMeasurement`, { params })
-        .subscribe(data => this.quarterGaugeValue = data[0]?.Grade ?? 0);
+        .subscribe(data => {
+          this.quarterGaugeValue = data[0]?.Grade !== null ? Math.round(data[0].Grade) : 0;
+        });
     } else {
       this.quarterGaugeValue = 0;
     }
   
-    // 🔹 Month gauge
+    // 🔹 Month-level gauge
     if (this.selectedYears.length && this.selectedMonths.length) {
       const fromDates: string[] = [];
       const toDates: string[] = [];
@@ -806,7 +795,9 @@ console.log('Sort:', this.measurementSort);
   
       const params = { ...baseParams, fromDates: fromDates.join(','), toDates: toDates.join(',') };
       this.http.get<MeasurementSummaryModel[]>(`${environment.apiUrl}/MeasurementDataMoshe/GetSummaryByMeasurement`, { params })
-        .subscribe(data => this.monthGaugeValue = data[0]?.Grade ?? 0);
+        .subscribe(data => {
+          this.monthGaugeValue = data[0]?.Grade !== null ? Math.round(data[0].Grade) : 0;
+        });
     } else {
       this.monthGaugeValue = 0;
     }
