@@ -36,11 +36,13 @@ export class PhysiotherapyComponent implements OnInit {
   anamnesisResultsDataSource = new MatTableDataSource<any>([]);
   fullListDataSource = new MatTableDataSource<any>([]);
 
-  anamnesisResultsColumns: string[] = ['EmployeeName', 'Simple', 'Complex', 'Group', 'Session'];
+  anamnesisResultsColumns: string[] = ['ID_No','First_Name','Last_Name', 'Simple', 'Complex', 'Group', 'Session'];
   fullListColumns: string[] = ['AdmissionNo', 'IdNum', 'FirstName', 'LastName', 'EmployeeName', 'Entry_Date', 'AnswerType'];
 
   columnDisplayNames2: { [key: string]: string } = {
-    'EmployeeName': 'שם עובד',
+    'ID_No': ' ת"ז',
+    'First_Name': 'שם פרטי',
+    'Last_Name': 'שם משפחה',
     'Simple': 'טיפול פשוט',
     'Complex': 'טיפול מורכב',
     'Group': 'טיפול קבוצתי',
