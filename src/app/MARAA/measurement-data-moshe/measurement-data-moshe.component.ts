@@ -10,6 +10,7 @@ import * as XLSX from 'xlsx';
 import { MatDialog } from '@angular/material/dialog';
 import { MeasurementRemarksDialogComponent } from '../measurement-remarks-dialog/measurement-remarks-dialog.component';
 import { AuthenticationService } from '../../services/authentication-service/authentication-service.component';
+import { forkJoin } from 'rxjs';
 
 export interface MeasurementSummaryModel {
   MeasurementCode: string;
@@ -73,7 +74,15 @@ measurementTargets: MeasurementTarget[] = [];
 selectedYear: number[] = [];
 selectedQuarter: string[] = [];
 selectedMonth: string[] = [];
+selectedPivot: 'yearly' | 'quarterly' | 'monthly' = 'yearly';
 
+yearlyData: any[] = [];
+quarterlyData: any[] = [];
+monthlyData: any[] = [];
+
+yearlyColumns: string[] = [];
+quarterlyColumns: string[] = [];
+monthlyColumns: string[] = [];
 selectedYears: number[] = [];
 selectedQuarters: string[] = [];
 selectedMonths: string[] = [];
@@ -101,6 +110,13 @@ monthGaugeValue: number | null = 0;
 
   @ViewChild('monthlyPaginator') monthlyPaginator!: MatPaginator;
 @ViewChild('monthlySort') monthlySort!: MatSort;
+
+yearlyDataSource = new MatTableDataSource<any>();
+yearlyDisplayedColumns: string[] = [];
+
+@ViewChild('yearlyPaginator') yearlyPaginator!: MatPaginator;
+@ViewChild('yearlySort') yearlySort!: MatSort;
+
 failedCasesDataSource = new MatTableDataSource<FailedMeasurementCaseModel>();
 failedCasesDisplayedColumns: string[] = [
   'Measurment_ID',
@@ -164,7 +180,8 @@ profilePictureUrl: string = 'assets/default-user.png';
   this.fetchTargets();
   this.loadDepartments();
 this.fetchMeasurement();
-this.fetchAllUnitsGrades()
+this.fetchAllUnitsGrades();
+
 }
 
 getUserDetailsFromDBByUserName(username: string): void {
@@ -187,6 +204,8 @@ getUserDetailsFromDBByUserName(username: string): void {
       this.fetchQuarterlyPivot();
       this.fetchMonthlyPivot();
       this.fetchFailedCases();
+      this.fetchYearlyPivot();
+
       console.log('✅ ViewChildren initialized');
 
       // this.measurementDataSource.paginator = this.measurementPaginator;
@@ -503,7 +522,49 @@ console.log('Sort:', this.measurementSort);
         this.measurementTargets = data;
       });
   }
-
+  fetchYearlyPivot(): void {
+    const params: { [key: string]: string } = {};
+    const fromDates: string[] = [];
+    const toDates: string[] = [];
+  
+    if (this.selectedYears?.length) {
+      for (const year of this.selectedYears) {
+        fromDates.push(`${year}-01-01`);
+        toDates.push(`${year}-12-31`);
+      }
+    }
+  
+    if (fromDates.length && toDates.length) {
+      params['fromDates'] = fromDates.join(',');
+      params['toDates'] = toDates.join(',');
+    }
+  
+    if (this.selectedDepartments?.length > 0) {
+      params['departments'] = this.selectedDepartments.join(',');
+    }
+  
+    const measurementCodes = this.extractMeasurementCodes();
+    if (measurementCodes.length > 0) {
+      params['measurement'] = measurementCodes.join(',');
+    }
+  
+    this.http.get<any[]>(`${environment.apiUrl}/MeasurementDataMoshe/GetYearlyPivot`, {
+      params: new HttpParams({ fromObject: params }),
+    }).subscribe({
+      next: data => {
+        this.yearlyDataSource = new MatTableDataSource(data);
+  
+        if (this.yearlyPaginator) this.yearlyDataSource.paginator = this.yearlyPaginator;
+        if (this.yearlySort) this.yearlyDataSource.sort = this.yearlySort;
+  
+        const staticCols = ['קוד מדד', 'שם מדד'];
+        const dynamicCols = Object.keys(data[0] || {}).filter(k => !staticCols.includes(k));
+        this.yearlyDisplayedColumns = [...staticCols, ...dynamicCols.sort((a, b) => b.localeCompare(a))];
+      },
+      error: err => console.error('❌ Error loading yearly pivot data', err)
+    });
+  }
+  
   
   resetFilter(): void {
     this.selectedYears = [];
@@ -611,6 +672,8 @@ console.log('Sort:', this.measurementSort);
   
     this.fetchGaugeValues();
     this.fetchAllUnitsGrades(); 
+    this.fetchYearlyPivot();
+
 
   }
   
@@ -767,6 +830,12 @@ console.log('Sort:', this.measurementSort);
   
     window.URL.revokeObjectURL(url); // Clean up
   }
+  exportYearly(): void {
+    const headersMap: { [key: string]: string } = {};
+    this.yearlyDisplayedColumns.forEach(col => headersMap[col] = col);
+    this.exportExcelFromTable(this.yearlyDataSource.filteredData, 'סיכום_שנתי', headersMap);
+  }
+  
   exportQuarterly(): void {
     const headersMap: { [key: string]: string } = {};
     this.quarterlyDisplayedColumns.forEach(col => headersMap[col] = col);
@@ -904,5 +973,33 @@ console.log('Sort:', this.measurementSort);
       });
     });
   }
+
+  onMeasurementFilter(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const value = input.value.trim().toLowerCase();
+    this.measurementDataSource.filter = value;
+  }
+  applyGlobalFilter(event: Event, tableType: string): void {
+    const filterValue = (event.target as HTMLInputElement).value.trim().toLowerCase();
+  
+    switch (tableType) {
+      case 'measurement':
+        this.measurementDataSource.filter = filterValue;
+        break;
+      case 'department':
+        this.departmentDataSource.filter = filterValue;
+        break;
+      case 'quarterly':
+        this.quarterlyDataSource.filter = filterValue;
+        break;
+      case 'monthly':
+        this.monthlyDataSource.filter = filterValue;
+        break;
+      case 'failed':
+        this.failedCasesDataSource.filter = filterValue;
+        break;
+    }
+  }
+ 
   
 }
