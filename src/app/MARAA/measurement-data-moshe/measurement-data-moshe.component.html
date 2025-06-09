@@ -49,9 +49,28 @@
     <button mat-raised-button color="primary" (click)="applyFilter()">סנן</button>
     <button mat-raised-button color="warn"  (click)="resetFilter()">איפוס</button>
   </div>
+  <mat-card class="info-card" *ngIf="summaryInfo">
+    <mat-card-title>🧾 סיכום חישוב</mat-card-title>
+    <mat-card-content>
+      <div *ngIf="summaryInfo.measurementSelected; else noMeasurementBlock">
+        <p>מדד נבחר: <strong>{{ summaryInfo.measurementCode }}</strong></p>
+        <p>שנה: <strong>{{ summaryInfo.year }}</strong></p>
+        <p>ציון: <strong>{{ summaryInfo.grade }}%</strong></p>
+        <p>יעד: <strong>{{ summaryInfo.target }}%</strong></p>
+      </div>
+      <ng-template #noMeasurementBlock>
+        <p>חישוב מבוסס על כל המדדים עם יעד:</p>
+        <ul>
+          <li>סה"כ מדדים עם יעד (מכנה): <strong>{{ summaryInfo.totalMechane }}</strong></li>
+          <li>מדדים שעמדו ביעד (מונה): <strong>{{ summaryInfo.totalMone }}</strong></li>
+          <li>ציון כולל: <strong>{{ summaryInfo.grade }}%</strong></li>
+        </ul>
+      </ng-template>
+    </mat-card-content>
+  </mat-card>
   <div class="gauge-section">
     <div class="gauge-row">
-  
+   
       <!-- Month Gauge -->
       <mat-card class="gauge-card">
         <div class="gauge-title">חודש</div>
@@ -155,8 +174,13 @@
 
       <ng-container matColumnDef="Grade">
         <th mat-header-cell *matHeaderCellDef mat-sort-header>אחוז</th>
-        <td mat-cell *matCellDef="let row">{{ row.Grade | number:'1.0-0' }}%</td>
+        <td mat-cell *matCellDef="let row">
+          <span [ngClass]="getCellClass(row.Grade, row.MeasurementCode)">
+            {{ row.Grade !== null && row.Grade !== undefined ? (row.Grade | number:'1.0-0') + '%' : '-' }}
+          </span>
+        </td>
       </ng-container>
+      
       <ng-container matColumnDef="Target">
         <th mat-header-cell *matHeaderCellDef>יעד</th>
         <td mat-cell *matCellDef="let row">
