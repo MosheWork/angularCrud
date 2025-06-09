@@ -14,14 +14,12 @@
         <mat-option *ngFor="let year of years" [value]="year">{{ year }}</mat-option>
       </mat-select>
     </mat-form-field>
-
     <mat-form-field >
       <mat-label>רבעון</mat-label>
       <mat-select [(ngModel)]="selectedQuarters" multiple>
         <mat-option *ngFor="let quarter of quarters" [value]="quarter">{{ quarter }}</mat-option>
       </mat-select>
     </mat-form-field>
-
     <mat-form-field >
       <mat-label>חודש</mat-label>
       <mat-select [(ngModel)]="selectedMonths" multiple>
@@ -29,6 +27,10 @@
       </mat-select>
     </mat-form-field>
 
+   
+  
+
+  
    <!-- מחלקה -->
 <mat-form-field>
   <mat-label>מחלקה</mat-label>
@@ -50,12 +52,12 @@
   <div class="gauge-section">
     <div class="gauge-row">
   
-      <!-- Year Gauge -->
+      <!-- Month Gauge -->
       <mat-card class="gauge-card">
-        <div class="gauge-title">שנה</div>
+        <div class="gauge-title">חודש</div>
         <div class="gauge-content">
           <ngx-gauge
-            [value]="yearGaugeValue ?? 0"
+            [value]="monthGaugeValue ?? 0"
             [min]="0"
             [max]="100"
             [label]="''"
@@ -63,15 +65,14 @@
             [type]="'semi'"
             [thick]="6"
             [size]="180"
-            [foregroundColor]="getGaugeColor(yearGaugeValue)"
-            [valueText]="yearGaugeValue !== null ? (yearGaugeValue | number : '1.0-0') + '%' : 'אין נתונים'">
+            [foregroundColor]="getGaugeColor(monthGaugeValue)"
+            [valueText]="monthGaugeValue !== null ? (monthGaugeValue | number : '1.0-0') + '%' : 'אין נתונים'">
           </ngx-gauge>
           <div class="gauge-target">
             יעד: {{ gaugeTargetValue !== null ? gaugeTargetValue + '%' : 'אין מידע' }}
           </div>
         </div>
       </mat-card>
-  
       <!-- Quarter Gauge -->
       <mat-card class="gauge-card">
         <div class="gauge-title">רבעון</div>
@@ -94,12 +95,13 @@
         </div>
       </mat-card>
   
-      <!-- Month Gauge -->
-      <mat-card class="gauge-card">
-        <div class="gauge-title">חודש</div>
+ 
+       <!-- Year Gauge -->
+       <mat-card class="gauge-card">
+        <div class="gauge-title">שנה</div>
         <div class="gauge-content">
           <ngx-gauge
-            [value]="monthGaugeValue ?? 0"
+            [value]="yearGaugeValue ?? 0"
             [min]="0"
             [max]="100"
             [label]="''"
@@ -107,8 +109,8 @@
             [type]="'semi'"
             [thick]="6"
             [size]="180"
-            [foregroundColor]="getGaugeColor(monthGaugeValue)"
-            [valueText]="monthGaugeValue !== null ? (monthGaugeValue | number : '1.0-0') + '%' : 'אין נתונים'">
+            [foregroundColor]="getGaugeColor(yearGaugeValue)"
+            [valueText]="yearGaugeValue !== null ? (yearGaugeValue | number : '1.0-0') + '%' : 'אין נתונים'">
           </ngx-gauge>
           <div class="gauge-target">
             יעד: {{ gaugeTargetValue !== null ? gaugeTargetValue + '%' : 'אין מידע' }}
@@ -183,7 +185,7 @@
 
     <mat-paginator
       #measurementPaginator
-      [pageSizeOptions]="[5, 10, 20]"
+      [pageSizeOptions]="[10, 20,50]"
       showFirstLastButtons>
     </mat-paginator>
   </mat-tab>
@@ -244,7 +246,7 @@
 
     <mat-paginator
       #departmentPaginator
-      [pageSizeOptions]="[5, 10, 20]"
+      [pageSizeOptions]="[10, 20,50]"
       showFirstLastButtons>
     </mat-paginator>
   </mat-tab>
@@ -277,7 +279,7 @@
   
         <mat-paginator
           #quarterlyPaginator
-          [pageSizeOptions]="[5, 10, 20]"
+          [pageSizeOptions]="[10, 20,50]"
           showFirstLastButtons>
         </mat-paginator>
       </div>
@@ -313,7 +315,7 @@
   
         <mat-paginator
           #monthlyPaginator
-          [pageSizeOptions]="[5, 10, 20]"
+          [pageSizeOptions]="[10, 20,50]"
           showFirstLastButtons>
         </mat-paginator>
       </div>
@@ -389,7 +391,7 @@
       <tr mat-row *matRowDef="let row; columns: failedCasesDisplayedColumns;" (click)="openRemarksDialog(row)"></tr>
     </table>
 
-    <mat-paginator #failedPaginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
+    <mat-paginator #failedPaginator   [pageSizeOptions]="[10, 20,50]" showFirstLastButtons></mat-paginator>
   </mat-card>
 </mat-tab>
 

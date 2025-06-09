@@ -28,7 +28,7 @@ export interface MeasurementDefModel {
   styleUrls: ['./measurement-def.component.scss']
 })
 export class MeasurementDefComponent implements OnInit, AfterViewInit {
-  displayedColumns: string[] = ['MeasurementCode', 'MeasurementShortDesc', 'date', 'department', 'DefaultDepartment',  'Active','CountRecords','EntryUser', 'EntryDate' , 'HasPDF','pdf',  'actions'];
+  displayedColumns: string[] = ['MeasurementCode', 'MeasurementShortDesc', 'date', 'department', 'DefaultDepartment',  'Active','CountRecords','EntryUser', 'EntryDate' ,  'actions', 'HasPDF','pdf'];
   dataSource = new MatTableDataSource<MeasurementDefModel>();
   formMap: { [code: string]: FormGroup } = {};
   loginUserName: string = '';
