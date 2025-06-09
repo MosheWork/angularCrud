@@ -99,8 +99,9 @@ monthGaugeValue: number | null = 0;
   monthlyDataSource = new MatTableDataSource<MonthlyPivotModel>();
   monthlyDisplayedColumns: string[] = []; // Will be filled dynamically
   isLoading = true;
-  @ViewChild('quarterlyPaginator') quarterlyPaginator!: MatPaginator;
-  @ViewChild('quarterlySort') quarterlySort!: MatSort;
+
+ 
+
   
   @ViewChild('measurementPaginator') measurementPaginator!: MatPaginator;
   @ViewChild('departmentPaginator') departmentPaginator!: MatPaginator;
@@ -108,14 +109,18 @@ monthGaugeValue: number | null = 0;
   @ViewChild('measurementSort') measurementSort!: MatSort;
   @ViewChild('departmentSort') departmentSort!: MatSort;
 
-  @ViewChild('monthlyPaginator') monthlyPaginator!: MatPaginator;
-@ViewChild('monthlySort') monthlySort!: MatSort;
 
+  @ViewChild('yearlyPaginator') yearlyPaginator!: MatPaginator;
+  @ViewChild('quarterlyPaginator') quarterlyPaginator!: MatPaginator;
+  @ViewChild('monthlyPaginator') monthlyPaginator!: MatPaginator;
+  
+  @ViewChild('yearlySort') yearlySort!: MatSort;
+  @ViewChild('quarterlySort') quarterlySort!: MatSort;
+  @ViewChild('monthlySort') monthlySort!: MatSort;
 yearlyDataSource = new MatTableDataSource<any>();
 yearlyDisplayedColumns: string[] = [];
 
-@ViewChild('yearlyPaginator') yearlyPaginator!: MatPaginator;
-@ViewChild('yearlySort') yearlySort!: MatSort;
+
 
 failedCasesDataSource = new MatTableDataSource<FailedMeasurementCaseModel>();
 failedCasesDisplayedColumns: string[] = [
@@ -205,7 +210,7 @@ getUserDetailsFromDBByUserName(username: string): void {
       this.fetchMonthlyPivot();
       this.fetchFailedCases();
       this.fetchYearlyPivot();
-
+      this.assignTableConfig();
       console.log('✅ ViewChildren initialized');
 
       // this.measurementDataSource.paginator = this.measurementPaginator;
@@ -223,11 +228,42 @@ getUserDetailsFromDBByUserName(username: string): void {
 
     this.failedCasesDataSource.paginator = this.failedPaginator;
     this.failedCasesDataSource.sort = this.failedSort;
-
+    setTimeout(() => {
+      if (this.yearlyPaginator && this.yearlySort) {
+        this.yearlyDataSource.paginator = this.yearlyPaginator;
+        this.yearlyDataSource.sort = this.yearlySort;
+      }
+  
+      if (this.quarterlyPaginator && this.quarterlySort) {
+        this.quarterlyDataSource.paginator = this.quarterlyPaginator;
+        this.quarterlyDataSource.sort = this.quarterlySort;
+      }
+  
+      if (this.monthlyPaginator && this.monthlySort) {
+        this.monthlyDataSource.paginator = this.monthlyPaginator;
+        this.monthlyDataSource.sort = this.monthlySort;
+      }
+    });
     });
     
   }
-  
+  ngOnChanges(): void {
+    this.assignTableConfig(); // in case you use OnChanges
+  }
+  assignTableConfig(): void {
+    setTimeout(() => {
+      if (this.selectedPivot === 'yearly') {
+        this.yearlyDataSource.paginator = this.yearlyPaginator;
+        this.yearlyDataSource.sort = this.yearlySort;
+      } else if (this.selectedPivot === 'quarterly') {
+        this.quarterlyDataSource.paginator = this.quarterlyPaginator;
+        this.quarterlyDataSource.sort = this.quarterlySort;
+      } else if (this.selectedPivot === 'monthly') {
+        this.monthlyDataSource.paginator = this.monthlyPaginator;
+        this.monthlyDataSource.sort = this.monthlySort;
+      }
+    });
+  }
   fetchSummaryByMeasurement(): void {
     this.http.get<MeasurementSummaryModel[]>(`${environment.apiUrl}/MeasurementDataMoshe/GetSummaryByMeasurement`)
       .subscribe(data => {
@@ -1000,6 +1036,31 @@ console.log('Sort:', this.measurementSort);
         break;
     }
   }
- 
+  exportSelectedPivot(): void {
+    const headersMap: { [key: string]: string } = {};
+    let data: any[] = [];
+    let fileName = '';
+  
+    switch (this.selectedPivot) {
+      case 'yearly':
+        this.yearlyDisplayedColumns.forEach(col => headersMap[col] = col);
+        data = this.yearlyDataSource.filteredData;
+        fileName = 'סיכום_שנתי';
+        break;
+      case 'quarterly':
+        this.quarterlyDisplayedColumns.forEach(col => headersMap[col] = col);
+        data = this.quarterlyDataSource.filteredData;
+        fileName = 'סיכום_רבעוני';
+        break;
+      case 'monthly':
+        this.monthlyDisplayedColumns.forEach(col => headersMap[col] = col);
+        data = this.monthlyDataSource.filteredData;
+        fileName = 'סיכום_חודשי';
+        break;
+    }
+  
+    this.exportExcelFromTable(data, fileName, headersMap);
+  }
+  
   
 }
