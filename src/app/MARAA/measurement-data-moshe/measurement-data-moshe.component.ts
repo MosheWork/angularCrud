@@ -245,7 +245,13 @@ getUserDetailsFromDBByUserName(username: string): void {
       }
     });
     });
-    
+    this.yearlyDataSource.filterPredicate = (data, filter) => {
+      return Object.values(data).some(value =>
+        value?.toString().toLowerCase().includes(filter)
+      );
+    };
+    this.quarterlyDataSource.filterPredicate = this.yearlyDataSource.filterPredicate;
+    this.monthlyDataSource.filterPredicate = this.yearlyDataSource.filterPredicate;
   }
   ngOnChanges(): void {
     this.assignTableConfig(); // in case you use OnChanges
@@ -1053,5 +1059,20 @@ console.log('Sort:', this.measurementSort);
     this.exportExcelFromTable(data, fileName, headersMap);
   }
   
+  applyGlobalPivotFilter(event: Event): void {
+    const filterValue = (event.target as HTMLInputElement).value.trim().toLowerCase();
+  
+    switch (this.selectedPivot) {
+      case 'yearly':
+        this.yearlyDataSource.filter = filterValue;
+        break;
+      case 'quarterly':
+        this.quarterlyDataSource.filter = filterValue;
+        break;
+      case 'monthly':
+        this.monthlyDataSource.filter = filterValue;
+        break;
+    }
+  }
   
 }

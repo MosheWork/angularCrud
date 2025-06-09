@@ -371,7 +371,10 @@
 
   <mat-tab label="סיכום תקופתי ">
     <mat-card class="filter-card" style="margin-bottom: 16px;" dir="rtl">
-   
+      <mat-form-field appearance="outline" style="margin-bottom: 16px; width: 300px;">
+        <mat-label>סינון גלובלי</mat-label>
+        <input matInput (input)="applyGlobalPivotFilter($event)" placeholder="הקלד טקסט לחיפוש">
+      </mat-form-field>
       <mat-radio-group [(ngModel)]="selectedPivot" (change)="assignTableConfig()">
         <mat-radio-button value="yearly">שנתי</mat-radio-button>
         <mat-radio-button value="quarterly">רבעוני</mat-radio-button>
