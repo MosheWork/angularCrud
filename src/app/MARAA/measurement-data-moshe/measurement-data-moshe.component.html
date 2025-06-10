@@ -52,22 +52,50 @@
   <mat-card class="info-card" *ngIf="summaryInfo">
     <mat-card-title>🧾 סיכום חישוב</mat-card-title>
     <mat-card-content>
-      <div *ngIf="summaryInfo.measurementSelected; else noMeasurementBlock">
+  
+      <div *ngIf="summaryInfo.measurementSelected; else allMeasurementsBlock">
         <p>מדד נבחר: <strong>{{ summaryInfo.measurementCode }}</strong></p>
-        <p>שנה: <strong>{{ summaryInfo.year }}</strong></p>
+  
+        <p *ngIf="selectedYears.length">שנים: 
+          <strong>{{ selectedYears.join(', ') }}</strong>
+        </p>
+  
+        <p *ngIf="selectedQuarters.length">רבעונים: 
+          <strong>{{ selectedQuarters.join(', ') }}</strong>
+        </p>
+  
+        <p *ngIf="selectedMonths.length">חודשים: 
+          <strong>{{ selectedMonths.join(', ') }}</strong>
+        </p>
+  
         <p>ציון: <strong>{{ summaryInfo.grade }}%</strong></p>
         <p>יעד: <strong>{{ summaryInfo.target }}%</strong></p>
       </div>
-      <ng-template #noMeasurementBlock>
-        <p>חישוב מבוסס על כל המדדים עם יעד:</p>
-        <ul>
-          <li>סה"כ מדדים עם יעד (מכנה): <strong>{{ summaryInfo.totalMechane }}</strong></li>
-          <li>מדדים שעמדו ביעד (מונה): <strong>{{ summaryInfo.totalMone }}</strong></li>
-          <li>ציון כולל: <strong>{{ summaryInfo.grade }}%</strong></li>
-        </ul>
+  
+      <ng-template #allMeasurementsBlock>
+  
+        <p *ngIf="yearGaugeValue! > 0">
+          מונה / מכנה (שנה): <strong>{{ summaryInfo.totalMone }} / {{ summaryInfo.totalMechane }}</strong><br>
+          ציון כולל (שנה): <strong>{{ yearGaugeValue! }}%</strong>
+        </p>
+        
+        <p *ngIf="quarterGaugeValue! > 0">
+          מונה / מכנה (רבעון): <strong>{{ quarterMone }} / {{ quarterMechane }}</strong><br>
+          ציון כולל (רבעון): <strong>{{ quarterGaugeValue! }}%</strong>
+        </p>
+        
+        <p *ngIf="monthGaugeValue! > 0">
+          מונה / מכנה (חודש): <strong>{{ monthMone }} / {{ monthMechane }}</strong><br>
+          ציון כולל (חודש): <strong>{{ monthGaugeValue! }}%</strong>
+        </p>
+        
+  
       </ng-template>
     </mat-card-content>
   </mat-card>
+  
+  
+  
   <div class="gauge-section">
     <div class="gauge-row">
    

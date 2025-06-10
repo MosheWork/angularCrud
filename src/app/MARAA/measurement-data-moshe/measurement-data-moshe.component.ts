@@ -49,6 +49,9 @@ export interface MeasurementTarget {
   MeasurementCode: string;
   MYear: number;
   MTarget: number | null;
+    // Add these two:
+    MQuarter?: string; // e.g., 'Q1', 'Q2', etc.
+    MMonth?: number;   // e.g., 1-12
 }
 @Component({
   selector: 'app-measurement-data-moshe',
@@ -69,6 +72,15 @@ selectedDepartments: string[] = [];
 selectedMeasurements: string[] = [];
 quarterlyDisplayedColumns: string[] = ['Measurement']; // will be populated dynamically
 gaugeTargetValue: number | null = null;
+quarterGaugeTargetValue: number | null = null;
+monthGaugeTargetValue: number | null = null;
+// 🔹 Add at top of class (e.g., below your other component-level vars)
+quarterMone: number = 0;
+quarterMechane: number = 0;
+monthMone: number = 0;
+monthMechane: number = 0;
+
+
 measurementTargets: MeasurementTarget[] = [];
 summaryInfo: {
   measurementSelected: boolean;
@@ -85,6 +97,10 @@ summaryInfo: {
     target: number;
     passed: boolean;
   }[];
+
+
+
+
 } | null = null;
 selectedYear: number[] = [];
 selectedQuarter: string[] = [];
@@ -734,159 +750,166 @@ console.log('Sort:', this.measurementSort);
 
   }
   
-  
   fetchGaugeValues(): void {
+ 
+
     const baseParams: any = {};
     const measurementCodes = this.extractMeasurementCodes();
     if (measurementCodes.length > 0) {
       baseParams.measurement = measurementCodes.join(',');
     }
   
-    // 🔹 Load target for selected measurement & year (used under the gauge)
-    if (this.selectedMeasurements.length === 1 && this.selectedYears.length === 1) {
-      const selectedMeasurementCode = this.selectedMeasurements[0].split(' ')[0];
-      const selectedYear = this.selectedYears[0];
+    // 🔹 Load targets once and cache them
+    this.http.get<MeasurementTarget[]>(`${environment.apiUrl}/MeasurementDataMoshe/GetMeasurementTargets`)
+      .subscribe(targets => {
+        this.measurementTargets = targets;
   
-      this.http.get<MeasurementTarget[]>(`${environment.apiUrl}/MeasurementDataMoshe/GetMeasurementTargets`)
-        .subscribe(targets => {
-          const match = targets.find(t =>
-            t.MeasurementCode === selectedMeasurementCode && t.MYear === selectedYear
-          );
-          this.gaugeTargetValue = match ? match.MTarget ?? null : null;
-        });
-    }
+        // ───────────── YEAR GAUGE ─────────────
+        if (this.selectedYears?.length) {
+          const fromDates: string[] = [];
+          const toDates: string[] = [];
   
-    // 🔹 Year-level gauge
-    if (this.selectedYears?.length) {
-      const fromDates: string[] = [];
-      const toDates: string[] = [];
-    
-      for (const year of this.selectedYears) {
-        fromDates.push(`${year}-01-01`);
-        toDates.push(`${year}-12-31`);
-      }
-    
-      const params = {
-        ...baseParams,
-        fromDates: fromDates.join(','),
-        toDates: toDates.join(',')
-      };
-    
-      this.http.get<MeasurementSummaryModel[]>(`${environment.apiUrl}/MeasurementDataMoshe/GetSummaryByMeasurement`, { params })
-        .subscribe(data => {
-          if (this.selectedMeasurements.length === 1) {
-            // Standard logic
-            const grade = data[0]?.Grade !== null ? Math.round(data[0].Grade) : 0;
-            this.yearGaugeValue = grade;
-            this.summaryInfo = {
-              measurementSelected: true,
-              measurementCode: this.selectedMeasurements[0].split(' ')[0],
-              year: this.selectedYears[0],
-              grade: grade,
-              target: this.gaugeTargetValue ?? 0
-            };
-          } else {
-            // New logic: count mone if Grade > target
-            this.http.get<MeasurementTarget[]>(`${environment.apiUrl}/MeasurementDataMoshe/GetMeasurementTargets`).subscribe(targets => {
-              let mone = 0;
-              let mechane = 0;
-    
-              for (const item of data) {
-                const match = targets.find(t =>
-                  t.MeasurementCode === item.MeasurementCode &&
-                  t.MYear === this.selectedYears[0]
-                );
-    
-                if (match) {
-                  mechane++;
-                  const grade = item.Grade ?? 0;
-                  if (match.MTarget !== null && grade >= match.MTarget) {
-                    mone++;
+          for (const year of this.selectedYears) {
+            fromDates.push(`${year}-01-01`);
+            toDates.push(`${year}-12-31`);
+          }
+  
+          const params = {
+            ...baseParams,
+            fromDates: fromDates.join(','),
+            toDates: toDates.join(',')
+          };
+  
+          this.http.get<MeasurementSummaryModel[]>(`${environment.apiUrl}/MeasurementDataMoshe/GetSummaryByMeasurement`, { params })
+            .subscribe(data => {
+              if (this.selectedMeasurements.length === 1) {
+                const grade = data[0]?.Grade !== null ? Math.round(data[0].Grade) : 0;
+                this.yearGaugeValue = grade;
+  
+                const selectedMeasurementCode = this.selectedMeasurements[0].split(' ')[0];
+                const selectedYear = this.selectedYears[0];
+                const targetMatch = targets.find(t => t.MeasurementCode === selectedMeasurementCode && t.MYear === selectedYear);
+  
+                this.gaugeTargetValue = targetMatch?.MTarget ?? null;
+  
+                this.summaryInfo = {
+                  measurementSelected: true,
+                  measurementCode: selectedMeasurementCode,
+                  year: selectedYear,
+                  grade,
+                  target: this.gaugeTargetValue ?? 0
+                };
+              } else {
+                let mone = 0;
+                let mechane = 0;
+                const selectedYear = this.selectedYears[0];
+  
+                for (const item of data) {
+                  const match = targets.find(t =>
+                    t.MeasurementCode === item.MeasurementCode &&
+                    t.MYear === selectedYear
+                  );
+  
+                  if (match) {
+                    mechane++;
+                    const grade = item.Grade ?? 0;
+                    if (match.MTarget !== null && grade >= match.MTarget) {
+                      mone++;
+                    }
                   }
                 }
+  
+                const grade = mechane > 0 ? Math.round((mone / mechane) * 100) : 0;
+                this.yearGaugeValue = grade;
+                this.summaryInfo = {
+                  measurementSelected: false,
+                  grade,
+                  totalMone: mone,
+                  totalMechane: mechane
+                };
               }
-    
-              const grade = mechane > 0 ? Math.round((mone / mechane) * 100) : 0;
-              console.log('📋 Full Measurement Target Match Report:');
-              data.forEach(item => {
-                const matchingTarget = targets.find(t =>
-                  t.MeasurementCode === item.MeasurementCode &&
-                  t.MYear === this.selectedYears[0]
-                );
-              
-                console.log({
-                  MeasurementCode: item.MeasurementCode,
-                  Description: item.MeasurementShortDesc,
-                  Grade: item.Grade,
-                  HasTarget: matchingTarget ? '✅ YES' : '❌ NO',
-                  TargetValue: matchingTarget?.MTarget ?? null,
-                  TargetYear: matchingTarget?.MYear ?? null
-                });
-              });
-              
-              this.yearGaugeValue = grade;
-              this.summaryInfo = {
-                measurementSelected: false,
-                grade,
-                totalMone: mone,
-                totalMechane: mechane
-              };
             });
-          }
-        });
-    } else {
-      this.yearGaugeValue = 0;
-      this.summaryInfo = null;
-    }
-    
-  
-    // 🔹 Quarter-level gauge
-    if (this.selectedYears.length && this.selectedQuarters.length) {
-      const fromDates: string[] = [];
-      const toDates: string[] = [];
-      const quarterMap = { Q1: [1, 3], Q2: [4, 6], Q3: [7, 9], Q4: [10, 12] };
-  
-      for (const year of this.selectedYears) {
-        for (const quarter of this.selectedQuarters) {
-          const [startMonth, endMonth] = quarterMap[quarter as keyof typeof quarterMap];
-          const endDay = new Date(year, endMonth, 0).getDate();
-          fromDates.push(`${year}-${String(startMonth).padStart(2, '0')}-01`);
-          toDates.push(`${year}-${String(endMonth).padStart(2, '0')}-${endDay}`);
+        } else {
+          this.yearGaugeValue = 0;
+          this.summaryInfo = null;
         }
-      }
   
-      const params = { ...baseParams, fromDates: fromDates.join(','), toDates: toDates.join(',') };
-      this.http.get<MeasurementSummaryModel[]>(`${environment.apiUrl}/MeasurementDataMoshe/GetSummaryByMeasurement`, { params })
-        .subscribe(data => {
-          this.quarterGaugeValue = data[0]?.Grade !== null ? Math.round(data[0].Grade) : 0;
-        });
-    } else {
-      this.quarterGaugeValue = 0;
-    }
+        // ───────────── QUARTER GAUGE ─────────────
+        if (this.selectedYears.length && this.selectedQuarters.length) {
+          const selectedQuarter = this.selectedQuarters[0];
+          const selectedYear = this.selectedYears[0];
+          const quarterKey = `${selectedYear}_${selectedQuarter}`;
   
-    // 🔹 Month-level gauge
-    if (this.selectedYears.length && this.selectedMonths.length) {
-      const fromDates: string[] = [];
-      const toDates: string[] = [];
+          let mone = 0;
+          let mechane = 0;
+          console.log('📊 Quarterly Data Source:', this.quarterlyDataSource.data);
+
+          this.quarterlyDataSource.data.forEach(row => {
+            const code = row['קוד מדד'];
+            console.log(`🔎 Checking row:`, row);
+
+            const target = targets.find(t => t.MeasurementCode === code && t.MYear === selectedYear)?.MTarget;
+            console.log(`➡️ Measurement: ${code}, Quarter Key: ${quarterKey}, Value:`, row[quarterKey]);
+
+            if (target !== undefined && row[quarterKey] != null) {
+              const percentStr = String(row[quarterKey]).replace('%', '');
+              const percent = parseInt(percentStr, 10);
+              if (!isNaN(percent)) {
+                mechane++;
+                console.log(`🔍 Quarter Calc — Measurement: ${code}, Quarter: ${quarterKey}, Grade: ${percent}, Target: ${target}`);
+
+                if (target != null && percent >= target) mone++;
+              }
+            }
+          });
   
-      for (const year of this.selectedYears) {
-        for (const month of this.selectedMonths) {
-          const monthIndex = this.months.indexOf(month) + 1;
-          const lastDay = new Date(year, monthIndex, 0).getDate();
-          const monthStr = String(monthIndex).padStart(2, '0');
-          fromDates.push(`${year}-${monthStr}-01`);
-          toDates.push(`${year}-${monthStr}-${lastDay}`);
+          const grade = mechane > 0 ? Math.round((mone / mechane) * 100) : 0;
+          this.quarterGaugeValue = grade;
+          this.summaryInfo = {
+            measurementSelected: false,
+            grade,
+            totalMone: mone,
+            totalMechane: mechane
+          };
+        } else {
+          this.quarterGaugeValue = 0;
         }
-      }
   
-      const params = { ...baseParams, fromDates: fromDates.join(','), toDates: toDates.join(',') };
-      this.http.get<MeasurementSummaryModel[]>(`${environment.apiUrl}/MeasurementDataMoshe/GetSummaryByMeasurement`, { params })
-        .subscribe(data => {
-          this.monthGaugeValue = data[0]?.Grade !== null ? Math.round(data[0].Grade) : 0;
-        });
-    } else {
-      this.monthGaugeValue = 0;
-    }
+        // ───────────── MONTH GAUGE ─────────────
+        if (this.selectedYears.length && this.selectedMonths.length) {
+          const selectedMonthIndex = this.months.indexOf(this.selectedMonths[0]) + 1;
+          const selectedYear = this.selectedYears[0];
+          const monthKey = `${selectedYear}_${String(selectedMonthIndex).padStart(2, '0')}`;
+  
+          let mone = 0;
+          let mechane = 0;
+  
+          this.monthlyDataSource.data.forEach(row => {
+            const code = row['קוד מדד'];
+            const target = targets.find(t => t.MeasurementCode === code && t.MYear === selectedYear)?.MTarget;
+  
+            if (target !== undefined && row[monthKey] != null) {
+              const percentStr = String(row[monthKey]).replace('%', '');
+              const percent = parseInt(percentStr, 10);
+              if (!isNaN(percent)) {
+                mechane++;
+                if (target != null && percent >= target) mone++;
+              }
+            }
+          });
+  
+          const grade = mechane > 0 ? Math.round((mone / mechane) * 100) : 0;
+          this.monthGaugeValue = grade;
+          this.summaryInfo = {
+            measurementSelected: false,
+            grade,
+            totalMone: mone,
+            totalMechane: mechane
+          };
+        } else {
+          this.monthGaugeValue = 0;
+        }
+      });
   }
   
   
