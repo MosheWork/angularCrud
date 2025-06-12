@@ -98,40 +98,7 @@
   </mat-card>
   
    -->
-   <mat-card class="gauge-raw-card" *ngIf="gaugeRawData.length > 0">
-    <mat-card-title>🧾 נתונים גולמיים לחישוב מדדים</mat-card-title>
-    <mat-card-content>
-      <table class="mat-elevation-z2 mat-table">
-        <thead>
-          <tr>
-            <th>שנה</th>
-            <th>חודש</th>
-            <th>קוד מדד</th>
-            <th>שם מדד</th>
-            <th>מונה</th>
-            <th>מכנה</th>
-            <th>ציון</th>
-            <th>יעד</th>
-            <th>עמד ביעד</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let row of gaugeRawData">
-            <td>{{ row.MYear }}</td>
-            <td>{{ row.MMonth }}</td>
-            <td>{{ row.MeasurementCode }}</td>
-            <td>{{ row.MeasurementShortDesc }}</td>
-            <td>{{ row.Mone }}</td>
-            <td>{{ row.Mechane }}</td>
-            <td>{{ row.Grade }}</td>
-            <td>{{ row.MTarget }}</td>
-            <td>{{ row.MeetsTarget }}</td>
-          </tr>
-        </tbody>
-      </table>
-    </mat-card-content>
-  </mat-card>
-  
+ 
 
    <div class="gauge-section">
     <div class="gauge-row">
