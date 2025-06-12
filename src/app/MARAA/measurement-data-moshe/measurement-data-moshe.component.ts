@@ -829,22 +829,18 @@ console.log('Sort:', this.measurementSort);
     const yearData = this.yearlySummaryRaw.filter(row =>
       this.selectedYears.length === 0 || this.selectedYears.includes(row.MYear)
     );
-    
     this.yearMone = yearData.filter(r => r.MeetsTarget === 'Yes').length;
     this.yearMechane = yearData.length;
     this.yearGaugeValue = this.calculateGauge(this.yearMone, this.yearMechane);
-    
+    this.yearGaugeTarget = this.extractTarget(yearData);
   
     // === QUARTER ===
-    const selectedQuarterList = this.selectedQuarters.map(q => q.replace('Q', '')); // ["1", "2", ...]
     const quarterData = this.quarterlySummaryRaw.filter(row =>
       (this.selectedYears.length === 0 || this.selectedYears.includes(row.MYear)) &&
-      (this.selectedQuarters.length === 0 || selectedQuarterList.includes(row.Quarter.toString()))
+      (this.selectedQuarters.length === 0 || this.selectedQuarters.includes(`Q${row.Quarter}`))
     );
-    this.quarterMone = quarterData
-      .filter(r => r.MeetsTarget === 'Yes')
-      .reduce((sum, r) => sum + (r.Mone || 0), 0);
-    this.quarterMechane = quarterData.reduce((sum, r) => sum + (r.Mechane || 0), 0);
+    this.quarterMone = quarterData.filter(r => r.MeetsTarget === 'Yes').length;
+    this.quarterMechane = quarterData.length;
     this.quarterGaugeValue = this.calculateGauge(this.quarterMone, this.quarterMechane);
     this.quarterGaugeTarget = this.extractTarget(quarterData);
   
@@ -854,17 +850,17 @@ console.log('Sort:', this.measurementSort);
       (this.selectedYears.length === 0 || this.selectedYears.includes(row.MYear)) &&
       (this.selectedMonths.length === 0 || selectedMonthIndexes.includes(row.MMonth))
     );
-    this.monthMone = monthData
-      .filter(r => r.MeetsTarget === 'Yes')
-      .reduce((sum, r) => sum + (r.Mone || 0), 0);
-    this.monthMechane = monthData.reduce((sum, r) => sum + (r.Mechane || 0), 0);
+    this.monthMone = monthData.filter(r => r.MeetsTarget === 'Yes').length;
+    this.monthMechane = monthData.length;
     this.monthGaugeValue = this.calculateGauge(this.monthMone, this.monthMechane);
     this.monthGaugeTarget = this.extractTarget(monthData);
   
+    // Logs
     console.log('📊 Year:', this.yearGaugeValue, 'Target:', this.yearGaugeTarget);
     console.log('📊 Quarter:', this.quarterGaugeValue, 'Target:', this.quarterGaugeTarget);
     console.log('📊 Month:', this.monthGaugeValue, 'Target:', this.monthGaugeTarget);
   }
+  
   
   
   
