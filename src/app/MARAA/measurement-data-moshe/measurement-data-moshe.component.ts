@@ -137,6 +137,12 @@ selectedQuarter: string[] = [];
 selectedMonth: string[] = [];
 selectedPivot: 'yearly' | 'quarterly' | 'monthly' = 'yearly';
 
+showYearDetails = false;
+showQuarterDetails = false;
+showMonthDetails = false;
+
+gaugeColumns: string[] = ['MeasurementCode', 'MeasurementShortDesc', 'Grade', 'MTarget', 'MeetsTarget'];
+
 yearlyData: any[] = [];
 quarterlyData: any[] = [];
 monthlyData: any[] = [];

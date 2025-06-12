@@ -100,76 +100,171 @@
    -->
  
 
-   <div class="gauge-section">
-    <div class="gauge-row">
+   <div class="gauge-section" dir="rtl" style="display: flex; gap: 24px; flex-wrap: wrap;">
   
-      <!-- Month Gauge -->
-      <mat-card class="gauge-card">
-        <div class="gauge-title">חודש</div>
-        <div class="gauge-content">
-          <ngx-gauge
-            [value]="monthGaugeValue ?? 0"
-            [min]="0"
-            [max]="100"
-            [label]="''"
-            [append]="'%'"
-            [type]="'semi'"
-            [thick]="6"
-            [size]="180"
-            [foregroundColor]="getGaugeColor(monthGaugeValue)"
-            [valueText]="monthGaugeValue !== null ? (monthGaugeValue | number : '1.0-0') + '%' : 'אין נתונים'">
-          </ngx-gauge>
-          <div class="gauge-details">
-            מונה / מכנה: {{ monthMone }} / {{ monthMechane }}<br>
-          </div>
-        </div>
-      </mat-card>
+    <!-- Year Gauge -->
+    <mat-card class="gauge-card">
+      <div class="gauge-title">שנה</div>
+      <ngx-gauge
+        [value]="yearGaugeValue ?? 0"
+        [min]="0"
+        [max]="100"
+        [label]="''"
+        [append]="'%'"
+        [type]="'semi'"
+        [thick]="6"
+        [size]="180"
+        [foregroundColor]="getGaugeColor(yearGaugeValue)"
+        [valueText]="yearGaugeValue !== null ? (yearGaugeValue | number : '1.0-0') + '%' : 'אין נתונים'">
+      </ngx-gauge>
+      <div class="gauge-details">
+        מונה / מכנה: {{ yearMone }} / {{ yearMechane }}<br>
+        <button mat-button (click)="showYearDetails = !showYearDetails">
+          {{ showYearDetails ? 'הסתר נתונים' : 'צפה בנתונים' }}
+        </button>
+      </div>
+      <div *ngIf="showYearDetails">
+        <table mat-table [dataSource]="yearlySummaryRaw" class="mat-elevation-z1" style="margin-top: 8px; width: 100%;">
+          <ng-container matColumnDef="MeasurementCode">
+            <th mat-header-cell *matHeaderCellDef> קוד מדד </th>
+            <td mat-cell *matCellDef="let row"> {{ row.MeasurementCode }} </td>
+          </ng-container>
   
-      <!-- Quarter Gauge -->
-      <mat-card class="gauge-card">
-        <div class="gauge-title">רבעון</div>
-        <div class="gauge-content">
-          <ngx-gauge
-            [value]="quarterGaugeValue ?? 0"
-            [min]="0"
-            [max]="100"
-            [label]="''"
-            [append]="'%'"
-            [type]="'semi'"
-            [thick]="6"
-            [size]="180"
-            [foregroundColor]="getGaugeColor(quarterGaugeValue)"
-            [valueText]="quarterGaugeValue !== null ? (quarterGaugeValue | number : '1.0-0') + '%' : 'אין נתונים'">
-          </ngx-gauge>
-          <div class="gauge-details">
-            מונה / מכנה: {{ quarterMone }} / {{ quarterMechane }}<br>
-          </div>
-        </div>
-      </mat-card>
+          <ng-container matColumnDef="MeasurementShortDesc">
+            <th mat-header-cell *matHeaderCellDef> מדד </th>
+            <td mat-cell *matCellDef="let row"> {{ row.MeasurementShortDesc }} </td>
+          </ng-container>
   
-      <!-- Year Gauge -->
-      <mat-card class="gauge-card">
-        <div class="gauge-title">שנה</div>
-        <div class="gauge-content">
-          <ngx-gauge
-            [value]="yearGaugeValue ?? 0"
-            [min]="0"
-            [max]="100"
-            [label]="''"
-            [append]="'%'"
-            [type]="'semi'"
-            [thick]="6"
-            [size]="180"
-            [foregroundColor]="getGaugeColor(yearGaugeValue)"
-            [valueText]="yearGaugeValue !== null ? (yearGaugeValue | number : '1.0-0') + '%' : 'אין נתונים'">
-          </ngx-gauge>
-          <div class="gauge-details">
-            מונה / מכנה: {{ yearMone }} / {{ yearMechane }}<br>
-          </div>
-        </div>
-      </mat-card>
+          <ng-container matColumnDef="Grade">
+            <th mat-header-cell *matHeaderCellDef> ציון </th>
+            <td mat-cell *matCellDef="let row"> {{ row.Grade }}% </td>
+          </ng-container>
   
-    </div>
+          <ng-container matColumnDef="MTarget">
+            <th mat-header-cell *matHeaderCellDef> יעד </th>
+            <td mat-cell *matCellDef="let row"> {{ row.MTarget }}% </td>
+          </ng-container>
+  
+          <ng-container matColumnDef="MeetsTarget">
+            <th mat-header-cell *matHeaderCellDef> עמד ביעד </th>
+            <td mat-cell *matCellDef="let row"> {{ row.MeetsTarget }} </td>
+          </ng-container>
+  
+          <tr mat-header-row *matHeaderRowDef="gaugeColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: gaugeColumns;"></tr>
+        </table>
+      </div>
+    </mat-card>
+  
+    <!-- Quarter Gauge -->
+    <mat-card class="gauge-card">
+      <div class="gauge-title">רבעון</div>
+      <ngx-gauge
+        [value]="quarterGaugeValue ?? 0"
+        [min]="0"
+        [max]="100"
+        [label]="''"
+        [append]="'%'"
+        [type]="'semi'"
+        [thick]="6"
+        [size]="180"
+        [foregroundColor]="getGaugeColor(quarterGaugeValue)"
+        [valueText]="quarterGaugeValue !== null ? (quarterGaugeValue | number : '1.0-0') + '%' : 'אין נתונים'">
+      </ngx-gauge>
+      <div class="gauge-details">
+        מונה / מכנה: {{ quarterMone }} / {{ quarterMechane }}<br>
+        <button mat-button (click)="showQuarterDetails = !showQuarterDetails">
+          {{ showQuarterDetails ? 'הסתר נתונים' : 'צפה בנתונים' }}
+        </button>
+      </div>
+      <div *ngIf="showQuarterDetails">
+        <table mat-table [dataSource]="quarterlySummaryRaw" class="mat-elevation-z1" style="margin-top: 8px; width: 100%;">
+          <ng-container matColumnDef="MeasurementCode">
+            <th mat-header-cell *matHeaderCellDef> קוד מדד </th>
+            <td mat-cell *matCellDef="let row"> {{ row.MeasurementCode }} </td>
+          </ng-container>
+  
+          <ng-container matColumnDef="MeasurementShortDesc">
+            <th mat-header-cell *matHeaderCellDef> מדד </th>
+            <td mat-cell *matCellDef="let row"> {{ row.MeasurementShortDesc }} </td>
+          </ng-container>
+  
+          <ng-container matColumnDef="Grade">
+            <th mat-header-cell *matHeaderCellDef> ציון </th>
+            <td mat-cell *matCellDef="let row"> {{ row.Grade }}% </td>
+          </ng-container>
+  
+          <ng-container matColumnDef="MTarget">
+            <th mat-header-cell *matHeaderCellDef> יעד </th>
+            <td mat-cell *matCellDef="let row"> {{ row.MTarget }}% </td>
+          </ng-container>
+  
+          <ng-container matColumnDef="MeetsTarget">
+            <th mat-header-cell *matHeaderCellDef> עמד ביעד </th>
+            <td mat-cell *matCellDef="let row"> {{ row.MeetsTarget }} </td>
+          </ng-container>
+  
+          <tr mat-header-row *matHeaderRowDef="gaugeColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: gaugeColumns;"></tr>
+        </table>
+      </div>
+    </mat-card>
+
+    <!-- Month Gauge -->
+    <mat-card class="gauge-card">
+      <div class="gauge-title">חודש</div>
+      <ngx-gauge
+        [value]="monthGaugeValue ?? 0"
+        [min]="0"
+        [max]="100"
+        [label]="''"
+        [append]="'%'"
+        [type]="'semi'"
+        [thick]="6"
+        [size]="180"
+        [foregroundColor]="getGaugeColor(monthGaugeValue)"
+        [valueText]="monthGaugeValue !== null ? (monthGaugeValue | number : '1.0-0') + '%' : 'אין נתונים'">
+      </ngx-gauge>
+      <div class="gauge-details">
+        מונה / מכנה: {{ monthMone }} / {{ monthMechane }}<br>
+        <button mat-button (click)="showMonthDetails = !showMonthDetails">
+          {{ showMonthDetails ? 'הסתר נתונים' : 'צפה בנתונים' }}
+        </button>
+      </div>
+      <div *ngIf="showMonthDetails">
+        <table mat-table [dataSource]="monthlySummaryRaw" class="mat-elevation-z1" style="margin-top: 8px; width: 100%;">
+  
+          <ng-container matColumnDef="MeasurementCode">
+            <th mat-header-cell *matHeaderCellDef> קוד מדד </th>
+            <td mat-cell *matCellDef="let row"> {{ row.MeasurementCode }} </td>
+          </ng-container>
+  
+          <ng-container matColumnDef="MeasurementShortDesc">
+            <th mat-header-cell *matHeaderCellDef> מדד </th>
+            <td mat-cell *matCellDef="let row"> {{ row.MeasurementShortDesc }} </td>
+          </ng-container>
+  
+          <ng-container matColumnDef="Grade">
+            <th mat-header-cell *matHeaderCellDef> ציון </th>
+            <td mat-cell *matCellDef="let row"> {{ row.Grade }}% </td>
+          </ng-container>
+  
+          <ng-container matColumnDef="MTarget">
+            <th mat-header-cell *matHeaderCellDef> יעד </th>
+            <td mat-cell *matCellDef="let row"> {{ row.MTarget }}% </td>
+          </ng-container>
+  
+          <ng-container matColumnDef="MeetsTarget">
+            <th mat-header-cell *matHeaderCellDef> עמד ביעד </th>
+            <td mat-cell *matCellDef="let row"> {{ row.MeetsTarget }} </td>
+          </ng-container>
+  
+          <tr mat-header-row *matHeaderRowDef="gaugeColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: gaugeColumns;"></tr>
+        </table>
+      </div>
+    </mat-card>
+  
   </div>
   
   
