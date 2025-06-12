@@ -57,10 +57,23 @@ export interface MeasurementTarget {
   MeasurementCode: string;
   MYear: number;
   MTarget: number | null;
-    // Add these two:
-    MQuarter?: string; // e.g., 'Q1', 'Q2', etc.
-    MMonth?: number;   // e.g., 1-12
+  
+    MQuarter?: string; 
+    MMonth?: number; 
 }
+
+export interface MonthlyMeasurementSummaryModel {
+  MYear: number;
+  MMonth: number;
+  MeasurementCode: string;
+  MeasurementShortDesc: string;
+  Mone: number;
+  Mechane: number;
+  Grade: number | null;
+  MTarget: number;
+  MeetsTarget: string;
+}
+
 @Component({
   selector: 'app-measurement-data-moshe',
   templateUrl: './measurement-data-moshe.component.html',
@@ -82,6 +95,10 @@ quarterlyDisplayedColumns: string[] = ['Measurement']; // will be populated dyna
 gaugeTargetValue: number | null = null;
 quarterGaugeTargetValue: number | null = null;
 monthGaugeTargetValue: number | null = null;
+monthlySummaryRaw: MonthlyMeasurementSummaryModel[] = [];
+gaugeRawData: MonthlyMeasurementSummaryModel[] = [];
+monthlyGaugeData: MonthlyMeasurementSummaryModel[] = [];
+
 // 🔹 Add at top of class (e.g., below your other component-level vars)
 quarterMone: number = 0;
 quarterMechane: number = 0;
@@ -205,7 +222,11 @@ profilePictureUrl: string = 'assets/default-user.png';
 
   const currentYear = new Date().getFullYear();
   this.years = [currentYear - 1, currentYear, currentYear + 1];
- 
+  this.http.get<MonthlyMeasurementSummaryModel[]>(`${environment.apiUrl}/MeasurementDataMoshe/GetMonthlyMeasurementSummary`)
+  .subscribe(data => {
+    this.monthlySummaryRaw = data;
+    this.calculateGaugeValues(); // Initial gauge display
+  });
 
   // 1. Get authenticated user
   this.authenticationService.getAuthentication().subscribe(
@@ -782,7 +803,7 @@ console.log('Sort:', this.measurementSort);
         this.monthlyPivotFlatData = monthData;
         this.targetsMap = this.buildTargetMap(targetData);
   
-        this.fetchGaugeValues(fromDates, toDates);
+        this.calculateGaugeValues();
         this.isLoading = false;
       },
       error => {
@@ -809,6 +830,9 @@ console.log('Sort:', this.measurementSort);
     //     console.error('❌ Error fetching measurement summary count:', err);
     //   }
     // });
+
+    this.calculateGaugeValues();
+
   }
   
   
@@ -819,51 +843,55 @@ console.log('Sort:', this.measurementSort);
     }
     return map;
   }
-  fetchGaugeValues(fromDates: string[], toDates: string[]): void {
-    let params = new HttpParams()
-      .set('fromDates', fromDates.join(','))
-      .set('toDates', toDates.join(','));
+  calculateGaugeValues(): void {
+    console.log('🔍 Calculating Gauge Values...');
+    console.log('🟡 Selected Years:', this.selectedYears);
+    console.log('🟡 Selected Quarters:', this.selectedQuarters);
+    console.log('🟡 Selected Months:', this.selectedMonths);
+    console.log('🟡 Selected Departments:', this.selectedDepartments);
+    console.log('🟡 Selected Measurements:', this.selectedMeasurements);
   
-    // Add year, quarter, and month if available
-    if (this.selectedYears.length === 1) {
-      params = params.set('year', this.selectedYears[0].toString());
-    }
+    const fromDates = this.selectedYears.map(year => `${year}-01-01`).join(',');
+    const toDates = this.selectedYears.map(year => `${year}-12-31`).join(',');
+    const departments = this.selectedDepartments.join(',');
   
-    if (this.selectedQuarters.length === 1) {
-      const qMap: { [key: string]: number } = { Q1: 1, Q2: 2, Q3: 3, Q4: 4 };
-      const quarterKey = this.selectedQuarters[0] as keyof typeof qMap;
-      params = params.set('quarter', qMap[quarterKey].toString());
-    }
+    const params: any = {
+      fromDates,
+      toDates,
+      departments
+    };
   
-    if (this.selectedMonths.length === 1) {
-      const monthIndex = this.months.indexOf(this.selectedMonths[0]) + 1;
-      if (monthIndex > 0) {
-        params = params.set('month', monthIndex.toString());
+    console.log('📤 Sending API request with params:', params);
+  
+    this.http.get<MonthlyMeasurementSummaryModel[]>(`${environment.apiUrl}/MeasurementDataMoshe/GetMonthlyMeasurementSummary`, {
+      params
+    }).subscribe(data => {
+      console.log('✅ Received Monthly Summary:', data);
+  
+      const selectedYear = this.selectedYears.length === 1 ? this.selectedYears[0] : null;
+      const filtered = selectedYear
+        ? data.filter(item => item.MYear === selectedYear)
+        : data;
+  
+      // ✅ Create a map of unique MeasurementCode to last row
+      const groupedMap: { [code: string]: MonthlyMeasurementSummaryModel } = {};
+      for (const item of filtered) {
+        groupedMap[item.MeasurementCode] = item; // last row for each code
       }
-    }
   
-    console.log('🚀 fetchGaugeValues() triggered with:', fromDates, toDates, params.toString());
+      const rows = Object.values(groupedMap);
   
-    this.http.get<MeasurementSummaryCountModel>(
-      `${environment.apiUrl}/MeasurementDataMoshe/GetMeasurementSummaryCount`,
-      { params }
-    ).subscribe(data => {
-      console.log('📥 Raw response from GetMeasurementSummaryCount:', data);
+      this.yearMechane = rows.length;
+      this.yearMone = rows.filter(row => row.MeetsTarget === 'Yes').length;
   
-      this.yearMone = data.YearMone;
-      this.yearMechane = data.YearMechane;
-      this.yearGaugeValue = this.calculateGauge(this.yearMone, this.yearMechane);
-      console.log(`📊 Year: Mone = ${this.yearMone}, Mechane = ${this.yearMechane}, Gauge = ${this.yearGaugeValue}`);
+      this.yearGaugeValue = this.yearMechane > 0
+        ? Math.round((this.yearMone / this.yearMechane) * 100)
+        : null;
   
-      this.quarterMone = data.YearQuarterMone;
-      this.quarterMechane = data.YearQuarterMechane;
-      this.quarterGaugeValue = this.calculateGauge(this.quarterMone, this.quarterMechane);
-      console.log(`📊 Quarter: Mone = ${this.quarterMone}, Mechane = ${this.quarterMechane}, Gauge = ${this.quarterGaugeValue}`);
+      this.yearGaugeTarget = this.extractTarget(rows);
   
-      this.monthMone = data.YearMonthMone;
-      this.monthMechane = data.YearMonthMechane;
-      this.monthGaugeValue = this.calculateGauge(this.monthMone, this.monthMechane);
-      console.log(`📊 Month: Mone = ${this.monthMone}, Mechane = ${this.monthMechane}, Gauge = ${this.monthGaugeValue}`);
+      console.log('📊 Setting gauge values from monthlyData:', rows);
+      console.log(`📈 Calculated gauge value: ${this.yearGaugeValue}`);
     });
   }
   
@@ -871,12 +899,43 @@ console.log('Sort:', this.measurementSort);
   
   
   
+  sumMone(rows: MonthlyMeasurementSummaryModel[]): number {
+    return rows.reduce((sum, r) => sum + r.Mone, 0);
+  }
   
+  sumMechane(rows: MonthlyMeasurementSummaryModel[]): number {
+    return rows.reduce((sum, r) => sum + r.Mechane, 0);
+  }
   
   calculateGauge(mone: number, mechane: number): number | null {
-    if (!mechane || mechane === 0) return null;
-    return Math.round((mone / mechane) * 100);
+    return mechane === 0 ? null : Math.round((mone / mechane) * 100);
   }
+  
+  extractTarget(rows: MonthlyMeasurementSummaryModel[]): number | null {
+    const valid = rows.filter(r => r.MTarget != null && !isNaN(r.MTarget));
+    return valid.length ? Math.round(valid.reduce((sum, r) => sum + r.MTarget, 0) / valid.length) : null;
+  }
+  
+
+  
+  
+  
+  getSelectedQuarterMonths(): number[] {
+    const qMap: { [key: string]: number[] } = {
+      Q1: [1, 2, 3],
+      Q2: [4, 5, 6],
+      Q3: [7, 8, 9],
+      Q4: [10, 11, 12]
+    };
+    return this.selectedQuarters.reduce((acc, q) => {
+      return acc.concat(qMap[q] || []);
+    }, [] as number[]);  }
+  
+  
+  
+  
+  
+
   
   getCellClass(value: any, measurementCode: string): string {
     if (value === null || value === undefined || isNaN(value)) return '';
@@ -1136,5 +1195,50 @@ console.log('Sort:', this.measurementSort);
         break;
     }
   }
+  setGaugeFromData(): void {
+    console.log('📊 Setting gauge values from monthlyData:', this.monthlyData);
   
+    // Year
+    const totalMone = this.monthlyData.reduce((sum, row) => sum + row.Mone, 0);
+    const totalMechane = this.monthlyData.reduce((sum, row) => sum + row.Mechane, 0);
+    this.yearMone = totalMone;
+    this.yearMechane = totalMechane;
+  
+    if (totalMechane === 0) {
+      this.yearGaugeValue = null;
+      this.yearGaugeTarget = null;
+    } else {
+      this.yearGaugeValue = Math.round((totalMone / totalMechane) * 100);
+      this.yearGaugeTarget = this.getAverageTarget(this.monthlyData);
+    }
+  
+    // Placeholder logic for quarter and month (add your real filtering here)
+    const currentQuarter = this.monthlyData.filter(row => row.Month.includes('-03') || row.Month.includes('-04') || row.Month.includes('-05'));
+    const currentMonth = this.monthlyData.filter(row => row.Month.endsWith('-05'));
+  
+    const qMone = currentQuarter.reduce((sum, row) => sum + row.Mone, 0);
+    const qMechane = currentQuarter.reduce((sum, row) => sum + row.Mechane, 0);
+    this.quarterMone = qMone;
+    this.quarterMechane = qMechane;
+    this.quarterGaugeValue = qMechane === 0 ? null : Math.round((qMone / qMechane) * 100);
+    this.quarterGaugeTarget = this.getAverageTarget(currentQuarter);
+  
+    const mMone = currentMonth.reduce((sum, row) => sum + row.Mone, 0);
+    const mMechane = currentMonth.reduce((sum, row) => sum + row.Mechane, 0);
+    this.monthMone = mMone;
+    this.monthMechane = mMechane;
+    this.monthGaugeValue = mMechane === 0 ? null : Math.round((mMone / mMechane) * 100);
+    this.monthGaugeTarget = this.getAverageTarget(currentMonth);
+  
+    console.log('📈 Year Gauge:', this.yearGaugeValue);
+    console.log('📈 Quarter Gauge:', this.quarterGaugeValue);
+    console.log('📈 Month Gauge:', this.monthGaugeValue);
+  }
+  getAverageTarget(data: MonthlyMeasurementSummaryModel[]): number | null {
+    const validTargets = data.map(row => row.MTarget).filter(t => t !== null && t !== undefined);
+    if (validTargets.length === 0) return null;
+    const avg = validTargets.reduce((sum, t) => sum + t, 0) / validTargets.length;
+    return Math.round(avg);
+  }
+   
 }
