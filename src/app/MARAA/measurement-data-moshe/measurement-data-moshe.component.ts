@@ -180,20 +180,119 @@ monthlyPivotFlatData: any[] = [];
  
 summaryTableDataSource: MatTableDataSource<any> = new MatTableDataSource();
   
-  @ViewChild('measurementPaginator') measurementPaginator!: MatPaginator;
-  @ViewChild('departmentPaginator') departmentPaginator!: MatPaginator;
+// 🔹 Measurement Table
+private _measurementPaginator!: MatPaginator;
+@ViewChild('measurementPaginator') set measurementPaginatorSetter(p: MatPaginator) {
+  this._measurementPaginator = p;
+  if (this.measurementDataSource) this.measurementDataSource.paginator = p;
+}
+get measurementPaginator(): MatPaginator {
+  return this._measurementPaginator;
+}
 
-  @ViewChild('measurementSort') measurementSort!: MatSort;
-  @ViewChild('departmentSort') departmentSort!: MatSort;
+private _measurementSort!: MatSort;
+@ViewChild('measurementSort') set measurementSortSetter(s: MatSort) {
+  this._measurementSort = s;
+  if (this.measurementDataSource) this.measurementDataSource.sort = s;
+}
+get measurementSort(): MatSort {
+  return this._measurementSort;
+}
 
+// 🔹 Department Table
+private _departmentPaginator!: MatPaginator;
+@ViewChild('departmentPaginator') set departmentPaginatorSetter(p: MatPaginator) {
+  this._departmentPaginator = p;
+  if (this.departmentDataSource) this.departmentDataSource.paginator = p;
+}
+get departmentPaginator(): MatPaginator {
+  return this._departmentPaginator;
+}
 
-  @ViewChild('yearlyPaginator') yearlyPaginator!: MatPaginator;
-  @ViewChild('quarterlyPaginator') quarterlyPaginator!: MatPaginator;
-  @ViewChild('monthlyPaginator') monthlyPaginator!: MatPaginator;
-  
-  @ViewChild('yearlySort') yearlySort!: MatSort;
-  @ViewChild('quarterlySort') quarterlySort!: MatSort;
-  @ViewChild('monthlySort') monthlySort!: MatSort;
+private _departmentSort!: MatSort;
+@ViewChild('departmentSort') set departmentSortSetter(s: MatSort) {
+  this._departmentSort = s;
+  if (this.departmentDataSource) this.departmentDataSource.sort = s;
+}
+get departmentSort(): MatSort {
+  return this._departmentSort;
+}
+
+// 🔹 Yearly Table
+private _yearlyPaginator!: MatPaginator;
+@ViewChild('yearlyPaginator') set yearlyPaginatorSetter(p: MatPaginator) {
+  this._yearlyPaginator = p;
+  if (this.yearlyDataSource) this.yearlyDataSource.paginator = p;
+}
+get yearlyPaginator(): MatPaginator {
+  return this._yearlyPaginator;
+}
+
+private _yearlySort!: MatSort;
+@ViewChild('yearlySort') set yearlySortSetter(s: MatSort) {
+  this._yearlySort = s;
+  if (this.yearlyDataSource) this.yearlyDataSource.sort = s;
+}
+get yearlySort(): MatSort {
+  return this._yearlySort;
+}
+
+// 🔹 Quarterly Table
+private _quarterlyPaginator!: MatPaginator;
+@ViewChild('quarterlyPaginator') set quarterlyPaginatorSetter(p: MatPaginator) {
+  this._quarterlyPaginator = p;
+  if (this.quarterlyDataSource) this.quarterlyDataSource.paginator = p;
+}
+get quarterlyPaginator(): MatPaginator {
+  return this._quarterlyPaginator;
+}
+
+private _quarterlySort!: MatSort;
+@ViewChild('quarterlySort') set quarterlySortSetter(s: MatSort) {
+  this._quarterlySort = s;
+  if (this.quarterlyDataSource) this.quarterlyDataSource.sort = s;
+}
+get quarterlySort(): MatSort {
+  return this._quarterlySort;
+}
+
+// 🔹 Monthly Table
+private _monthlyPaginator!: MatPaginator;
+@ViewChild('monthlyPaginator') set monthlyPaginatorSetter(p: MatPaginator) {
+  this._monthlyPaginator = p;
+  if (this.monthlyDataSource) this.monthlyDataSource.paginator = p;
+}
+get monthlyPaginator(): MatPaginator {
+  return this._monthlyPaginator;
+}
+
+private _monthlySort!: MatSort;
+@ViewChild('monthlySort') set monthlySortSetter(s: MatSort) {
+  this._monthlySort = s;
+  if (this.monthlyDataSource) this.monthlyDataSource.sort = s;
+}
+get monthlySort(): MatSort {
+  return this._monthlySort;
+}
+// 🔹 Failed Table
+private _failedPaginator!: MatPaginator;
+@ViewChild('failedPaginator') set failedPaginatorSetter(p: MatPaginator) {
+  this._failedPaginator = p;
+  if (this.failedCasesDataSource) this.failedCasesDataSource.paginator = p;
+}
+get failedPaginator(): MatPaginator {
+  return this._failedPaginator;
+}
+
+private _failedSort!: MatSort;
+@ViewChild('failedSort') set failedSortSetter(s: MatSort) {
+  this._failedSort = s;
+  if (this.failedCasesDataSource) this.failedCasesDataSource.sort = s;
+}
+get failedSort(): MatSort {
+  return this._failedSort;
+}
+
 yearlyDataSource = new MatTableDataSource<any>();
 yearlyDisplayedColumns: string[] = [];
 
@@ -214,8 +313,7 @@ failedCasesDisplayedColumns: string[] = [
   'Subtract',
   'AprovedMabar',
 ];
-@ViewChild('failedPaginator') failedPaginator!: MatPaginator;
-@ViewChild('failedSort') failedSort!: MatSort;
+
 
 loginUserName: string = '';
 
@@ -772,7 +870,7 @@ console.log('Sort:', this.measurementSort);
       }
     }
   
-    if (fromDates.length > 0 && toDates.length > 0) {
+    if (fromDates.length && toDates.length) {
       params['fromDates'] = fromDates.join(',');
       params['toDates'] = toDates.join(',');
     }
@@ -786,7 +884,7 @@ console.log('Sort:', this.measurementSort);
       params['measurement'] = measurementCodes.join(',');
     }
   
-    // ✅ Use frontend-only filter for gauges
+    // ✅ Update gauges
     const selectedMonthIndexes = this.selectedMonths.map(m => this.months.indexOf(m) + 1);
     const selectedQuarterList = this.selectedQuarters.map(q => q.replace('Q', ''));
   
@@ -797,11 +895,11 @@ console.log('Sort:', this.measurementSort);
       return yearMatch && quarterMatch && monthMatch;
     });
   
-    this.calculateGaugeValues(); // ✅ Update gauges and card
+    this.calculateGaugeValues();
   
     const httpParams = new HttpParams({ fromObject: params });
   
-    // ✅ Load table data (pivot + summaries) with filters
+    // ✅ Load pivot tables and targets
     forkJoin([
       this.http.get<any[]>(`${environment.apiUrl}/MeasurementDataMoshe/GetYearlyPivot`, { params: httpParams }),
       this.http.get<any[]>(`${environment.apiUrl}/MeasurementDataMoshe/GetQuarterlyPivot`, { params: httpParams }),
@@ -814,9 +912,20 @@ console.log('Sort:', this.measurementSort);
         this.monthlyPivotFlatData = monthData;
         this.targetsMap = this.buildTargetMap(targetData);
   
-        this.yearlyDataSource.data = yearData;
-        this.quarterlyDataSource.data = quarterData;
-        this.monthlyDataSource.data = monthData;
+        this.yearlyDataSource = new MatTableDataSource(yearData);
+        this.quarterlyDataSource = new MatTableDataSource(quarterData);
+        this.monthlyDataSource = new MatTableDataSource(monthData);
+  
+        setTimeout(() => {
+          this.yearlyDataSource.paginator = this.yearlyPaginator;
+          this.yearlyDataSource.sort = this.yearlySort;
+  
+          this.quarterlyDataSource.paginator = this.quarterlyPaginator;
+          this.quarterlyDataSource.sort = this.quarterlySort;
+  
+          this.monthlyDataSource.paginator = this.monthlyPaginator;
+          this.monthlyDataSource.sort = this.monthlySort;
+        });
   
         this.isLoading = false;
       },
@@ -826,17 +935,34 @@ console.log('Sort:', this.measurementSort);
       }
     );
   
-    // ✅ Load summary + failed cases
+    // ✅ Load summary tables
     this.http.get<MeasurementSummaryModel[]>(`${environment.apiUrl}/MeasurementDataMoshe/GetSummaryByMeasurement`, { params })
-      .subscribe(data => this.measurementDataSource.data = data);
+      .subscribe(data => {
+        this.measurementDataSource = new MatTableDataSource(data);
+        setTimeout(() => {
+          this.measurementDataSource.paginator = this.measurementPaginator;
+          this.measurementDataSource.sort = this.measurementSort;
+        });
+      });
   
     this.http.get<MeasurementSummaryModel[]>(`${environment.apiUrl}/MeasurementDataMoshe/GetSummaryByDepartment`, { params })
-      .subscribe(data => this.departmentDataSource.data = data);
+      .subscribe(data => {
+        this.departmentDataSource = new MatTableDataSource(data);
+        setTimeout(() => {
+          this.departmentDataSource.paginator = this.departmentPaginator;
+          this.departmentDataSource.sort = this.departmentSort;
+        });
+      });
   
     this.http.get<FailedMeasurementCaseModel[]>(`${environment.apiUrl}/MeasurementDataMoshe/GetFailedCases`, { params })
-      .subscribe(data => this.failedCasesDataSource.data = data);
+      .subscribe(data => {
+        this.failedCasesDataSource = new MatTableDataSource(data);
+        setTimeout(() => {
+          this.failedCasesDataSource.paginator = this.failedPaginator;
+          this.failedCasesDataSource.sort = this.failedSort;
+        });
+      });
   
-    // ✅ Recalculate all-units color map
     this.fetchAllUnitsGrades();
   }
   
