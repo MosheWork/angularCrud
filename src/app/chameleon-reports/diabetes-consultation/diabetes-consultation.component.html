@@ -319,6 +319,509 @@ class="custom-toggle-group"
     style="overflow-x: hidden; overflow-y: hidden; display: inline-grid"
   >
     <mat-tab-group >
+   
+      <mat-tab label="">
+        <ng-template mat-tab-label>
+          <span matTooltip=" מטופלים עם אבחנה ICD9  " matTooltipPosition="above">
+            מטופלים עם אבחנה ICD9
+          </span>
+        </ng-template>
+        <table mat-table [dataSource]="DiagnosisICD9dataSource" class="mat-elevation-z8" matSort #sort4="matSort" style="table-layout: fixed; width: 100%">
+
+        
+          <ng-container matColumnDef="Admission_No">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>
+              Admission No
+            </th>
+            <td mat-cell *matCellDef="let element">
+              {{ element.Admission_No }}
+            </td>
+          </ng-container>
+          <ng-container matColumnDef="Admission_Date">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>
+              Admission Date
+            </th>
+            <td mat-cell *matCellDef="let element">
+              {{ element.Admission_Date | date }}
+            </td>
+          </ng-container>
+          <ng-container matColumnDef="Id_Num">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>ID Number</th>
+            <td mat-cell *matCellDef="let element">{{ element.Id_Num }}</td>
+          </ng-container>
+          <ng-container matColumnDef="First_Name">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>
+              First Name
+            </th>
+            <td mat-cell *matCellDef="let element">{{ element.First_Name }}</td>
+          </ng-container>
+          <ng-container matColumnDef="Last_Name">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Last Name</th>
+            <td mat-cell *matCellDef="let element">{{ element.Last_Name }}</td>
+          </ng-container>
+          <ng-container matColumnDef="ICD9">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>ICD9</th>
+            <td mat-cell *matCellDef="let element">{{ element.ICD9 }}</td>
+          </ng-container>
+          <ng-container matColumnDef="Name">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Name</th>
+            <td mat-cell *matCellDef="let element">{{ element.Name }}</td>
+          </ng-container>
+          <!-- <ng-container matColumnDef="Entry_Date">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>
+              Entry Date
+            </th>
+            <td mat-cell *matCellDef="let element">
+              {{ element.Entry_Date | date }}
+            </td>
+          </ng-container> -->
+          <ng-container matColumnDef="Release_Date">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Release Date</th>
+            <td mat-cell *matCellDef="let element">{{ element.Release_Date | date }}</td>
+          </ng-container>
+          <ng-container matColumnDef="UnitName">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>מחלקה </th>
+            <td mat-cell *matCellDef="let element">{{ element.UnitName }}</td>
+          </ng-container>
+          <tr mat-header-row *matHeaderRowDef="DiagnosisICD9"></tr>
+          <tr mat-row *matRowDef="let row; columns: DiagnosisICD9"></tr>
+        </table>
+        <mat-paginator
+          #paginator4
+          [pageSizeOptions]="[5, 10, 20]"
+          showFirstLastButtons
+        ></mat-paginator>
+      </mat-tab>
+
+    
+   
+      
+      <mat-tab class="tabtitle" label=" סוכר מעל 180" >
+        <ng-template mat-tab-label>
+          <span matTooltip="2 בדיקות סוכר מעל 180 תוך 48 שעות" matTooltipPosition="above">
+            סוכר מעל 180
+          </span>
+        </ng-template>
+        <table mat-table [dataSource]="sugerAbove180" class="mat-elevation-z8" matSort #sort1="matSort" style="table-layout: fixed; width: 100%">
+
+          <ng-container matColumnDef="Admission_No">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>
+              Admission No
+            </th>
+            <td mat-cell *matCellDef="let element">
+              {{ element.Admission_No }}
+            </td>
+          </ng-container>
+          <ng-container matColumnDef="Admission_Date">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>
+              Admission Date
+            </th>
+            <td mat-cell *matCellDef="let element">
+              {{ element.Admission_Date | date }}
+            </td>
+          </ng-container>
+        
+          <ng-container matColumnDef="First_Name">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>
+              First Name
+            </th>
+            <td mat-cell *matCellDef="let element">{{ element.First_Name }}</td>
+          </ng-container>
+          <ng-container matColumnDef="Last_Name">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Last Name</th>
+            <td mat-cell *matCellDef="let element">{{ element.Last_Name }}</td>
+          </ng-container>
+          <ng-container matColumnDef="Age_Years">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>גיל</th>
+            <td mat-cell *matCellDef="let element">{{ element.Age_Years }}</td>
+          </ng-container>
+          <ng-container matColumnDef="Count_Above_180_Less_48h">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>
+              Count > 180
+            </th>
+            <td mat-cell *matCellDef="let element">
+              {{ element.Count_Above_180_Less_48h }}
+            </td>
+          </ng-container>
+          <ng-container matColumnDef="Release_Date">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Release Date</th>
+            <td mat-cell *matCellDef="let element">{{ element.Release_Date | date }}</td>
+          </ng-container>
+          <ng-container matColumnDef="UnitName">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header> מחלקה</th>
+            <td mat-cell *matCellDef="let element">{{ element.UnitName }}</td>
+          </ng-container>
+          <ng-container matColumnDef="LastTestResult">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header> בדיקה אחרונה</th>
+            <td mat-cell *matCellDef="let element">{{ element.LastTestResult }}</td>
+          </ng-container>
+          <tr mat-header-row *matHeaderRowDef="sugerAbove180Columns"></tr>
+
+          <tr 
+          mat-row 
+          *matRowDef="let row; columns: sugerAbove180Columns" 
+          (click)="openDialog(row)"
+          style="cursor: pointer;">
+        </tr>
+                 
+        </table>
+        <mat-paginator
+          #paginator1
+          [pageSizeOptions]="[5, 10, 20]"
+          showFirstLastButtons
+        ></mat-paginator>
+      </mat-tab>
+
+      
+      
+ 
+
+   
+   
+      <mat-tab label="מעל 180 ללא אינסולין">
+        <table mat-table [dataSource]="LabResultsWithoutInsulinDataSource" class="mat-elevation-z8" matSort #sortWithoutInsulin="matSort" style="table-layout: fixed; width: 100%">
+
+          <ng-container matColumnDef="Admission_No">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>מספר אשפוז</th>
+            <td mat-cell *matCellDef="let element">{{ element.Admission_No }}</td>
+          </ng-container>
+          <ng-container matColumnDef="Admission_Date">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>תאריך קבלה</th>
+            <td mat-cell *matCellDef="let element">{{ element.Admission_Date | date }}</td>
+          </ng-container>
+          <ng-container matColumnDef="First_Name">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>שם פרטי</th>
+            <td mat-cell *matCellDef="let element">{{ element.First_Name }}</td>
+          </ng-container>
+          <ng-container matColumnDef="Last_Name">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>שם משפחה</th>
+            <td mat-cell *matCellDef="let element">{{ element.Last_Name }}</td>
+          </ng-container>
+          <ng-container matColumnDef="Count_Above_180_Less_48h">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>מדידות מעל 180 ב-48 שעות</th>
+            <td mat-cell *matCellDef="let element">{{ element.Count_Above_180_Less_48h }}</td>
+          </ng-container>
+          <ng-container matColumnDef="Release_Date">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>תאריך שחרור</th>
+            <td mat-cell *matCellDef="let element">{{ element.Release_Date | date }}</td>
+          </ng-container>
+          <ng-container matColumnDef="UnitName">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>מחלקה </th>
+            <td mat-cell *matCellDef="let element">{{ element.UnitName }}</td>
+          </ng-container>
+          <tr mat-header-row *matHeaderRowDef="displayedColumnsLabResultsWithoutInsulin"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumnsLabResultsWithoutInsulin;"></tr>
+        </table>
+      
+        <mat-paginator
+          #paginatorWithoutInsulin
+          [pageSizeOptions]="[5, 10, 20]"
+          showFirstLastButtons>
+        </mat-paginator>
+      </mat-tab>
+      <mat-tab label="מקבל אינסולין">
+        <ng-template mat-tab-label>
+          <span matTooltip="   לעדכן הסבר" matTooltipPosition="above">
+           אינסולין
+          </span>
+        </ng-template>
+        <table mat-table [dataSource]="InsulinDataSource" class="mat-elevation-z8" matSort #sort3="matSort" style="table-layout: fixed; width: 100%">
+
+          <ng-container matColumnDef="Hospitalization_Patient">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Patient</th>
+            <td mat-cell *matCellDef="let element">
+              {{ element.Hospitalization_Patient }}
+            </td>
+          </ng-container>
+          <ng-container matColumnDef="Admission_No">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>
+              Admission No
+            </th>
+            <td mat-cell *matCellDef="let element">
+              {{ element.Admission_No }}
+            </td>
+          </ng-container>
+          <ng-container matColumnDef="Admission_Date">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>
+              Admission Date
+            </th>
+            <td mat-cell *matCellDef="let element">
+              {{ element.Admission_Date | date }}
+            </td>
+          </ng-container>
+          <ng-container matColumnDef="Id_Num">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>ID Number</th>
+            <td mat-cell *matCellDef="let element">{{ element.Id_Num }}</td>
+          </ng-container>
+          <ng-container matColumnDef="First_Name">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>
+              First Name
+            </th>
+            <td mat-cell *matCellDef="let element">{{ element.First_Name }}</td>
+          </ng-container>
+          <ng-container matColumnDef="Last_Name">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Last Name</th>
+            <td mat-cell *matCellDef="let element">{{ element.Last_Name }}</td>
+          </ng-container>
+          <ng-container matColumnDef="Main_Drug">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Main Drug</th>
+            <td mat-cell *matCellDef="let element">{{ element.Main_Drug }}</td>
+          </ng-container>
+          <ng-container matColumnDef="Name">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Drug Name</th>
+            <td mat-cell *matCellDef="let element">{{ element.Name }}</td>
+          </ng-container>
+          <ng-container matColumnDef="Entry_Date">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>
+              Entry Date
+            </th>
+            <td mat-cell *matCellDef="let element">
+              {{ element.Entry_Date | date }}
+            </td>
+          </ng-container>
+          <ng-container matColumnDef="Release_Date">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>
+              Release_Date
+            </th>
+            <td mat-cell *matCellDef="let element">
+              {{ element.Release_Date | date }}
+            </td>
+          </ng-container>
+          <ng-container matColumnDef="UnitName">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>מחלקה </th>
+            <td mat-cell *matCellDef="let element">{{ element.UnitName }}</td>
+          </ng-container>
+          <tr mat-header-row *matHeaderRowDef="insulinColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: insulinColumns"></tr>
+        </table>
+        <mat-paginator
+          #Ensoleen
+          [length]="EnsoleenresultsLength"
+          [pageSizeOptions]="[5, 10, 20]"
+          showFirstLastButtons
+        ></mat-paginator>
+      </mat-tab>
+      <mat-tab label="">
+        <ng-template mat-tab-label>
+          <span matTooltip="" matTooltipPosition="above">
+            המוגלובין מסוכרר  
+          </span>
+        </ng-template>
+        <table mat-table [dataSource]="dataSourceHemoglobin" class="mat-elevation-z8" matSort #sortHemoglobin="matSort" style="table-layout: fixed; width: 100%">
+
+          <ng-container matColumnDef="Admission_Date">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>
+              Admission Date
+            </th>
+            <td mat-cell *matCellDef="let element">
+              {{ element.Admission_Date | date }}
+            </td>
+          </ng-container>
+          <ng-container matColumnDef="TestCode">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Test Code</th>
+            <td mat-cell *matCellDef="let element">{{ element.TestCode }}</td>
+          </ng-container>
+          <ng-container matColumnDef="TestName">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Test Name</th>
+            <td mat-cell *matCellDef="let element">{{ element.TestName }}</td>
+          </ng-container>
+          <ng-container matColumnDef="Result">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Result</th>
+            <td mat-cell *matCellDef="let element">{{ element.Result }}</td>
+          </ng-container>
+          <ng-container matColumnDef="TestDate">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Test Date</th>
+            <td mat-cell *matCellDef="let element">
+              {{ element.TestDate | date }}
+            </td>
+          </ng-container>
+          <ng-container matColumnDef="Id_Num">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>ID Number</th>
+            <td mat-cell *matCellDef="let element">{{ element.Id_Num }}</td>
+          </ng-container>
+          <ng-container matColumnDef="First_Name">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>
+              First Name
+            </th>
+            <td mat-cell *matCellDef="let element">{{ element.First_Name }}</td>
+          </ng-container>
+          <ng-container matColumnDef="Last_Name">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Last Name</th>
+            <td mat-cell *matCellDef="let element">{{ element.Last_Name }}</td>
+          </ng-container>
+          <tr mat-header-row *matHeaderRowDef="displayedColumnsHemoglobin"></tr>
+          <tr 
+          mat-row 
+          *matRowDef="let row; columns: displayedColumnsHemoglobin" 
+          (click)="openDialog(row)"
+          style="cursor: pointer;">
+        </tr>
+
+        </table> 
+        <mat-paginator
+          #paginatorHemoglobin
+          [pageSizeOptions]="[5, 10, 20]"
+          showFirstLastButtons
+        ></mat-paginator>
+      </mat-tab>
+    
+      <mat-tab class="tabtitle" label="סוכר מתחת ל-70">
+        <ng-template mat-tab-label>
+          <span matTooltip="2 בדיקות סוכר מתחת 70 תוך 48 שעות" matTooltipPosition="above">
+            סוכר מתחת ל 70
+          </span>
+        </ng-template>
+        <table mat-table [dataSource]="dataSourceBelow70" class="mat-elevation-z8" matSort #sortBelow70="matSort" style="table-layout: fixed; width: 100%">
+
+          <ng-container matColumnDef="Admission_No">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>
+              Admission No
+            </th>
+            <td mat-cell *matCellDef="let element">{{ element.Admission_No }}</td>
+          </ng-container>
+          <ng-container matColumnDef="Admission_Date">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>
+              Admission Date
+            </th>
+            <td mat-cell *matCellDef="let element">
+              {{ element.Admission_Date | date }}
+            </td>
+          </ng-container>
+          <ng-container matColumnDef="First_Name">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>
+              First Name
+            </th>
+            <td mat-cell *matCellDef="let element">{{ element.First_Name }}</td>
+          </ng-container>
+          <ng-container matColumnDef="Age_Years">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>גיל</th>
+            <td mat-cell *matCellDef="let element">{{ element.Age_Years }}</td>
+          </ng-container>
+          <ng-container matColumnDef="Last_Name">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>
+              Last Name
+            </th>
+            <td mat-cell *matCellDef="let element">{{ element.Last_Name }}</td>
+          </ng-container>
+          <ng-container matColumnDef="Count_Less_70_Less_48h">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>
+              Count < 70 (48h)
+            </th>
+            <td mat-cell *matCellDef="let element">
+              {{ element.Count_Less_70_Less_48h }}
+            </td>
+          </ng-container>
+          <ng-container matColumnDef="Release_Date">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Release Date</th>
+            <td mat-cell *matCellDef="let element">{{ element.Release_Date | date }}</td>
+          </ng-container>
+          <ng-container matColumnDef="UnitName">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>מחלקה </th>
+            <td mat-cell *matCellDef="let element">{{ element.UnitName }}</td>
+          </ng-container>
+          <tr mat-header-row *matHeaderRowDef="displayedColumnsBelow70"></tr>
+
+          <tr 
+          mat-row 
+          *matRowDef="let row; columns: displayedColumnsBelow70" 
+          (click)="openDialog(row)"
+          style="cursor: pointer;">
+        </tr>
+        </table>
+        <mat-paginator
+          #paginatorBelow70
+          [pageSizeOptions]="[5, 10, 20]"
+          showFirstLastButtons
+        ></mat-paginator>
+      </mat-tab>
+  
+      <mat-tab label="ייעוצים">
+        <table mat-table [dataSource]="dataSourceAllConsiliums" class="mat-elevation-z8" matSort #sortAllConsiliums="matSort" style="table-layout: fixed; width: 100%">
+          <ng-container matColumnDef="Id_Num">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>ID</th>
+            <td mat-cell *matCellDef="let element">{{ element.Id_Num }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="First_Name">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>
+              First Name
+            </th>
+            <td mat-cell *matCellDef="let element">{{ element.First_Name }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="Last_Name">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Last Name</th>
+            <td mat-cell *matCellDef="let element">{{ element.Last_Name }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="UnitName">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Unit</th>
+            <td mat-cell *matCellDef="let element">{{ element.UnitName }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="Entry_Date">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>
+              Entry Date
+            </th>
+            <td mat-cell *matCellDef="let element">
+              {{ element.Entry_Date | date }}
+            </td>
+          </ng-container>
+          <ng-container matColumnDef="Question">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Question</th>
+            <td mat-cell *matCellDef="let element">{{ element.Question }}</td>
+          </ng-container>
+          <ng-container matColumnDef="Diagnosis_Text">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>
+              Diagnosis_Text
+            </th>
+            <td mat-cell *matCellDef="let element">
+              {{ element.Diagnosis_Text }}
+            </td>
+          </ng-container>
+          <ng-container matColumnDef="Consulted_Unit">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>
+              Consulted_Unit
+            </th>
+            <td mat-cell *matCellDef="let element">
+              {{ element.Consulted_Unit }}
+            </td>
+          </ng-container>
+          <ng-container matColumnDef="Answer_Text">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>
+              Answer_Text
+            </th>
+            <td mat-cell *matCellDef="let element">
+              {{ element.Answer_Text }}
+            </td>
+          </ng-container>
+          <ng-container matColumnDef="Answer_Date">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>
+              Answer_Date
+            </th>
+            <td mat-cell *matCellDef="let element">
+              {{ element.Answer_Date | date }}
+            </td>
+          </ng-container>
+          
+          <!-- Add other columns similarly -->
+
+          <tr
+            mat-header-row
+            *matHeaderRowDef="displayedColumnsAllConsiliums"
+          ></tr>
+          <tr
+            mat-row
+            *matRowDef="let row; columns: displayedColumnsAllConsiliums"
+          ></tr>
+        </table>
+
+        <mat-paginator
+          #paginatorAllConsiliums
+          [pageSizeOptions]="[5, 10, 20]"
+          showFirstLastButtons
+        ></mat-paginator>
+      </mat-tab>
       <mat-tab label="ICD9 עם אומדן סוכרת">
         <table mat-table [dataSource]="PatientWithICD9AndHaveDiabetesEstimationDataSource" class="mat-elevation-z8"  matSort
         #sortICD9HaveEstimation="matSort" style="table-layout: fixed; width: 100%">
@@ -409,7 +912,6 @@ class="custom-toggle-group"
         </mat-paginator>
       </mat-tab>
       
-      
       <mat-tab class="tabtitle" label="הערכת כף רגל סוכרתית">
         <ng-template mat-tab-label>
           <span matTooltip="נתוני הערכה לכף רגל סוכרתית" matTooltipPosition="above">
@@ -487,502 +989,6 @@ class="custom-toggle-group"
           showFirstLastButtons
         ></mat-paginator>
       </mat-tab>
-      
-      <mat-tab class="tabtitle" label=" סוכר מעל 180" >
-        <ng-template mat-tab-label>
-          <span matTooltip="2 בדיקות סוכר מעל 180 תוך 48 שעות" matTooltipPosition="above">
-            סוכר מעל 180
-          </span>
-        </ng-template>
-        <table mat-table [dataSource]="sugerAbove180" class="mat-elevation-z8" matSort #sort1="matSort" style="table-layout: fixed; width: 100%">
-
-          <ng-container matColumnDef="Admission_No">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>
-              Admission No
-            </th>
-            <td mat-cell *matCellDef="let element">
-              {{ element.Admission_No }}
-            </td>
-          </ng-container>
-          <ng-container matColumnDef="Admission_Date">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>
-              Admission Date
-            </th>
-            <td mat-cell *matCellDef="let element">
-              {{ element.Admission_Date | date }}
-            </td>
-          </ng-container>
-        
-          <ng-container matColumnDef="First_Name">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>
-              First Name
-            </th>
-            <td mat-cell *matCellDef="let element">{{ element.First_Name }}</td>
-          </ng-container>
-          <ng-container matColumnDef="Last_Name">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>Last Name</th>
-            <td mat-cell *matCellDef="let element">{{ element.Last_Name }}</td>
-          </ng-container>
-          <ng-container matColumnDef="Age_Years">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>גיל</th>
-            <td mat-cell *matCellDef="let element">{{ element.Age_Years }}</td>
-          </ng-container>
-          <ng-container matColumnDef="Count_Above_180_Less_48h">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>
-              Count > 180
-            </th>
-            <td mat-cell *matCellDef="let element">
-              {{ element.Count_Above_180_Less_48h }}
-            </td>
-          </ng-container>
-          <ng-container matColumnDef="Release_Date">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>Release Date</th>
-            <td mat-cell *matCellDef="let element">{{ element.Release_Date | date }}</td>
-          </ng-container>
-          <ng-container matColumnDef="UnitName">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header> מחלקה</th>
-            <td mat-cell *matCellDef="let element">{{ element.UnitName }}</td>
-          </ng-container>
-          <ng-container matColumnDef="LastTestResult">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header> בדיקה אחרונה</th>
-            <td mat-cell *matCellDef="let element">{{ element.LastTestResult }}</td>
-          </ng-container>
-          <tr mat-header-row *matHeaderRowDef="sugerAbove180Columns"></tr>
-
-          <tr 
-          mat-row 
-          *matRowDef="let row; columns: sugerAbove180Columns" 
-          (click)="openDialog(row)"
-          style="cursor: pointer;">
-        </tr>
-                 
-        </table>
-        <mat-paginator
-          #paginator1
-          [pageSizeOptions]="[5, 10, 20]"
-          showFirstLastButtons
-        ></mat-paginator>
-      </mat-tab>
-
-      <mat-tab class="tabtitle" label="סוכר מתחת ל-70">
-        <ng-template mat-tab-label>
-          <span matTooltip="2 בדיקות סוכר מתחת 70 תוך 48 שעות" matTooltipPosition="above">
-            סוכר מתחת ל 70
-          </span>
-        </ng-template>
-        <table mat-table [dataSource]="dataSourceBelow70" class="mat-elevation-z8" matSort #sortBelow70="matSort" style="table-layout: fixed; width: 100%">
-
-          <ng-container matColumnDef="Admission_No">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>
-              Admission No
-            </th>
-            <td mat-cell *matCellDef="let element">{{ element.Admission_No }}</td>
-          </ng-container>
-          <ng-container matColumnDef="Admission_Date">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>
-              Admission Date
-            </th>
-            <td mat-cell *matCellDef="let element">
-              {{ element.Admission_Date | date }}
-            </td>
-          </ng-container>
-          <ng-container matColumnDef="First_Name">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>
-              First Name
-            </th>
-            <td mat-cell *matCellDef="let element">{{ element.First_Name }}</td>
-          </ng-container>
-          <ng-container matColumnDef="Age_Years">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>גיל</th>
-            <td mat-cell *matCellDef="let element">{{ element.Age_Years }}</td>
-          </ng-container>
-          <ng-container matColumnDef="Last_Name">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>
-              Last Name
-            </th>
-            <td mat-cell *matCellDef="let element">{{ element.Last_Name }}</td>
-          </ng-container>
-          <ng-container matColumnDef="Count_Less_70_Less_48h">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>
-              Count < 70 (48h)
-            </th>
-            <td mat-cell *matCellDef="let element">
-              {{ element.Count_Less_70_Less_48h }}
-            </td>
-          </ng-container>
-          <ng-container matColumnDef="Release_Date">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>Release Date</th>
-            <td mat-cell *matCellDef="let element">{{ element.Release_Date | date }}</td>
-          </ng-container>
-          <ng-container matColumnDef="UnitName">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>מחלקה </th>
-            <td mat-cell *matCellDef="let element">{{ element.UnitName }}</td>
-          </ng-container>
-          <tr mat-header-row *matHeaderRowDef="displayedColumnsBelow70"></tr>
-
-          <tr 
-          mat-row 
-          *matRowDef="let row; columns: displayedColumnsBelow70" 
-          (click)="openDialog(row)"
-          style="cursor: pointer;">
-        </tr>
-        </table>
-        <mat-paginator
-          #paginatorBelow70
-          [pageSizeOptions]="[5, 10, 20]"
-          showFirstLastButtons
-        ></mat-paginator>
-      </mat-tab>
-      
-      
-      <mat-tab label="מקבל אינסולין">
-        <ng-template mat-tab-label>
-          <span matTooltip="   לעדכן הסבר" matTooltipPosition="above">
-           אינסולין
-          </span>
-        </ng-template>
-        <table mat-table [dataSource]="InsulinDataSource" class="mat-elevation-z8" matSort #sort3="matSort" style="table-layout: fixed; width: 100%">
-
-          <ng-container matColumnDef="Hospitalization_Patient">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>Patient</th>
-            <td mat-cell *matCellDef="let element">
-              {{ element.Hospitalization_Patient }}
-            </td>
-          </ng-container>
-          <ng-container matColumnDef="Admission_No">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>
-              Admission No
-            </th>
-            <td mat-cell *matCellDef="let element">
-              {{ element.Admission_No }}
-            </td>
-          </ng-container>
-          <ng-container matColumnDef="Admission_Date">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>
-              Admission Date
-            </th>
-            <td mat-cell *matCellDef="let element">
-              {{ element.Admission_Date | date }}
-            </td>
-          </ng-container>
-          <ng-container matColumnDef="Id_Num">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>ID Number</th>
-            <td mat-cell *matCellDef="let element">{{ element.Id_Num }}</td>
-          </ng-container>
-          <ng-container matColumnDef="First_Name">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>
-              First Name
-            </th>
-            <td mat-cell *matCellDef="let element">{{ element.First_Name }}</td>
-          </ng-container>
-          <ng-container matColumnDef="Last_Name">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>Last Name</th>
-            <td mat-cell *matCellDef="let element">{{ element.Last_Name }}</td>
-          </ng-container>
-          <ng-container matColumnDef="Main_Drug">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>Main Drug</th>
-            <td mat-cell *matCellDef="let element">{{ element.Main_Drug }}</td>
-          </ng-container>
-          <ng-container matColumnDef="Name">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>Drug Name</th>
-            <td mat-cell *matCellDef="let element">{{ element.Name }}</td>
-          </ng-container>
-          <ng-container matColumnDef="Entry_Date">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>
-              Entry Date
-            </th>
-            <td mat-cell *matCellDef="let element">
-              {{ element.Entry_Date | date }}
-            </td>
-          </ng-container>
-          <ng-container matColumnDef="Release_Date">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>
-              Release_Date
-            </th>
-            <td mat-cell *matCellDef="let element">
-              {{ element.Release_Date | date }}
-            </td>
-          </ng-container>
-          <ng-container matColumnDef="UnitName">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>מחלקה </th>
-            <td mat-cell *matCellDef="let element">{{ element.UnitName }}</td>
-          </ng-container>
-          <tr mat-header-row *matHeaderRowDef="insulinColumns"></tr>
-          <tr mat-row *matRowDef="let row; columns: insulinColumns"></tr>
-        </table>
-        <mat-paginator
-          #Ensoleen
-          [length]="EnsoleenresultsLength"
-          [pageSizeOptions]="[5, 10, 20]"
-          showFirstLastButtons
-        ></mat-paginator>
-      </mat-tab>
-
-      <mat-tab label="">
-        <ng-template mat-tab-label>
-          <span matTooltip=" מטופלים עם אבחנה ICD9  " matTooltipPosition="above">
-            מטופלים עם אבחנה ICD9
-          </span>
-        </ng-template>
-        <table mat-table [dataSource]="DiagnosisICD9dataSource" class="mat-elevation-z8" matSort #sort4="matSort" style="table-layout: fixed; width: 100%">
-
-        
-          <ng-container matColumnDef="Admission_No">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>
-              Admission No
-            </th>
-            <td mat-cell *matCellDef="let element">
-              {{ element.Admission_No }}
-            </td>
-          </ng-container>
-          <ng-container matColumnDef="Admission_Date">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>
-              Admission Date
-            </th>
-            <td mat-cell *matCellDef="let element">
-              {{ element.Admission_Date | date }}
-            </td>
-          </ng-container>
-          <ng-container matColumnDef="Id_Num">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>ID Number</th>
-            <td mat-cell *matCellDef="let element">{{ element.Id_Num }}</td>
-          </ng-container>
-          <ng-container matColumnDef="First_Name">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>
-              First Name
-            </th>
-            <td mat-cell *matCellDef="let element">{{ element.First_Name }}</td>
-          </ng-container>
-          <ng-container matColumnDef="Last_Name">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>Last Name</th>
-            <td mat-cell *matCellDef="let element">{{ element.Last_Name }}</td>
-          </ng-container>
-          <ng-container matColumnDef="ICD9">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>ICD9</th>
-            <td mat-cell *matCellDef="let element">{{ element.ICD9 }}</td>
-          </ng-container>
-          <ng-container matColumnDef="Name">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>Name</th>
-            <td mat-cell *matCellDef="let element">{{ element.Name }}</td>
-          </ng-container>
-          <!-- <ng-container matColumnDef="Entry_Date">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>
-              Entry Date
-            </th>
-            <td mat-cell *matCellDef="let element">
-              {{ element.Entry_Date | date }}
-            </td>
-          </ng-container> -->
-          <ng-container matColumnDef="Release_Date">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>Release Date</th>
-            <td mat-cell *matCellDef="let element">{{ element.Release_Date | date }}</td>
-          </ng-container>
-          <ng-container matColumnDef="UnitName">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>מחלקה </th>
-            <td mat-cell *matCellDef="let element">{{ element.UnitName }}</td>
-          </ng-container>
-          <tr mat-header-row *matHeaderRowDef="DiagnosisICD9"></tr>
-          <tr mat-row *matRowDef="let row; columns: DiagnosisICD9"></tr>
-        </table>
-        <mat-paginator
-          #paginator4
-          [pageSizeOptions]="[5, 10, 20]"
-          showFirstLastButtons
-        ></mat-paginator>
-      </mat-tab>
-
-      <mat-tab label="">
-        <ng-template mat-tab-label>
-          <span matTooltip="" matTooltipPosition="above">
-            A1C 
-          </span>
-        </ng-template>
-        <table mat-table [dataSource]="dataSourceHemoglobin" class="mat-elevation-z8" matSort #sortHemoglobin="matSort" style="table-layout: fixed; width: 100%">
-
-          <ng-container matColumnDef="Admission_Date">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>
-              Admission Date
-            </th>
-            <td mat-cell *matCellDef="let element">
-              {{ element.Admission_Date | date }}
-            </td>
-          </ng-container>
-          <ng-container matColumnDef="TestCode">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>Test Code</th>
-            <td mat-cell *matCellDef="let element">{{ element.TestCode }}</td>
-          </ng-container>
-          <ng-container matColumnDef="TestName">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>Test Name</th>
-            <td mat-cell *matCellDef="let element">{{ element.TestName }}</td>
-          </ng-container>
-          <ng-container matColumnDef="Result">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>Result</th>
-            <td mat-cell *matCellDef="let element">{{ element.Result }}</td>
-          </ng-container>
-          <ng-container matColumnDef="TestDate">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>Test Date</th>
-            <td mat-cell *matCellDef="let element">
-              {{ element.TestDate | date }}
-            </td>
-          </ng-container>
-          <ng-container matColumnDef="Id_Num">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>ID Number</th>
-            <td mat-cell *matCellDef="let element">{{ element.Id_Num }}</td>
-          </ng-container>
-          <ng-container matColumnDef="First_Name">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>
-              First Name
-            </th>
-            <td mat-cell *matCellDef="let element">{{ element.First_Name }}</td>
-          </ng-container>
-          <ng-container matColumnDef="Last_Name">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>Last Name</th>
-            <td mat-cell *matCellDef="let element">{{ element.Last_Name }}</td>
-          </ng-container>
-          <tr mat-header-row *matHeaderRowDef="displayedColumnsHemoglobin"></tr>
-          <tr 
-          mat-row 
-          *matRowDef="let row; columns: displayedColumnsHemoglobin" 
-          (click)="openDialog(row)"
-          style="cursor: pointer;">
-        </tr>
-
-        </table> 
-        <mat-paginator
-          #paginatorHemoglobin
-          [pageSizeOptions]="[5, 10, 20]"
-          showFirstLastButtons
-        ></mat-paginator>
-      </mat-tab>
-      <mat-tab label="ייעוצים">
-        <table mat-table [dataSource]="dataSourceAllConsiliums" class="mat-elevation-z8" matSort #sortAllConsiliums="matSort" style="table-layout: fixed; width: 100%">
-          <ng-container matColumnDef="Id_Num">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>ID</th>
-            <td mat-cell *matCellDef="let element">{{ element.Id_Num }}</td>
-          </ng-container>
-
-          <ng-container matColumnDef="First_Name">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>
-              First Name
-            </th>
-            <td mat-cell *matCellDef="let element">{{ element.First_Name }}</td>
-          </ng-container>
-
-          <ng-container matColumnDef="Last_Name">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>Last Name</th>
-            <td mat-cell *matCellDef="let element">{{ element.Last_Name }}</td>
-          </ng-container>
-
-          <ng-container matColumnDef="UnitName">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>Unit</th>
-            <td mat-cell *matCellDef="let element">{{ element.UnitName }}</td>
-          </ng-container>
-
-          <ng-container matColumnDef="Entry_Date">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>
-              Entry Date
-            </th>
-            <td mat-cell *matCellDef="let element">
-              {{ element.Entry_Date | date }}
-            </td>
-          </ng-container>
-          <ng-container matColumnDef="Question">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>Question</th>
-            <td mat-cell *matCellDef="let element">{{ element.Question }}</td>
-          </ng-container>
-          <ng-container matColumnDef="Diagnosis_Text">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>
-              Diagnosis_Text
-            </th>
-            <td mat-cell *matCellDef="let element">
-              {{ element.Diagnosis_Text }}
-            </td>
-          </ng-container>
-          <ng-container matColumnDef="Consulted_Unit">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>
-              Consulted_Unit
-            </th>
-            <td mat-cell *matCellDef="let element">
-              {{ element.Consulted_Unit }}
-            </td>
-          </ng-container>
-          <ng-container matColumnDef="Answer_Text">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>
-              Answer_Text
-            </th>
-            <td mat-cell *matCellDef="let element">
-              {{ element.Answer_Text }}
-            </td>
-          </ng-container>
-          <ng-container matColumnDef="Answer_Date">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>
-              Answer_Date
-            </th>
-            <td mat-cell *matCellDef="let element">
-              {{ element.Answer_Date | date }}
-            </td>
-          </ng-container>
-          
-          <!-- Add other columns similarly -->
-
-          <tr
-            mat-header-row
-            *matHeaderRowDef="displayedColumnsAllConsiliums"
-          ></tr>
-          <tr
-            mat-row
-            *matRowDef="let row; columns: displayedColumnsAllConsiliums"
-          ></tr>
-        </table>
-
-        <mat-paginator
-          #paginatorAllConsiliums
-          [pageSizeOptions]="[5, 10, 20]"
-          showFirstLastButtons
-        ></mat-paginator>
-      </mat-tab>
-      <mat-tab label="ללא אינסולין סוכר מעל 180">
-        <table mat-table [dataSource]="LabResultsWithoutInsulinDataSource" class="mat-elevation-z8" matSort #sortWithoutInsulin="matSort" style="table-layout: fixed; width: 100%">
-
-          <ng-container matColumnDef="Admission_No">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>מספר אשפוז</th>
-            <td mat-cell *matCellDef="let element">{{ element.Admission_No }}</td>
-          </ng-container>
-          <ng-container matColumnDef="Admission_Date">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>תאריך קבלה</th>
-            <td mat-cell *matCellDef="let element">{{ element.Admission_Date | date }}</td>
-          </ng-container>
-          <ng-container matColumnDef="First_Name">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>שם פרטי</th>
-            <td mat-cell *matCellDef="let element">{{ element.First_Name }}</td>
-          </ng-container>
-          <ng-container matColumnDef="Last_Name">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>שם משפחה</th>
-            <td mat-cell *matCellDef="let element">{{ element.Last_Name }}</td>
-          </ng-container>
-          <ng-container matColumnDef="Count_Above_180_Less_48h">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>מדידות מעל 180 ב-48 שעות</th>
-            <td mat-cell *matCellDef="let element">{{ element.Count_Above_180_Less_48h }}</td>
-          </ng-container>
-          <ng-container matColumnDef="Release_Date">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>תאריך שחרור</th>
-            <td mat-cell *matCellDef="let element">{{ element.Release_Date | date }}</td>
-          </ng-container>
-          <ng-container matColumnDef="UnitName">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>מחלקה </th>
-            <td mat-cell *matCellDef="let element">{{ element.UnitName }}</td>
-          </ng-container>
-          <tr mat-header-row *matHeaderRowDef="displayedColumnsLabResultsWithoutInsulin"></tr>
-          <tr mat-row *matRowDef="let row; columns: displayedColumnsLabResultsWithoutInsulin;"></tr>
-        </table>
-      
-        <mat-paginator
-          #paginatorWithoutInsulin
-          [pageSizeOptions]="[5, 10, 20]"
-          showFirstLastButtons>
-        </mat-paginator>
-      </mat-tab>
-      
       <mat-tab label="מטופלים סוכרתיים עם קטטר ">
         <table mat-table [dataSource]="DiabeticPatientsWithCatheterOrdersDataSource" class="mat-elevation-z8" matSort #sortCatheterOrders="matSort" style="table-layout: fixed; width: 100%">
       
