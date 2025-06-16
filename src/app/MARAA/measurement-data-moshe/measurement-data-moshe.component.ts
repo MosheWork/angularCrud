@@ -233,18 +233,38 @@ profilePictureUrl: string = 'assets/default-user.png';
     const currentYear = new Date().getFullYear();
     this.years = [currentYear - 1, currentYear, currentYear + 1];
   
-    // ✅ Load all 3 gauge datasets
+    // ✅ Fetch all 3 summaries for gauge
     forkJoin({
       yearly: this.http.get<MonthlyMeasurementSummaryModel[]>(`${environment.apiUrl}/MeasurementDataMoshe/GetYearlyMeasurementSummary`),
       quarterly: this.http.get<MonthlyMeasurementSummaryModel[]>(`${environment.apiUrl}/MeasurementDataMoshe/GetQuarterlyMeasurementSummary`),
       monthly: this.http.get<MonthlyMeasurementSummaryModel[]>(`${environment.apiUrl}/MeasurementDataMoshe/GetMonthlyMeasurementSummary`)
     }).subscribe({
-      next: ({ yearly, quarterly, monthly }) => {
+      next: ({ yearly, quarterly, monthly }: {
+        yearly: MonthlyMeasurementSummaryModel[],
+        quarterly: MonthlyMeasurementSummaryModel[],
+        monthly: MonthlyMeasurementSummaryModel[]
+      }) => {
         this.yearlySummaryRaw = yearly;
         this.quarterlySummaryRaw = quarterly;
         this.monthlySummaryRaw = monthly;
   
-        this.applyFilter(); // 🟢 Calculate gauges and raw data
+        // ✅ Determine latest date from data
+        const latest = this.getLatestAvailableDate();
+        if (latest) {
+          this.selectedYears = [latest.year];
+          this.selectedQuarters = [latest.quarter];
+          this.selectedMonths = [latest.month];
+  
+          // ✅ Filter just the latest data for gauges
+          this.gaugeRawData = this.monthlySummaryRaw.filter(row =>
+            row.MYear === latest.year &&
+            `Q${row.Quarter}` === latest.quarter &&
+            row.MMonth === (this.months.indexOf(latest.month) + 1)
+          );
+          this.calculateGaugeValues();
+        }
+  
+        this.applyFilter(); // Optional if you want tables as well
         this.isLoading = false;
       },
       error: err => {
@@ -1216,4 +1236,25 @@ console.log('Sort:', this.measurementSort);
     return Math.round(avg);
   }
    
+  getLatestAvailableDate(): { year: number, quarter: string, month: string } | null {
+    if (!this.monthlySummaryRaw || this.monthlySummaryRaw.length === 0) return null;
+  
+    const latest = this.monthlySummaryRaw.reduce((latest, current) => {
+      const latestDate = new Date(latest.MYear, latest.MMonth - 1, 1);
+      const currentDate = new Date(current.MYear, current.MMonth - 1, 1);
+      return currentDate > latestDate ? current : latest;
+    });
+  
+    const latestMonthIndex = latest.MMonth - 1;
+    const latestMonthName = this.months[latestMonthIndex]; // convert to 'ינואר' etc.
+    const quarter = `Q${Math.floor((latest.MMonth - 1) / 3) + 1}`;
+  
+    return {
+      year: latest.MYear,
+      quarter,
+      month: latestMonthName
+    };
+  }
+  
+  
 }
