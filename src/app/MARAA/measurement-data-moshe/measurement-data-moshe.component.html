@@ -119,9 +119,9 @@
       </ngx-gauge>
       <div class="gauge-details">
         מונה / מכנה: {{ yearMone }} / {{ yearMechane }}<br>
-        <button mat-button (click)="showYearDetails = !showYearDetails">
+        <!-- <button mat-button (click)="showYearDetails = !showYearDetails">
           {{ showYearDetails ? 'הסתר נתונים' : 'צפה בנתונים' }}
-        </button>
+        </button> -->
       </div>
       <div *ngIf="showYearDetails">
         <table mat-table [dataSource]="yearlySummaryRaw" class="mat-elevation-z1" style="margin-top: 8px; width: 100%;">
@@ -173,9 +173,9 @@
       </ngx-gauge>
       <div class="gauge-details">
         מונה / מכנה: {{ quarterMone }} / {{ quarterMechane }}<br>
-        <button mat-button (click)="showQuarterDetails = !showQuarterDetails">
+        <!-- <button mat-button (click)="showQuarterDetails = !showQuarterDetails">
           {{ showQuarterDetails ? 'הסתר נתונים' : 'צפה בנתונים' }}
-        </button>
+        </button> -->
       </div>
       <div *ngIf="showQuarterDetails">
         <table mat-table [dataSource]="quarterlySummaryRaw" class="mat-elevation-z1" style="margin-top: 8px; width: 100%;">
@@ -227,9 +227,9 @@
       </ngx-gauge>
       <div class="gauge-details">
         מונה / מכנה: {{ monthMone }} / {{ monthMechane }}<br>
-        <button mat-button (click)="showMonthDetails = !showMonthDetails">
+        <!-- <button mat-button (click)="showMonthDetails = !showMonthDetails">
           {{ showMonthDetails ? 'הסתר נתונים' : 'צפה בנתונים' }}
-        </button>
+        </button> -->
       </div>
       <div *ngIf="showMonthDetails">
         <table mat-table [dataSource]="monthlySummaryRaw" class="mat-elevation-z1" style="margin-top: 8px; width: 100%;">
