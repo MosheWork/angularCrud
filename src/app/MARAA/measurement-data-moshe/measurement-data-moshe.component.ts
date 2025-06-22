@@ -74,6 +74,12 @@ export interface MonthlyMeasurementSummaryModel {
   MTarget: number;
   MeetsTarget: string;
 }
+export interface MeasurementGaugeSummaryModel {
+  DateT: 'YEAR' | 'QUERTER' | 'MONTH';
+  Mone: number;
+  Mechane: number;
+  Perc: number;
+}
 
 @Component({
   selector: 'app-measurement-data-moshe',
@@ -99,17 +105,26 @@ monthGaugeTargetValue: number | null = null;
 yearlySummaryRaw: MonthlyMeasurementSummaryModel[] = [];
 quarterlySummaryRaw: MonthlyMeasurementSummaryModel[] = [];
 monthlySummaryRaw: MonthlyMeasurementSummaryModel[] = []; // already exists
+yearGaugeValue: number | null = null;
+yearMone: number | null = null;
+yearMechane: number | null = null;
 
-gaugeRawData: MonthlyMeasurementSummaryModel[] = [];
+quarterGaugeValue: number | null = null;
+quarterMone: number | null = null;
+quarterMechane: number | null = null;
+
+monthGaugeValue: number | null = null;
+monthMone: number | null = null;
+monthMechane: number | null = null;
+
 monthlyGaugeData: MonthlyMeasurementSummaryModel[] = [];
+monthlyGauge: number | null = null;
+quarterlyGauge: number | null = null;
+yearlyGauge: number | null = null;
+gaugeRawData: any[] = [];
 
 // 🔹 Add at top of class (e.g., below your other component-level vars)
-quarterMone: number = 0;
-quarterMechane: number = 0;
-monthMone: number = 0;
-monthMechane: number = 0;
-yearMone: number = 0;
-yearMechane: number = 0;
+
 yearGaugeTarget: number | null = null;
 quarterGaugeTarget: number | null = null;
 monthGaugeTarget: number | null = null;
@@ -147,6 +162,7 @@ yearlyData: any[] = [];
 quarterlyData: any[] = [];
 monthlyData: any[] = [];
 
+
 yearlyColumns: string[] = [];
 quarterlyColumns: string[] = [];
 monthlyColumns: string[] = [];
@@ -157,9 +173,7 @@ allUnitsGradeMap: { [code: string]: number | null } = {};
 
 selectedDepartment: string | null = null;
 selectedMeasurement: string | null = null;
-yearGaugeValue: number | null = 0;
-quarterGaugeValue: number | null = 0;
-monthGaugeValue: number | null = 0;
+
   measurementDataSource = new MatTableDataSource<MeasurementSummaryModel>();
   departmentDataSource = new MatTableDataSource<MeasurementSummaryModel>();
   quarterlyDataSource = new MatTableDataSource<QuarterlyPivotFlatModel>();
@@ -331,47 +345,7 @@ profilePictureUrl: string = 'assets/default-user.png';
     const currentYear = new Date().getFullYear();
     this.years = [currentYear - 1, currentYear, currentYear + 1];
   
-    // ✅ Fetch all 3 summaries for gauge
-    forkJoin({
-      yearly: this.http.get<MonthlyMeasurementSummaryModel[]>(`${environment.apiUrl}/MeasurementDataMoshe/GetYearlyMeasurementSummary`),
-      quarterly: this.http.get<MonthlyMeasurementSummaryModel[]>(`${environment.apiUrl}/MeasurementDataMoshe/GetQuarterlyMeasurementSummary`),
-      monthly: this.http.get<MonthlyMeasurementSummaryModel[]>(`${environment.apiUrl}/MeasurementDataMoshe/GetMonthlyMeasurementSummary`)
-    }).subscribe({
-      next: ({ yearly, quarterly, monthly }: {
-        yearly: MonthlyMeasurementSummaryModel[],
-        quarterly: MonthlyMeasurementSummaryModel[],
-        monthly: MonthlyMeasurementSummaryModel[]
-      }) => {
-        this.yearlySummaryRaw = yearly;
-        this.quarterlySummaryRaw = quarterly;
-        this.monthlySummaryRaw = monthly;
-  
-        // ✅ Determine latest date from data
-        const latest = this.getLatestAvailableDate();
-        if (latest) {
-          this.selectedYears = [latest.year];
-          this.selectedQuarters = [latest.quarter];
-          this.selectedMonths = [latest.month];
-  
-          // ✅ Filter just the latest data for gauges
-          this.gaugeRawData = this.monthlySummaryRaw.filter(row =>
-            row.MYear === latest.year &&
-            `Q${row.Quarter}` === latest.quarter &&
-            row.MMonth === (this.months.indexOf(latest.month) + 1)
-          );
-          this.calculateGaugeValues();
-        }
-  
-        this.applyFilter(); // Optional if you want tables as well
-        this.isLoading = false;
-      },
-      error: err => {
-        console.error('❌ Failed to load summary data:', err);
-        this.isLoading = false;
-      }
-    });
-  
-    // ✅ Get logged in user
+    // ✅ Get logged-in user
     this.authenticationService.getAuthentication().subscribe(
       (response) => {
         const user = response.message.split('\\')[1].toUpperCase();
@@ -384,11 +358,66 @@ profilePictureUrl: string = 'assets/default-user.png';
       }
     );
   
-    // ✅ Other required data
+    // ✅ Fetch initial data (departments, measurements, targets)
     this.fetchTargets();
     this.loadDepartments();
     this.fetchMeasurement();
     this.fetchAllUnitsGrades();
+  
+    // ✅ Fetch latest gauge summary
+    this.http.get<MeasurementGaugeSummaryModel[]>(`${environment.apiUrl}/MeasurementDataMoshe/GetMeasurementGaugeSummary`, {
+      params: new HttpParams({
+        fromObject: {
+          years: [currentYear].join(','),                      // e.g., "2024"
+          quarters: ['1', '2', '3', '4'].join(','),            // e.g., "1,2,3,4"
+          months: ['1','2','3','4','5','6','7','8','9','10','11','12'].join(','), // all months
+          departments: '',                                     // all departments
+          measurements: ''                                     // all measurements
+        }
+      })
+    }).subscribe({
+      next: (data) => {
+        const yearData = data.find(d => d.DateT === 'YEAR');
+        const quarterData = data.find(d => d.DateT === 'QUERTER');
+        const monthData = data.find(d => d.DateT === 'MONTH');
+    
+        if (yearData) {
+          this.yearGaugeValue = yearData.Perc;
+          this.yearMone = yearData.Mone;
+          this.yearMechane = yearData.Mechane;
+        }
+    
+        if (quarterData) {
+          this.quarterGaugeValue = quarterData.Perc;
+          this.quarterMone = quarterData.Mone;
+          this.quarterMechane = quarterData.Mechane;
+        }
+    
+        if (monthData) {
+          this.monthGaugeValue = monthData.Perc;
+          this.monthMone = monthData.Mone;
+          this.monthMechane = monthData.Mechane;
+        }
+    
+        // ✅ Set current period as default selected filters
+        const now = new Date();
+        const monthIndex = now.getMonth(); // 0-based
+        const monthName = this.months[monthIndex];
+        const quarter = `Q${Math.floor(monthIndex / 3) + 1}`;
+    
+        this.selectedYears = [currentYear];
+        this.selectedMonths = [monthName];
+        this.selectedQuarters = [quarter];
+    
+        this.applyFilter(); // run full filtering on data
+        this.isLoading = false;
+      },
+      error: err => {
+        console.error('❌ Failed to load gauge summary:', err);
+        this.isLoading = false;
+      }
+    });
+    
   }
   
 getUserDetailsFromDBByUserName(username: string): void {
@@ -510,7 +539,41 @@ console.log('Sort:', this.measurementSort);
       });
   }
   
-
+  loadGaugesFromSummary(): void {
+    const params = new HttpParams()
+      .set('years', this.selectedYears?.join(',') || '')
+      .set('quarters', (this.selectedQuarters || []).map(q => q.replace('Q', '')).join(','))
+      .set('months', (this.selectedMonths || []).map(m => {
+        const index = this.months.indexOf(m);
+        return index >= 0 ? (index + 1).toString() : '';
+      }).filter(m => m !== '').join(','))
+      .set('departments', this.selectedDepartments?.join(',') || '')
+      .set('measurements', (this.selectedMeasurements || []).join(','))
+  
+    this.http.get<any[]>(`${environment.apiUrl}/MeasurementDataMoshe/GetMeasurementGaugeSummary`, { params }).subscribe(data => {
+      data.forEach(row => {
+        switch (row.DateT) {
+          case 'YEAR':
+            this.yearGaugeValue = row.Perc;
+            this.yearMone = row.Mone;
+            this.yearMechane = row.Mechane;
+            break;
+          case 'QUERTER':
+            this.quarterGaugeValue = row.Perc;
+            this.quarterMone = row.Mone;
+            this.quarterMechane = row.Mechane;
+            break;
+          case 'MONTH':
+            this.monthGaugeValue = row.Perc;
+            this.monthMone = row.Mone;
+            this.monthMechane = row.Mechane;
+            break;
+        }
+      });
+    });
+  }
+  
+  
   loadDepartments(): void {
     this.http.get<string[]>(`${environment.apiUrl}/MeasurementDataMoshe/GetDepartments`)
       .subscribe(data => this.departments = data);
@@ -830,7 +893,6 @@ console.log('Sort:', this.measurementSort);
   applyFilter(): void {
     this.isLoading = true;
   
-    const params: { [key: string]: string } = {};
     const fromDates: string[] = [];
     const toDates: string[] = [];
   
@@ -870,6 +932,7 @@ console.log('Sort:', this.measurementSort);
       }
     }
   
+    const params: { [key: string]: string } = {};
     if (fromDates.length && toDates.length) {
       params['fromDates'] = fromDates.join(',');
       params['toDates'] = toDates.join(',');
@@ -883,19 +946,6 @@ console.log('Sort:', this.measurementSort);
     if (measurementCodes.length > 0) {
       params['measurement'] = measurementCodes.join(',');
     }
-  
-    // ✅ Update gauges
-    const selectedMonthIndexes = this.selectedMonths.map(m => this.months.indexOf(m) + 1);
-    const selectedQuarterList = this.selectedQuarters.map(q => q.replace('Q', ''));
-  
-    this.gaugeRawData = this.monthlySummaryRaw.filter(row => {
-      const yearMatch = this.selectedYears.length === 0 || this.selectedYears.includes(row.MYear);
-      const quarterMatch = this.selectedQuarters.length === 0 || selectedQuarterList.includes(row.Quarter.toString());
-      const monthMatch = this.selectedMonths.length === 0 || selectedMonthIndexes.includes(row.MMonth);
-      return yearMatch && quarterMatch && monthMatch;
-    });
-  
-    this.calculateGaugeValues();
   
     const httpParams = new HttpParams({ fromObject: params });
   
@@ -963,7 +1013,55 @@ console.log('Sort:', this.measurementSort);
         });
       });
   
+    // ✅ Load gauge values from new API
+   const yearList = this.selectedYears.join(',');
+const quarterList = this.selectedQuarters.map(q => q.replace('Q', '')).join(',');
+const monthList = this.selectedMonths.map(m => this.months.indexOf(m) + 1).filter(n => n > 0).join(',');
+const deptList = this.selectedDepartments?.join(',') || '';
+const measList = this.extractMeasurementCodes().join(',');
+
+const gaugeParams = new HttpParams({
+  fromObject: {
+    years: yearList,
+    quarters: quarterList,
+    months: monthList,
+    departments: deptList,
+    measurements: measList
+  }
+});
+
+this.http.get<any[]>(`${environment.apiUrl}/MeasurementDataMoshe/GetMeasurementGaugeSummary`, { params: gaugeParams })
+  .subscribe({
+    next: data => {
+      this.gaugeRawData = data;
+      const month = data.find(d => d.DateT === 'MONTH');
+      const quarter = data.find(d => d.DateT === 'QUERTER');
+      const year = data.find(d => d.DateT === 'YEAR');
+      
+      this.monthGaugeValue = month?.Perc ?? null;
+      this.monthMone = month?.Mone ?? null;
+      this.monthMechane = month?.Mechane ?? null;
+      
+      this.quarterGaugeValue = quarter?.Perc ?? null;
+      this.quarterMone = quarter?.Mone ?? null;
+      this.quarterMechane = quarter?.Mechane ?? null;
+      
+      this.yearGaugeValue = year?.Perc ?? null;
+      this.yearMone = year?.Mone ?? null;
+      this.yearMechane = year?.Mechane ?? null;
+      
+    },
+    error: err => {
+      console.error('❌ Gauge fetch error:', err);
+      this.gaugeRawData = [];
+    }
+  });
+
+    
+  
     this.fetchAllUnitsGrades();
+   
+
   }
   
 
@@ -976,42 +1074,7 @@ console.log('Sort:', this.measurementSort);
     return map;
   }
 
-  calculateGaugeValues(): void {
-    // === YEAR ===
-    const yearData = this.yearlySummaryRaw.filter(row =>
-      this.selectedYears.length === 0 || this.selectedYears.includes(row.MYear)
-    );
-    this.yearMone = yearData.filter(r => r.MeetsTarget === 'Yes').length;
-    this.yearMechane = yearData.length;
-    this.yearGaugeValue = this.calculateGauge(this.yearMone, this.yearMechane);
-    this.yearGaugeTarget = this.extractTarget(yearData);
-  
-    // === QUARTER ===
-    const quarterData = this.quarterlySummaryRaw.filter(row =>
-      (this.selectedYears.length === 0 || this.selectedYears.includes(row.MYear)) &&
-      (this.selectedQuarters.length === 0 || this.selectedQuarters.includes(`Q${row.Quarter}`))
-    );
-    this.quarterMone = quarterData.filter(r => r.MeetsTarget === 'Yes').length;
-    this.quarterMechane = quarterData.length;
-    this.quarterGaugeValue = this.calculateGauge(this.quarterMone, this.quarterMechane);
-    this.quarterGaugeTarget = this.extractTarget(quarterData);
-  
-    // === MONTH ===
-    const selectedMonthIndexes = this.selectedMonths.map(m => this.months.indexOf(m) + 1);
-    const monthData = this.monthlySummaryRaw.filter(row =>
-      (this.selectedYears.length === 0 || this.selectedYears.includes(row.MYear)) &&
-      (this.selectedMonths.length === 0 || selectedMonthIndexes.includes(row.MMonth))
-    );
-    this.monthMone = monthData.filter(r => r.MeetsTarget === 'Yes').length;
-    this.monthMechane = monthData.length;
-    this.monthGaugeValue = this.calculateGauge(this.monthMone, this.monthMechane);
-    this.monthGaugeTarget = this.extractTarget(monthData);
-  
-    // Logs
-    console.log('📊 Year:', this.yearGaugeValue, 'Target:', this.yearGaugeTarget);
-    console.log('📊 Quarter:', this.quarterGaugeValue, 'Target:', this.quarterGaugeTarget);
-    console.log('📊 Month:', this.monthGaugeValue, 'Target:', this.monthGaugeTarget);
-  }
+ 
   
   
   
