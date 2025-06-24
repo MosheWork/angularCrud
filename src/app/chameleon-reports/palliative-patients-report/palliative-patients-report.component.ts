@@ -8,13 +8,22 @@ import { DatePipe } from '@angular/common';
 import { environment } from '../../../environments/environment';
 import * as XLSX from 'xlsx';
 
-interface PalliativePatientsReportModel {
+export interface PalliativePatientsReportModel {
   PatientName: string;
+  name: string; // Department name
   IdNum: string;
   AdmissionNo: string;
-  ResultComboText: string;
-  ComboEntryDate: Date | null;
-  AdmissionDate: Date | null;
+  AdmissionDate: Date;
+
+  // ✅ Add these two:
+  ResultCognitive: string;
+  ResultEntryDate: Date;
+
+  // ⬅️ If needed:
+  DescriptionCognitive?: string;
+  DescriptionEntryDate?: Date;
+
+  // Add any other fields you use in the export
 }
 
 @Component({
@@ -151,30 +160,33 @@ export class PalliativePatientsReportComponent implements OnInit, AfterViewInit 
     this.applyFilters();
     this.loadData();
   }
-
   exportToExcel(): void {
     const data = this.dataSource.data.map((item) => {
       return {
         'שם המטופל': item.PatientName,
+        'מחלקה': item.name,
         'תעודת זהות': item.IdNum,
         'מספר מקרה': item.AdmissionNo,
-        'מצב החולה': item.ResultComboText,
-        'תאריך כניסת האבחנה': this.datePipe.transform(item.ComboEntryDate, 'yyyy-MM-dd'),
-        'תאריך קבלה': this.datePipe.transform(item.AdmissionDate, 'yyyy-MM-dd')
+        'תאריך קבלה': this.datePipe.transform(item.AdmissionDate, 'yyyy-MM-dd'),
+        'הגדרת החולה': item.ResultCognitive,
+        'תאריך הגדרה': this.datePipe.transform(item.ResultEntryDate, 'yyyy-MM-dd'),
+        'תיעוד רופא מלל חופשי': item.DescriptionCognitive,
+        'תאריך התיעוד': this.datePipe.transform(item.DescriptionEntryDate, 'yyyy-MM-dd')
       };
     });
-
+  
     const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(data);
     const workbook: XLSX.WorkBook = { Sheets: { data: worksheet }, SheetNames: ['data'] };
     const excelBuffer: any = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
     const blob: Blob = new Blob([excelBuffer], {
       type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
     });
-
+  
     const url = window.URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
     link.download = 'PalliativePatientsReport.xlsx';
     link.click();
   }
+  
 }

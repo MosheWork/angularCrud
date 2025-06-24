@@ -155,13 +155,13 @@ const routes: Routes = [
   { path: 'UserLogPerCaseNumberReport', component: UserLogPerCaseNumberReportComponent, data: { title: 'בטיחות הטיפול - לוגים קמיליון' }}, // בטיחות הטיפול - לוגים קמיליון
   { path: 'icd9-report', component: Icd9ReportComponent, data: { title: 'חיפוש מטופלים על פי קוד ICD 9' }}, // חיפוש מטופלים על פי קוד ICD 9
   { path: 'ssri-protocol', component: SSRIProtocolComponent, data: { title: 'צטופלים שהופעלה להם הוראה קלינית SSRI' }}, // צטופלים שהופעלה להם הוראה קלינית SSRI
-  { path: 'hemo-dialysis', component: HemoDialysisReportComponent, data: { title: 'דוח לדיאליזה' }}, // דוח לדיאליזה
-  { path: 'SearchByCaseNumber', component: SearchByCaseNumberComponent, data: { title: 'חיפוש על פי מספרי מקרה-מחלקה משחררת' }}, // חיפוש על פי מספרי מקרה-מחלקה משחררת
-  { path: 'palliative-patients-report', component: PalliativePatientsReportComponent, data: { title: 'מטופלים פליאטים ' }}, // מטופלים פליאטים לרווטיל
-  { path: 'GeriatricsDrugsOnVacation', component: GeriatricsDrugsOnVacationComponent, data: { title: 'דוח תרופות לחולים גריאטרים שיוצאים לחופשה ' }}, // דוח תרופות לחולים גריאטרים שיוצאים לחופשה - עוד לא אושר
-  { path: 'stazerim', component: StazerimComponent, data: { title: 'דוח הרשאות לסטזארים' }}, // דוח הרשאות לסטזארים
-  { path: 'dynamicTable', component: DynamicTablesComponent, data: { title: 'רשימת טבלאות דינמאיות של הקמיליון' }}, // רשימת טבלאות דינמאיות של הקמיליון
-  { path: 'medicalDevices', component: MedicalDevicesComponent, data: { title: 'רשימת מכשירים בקמיליון' }}, // רשימת מכשירים בקמיליון
+{ path: 'hemo-dialysis', component: HemoDialysisReportComponent, data: { title: 'דוח לדיאליזה' }}, // דוח לדיאליזה
+{ path: 'SearchByCaseNumber', component: SearchByCaseNumberComponent, data: { title: 'חיפוש על פי מספרי מקרה-מחלקה משחררת' }}, // חיפוש על פי מספרי מקרה-מחלקה משחררת
+{ path: 'palliative-patients-report', component: PalliativePatientsReportComponent, data: { title: 'מטופלים פליאטים ' }}, // מטופלים פליאטים לרווטיל
+{ path: 'GeriatricsDrugsOnVacation', component: GeriatricsDrugsOnVacationComponent, data: { title: 'דוח תרופות לחולים גריאטרים שיוצאים לחופשה ' }}, // דוח תרופות לחולים גריאטרים שיוצאים לחופשה - עוד לא אושר
+{ path: 'stazerim', component: StazerimComponent, data: { title: 'דוח הרשאות לסטזארים' }}, // דוח הרשאות לסטזארים
+{ path: 'dynamicTable', component: DynamicTablesComponent, data: { title: 'רשימת טבלאות דינמאיות של הקמיליון' }}, // רשימת טבלאות דינמאיות של הקמיליון
+{ path: 'medicalDevices', component: MedicalDevicesComponent, data: { title: 'רשימת מכשירים בקמיליון' }}, // רשימת מכשירים בקמיליון
 { path: 'ComponentsListInUnits', component: ComponentsListInUnitsComponent, data: { title: 'רכיבים בקמיליון' }}, // רכיבים בקמיליון
 { path: 'DrugsReport', component: DrugsReportComponent, data: { title: ' דוח של מטופלות עם תרופות קבועות או פעילות על פי קודים של יולדות' }}, // לורדית דוח של מטופלות עם תרופות קבועות או פעילות על פי קודים של יולדות
 { path: 'epidemiological-investigation', component: EpidemiologicalInvestigationComponent, data: { title: 'חקירה אפידמיולוגית ליחידה למניעת זיהומים' }}, // חקירה אפידמיולוגית ליחידה למניעת זיהומים
@@ -171,21 +171,18 @@ const routes: Routes = [
 { path: 'CommunicationTherapist', component: CommunicationTherapistComponent, data: { title: 'דוח קלינאית תקשורת ' }}, // דוח קלינאית תקשורת לבתאל
 { path: 'vwinfection-control-icu', component: VWInfectionControlICUComponent, data: { title: 'דוח  מחלות זיהומיות  ' }}, // דוח להיבה מחלות זיהומיות שאילתא מאופיר
 { path: 'DepartmentOccupiedMitav', component: DepartmentOccupiedMitavComponent, data: { title: 'דוח תפוסה ניידות' }}, // דוח תפוסה מיטבית
-
-   { path: 'TraumaPatients', component: TraumaPatientsComponent , data: { title: 'מטופלי טראומה' }},// מטופלי טרואמה מאופיר
-   { path: 'ERdashboard', component: ERdashboardComponent , data: { title: 'דאשבורד למיון' }},// דאשבורד למיון
-   { path: 'dementia-patients', component: DementiaPatientsComponent , data: { title: 'מטופלים דימנטים ' }},// מטופלים דימנטים לרויטל
-   { path: 'CameleonNoCaseNumberReasons', component: CameleonNoCaseNumberReasonsComponent , data: { title: 'מטופלים ללא מספר מקרה' }},// מטופלים  ללא מספרי מקרה לדלאשה   
-   { path: 'MosheOnlineLogs', component: MosheOnlineLogsComponent , data: { title: ' לוגים' }},// פרויקט אישי לוגים
-   { path: 'HospPhoneByDepartment', component: HospPhoneByDepartmentComponent , data: { title: 'רשימת טלפונים' }},// טלפונים של מאושפזים למאיר  
-   { path: 'SkinIntegrityDashboard', component: SkinIntegrityDashboardComponent , data: { title: ' דאשבורד שלמות העור' }},// דאשבורד לדיאנה לאומדן שלמות העור  
-   { path: 'occupational-therapy', component: OccupationalTherapyComponent , data: { title: ' דאשבורד ריפוי בעיסוק' }},// - לוצ רך חישוב פרמייה דאשבורד לרוני צור סהר ריפוי ועיסוק     
-   { path: 'Physiotherapy', component: PhysiotherapyComponent , data: { title: 'פיזותרפיה' }},// דוח תפוקות פיזותרפיה של עופר    
-
-   { path: 'ProductivityReports', component: ProductivityReportsComponent , data: { title: 'דוח תפוקות' }},// דוח תפוקות  של פרא רפואי     
-
-   { path: 'physio-equipment-report', component: PhysioEquipmentReportComponent , data: { title: 'פיזותרפיה השאלת ציוד ' }},// דוח תפוקות  של פרא רפואי     
-   { path: 'nutritionist-report', component: NutritionistReportComponent , data: { title: 'דוח תפוקות - תזונה' }},// דוח תפוקות  של פרא רפואי     
+{ path: 'TraumaPatients', component: TraumaPatientsComponent , data: { title: 'מטופלי טראומה' }},// מטופלי טרואמה מאופיר
+{ path: 'ERdashboard', component: ERdashboardComponent , data: { title: 'דאשבורד למיון' }},// דאשבורד למיון
+{ path: 'dementia-patients', component: DementiaPatientsComponent , data: { title: 'מטופלים דימנטים ' }},// מטופלים דימנטים לרויטל
+{ path: 'CameleonNoCaseNumberReasons', component: CameleonNoCaseNumberReasonsComponent , data: { title: 'מטופלים ללא מספר מקרה' }},// מטופלים  ללא מספרי מקרה לדלאשה   
+{ path: 'MosheOnlineLogs', component: MosheOnlineLogsComponent , data: { title: ' לוגים' }},// פרויקט אישי לוגים
+{ path: 'HospPhoneByDepartment', component: HospPhoneByDepartmentComponent , data: { title: 'רשימת טלפונים' }},// טלפונים של מאושפזים למאיר  
+{ path: 'SkinIntegrityDashboard', component: SkinIntegrityDashboardComponent , data: { title: ' דאשבורד שלמות העור' }},// דאשבורד לדיאנה לאומדן שלמות העור  
+{ path: 'occupational-therapy', component: OccupationalTherapyComponent , data: { title: ' דאשבורד ריפוי בעיסוק' }},// - לוצ רך חישוב פרמייה דאשבורד לרוני צור סהר ריפוי ועיסוק     
+{ path: 'Physiotherapy', component: PhysiotherapyComponent , data: { title: 'פיזותרפיה' }},// דוח תפוקות פיזותרפיה של עופר    
+{ path: 'ProductivityReports', component: ProductivityReportsComponent , data: { title: 'דוח תפוקות' }},// דוח תפוקות  של פרא רפואי     
+{ path: 'physio-equipment-report', component: PhysioEquipmentReportComponent , data: { title: 'פיזותרפיה השאלת ציוד ' }},// דוח תפוקות  של פרא רפואי     
+{ path: 'nutritionist-report', component: NutritionistReportComponent , data: { title: 'דוח תפוקות - תזונה' }},// דוח תפוקות  של פרא רפואי     
 
 
 //chemelondashboard
