@@ -243,4 +243,38 @@
     padding-top: 70px;  // or more/less as needed to push down from the header
     padding-bottom: 50px; // to ensure space above the footer
   }
+  .summary-card {
+    margin: 15px 25px;
+    padding: 10px 15px;
+    background-color: #f3f3f3;
+    font-weight: bold;
+    border: 1px solid #ccc;
+  }
+  
+  .summary-row {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+  }
+  
+  .summary-item {
+    margin: 5px 10px;
+    font-size: 16px;
+  }
+  
+  .summary-item.red {
+    color: red;
+  }
+  
+  .summary-item.orange {
+    color: orange;
+  }
+  
+  .summary-item.green {
+    color: green;
+  }
+  
+  .summary-item.total {
+    color: #333;
+  }
   

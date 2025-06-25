@@ -36,17 +36,17 @@ export class DrugSurgeryReportComponent implements OnInit {
 
   columns: string[] = [
     'AdmissionNo',
-    'OrderID',
+    //'OrderID',
     'Drug',
     'BasicName',
     'DrugGiveTime',
     'OperationStartTime',
     'MinutesDiff',
-    'EntryUser',
+    //'EntryUser',
     'GiveOrderName',
     'MainDoctor',
     'Anesthetic',
-    'ExecStatusName',
+    //'ExecStatusName',
     'ProcedureICD9',
     'ProcedureName',
     'SurgeryDepartment',
@@ -112,7 +112,7 @@ export class DrugSurgeryReportComponent implements OnInit {
 
   getColumnLabel(column: string): string {
     const columnLabels: Record<string, string> = {
-      AdmissionNo: 'מספר אשפוז',
+      AdmissionNo: 'מספר מקרה',
       OrderID: 'מזהה הזמנה',
       Drug: 'קוד תרופה',
       BasicName: 'שם התרופה',
@@ -189,6 +189,28 @@ export class DrugSurgeryReportComponent implements OnInit {
       if (minutes >= 0) return 'minutes-low';
     }
     return '';
+  }
+  summary = {
+    red: 0,
+    orange: 0,
+    green: 0,
+    total: 0
+  };
+  
+  calculateSummary(data: any[]): void {
+    this.summary = {
+      red: 0,
+      orange: 0,
+      green: 0,
+      total: data.length
+    };
+  
+    data.forEach(row => {
+      const minutes = Number(row.MinutesDiff);
+      if (minutes > 60) this.summary.red++;
+      else if (minutes >= 30) this.summary.green++;
+      else if (minutes >= 0) this.summary.orange++;
+    });
   }
   
 
