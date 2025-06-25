@@ -1,11 +1,7 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
 <div class="body">
   
-  <div class="nine">
-    <h1>
-      {{ titleUnit }}<span>{{ Title1 }}{{ Title2 }}{{ totalResults }}</span>
-    </h1>
-  </div>
+  
 
   <form [formGroup]="filterForm" dir="rtl" class="filter-form">
     <div class="container-fluid mb-2">
@@ -80,8 +76,20 @@
       <mat-header-cell *matHeaderCellDef mat-sort-header>
         {{ getColumnLabel(column) }}
       </mat-header-cell>
-      <mat-cell *matCellDef="let element">{{ element[column] }}</mat-cell>
-    </ng-container>
+      <mat-cell *matCellDef="let row" [ngClass]="getCellClass(column, row[column])">
+        <ng-container [ngSwitch]="column">
+          <ng-container *ngSwitchCase="'DrugGiveTime'">
+            {{ row[column] | date: 'HH:mm' }}
+          </ng-container>
+          <ng-container *ngSwitchCase="'OperationStartTime'">
+            {{ row[column] | date: 'HH:mm' }}
+          </ng-container>
+          <ng-container *ngSwitchDefault>
+            {{ row[column] }}
+          </ng-container>
+        </ng-container>
+      </mat-cell>
+          </ng-container>
 
     <!-- Define the header row -->
     <mat-header-row *matHeaderRowDef="columns"></mat-header-row>
