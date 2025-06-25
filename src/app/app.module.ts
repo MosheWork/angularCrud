@@ -177,6 +177,7 @@ import { MeasurementDefComponent } from './MARAA/measurement-def/measurement-def
 import { MaccabiTelAvivComponent } from './maccabi-tel-aviv/maccabi-tel-aviv.component';
 import { PhysioEquipmentReportComponent } from './chameleon-reports/physio-equipment-report/physio-equipment-report.component';
 import { NutritionistReportComponent } from './chameleon-reports/nutritionist-report/nutritionist-report.component';
+import { DrugSurgeryReportComponent } from './chameleon-reports/drug-surgery-report/drug-surgery-report.component';
 
 
 export const MY_DATE_FORMATS: MatDateFormats = {
@@ -330,7 +331,8 @@ export function playerFactory() {
     MeasurementDefComponent,
     MaccabiTelAvivComponent,
     PhysioEquipmentReportComponent,
-    NutritionistReportComponent
+    NutritionistReportComponent,
+    DrugSurgeryReportComponent
    
      
   

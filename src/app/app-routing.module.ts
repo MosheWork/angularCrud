@@ -91,6 +91,7 @@ import { MeasurementDefComponent } from './MARAA/measurement-def/measurement-def
 import { MaccabiTelAvivComponent } from './maccabi-tel-aviv/maccabi-tel-aviv.component';
 import { PhysioEquipmentReportComponent } from './chameleon-reports/physio-equipment-report/physio-equipment-report.component';
 import { NutritionistReportComponent } from './chameleon-reports/nutritionist-report/nutritionist-report.component';
+import { DrugSurgeryReportComponent } from './chameleon-reports/drug-surgery-report/drug-surgery-report.component';
 
 const routes: Routes = [
   { path: 'users', component: UsersComponent },
@@ -183,6 +184,7 @@ const routes: Routes = [
 { path: 'ProductivityReports', component: ProductivityReportsComponent , data: { title: 'דוח תפוקות' }},// דוח תפוקות  של פרא רפואי     
 { path: 'physio-equipment-report', component: PhysioEquipmentReportComponent , data: { title: 'פיזותרפיה השאלת ציוד ' }},// דוח תפוקות  של פרא רפואי     
 { path: 'nutritionist-report', component: NutritionistReportComponent , data: { title: 'דוח תפוקות - תזונה' }},// דוח תפוקות  של פרא רפואי     
+{ path: 'drug-surgery-report', component: DrugSurgeryReportComponent , data: { title: '- SSIזיהומים לאחר ניתוח ' }},//    של היבה         
 
 
 //chemelondashboard
