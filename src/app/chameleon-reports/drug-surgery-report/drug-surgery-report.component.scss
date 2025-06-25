@@ -239,4 +239,8 @@
     background-color: red;
     color: white;
   }
+  .body {
+    padding-top: 70px;  // or more/less as needed to push down from the header
+    padding-bottom: 50px; // to ensure space above the footer
+  }
   
