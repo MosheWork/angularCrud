@@ -167,7 +167,7 @@
         <form [formGroup]="editForms[selectedPatient.CaseNumber]">
     
           <!-- ✅ Grouped readonly fields -->
-          <div class="columns-grid">
+          <div class="columns-grid" dir="rtl">
             <ng-container *ngFor="let column of displayedColumns">
               <ng-container *ngIf="column !== 'RelevantToggle' && column !== 'Remarks' && column !== 'Relevant'">
     

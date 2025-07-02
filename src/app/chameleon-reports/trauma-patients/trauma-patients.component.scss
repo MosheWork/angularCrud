@@ -232,7 +232,10 @@
     overflow-x: auto; /* Enables horizontal scrolling */
     direction: rtl; /* Ensures the table is right-aligned */
     scrollbar-gutter: stable both-edges; /* Keeps scrollbar in a stable position */
+    padding-right: 7px; /* ✅ Adds space to the right of the scrollable area */
+
   }
+  
   .table-responsive::-webkit-scrollbar {
     width: 8px;
     height: 8px; /* Horizontal scrollbar size */
