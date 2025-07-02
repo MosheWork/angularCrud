@@ -7,12 +7,7 @@
     <div class="welcome-text">ברוך הבא {{ UserName }}</div>
   </div>
   <div class="summary-card-wrapper" dir="rtl">
-    <div
-  class="summary-box custom-grey"
-  (click)="applyNegativeOrEmptyFilter()"
-  [ngClass]="{ active: selectedColor === 'negativeOrEmpty' }">
-  זמן שלילי/ריק<br />{{ summary.negativeOrEmpty }}
-</div>
+
 
     <mat-card class="summary-card">
       <div
@@ -33,6 +28,12 @@
     [ngClass]="{ active: selectedColor === 'red' }">
     60+<br />{{ summary.red }}
   </div>
+  <div
+  class="summary-box custom-grey"
+  (click)="applyNegativeOrEmptyFilter()"
+  [ngClass]="{ active: selectedColor === 'negativeOrEmpty' }">
+   ריק<br />{{ summary.negativeOrEmpty }}
+</div>
   <div class="summary-box total">
     סה"כ<br />{{ summary.total }}
   </div>

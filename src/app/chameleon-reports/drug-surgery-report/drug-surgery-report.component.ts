@@ -63,7 +63,10 @@ export class DrugSurgeryReportComponent implements OnInit {
     'SurgeryDepartment',
 'OperationDurationHHMM',
     'DrugGivenInOtherUnitsAfterOp',
-    'HoursFromOperationToDrug'
+    'HoursFromOperationToDrug',
+    'DrugGivenAfterOperationEnd',         
+    'Execution_UnitNameAfterOrderStop',  
+    'HoursFromOperationEndToOrderStop',
   ];
   
 
@@ -171,7 +174,10 @@ export class DrugSurgeryReportComponent implements OnInit {
       SurgeryDepartment: 'מחלקת ניתוח',
       OperationDurationHHMM:'משך ניתוח',
       DrugGivenInOtherUnitsAfterOp: 'נרשמה תרופה במחלקה אחרת לאחר ניתוח',
-      HoursFromOperationToDrug: '  המשך מתן תרופה לאחר סיום ניתוח (שעות)  '
+      HoursFromOperationToDrug: '  המשך מתן תרופה לאחר סיום ניתוח (שעות)  ',
+      DrugGivenAfterOperationEnd: 'נרשמה תרופה לאחר סיום ניתוח',
+      Execution_UnitNameAfterOrderStop: 'מחלקה עבור Order_Stop_Date',
+      HoursFromOperationEndToOrderStop: 'שעות מסיום ניתוח עד Order_Stop_Date'
     };
     return columnLabels[column] || column;
   }
@@ -281,7 +287,7 @@ export class DrugSurgeryReportComponent implements OnInit {
   }
 
   canManageICD9(): boolean {
-    return this.UserName === 'mmaman' || this.UserName === 'admin'; 
+    return this.UserName === 'MMAMAN' || this.UserName === 'HABUZAYYAD'|| this.UserName === 'HABUZAYYAD'|| this.UserName === 'RKOURY'; 
     // ✅ Add your allowed usernames here
   }
 
