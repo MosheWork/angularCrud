@@ -58,28 +58,35 @@ export class Drug2hDetailsComponent implements OnInit {
   }
 
   fetchDrugDetails(unit: string): void {
-    this.loading = true; // Show spinner
-
-    const params = new HttpParams().set('unit', unit);
+    this.loading = true;
+  
+    let params = new HttpParams().set('unit', unit);
+  
+    // ✅ Add more filters!
+    if (this.data.year && this.data.year.length) {
+      params = params.set('year', this.data.year.join(','));
+    }
+    if (this.data.quarter && this.data.quarter.length) {
+      params = params.set('quarter', this.data.quarter.join(','));
+    }
+    if (this.data.half) {
+      params = params.set('half', this.data.half);
+    }
+  
+    console.log('Calling details API with params:', params.toString());
   
     this.http.get<any[]>(`${environment.apiUrl}Drug2hReview/details`, { params }).subscribe(
       (data) => {
-        this.loading = false; // Hide spinner when data is successfully fetched
-
-        if (data && Array.isArray(data)) {
-          this.dataSource.data = data; // Update table data
-          console.log('Drug details fetched successfully:', data);
-        } else {
-          console.warn('Unexpected response format:', data);
-        }
+        this.loading = false;
+        this.dataSource.data = data;
       },
       (error) => {
-        this.loading = false; // Hide spinner on error
-
+        this.loading = false;
         console.error('Failed to fetch drug details:', error);
       }
     );
   }
+  
   
 
   onFilterSubmit(): void {

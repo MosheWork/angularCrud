@@ -12,6 +12,7 @@ import * as XLSX from 'xlsx';
 import { environment } from '../../../environments/environment';
 import { MatDialog } from '@angular/material/dialog';
 import { ProcedureICD9ManagerDialogComponent } from './procedure-icd9-manager-dialog/procedure-icd9-manager-dialog.component';
+import { AuthenticationService } from '../../../app/services/authentication-service/authentication-service.component';
 
 @Component({
   selector: 'app-drug-surgery-report',
@@ -26,7 +27,11 @@ export class DrugSurgeryReportComponent implements OnInit {
   titleUnit = 'מחלקת ניתוחים ';
   totalResults = 0;
   isLoading = false;
+  UserName: string = '';
+  profilePictureUrl: string = 'assets/default-user.png'; // fallback default
 
+
+  profilePicture: string = ''; // URL or base64
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
@@ -36,6 +41,9 @@ export class DrugSurgeryReportComponent implements OnInit {
   filteredData: any[] = [];
   matTableDataSource: MatTableDataSource<any>;
 
+
+  
+  
   columns: string[] = [
     'AdmissionNo',
     //'OrderID',
@@ -43,6 +51,7 @@ export class DrugSurgeryReportComponent implements OnInit {
     'BasicName',
     'DrugGiveTime',
     'OperationStartTime',
+    'OperationEndTime',
     'MinutesDiff',
     //'EntryUser',
     'GiveOrderName',
@@ -52,12 +61,13 @@ export class DrugSurgeryReportComponent implements OnInit {
     'ProcedureICD9',
     'ProcedureName',
     'SurgeryDepartment',
+'OperationDurationHHMM',
     'DrugGivenInOtherUnitsAfterOp',
     'HoursFromOperationToDrug'
   ];
   
 
-  constructor(private http: HttpClient, private fb: FormBuilder, private router: Router,private dialog: MatDialog) {
+  constructor(private http: HttpClient, private fb: FormBuilder, private router: Router,private dialog: MatDialog,private authenticationService: AuthenticationService,) {
     this.filterForm = this.createFilterForm();
     this.matTableDataSource = new MatTableDataSource<any>([]);
   }
@@ -85,6 +95,33 @@ export class DrugSurgeryReportComponent implements OnInit {
 
       this.applyFilters();
     });
+
+
+    this.authenticationService.getAuthentication().subscribe(
+      (response) => {
+        console.log('✅ Authentication Successful:', response.message);
+        let user = response.message.split('\\')[1];
+        console.log('🧑 User:', user);
+        this.getUserDetailsFromDBByUserName(user.toUpperCase());
+      },
+      (error) => {
+        console.error('❌ Authentication Failed:', error);
+      }
+    );
+    
+  }
+  getUserDetailsFromDBByUserName(username: string): void {
+    this.http.get<any>(`${environment.apiUrl}ServiceCRM/GetEmployeeInfo?username=${username.toUpperCase()}`)
+  .subscribe(
+    (data) => {
+      this.UserName = data.UserName;
+      this.profilePictureUrl = `${data.ProfilePicture}`; // adjust path if needed
+    },
+    (error) => {
+      console.error('Error fetching employee info:', error);
+    }
+  );
+
   }
 
   autoLogin() {
@@ -122,6 +159,7 @@ export class DrugSurgeryReportComponent implements OnInit {
       BasicName: 'אנטיביוטיקה ',
       DrugGiveTime: 'זמן מתן תרופה',
       OperationStartTime: 'זמן תחילת ניתוח',
+      OperationEndTime:'זמן סיום ניתוח',
       MinutesDiff: 'זמן ממתן תרופה עד חתך (בדקות)',
       EntryUser: 'מקודד',
       GiveOrderName: 'נותן התרופה',
@@ -131,6 +169,7 @@ export class DrugSurgeryReportComponent implements OnInit {
       ProcedureICD9: 'קוד פרוצדורה',
       ProcedureName: 'שם פרוצדורה',
       SurgeryDepartment: 'מחלקת ניתוח',
+      OperationDurationHHMM:'משך ניתוח',
       DrugGivenInOtherUnitsAfterOp: 'נרשמה תרופה במחלקה אחרת לאחר ניתוח',
       HoursFromOperationToDrug: '  המשך מתן תרופה לאחר סיום ניתוח (שעות)  '
     };
@@ -193,19 +232,25 @@ export class DrugSurgeryReportComponent implements OnInit {
     }
     return '';
   }
-  summary = { green: 0, orange: 0, red: 0, total: 0 };
+  summary = { green: 0, orange: 0, red: 0, negativeOrEmpty: 0, total: 0 };
   selectedColor: string | null = null;
   originalData: any[] = [];
   
   calculateSummary(data: any[]): void {
-    this.summary = { green: 0, orange: 0, red: 0, total: data.length };
+    this.summary = { green: 0, orange: 0, red: 0, negativeOrEmpty: 0, total: data.length };
     this.originalData = data; // Save for clearing later
   
     data.forEach(row => {
       const minutes = Number(row.MinutesDiff);
-      if (minutes > 60) this.summary.red++;
-      else if (minutes >= 30) this.summary.green++;
-      else if (minutes >= 0) this.summary.orange++;
+      if (minutes == null || isNaN(minutes) || minutes < 0) {
+        this.summary.negativeOrEmpty++;
+      } else if (minutes > 60) {
+        this.summary.red++;
+      } else if (minutes >= 30) {
+        this.summary.green++;
+      } else if (minutes >= 0) {
+        this.summary.orange++;
+      }
     });
   }
   
@@ -234,4 +279,21 @@ export class DrugSurgeryReportComponent implements OnInit {
 
     });
   }
+
+  canManageICD9(): boolean {
+    return this.UserName === 'mmaman' || this.UserName === 'admin'; 
+    // ✅ Add your allowed usernames here
+  }
+
+  applyNegativeOrEmptyFilter(): void {
+    this.selectedColor = 'negativeOrEmpty';
+  
+    const filtered = this.originalData.filter(row => {
+      const minutes = Number(row.MinutesDiff);
+      return minutes == null ||  isNaN(minutes) || minutes < 0;
+    });
+  
+    this.matTableDataSource.data = filtered;
+  }
+  
 }

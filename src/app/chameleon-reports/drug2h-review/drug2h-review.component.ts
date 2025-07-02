@@ -205,16 +205,25 @@ export class Drug2hReviewComponent implements OnInit, AfterViewInit {
   }
 
   openDrugDetailsDialog(unitName: string): void {
+    const filters = this.filterForm.value;
+  
     const dialogRef = this.dialog.open(Drug2hDetailsComponent, {
       width: '80%',
-      data: { Unit_Name: unitName },
+      data: {
+        Unit_Name: unitName,
+        year: filters.year,
+        quarter: filters.quarter,
+        half: filters.half,
+        unitName: filters.unitName
+        // Add fromDate/toDate if you have them!
+      },
     });
-
+  
     dialogRef.afterClosed().subscribe(() => {
       console.log('Dialog closed');
     });
   }
-
+  
   toggleView(): void {
     this.isGraphVisible = !this.isGraphVisible;
     if (this.isGraphVisible) {

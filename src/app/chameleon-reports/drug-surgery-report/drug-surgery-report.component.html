@@ -1,7 +1,19 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
+
 <div class="body">
-  
+   <!-- 👤 Profile Section -->
+   <div class="user-info">
+    <img [src]="profilePictureUrl" alt="User Profile" class="profile-pic" />
+    <div class="welcome-text">ברוך הבא {{ UserName }}</div>
+  </div>
   <div class="summary-card-wrapper" dir="rtl">
+    <div
+  class="summary-box custom-grey"
+  (click)="applyNegativeOrEmptyFilter()"
+  [ngClass]="{ active: selectedColor === 'negativeOrEmpty' }">
+  זמן שלילי/ריק<br />{{ summary.negativeOrEmpty }}
+</div>
+
     <mat-card class="summary-card">
       <div
     class="summary-box mat-accent"
@@ -26,9 +38,15 @@
   </div>
       <button mat-stroked-button class="blue-button" (click)="clearColorFilter()">נקה סינון</button>
     </mat-card>
-    <button mat-raised-button color="primary" (click)="openProcedureDialog()" style="margin: 10px;">
-      ניהול קודי ICD9
-    </button>
+    <button 
+    *ngIf="canManageICD9()"
+    mat-raised-button 
+    color="primary" 
+    (click)="openProcedureDialog()" 
+    style="margin: 10px;">
+    ניהול קודי ICD9
+  </button>
+  
   </div>
   
   
@@ -112,6 +130,9 @@
             {{ row[column] | date: 'yyyy-MM-dd HH:mm' }}
           </ng-container>
           <ng-container *ngSwitchCase="'OperationStartTime'">
+            {{ row[column] | date: 'yyyy-MM-dd HH:mm' }}
+          </ng-container>
+          <ng-container *ngSwitchCase="'OperationEndTime'">
             {{ row[column] | date: 'yyyy-MM-dd HH:mm' }}
           </ng-container>
           <ng-container *ngSwitchDefault>
