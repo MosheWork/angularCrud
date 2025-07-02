@@ -1,0 +1,53 @@
+<mat-card  dir="rtl" class="full-dialog-card" >
+
+        <div class="dialog-title-wrapper">
+            <h2 class="mat-typography dialog-title">ניהול קודי ניתוח (ICD9)</h2>
+          </div>        <div style="text-align: end; margin-top: 20px;">
+        <button mat-stroked-button color="primary" (click)="dialogRef.close()">סגור</button>
+  
+    </div>
+  
+    <mat-form-field appearance="outline" style="width: 100%; margin-bottom: 16px;" >
+      <mat-label>חיפוש</mat-label>
+      <input matInput [formControl]="searchControl" placeholder="חפש לפי קוד או שם">
+    </mat-form-field>
+  
+    <table mat-table [dataSource]="dataSource" matSort class="mat-elevation-z2 full-width-table">
+
+        <!-- ICD9 Code -->
+        <ng-container matColumnDef="ProcedureICD9">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header sticky>קוד ICD9</th>
+          <td mat-cell *matCellDef="let row"> {{ row.ProcedureICD9 }} </td>
+        </ng-container>
+      
+        <!-- Description -->
+        <ng-container matColumnDef="Name">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header sticky>תיאור</th>
+          <td mat-cell *matCellDef="let row"> {{ row.Name }} </td>
+        </ng-container>
+      
+        <!-- Active -->
+        <ng-container matColumnDef="Active">
+          <th mat-header-cell *matHeaderCellDef sticky>פעיל</th>
+          <td mat-cell *matCellDef="let row">
+            <mat-slide-toggle [(ngModel)]="row.Active" (change)="onToggleActive(row)"></mat-slide-toggle>
+          </td>
+        </ng-container>
+      
+        <!-- Header and Rows -->
+        <tr mat-header-row *matHeaderRowDef="displayedColumns" sticky></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+      </table>
+      
+      <!-- Paginator -->
+      <mat-paginator [length]="filteredData.length"
+                     [pageSize]="10"
+                     [pageSizeOptions]="[5, 10, 20]"
+                     showFirstLastButtons
+                    >
+      </mat-paginator>
+      
+  
+    
+  </mat-card>
+  

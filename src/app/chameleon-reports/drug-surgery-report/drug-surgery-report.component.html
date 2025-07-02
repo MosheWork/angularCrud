@@ -1,14 +1,36 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
 <div class="body">
   
-  <mat-card class="summary-card" dir="rtl">
-    <div class="summary-row">
-      <div class="summary-item red">🔴 מעל 60 דק: {{ summary.red }}</div>
-      <div class="summary-item orange">🟠 עד 30 דק: {{ summary.orange }}</div>
-      <div class="summary-item green">🟢 בין 30–60 דק: {{ summary.green }}</div>
-      <div class="summary-item total">סה"כ מקרים: {{ summary.total }}</div>
-    </div>
-  </mat-card>
+  <div class="summary-card-wrapper" dir="rtl">
+    <mat-card class="summary-card">
+      <div
+    class="summary-box mat-accent"
+    (click)="applyColorFilter('green')"
+    [ngClass]="{ active: selectedColor === 'green' }">
+    30-60<br />{{ summary.green }}
+  </div>
+  <div
+    class="summary-box custom-orange"
+    (click)="applyColorFilter('orange')"
+    [ngClass]="{ active: selectedColor === 'orange' }">
+    0-30<br />{{ summary.orange }}
+  </div>
+  <div
+    class="summary-box mat-warn"
+    (click)="applyColorFilter('red')"
+    [ngClass]="{ active: selectedColor === 'red' }">
+    60+<br />{{ summary.red }}
+  </div>
+  <div class="summary-box total">
+    סה"כ<br />{{ summary.total }}
+  </div>
+      <button mat-stroked-button class="blue-button" (click)="clearColorFilter()">נקה סינון</button>
+    </mat-card>
+    <button mat-raised-button color="primary" (click)="openProcedureDialog()" style="margin: 10px;">
+      ניהול קודי ICD9
+    </button>
+  </div>
+  
   
 
   <form [formGroup]="filterForm" dir="rtl" class="filter-form">
@@ -68,9 +90,9 @@
         <mat-label class="filters" style="color: blue"> חיפוש</mat-label>
         <input matInput [formControlName]="'globalFilter'" class="search-input" />
       </mat-form-field>
-      <div class="graph-button-container">
+      <!-- <div class="graph-button-container">
         <img (click)="navigateToGraphPage()" matTooltip="Move To Graph" src="../../../../assets/graphIcon.png" width="50px" />
-      </div>
+      </div> -->
       <div class="icon" matTooltip="Download Excel">
         <img src="../../assets/excel.png" alt="Download" (click)="exportToExcel()" class="download-icon" width="50px" />
       </div>
@@ -87,10 +109,10 @@
       <mat-cell *matCellDef="let row" [ngClass]="getCellClass(column, row[column])">
         <ng-container [ngSwitch]="column">
           <ng-container *ngSwitchCase="'DrugGiveTime'">
-            {{ row[column] | date: 'HH:mm' }}
+            {{ row[column] | date: 'yyyy-MM-dd HH:mm' }}
           </ng-container>
           <ng-container *ngSwitchCase="'OperationStartTime'">
-            {{ row[column] | date: 'HH:mm' }}
+            {{ row[column] | date: 'yyyy-MM-dd HH:mm' }}
           </ng-container>
           <ng-container *ngSwitchDefault>
             {{ row[column] }}

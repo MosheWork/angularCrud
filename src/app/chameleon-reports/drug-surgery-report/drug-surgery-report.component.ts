@@ -10,6 +10,8 @@ import { Observable } from 'rxjs';
 import { map, startWith, tap } from 'rxjs/operators';
 import * as XLSX from 'xlsx';
 import { environment } from '../../../environments/environment';
+import { MatDialog } from '@angular/material/dialog';
+import { ProcedureICD9ManagerDialogComponent } from './procedure-icd9-manager-dialog/procedure-icd9-manager-dialog.component';
 
 @Component({
   selector: 'app-drug-surgery-report',
@@ -55,7 +57,7 @@ export class DrugSurgeryReportComponent implements OnInit {
   ];
   
 
-  constructor(private http: HttpClient, private fb: FormBuilder, private router: Router) {
+  constructor(private http: HttpClient, private fb: FormBuilder, private router: Router,private dialog: MatDialog) {
     this.filterForm = this.createFilterForm();
     this.matTableDataSource = new MatTableDataSource<any>([]);
   }
@@ -69,6 +71,8 @@ export class DrugSurgeryReportComponent implements OnInit {
       this.matTableDataSource = new MatTableDataSource(this.filteredData);
       this.matTableDataSource.paginator = this.paginator;
       this.matTableDataSource.sort = this.sort;
+      this.calculateSummary(data); 
+
 
       this.columns.forEach((column) => {
         this.filterForm.get(column)?.valueChanges.pipe(debounceTime(300), distinctUntilChanged()).subscribe(() => this.applyFilters());
@@ -183,27 +187,19 @@ export class DrugSurgeryReportComponent implements OnInit {
   }
   getCellClass(column: string, value: any): string {
     if (column === 'MinutesDiff') {
-      const minutes = Number(value);
-      if (minutes > 60) return 'minutes-high';
-      if (minutes >= 30) return 'minutes-mid';
-      if (minutes >= 0) return 'minutes-low';
+      if (value >= 60) return 'cell-red';
+      else if (value >= 30) return 'cell-green';
+      else if (value >= 0) return 'cell-orange';
     }
     return '';
   }
-  summary = {
-    red: 0,
-    orange: 0,
-    green: 0,
-    total: 0
-  };
+  summary = { green: 0, orange: 0, red: 0, total: 0 };
+  selectedColor: string | null = null;
+  originalData: any[] = [];
   
   calculateSummary(data: any[]): void {
-    this.summary = {
-      red: 0,
-      orange: 0,
-      green: 0,
-      total: data.length
-    };
+    this.summary = { green: 0, orange: 0, red: 0, total: data.length };
+    this.originalData = data; // Save for clearing later
   
     data.forEach(row => {
       const minutes = Number(row.MinutesDiff);
@@ -213,5 +209,29 @@ export class DrugSurgeryReportComponent implements OnInit {
     });
   }
   
+  applyColorFilter(color: string): void {
+    this.selectedColor = color;
+  
+    const filtered = this.originalData.filter(row => {
+      const minutes = Number(row.MinutesDiff);
+      if (color === 'green') return minutes >= 30 && minutes <= 60;
+      if (color === 'orange') return minutes >= 0 && minutes < 30;
+      if (color === 'red') return minutes > 60;
+      return true;
+    });
+  
+    this.matTableDataSource.data = filtered;
+  }
+  
+  clearColorFilter(): void {
+    this.selectedColor = null;
+    this.matTableDataSource.data = this.originalData;
+  }
+  openProcedureDialog(): void {
+    this.dialog.open(ProcedureICD9ManagerDialogComponent, {
+      width: '1200px',
+      height: '1000px' 
 
+    });
+  }
 }

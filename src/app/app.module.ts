@@ -178,6 +178,7 @@ import { MaccabiTelAvivComponent } from './maccabi-tel-aviv/maccabi-tel-aviv.com
 import { PhysioEquipmentReportComponent } from './chameleon-reports/physio-equipment-report/physio-equipment-report.component';
 import { NutritionistReportComponent } from './chameleon-reports/nutritionist-report/nutritionist-report.component';
 import { DrugSurgeryReportComponent } from './chameleon-reports/drug-surgery-report/drug-surgery-report.component';
+import { ProcedureICD9ManagerDialogComponent } from './chameleon-reports/drug-surgery-report/procedure-icd9-manager-dialog/procedure-icd9-manager-dialog.component';
 
 
 export const MY_DATE_FORMATS: MatDateFormats = {
@@ -332,7 +333,8 @@ export function playerFactory() {
     MaccabiTelAvivComponent,
     PhysioEquipmentReportComponent,
     NutritionistReportComponent,
-    DrugSurgeryReportComponent
+    DrugSurgeryReportComponent,
+    ProcedureICD9ManagerDialogComponent
    
      
   
