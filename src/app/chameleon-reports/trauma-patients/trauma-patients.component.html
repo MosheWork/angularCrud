@@ -12,7 +12,7 @@
         </button>
         <img src="../../assets/excel.png" alt="Download" (click)="exportToExcel()" class="download-icon" width="50px" />
          
-        
+
         <mat-form-field>
           <mat-label>שנה</mat-label>
           <mat-select formControlName="YearFilter" multiple>
@@ -100,37 +100,57 @@
     <div class="table-responsive">
       <div class="table-responsive">
         <mat-table [dataSource]="dataSource" matSort class="mat-elevation-z8">
-          <ng-container *ngFor="let column of displayedColumns" [matColumnDef]="column">
-            <mat-header-cell *matHeaderCellDef mat-sort-header>
-              {{ columnHeaders[column] || column }}
-            </mat-header-cell>      
-            <mat-cell *matCellDef="let element" (click)="openDialog(element)">
-              <!-- Relevant Column Formatting -->
-              <ng-container *ngIf="column === 'Relevant'; else defaultColumn">
-                <span *ngIf="element.Relevant === 1">כן</span>
-                <span *ngIf="element.Relevant === 0">לא</span>
-                <span *ngIf="element.Relevant === null">לא עודכן</span>
-              </ng-container>
       
-              <!-- Date Formatting -->
-              <ng-template #defaultColumn>
-                <ng-container *ngIf="isDateColumn(column); else textContent">
-                  <ng-container *ngIf="!isDefaultDate(element[column]); else emptyDate">
-                    {{ element[column] | date:'dd/MM/yyyy HH:mm' }}
-                  </ng-container>
-                  <ng-template #emptyDate> </ng-template>
-                </ng-container>
-                <ng-template #textContent>
-                  {{ element[column] }}
-                </ng-template>
-              </ng-template>
-            </mat-cell>
+         <!-- ✅ 1. Static RelevantToggle Column -->
+<ng-container matColumnDef="RelevantToggle">
+  <mat-header-cell *matHeaderCellDef> רלוונטי </mat-header-cell>
+  <mat-cell *matCellDef="let element">
+    <mat-checkbox
+      [checked]="element.Relevant === 1"
+      (change)="onRelevantToggle(element, $event.checked)">
+    </mat-checkbox>
+  </mat-cell>
+</ng-container>
+
+<!-- ✅ 2. Dynamic Columns - safe loop -->
+<ng-container *ngFor="let column of displayedColumns">
+  <ng-container *ngIf="column !== 'RelevantToggle'" [matColumnDef]="column">
+    <mat-header-cell *matHeaderCellDef mat-sort-header>
+      {{ columnHeaders[column] || column }}
+    </mat-header-cell>
+
+    <mat-cell *matCellDef="let element" (click)="openDialog(element)">
+      <!-- Relevant Column Custom Format -->
+      <ng-container *ngIf="column === 'Relevant'; else defaultColumn">
+        <span *ngIf="element.Relevant === 1">כן</span>
+        <span *ngIf="element.Relevant === 0">לא</span>
+        <span *ngIf="element.Relevant === null">לא עודכן</span>
+      </ng-container>
+
+      <!-- Default Format -->
+      <ng-template #defaultColumn>
+        <ng-container *ngIf="isDateColumn(column); else textContent">
+          <ng-container *ngIf="!isDefaultDate(element[column]); else emptyDate">
+            {{ element[column] | date:'dd/MM/yyyy HH:mm' }}
           </ng-container>
+          <ng-template #emptyDate> </ng-template>
+        </ng-container>
+        <ng-template #textContent>
+          {{ element[column] }}
+        </ng-template>
+      </ng-template>
+    </mat-cell>
+  </ng-container>
+</ng-container>
+
       
+          <!-- ✅ 3. Table Headers & Rows -->
           <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
           <mat-row *matRowDef="let row; columns: displayedColumns;" class="clickable-row"></mat-row>
+      
         </mat-table>
       </div>
+      
       
       
 
@@ -141,34 +161,47 @@
     </mat-paginator></div>
     <!-- Edit Dialog (inside the same component) -->
     <div *ngIf="selectedPatient" class="dialog-backdrop">
-      <div class="dialog-box">
+      <div class="dialog-box large-dialog" style="max-width: 90vw; width: 90vw; max-height: 90vh; overflow: auto;">
         <h2>עריכת מטופל טראומה</h2>
-  
-        <form [formGroup]="editForms[selectedPatient.CaseNumber]"> <!-- ✅ Fix: Use correct form -->
-          <mat-form-field>
-            <mat-label>מספר מקרה</mat-label>
-            <input matInput formControlName="CaseNumber" readonly />
+    
+        <form [formGroup]="editForms[selectedPatient.CaseNumber]">
+    
+          <!-- ✅ Grouped readonly fields -->
+          <div class="columns-grid">
+            <ng-container *ngFor="let column of displayedColumns">
+              <ng-container *ngIf="column !== 'RelevantToggle' && column !== 'Remarks' && column !== 'Relevant'">
+    
+                <mat-form-field  class="full-width">
+                  <mat-label>{{ columnHeaders[column] || column }}</mat-label>
+                  <input matInput [value]="formatDialogValue(column, selectedPatient[column])" readonly />
+                </mat-form-field>
+    
+              </ng-container>
+            </ng-container>
+          </div>
+    
+          <!-- ✅ Editable Remarks -->
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>הערות</mat-label>
+            <textarea matInput formControlName="Remarks" rows="5" maxlength="2000"></textarea>
           </mat-form-field>
-  
-              <!-- Remarks (Now a Large TextArea) -->
-    <mat-form-field appearance="outline" class="full-width">
-        <mat-label>הערות</mat-label>
-        <textarea matInput formControlName="Remarks" rows="5" maxlength="2000"></textarea>
-      </mat-form-field>
-  
-          
-            <mat-label>רלוונטי</mat-label>
-            <mat-radio-group formControlName="Relevant" class="radio-group">
-                <mat-radio-button [value]="1">כן</mat-radio-button>
-                <mat-radio-button [value]="0">לא</mat-radio-button>
-            </mat-radio-group>
+    
+          <!-- ✅ Editable Relevant -->
+          <mat-label>רלוונטי</mat-label>
+          <mat-radio-group formControlName="Relevant" class="radio-group">
+            <mat-radio-button [value]="1">כן</mat-radio-button>
+            <mat-radio-button [value]="0">לא</mat-radio-button>
+          </mat-radio-group>
+    
         </form>
-  
+    
         <div class="dialog-actions">
           <button mat-button (click)="closeDialog()">בטל</button>
-          <button mat-button color="primary" (click)="saveEdit()">שמור</button> <!-- ✅ Fix: No parameter -->
+          <button mat-button color="primary" (click)="saveEdit()">שמור</button>
         </div>
       </div>
     </div>
+    
+    
   </div>
   

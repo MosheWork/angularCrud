@@ -118,11 +118,11 @@ export class DrugSurgeryReportComponent implements OnInit {
     const columnLabels: Record<string, string> = {
       AdmissionNo: 'מספר מקרה',
       OrderID: 'מזהה הזמנה',
-      Drug: 'קוד תרופה',
-      BasicName: 'שם התרופה',
+      Drug: 'קוד אנטיביוטיקה',
+      BasicName: 'אנטיביוטיקה ',
       DrugGiveTime: 'זמן מתן תרופה',
       OperationStartTime: 'זמן תחילת ניתוח',
-      MinutesDiff: 'דקות מהניתוח עד התרופה',
+      MinutesDiff: 'זמן ממתן תרופה עד חתך (בדקות)',
       EntryUser: 'מקודד',
       GiveOrderName: 'נותן התרופה',
       MainDoctor: 'רופא מנתח',
@@ -132,7 +132,7 @@ export class DrugSurgeryReportComponent implements OnInit {
       ProcedureName: 'שם פרוצדורה',
       SurgeryDepartment: 'מחלקת ניתוח',
       DrugGivenInOtherUnitsAfterOp: 'נרשמה תרופה במחלקה אחרת לאחר ניתוח',
-      HoursFromOperationToDrug: 'שעות מהניתוח ועד התרופה'
+      HoursFromOperationToDrug: '  המשך מתן תרופה לאחר סיום ניתוח (שעות)  '
     };
     return columnLabels[column] || column;
   }

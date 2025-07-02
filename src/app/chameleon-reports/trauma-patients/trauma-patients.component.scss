@@ -145,6 +145,7 @@
   .card-body {
     position: relative;
     padding-left: 40px; /* Adjust the padding-left to make space for the button */
+    padding-right: 40px;
   }
   /* Add space between the end of the search bar and the start of the Excel icon */
   .icon {
@@ -263,6 +264,7 @@
    display: table;
    border-collapse: collapse;
    margin: 0px;
+  padding-right: 20px;
   }
   
   mat-row,
@@ -584,6 +586,17 @@
     .radio-group {
       display: flex;
       gap: 10px;
+    }
+  }
+  .columns-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); /* Adjust size as needed */
+    gap: 12px;
+  }
+  
+  @media (min-width: 1200px) {
+    .columns-grid {
+      grid-template-columns: repeat(6, 1fr); /* 6 columns in large screens */
     }
   }
   

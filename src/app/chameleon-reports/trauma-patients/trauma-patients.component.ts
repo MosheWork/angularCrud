@@ -3,6 +3,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatDialogRef } from '@angular/material/dialog';
 import { HttpClient } from '@angular/common/http';
 import * as XLSX from 'xlsx';
+import { DatePipe } from '@angular/common';
 
 import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
@@ -44,6 +45,7 @@ interface TraumaPatient {
 })
 export class TraumaPatientsComponent implements OnInit {
   displayedColumns: string[] = [
+    'RelevantToggle',
     'Remarks',
     'Relevant',
     'CaseNumber',
@@ -145,7 +147,9 @@ export class TraumaPatientsComponent implements OnInit {
   constructor(
     private http: HttpClient,
     private fb: FormBuilder,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private datePipe: DatePipe
+
   ) {
     this.filterForm = this.createFilterForm();
   }
@@ -403,4 +407,34 @@ export class TraumaPatientsComponent implements OnInit {
     const date = new Date(value);
     return date.getFullYear() === 1900;
   }
+
+  onRelevantToggle(element: any, isChecked: boolean) {
+    // Update the local value
+    element.Relevant = isChecked ? 1 : 0;
+  
+    // Create the same payload your dialog uses
+    const updatedData = {
+      CaseNumber: element.CaseNumber,
+      Relevant: element.Relevant,
+      Remarks: element.Remarks || ''  // or pull from element if needed
+    };
+  
+    // Call backend same as saveEdit()
+    this.http.post(environment.apiUrl + 'Trauma/InsertTraumaRemark', updatedData).subscribe(
+      () => {
+        console.log('Relevant updated successfully');
+        this.fetchTraumaPatients(); // Refresh
+      },
+      (error) => {
+        console.error('Error updating Relevant:', error);
+      }
+    );
+  }
+  formatDialogValue(column: string, value: any): string {
+    if (this.isDateColumn(column) && value && !this.isDefaultDate(value)) {
+      return this.datePipe.transform(value, 'dd/MM/yyyy HH:mm') || '';
+    }
+    return value;
+  }
+  
 }
