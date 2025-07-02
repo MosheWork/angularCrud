@@ -176,8 +176,8 @@ export class DrugSurgeryReportComponent implements OnInit {
       DrugGivenInOtherUnitsAfterOp: 'נרשמה תרופה במחלקה אחרת לאחר ניתוח',
       HoursFromOperationToDrug: '  המשך מתן תרופה לאחר סיום ניתוח (שעות)  ',
       DrugGivenAfterOperationEnd: 'נרשמה תרופה לאחר סיום ניתוח',
-      Execution_UnitNameAfterOrderStop: 'מחלקה עבור Order_Stop_Date',
-      HoursFromOperationEndToOrderStop: 'שעות מסיום ניתוח עד Order_Stop_Date'
+      Execution_UnitNameAfterOrderStop: 'שם מחלקה נותנת תרופה',
+      HoursFromOperationEndToOrderStop: 'שעות מסיום ניתוח עד סיום הוראה'
     };
     return columnLabels[column] || column;
   }
