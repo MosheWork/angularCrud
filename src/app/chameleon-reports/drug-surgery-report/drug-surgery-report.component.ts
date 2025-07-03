@@ -13,6 +13,7 @@ import { environment } from '../../../environments/environment';
 import { MatDialog } from '@angular/material/dialog';
 import { ProcedureICD9ManagerDialogComponent } from './procedure-icd9-manager-dialog/procedure-icd9-manager-dialog.component';
 import { AuthenticationService } from '../../../app/services/authentication-service/authentication-service.component';
+import { ChangeDetectorRef } from '@angular/core';
 
 @Component({
   selector: 'app-drug-surgery-report',
@@ -28,12 +29,19 @@ export class DrugSurgeryReportComponent implements OnInit {
   totalResults = 0;
   isLoading = false;
   UserName: string = '';
+  totalRows: number = 0;
+noDrugsPercentage: number = 0;
   profilePictureUrl: string = 'assets/default-user.png'; // fallback default
+  LoginUserName: string = '';
+DisplayUserName: string = '';
 
 
   profilePicture: string = ''; // URL or base64
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
+  @ViewChild('mainPaginator') mainPaginator!: MatPaginator;
+  @ViewChild('noDrugsPaginator') noDrugsPaginator!: MatPaginator;
+
 
   filterForm: FormGroup;
   graphData: any[] = [];
@@ -41,7 +49,22 @@ export class DrugSurgeryReportComponent implements OnInit {
   filteredData: any[] = [];
   matTableDataSource: MatTableDataSource<any>;
 
-
+  noDrugsDataSource: any[] = [];
+  filteredNoDrugsData: any[] = [];
+  noDrugsMatTableDataSource = new MatTableDataSource<any>([]);
+  noDrugsColumns: string[] = [
+    'AdmissionNo',
+    'OperationStartTime',
+    'OperationEndTime',
+    'OperationDurationHHMM',
+    'GiveOrderName',
+    'MainDoctor',
+    'Anesthetic',
+    'ProcedureICD9',
+    'ProcedureName',
+    'SurgeryDepartment'
+  ];
+  
   
   
   columns: string[] = [
@@ -62,15 +85,15 @@ export class DrugSurgeryReportComponent implements OnInit {
     'ProcedureName',
     'SurgeryDepartment',
 'OperationDurationHHMM',
-    'DrugGivenInOtherUnitsAfterOp',
-    'HoursFromOperationToDrug',
+    //'DrugGivenInOtherUnitsAfterOp',
+    //'HoursFromOperationToDrug',
     'DrugGivenAfterOperationEnd',         
     'Execution_UnitNameAfterOrderStop',  
     'HoursFromOperationEndToOrderStop',
   ];
   
 
-  constructor(private http: HttpClient, private fb: FormBuilder, private router: Router,private dialog: MatDialog,private authenticationService: AuthenticationService,) {
+  constructor(private http: HttpClient, private fb: FormBuilder, private router: Router,private dialog: MatDialog,private authenticationService: AuthenticationService, private cdr: ChangeDetectorRef) {
     this.filterForm = this.createFilterForm();
     this.matTableDataSource = new MatTableDataSource<any>([]);
   }
@@ -82,10 +105,11 @@ export class DrugSurgeryReportComponent implements OnInit {
       this.dataSource = data;
       this.filteredData = [...data];
       this.matTableDataSource = new MatTableDataSource(this.filteredData);
-      this.matTableDataSource.paginator = this.paginator;
-      this.matTableDataSource.sort = this.sort;
+   
       this.calculateSummary(data); 
-
+    // ✅ Connect paginator for MAIN
+    this.matTableDataSource.paginator = this.mainPaginator;
+    this.matTableDataSource.sort = this.sort;
 
       this.columns.forEach((column) => {
         this.filterForm.get(column)?.valueChanges.pipe(debounceTime(300), distinctUntilChanged()).subscribe(() => this.applyFilters());
@@ -97,35 +121,60 @@ export class DrugSurgeryReportComponent implements OnInit {
       });
 
       this.applyFilters();
+        // Recalculate gauge if noDrugsDataSource is ready
+  this.updateGauge();
     });
-
+  // No Drugs table
+  this.http.get<any[]>(environment.apiUrl + 'DrugSurgeryReport/NoDrugs').subscribe(data => {
+    this.noDrugsDataSource = data;
+    this.filteredNoDrugsData = [...data];
+    this.noDrugsMatTableDataSource = new MatTableDataSource(this.filteredNoDrugsData);
+    this.noDrugsMatTableDataSource.paginator = this.noDrugsPaginator;
+  // Recalculate gauge if main data is ready
+  this.updateGauge();
+  });
 
     this.authenticationService.getAuthentication().subscribe(
       (response) => {
-        console.log('✅ Authentication Successful:', response.message);
-        let user = response.message.split('\\')[1];
-        console.log('🧑 User:', user);
-        this.getUserDetailsFromDBByUserName(user.toUpperCase());
-      },
-      (error) => {
-        console.error('❌ Authentication Failed:', error);
+        const loginUserName = response.message.split('\\')[1].toUpperCase();
+        this.LoginUserName = loginUserName;
+    
+        console.log('🧑‍💻 LoginUserName set to:', this.LoginUserName, '| Allowed:', this.canManageICD9());
+        this.cdr.detectChanges();
+    
+        this.getUserDetailsFromDBByUserName(loginUserName);
       }
     );
     
+    
+  }
+
+  updateGauge() {
+    const mainCount = this.matTableDataSource?.data?.length || 0;
+    const noDrugsCount = this.noDrugsMatTableDataSource?.data?.length || 0;
+    this.totalRows = mainCount + noDrugsCount;
+  
+    if (this.totalRows > 0) {
+      this.noDrugsPercentage = +(noDrugsCount / this.totalRows * 100).toFixed(1);
+    } else {
+      this.noDrugsPercentage = 0;
+    }
   }
   getUserDetailsFromDBByUserName(username: string): void {
-    this.http.get<any>(`${environment.apiUrl}ServiceCRM/GetEmployeeInfo?username=${username.toUpperCase()}`)
-  .subscribe(
-    (data) => {
-      this.UserName = data.UserName;
-      this.profilePictureUrl = `${data.ProfilePicture}`; // adjust path if needed
-    },
-    (error) => {
-      console.error('Error fetching employee info:', error);
-    }
-  );
-
+    this.http.get<any>(`${environment.apiUrl}ServiceCRM/GetEmployeeInfo?username=${username}`)
+      .subscribe(
+        (data) => {
+          this.DisplayUserName = data.UserName; // Hebrew display name
+          this.profilePictureUrl = `${data.ProfilePicture}`;
+  
+          console.log('🧑‍💻 DisplayUserName set to:', this.DisplayUserName);
+          this.cdr.detectChanges();
+        }
+      );
   }
+  
+  
+  
 
   autoLogin() {
     const headers = new HttpHeaders().set('Content-Type', 'application/json');
@@ -173,11 +222,13 @@ export class DrugSurgeryReportComponent implements OnInit {
       ProcedureName: 'שם פרוצדורה',
       SurgeryDepartment: 'מחלקת ניתוח',
       OperationDurationHHMM:'משך ניתוח',
-      DrugGivenInOtherUnitsAfterOp: 'נרשמה תרופה במחלקה אחרת לאחר ניתוח',
-      HoursFromOperationToDrug: '  המשך מתן תרופה לאחר סיום ניתוח (שעות)  ',
+     // DrugGivenInOtherUnitsAfterOp: 'נרשמה תרופה במחלקה אחרת לאחר ניתוח',
+     // HoursFromOperationToDrug: '  המשך מתן תרופה לאחר סיום ניתוח (שעות)  ',
       DrugGivenAfterOperationEnd: 'נרשמה תרופה לאחר סיום ניתוח',
       Execution_UnitNameAfterOrderStop: 'שם מחלקה נותנת תרופה',
-      HoursFromOperationEndToOrderStop: 'שעות מסיום ניתוח עד סיום הוראה'
+      HoursFromOperationEndToOrderStop: 'המשך מתן תרופה לאחר סיום ניתוח (שעות) ',
+
+     
     };
     return columnLabels[column] || column;
   }
@@ -215,7 +266,32 @@ export class DrugSurgeryReportComponent implements OnInit {
   }
 
   exportToExcel() {
-    const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(this.filteredData);
+    // Step 1: Prepare a copy with real Date objects
+    const dataToExport = this.filteredData.map(item => ({
+      ...item,
+      OperationStartTime: item.OperationStartTime ? new Date(item.OperationStartTime) : null,
+      OperationEndTime: item.OperationEndTime ? new Date(item.OperationEndTime) : null,
+      DrugGiveTime: item.DrugGiveTime ? new Date(item.DrugGiveTime) : null
+      // Add other date fields if needed
+    }));
+  
+    // Step 2: Convert to worksheet
+    const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(dataToExport);
+  
+    // Optional: Set column format for Excel
+    const dateCols = ['OperationStartTime', 'OperationEndTime', 'DrugGiveTime'];
+    dateCols.forEach((col, i) => {
+      const colRef = XLSX.utils.encode_col(i); // get col letter
+      worksheet[`${colRef}1`].z = 'yyyy-mm-dd hh:mm'; // header cell
+      for (let row = 2; row <= dataToExport.length + 1; row++) {
+        const cellRef = `${colRef}${row}`;
+        if (worksheet[cellRef]) {
+          worksheet[cellRef].z = 'yyyy-mm-dd hh:mm'; // date format
+        }
+      }
+    });
+  
+    // Step 3: Create workbook and save
     const workbook: XLSX.WorkBook = { Sheets: { data: worksheet }, SheetNames: ['data'] };
     const excelBuffer: any = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
     const blob = new Blob([excelBuffer], {
@@ -226,6 +302,7 @@ export class DrugSurgeryReportComponent implements OnInit {
     link.download = 'drug_surgery_report.xlsx';
     link.click();
   }
+  
 
   navigateToGraphPage() {
     this.showGraph = !this.showGraph;
@@ -287,9 +364,11 @@ export class DrugSurgeryReportComponent implements OnInit {
   }
 
   canManageICD9(): boolean {
-    return this.UserName === 'MMAMAN' || this.UserName === 'HABUZAYYAD'|| this.UserName === 'HABUZAYYAD'|| this.UserName === 'RKOURY'; 
-    // ✅ Add your allowed usernames here
+    const u = (this.LoginUserName || '').trim().toLowerCase();
+    return ['mmaman', 'habuzayyad', 'rkoury', 'owertheim'].includes(u);
   }
+  
+  
 
   applyNegativeOrEmptyFilter(): void {
     this.selectedColor = 'negativeOrEmpty';

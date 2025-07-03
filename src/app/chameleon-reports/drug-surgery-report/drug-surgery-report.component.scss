@@ -368,4 +368,24 @@
     background-color: grey;
     color: white;
   }
+  .gauge-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    margin-bottom: 20px;
+    
+    
+  }
   
+  .gauge-summary {
+    margin-top: 10px;
+    font-weight: bold;
+  }
+  ::ng-deep ngx-gauge .reading-block {
+    font-size: 25px !important;
+    transform: translateY(78px) !important;
+    font-weight: 400;
+    color: black !important;
+    margin-top: 0;
+  }

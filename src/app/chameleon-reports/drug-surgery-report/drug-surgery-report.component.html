@@ -3,12 +3,23 @@
 <div class="body">
    <!-- 👤 Profile Section -->
    <div class="user-info">
-    <img [src]="profilePictureUrl" alt="User Profile" class="profile-pic" />
+    <!-- <img [src]="profilePictureUrl" alt="User Profile" class="profile-pic" /> -->
     <div class="welcome-text">ברוך הבא {{ UserName }}</div>
   </div>
   <div class="summary-card-wrapper" dir="rtl">
 
-
+    <div class="gauge-wrapper">
+      <ngx-gauge 
+        [value]="noDrugsPercentage"
+        [label]="'ללא תרופות ברשימה %'"
+        [append]="'%'">
+      </ngx-gauge>
+    
+      <div class="gauge-summary">
+        סה״כ: {{ totalRows }} | ללא תרופות: {{ noDrugsMatTableDataSource.data.length }}
+      </div>
+    </div>
+    
     <mat-card class="summary-card">
       <div
     class="summary-box mat-accent"
@@ -117,43 +128,73 @@
       </div>
     </div>
   </form>
-  <app-sys-graph *ngIf="showGraph" [graphData]="graphData"></app-sys-graph>
+  <mat-tab-group>
 
-  <mat-table *ngIf="!showGraph" [dataSource]="matTableDataSource" matSort dir="rtl" class="mat-elevation-z8">
-    <!-- Loop through columns to define each column in the table -->
-    <ng-container *ngFor="let column of columns" [matColumnDef]="column">
-      <mat-header-cell *matHeaderCellDef mat-sort-header>
-        {{ getColumnLabel(column) }}
-      </mat-header-cell>
-      <mat-cell *matCellDef="let row" [ngClass]="getCellClass(column, row[column])">
-        <ng-container [ngSwitch]="column">
-          <ng-container *ngSwitchCase="'DrugGiveTime'">
-            {{ row[column] | date: 'yyyy-MM-dd HH:mm' }}
-          </ng-container>
-          <ng-container *ngSwitchCase="'OperationStartTime'">
-            {{ row[column] | date: 'yyyy-MM-dd HH:mm' }}
-          </ng-container>
-          <ng-container *ngSwitchCase="'OperationEndTime'">
-            {{ row[column] | date: 'yyyy-MM-dd HH:mm' }}
-          </ng-container>
-          <ng-container *ngSwitchDefault>
-            {{ row[column] }}
-          </ng-container>
+    <!-- ✅ TAB 1: Drug Surgery Report -->
+    <mat-tab label="דו״ח תרופות וניתוחים">
+  
+      <mat-table [dataSource]="matTableDataSource" matSort dir="rtl" class="mat-elevation-z8">
+        <ng-container *ngFor="let column of columns" [matColumnDef]="column">
+          <mat-header-cell *matHeaderCellDef mat-sort-header>
+            {{ getColumnLabel(column) }}
+          </mat-header-cell>
+          <mat-cell *matCellDef="let row" [ngClass]="getCellClass(column, row[column])">
+            <ng-container [ngSwitch]="column">
+              <ng-container *ngSwitchCase="'DrugGiveTime'">
+                {{ row[column] | date: 'yyyy-MM-dd HH:mm' }}
+              </ng-container>
+              <ng-container *ngSwitchCase="'OperationStartTime'">
+                {{ row[column] | date: 'yyyy-MM-dd HH:mm' }}
+              </ng-container>
+              <ng-container *ngSwitchCase="'OperationEndTime'">
+                {{ row[column] | date: 'yyyy-MM-dd HH:mm' }}
+              </ng-container>
+              <ng-container *ngSwitchDefault>
+                {{ row[column] }}
+              </ng-container>
+            </ng-container>
+          </mat-cell>
         </ng-container>
-      </mat-cell>
-          </ng-container>
-
-    <!-- Define the header row -->
-    <mat-header-row *matHeaderRowDef="columns"></mat-header-row>
-    <!-- Define the data row -->
-    <mat-row *matRowDef="let row; columns: columns" class="mat-row"></mat-row>
-  </mat-table>
-
-  <!-- Define the paginator with page size options -->
-  <mat-paginator
-    [length]="matTableDataSource.paginator?.length || 0"
-    [pageIndex]="matTableDataSource.paginator?.pageIndex"
-    [pageSize]="matTableDataSource.paginator?.pageSize"
-    [pageSizeOptions]="[10, 50, 100]"
-  ></mat-paginator>
+  
+        <mat-header-row *matHeaderRowDef="columns"></mat-header-row>
+        <mat-row *matRowDef="let row; columns: columns"></mat-row>
+      </mat-table>
+  
+      <mat-paginator
+        #mainPaginator
+        [length]="matTableDataSource.data.length || 0"
+        [pageSize]="5"
+        [pageSizeOptions]="[5, 50, 100]">
+      </mat-paginator>
+  
+    </mat-tab>
+  
+    <!-- ✅ TAB 2: No Drugs Report -->
+    <mat-tab label="ללא תרופות ברשימה">
+  
+      <mat-table [dataSource]="noDrugsMatTableDataSource" dir="rtl" class="mat-elevation-z8">
+        <ng-container *ngFor="let column of noDrugsColumns" [matColumnDef]="column">
+          <mat-header-cell *matHeaderCellDef>
+            {{ getColumnLabel(column) }}
+          </mat-header-cell>
+          <mat-cell *matCellDef="let row">
+            {{ row[column] }}
+          </mat-cell>
+        </ng-container>
+  
+        <mat-header-row *matHeaderRowDef="noDrugsColumns"></mat-header-row>
+        <mat-row *matRowDef="let row; columns: noDrugsColumns"></mat-row>
+      </mat-table>
+  
+      <mat-paginator
+        #noDrugsPaginator
+        [length]="noDrugsMatTableDataSource.data.length || 0"
+        [pageSize]="5"
+        [pageSizeOptions]="[10, 50, 100]">
+      </mat-paginator>
+  
+    </mat-tab>
+  
+  </mat-tab-group>
+  
 </div>
