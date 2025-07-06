@@ -101,19 +101,27 @@ dateTo: Date | null = null;
   
           return yearPass && quarterPass;
         });
+        console.log('📊 Filtered rows:', filtered.length);
+        console.log('📊 Raw rows:', res.length);
+        console.log(filtered);
+console.log(filtered.map(row => row.Admission_No));
   
-        // Unique Patients
-        const uniquePatients = new Set(filtered.map(row => row.Patient)).size;
+        // ✅ Your Row_IDs should already be unique thanks to SQL, but you can wrap a Set if you want safety:
+        const totalConsiliums = filtered.length;
+        const uniqueRowIDs = new Set(filtered.map(row => row.Row_ID)).size;
   
-        // Unique Patient + Date combination (formatted)
-        const uniquePatientDatePairs = new Set(
-          filtered.map(row => `${row.Patient}|${new Date(row.Entry_Date).toISOString().split('T')[0]}`)
-        ).size;
+        if (totalConsiliums !== uniqueRowIDs) {
+          console.warn('⚠️ Row_ID duplicates found in response! Double-check your SQL join.');
+        }
+  
+        const uniqueAdmissions = new Set(filtered.map(row => row.Admission_No)).size;
   
         this.geriatricSummary = {
-          UniquePatients: uniquePatients,
-          TotalPatientDateRows: uniquePatientDatePairs
+          UniqueAdmissions: uniqueAdmissions,
+          TotalConsiliums: totalConsiliums
         };
+  
+        console.log('✅ Geriatric Summary:', this.geriatricSummary);
   
         this.isLoading = false;
       },
@@ -123,6 +131,7 @@ dateTo: Date | null = null;
       }
     );
   }
+  
   
   
   formatDate(date: Date): string {
@@ -413,14 +422,23 @@ exportAllTables(): void {
 
   if (this.geriatricSummary) {
     addSection("4. ייעוצים גריאטרים", [
-      "סה\"כ מאושפזים 75+", "סה\"כ ייעוצים", "ייעוצים ע\"י רופא/ה גריאטר/ית", "ייעוצים ע\"י אח/ות קליני/ת"
+      "סה\"כ מאושפזים 75+", 
+      "סה\"כ ייעוצים",
+      "ייעוצים ע\"י רופא/ה גריאטר/ית",
+      "ייעוצים ע\"י אח/ות קליני/ת"
     ], [{
-      "סה\"כ מאושפזים 75+": this.geriatricSummary.UniquePatients,
-      "סה\"כ ייעוצים": this.geriatricSummary.TotalPatientDateRows,
-      "ייעוצים ע\"י רופא/ה גריאטר/ית": this.geriatricSummary.TotalPatientDateRows,
+      "סה\"כ מאושפזים 75+": this.geriatricSummary.UniqueAdmissions,
+      "סה\"כ ייעוצים": this.geriatricSummary.TotalConsiliums,
+      "ייעוצים ע\"י רופא/ה גריאטר/ית": this.geriatricSummary.TotalConsiliums,  // Or split if you have more info
       "ייעוצים ע\"י אח/ות קליני/ת": 0
-    }], ["סה\"כ מאושפזים 75+", "סה\"כ ייעוצים", "ייעוצים ע\"י רופא/ה גריאטר/ית", "ייעוצים ע\"י אח/ות קליני/ת"]);
+    }], [
+      "סה\"כ מאושפזים 75+",
+      "סה\"כ ייעוצים",
+      "ייעוצים ע\"י רופא/ה גריאטר/ית",
+      "ייעוצים ע\"י אח/ות קליני/ת"
+    ]);
   }
+  
 
   ws['!dir'] = 'rtl';
   XLSX.utils.book_append_sheet(wb, ws, 'דו"ח דליריום');
