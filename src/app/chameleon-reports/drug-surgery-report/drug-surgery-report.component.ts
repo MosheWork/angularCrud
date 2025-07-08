@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild ,AfterViewInit } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { FormControl, FormGroup, FormBuilder } from '@angular/forms';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
@@ -20,7 +20,7 @@ import { ChangeDetectorRef } from '@angular/core';
   templateUrl: './drug-surgery-report.component.html',
   styleUrls: ['./drug-surgery-report.component.scss'],
 })
-export class DrugSurgeryReportComponent implements OnInit {
+export class DrugSurgeryReportComponent implements OnInit ,AfterViewInit  {
   filteredResponsibilities: Observable<string[]> | undefined;
   showGraph = false;
   Title1 = 'דו״ח תרופות וניתוחים - ';
@@ -38,9 +38,10 @@ DisplayUserName: string = '';
 
   profilePicture: string = ''; // URL or base64
   @ViewChild(MatPaginator) paginator!: MatPaginator;
-  @ViewChild(MatSort) sort!: MatSort;
+  @ViewChild('mainSort') sort!: MatSort;   // זה מבטיח שתקבל בדיוק אותו
   @ViewChild('mainPaginator') mainPaginator!: MatPaginator;
   @ViewChild('noDrugsPaginator') noDrugsPaginator!: MatPaginator;
+  @ViewChild('noDrugsSort') noDrugsSort!: MatSort;
 
 
   filterForm: FormGroup;
@@ -99,56 +100,31 @@ DisplayUserName: string = '';
   }
 
   ngOnInit() {
-    
     this.autoLogin();
+  
     this.http.get<any[]>(environment.apiUrl + 'DrugSurgeryReport').subscribe((data) => {
       this.dataSource = data;
       this.filteredData = [...data];
-      this.matTableDataSource = new MatTableDataSource(this.filteredData);
-   
-      this.calculateSummary(data); 
-    // ✅ Connect paginator for MAIN
+      this.matTableDataSource.data = this.filteredData;  // 👈 לא מחליף אובייקט
+  
+      this.calculateSummary(data);
+      this.updateGauge();
+    });
+  
+    this.http.get<any[]>(environment.apiUrl + 'DrugSurgeryReport/NoDrugs').subscribe(data => {
+      this.noDrugsDataSource = data;
+      this.filteredNoDrugsData = [...data];
+      this.noDrugsMatTableDataSource.data = this.filteredNoDrugsData;  // 👈 גם כאן לא new
+      this.updateGauge();
+    });
+  }
+  ngAfterViewInit() {
     this.matTableDataSource.paginator = this.mainPaginator;
     this.matTableDataSource.sort = this.sort;
-
-      this.columns.forEach((column) => {
-        this.filterForm.get(column)?.valueChanges.pipe(debounceTime(300), distinctUntilChanged()).subscribe(() => this.applyFilters());
-      });
-
-      this.filterForm.valueChanges.subscribe(() => {
-        this.applyFilters();
-        this.paginator.firstPage();
-      });
-
-      this.applyFilters();
-        // Recalculate gauge if noDrugsDataSource is ready
-  this.updateGauge();
-    });
-  // No Drugs table
-  this.http.get<any[]>(environment.apiUrl + 'DrugSurgeryReport/NoDrugs').subscribe(data => {
-    this.noDrugsDataSource = data;
-    this.filteredNoDrugsData = [...data];
-    this.noDrugsMatTableDataSource = new MatTableDataSource(this.filteredNoDrugsData);
+  
     this.noDrugsMatTableDataSource.paginator = this.noDrugsPaginator;
-  // Recalculate gauge if main data is ready
-  this.updateGauge();
-  });
-
-    this.authenticationService.getAuthentication().subscribe(
-      (response) => {
-        const loginUserName = response.message.split('\\')[1].toUpperCase();
-        this.LoginUserName = loginUserName;
-    
-        console.log('🧑‍💻 LoginUserName set to:', this.LoginUserName, '| Allowed:', this.canManageICD9());
-        this.cdr.detectChanges();
-    
-        this.getUserDetailsFromDBByUserName(loginUserName);
-      }
-    );
-    
-    
+    this.noDrugsMatTableDataSource.sort = this.noDrugsSort;
   }
-
   updateGauge() {
     const mainCount = this.matTableDataSource?.data?.length || 0;
     const noDrugsCount = this.noDrugsMatTableDataSource?.data?.length || 0;
