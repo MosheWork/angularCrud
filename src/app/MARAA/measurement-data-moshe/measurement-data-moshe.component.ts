@@ -1267,15 +1267,30 @@ this.http.get<any[]>(`${environment.apiUrl}/MeasurementDataMoshe/GetMeasurementG
     window.open(`${environment.apiUrl}MeasurementDataMoshe/GetMeasurementPDF?code=${code}`, '_blank');
   }
   getTargetValue(measurementCode: string): number | null {
-    if (!this.selectedYears || this.selectedYears.length === 0) return null;
+    if (!this.selectedYears || this.selectedYears.length === 0) {
+      console.warn('⚠️ No selected year!');
+      return null;
+    }
   
-    const selectedYear = this.selectedYears[0]; // ✅ use selected year only
+    const selectedYear = this.selectedYears[0];
   
-    const target = this.measurementTargets.find(
+    const matches = this.measurementTargets.filter(
       t => t.MeasurementCode === measurementCode && t.MYear === selectedYear
     );
   
-    return target?.MTarget ?? null;
+    console.log(`🔍 Checking target for MeasurementCode: ${measurementCode}, Year: ${selectedYear}`);
+    console.log('📋 Available measurementTargets:', this.measurementTargets);
+    console.log('✅ Matches found:', matches);
+  
+    const target = matches[0]?.MTarget ?? null;
+  
+    if (target === null) {
+      console.warn(`❌ No target found for ${measurementCode} in ${selectedYear}`);
+    } else {
+      console.log(`🎯 Found target: ${target}`);
+    }
+  
+    return target;
   }
   
   
