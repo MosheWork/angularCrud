@@ -356,5 +356,44 @@ DisplayUserName: string = '';
   
     this.matTableDataSource.data = filtered;
   }
-  
+ 
+
+// הורדת הטבלה הראשית
+exportToExcelMain() {
+  const dataToExport = this.matTableDataSource.data.map(item => ({
+    ...item,
+    OperationStartTime: item.OperationStartTime ? new Date(item.OperationStartTime) : null,
+    OperationEndTime: item.OperationEndTime ? new Date(item.OperationEndTime) : null,
+    DrugGiveTime: item.DrugGiveTime ? new Date(item.DrugGiveTime) : null
+  }));
+
+  if (dataToExport.length === 0) {
+    alert('אין נתונים להורדה');
+    return;
+  }
+
+  const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(dataToExport);
+  const workbook: XLSX.WorkBook = { Sheets: { 'דו״ח תרופות וניתוחים': worksheet }, SheetNames: ['דו״ח תרופות וניתוחים'] };
+  XLSX.writeFile(workbook, 'drug_surgery_report.xlsx');
+}
+
+
+// הורדת טבלת ללא תרופות
+exportToExcelNoDrugs() {
+  const dataToExport = this.noDrugsMatTableDataSource.data.map(item => ({
+    ...item
+  }));
+
+  if (dataToExport.length === 0) {
+    alert('אין נתונים להורדה');
+    return;
+  }
+
+  const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(dataToExport);
+  const workbook: XLSX.WorkBook = { Sheets: { 'ללא תרופות ברשימה': worksheet }, SheetNames: ['ללא תרופות ברשימה'] };
+  XLSX.writeFile(workbook, 'no_drugs_report.xlsx');
+}
+
+
+
 }

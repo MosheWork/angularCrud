@@ -135,6 +135,10 @@
     <!-- ✅ TAB 2: No Drugs Report -->
     <mat-tab label="ללא תרופות ברשימה">
   
+      <!-- כפתור אקסל לטבלת ללא תרופות -->
+<button mat-stroked-button (click)="exportToExcelNoDrugs()">
+  הורד דו״ח ללא תרופות ברשימה
+</button>
       <mat-table [dataSource]="noDrugsMatTableDataSource" matSort #noDrugsSort="matSort" dir="rtl" class="mat-elevation-z8">
         <ng-container *ngFor="let column of noDrugsColumns" [matColumnDef]="column">
           <mat-header-cell *matHeaderCellDef mat-sort-header>
@@ -161,7 +165,10 @@
     </mat-tab>
   <!-- ✅ TAB 1: Drug Surgery Report -->
   <mat-tab label="דו״ח תרופות וניתוחים">
-  
+ <!-- כפתור אקסל לטבלה הראשית -->
+<button mat-stroked-button (click)="exportToExcelMain()">
+  הורד דו״ח תרופות וניתוחים
+</button>
     <mat-table [dataSource]="matTableDataSource" matSort #mainSort="matSort" dir="rtl" class="mat-elevation-z8">
       <ng-container *ngFor="let column of columns" [matColumnDef]="column">
         <mat-header-cell *matHeaderCellDef mat-sort-header>
