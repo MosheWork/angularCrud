@@ -123,9 +123,9 @@
       <!-- <div class="graph-button-container">
         <img (click)="navigateToGraphPage()" matTooltip="Move To Graph" src="../../../../assets/graphIcon.png" width="50px" />
       </div> -->
-      <div class="icon" matTooltip="Download Excel">
+      <!-- <div class="icon" matTooltip="Download Excel">
         <img src="../../assets/excel.png" alt="Download" (click)="exportToExcel()" class="download-icon" width="50px" />
-      </div>
+      </div> -->
     </div>
   </form>
   <mat-tab-group>
@@ -136,9 +136,9 @@
     <mat-tab label="ללא תרופות ברשימה">
   
       <!-- כפתור אקסל לטבלת ללא תרופות -->
-<button mat-stroked-button (click)="exportToExcelNoDrugs()">
-  הורד דו״ח ללא תרופות ברשימה
-</button>
+      <img src="../../assets/excel.png" alt="Download" (click)="exportToExcelNoDrugs()" class="download-icon" width="50px" />
+
+
       <mat-table [dataSource]="noDrugsMatTableDataSource" matSort #noDrugsSort="matSort" dir="rtl" class="mat-elevation-z8">
         <ng-container *ngFor="let column of noDrugsColumns" [matColumnDef]="column">
           <mat-header-cell *matHeaderCellDef mat-sort-header>
@@ -165,10 +165,9 @@
     </mat-tab>
   <!-- ✅ TAB 1: Drug Surgery Report -->
   <mat-tab label="דו״ח תרופות וניתוחים">
- <!-- כפתור אקסל לטבלה הראשית -->
-<button mat-stroked-button (click)="exportToExcelMain()">
-  הורד דו״ח תרופות וניתוחים
-</button>
+    <img src="../../assets/excel.png" alt="Download" (click)="exportToExcelMain()" class="download-icon" width="50px" />
+
+
     <mat-table [dataSource]="matTableDataSource" matSort #mainSort="matSort" dir="rtl" class="mat-elevation-z8">
       <ng-container *ngFor="let column of columns" [matColumnDef]="column">
         <mat-header-cell *matHeaderCellDef mat-sort-header>
