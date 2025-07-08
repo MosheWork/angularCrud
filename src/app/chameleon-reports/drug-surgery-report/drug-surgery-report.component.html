@@ -128,45 +128,19 @@
       </div> -->
     </div>
   </form>
-  <mat-tab-group>
-
-    
-  
-    <!-- ✅ TAB 2: No Drugs Report -->
-    <mat-tab label="ללא תרופות ברשימה">
-  
-      <!-- כפתור אקסל לטבלת ללא תרופות -->
-      <img src="../../assets/excel.png" alt="Download" (click)="exportToExcelNoDrugs()" class="download-icon" width="50px" />
 
 
-      <mat-table [dataSource]="noDrugsMatTableDataSource" matSort #noDrugsSort="matSort" dir="rtl" class="mat-elevation-z8">
-        <ng-container *ngFor="let column of noDrugsColumns" [matColumnDef]="column">
-          <mat-header-cell *matHeaderCellDef mat-sort-header>
-            {{ getColumnLabel(column) }}
-          </mat-header-cell>
-          <mat-cell *matCellDef="let row">
-            {{ row[column] }}
-          </mat-cell>
-        </ng-container>
-  
-        <mat-header-row *matHeaderRowDef="noDrugsColumns"></mat-header-row>
-        <mat-row *matRowDef="let row; columns: noDrugsColumns"></mat-row>
-      </mat-table>
-  
-      <mat-paginator
-      matSort 
 
-        #noDrugsPaginator
-        [length]="noDrugsMatTableDataSource.data.length || 0"
-        [pageSize]="5"
-        [pageSizeOptions]="[10, 50, 100]">
-      </mat-paginator>
-  
-    </mat-tab>
-  <!-- ✅ TAB 1: Drug Surgery Report -->
+  <mat-tab-group dir="rtl">
+
+      <!-- ✅ TAB 1: Drug Surgery Report -->
   <mat-tab label="דו״ח תרופות וניתוחים">
     <img src="../../assets/excel.png" alt="Download" (click)="exportToExcelMain()" class="download-icon" width="50px" />
-
+    <mat-form-field appearance="outline">
+      <mat-label>חיפוש</mat-label>
+      <input matInput (keyup)="applyMainFilter($event)" placeholder="חפש בטבלה">
+    </mat-form-field>
+    
 
     <mat-table [dataSource]="matTableDataSource" matSort #mainSort="matSort" dir="rtl" class="mat-elevation-z8">
       <ng-container *ngFor="let column of columns" [matColumnDef]="column">
@@ -203,6 +177,41 @@
     </mat-paginator>
 
   </mat-tab>
+  
+    <!-- ✅ TAB 2: No Drugs Report -->
+    <mat-tab label="ללא תרופות ברשימה">
+  
+      <!-- כפתור אקסל לטבלת ללא תרופות -->
+      <img src="../../assets/excel.png" alt="Download" (click)="exportToExcelNoDrugs()" class="download-icon" width="50px" />
+      <mat-form-field appearance="outline">
+        <mat-label>חיפוש</mat-label>
+        <input matInput (keyup)="applyNoDrugsFilter($event)" placeholder="חפש בטבלה">
+      </mat-form-field>
+      <mat-table [dataSource]="noDrugsMatTableDataSource" matSort #noDrugsSort="matSort" dir="rtl" class="mat-elevation-z8">
+        <ng-container *ngFor="let column of noDrugsColumns" [matColumnDef]="column">
+          <mat-header-cell *matHeaderCellDef mat-sort-header>
+            {{ getColumnLabel(column) }}
+          </mat-header-cell>
+          <mat-cell *matCellDef="let row">
+            {{ row[column] }}
+          </mat-cell>
+        </ng-container>
+  
+        <mat-header-row *matHeaderRowDef="noDrugsColumns"></mat-header-row>
+        <mat-row *matRowDef="let row; columns: noDrugsColumns"></mat-row>
+      </mat-table>
+  
+      <mat-paginator
+      matSort 
+
+        #noDrugsPaginator
+        [length]="noDrugsMatTableDataSource.data.length || 0"
+        [pageSize]="5"
+        [pageSizeOptions]="[10, 50, 100]">
+      </mat-paginator>
+  
+    </mat-tab>
+
   </mat-tab-group>
   
 </div>

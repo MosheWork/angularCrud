@@ -395,5 +395,15 @@ exportToExcelNoDrugs() {
 }
 
 
+// חיפוש בטבלה הראשית
+applyMainFilter(event: any) {
+  const filterValue = (event.target as HTMLInputElement).value.trim().toLowerCase();
+  this.matTableDataSource.filter = filterValue;
+}
+// חיפוש בטבלת ללא תרופות
+applyNoDrugsFilter(event: any) {
+  const filterValue = (event.target as HTMLInputElement).value.trim().toLowerCase();
+  this.noDrugsMatTableDataSource.filter = filterValue;
+}
 
 }
