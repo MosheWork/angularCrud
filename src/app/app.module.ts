@@ -179,6 +179,8 @@ import { PhysioEquipmentReportComponent } from './chameleon-reports/physio-equip
 import { NutritionistReportComponent } from './chameleon-reports/nutritionist-report/nutritionist-report.component';
 import { DrugSurgeryReportComponent } from './chameleon-reports/drug-surgery-report/drug-surgery-report.component';
 import { ProcedureICD9ManagerDialogComponent } from './chameleon-reports/drug-surgery-report/procedure-icd9-manager-dialog/procedure-icd9-manager-dialog.component';
+import { PCIreportComponent } from './chameleon-reports/pci-report/pci-report.component';
+import { PciReportDialogComponent } from './chameleon-reports/pci-report-dialog/pci-report-dialog.component';
 
 
 export const MY_DATE_FORMATS: MatDateFormats = {
@@ -334,7 +336,9 @@ export function playerFactory() {
     PhysioEquipmentReportComponent,
     NutritionistReportComponent,
     DrugSurgeryReportComponent,
-    ProcedureICD9ManagerDialogComponent
+    ProcedureICD9ManagerDialogComponent,
+    PCIreportComponent,
+    PciReportDialogComponent
    
      
   

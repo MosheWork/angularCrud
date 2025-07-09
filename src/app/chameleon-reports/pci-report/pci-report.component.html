@@ -1,0 +1,117 @@
+<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
+
+<div class="body">
+  <div class="nine">
+    <h1>{{ titleUnit }}<span>{{ Title1 }}{{ Title2 }}{{ totalResults }}</span></h1>
+  </div>
+
+
+  <form [formGroup]="filterForm" dir="rtl" class="filter-form">
+
+    <mat-form-field>
+      <mat-label>תאריך התחלה</mat-label>
+      <input matInput [matDatepicker]="pickerStart" formControlName="startDate">
+      <mat-datepicker-toggle matSuffix [for]="pickerStart"></mat-datepicker-toggle>
+      <mat-datepicker #pickerStart></mat-datepicker>
+    </mat-form-field>
+  
+    <mat-form-field>
+      <mat-label>תאריך סיום</mat-label>
+      <input matInput [matDatepicker]="pickerEnd" formControlName="endDate">
+      <mat-datepicker-toggle matSuffix [for]="pickerEnd"></mat-datepicker-toggle>
+      <mat-datepicker #pickerEnd></mat-datepicker>
+    </mat-form-field>
+  
+    <!-- כפתור חיפוש שישלח ל-API -->
+    <button mat-raised-button color="primary" (click)="fetchData()">חפש</button>
+  
+  </form>
+  
+  <form [formGroup]="filterForm" (ngSubmit)="applyFilters()" dir="rtl" class="filter-form">
+    <div dir="rtl" class="form-footer" style="display: flex; justify-content: space-between;">
+      <mat-form-field class="long-search-bar" style="flex: 1; margin-right: 10px;">
+        <mat-label class="filters" style="color: blue">חיפוש</mat-label>
+        <input matInput formControlName="globalFilter" class="search-input" (input)="applyFilters()" />
+      </mat-form-field>
+
+      <div class="button-container" style="display: flex; align-items: center;">
+        <button mat-button (click)="resetFilters()" mat-raised-button color="primary" class="custom-button" matTooltip="איפוס סינון">
+          <i class="material-icons">refresh</i>
+        </button>
+        <img src="../../assets/excel.png" alt="Download" (click)="exportToExcel()" class="download-icon icon" width="50px" style="margin-right: 10px;" />
+      </div>
+    </div>
+  </form>
+
+  <table mat-table [dataSource]="dataSource" matSort class="mat-elevation-z8" dir="rtl">
+    <ng-container matColumnDef="CaseNumber">
+      <mat-header-cell *matHeaderCellDef mat-sort-header> מספר מקרה </mat-header-cell>
+      <mat-cell *matCellDef="let element"> {{ element.CaseNumber }} </mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="DRG_Desc_KABALA">
+      <mat-header-cell *matHeaderCellDef mat-sort-header> תיאור DRG קבלה </mat-header-cell>
+      <mat-cell *matCellDef="let element"> {{ element.DRG_Desc_KABALA }} </mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="DRG_DOC_Desc_KABALA">
+      <mat-header-cell *matHeaderCellDef mat-sort-header> תיאור DRG רופא </mat-header-cell>
+      <mat-cell *matCellDef="let element"> {{ element.DRG_DOC_Desc_KABALA }} </mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="DOC_ICD9">
+      <mat-header-cell *matHeaderCellDef mat-sort-header> קוד ICD9 רופא </mat-header-cell>
+      <mat-cell *matCellDef="let element"> {{ element.DOC_ICD9 }} </mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="DRG_Code_Invoice">
+      <mat-header-cell *matHeaderCellDef mat-sort-header> קוד DRG חשבונית </mat-header-cell>
+      <mat-cell *matCellDef="let element"> {{ element.DRG_Code_Invoice }} </mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="PCI_Date">
+      <mat-header-cell *matHeaderCellDef mat-sort-header> תאריך PCI </mat-header-cell>
+      <mat-cell *matCellDef="let element"> {{ element.PCI_Date | date: 'dd/MM/yyyy' }} </mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="Hosp_Date">
+      <mat-header-cell *matHeaderCellDef mat-sort-header> תאריך אשפוז </mat-header-cell>
+      <mat-cell *matCellDef="let element"> {{ element.Hosp_Date | date: 'dd/MM/yyyy' }} </mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="TimeCuttingTime">
+      <mat-header-cell *matHeaderCellDef mat-sort-header> זמן חתך </mat-header-cell>
+      <mat-cell *matCellDef="let element"> {{ element.TimeCuttingTime }} </mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="TimeEndSurgery">
+      <mat-header-cell *matHeaderCellDef mat-sort-header> סוף ניתוח </mat-header-cell>
+      <mat-cell *matCellDef="let element"> {{ element.TimeEndSurgery }} </mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="TimeExitingTheOperatingRoom">
+      <mat-header-cell *matHeaderCellDef mat-sort-header> יציאה מחדר ניתוח </mat-header-cell>
+      <mat-cell *matCellDef="let element"> {{ element.TimeExitingTheOperatingRoom }} </mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="TimeEntranceToTheRecoveryRoom">
+      <mat-header-cell *matHeaderCellDef mat-sort-header> כניסה להתאוששות </mat-header-cell>
+      <mat-cell *matCellDef="let element"> {{ element.TimeEntranceToTheRecoveryRoom }} </mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="TimeSendPatientBackToDepart">
+      <mat-header-cell *matHeaderCellDef mat-sort-header> שחרור למחלקה </mat-header-cell>
+      <mat-cell *matCellDef="let element"> {{ element.TimeSendPatientBackToDepart }} </mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="TimeExitRecoveryRoom">
+      <mat-header-cell *matHeaderCellDef mat-sort-header> יציאה מהתאוששות </mat-header-cell>
+      <mat-cell *matCellDef="let element"> {{ element.TimeExitRecoveryRoom }} </mat-cell>
+    </ng-container>
+
+    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+    <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+  </table>
+
+  <mat-paginator [pageSize]="10" [pageSizeOptions]="[10, 25, 50]" showFirstLastButtons></mat-paginator>
+</div>
