@@ -1,1 +1,15 @@
-<p>pci-report-dialog works!</p>
+<form [formGroup]="form">
+    <h2 mat-dialog-title>הערה למספר מקרה</h2>
+    <mat-dialog-content>
+      <p><strong>מספר מקרה:</strong> {{ data.CaseNumber }}</p>
+      <mat-form-field appearance="fill" style="width: 100%;">
+        <mat-label>הערה</mat-label>
+        <textarea matInput formControlName="remark" rows="4"></textarea>
+      </mat-form-field>
+    </mat-dialog-content>
+  
+    <mat-dialog-actions align="end">
+      <button mat-button mat-dialog-close>ביטול</button>
+      <button mat-raised-button color="primary" (click)="saveRemark()">שמור</button>
+    </mat-dialog-actions>
+  </form>

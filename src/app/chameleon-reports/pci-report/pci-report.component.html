@@ -76,9 +76,13 @@
 
     <ng-container matColumnDef="Hosp_Date">
       <mat-header-cell *matHeaderCellDef mat-sort-header> תאריך אשפוז </mat-header-cell>
-      <mat-cell *matCellDef="let element"> {{ element.Hosp_Date | date: 'dd/MM/yyyy' }} </mat-cell>
+      <mat-cell *matCellDef="let element"> {{ element.Hosp_Date | date: 'dd/MM/yyyy HH:MM' }} </mat-cell>
     </ng-container>
-
+    <ng-container matColumnDef="MinutesDiff">
+        <mat-header-cell *matHeaderCellDef mat-sort-header> הפרש בדקות מקבלה לניתוח</mat-header-cell>
+        <mat-cell *matCellDef="let element"> {{ element.MinutesDiff }} </mat-cell>
+      </ng-container>
+  
     <ng-container matColumnDef="TimeCuttingTime">
       <mat-header-cell *matHeaderCellDef mat-sort-header> זמן חתך </mat-header-cell>
       <mat-cell *matCellDef="let element"> {{ element.TimeCuttingTime }} </mat-cell>
@@ -108,10 +112,24 @@
       <mat-header-cell *matHeaderCellDef mat-sort-header> יציאה מהתאוששות </mat-header-cell>
       <mat-cell *matCellDef="let element"> {{ element.TimeExitRecoveryRoom }} </mat-cell>
     </ng-container>
+    <ng-container matColumnDef="Remark">
+        <mat-header-cell *matHeaderCellDef mat-sort-header> הערות</mat-header-cell>
+        <mat-cell *matCellDef="let element"> {{ element.Remark}} </mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="EntryDate">
+        <mat-header-cell *matHeaderCellDef mat-sort-header> תאריך הערה  </mat-header-cell>
+        <mat-cell *matCellDef="let element"> {{ element.EntryDate}} </mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="EntryUser">
+        <mat-header-cell *matHeaderCellDef mat-sort-header> משתמש  </mat-header-cell>
+        <mat-cell *matCellDef="let element"> {{ element.EntryUser }} </mat-cell>
+      </ng-container>
 
     <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-    <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
-  </table>
+    <mat-row *matRowDef="let row; columns: displayedColumns"
+    (click)="openRemarkDialog(row)"
+    class="clickable-row">
+</mat-row>  </table>
 
   <mat-paginator [pageSize]="10" [pageSizeOptions]="[10, 25, 50]" showFirstLastButtons></mat-paginator>
 </div>

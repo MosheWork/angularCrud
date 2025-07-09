@@ -6,6 +6,9 @@ import { MatTableDataSource } from '@angular/material/table';
 import { MatSort } from '@angular/material/sort';
 import * as XLSX from 'xlsx';
 import { environment } from '../../../environments/environment';
+import { MatDialog } from '@angular/material/dialog';
+import { PCIreportDialogComponent } from '../pci-report-dialog/pci-report-dialog.component';
+import { AuthenticationService } from '../../../app/services/authentication-service/authentication-service.component';
 
 @Component({
   selector: 'app-pci-report',
@@ -17,13 +20,13 @@ export class PCIreportComponent implements OnInit {
   titleUnit: string = 'דו״ח PCI';
   Title1: string = ' סה"כ תוצאות: ';
   Title2: string = '';    
-
+  UserName: string = '';
   displayedColumns: string[] = [
     'CaseNumber', 'DRG_Desc_KABALA', 'DRG_DOC_Desc_KABALA',
     'DOC_ICD9', 'DRG_Code_Invoice', 'PCI_Date', 'Hosp_Date',
-    'TimeCuttingTime', 'TimeEndSurgery', 'TimeExitingTheOperatingRoom',
+    'TimeCuttingTime','MinutesDiff', 'TimeEndSurgery', 'TimeExitingTheOperatingRoom',
     'TimeEntranceToTheRecoveryRoom', 'TimeSendPatientBackToDepart',
-    'TimeExitRecoveryRoom'
+    'TimeExitRecoveryRoom','Remark','EntryUser','EntryDate'
   ];
 
   dataSource: MatTableDataSource<any> = new MatTableDataSource<any>([]);
@@ -34,7 +37,7 @@ export class PCIreportComponent implements OnInit {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
-  constructor(private fb: FormBuilder, private http: HttpClient) {
+  constructor(private fb: FormBuilder, private http: HttpClient,  public dialog: MatDialog   ,private authenticationService: AuthenticationService ) {
     this.filterForm = this.fb.group({
       startDate: [null],
       endDate: [null],
@@ -43,9 +46,32 @@ export class PCIreportComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.authenticationService.getAuthentication().subscribe(
+      (response) => {
+        console.log('✅ Authentication Successful:', response.message);
+        let user = response.message.split('\\')[1];
+        console.log('🧑 User:', user);
+        this.getUserDetailsFromDBByUserName(user.toUpperCase());
+      },
+      (error) => {
+        console.error('❌ Authentication Failed:', error);
+      }
+    );
     this.fetchData();
   }
+  getUserDetailsFromDBByUserName(username: string): void {
+    this.http.get<any>(`${environment.apiUrl}ServiceCRM/GetEmployeeInfo?username=${username.toUpperCase()}`)
+  .subscribe(
+    (data) => {
+      this.UserName = data.UserName;
 
+    },
+    (error) => {
+      console.error('Error fetching employee info:', error);
+    }
+  );
+
+  }
   fetchData() {
     this.isLoading = true;
   
@@ -114,4 +140,22 @@ export class PCIreportComponent implements OnInit {
     const workbook: XLSX.WorkBook = { Sheets: { 'PCI Report': worksheet }, SheetNames: ['PCI Report'] };
     XLSX.writeFile(workbook, 'PCI_Report.xlsx');
   }
+
+  // הוסף לפונקציית ה-Row click:
+openRemarkDialog(row: any) {
+  this.dialog.open(PCIreportDialogComponent, {
+    width: '600px',
+    data: {
+      ...row, // כל הנתונים של השורה
+      EntryUser: this.UserName // הוסף את שם המשתמש מה־Auth
+    }
+  }).afterClosed().subscribe(result => {
+    if (result) {
+      console.log('🚩 נשמר בהצלחה — אפשר לרענן אם צריך');
+      // this.fetchData();
+    }
+  });
+}
+
+  
 }
