@@ -4,8 +4,28 @@
   <div class="nine">
     <h1>{{ titleUnit }}<span>{{ Title1 }}{{ Title2 }}{{ totalResults }}</span></h1>
   </div>
+  <div class="filters-gauge-container">
 
-
+  <div class="gauge-wrapper">
+    <ngx-gauge
+      [size]="250"
+      [type]="'semi'"
+      [value]="validPercentage"
+      [label]="'אחוז שורות תקינות'"
+      [append]="'%'"
+      [min]="0"
+      [max]="100"
+      [thick]="15"
+      [foregroundColor]="'green'"
+      [backgroundColor]="'#e0e0e0'">
+    </ngx-gauge>
+    <p style="text-align: center;">
+      תקינות: {{ validCount }}<br>
+      לא תקינות: {{ invalidCount }}<br>
+      סה"כ: {{ totalResults }}
+    </p>
+  </div>
+  
   <form [formGroup]="filterForm" dir="rtl" class="filter-form">
 
     <mat-form-field>
@@ -26,7 +46,7 @@
     <button mat-raised-button color="primary" (click)="fetchData()">חפש</button>
   
   </form>
-  
+</div>
   <form [formGroup]="filterForm" (ngSubmit)="applyFilters()" dir="rtl" class="filter-form">
     <div dir="rtl" class="form-footer" style="display: flex; justify-content: space-between;">
       <mat-form-field class="long-search-bar" style="flex: 1; margin-right: 10px;">

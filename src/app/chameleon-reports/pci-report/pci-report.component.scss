@@ -235,3 +235,46 @@
   .clickable-row:hover {
     background-color: rgba(0, 0, 0, 0.05);
   }
+
+
+
+  ::ng-deep ngx-gauge .reading-block {
+    font-size: 26px !important;
+    transform: translateY(78px) !important;
+    font-weight: 400;
+    color: black !important;
+    margin-top: 0;
+  }
+  .filters-gauge-container {
+    display: flex;
+    align-items: flex-start;
+    justify-content: flex-start;
+    gap: 40px; // רווח בין Gauge לפילטרים
+    flex-wrap: wrap; // ירד שורה במסכים צרים
+  
+    .gauge-wrapper {
+      flex: 0 0 auto; // לא יימתח
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+  
+    .filter-form {
+      display: flex;
+      align-items: flex-end;
+      flex-wrap: wrap;
+      gap: 15px;
+  
+      mat-form-field {
+        width: 180px; // אפשר להתאים
+      }
+    }
+  
+    // אופציונלי: סידור יפה של הסטטיסטיקה
+    .gauge-wrapper p {
+      margin: 10px 0 0;
+      font-weight: bold;
+      text-align: center;
+    }
+  }
+  

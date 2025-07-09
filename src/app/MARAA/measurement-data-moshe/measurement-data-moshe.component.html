@@ -119,9 +119,6 @@
       </ngx-gauge>
       <div class="gauge-details">
         מונה / מכנה: {{ yearMone }} / {{ yearMechane }}<br>
-        <!-- <button mat-button (click)="showYearDetails = !showYearDetails">
-          {{ showYearDetails ? 'הסתר נתונים' : 'צפה בנתונים' }}
-        </button> -->
       </div>
       <div *ngIf="showYearDetails">
         <table mat-table [dataSource]="yearlySummaryRaw" class="mat-elevation-z1" style="margin-top: 8px; width: 100%;">

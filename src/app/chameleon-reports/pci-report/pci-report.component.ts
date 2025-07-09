@@ -21,6 +21,11 @@ export class PCIreportComponent implements OnInit {
   Title1: string = ' סה"כ תוצאות: ';
   Title2: string = '';    
   UserName: string = '';
+  validCount: number = 0;
+  invalidCount: number = 0;
+  validPercentage: number = 0;
+  
+
   displayedColumns: string[] = [
     'CaseNumber', 'DRG_Desc_KABALA', 'DRG_DOC_Desc_KABALA',
     'DOC_ICD9', 'DRG_Code_Invoice', 'PCI_Date', 'Hosp_Date',
@@ -105,21 +110,27 @@ export class PCIreportComponent implements OnInit {
 
   applyFilters() {
     const { globalFilter } = this.filterForm.value;
-
+  
     const filteredData = this.originalData.filter(row =>
       !globalFilter || Object.values(row).some(value =>
         value?.toString().toLowerCase().includes(globalFilter.toLowerCase())
       )
     );
-
+  
     this.dataSource.data = [...filteredData];
     this.totalResults = this.dataSource.data.length;
-
+  
+    // ✅ חשב את התקינים והלא תקינים
+    this.validCount = filteredData.filter(row => row.MinutesDiff <= 90).length;
+    this.invalidCount = filteredData.filter(row => row.MinutesDiff > 90).length;
+    this.validPercentage = this.totalResults > 0 ? Math.round(this.validCount / this.totalResults * 100) : 0;
+  
     setTimeout(() => {
       this.dataSource.paginator = this.paginator;
       this.dataSource.sort = this.sort;
     });
   }
+  
 
   resetFilters() {
     this.filterForm.setValue({
