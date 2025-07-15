@@ -24,6 +24,7 @@ export class DementiaPatientsComponent implements OnInit {
   Title1: string = ' סה"כ תוצאות: ';
   Title2: string = '';    
   showOnlyThreeOrMore: boolean = false;
+  showOnlyDiagnosis: boolean = false; // Default: off
 
   displayedColumns: string[] = [
     'Admission_Date',  'UnitName', 'IdNum', 'AdmissionNo', 'FirstName', 'LastName','DataStatus','HospitalizationsLast6Months'
@@ -53,6 +54,8 @@ export class DementiaPatientsComponent implements OnInit {
 
   ngOnInit() {
     this.fetchData();
+    this.showOnlyDiagnosis = true;
+
   }
 
   fetchData() {
@@ -98,7 +101,10 @@ export class DementiaPatientsComponent implements OnInit {
       const hasMinHospitalizations =
         !this.showOnlyThreeOrMore || (patient.HospitalizationsLast6Months >= 3);
   
-      return isDateInRange && isGlobalMatch && hasMinHospitalizations;
+      const hasDiagnosisStatus =
+        !this.showOnlyDiagnosis || (patient.DataStatus === 'יש אבחנה');
+  
+      return isDateInRange && isGlobalMatch && hasMinHospitalizations && hasDiagnosisStatus;
     });
   
     this.dataSource.data = [...filteredData];
@@ -109,6 +115,7 @@ export class DementiaPatientsComponent implements OnInit {
       this.dataSource.sort = this.sort;
     });
   }
+  
   
   
   resetFilters() {

@@ -28,6 +28,13 @@
     (change)="applyFilters()">
     הצג רק 3 אשפוזים ומעלה
   </mat-slide-toggle>
+  <mat-slide-toggle
+  [(ngModel)]="showOnlyDiagnosis"
+  [ngModelOptions]="{ standalone: true }"
+  (change)="applyFilters()">
+  הצג רק מקור 'יש אבחנה'
+</mat-slide-toggle>
+
     <!-- Form Footer with Search, Reset, and Export Options -->
     <div dir="rtl" class="form-footer" style="display: flex; justify-content: space-between;" >
       <mat-form-field class="long-search-bar" style="flex: 1; margin-right: 10px;">
