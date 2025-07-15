@@ -181,6 +181,7 @@ import { DrugSurgeryReportComponent } from './chameleon-reports/drug-surgery-rep
 import { ProcedureICD9ManagerDialogComponent } from './chameleon-reports/drug-surgery-report/procedure-icd9-manager-dialog/procedure-icd9-manager-dialog.component';
 import { PCIreportComponent } from './chameleon-reports/pci-report/pci-report.component';
 import { PCIreportDialogComponent } from './chameleon-reports/pci-report-dialog/pci-report-dialog.component';
+import { ApplicationsComponent } from './applications-component/applications-component.component';
 
 
 export const MY_DATE_FORMATS: MatDateFormats = {
@@ -338,8 +339,8 @@ export function playerFactory() {
     DrugSurgeryReportComponent,
     ProcedureICD9ManagerDialogComponent,
     PCIreportComponent,
-    PCIreportDialogComponent
-   
+    PCIreportDialogComponent,
+    ApplicationsComponent   
      
   
   ],

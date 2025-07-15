@@ -315,7 +315,7 @@
         <th mat-header-cell *matHeaderCellDef>כלל היחידות</th>
         <td mat-cell *matCellDef="let row">
           <span [ngClass]="getCellClass(allUnitsGradeMap[row.MeasurementCode], row.MeasurementCode)">
-            {{ allUnitsGradeMap[row.MeasurementCode] !== null ? (allUnitsGradeMap[row.MeasurementCode] | number:'1.0-0') + '%' : '-' }}
+            {{ allUnitsGradeMap[row.MeasurementCode] !== null ? (allUnitsGradeMap[row.MeasurementCode] | number:'1.1-1') + '%' : '-' }}
           </span>
         </td>
       </ng-container>

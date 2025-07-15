@@ -93,6 +93,7 @@ import { PhysioEquipmentReportComponent } from './chameleon-reports/physio-equip
 import { NutritionistReportComponent } from './chameleon-reports/nutritionist-report/nutritionist-report.component';
 import { DrugSurgeryReportComponent } from './chameleon-reports/drug-surgery-report/drug-surgery-report.component';
 import { PCIreportComponent } from './chameleon-reports/pci-report/pci-report.component';
+import { ApplicationsComponent } from './applications-component/applications-component.component';
 
 const routes: Routes = [
   { path: 'users', component: UsersComponent },
@@ -227,8 +228,10 @@ const routes: Routes = [
    { path: 'MeasurementDef', component: MeasurementDefComponent , data: { title: 'פרוייקט מרא"ה - עדכון מדדים   ' }},
 
 //מכבי תל אביב לצביקה
-{ path: 'maccabi-tel-aviv', component: MaccabiTelAvivComponent , data: { title: 'מכבי תל אביב' }}
+{ path: 'maccabi-tel-aviv', component: MaccabiTelAvivComponent , data: { title: 'מכבי תל אביב' }},
 
+// מערכת לקישורים לתיקיות 
+{ path: 'ApplicationsComponent', component: ApplicationsComponent , data: { title: ' קישורים חשובים של מערכות ' }}
 
 ];
 

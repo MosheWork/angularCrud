@@ -1,0 +1,106 @@
+<div class="body">
+    <!-- Page Title with Dynamic Count -->
+    <div class="nine">
+      <h1>רשימת אפליקציות <span>סה"כ: {{ totalResults }}</span></h1>
+    </div>
+  
+    <!-- Add New App Button -->
+    <button mat-raised-button color="primary" (click)="addRow()">
+      הוסף אפליקציה חדשה
+    </button>
+  
+    <!-- Search + Export -->
+    <div class="form-footer">
+      <mat-form-field class="long-search-bar">
+        <mat-label class="filters">חיפוש</mat-label>
+        <input matInput (keyup)="applyFilter($event)" placeholder="חפש לפי כל שדה">
+      </mat-form-field>
+      <button mat-button (click)="resetFilters()" mat-raised-button color="primary">
+        איפוס
+      </button>
+      <img src="../../assets/excel.png" alt="Download" (click)="exportToExcel()"
+        class="download-icon icon" width="50px" />
+    </div>
+  
+    <!-- Data Table -->
+    <table mat-table [dataSource]="dataSource" matSort class="mat-elevation-z8">
+  
+      <!-- AppName -->
+      <ng-container matColumnDef="AppName">
+        <mat-header-cell *matHeaderCellDef mat-sort-header> שם אפליקציה </mat-header-cell>
+        <mat-cell *matCellDef="let element">
+          <ng-container *ngIf="element.isNew || element.isEditing; else displayAppName">
+            <input [(ngModel)]="element.AppName" placeholder="שם אפליקציה" />
+          </ng-container>
+          <ng-template #displayAppName>
+            {{ element.AppName }}
+          </ng-template>
+        </mat-cell>
+      </ng-container>
+  
+      <!-- Link -->
+      <ng-container matColumnDef="Link">
+        <mat-header-cell *matHeaderCellDef mat-sort-header> קישור </mat-header-cell>
+        <mat-cell *matCellDef="let element">
+          <ng-container *ngIf="element.isNew || element.isEditing; else displayLink">
+            <input [(ngModel)]="element.Link" placeholder="קישור" />
+          </ng-container>
+          <ng-template #displayLink>
+            <a [href]="element.Link" target="_blank">{{ element.Link }}</a>
+          </ng-template>
+        </mat-cell>
+      </ng-container>
+  
+      <!-- Comments -->
+      <ng-container matColumnDef="Comments">
+        <mat-header-cell *matHeaderCellDef mat-sort-header> הערות </mat-header-cell>
+        <mat-cell *matCellDef="let element">
+          <ng-container *ngIf="element.isNew || element.isEditing; else displayComments">
+            <input [(ngModel)]="element.Comments" placeholder="הערות" />
+          </ng-container>
+          <ng-template #displayComments>
+            {{ element.Comments }}
+          </ng-template>
+        </mat-cell>
+      </ng-container>
+  
+      <!-- Active -->
+      <ng-container matColumnDef="Active">
+        <mat-header-cell *matHeaderCellDef mat-sort-header> פעיל </mat-header-cell>
+        <mat-cell *matCellDef="let element">
+          <ng-container *ngIf="element.isNew || element.isEditing; else displayActive">
+            <mat-slide-toggle [(ngModel)]="element.Active">
+              פעיל
+            </mat-slide-toggle>
+          </ng-container>
+          <ng-template #displayActive>
+            {{ element.Active === true || element.Active === 1 ? 'כן' : 'לא' }}
+          </ng-template>
+        </mat-cell>
+      </ng-container>
+  
+      <!-- Actions -->
+      <ng-container matColumnDef="Actions">
+        <mat-header-cell *matHeaderCellDef> פעולה </mat-header-cell>
+        <mat-cell *matCellDef="let element">
+          <button *ngIf="element.isNew" mat-raised-button color="accent" (click)="saveRow(element)">
+            שמור חדש
+          </button>
+          <button *ngIf="!element.isNew && !element.isEditing" mat-button (click)="editRow(element)">
+            ערוך
+          </button>
+          <button *ngIf="element.isEditing" mat-raised-button color="accent" (click)="saveEdit(element)">
+            שמור
+          </button>
+        </mat-cell>
+      </ng-container>
+  
+      <!-- Header & Rows -->
+      <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+      <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+    </table>
+  
+    <!-- Paginator -->
+    <mat-paginator [pageSize]="10" [pageSizeOptions]="[10, 25, 50]" showFirstLastButtons></mat-paginator>
+  </div>
+  

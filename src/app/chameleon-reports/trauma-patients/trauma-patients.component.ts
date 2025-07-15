@@ -70,7 +70,9 @@ export class TraumaPatientsComponent implements OnInit {
     'ReceiveCauseDescription',
     'ERDoctor',
     'ERNurse',  // ✅ Added missing ERNurse
-    'TransferToOtherInstitution'  // ✅ Added missing TransferToOtherInstitution
+    'TransferToOtherInstitution' ,
+    'ExecutionDetails'
+     
     
  
   ];
@@ -113,7 +115,8 @@ export class TraumaPatientsComponent implements OnInit {
     'ERDoctor': 'רופא במיון',
     'ERNurse': 'אח/ות במיון',
     'ChestXRayTime': 'זמן צילום חזה',
-    'UltrasoundTechTime': 'זמן טכנאי אולטרסאונד'
+    'UltrasoundTechTime': 'זמן טכנאי אולטרסאונד',
+    'ExecutionDetails':'ExecutionDetails'
     
 };
 
