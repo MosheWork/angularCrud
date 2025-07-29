@@ -35,6 +35,7 @@ interface TraumaPatient {
   Week: number;
   Year: number;
   TransferToOtherInstitution: string; 
+  ExecutionDetails: string; 
 
 }
 
@@ -350,7 +351,9 @@ export class TraumaPatientsComponent implements OnInit {
       ChestXRayTime: 'זמן צילום חזה',
       UltrasoundTechTime: 'זמן טכנאי אולטרסאונד',
       Remarks: 'הערות',
-      Relevant: 'רלוונטי'
+      Relevant: 'רלוונטי',
+      ExecutionDetails: 'פרטי ביצוע'
+
     };
   
     // ✅ Format data with Hebrew headers

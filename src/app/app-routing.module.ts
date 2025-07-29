@@ -94,6 +94,7 @@ import { NutritionistReportComponent } from './chameleon-reports/nutritionist-re
 import { DrugSurgeryReportComponent } from './chameleon-reports/drug-surgery-report/drug-surgery-report.component';
 import { PCIreportComponent } from './chameleon-reports/pci-report/pci-report.component';
 import { ApplicationsComponent } from './applications-component/applications-component.component';
+import { GuideManagerComponent } from './guide-manager/guide-manager.component';
 
 const routes: Routes = [
   { path: 'users', component: UsersComponent },
@@ -231,8 +232,10 @@ const routes: Routes = [
 { path: 'maccabi-tel-aviv', component: MaccabiTelAvivComponent , data: { title: 'מכבי תל אביב' }},
 
 // מערכת לקישורים לתיקיות 
-{ path: 'ApplicationsComponent', component: ApplicationsComponent , data: { title: ' קישורים חשובים של מערכות ' }}
+{ path: 'ApplicationsComponent', component: ApplicationsComponent , data: { title: ' קישורים חשובים של מערכות ' }},
 
+// ניהול ידע
+{ path: 'app-guide-manager', component: GuideManagerComponent , data: { title: 'רשימת יישומים' }}
 ];
 
 @NgModule({

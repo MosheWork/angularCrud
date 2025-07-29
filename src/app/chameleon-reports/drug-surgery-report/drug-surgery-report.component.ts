@@ -360,37 +360,57 @@ DisplayUserName: string = '';
 
 // הורדת הטבלה הראשית
 exportToExcelMain() {
-  const dataToExport = this.matTableDataSource.data.map(item => ({
-    ...item,
-    OperationStartTime: item.OperationStartTime ? new Date(item.OperationStartTime) : null,
-    OperationEndTime: item.OperationEndTime ? new Date(item.OperationEndTime) : null,
-    DrugGiveTime: item.DrugGiveTime ? new Date(item.DrugGiveTime) : null
-  }));
+  const dataToExport = this.matTableDataSource.data;
 
   if (dataToExport.length === 0) {
     alert('אין נתונים להורדה');
     return;
   }
 
-  const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(dataToExport);
-  const workbook: XLSX.WorkBook = { Sheets: { 'דו״ח תרופות וניתוחים': worksheet }, SheetNames: ['דו״ח תרופות וניתוחים'] };
+  // Step 1: Convert to Hebrew column labels
+  const exportData = dataToExport.map(row => {
+    const newRow: any = {};
+    this.columns.forEach(col => {
+      const label = this.getColumnLabel(col);
+      newRow[label] = row[col];
+    });
+    return newRow;
+  });
+
+  // Step 2: Create worksheet and export
+  const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(exportData);
+  const workbook: XLSX.WorkBook = {
+    Sheets: { 'דו״ח תרופות וניתוחים': worksheet },
+    SheetNames: ['דו״ח תרופות וניתוחים']
+  };
   XLSX.writeFile(workbook, 'drug_surgery_report.xlsx');
 }
 
 
+
 // הורדת טבלת ללא תרופות
 exportToExcelNoDrugs() {
-  const dataToExport = this.noDrugsMatTableDataSource.data.map(item => ({
-    ...item
-  }));
+  const dataToExport = this.noDrugsMatTableDataSource.data;
 
   if (dataToExport.length === 0) {
     alert('אין נתונים להורדה');
     return;
   }
 
-  const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(dataToExport);
-  const workbook: XLSX.WorkBook = { Sheets: { 'ללא תרופות ברשימה': worksheet }, SheetNames: ['ללא תרופות ברשימה'] };
+  const exportData = dataToExport.map(row => {
+    const newRow: any = {};
+    this.noDrugsColumns.forEach(col => {
+      const label = this.getColumnLabel(col);
+      newRow[label] = row[col];
+    });
+    return newRow;
+  });
+
+  const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(exportData);
+  const workbook: XLSX.WorkBook = {
+    Sheets: { 'ללא תרופות ברשימה': worksheet },
+    SheetNames: ['ללא תרופות ברשימה']
+  };
   XLSX.writeFile(workbook, 'no_drugs_report.xlsx');
 }
 
