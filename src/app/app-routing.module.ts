@@ -95,6 +95,7 @@ import { DrugSurgeryReportComponent } from './chameleon-reports/drug-surgery-rep
 import { PCIreportComponent } from './chameleon-reports/pci-report/pci-report.component';
 import { ApplicationsComponent } from './applications-component/applications-component.component';
 import { GuideManagerComponent } from './guide-manager/guide-manager.component';
+import { BreastfeedingCoordinatorComponent } from './chameleon-reports/breastfeeding-coordinator/breastfeeding-coordinator.component';
 
 const routes: Routes = [
   { path: 'users', component: UsersComponent },
@@ -189,6 +190,7 @@ const routes: Routes = [
 { path: 'nutritionist-report', component: NutritionistReportComponent , data: { title: 'דוח תפוקות - תזונה' }},// דוח תפוקות  של פרא רפואי     
 { path: 'drug-surgery-report', component: DrugSurgeryReportComponent , data: { title: 'אנטיביוטיקה מניעתית לפני ניתוח' }},//    של היבה         
 { path: 'PCIreportComponent', component: PCIreportComponent , data: { title: ' PCI' }},//    לבקשת אופיר       
+{ path: 'breastfeeding-coordinator', component: BreastfeedingCoordinatorComponent , data: { title: ' מתאמת הנקה ' }},//   מתאמת הנקה      
 
 
 //chemelondashboard

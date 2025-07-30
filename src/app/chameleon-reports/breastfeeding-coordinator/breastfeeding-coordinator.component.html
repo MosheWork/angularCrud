@@ -1,0 +1,98 @@
+<app-spinner [isLoading]="isLoading"></app-spinner>
+
+<!-- ✅ Tab group must always render -->
+<mat-tab-group dir="rtl">
+
+  <!-- 🟦 Tab 1 -->
+  <mat-tab label="מאושפזות ללא ייעוץ">
+    <ng-container *ngIf="!isLoading">
+      <mat-card class="monthly-table-card" dir="rtl">
+        <mat-card-title>רשימת מאושפזות ללא ייעוץ</mat-card-title>
+
+        <table mat-table [dataSource]="maternityDataSource" matSort #maternitySort="matSort" class="mat-elevation-z8">
+          <ng-container matColumnDef="Admission_No">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>מספר אשפוז</th>
+            <td mat-cell *matCellDef="let row">{{ row.Admission_No }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="First_Name">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>שם פרטי</th>
+            <td mat-cell *matCellDef="let row">{{ row.First_Name }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="Last_Name">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>שם משפחה</th>
+            <td mat-cell *matCellDef="let row">{{ row.Last_Name }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="BirthDate">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>תאריך לידה</th>
+            <td mat-cell *matCellDef="let row">{{ row.BirthDate | date: 'dd/MM/yyyy' }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="TimeFromDelivery">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>זמן מהלידה</th>
+            <td mat-cell *matCellDef="let row">{{ row.TimeFromDelivery }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="TimeFromDeliveryInMinute">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>בדקות</th>
+            <td mat-cell *matCellDef="let row">{{ row.TimeFromDeliveryInMinute }}</td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="maternityDisplayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: maternityDisplayedColumns;"></tr>
+        </table>
+
+        <mat-paginator #maternityPaginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
+      </mat-card>
+    </ng-container>
+  </mat-tab>
+
+  <!-- 🟨 Tab 2 -->
+  <mat-tab label="דו״ח מתאם הנקה">
+    <ng-container *ngIf="!isLoading">
+      <mat-card class="filter-card" dir="rtl">
+        <mat-radio-group [(ngModel)]="selectedView" (change)="onRadioChange()" style="margin-bottom: 16px;">
+          <mat-radio-button value="Year">שנתי</mat-radio-button>
+          <mat-radio-button value="Querter">רבעוני</mat-radio-button>
+          <mat-radio-button value="Month">חודשי</mat-radio-button>
+        </mat-radio-group>
+      </mat-card>
+
+      <mat-card class="monthly-table-card" dir="rtl">
+        <mat-card-title>
+          דו״ח מתאם הנקה לפי {{ selectedView === 'Year' ? 'שנה' : selectedView === 'Querter' ? 'רבעון' : 'חודש' }}
+        </mat-card-title>
+
+        <table mat-table [dataSource]="filteredData" matSort #summarySort="matSort" class="mat-elevation-z8">
+          <ng-container matColumnDef="PeriodDesc">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>תקופה</th>
+            <td mat-cell *matCellDef="let row">{{ row.PeriodDesc }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="OnTime">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>בוצע בזמן</th>
+            <td mat-cell *matCellDef="let row">{{ row.OnTime }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="NotNoTime">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>בוצע לא בזמן</th>
+            <td mat-cell *matCellDef="let row">{{ row.NotNoTime }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="OnTimeConseltationPerc">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>אחוז שבוצע בזמן</th>
+            <td mat-cell *matCellDef="let row">{{ row.OnTimeConseltationPerc | number:'1.0-0' }}%</td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+        </table>
+
+        <mat-paginator #summaryPaginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
+      </mat-card>
+    </ng-container>
+  </mat-tab>
+
+</mat-tab-group>

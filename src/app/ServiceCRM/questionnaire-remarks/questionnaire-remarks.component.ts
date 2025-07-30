@@ -186,7 +186,8 @@ uniqueMonths: number[] = [];
       'הערות מנהל מקרה': row.CaseManagerRemarks,
       'סטטוס': row.CaseManagerStatus,
       'קטגוריה': row.CaseManagerCategory,
-      ' טלפון': row.CellNumber2
+      ' טלפון': row.CellNumber2,
+      ' הערה': row.Remark
      
     }));
   
