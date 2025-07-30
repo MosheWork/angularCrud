@@ -98,20 +98,26 @@ maternityDisplayedColumns: string[] = ['Admission_No', 'First_Name', 'Last_Name'
   applyFilter(): void {
     const filtered = this.data.filter(row => row.DataType === this.selectedView);
     this.filteredData.data = filtered;
-    // if (this.paginator) this.filteredData.paginator = this.paginator;
-    // if (this.sort) this.filteredData.sort = this.sort;
+  
+    setTimeout(() => {
+      if (this.summaryPaginator) this.filteredData.paginator = this.summaryPaginator;
+      if (this.summarySort) this.filteredData.sort = this.summarySort;
+    });
   }
-
+  
   onRadioChange(): void {
     this.applyFilter();
   }
 
   ngAfterViewInit(): void {
-    if (this.summaryPaginator) this.filteredData.paginator = this.summaryPaginator;
-    if (this.summarySort) this.filteredData.sort = this.summarySort;
+    setTimeout(() => {
+      if (this.summaryPaginator) this.filteredData.paginator = this.summaryPaginator;
+      if (this.summarySort) this.filteredData.sort = this.summarySort;
   
-    if (this.maternityPaginator) this.maternityDataSource.paginator = this.maternityPaginator;
-    if (this.maternitySort) this.maternityDataSource.sort = this.maternitySort;
+      if (this.maternityPaginator) this.maternityDataSource.paginator = this.maternityPaginator;
+      if (this.maternitySort) this.maternityDataSource.sort = this.maternitySort;
+    });
   }
+  
   
 }
