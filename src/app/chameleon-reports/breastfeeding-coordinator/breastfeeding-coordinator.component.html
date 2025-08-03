@@ -1,7 +1,50 @@
 <app-spinner [isLoading]="isLoading"></app-spinner>
+<div class="body">
+<mat-card class="filters-gauge-container" dir="rtl" *ngIf="!isLoading">
+  <!-- 🟩 Monthly Gauge -->
+  <div class="gauge-wrapper">
+    <ngx-gauge
+      [size]="220"
+      [type]="'semi'"
+      [value]="validPercMonth"
+      [label]="'אחוז תקין - חודש נוכחי'"
+      [append]="'%'"
+      [thick]="15"
+      [foregroundColor]="'green'"
+      [backgroundColor]="'#e0e0e0'">
+    </ngx-gauge>
+    <div class="gauge-details">
+      <p>סה"כ מקרים: {{ monthTotal }}</p>
+      <p>מקרים תקינים: {{ monthValid }}</p>
+      <p>לא תקינים: {{ monthNotValid }}</p>
+    </div>
+  </div>
+
+  <!-- 🟦 Yearly Gauge -->
+  <div class="gauge-wrapper">
+    <ngx-gauge
+      [size]="220"
+      [type]="'semi'"
+      [value]="validPercYear"
+      [label]="'אחוז תקין - שנה נוכחית'"
+      [append]="'%'"
+      [thick]="15"
+      [foregroundColor]="'blue'"
+      [backgroundColor]="'#e0e0e0'">
+    </ngx-gauge>
+    <div class="gauge-details">
+      <p>סה"כ מקרים: {{ yearTotal }}</p>
+      <p>מקרים תקינים: {{ yearValid }}</p>
+      <p>לא תקינים: {{ yearNotValid }}</p>
+    </div>
+  </div>
+</mat-card>
+
 
 <!-- ✅ Tab group must always render -->
 <mat-tab-group dir="rtl" *ngIf="!isLoading">
+
+  
 
   <!-- 🟦 Tab 1 -->
   <mat-tab label="מאושפזות ללא ייעוץ">
@@ -100,3 +143,4 @@
   </mat-tab>
 
 </mat-tab-group>
+</div>

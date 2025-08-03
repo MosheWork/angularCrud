@@ -1,3 +1,9 @@
+.body {
+  margin-top: 80px;
+  margin-bottom: 50px;
+}
+
+
 .measurement-wrapper {
     padding-top: 80px; // adjust based on your header height
     padding-left: 16px;
@@ -177,3 +183,29 @@
   .row-red {
     background-color: #ffebee !important; /* light red */
   }
+
+
+  .filters-gauge-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 40px; /* space between gauges */
+    flex-wrap: nowrap; /* 🔑 prevent wrapping to new line */
+    margin: 16px 0;
+  }
+  
+  .gauge-wrapper {
+    text-align: center;
+    width: 250px; /* fixed width to align nicely */
+    padding: 8px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    border-radius: 12px;
+    background-color: #fff;
+  }
+  
+  .gauge-details p {
+    margin: 4px 0;
+    font-weight: 500;
+  }
+  

@@ -48,7 +48,17 @@ maternityDisplayedColumns: string[] = ['Admission_No', 'First_Name', 'Last_Name'
 @ViewChild('maternitySort') maternitySort!: MatSort;
 
   isLoading = true;
-
+  validPercMonth: number = 0;
+  validPercYear: number = 0;
+  
+  monthValid: number = 0;
+  monthNotValid: number = 0;
+  monthTotal: number = 0;
+  
+  yearValid: number = 0;
+  yearNotValid: number = 0;
+  yearTotal: number = 0;
+  
   constructor(private http: HttpClient) {}
 
   ngOnInit(): void {
@@ -63,7 +73,8 @@ maternityDisplayedColumns: string[] = ['Admission_No', 'First_Name', 'Last_Name'
   
         this.maternityNoConsultationData = maternity;
         this.maternityDataSource.data = maternity;
-  
+        this.calculateGauges(summary);
+
         this.isLoading = false;
       },
       error: (err) => {
@@ -71,6 +82,8 @@ maternityDisplayedColumns: string[] = ['Admission_No', 'First_Name', 'Last_Name'
         this.isLoading = false;
       }
     });
+
+
   }
 
   fetchData(): void {
@@ -132,5 +145,25 @@ maternityDisplayedColumns: string[] = ['Admission_No', 'First_Name', 'Last_Name'
       return '';
     }
   }
+  calculateGauges(summary: BreastfeedingCoordinatorModel[]): void {
+    const now = new Date();
+    const thisMonth = now.getMonth() + 1;
+    const thisYear = now.getFullYear();
+  
+    // Monthly
+    const monthData = summary.filter(d => d.DataType === 'Month' && d.YearNum === thisYear && d.PeriodNum === thisMonth);
+    this.monthValid = monthData.reduce((sum, d) => sum + d.OnTime, 0);
+    this.monthNotValid = monthData.reduce((sum, d) => sum + d.NotNoTime, 0);
+    this.monthTotal = this.monthValid + this.monthNotValid;
+    this.validPercMonth = this.monthTotal > 0 ? (this.monthValid / this.monthTotal) * 100 : 0;
+  
+    // Yearly
+    const yearData = summary.filter(d => d.DataType === 'Year' && d.YearNum === thisYear);
+    this.yearValid = yearData.reduce((sum, d) => sum + d.OnTime, 0);
+    this.yearNotValid = yearData.reduce((sum, d) => sum + d.NotNoTime, 0);
+    this.yearTotal = this.yearValid + this.yearNotValid;
+    this.validPercYear = this.yearTotal > 0 ? (this.yearValid / this.yearTotal) * 100 : 0;
+  }
+  
   
 }
