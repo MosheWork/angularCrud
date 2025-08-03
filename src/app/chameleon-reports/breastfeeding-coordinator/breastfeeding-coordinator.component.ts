@@ -119,5 +119,18 @@ maternityDisplayedColumns: string[] = ['Admission_No', 'First_Name', 'Last_Name'
     });
   }
   
+  getRowColorClass(row: MaternityNoConsultationModel): string {
+    const minutes = row.TimeFromDeliveryInMinute;
+  
+    if (minutes <= 360) {
+      return 'row-green';
+    } else if (minutes > 360 && minutes <= 900) {
+      return 'row-orange';
+    } else if (minutes > 900 && minutes <= 1440) {
+      return 'row-red';
+    } else {
+      return '';
+    }
+  }
   
 }
