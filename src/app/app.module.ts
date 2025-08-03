@@ -184,6 +184,7 @@ import { PCIreportDialogComponent } from './chameleon-reports/pci-report-dialog/
 import { ApplicationsComponent } from './applications-component/applications-component.component';
 import { GuideManagerComponent } from './guide-manager/guide-manager.component';
 import { BreastfeedingCoordinatorComponent } from './chameleon-reports/breastfeeding-coordinator/breastfeeding-coordinator.component';
+import { MedicationReconciliationComponent } from './chameleon-reports/medication-reconciliation/medication-reconciliation.component';
 
 
 export const MY_DATE_FORMATS: MatDateFormats = {
@@ -344,7 +345,8 @@ export function playerFactory() {
     PCIreportDialogComponent,
     ApplicationsComponent,
     GuideManagerComponent,
-    BreastfeedingCoordinatorComponent   
+    BreastfeedingCoordinatorComponent,
+    MedicationReconciliationComponent   
      
   
   ],

@@ -1,0 +1,46 @@
+<app-spinner [isLoading]="isLoading"></app-spinner>
+<div class="body">
+<mat-card class="monthly-table-card" dir="rtl" *ngIf="!isLoading">
+  <mat-card-title>דו״ח MEDICATION RECONCILIATION</mat-card-title>
+
+  <table mat-table [dataSource]="dataSource" matSort #sort="matSort" class="mat-elevation-z8">
+
+    <ng-container matColumnDef="Admission_No">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>מספר אשפוז</th>
+      <td mat-cell *matCellDef="let row">{{ row.Admission_No }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="Admission_Date">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>תאריך קבלה</th>
+      <td mat-cell *matCellDef="let row">{{ row.Admission_Date | date: 'dd/MM/yyyy' }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="UnitName">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>שם מחלקה</th>
+      <td mat-cell *matCellDef="let row">{{ row.UnitName }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="ComboText_15536">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header> בוצעה סקירה והשוואה של הטיפול התרופתי </th>
+      <td mat-cell *matCellDef="let row">{{ row.ComboText_15536 }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="ComboText_15537">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>  האם למטופל יש POLYPHARMACY ?</th>
+      <td mat-cell *matCellDef="let row">{{ row.ComboText_15537 }}</td>
+    </ng-container>
+
+   
+
+    <ng-container matColumnDef="Consiliums">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>ייעוץ רוקח קליני</th>
+      <td mat-cell *matCellDef="let row">{{ row.Consiliums }}</td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+  </table>
+
+  <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
+</mat-card>
+</div>
