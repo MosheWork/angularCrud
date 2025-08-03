@@ -38,6 +38,7 @@ export class MedicationReconciliationComponent implements OnInit {
   filterForm: FormGroup;
 
   originalData: MedicationReconciliationModel[] = [];
+  @ViewChild('globalSearchInput') globalSearchInput!: any;
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
@@ -91,7 +92,14 @@ export class MedicationReconciliationComponent implements OnInit {
   }
   resetFilters(): void {
     this.filterForm.reset();
+    this.dataSource.filter = '';
     this.dataSource.data = this.originalData;
+  
+    // איפוס שורת החיפוש החופשי
+    if (this.globalSearchInput) {
+      this.globalSearchInput.nativeElement.value = '';
+    }
+  
     setTimeout(() => this.dataSource.paginator = this.paginator);
   }
 }

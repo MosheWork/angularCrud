@@ -1,6 +1,6 @@
 <app-spinner [isLoading]="isLoading"></app-spinner>
 <div class="body">
-  <mat-card class="filter-card" dir="rtl">
+  <mat-card class="filter-card" dir="rtl" *ngIf="!isLoading">
     <form [formGroup]="filterForm" class="filter-form">
       <div class="filter-fields">
   
@@ -29,11 +29,12 @@
           <mat-datepicker #pickerEnd></mat-datepicker>
         </mat-form-field>
   
-        <!-- Global Search -->
-        <mat-form-field appearance="fill" style="flex: 1;">
-          <mat-label>חיפוש חופשי</mat-label>
-          <input matInput (keyup)="applyGlobalFilter($event)" placeholder="חפש...">
-        </mat-form-field>
+      
+     <!-- Global Search -->
+<mat-form-field appearance="fill" style="flex: 1;">
+  <mat-label>חיפוש חופשי</mat-label>
+  <input matInput #globalSearchInput (keyup)="applyGlobalFilter($event)" placeholder="חפש...">
+</mat-form-field>
         <button mat-raised-button color="primary" (click)="resetFilters()">
           איפוס מסננים
         </button>
@@ -42,7 +43,6 @@
   </mat-card>
   
 <mat-card class="monthly-table-card" dir="rtl" *ngIf="!isLoading">
-  <mat-card-title>דו״ח MEDICATION RECONCILIATION</mat-card-title>
 
   <table mat-table [dataSource]="dataSource" matSort #sort="matSort" class="mat-elevation-z8">
 
