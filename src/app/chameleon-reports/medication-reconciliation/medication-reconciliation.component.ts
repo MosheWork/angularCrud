@@ -89,5 +89,9 @@ export class MedicationReconciliationComponent implements OnInit {
     this.dataSource.data = filtered;
     setTimeout(() => this.dataSource.paginator = this.paginator);
   }
-  
+  resetFilters(): void {
+    this.filterForm.reset();
+    this.dataSource.data = this.originalData;
+    setTimeout(() => this.dataSource.paginator = this.paginator);
+  }
 }

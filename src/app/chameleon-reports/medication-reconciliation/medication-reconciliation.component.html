@@ -34,7 +34,7 @@
           <mat-label>חיפוש חופשי</mat-label>
           <input matInput (keyup)="applyGlobalFilter($event)" placeholder="חפש...">
         </mat-form-field>
-        <button mat-raised-button color="primary" (click)="filterForm.reset(); applyFormFilter()">
+        <button mat-raised-button color="primary" (click)="resetFilters()">
           איפוס מסננים
         </button>
       </div>
