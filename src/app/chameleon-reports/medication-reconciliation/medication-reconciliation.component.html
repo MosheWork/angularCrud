@@ -1,5 +1,46 @@
 <app-spinner [isLoading]="isLoading"></app-spinner>
 <div class="body">
+  <mat-card class="filter-card" dir="rtl">
+    <form [formGroup]="filterForm" class="filter-form">
+      <div class="filter-fields">
+  
+        <!-- Department Dropdown -->
+        <mat-form-field appearance="fill">
+          <mat-label>מחלקה</mat-label>
+          <mat-select formControlName="department">
+            <mat-option value="">הכל</mat-option>
+            <mat-option *ngFor="let dept of departments" [value]="dept">{{ dept }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+  
+        <!-- Start Date -->
+        <mat-form-field appearance="fill">
+          <mat-label>מתאריך</mat-label>
+          <input matInput [matDatepicker]="pickerStart" formControlName="startDate">
+          <mat-datepicker-toggle matSuffix [for]="pickerStart"></mat-datepicker-toggle>
+          <mat-datepicker #pickerStart></mat-datepicker>
+        </mat-form-field>
+  
+        <!-- End Date -->
+        <mat-form-field appearance="fill">
+          <mat-label>עד תאריך</mat-label>
+          <input matInput [matDatepicker]="pickerEnd" formControlName="endDate">
+          <mat-datepicker-toggle matSuffix [for]="pickerEnd"></mat-datepicker-toggle>
+          <mat-datepicker #pickerEnd></mat-datepicker>
+        </mat-form-field>
+  
+        <!-- Global Search -->
+        <mat-form-field appearance="fill" style="flex: 1;">
+          <mat-label>חיפוש חופשי</mat-label>
+          <input matInput (keyup)="applyGlobalFilter($event)" placeholder="חפש...">
+        </mat-form-field>
+        <button mat-raised-button color="primary" (click)="filterForm.reset(); applyFormFilter()">
+          איפוס מסננים
+        </button>
+      </div>
+    </form>
+  </mat-card>
+  
 <mat-card class="monthly-table-card" dir="rtl" *ngIf="!isLoading">
   <mat-card-title>דו״ח MEDICATION RECONCILIATION</mat-card-title>
 
