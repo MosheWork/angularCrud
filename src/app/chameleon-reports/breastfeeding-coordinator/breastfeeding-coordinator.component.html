@@ -50,7 +50,6 @@
   <mat-tab label="מאושפזות ללא ייעוץ">
     <ng-container *ngIf="!isLoading">
       <mat-card class="monthly-table-card" dir="rtl">
-        <mat-card-title>רשימת מאושפזות ללא ייעוץ</mat-card-title>
 
         <table mat-table [dataSource]="maternityDataSource" matSort #maternitySort="matSort" class="mat-elevation-z8">
           <ng-container matColumnDef="Admission_No">

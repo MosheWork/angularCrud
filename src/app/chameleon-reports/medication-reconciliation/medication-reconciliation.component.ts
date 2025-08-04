@@ -13,8 +13,11 @@ export interface MedicationReconciliationModel {
   UnitName: string;
   ComboText_15536: string;
   ComboText_15537: string;
- 
   Consiliums: string;
+
+  // 🆕 Add these for tracking entry users
+  UserName_15536: string;
+  UserName_15537: string;
 }
 
 @Component({
@@ -29,20 +32,28 @@ export class MedicationReconciliationComponent implements OnInit {
     'UnitName',
     'ComboText_15536',
     'ComboText_15537',
-   
     'Consiliums'
   ];
   dataSource = new MatTableDataSource<MedicationReconciliationModel>();
+  stillHospitalizedDataSource = new MatTableDataSource<MedicationReconciliationModel>();
+
   isLoading = true;
   departments: string[] = []; // will populate after data loads
   filterForm: FormGroup;
+  tabIndex = 0;
 
   originalData: MedicationReconciliationModel[] = [];
+  originalStillInHospitalData: MedicationReconciliationModel[] = [];
+
   @ViewChild('globalSearchInput') globalSearchInput!: any;
 
-  @ViewChild(MatPaginator) paginator!: MatPaginator;
-  @ViewChild(MatSort) sort!: MatSort;
-
+  @ViewChild('paginator') paginator!: MatPaginator;
+  @ViewChild('sort') sort!: MatSort;
+  
+  // 🆕 For second table
+  @ViewChild('stillPaginator') stillPaginator!: MatPaginator;
+  @ViewChild('stillSort') stillSort!: MatSort;
+  
   constructor(private http: HttpClient, private fb: FormBuilder) {
     this.filterForm = this.fb.group({
       department: [''],
@@ -51,12 +62,17 @@ export class MedicationReconciliationComponent implements OnInit {
     });
   }
   ngOnInit(): void {
+    this.loadDischargedData();
+    this.loadStillHospitalizedData();
+  }
+
+  loadDischargedData(): void {
     this.http.get<MedicationReconciliationModel[]>(`${environment.apiUrl}/MedicationReconciliation`)
       .subscribe({
         next: data => {
-          this.originalData = data; // ✅ keep original
+          this.originalData = data;
           this.dataSource.data = data;
-          this.departments = [...new Set(data.map(row => row.UnitName).filter(Boolean))]; // unique departments
+          this.departments = [...new Set(data.map(row => row.UnitName).filter(Boolean))];
           this.isLoading = false;
           setTimeout(() => {
             this.dataSource.paginator = this.paginator;
@@ -66,8 +82,25 @@ export class MedicationReconciliationComponent implements OnInit {
           this.filterForm.valueChanges.subscribe(() => this.applyFormFilter());
         },
         error: err => {
-          console.error('❌ Failed to load data:', err);
+          console.error('❌ Failed to load discharged data:', err);
           this.isLoading = false;
+        }
+      });
+  }
+
+  loadStillHospitalizedData(): void {
+    this.http.get<MedicationReconciliationModel[]>(`${environment.apiUrl}/MedicationReconciliation/StilinHospital`)
+      .subscribe({
+        next: data => {
+          this.originalStillInHospitalData = data;
+          this.stillHospitalizedDataSource.data = data;
+          setTimeout(() => {
+            this.stillHospitalizedDataSource.paginator = this.stillPaginator;
+            this.stillHospitalizedDataSource.sort = this.stillSort;
+          });
+        },
+        error: err => {
+          console.error('❌ Failed to load still hospitalized data:', err);
         }
       });
   }
@@ -78,7 +111,6 @@ export class MedicationReconciliationComponent implements OnInit {
 
   applyFormFilter(): void {
     const { department, startDate, endDate } = this.filterForm.value;
-  
     const filtered = this.originalData.filter(row => {
       const matchesDept = !department || row.UnitName === department;
       const date = new Date(row.Admission_Date);
@@ -86,20 +118,18 @@ export class MedicationReconciliationComponent implements OnInit {
       const matchesEnd = !endDate || date <= new Date(endDate);
       return matchesDept && matchesStart && matchesEnd;
     });
-  
+
     this.dataSource.data = filtered;
     setTimeout(() => this.dataSource.paginator = this.paginator);
   }
+
   resetFilters(): void {
     this.filterForm.reset();
     this.dataSource.filter = '';
     this.dataSource.data = this.originalData;
-  
-    // איפוס שורת החיפוש החופשי
     if (this.globalSearchInput) {
       this.globalSearchInput.nativeElement.value = '';
     }
-  
     setTimeout(() => this.dataSource.paginator = this.paginator);
   }
 }
