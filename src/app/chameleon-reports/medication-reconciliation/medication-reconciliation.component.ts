@@ -61,11 +61,44 @@ export class MedicationReconciliationComponent implements OnInit{
   originalStillInHospitalData: MedicationReconciliationModel[] = [];
 
   @ViewChild('globalSearchInput') globalSearchInput!: any;
-  @ViewChild('dischargedPaginator') dischargedPaginator!: MatPaginator;
-  @ViewChild('dischargedSort') dischargedSort!: MatSort;
-  
-  @ViewChild('stillHospitalizedPaginator') stillHospitalizedPaginator!: MatPaginator;
-  @ViewChild('stillHospitalizedSort') stillHospitalizedSort!: MatSort;
+// ✅ Discharged
+private _dischargedPaginator!: MatPaginator;
+@ViewChild('dischargedPaginator') set dischargedPaginatorSetter(p: MatPaginator) {
+  this._dischargedPaginator = p;
+  if (this.dataSource) this.dataSource.paginator = p;
+}
+get dischargedPaginator(): MatPaginator {
+  return this._dischargedPaginator;
+}
+
+private _dischargedSort!: MatSort;
+@ViewChild('dischargedSort') set dischargedSortSetter(s: MatSort) {
+  this._dischargedSort = s;
+  if (this.dataSource) this.dataSource.sort = s;
+}
+get dischargedSort(): MatSort {
+  return this._dischargedSort;
+}
+
+// ✅ Still Hospitalized
+private _stillHospitalizedPaginator!: MatPaginator;
+@ViewChild('stillHospitalizedPaginator') set stillHospitalizedPaginatorSetter(p: MatPaginator) {
+  this._stillHospitalizedPaginator = p;
+  if (this.stillHospitalizedDataSource) this.stillHospitalizedDataSource.paginator = p;
+}
+get stillHospitalizedPaginator(): MatPaginator {
+  return this._stillHospitalizedPaginator;
+}
+
+private _stillHospitalizedSort!: MatSort;
+@ViewChild('stillHospitalizedSort') set stillHospitalizedSortSetter(s: MatSort) {
+  this._stillHospitalizedSort = s;
+  if (this.stillHospitalizedDataSource) this.stillHospitalizedDataSource.sort = s;
+}
+get stillHospitalizedSort(): MatSort {
+  return this._stillHospitalizedSort;
+}
+
   
   constructor(private http: HttpClient, private fb: FormBuilder) {
     this.filterForm = this.fb.group({
@@ -132,14 +165,17 @@ this.stillValidPercentage = this.stillTotalCount ? Math.round((this.stillValidCo
   applyGlobalFilter(event: Event): void {
     const filterValue = (event.target as HTMLInputElement).value.trim().toLowerCase();
   
-    this.dataSource.filterPredicate = (data, filter) => {
+    const activeDataSource = this.tabIndex === 0 ? this.stillHospitalizedDataSource : this.dataSource;
+  
+    activeDataSource.filterPredicate = (data, filter) => {
       return Object.values(data).some(val =>
         val?.toString().toLowerCase().includes(filter)
       );
     };
   
-    this.dataSource.filter = filterValue;
+    activeDataSource.filter = filterValue;
   }
+  
   applyFormFilter(): void {
     const { department, startDate, endDate } = this.filterForm.value;
   
@@ -197,18 +233,19 @@ this.stillValidPercentage = this.stillTotalCount ? Math.round((this.stillValidCo
 
 
   onTabChange(event: any): void {
-    const index = event.index;
+    this.tabIndex = event.index;
   
     setTimeout(() => {
-      if (index === 0 && this.stillHospitalizedPaginator && this.stillHospitalizedSort) {
+      if (this.tabIndex === 0 && this.stillHospitalizedPaginator && this.stillHospitalizedSort) {
         this.stillHospitalizedDataSource.paginator = this.stillHospitalizedPaginator;
         this.stillHospitalizedDataSource.sort = this.stillHospitalizedSort;
-      } else if (index === 1 && this.dischargedPaginator && this.dischargedSort) {
+      } else if (this.tabIndex === 1 && this.dischargedPaginator && this.dischargedSort) {
         this.dataSource.paginator = this.dischargedPaginator;
         this.dataSource.sort = this.dischargedSort;
       }
-    }, 0); // Delay to let tab render
+    }, 0);
   }
+  
   
   
 }

@@ -10,7 +10,7 @@
       [label]="'אחוז תקין - חודש נוכחי'"
       [append]="'%'"
       [thick]="15"
-      [foregroundColor]="'green'"
+      [foregroundColor]="getMonthGaugeColor()"
       [backgroundColor]="'#e0e0e0'">
     </ngx-gauge>
     <div class="gauge-details">
@@ -29,8 +29,8 @@
       [label]="'אחוז תקין - שנה נוכחית'"
       [append]="'%'"
       [thick]="15"
-      [foregroundColor]="'blue'"
-      [backgroundColor]="'#e0e0e0'">
+      [foregroundColor]="getYearGaugeColor()"
+            [backgroundColor]="'#e0e0e0'">
     </ngx-gauge>
     <div class="gauge-details">
       <p>סה"כ מקרים: {{ yearTotal }}</p>
@@ -108,7 +108,7 @@
 
       <mat-card class="monthly-table-card" dir="rtl">
         <mat-card-title>
-          דו״ח מתאם הנקה לפי {{ selectedView === 'Year' ? 'שנה' : selectedView === 'Querter' ? 'רבעון' : 'חודש' }}
+         {{ selectedView === 'Year' ? 'שנה' : selectedView === 'Querter' ? 'רבעון' : 'חודש' }}
         </mat-card-title>
 
         <table mat-table [dataSource]="filteredData" matSort #summarySort="matSort" class="mat-elevation-z8">
@@ -140,6 +140,45 @@
       </mat-card>
     </ng-container>
   </mat-tab>
+<!-- 🟥 Tab 3 -->
+<mat-tab label="דו״ח ייעוץ שלא בוצע בזמן">
+  <ng-container *ngIf="!isLoading">
+    <mat-card class="monthly-table-card" dir="rtl">
+      <table mat-table [dataSource]="noOnTimeConsultationsDataSource" matSort #noOnTimeSort="matSort" class="mat-elevation-z8">
+
+        <ng-container matColumnDef="Admission_No">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>מספר אשפוז</th>
+          <td mat-cell *matCellDef="let row">{{ row.Admission_No }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="First_Name">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>שם פרטי</th>
+          <td mat-cell *matCellDef="let row">{{ row.First_Name }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="Last_Name">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>שם משפחה</th>
+          <td mat-cell *matCellDef="let row">{{ row.Last_Name }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="H_DOB">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>תאריך לידה</th>
+          <td mat-cell *matCellDef="let row">{{ row.H_DOB | date:'yyyy-MM-dd' }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="H_DOB_TIME">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>שעת לידה</th>
+          <td mat-cell *matCellDef="let row">{{ row.H_DOB_TIME }}</td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="noOnTimeConsultationsDisplayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: noOnTimeConsultationsDisplayedColumns;"></tr>
+      </table>
+      <mat-paginator #noOnTimePaginator [pageSize]="5" [pageSizeOptions]="[5, 10, 20, 50]">
+      </mat-paginator>
+    </mat-card>
+  </ng-container>
+</mat-tab>
 
 </mat-tab-group>
 </div>

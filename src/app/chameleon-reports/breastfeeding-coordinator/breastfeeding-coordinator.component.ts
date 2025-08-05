@@ -6,6 +6,13 @@ import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
 import { forkJoin } from 'rxjs';
 
+export interface BreastfeedingNoOnTimeConsultationModel {
+  Admission_No: string;
+  First_Name: string;
+  Last_Name: string;
+  H_DOB: Date | null;
+  H_DOB_TIME: string;
+}
 
 
 export interface BreastfeedingCoordinatorModel {
@@ -36,16 +43,71 @@ export class BreastfeedingCoordinatorComponent implements OnInit, AfterViewInit 
   selectedView: 'Year' | 'Querter' | 'Month' = 'Year';
 
   displayedColumns: string[] = ['PeriodDesc', 'OnTime', 'NotNoTime', 'OnTimeConseltationPerc'];
-
+  noOnTimeConsultations: BreastfeedingNoOnTimeConsultationModel[] = [];
+  noOnTimeConsultationsDataSource = new MatTableDataSource<BreastfeedingNoOnTimeConsultationModel>();
+  noOnTimeConsultationsDisplayedColumns: string[] = ['Admission_No', 'First_Name', 'Last_Name', 'H_DOB', 'H_DOB_TIME'];
+  
   maternityNoConsultationData: MaternityNoConsultationModel[] = [];
 maternityDataSource = new MatTableDataSource<MaternityNoConsultationModel>();
 maternityDisplayedColumns: string[] = ['Admission_No', 'First_Name', 'Last_Name', 'BirthDate', 'TimeFromDelivery', 'TimeFromDeliveryInMinute'];
 
-@ViewChild('summaryPaginator') summaryPaginator!: MatPaginator;
-@ViewChild('summarySort') summarySort!: MatSort;
+private _summaryPaginator!: MatPaginator;
+@ViewChild('summaryPaginator') set summaryPaginatorSetter(p: MatPaginator) {
+  this._summaryPaginator = p;
+  if (this.filteredData) this.filteredData.paginator = p;
+}
+get summaryPaginator(): MatPaginator {
+  return this._summaryPaginator;
+}
 
-@ViewChild('maternityPaginator') maternityPaginator!: MatPaginator;
-@ViewChild('maternitySort') maternitySort!: MatSort;
+private _summarySort!: MatSort;
+@ViewChild('summarySort') set summarySortSetter(s: MatSort) {
+  this._summarySort = s;
+  if (this.filteredData) this.filteredData.sort = s;
+}
+get summarySort(): MatSort {
+  return this._summarySort;
+}
+
+// Same for maternity table:
+private _maternityPaginator!: MatPaginator;
+@ViewChild('maternityPaginator') set maternityPaginatorSetter(p: MatPaginator) {
+  this._maternityPaginator = p;
+  if (this.maternityDataSource) this.maternityDataSource.paginator = p;
+}
+get maternityPaginator(): MatPaginator {
+  return this._maternityPaginator;
+}
+
+private _maternitySort!: MatSort;
+@ViewChild('maternitySort') set maternitySortSetter(s: MatSort) {
+  this._maternitySort = s;
+  if (this.maternityDataSource) this.maternityDataSource.sort = s;
+}
+get maternitySort(): MatSort {
+  return this._maternitySort;
+}
+
+private _noOnTimePaginator!: MatPaginator;
+@ViewChild('noOnTimePaginator') set noOnTimePaginatorSetter(p: MatPaginator) {
+  this._noOnTimePaginator = p;
+  if (this.noOnTimeConsultationsDataSource) {
+    this.noOnTimeConsultationsDataSource.paginator = p;
+  }
+}
+get noOnTimePaginator(): MatPaginator {
+  return this._noOnTimePaginator;
+}
+private _noOnTimeSort!: MatSort;
+@ViewChild('noOnTimeSort') set noOnTimeSortSetter(s: MatSort) {
+  this._noOnTimeSort = s;
+  if (this.noOnTimeConsultationsDataSource) {
+    this.noOnTimeConsultationsDataSource.sort = s;
+  }
+}
+get noOnTimeSort(): MatSort {
+  return this._noOnTimeSort;
+}
 
   isLoading = true;
   validPercMonth: number = 0;
@@ -65,16 +127,20 @@ maternityDisplayedColumns: string[] = ['Admission_No', 'First_Name', 'Last_Name'
     this.isLoading = true;
     forkJoin({
       summary: this.http.get<BreastfeedingCoordinatorModel[]>(`${environment.apiUrl}/BreastfeedingCoordinator`),
-      maternity: this.http.get<MaternityNoConsultationModel[]>(`${environment.apiUrl}/BreastfeedingCoordinator/NoConsultationCurrentHospitalize`)
+      maternity: this.http.get<MaternityNoConsultationModel[]>(`${environment.apiUrl}/BreastfeedingCoordinator/NoConsultationCurrentHospitalize`),
+      noOnTime: this.http.get<BreastfeedingNoOnTimeConsultationModel[]>(`${environment.apiUrl}/BreastfeedingCoordinator/NoOnTimeConsultations`)
     }).subscribe({
-      next: ({ summary, maternity }) => {
+      next: ({ summary, maternity, noOnTime }) => {
         this.data = summary;
         this.applyFilter();
-  
+    
         this.maternityNoConsultationData = maternity;
         this.maternityDataSource.data = maternity;
+    
+        this.noOnTimeConsultations = noOnTime;
+        this.noOnTimeConsultationsDataSource.data = noOnTime;
+    
         this.calculateGauges(summary);
-
         this.isLoading = false;
       },
       error: (err) => {
@@ -82,6 +148,7 @@ maternityDisplayedColumns: string[] = ['Admission_No', 'First_Name', 'Last_Name'
         this.isLoading = false;
       }
     });
+    
 
 
   }
@@ -104,6 +171,7 @@ maternityDisplayedColumns: string[] = ['Admission_No', 'First_Name', 'Last_Name'
         next: data => {
           this.maternityNoConsultationData = data;
           this.maternityDataSource.data = data;
+          
         },
         error: err => console.error('❌ Failed to fetch maternity consultation data', err)
       });
@@ -130,6 +198,11 @@ maternityDisplayedColumns: string[] = ['Admission_No', 'First_Name', 'Last_Name'
       if (this.maternityPaginator) this.maternityDataSource.paginator = this.maternityPaginator;
       if (this.maternitySort) this.maternityDataSource.sort = this.maternitySort;
     });
+
+    this.maternityDataSource.sort = this.summarySort;
+
+   
+    
   }
   
   getRowColorClass(row: MaternityNoConsultationModel): string {
@@ -165,5 +238,12 @@ maternityDisplayedColumns: string[] = ['Admission_No', 'First_Name', 'Last_Name'
     this.validPercYear = this.yearTotal > 0 ? (this.yearValid / this.yearTotal) * 100 : 0;
   }
   
+  getMonthGaugeColor(): string {
+    return this.validPercMonth >= 90 ? 'green' : 'red';
+  }
   
+  getYearGaugeColor(): string {
+    return this.validPercYear >= 90 ? 'green' : 'red';
+  }
+ 
 }
