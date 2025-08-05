@@ -1,9 +1,12 @@
 <app-spinner [isLoading]="isLoading"></app-spinner>
 
 <div class="body" *ngIf="!isLoading">
+
+  
+  
   <mat-card class="filter-card" dir="rtl">
     <form [formGroup]="filterForm" class="filter-form">
-      <div class="filter-fields">
+      <div class="filter-row">
 
         <!-- Department Dropdown -->
         <mat-form-field appearance="fill">
@@ -40,13 +43,117 @@
       </div>
     </form>
   </mat-card>
-  <mat-tab-group>
+
+  
+  <div class="gauge-row" *ngIf="!isLoading">
+
+    <!-- Gauge: עדיין מאושפזים -->
+    <div class="gauge-card">
+      <!-- <div class="gauge-title">עדיין מאושפזים</div> -->
+      <div class="gauge-content">
+        <ngx-gauge
+          [size]="200"
+          [type]="'semi'"
+          [value]="stillValidPercentage"
+          [label]="'מאושפזים- אחוז סקירות תקינות'"
+          [append]="'%'"
+          [min]="0"
+          [max]="100"
+          [thick]="15"
+          [foregroundColor]="'green'"
+          [backgroundColor]="'#e0e0e0'">
+        </ngx-gauge>
+      </div>
+      <div class="gauge-info">
+        תקינות: {{ stillValidCount }}
+        לא תקינות: {{ stillInvalidCount }}
+        סה"כ: {{ stillTotalCount }}
+      </div>
+    </div>
+  
+    <!-- Gauge: שוחררו -->
+    <div class="gauge-card">
+      <!-- <div class="gauge-title">שוחררו</div> -->
+      <div class="gauge-content">
+        <ngx-gauge
+          [size]="200"
+          [type]="'semi'"
+          [value]="dischargedValidPercentage"
+          [label]="'משוחררים - אחוז סקירות תקינות'"
+          [append]="'%'"
+          [min]="0"
+          [max]="100"
+          [thick]="15"
+          [foregroundColor]="'green'"
+          [backgroundColor]="'#e0e0e0'">
+        </ngx-gauge>
+      </div>
+      <div class="gauge-info">
+        תקינות: {{ dischargedValidCount }}
+        לא תקינות: {{ dischargedInvalidCount }}
+        סה"כ: {{ dischargedTotalCount }}
+      </div>
+    </div>
+  
+  </div>
+  <mat-tab-group (selectedTabChange)="onTabChange($event)">
     <!-- 🟢 Tab 1: Discharged Patients -->
+    <mat-tab label="עדיין מאושפזים">
+      <mat-card class="monthly-table-card" dir="rtl">
+        <table mat-table [dataSource]="stillHospitalizedDataSource" matSort #stillHospitalizedSort="matSort" >
+
+          <ng-container matColumnDef="Admission_No">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>מספר אשפוז</th>
+            <td mat-cell *matCellDef="let row">{{ row.Admission_No }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="Admission_Date">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>תאריך קבלה</th>
+            <td mat-cell *matCellDef="let row">{{ row.Admission_Date | date: 'dd/MM/yyyy' }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="UnitName">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>שם מחלקה</th>
+            <td mat-cell *matCellDef="let row">{{ row.UnitName }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="ComboText_15536">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>בוצעה סקירה והשוואה</th>
+            <td mat-cell *matCellDef="let row">{{ row.ComboText_15536 }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="ComboText_15537">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>POLYPHARMACY</th>
+            <td mat-cell *matCellDef="let row">{{ row.ComboText_15537 }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="UserName_15536">
+            <th mat-header-cell *matHeaderCellDef>הוזן ע״י סקירה</th>
+            <td mat-cell *matCellDef="let row">{{ row.UserName_15536 }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="UserName_15537">
+            <th mat-header-cell *matHeaderCellDef>הוזן ע״י POLYPHARMACY</th>
+            <td mat-cell *matCellDef="let row">{{ row.UserName_15537 }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="Consiliums">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>ייעוץ רוקח קליני</th>
+            <td mat-cell *matCellDef="let row">{{ row.Consiliums }}</td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+        </table>
+
+        <mat-paginator #stillHospitalizedPaginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
+      </mat-card>
+    </mat-tab>
     <mat-tab label="מאושפזים ששוחררו">
  
 
       <mat-card class="monthly-table-card" dir="rtl">
-        <table mat-table [dataSource]="stillHospitalizedDataSource" matSort #stillSort="matSort" class="mat-elevation-z8">
+        <table mat-table [dataSource]="dataSource" matSort #dischargedSort="matSort" class="mat-elevation-z8">
 
           <ng-container matColumnDef="Admission_No">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>מספר אשפוז</th>
@@ -92,61 +199,11 @@
           <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
         </table>
 
-        <mat-paginator #stillPaginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
+        <mat-paginator #dischargedPaginator  [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
       </mat-card>
     </mat-tab>
 
     <!-- 🟡 Tab 2: Still Hospitalized Patients -->
-    <mat-tab label="עדיין מאושפזים">
-      <mat-card class="monthly-table-card" dir="rtl">
-        <table mat-table [dataSource]="stillHospitalizedDataSource" matSort class="mat-elevation-z8">
-
-          <ng-container matColumnDef="Admission_No">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>מספר אשפוז</th>
-            <td mat-cell *matCellDef="let row">{{ row.Admission_No }}</td>
-          </ng-container>
-
-          <ng-container matColumnDef="Admission_Date">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>תאריך קבלה</th>
-            <td mat-cell *matCellDef="let row">{{ row.Admission_Date | date: 'dd/MM/yyyy' }}</td>
-          </ng-container>
-
-          <ng-container matColumnDef="UnitName">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>שם מחלקה</th>
-            <td mat-cell *matCellDef="let row">{{ row.UnitName }}</td>
-          </ng-container>
-
-          <ng-container matColumnDef="ComboText_15536">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>בוצעה סקירה והשוואה</th>
-            <td mat-cell *matCellDef="let row">{{ row.ComboText_15536 }}</td>
-          </ng-container>
-
-          <ng-container matColumnDef="ComboText_15537">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>POLYPHARMACY</th>
-            <td mat-cell *matCellDef="let row">{{ row.ComboText_15537 }}</td>
-          </ng-container>
-
-          <ng-container matColumnDef="UserName_15536">
-            <th mat-header-cell *matHeaderCellDef>הוזן ע״י סקירה</th>
-            <td mat-cell *matCellDef="let row">{{ row.UserName_15536 }}</td>
-          </ng-container>
-
-          <ng-container matColumnDef="UserName_15537">
-            <th mat-header-cell *matHeaderCellDef>הוזן ע״י POLYPHARMACY</th>
-            <td mat-cell *matCellDef="let row">{{ row.UserName_15537 }}</td>
-          </ng-container>
-
-          <ng-container matColumnDef="Consiliums">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>ייעוץ רוקח קליני</th>
-            <td mat-cell *matCellDef="let row">{{ row.Consiliums }}</td>
-          </ng-container>
-
-          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-          <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-        </table>
-
-        <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
-      </mat-card>
-    </mat-tab>
+   
   </mat-tab-group>
 </div>
