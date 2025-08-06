@@ -1,0 +1,63 @@
+<div class="body">
+    <form [formGroup]="filterForm" dir="rtl" class="filter-form">
+      <div class="form-footer">
+        <!-- 🔍 Global Filter -->
+        <mat-form-field class="long-search-bar">
+          <mat-label>חיפוש</mat-label>
+          <input matInput [formControlName]="'globalFilter'" />
+        </mat-form-field>
+  
+        <!-- 🔄 Reset Filters -->
+        <button mat-raised-button color="primary" (click)="resetFilters()" matTooltip="איפוס סינונים">
+          <i class="material-icons">refresh</i>
+        </button>
+  
+        <!-- 📥 Export to Excel -->
+        <img src="../../assets/excel.png" alt="Download" (click)="exportToExcel()" class="download-icon" width="50px" />
+      </div>
+  
+      <!-- ➕ Add New Application -->
+      <button mat-raised-button color="primary" (click)="openAddDialog()">הוסף יישום חדש</button>
+    </form>
+  
+    <!-- 📋 Table -->
+    <mat-table [dataSource]="matTableDataSource" matSort dir="rtl" class="mat-elevation-z8">
+  
+      <!-- 🔁 Dynamic Columns -->
+      <ng-container *ngFor="let column of columns" [matColumnDef]="column">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>
+          {{ column === 'AppName' ? 'שם' :
+             column === 'AppDescription' ? 'הסבר על המערכת' :
+             column === 'PrimaryReference' ? 'רפרנט ראשי' :
+             column === 'SecondaryReference' ? 'רפרנט משני' :
+             column === 'Remarks' ? 'הערות' :
+             column === 'Phones' ? 'טלפונים' :
+             column === 'Guides' ? 'מדריכים' :
+             column === 'CompanyName' ? 'חברה' : column }}
+        </mat-header-cell>
+        <mat-cell *matCellDef="let element">{{ element[column] }}</mat-cell>
+      </ng-container>
+  
+      <!-- 🛠 Actions Column -->
+      <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef>פעולות</th>
+        <td mat-cell *matCellDef="let element">
+          <button mat-icon-button (click)="openEditDialog(element)" matTooltip="עריכה">
+            <mat-icon>edit</mat-icon>
+          </button>
+        </td>
+      </ng-container>
+  
+      <!-- 🧱 Table Rows -->
+      <mat-header-row *matHeaderRowDef="columns.concat(['actions'])"></mat-header-row>
+      <mat-row *matRowDef="let row; columns: columns.concat(['actions'])"></mat-row>
+    </mat-table>
+  
+    <!-- 📄 Paginator -->
+    <mat-paginator *ngIf="matTableDataSource"
+                   [length]="matTableDataSource.data.length"
+                   [pageSize]="5"
+                   [pageSizeOptions]="[15, 50, 100]">
+    </mat-paginator>
+  </div>
+  

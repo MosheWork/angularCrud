@@ -1,0 +1,52 @@
+<mat-card class="full-dialog-card" dir="rtl">
+    <div class="dialog-title-wrapper">
+      <h2 class="dialog-title">
+        {{ data ? 'עריכת מערכת' : 'הוספת מערכת חדשה' }}
+      </h2>
+    </div>
+  
+    <form [formGroup]="form" (ngSubmit)="save()" class="dialog-form">
+      <mat-form-field appearance="fill" class="full-width">
+        <mat-label>שם המערכת</mat-label>
+        <input matInput formControlName="AppName" required>
+      </mat-form-field>
+  
+      <mat-form-field appearance="fill" class="full-width">
+        <mat-label>הסבר על המערכת</mat-label>
+        <textarea matInput formControlName="AppDescription"></textarea>
+      </mat-form-field>
+  
+      <mat-form-field appearance="fill" class="full-width">
+        <mat-label>רפרנט ראשי</mat-label>
+        <input matInput formControlName="PrimaryReference">
+      </mat-form-field>
+  
+      <mat-form-field appearance="fill" class="full-width">
+        <mat-label>רפרנט משני</mat-label>
+        <input matInput formControlName="SecondaryReference">
+      </mat-form-field>
+  
+      <mat-form-field appearance="fill" class="full-width">
+        <mat-label>הערות</mat-label>
+        <textarea matInput formControlName="Remarks"></textarea>
+      </mat-form-field>
+  
+      <mat-form-field appearance="fill" class="full-width">
+        <mat-label>טלפונים</mat-label>
+        <input matInput formControlName="Phones">
+      </mat-form-field>
+  
+      <mat-form-field appearance="fill" class="full-width">
+        <mat-label>מדריכים</mat-label>
+        <input matInput formControlName="Guides">
+      </mat-form-field>
+  
+      <div class="dialog-buttons">
+        <button mat-raised-button color="primary" type="submit" [disabled]="form.invalid">
+          שמור
+        </button>
+        <button mat-raised-button color="warn" (click)="close()">ביטול</button>
+      </div>
+    </form>
+  </mat-card>
+  

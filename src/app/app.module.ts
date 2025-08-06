@@ -185,6 +185,8 @@ import { ApplicationsComponent } from './applications-component/applications-com
 import { GuideManagerComponent } from './guide-manager/guide-manager.component';
 import { BreastfeedingCoordinatorComponent } from './chameleon-reports/breastfeeding-coordinator/breastfeeding-coordinator.component';
 import { MedicationReconciliationComponent } from './chameleon-reports/medication-reconciliation/medication-reconciliation.component';
+import { ApplicationsListDeptComponent } from './ApplicationsListDept/applications-list-dept/applications-list-dept.component';
+import { ApplicationsListDeptDialogComponent } from './ApplicationsListDept/applications-list-dept-dialog/applications-list-dept-dialog.component';
 
 
 export const MY_DATE_FORMATS: MatDateFormats = {
@@ -346,7 +348,9 @@ export function playerFactory() {
     ApplicationsComponent,
     GuideManagerComponent,
     BreastfeedingCoordinatorComponent,
-    MedicationReconciliationComponent   
+    MedicationReconciliationComponent,
+    ApplicationsListDeptComponent,
+    ApplicationsListDeptDialogComponent   
      
   
   ],

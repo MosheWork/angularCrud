@@ -97,6 +97,7 @@ import { ApplicationsComponent } from './applications-component/applications-com
 import { GuideManagerComponent } from './guide-manager/guide-manager.component';
 import { BreastfeedingCoordinatorComponent } from './chameleon-reports/breastfeeding-coordinator/breastfeeding-coordinator.component';
 import { MedicationReconciliationComponent } from './chameleon-reports/medication-reconciliation/medication-reconciliation.component';
+import { ApplicationsListDeptComponent } from './ApplicationsListDept/applications-list-dept/applications-list-dept.component';
 
 const routes: Routes = [
   { path: 'users', component: UsersComponent },
@@ -239,7 +240,8 @@ const routes: Routes = [
 { path: 'ApplicationsComponent', component: ApplicationsComponent , data: { title: ' קישורים חשובים של מערכות ' }},
 
 // ניהול ידע
-{ path: 'app-guide-manager', component: GuideManagerComponent , data: { title: 'רשימת יישומים' }}
+{ path: 'app-guide-manager', component: GuideManagerComponent , data: { title: 'רשימת יישומים' }},
+{ path: 'applications-list-dept', component: ApplicationsListDeptComponent , data: { title: 'רשימת יישומים' }}
 ];
 
 @NgModule({
