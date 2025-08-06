@@ -23,7 +23,7 @@ export class ApplicationsListDeptDialogComponent {
     this.form = this.fb.group({
       ID: [data?.ID || null],
       AppName: [data?.AppName || '', Validators.required],
-      CompanyName: [data?.CompanyName || ''],
+      companyName: [data?.companyName || ''],
       AppDescription: [data?.AppDescription || ''],
       PrimaryReference: [data?.PrimaryReference || ''],
       SecondaryReference: [data?.SecondaryReference || ''],

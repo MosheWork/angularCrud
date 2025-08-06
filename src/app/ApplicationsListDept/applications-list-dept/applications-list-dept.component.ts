@@ -35,8 +35,8 @@ export class ApplicationsListDeptComponent implements OnInit {
     'Remarks',
     'Phones',
     'Guides',
-    'CompanyName',
-    'actions' 
+    'companyName'
+   
 
   ];
 

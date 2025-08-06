@@ -33,7 +33,7 @@
              column === 'Remarks' ? 'הערות' :
              column === 'Phones' ? 'טלפונים' :
              column === 'Guides' ? 'מדריכים' :
-             column === 'CompanyName' ? 'חברה' : column }}
+             column === 'companyName' ? 'חברה' : column }}
         </mat-header-cell>
         <mat-cell *matCellDef="let element">{{ element[column] }}</mat-cell>
       </ng-container>
