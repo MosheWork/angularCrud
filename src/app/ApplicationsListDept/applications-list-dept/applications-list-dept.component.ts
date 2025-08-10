@@ -148,5 +148,18 @@ export class ApplicationsListDeptComponent implements OnInit {
       }
     });
   }
+  getColumnLabel(column: string): string {
+    switch (column) {
+      case 'AppName': return 'שם';
+      case 'AppDescription': return 'הסבר על המערכת';
+      case 'PrimaryReference': return 'רפרנט ראשי';
+      case 'SecondaryReference': return 'רפרנט משני';
+      case 'Remarks': return 'הערות';
+      case 'Phones': return 'טלפונים';
+      case 'Guides': return 'מדריכים';
+      case 'CompanyName': return 'חברה';
+      default: return column;
+    }
+  }
   
 }

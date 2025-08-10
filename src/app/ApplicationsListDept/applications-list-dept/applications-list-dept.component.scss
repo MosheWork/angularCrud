@@ -2,3 +2,41 @@
     margin-top: 50px;
     margin-bottom: 50px;
 }
+
+.mat-header-cell, .mat-cell {
+    text-align: right;
+    direction: rtl;
+    white-space: pre-line; // Supports multiline text like in AppDescription
+    font-family: 'Arial', sans-serif;
+    font-size: 14px;
+  }
+  
+  .mat-header-cell {
+    font-weight: bold;
+    background-color: #f5f5f5;
+  }
+  
+  .actions-column {
+    text-align: center;
+  }
+  
+  .mat-table {
+    width: 100%;
+  }
+  
+  .download-icon {
+    cursor: pointer;
+    margin: 0 10px;
+  }
+  
+  .form-footer {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 10px;
+  }
+  .CompanyName-col {
+    max-width: 150px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
