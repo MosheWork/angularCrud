@@ -1,0 +1,17 @@
+.content {
+    min-width: 420px;
+  }
+  .row {
+    display: grid;
+    grid-template-columns: 140px 1fr;
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+  .label {
+    font-weight: 600;
+    color: #444;
+  }
+  .value {
+    word-break: break-word;
+  }
+  

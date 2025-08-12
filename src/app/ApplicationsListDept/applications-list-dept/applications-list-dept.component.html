@@ -29,26 +29,35 @@
   
     <!-- 📋 Applications Table -->
     <mat-table [dataSource]="matTableDataSource" matSort dir="rtl" class="mat-elevation-z8">
-      
-      <!-- 🔁 Dynamic Columns -->
+
       <ng-container *ngFor="let column of columns" [matColumnDef]="column">
         <mat-header-cell *matHeaderCellDef mat-sort-header [ngClass]="column + '-col'">
-          {{ column === 'AppName' ? 'שם' :
-             column === 'AppDescription' ? 'הסבר על המערכת' :
-             column === 'PrimaryReference' ? 'רפרנט ראשי' :
-             column === 'SecondaryReference' ? 'רפרנט משני' :
-             column === 'Remarks' ? 'הערות' :
-             column === 'Phones' ? 'טלפונים' :
-             column === 'Guides' ? 'מדריכים' :
-             column === 'CompanyName' ? 'חברה' :
-             column }}
+          {{ getColumnLabel(column) }}
         </mat-header-cell>
+    
         <mat-cell *matCellDef="let element" [ngClass]="column + '-col'">
-          {{ element[column] }}
+          <ng-container [ngSwitch]="column">
+    
+            <!-- Single guide link -->
+            <ng-container *ngSwitchCase="'Guides'">
+              <a *ngIf="element.guideUrl; else noGuide"
+                 [href]="element.guideUrl" target="_blank" rel="noopener">
+                {{ element.guideLabel }}
+              </a>
+              <ng-template #noGuide>—</ng-template>
+            </ng-container>
+            
+    
+            <!-- Default text -->
+            <ng-container *ngSwitchDefault>
+              {{ element[column] }}
+            </ng-container>
+    
+          </ng-container>
         </mat-cell>
       </ng-container>
-  
-      <!-- 🛠 Actions Column -->
+    
+      <!-- Actions -->
       <ng-container matColumnDef="actions">
         <mat-header-cell *matHeaderCellDef>פעולות</mat-header-cell>
         <mat-cell *matCellDef="let element">
@@ -57,11 +66,11 @@
           </button>
         </mat-cell>
       </ng-container>
-  
-      <!-- Row definitions -->
+    
       <mat-header-row *matHeaderRowDef="columns.concat(['actions'])"></mat-header-row>
       <mat-row *matRowDef="let row; columns: columns.concat(['actions'])"></mat-row>
     </mat-table>
+    
   
     <!-- 📄 Paginator -->
     <mat-paginator

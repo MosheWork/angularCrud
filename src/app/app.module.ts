@@ -187,6 +187,8 @@ import { BreastfeedingCoordinatorComponent } from './chameleon-reports/breastfee
 import { MedicationReconciliationComponent } from './chameleon-reports/medication-reconciliation/medication-reconciliation.component';
 import { ApplicationsListDeptComponent } from './ApplicationsListDept/applications-list-dept/applications-list-dept.component';
 import { ApplicationsListDeptDialogComponent } from './ApplicationsListDept/applications-list-dept-dialog/applications-list-dept-dialog.component';
+import { MainSurgeryComponent } from './chameleon-reports/main-surgery/main-surgery.component';
+import { MainSurgeryDialogComponent } from './chameleon-reports/main-surgery/main-surgery-dialog/main-surgery-dialog.component';
 
 
 export const MY_DATE_FORMATS: MatDateFormats = {
@@ -350,7 +352,9 @@ export function playerFactory() {
     BreastfeedingCoordinatorComponent,
     MedicationReconciliationComponent,
     ApplicationsListDeptComponent,
-    ApplicationsListDeptDialogComponent   
+    ApplicationsListDeptDialogComponent,
+    MainSurgeryComponent,
+    MainSurgeryDialogComponent   
      
   
   ],

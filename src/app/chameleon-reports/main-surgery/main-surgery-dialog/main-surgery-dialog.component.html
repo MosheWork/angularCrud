@@ -1,0 +1,55 @@
+<h2 mat-dialog-title dir="rtl">פרטי ניתוח</h2>
+
+<mat-dialog-content dir="rtl" class="content">
+  <div class="row">
+    <div class="label">מספר תיק:</div>
+    <div class="value">{{ data.CaseNumber || '—' }}</div>
+  </div>
+
+  <div class="row">
+    <div class="label">שם מטופל:</div>
+    <div class="value">{{ data.PatientName || '—' }}</div>
+  </div>
+
+  <div class="row">
+    <div class="label">סטטוס ביצוע:</div>
+    <!-- preserve \r\n -->
+    <div class="value pre">{{ data.DoingText || '—' }}</div>
+  </div>
+
+  <mat-divider></mat-divider>
+
+  <div class="row">
+    <div class="label">מנתח 1:</div>
+    <div class="value">
+      {{ ((data.MainSurgeonNameFirst1 || '') + ' ' + (data.MainSurgeonNameLast1 || '')).trim() || '—' }}
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="label">אימייל מנתח 1:</div>
+    <div class="value">{{ (data.MainSurgeonEmail1 || '').trim() || '—' }}</div>
+  </div>
+
+  <div class="row">
+    <div class="label">נייד מנתח 1:</div>
+    <div class="value">{{ (data.MainSurgeonCell1 || '').trim() || '—' }}</div>
+  </div>
+
+  <div class="row">
+    <div class="label">מנתח 2:</div>
+    <div class="value">
+      {{ ((data.MainSurgeonNameFirst2 || '') + ' ' + (data.MainSurgeonNameLast2 || '')).trim() || '—' }}
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="label">אימייל מנתח 2:</div>
+    <div class="value">{{ (data.MainSurgeonEmail2 || '').trim() || '—' }}</div>
+  </div>
+
+  <div class="row">
+    <div class="label">נייד מנתח 2:</div>
+    <div class="value">{{ (data.MainSurgeonCell2 || '').trim() || '—' }}</div>
+  </div>
+</mat-dialog-content>

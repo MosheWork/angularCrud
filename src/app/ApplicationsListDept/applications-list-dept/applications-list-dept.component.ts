@@ -15,6 +15,7 @@ import { MatDialog } from '@angular/material/dialog';
   templateUrl: './applications-list-dept.component.html',
   styleUrls: ['./applications-list-dept.component.scss']
 })
+
 export class ApplicationsListDeptComponent implements OnInit {
   title: string = 'רשימת מערכות לפי מחלקות';
   totalResults = 0;
@@ -36,8 +37,6 @@ export class ApplicationsListDeptComponent implements OnInit {
     'Phones',
     'Guides',
     'companyName'
-   
-
   ];
 
   constructor(private http: HttpClient, private fb: FormBuilder, public dialog: MatDialog) {
@@ -61,7 +60,24 @@ export class ApplicationsListDeptComponent implements OnInit {
   }
 
   fetchData(): void {
-    this.http.get<any[]>(environment.apiUrl + 'ApplicationsListDept/GetAll').subscribe(data => {
+    this.http.get<any[]>(environment.apiUrl + 'ApplicationsListDept/GetAll').subscribe(raw => {
+      // מוסיפים לכל שורה: guideUrl (לינק פתיחה) ו-guideLabel (שם לתצוגה)
+      const data = raw.map(r => {
+        const guides = r.Guides || '';
+        const isAbsolute = /^https?:\/\//i.test(guides);
+        const guideUrl = guides
+          ? (isAbsolute
+              ? guides
+              : `${environment.apiUrl}ApplicationsListDept/Guide?fileName=${encodeURIComponent(guides)}`)
+          : '';
+  
+        const lastSeg = (guides.split('/').pop() || guides);
+        let guideLabel: string;
+        try { guideLabel = decodeURIComponent(lastSeg); } catch { guideLabel = lastSeg; }
+  
+        return { ...r, guideUrl, guideLabel };
+      });
+  
       this.dataSource = data;
       this.filteredData = [...data];
       this.matTableDataSource.data = this.filteredData;
@@ -70,6 +86,7 @@ export class ApplicationsListDeptComponent implements OnInit {
       this.matTableDataSource.sort = this.sort;
     });
   }
+  
   
   private createFilterForm(): FormGroup {
     const formControls: { [key: string]: FormControl } = {};
@@ -80,11 +97,11 @@ export class ApplicationsListDeptComponent implements OnInit {
 
   applyFilters(): void {
     const filters = this.filterForm.value;
-    const global = filters['globalFilter'].toLowerCase();
+    const global = (filters['globalFilter'] || '').toLowerCase();
 
     this.filteredData = this.dataSource.filter(item =>
-      this.columns.every(col => !filters[col] || (item[col] || '').toLowerCase().includes(filters[col].toLowerCase())) &&
-      (global === '' || this.columns.some(col => (item[col] || '').toLowerCase().includes(global)))
+      this.columns.every(col => !filters[col] || ((item[col] || '').toString().toLowerCase().includes(filters[col].toLowerCase()))) &&
+      (global === '' || this.columns.some(col => ((item[col] || '') + '').toLowerCase().includes(global)))
     );
 
     this.totalResults = this.filteredData.length;
@@ -105,7 +122,8 @@ export class ApplicationsListDeptComponent implements OnInit {
       SecondaryReference: 'רפרנט משני',
       Remarks: 'הערות',
       Phones: 'טלפונים',
-      Guides: 'מדריכים'
+      Guides: 'מדריכים',
+      companyName: 'חברה'
     };
 
     const exportData = this.filteredData.map(item => ({
@@ -115,7 +133,8 @@ export class ApplicationsListDeptComponent implements OnInit {
       [headers.SecondaryReference]: item.SecondaryReference,
       [headers.Remarks]: item.Remarks,
       [headers.Phones]: item.Phones,
-      [headers.Guides]: item.Guides
+      [headers.Guides]: item.Guides,       // single URL string
+      [headers.companyName]: item.companyName
     }));
 
     const worksheet = XLSX.utils.json_to_sheet(exportData);
@@ -128,26 +147,21 @@ export class ApplicationsListDeptComponent implements OnInit {
       width: '500px',
       data: null
     });
-  
     dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        this.fetchData(); // reload table
-      }
+      if (result) this.fetchData();
     });
   }
-  
+
   openEditDialog(row: any) {
     const dialogRef = this.dialog.open(ApplicationsListDeptDialogComponent, {
       width: '500px',
       data: row
     });
-  
     dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        this.fetchData();
-      }
+      if (result) this.fetchData();
     });
   }
+
   getColumnLabel(column: string): string {
     switch (column) {
       case 'AppName': return 'שם';
@@ -157,9 +171,9 @@ export class ApplicationsListDeptComponent implements OnInit {
       case 'Remarks': return 'הערות';
       case 'Phones': return 'טלפונים';
       case 'Guides': return 'מדריכים';
-      case 'CompanyName': return 'חברה';
+      case 'companyName': return 'חברה';
       default: return column;
     }
   }
-  
 }
+

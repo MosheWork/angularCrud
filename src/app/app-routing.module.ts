@@ -98,6 +98,7 @@ import { GuideManagerComponent } from './guide-manager/guide-manager.component';
 import { BreastfeedingCoordinatorComponent } from './chameleon-reports/breastfeeding-coordinator/breastfeeding-coordinator.component';
 import { MedicationReconciliationComponent } from './chameleon-reports/medication-reconciliation/medication-reconciliation.component';
 import { ApplicationsListDeptComponent } from './ApplicationsListDept/applications-list-dept/applications-list-dept.component';
+import { MainSurgeryComponent } from './chameleon-reports/main-surgery/main-surgery.component';
 
 const routes: Routes = [
   { path: 'users', component: UsersComponent },
@@ -194,6 +195,7 @@ const routes: Routes = [
 { path: 'PCIreportComponent', component: PCIreportComponent , data: { title: ' PCI' }},//    לבקשת אופיר       
 { path: 'breastfeeding-coordinator', component: BreastfeedingCoordinatorComponent , data: { title: ' מתאמת הנקה ' }},//   מתאמת הנקה      
 { path: 'medication-reconciliationr', component: MedicationReconciliationComponent , data: { title: 'MedicationReconciliation' }},//  MedicationReconciliation 
+{ path: 'main-surgery', component: MainSurgeryComponent , data: { title: 'רשימת ניתוחים' }},//  רשימת ניתוחים
 
 
 //chemelondashboard

@@ -1,52 +1,62 @@
 <mat-card class="full-dialog-card" dir="rtl">
-    <div class="dialog-title-wrapper">
-      <h2 class="dialog-title">
-        {{ data ? 'עריכת מערכת' : 'הוספת מערכת חדשה' }}
-      </h2>
-    </div>
-  
-    <form [formGroup]="form" (ngSubmit)="save()" class="dialog-form">
-      <mat-form-field appearance="fill" class="full-width">
-        <mat-label>שם המערכת</mat-label>
-        <input matInput formControlName="AppName" required>
-      </mat-form-field>
-  
-      <mat-form-field appearance="fill" class="full-width">
-        <mat-label>הסבר על המערכת</mat-label>
-        <textarea matInput formControlName="AppDescription"></textarea>
-      </mat-form-field>
-  
-      <mat-form-field appearance="fill" class="full-width">
-        <mat-label>רפרנט ראשי</mat-label>
-        <input matInput formControlName="PrimaryReference">
-      </mat-form-field>
-  
-      <mat-form-field appearance="fill" class="full-width">
-        <mat-label>רפרנט משני</mat-label>
-        <input matInput formControlName="SecondaryReference">
-      </mat-form-field>
-  
-      <mat-form-field appearance="fill" class="full-width">
-        <mat-label>הערות</mat-label>
-        <textarea matInput formControlName="Remarks"></textarea>
-      </mat-form-field>
-  
-      <mat-form-field appearance="fill" class="full-width">
-        <mat-label>טלפונים</mat-label>
-        <input matInput formControlName="Phones">
-      </mat-form-field>
-  
-      <mat-form-field appearance="fill" class="full-width">
-        <mat-label>מדריכים</mat-label>
-        <input matInput formControlName="Guides">
-      </mat-form-field>
-  
-      <div class="dialog-buttons">
-        <button mat-raised-button color="primary" type="submit" [disabled]="form.invalid">
-          שמור
-        </button>
-        <button mat-raised-button color="warn" (click)="close()">ביטול</button>
+  <div class="dialog-title-wrapper">
+    <h2 class="dialog-title">
+      {{ form.value.ID ? 'עריכת מערכת' : 'הוספת מערכת חדשה' }}
+    </h2>
+  </div>
+
+  <form [formGroup]="form" (ngSubmit)="save()" class="dialog-form">
+
+    <mat-form-field appearance="fill" class="full-width">
+      <mat-label>שם המערכת</mat-label>
+      <input matInput formControlName="AppName" required>
+    </mat-form-field>
+
+    <mat-form-field appearance="fill" class="full-width">
+      <mat-label>חברה</mat-label>
+      <input matInput formControlName="companyName">
+    </mat-form-field>
+
+    <mat-form-field appearance="fill" class="full-width">
+      <mat-label>הסבר על המערכת</mat-label>
+      <textarea matInput formControlName="AppDescription"></textarea>
+    </mat-form-field>
+
+    <mat-form-field appearance="fill" class="full-width">
+      <mat-label>רפרנט ראשי</mat-label>
+      <input matInput formControlName="PrimaryReference">
+    </mat-form-field>
+
+    <mat-form-field appearance="fill" class="full-width">
+      <mat-label>רפרנט משני</mat-label>
+      <input matInput formControlName="SecondaryReference">
+    </mat-form-field>
+
+    <mat-form-field appearance="fill" class="full-width">
+      <mat-label>הערות</mat-label>
+      <textarea matInput formControlName="Remarks"></textarea>
+    </mat-form-field>
+
+    <mat-form-field appearance="fill" class="full-width">
+      <mat-label>טלפונים</mat-label>
+      <input matInput formControlName="Phones">
+    </mat-form-field>
+
+    <!-- Guide (single) -->
+    <div class="full-width" style="margin: 8px 0;">
+      <label class="mat-body-1">מדריך (קובץ אחד)</label>
+      <input type="file" (change)="onFileSelected($event)" />
+      <div *ngIf="uploadedFileUrl" class="uploaded-list" style="margin-top:8px;">
+        <a [href]="uploadedFileUrl" target="_blank">{{ uploadedFileName }}</a>
+        <button mat-button color="warn" type="button" (click)="onDeleteGuide()">מחק מדריך</button>
       </div>
-    </form>
-  </mat-card>
-  
+    </div>
+
+    <div class="dialog-buttons">
+      <button mat-raised-button color="primary" type="submit" [disabled]="form.invalid">
+        שמור
+      </button>
+      <button mat-raised-button color="warn" type="button" (click)="close()">ביטול</button>
+    </div>
+  </form>
+</mat-card>
