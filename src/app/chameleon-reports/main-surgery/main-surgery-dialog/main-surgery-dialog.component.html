@@ -1,6 +1,8 @@
 <h2 mat-dialog-title dir="rtl">פרטי ניתוח</h2>
 
 <mat-dialog-content dir="rtl" class="content">
+
+  <!-- top summary -->
   <div class="row">
     <div class="label">מספר תיק:</div>
     <div class="value">{{ data.CaseNumber || '—' }}</div>
@@ -12,13 +14,47 @@
   </div>
 
   <div class="row">
-    <div class="label">סטטוס ביצוע:</div>
-    <!-- preserve \r\n -->
-    <div class="value pre">{{ data.DoingText || '—' }}</div>
+    <div class="label">תאריך ניתוח:</div>
+    <div class="value">{{ fmtDate(data.SurgeryDate) || '—' }}</div>
+  </div>
+
+  <div class="row">
+    <div class="label">מחלקה:</div>
+    <div class="value">{{ data.Department || '—' }}</div>
+  </div>
+
+  <div class="row">
+    <div class="label">DRG:</div>
+    <div class="value">{{ data.DRG || '—' }}</div>
+  </div>
+
+  <div class="row">
+    <div class="label">ICD9:</div>
+    <div class="value">{{ data.ICD9 || '—' }}</div>
+  </div>
+
+  <div class="row">
+    <div class="label">שם ניתוח:</div>
+    <div class="value">{{ data.SURGERY_NAME || '—' }}</div>
+  </div>
+
+  <div class="row">
+    <div class="label">דירוג ניתוח:</div>
+    <div class="value">{{ data.SurgeryRunk || '—' }}</div>
   </div>
 
   <mat-divider></mat-divider>
 
+  <!-- doing text -->
+  <div class="row">
+    <div class="label">סיכום/דוח פעולה:</div>
+    <!-- keep RTL order + newlines -->
+    <div class="value pre" [innerText]="data.DoingText || '—'"></div>
+  </div>
+
+  <mat-divider></mat-divider>
+
+  <!-- surgeons -->
   <div class="row">
     <div class="label">מנתח 1:</div>
     <div class="value">
@@ -52,4 +88,78 @@
     <div class="label">נייד מנתח 2:</div>
     <div class="value">{{ (data.MainSurgeonCell2 || '').trim() || '—' }}</div>
   </div>
+
+  <!-- actions -->
+  <mat-dialog-actions align="end" style="margin-top: 12px;">
+    <button mat-stroked-button (click)="close()">סגור</button>
+    <button mat-stroked-button (click)="downloadPdfFromHtml()">
+      <mat-icon>picture_as_pdf</mat-icon>&nbsp;PDF
+    </button>
+    <button mat-raised-button color="primary" (click)="downloadEmlWithPdf()" [disabled]="emails.length === 0">
+      <mat-icon>attach_file</mat-icon>&nbsp;EML עם PDF מצורף
+    </button>
+  </mat-dialog-actions>
 </mat-dialog-content>
+
+
+<!-- ===== hidden printable area for HTML → canvas → PDF ===== -->
+<div #pdfContent
+     dir="rtl"
+     style="
+       position:absolute; left:-99999px; top:0;
+       width:794px;                 /* A4 width @96dpi ~ 794px */
+       font-family: Heebo, Arial, sans-serif;
+       color:#000; text-align:right; line-height:1.5;
+     ">
+
+  <div style="padding:32px;">
+    <!-- header -->
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+      <div>
+        <div style="font-size:20px; font-weight:700;">פרטי ניתוח</div>
+        <div>מספר תיק: {{data.CaseNumber || '—'}}</div>
+        <div>שם מטופל: {{data.PatientName || '—'}}</div>
+        <div>תאריך ניתוח: {{ fmtDate(data.SurgeryDate) || '—' }}</div>
+        <div>מחלקה: {{data.Department || '—'}}</div>
+      </div>
+      <img src="assets/poria icon.jpg" alt="logo" style="height:60px;">
+    </div>
+
+    <!-- details -->
+    <div style="margin:12px 0;">
+      <div>DRG: {{data.DRG || '—'}}</div>
+      <div>ICD9: {{data.ICD9 || '—'}}</div>
+      <div>שם ניתוח: {{data.SURGERY_NAME || '—'}}</div>
+      <div>דירוג ניתוח: {{data.SurgeryRunk || '—'}}</div>
+    </div>
+
+    <!-- surgeons -->
+    <div style="margin:12px 0;">
+      <div>מנתח 1:
+        {{ ((data.MainSurgeonNameFirst1 || '') + ' ' + (data.MainSurgeonNameLast1 || '')).trim() || '—' }}
+      </div>
+      <div>אימייל: {{ (data.MainSurgeonEmail1 || '').trim() || '—' }}
+        | נייד: {{ (data.MainSurgeonCell1 || '').trim() || '—' }}</div>
+
+      <div *ngIf="data.MainSurgeonNameFirst2 || data.MainSurgeonNameLast2" style="margin-top:6px;">
+        מנתח 2:
+        {{ ((data.MainSurgeonNameFirst2 || '') + ' ' + (data.MainSurgeonNameLast2 || '')).trim() || '—' }}
+      </div>
+      <div *ngIf="data.MainSurgeonEmail2 || data.MainSurgeonCell2">
+        אימייל: {{ (data.MainSurgeonEmail2 || '').trim() || '—' }}
+        | נייד: {{ (data.MainSurgeonCell2 || '').trim() || '—' }}
+      </div>
+    </div>
+
+    <!-- DoingText -->
+    <div style="margin-top:16px; font-weight:700;">סיכום/דוח פעולה:</div>
+    <div
+      style="
+        white-space: pre-wrap;
+        unicode-bidi: plaintext;
+        border:1px solid #ddd; padding:12px; border-radius:8px; min-height:120px;
+      "
+      [innerText]="data.DoingText || '—'">
+    </div>
+  </div>
+</div>

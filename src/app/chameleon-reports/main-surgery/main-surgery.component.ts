@@ -297,27 +297,34 @@ if (depSel.length) {
     this.showGraph = !this.showGraph;
   }
 // main-surgery.component.ts
+// main-surgery.component.ts
 openDetails(row: any) {
-  console.log('ROW ->', row); // <- check MainSurgeonEmail1, MainSurgeonCell1, etc.
   this.dialog.open(MainSurgeryDialogComponent, {
     width: '600px',
     direction: 'rtl',
     data: {
       CaseNumber: row.CaseNumber,
       PatientName: row.PatientName,
+      SurgeryDate: row.SurgeryDate,
+      Department: row.Department,
+      DRG: row.DRG,
+      ICD9: row.ICD9,
+      SURGERY_NAME: row.SURGERY_NAME,
+      SurgeryRunk: row.SurgeryRunk,
       DoingText: row.DoingText,
-      MainSurgeonNameFirst1: row.MainSurgeonNameFirst1,
-      MainSurgeonNameLast1: row.MainSurgeonNameLast1,
 
-      MainSurgeonEmail1: row.MainSurgeonEmail1,
-      MainSurgeonCell1: row.MainSurgeonCell1,
+      MainSurgeonNameFirst1: row.MainSurgeonNameFirst1,
+      MainSurgeonNameLast1:  row.MainSurgeonNameLast1,
+      MainSurgeonEmail1:     (row.MainSurgeonEmail1 || '').trim(),
+      MainSurgeonCell1:      (row.MainSurgeonCell1  || '').trim(),
       MainSurgeonNameFirst2: row.MainSurgeonNameFirst2,
-      MainSurgeonNameLast2: row.MainSurgeonNameLast2,
-      MainSurgeonEmail2: row.MainSurgeonEmail2,
-      MainSurgeonCell2: row.MainSurgeonCell2,
+      MainSurgeonNameLast2:  row.MainSurgeonNameLast2,
+      MainSurgeonEmail2:     (row.MainSurgeonEmail2 || '').trim(),
+      MainSurgeonCell2:      (row.MainSurgeonCell2  || '').trim(),
     } as MainSurgeryDialogData
   });
 }
+
 
 
 }
