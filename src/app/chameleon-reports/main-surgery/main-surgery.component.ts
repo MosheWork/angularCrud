@@ -165,23 +165,28 @@ allFields: string[] = [
     return `${y}-${m}-${day}`;
   }
 
- private createFilterForm() {
-  const formControls: FormControls = {};
-  this.columns.forEach((column) => {
-    formControls[column] = new FormControl('');
-  });
-
-  formControls['pageSize'] = new FormControl(5);
-  formControls['pageIndex'] = new FormControl(0);
-  formControls['globalFilter'] = new FormControl('');
-  formControls['fromDate'] = new FormControl(null);
-  formControls['toDate'] = new FormControl(null);
-
-  // NEW: multi-select for Department
-  formControls['DepartmentFilter'] = new FormControl<string[]>([]);
-
-  return this.fb.group(formControls);
-}
+  private createFilterForm() {
+    const to = new Date();
+    to.setHours(23, 59, 59, 999);
+  
+    const from = new Date();
+    from.setDate(from.getDate() - 30);
+    from.setHours(0, 0, 0, 0);
+  
+    const formControls: FormControls = {};
+    this.columns.forEach((column) => (formControls[column] = new FormControl('')));
+  
+    formControls['pageSize'] = new FormControl(5);
+    formControls['pageIndex'] = new FormControl(0);
+    formControls['globalFilter'] = new FormControl('');
+    formControls['fromDate'] = new FormControl(from);  // last 30 days start
+    formControls['toDate'] = new FormControl(to);      // today end-of-day
+    formControls['DepartmentFilter'] = new FormControl<string[]>([]);
+  
+    return this.fb.group(formControls);
+  }
+  
+  
 
 
   getColumnLabel(column: string): string {
