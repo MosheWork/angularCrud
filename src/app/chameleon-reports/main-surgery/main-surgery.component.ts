@@ -312,13 +312,14 @@ if (depSel.length) {
 // main-surgery.component.ts
 // main-surgery.component.ts
 openDetails(row: any) {
-  this.dialog.open(MainSurgeryDialogComponent, {
+  const ref = this.dialog.open(MainSurgeryDialogComponent, {
     width: '600px',
     direction: 'rtl',
     data: {
+      // core fields the dialog shows
       CaseNumber: row.CaseNumber,
       PatientName: row.PatientName,
-      SurgeryDate: row.SurgeryDate,
+      SurgeryDate: row.SurgeryDate ? new Date(row.SurgeryDate) : null, // 👈 this is the line you asked about
       Department: row.Department,
       DRG: row.DRG,
       DiagCode: row.DiagCode,
@@ -336,21 +337,28 @@ openDetails(row: any) {
       MainSurgeonEmail2:     (row.MainSurgeonEmail2 || '').trim(),
       MainSurgeonCell2:      (row.MainSurgeonCell2  || '').trim(),
 
-      // NEW — pass latest comment snapshot (nullable)
-      RegistrarBillingRecommendation: row.RegistrarBillingRecommendation || '',
-      RegistrarComments: row.RegistrarComments || '',
-      RegistrarRequestForReportCorrection: row.RegistrarRequestForReportCorrection || '',
-      CommentDate: row.CommentDate || null,  // optional help for dialog
-      CommentId: row.CommentId || null
+      // latest comment snapshot (if you added it to GetAll)
+      RegistrarBillingRecommendation: row.RegistrarBillingRecommendation ?? '',
+      RegistrarComments: row.RegistrarComments ?? '',
+      RegistrarRequestForReportCorrection: row.RegistrarRequestForReportCorrection ?? '',
+      CommentDate: row.CommentDate ? new Date(row.CommentDate) : null,  // optional
+      CommentId: row.CommentId ?? null                                   // optional
     } as MainSurgeryDialogData & {
       RegistrarBillingRecommendation?: string;
       RegistrarComments?: string;
       RegistrarRequestForReportCorrection?: string;
-      CommentDate?: string | Date | null;
+      CommentDate?: Date | null;
       CommentId?: number | null;
     }
   });
+
+  // refresh table after saving in dialog
+  ref.afterClosed().subscribe(res => {
+    if (res?.updated) this.fetchData(); // or this.fetchWithBackendFilters();
+  });
 }
+
+
 
 
 openMOHPriceList() {

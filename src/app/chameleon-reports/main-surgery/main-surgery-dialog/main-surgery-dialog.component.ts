@@ -55,9 +55,11 @@ export class MainSurgeryDialogComponent {
       RegistrarComments: [this.data?.RegistrarComments || ''],
       RegistrarRequestForReportCorrection: [this.data?.RegistrarRequestForReportCorrection || ''],
       EntryUser: '',
-      // Prefer existing CommentDate; otherwise initialize from SurgeryDate
-      Date: [ this.data?.CommentDate ? new Date(this.data.CommentDate) :
-              (this.data?.SurgeryDate ? new Date(this.data.SurgeryDate) : null) ]
+      Date: [
+        this.data?.CommentDate
+          ? new Date(this.data.CommentDate)
+          : (this.data?.SurgeryDate ? new Date(this.data.SurgeryDate) : null)
+      ]
     });
   
     this.existing = !!(
@@ -68,50 +70,81 @@ export class MainSurgeryDialogComponent {
     );
   }
 
-   toSqlLocalDateTime(input: string | Date, setToMidnight = true): string {
-    const d = new Date(input);
-    if (setToMidnight) d.setHours(0, 0, 0, 0); // "yyyy-MM-ddT00:00:00" local
-    const pad = (n: number) => n.toString().padStart(2, '0');
-    return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}T` +
-           `${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
+  private toSqlLocal(d: string | Date, setToMidnight = true): string {
+    const x = new Date(d);
+    if (setToMidnight) x.setHours(0, 0, 0, 0);
+    const pad = (n: number) => String(n).padStart(2, '0');
+    return `${x.getFullYear()}-${pad(x.getMonth() + 1)}-${pad(x.getDate())}T` +
+           `${pad(x.getHours())}:${pad(x.getMinutes())}:${pad(x.getSeconds())}`;
   }
+
+  private pickBaseDate(): Date | null {
+    const raw = this.commentForm?.value;
+    const candidates: Array<string | Date | null | undefined> = [
+      this.data?.CommentDate,          // if row already had a saved comment date
+      raw?.Date,                       // form control (if user edited)
+      this.data?.SurgeryDate           // fallback from main row
+    ];
+  
+    for (const c of candidates) {
+      if (!c) continue;
+      const d = new Date(c);
+      if (!isNaN(d.getTime())) {
+        // normalize to midnight local if you want date-only uniqueness
+        d.setHours(0, 0, 0, 0);
+        return d;
+      }
+    }
+    return null;
+  }
+  
   saveComment() {
     if (this.commentForm.invalid) return;
     this.saving = true;
   
     const raw = this.commentForm.value;
-    const baseDate = raw.Date || this.data.SurgeryDate; // prefer existing comment date; else surgery date
-
-    const payload = {
-      ...raw,
-      Date: baseDate ? this.toSqlLocalDateTime(baseDate, /*setToMidnight*/ true) : null
-    };
+    const baseDateObj = this.pickBaseDate();
+  
+    if (!baseDateObj) {
+      this.saving = false;
+      console.error('No date found. Debug:', {
+        formDate: raw?.Date,
+        commentDate: this.data?.CommentDate,
+        surgeryDate: this.data?.SurgeryDate
+      });
+      alert('לא נמצא תאריך ניתוח/הערה לשמירה (בדוק שהשורה כוללת SurgeryDate).');
+      return;
+    }
+  
+    const pad = (n: number) => String(n).padStart(2, '0');
+    const dateSqlLocal =
+      `${baseDateObj.getFullYear()}-${pad(baseDateObj.getMonth()+1)}-${pad(baseDateObj.getDate())}` +
+      `T${pad(baseDateObj.getHours())}:${pad(baseDateObj.getMinutes())}:${pad(baseDateObj.getSeconds())}`;
+  
+    const payload = { ...raw, Date: dateSqlLocal };
+  
     const req$ = this.existing
-    ? this.http.put(`${environment.apiUrl}MainSurgery/Comments`, payload)
-    : this.http.post(`${environment.apiUrl}MainSurgery/Comments`, payload);
+      ? this.http.put(`${environment.apiUrl}MainSurgery/Comments`, payload)
+      : this.http.post(`${environment.apiUrl}MainSurgery/Comments`, payload);
   
     req$.subscribe({
-      next: () => {
-        this.existing = true;
-        alert('ההערות נשמרו בהצלחה');
-        this.commentForm.markAsPristine();
-      },
+      next: () => this.dialogRef.close({ updated: true }),
       error: (err) => {
-        // If server enforces uniqueness (CaseNumber+SystemName+Date), handle 409 by retrying as update:
         if (err?.status === 409) {
-          this.http.put(`${environment.apiUrl}MainSurgery/Comments`, payload).subscribe({
-            next: () => { this.existing = true; alert('עודכן בהצלחה'); this.commentForm.markAsPristine(); },
-            error: e2 => { console.error(e2); alert('עדכון נכשל'); },
-            complete: () => this.saving = false
-          });
+          this.http.put(`${environment.apiUrl}MainSurgery/Comments`, payload)
+            .subscribe({
+              next: () => this.dialogRef.close({ updated: true }),
+              error: e2 => { console.error(e2); this.saving = false; alert('Update failed'); }
+            });
         } else {
-          console.error(err); alert('שמירה נכשלה'); this.saving = false;
+          console.error(err);
+          this.saving = false;
+          alert(err?.error || 'Save failed');
         }
-      },
-      complete: () => this.saving = false
+      }
     });
   }
-
+  
   close() { this.dialogRef.close(); }
   commentForm: FormGroup;
   saving = false;
