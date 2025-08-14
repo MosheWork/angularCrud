@@ -26,12 +26,18 @@ export class WelcomeSplashComponent implements OnInit {
   /** Event when splash is gone */
   @Output() done = new EventEmitter<void>();
 
+    // NEW: effect toggles
+    @Input() fxProgress = true;
+    @Input() fxConfetti = true;
+    @Input() fxParticles = true;
   // populated from AuthenticationService + DB call
   userName = 'משתמש';
   profilePictureUrl = 'assets/default-user.png';
 
   visible = true;
-
+  // used to render confetti/particles
+  confetti = Array.from({ length: 26 }).map((_, i) => i);
+  colors = ['#f94144', '#f3722c', '#f9c74f', '#43aa8b', '#577590'];
   constructor(
     private auth: AuthenticationService,
     private http: HttpClient

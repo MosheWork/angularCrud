@@ -184,4 +184,54 @@
     .splash-logo { width: 112px; }
     .avatar-wrap { width: 90px; height: 90px; }
   }
+  /* ---------- Progress bar ---------- */
+.progress {
+    position: absolute; top: 0; left: 0; width: 100%; height: 4px;
+    background: rgba(255,255,255,0.14);
+    overflow: hidden;
+  }
+  .progress > span {
+    display: block; height: 100%; width: 0;
+    background: linear-gradient(90deg, #00e1ff, #8a2be2, #ff4d8d);
+    animation: load var(--dur, 5000ms) linear forwards;
+    filter: drop-shadow(0 0 6px rgba(255,255,255,.45));
+  }
+  @keyframes load { to { width: 100%; } }
+  
+  /* ---------- Confetti ---------- */
+  .confetti {
+    position: absolute; inset: 0; pointer-events: none; overflow: hidden; z-index: 2;
+  }
+  .confetti span {
+    position: absolute; top: -12px; width: 10px; height: 16px; opacity: 0.95;
+    border-radius: 2px;
+    animation-name: confettiFall; animation-timing-function: cubic-bezier(.25,.7,.3,1);
+    will-change: transform;
+  }
+  @keyframes confettiFall {
+    0%   { transform: translate3d(0, -12px, 0) rotate(0deg); }
+    100% { transform: translate3d(0, 110vh, 0) rotate(540deg); }
+  }
+  
+  /* ---------- Particles ---------- */
+  .particles { position: absolute; inset: 0; pointer-events: none; z-index: 1; }
+  .particles span {
+    position: absolute; bottom: -10px; width: 4px; height: 4px;
+    border-radius: 50%; background: rgba(255,255,255,0.75);
+    box-shadow: 0 0 10px rgba(255,255,255,0.65);
+    animation-name: particleFloat; animation-timing-function: ease-in-out; opacity: .85;
+    filter: blur(.2px);
+  }
+  @keyframes particleFloat {
+    0%   { transform: translate3d(0, 0, 0) scale(.9); opacity: .0; }
+    10%  { opacity: .85; }
+    100% { transform: translate3d(0, -105vh, 0) scale(1.1); opacity: 0; }
+  }
+  
+  /* Respect reduced motion */
+  @media (prefers-reduced-motion: reduce) {
+    .progress > span,
+    .confetti span,
+    .particles span { animation: none !important; }
+  }
   

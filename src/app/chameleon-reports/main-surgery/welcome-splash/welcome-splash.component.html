@@ -3,12 +3,40 @@
   *ngIf="visible"
   (click)="onOverlayClick()"
   [ngStyle]="{
+    '--dur': durationMs + 'ms', 
+
     'background-size': 'cover',
     'background-position': 'center',
     'background-repeat': 'no-repeat'
   }"
   dir="rtl"
 >
+
+
+  <!-- NEW: top progress bar -->
+  <div class="progress" *ngIf="fxProgress"><span></span></div>
+
+  <!-- NEW: falling confetti -->
+  <div class="confetti" *ngIf="fxConfetti">
+    <span
+      *ngFor="let c of confetti; let i = index"
+      [style.left.%]="(i * 100) / confetti.length"
+      [style.background]="colors[i % colors.length]"
+      [style.animationDelay.ms]="(i % 10) * 120"
+      [style.animationDuration.ms]="2200 + (i % 7) * 260"
+      [style.transform]="'rotate(' + (i * 37 % 360) + 'deg)'"
+    ></span>
+  </div>
+
+  <!-- NEW: soft floating particles -->
+  <div class="particles" *ngIf="fxParticles">
+    <span
+      *ngFor="let p of confetti; let i = index"
+      [style.left.%]="(i * 100) / confetti.length"
+      [style.animationDelay.ms]="(i % 12) * 180"
+      [style.animationDuration.ms]="4000 + (i % 8) * 500"
+    ></span>
+  </div>
   <!-- animated gradient glow -->
   <div class="splash-gradient"></div>
 
