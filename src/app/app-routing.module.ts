@@ -195,7 +195,7 @@ const routes: Routes = [
 { path: 'PCIreportComponent', component: PCIreportComponent , data: { title: ' PCI' }},//    לבקשת אופיר       
 { path: 'breastfeeding-coordinator', component: BreastfeedingCoordinatorComponent , data: { title: ' מתאמת הנקה ' }},//   מתאמת הנקה      
 { path: 'medication-reconciliationr', component: MedicationReconciliationComponent , data: { title: 'MedicationReconciliation' }},//  MedicationReconciliation 
-{ path: 'main-surgery', component: MainSurgeryComponent , data: { title: 'רשימת ניתוחים' }},//  רשימת ניתוחים
+{ path: 'main-surgery', component: MainSurgeryComponent , data: { title: 'מערכת יעל ' }},//  רשימת ניתוחים
 
 
 //chemelondashboard

@@ -72,6 +72,7 @@
         class="search-input"
       />
     </mat-form-field>
+  
     <div class="graph-button-container">
       <img
         (click)="navigateToGraphPage()"
@@ -80,6 +81,7 @@
         width="50px"
       />
     </div>
+  
     <div class="icon" matTooltip="Download Excel">
       <img
         src="../../assets/excel.png"
@@ -89,7 +91,31 @@
         width="50px"
       />
     </div>
+  
+    <!-- כפתור תעריפון משרד הבריאות -->
+    <button
+      mat-raised-button
+      color="accent"
+      style="margin-right: 10px"
+      (click)="openMOHPriceList()"
+      matTooltip="פתח קישור תעריפון משרד הבריאות"
+    >
+      תעריפון משרד הבריאות
+    </button>
+  
+    <!-- כפתור טבלת שיוך ICD9 -->
+    <button
+      mat-raised-button
+      color="primary"
+      style="margin-right: 10px"
+      (click)="openICD9Mapping()"
+      matTooltip="פתח טבלת שיוך קודי ICD9 וקודי שירות"
+    >
+      טבלת שיוך ICD9
+    </button>
   </div>
+  
+  
 
   </form>
 
@@ -133,14 +159,14 @@
     </ng-container>
   
     <!-- Keren -->
-    <ng-container matColumnDef="Keren">
+    <!-- <ng-container matColumnDef="Keren">
       <mat-header-cell *matHeaderCellDef mat-sort-header>
         {{ getColumnLabel('Keren') }}
       </mat-header-cell>
       <mat-cell *matCellDef="let element">
         {{ element.Keren }}
       </mat-cell>
-    </ng-container>
+    </ng-container> -->
   
     <!-- DRG -->
     <ng-container matColumnDef="DRG">
@@ -209,6 +235,35 @@
       (click)="openDetails(row)"
       matTooltip="לחץ לשם פרטי הניתוח">
     </mat-row>
+<!-- RegistrarBillingRecommendation -->
+<ng-container matColumnDef="RegistrarBillingRecommendation">
+  <mat-header-cell *matHeaderCellDef mat-sort-header>
+    {{ getColumnLabel('RegistrarBillingRecommendation') }}
+  </mat-header-cell>
+  <mat-cell *matCellDef="let element">
+    {{ element.RegistrarBillingRecommendation }}
+  </mat-cell>
+</ng-container>
+
+<!-- RegistrarComments -->
+<ng-container matColumnDef="RegistrarComments">
+  <mat-header-cell *matHeaderCellDef mat-sort-header>
+    {{ getColumnLabel('RegistrarComments') }}
+  </mat-header-cell>
+  <mat-cell *matCellDef="let element">
+    {{ element.RegistrarComments }}
+  </mat-cell>
+</ng-container>
+
+<!-- RegistrarRequestForReportCorrection -->
+<ng-container matColumnDef="RegistrarRequestForReportCorrection">
+  <mat-header-cell *matHeaderCellDef mat-sort-header>
+    {{ getColumnLabel('RegistrarRequestForReportCorrection') }}
+  </mat-header-cell>
+  <mat-cell *matCellDef="let element">
+    {{ element.RegistrarRequestForReportCorrection }}
+  </mat-cell>
+</ng-container>
 
 
 

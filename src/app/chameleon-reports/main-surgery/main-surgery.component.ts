@@ -47,13 +47,16 @@ columns: string[] = [
   'CaseNumber',
   'PatientName',
   'SurgeryDate',
-  'Keren',
+
   'DRG',
   'SURGERY_NAME',
   'Department',
+  'DiagCode',
   'ICD9',
   'SurgeryRunk',
-  'DiagCode',
+  'RegistrarBillingRecommendation',
+  'RegistrarComments',
+  'RegistrarRequestForReportCorrection'
 ];
 
 // (optional) keep this if you want a list of ALL data fields for other logic
@@ -62,7 +65,8 @@ allFields: string[] = [
   'Department','ICD9','DischargeDate','SurgeryLangth','SurgeryRunk','DoingText',
   'MainSurgeonNameFirst1','MainSurgeonNameLast1','MainSurgeonEmail1','MainSurgeonCell1',
   'MainSurgeonNameFirst2','MainSurgeonNameLast2','MainSurgeonEmail2','MainSurgeonCell2',
-  'DiagCode','DiagDesc'
+  'DiagCode','DiagDesc',  'RegistrarBillingRecommendation','RegistrarComments','RegistrarRequestForReportCorrection'
+
 ];
 
 
@@ -191,15 +195,15 @@ allFields: string[] = [
 
   getColumnLabel(column: string): string {
     const labels: Record<string, string> = {
-      CaseNumber: 'מספר תיק',
+      CaseNumber: 'מספר מקרה',
       PatientName: 'שם מטופל',
       SurgeryDate: 'תאריך ניתוח',
       HDayOfWeek: 'יום בשבוע',
       Keren: 'קרן',
-      DRG: 'DRG',
+      DRG: ' לפי זימון DRG',
       SURGERY_NAME: 'שם ניתוח',
       Department: 'מחלקה',
-      ICD9: 'ICD9',
+      ICD9: 'פעולה - ICD9',
       DischargeDate: 'תאריך שחרור',
       SurgeryLangth: 'משך ניתוח',
       SurgeryRunk: 'דירוג ניתוח',
@@ -213,7 +217,11 @@ allFields: string[] = [
       MainSurgeonEmail2: 'מנתח 2 - אימייל',
       MainSurgeonCell2: 'מנתח 2 - נייד',
       DiagCode: 'קוד אבחנה',
-      DiagDesc: 'תיאור אבחנה'
+      DiagDesc: 'תיאור אבחנה',
+      // NEW:
+      RegistrarBillingRecommendation: 'המלצת רושמת לחיוב',
+      RegistrarComments: 'הערות רושמת',
+      RegistrarRequestForReportCorrection: 'פניית רושמת לתיקון דוח'
     };
     return labels[column] || column;
   }
@@ -313,6 +321,7 @@ openDetails(row: any) {
       SurgeryDate: row.SurgeryDate,
       Department: row.Department,
       DRG: row.DRG,
+      DiagCode: row.DiagCode,
       ICD9: row.ICD9,
       SURGERY_NAME: row.SURGERY_NAME,
       SurgeryRunk: row.SurgeryRunk,
@@ -326,10 +335,36 @@ openDetails(row: any) {
       MainSurgeonNameLast2:  row.MainSurgeonNameLast2,
       MainSurgeonEmail2:     (row.MainSurgeonEmail2 || '').trim(),
       MainSurgeonCell2:      (row.MainSurgeonCell2  || '').trim(),
-    } as MainSurgeryDialogData
+
+      // NEW — pass latest comment snapshot (nullable)
+      RegistrarBillingRecommendation: row.RegistrarBillingRecommendation || '',
+      RegistrarComments: row.RegistrarComments || '',
+      RegistrarRequestForReportCorrection: row.RegistrarRequestForReportCorrection || '',
+      CommentDate: row.CommentDate || null,  // optional help for dialog
+      CommentId: row.CommentId || null
+    } as MainSurgeryDialogData & {
+      RegistrarBillingRecommendation?: string;
+      RegistrarComments?: string;
+      RegistrarRequestForReportCorrection?: string;
+      CommentDate?: string | Date | null;
+      CommentId?: number | null;
+    }
   });
 }
 
 
+openMOHPriceList() {
+  window.open(
+    'https://www.gov.il/he/Departments/DynamicCollectors/moh-price-list?skip=0',
+    '_blank'
+  );
+}
+
+openICD9Mapping() {
+  window.open(
+    'https://www.gov.il/he/Departments/DynamicCollectors/moh-price-list?skip=0&moh_price_list_type=4',
+    '_blank'
+  );
+}
 
 }

@@ -2,6 +2,9 @@ import { Component, Inject, ElementRef, ViewChild } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { jsPDF } from 'jspdf';
 import html2canvas from 'html2canvas';
+import { HttpClient } from '@angular/common/http';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { environment } from '../../../../environments/environment'; // adjust path if needed
 
 export interface MainSurgeryDialogData {
   CaseNumber: string;
@@ -10,6 +13,7 @@ export interface MainSurgeryDialogData {
   Department?: string;
   DRG?: string;
   ICD9?: string;
+  DiagCode?: string;
   SURGERY_NAME?: string;
   SurgeryRunk?: string;
   DoingText?: string;
@@ -21,6 +25,11 @@ export interface MainSurgeryDialogData {
   MainSurgeonNameLast2?: string;
   MainSurgeonEmail2?: string;
   MainSurgeonCell2?: string;
+  RegistrarBillingRecommendation?: string;
+  RegistrarComments?: string;
+  RegistrarRequestForReportCorrection?: string;
+  CommentId?: number | null;
+  CommentDate?: string | Date | null;
 }
 
 @Component({
@@ -31,14 +40,81 @@ export interface MainSurgeryDialogData {
 export class MainSurgeryDialogComponent {
   // the hidden printable area in your HTML
   @ViewChild('pdfContent', { static: false }) pdfContent!: ElementRef<HTMLDivElement>;
+  existing = false;
 
   constructor(
     public dialogRef: MatDialogRef<MainSurgeryDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: MainSurgeryDialogData
-  ) {}
+    @Inject(MAT_DIALOG_DATA) public data: MainSurgeryDialogData,
+    private http: HttpClient,
+    private fb: FormBuilder
+  ) {
+    this.commentForm = this.fb.group({
+      SystemName: ['MainSurgery'],
+      CaseNumber: [this.data?.CaseNumber || ''],
+      RegistrarBillingRecommendation: [this.data?.RegistrarBillingRecommendation || ''],
+      RegistrarComments: [this.data?.RegistrarComments || ''],
+      RegistrarRequestForReportCorrection: [this.data?.RegistrarRequestForReportCorrection || ''],
+      EntryUser: '',
+      // Prefer existing CommentDate; otherwise initialize from SurgeryDate
+      Date: [ this.data?.CommentDate ? new Date(this.data.CommentDate) :
+              (this.data?.SurgeryDate ? new Date(this.data.SurgeryDate) : null) ]
+    });
+  
+    this.existing = !!(
+      (this.data?.RegistrarBillingRecommendation && this.data.RegistrarBillingRecommendation.trim().length) ||
+      (this.data?.RegistrarComments && this.data.RegistrarComments.trim().length) ||
+      (this.data?.RegistrarRequestForReportCorrection && this.data.RegistrarRequestForReportCorrection.trim().length) ||
+      this.data?.CommentDate
+    );
+  }
+
+   toSqlLocalDateTime(input: string | Date, setToMidnight = true): string {
+    const d = new Date(input);
+    if (setToMidnight) d.setHours(0, 0, 0, 0); // "yyyy-MM-ddT00:00:00" local
+    const pad = (n: number) => n.toString().padStart(2, '0');
+    return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}T` +
+           `${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
+  }
+  saveComment() {
+    if (this.commentForm.invalid) return;
+    this.saving = true;
+  
+    const raw = this.commentForm.value;
+    const baseDate = raw.Date || this.data.SurgeryDate; // prefer existing comment date; else surgery date
+
+    const payload = {
+      ...raw,
+      Date: baseDate ? this.toSqlLocalDateTime(baseDate, /*setToMidnight*/ true) : null
+    };
+    const req$ = this.existing
+    ? this.http.put(`${environment.apiUrl}MainSurgery/Comments`, payload)
+    : this.http.post(`${environment.apiUrl}MainSurgery/Comments`, payload);
+  
+    req$.subscribe({
+      next: () => {
+        this.existing = true;
+        alert('ההערות נשמרו בהצלחה');
+        this.commentForm.markAsPristine();
+      },
+      error: (err) => {
+        // If server enforces uniqueness (CaseNumber+SystemName+Date), handle 409 by retrying as update:
+        if (err?.status === 409) {
+          this.http.put(`${environment.apiUrl}MainSurgery/Comments`, payload).subscribe({
+            next: () => { this.existing = true; alert('עודכן בהצלחה'); this.commentForm.markAsPristine(); },
+            error: e2 => { console.error(e2); alert('עדכון נכשל'); },
+            complete: () => this.saving = false
+          });
+        } else {
+          console.error(err); alert('שמירה נכשלה'); this.saving = false;
+        }
+      },
+      complete: () => this.saving = false
+    });
+  }
 
   close() { this.dialogRef.close(); }
-
+  commentForm: FormGroup;
+  saving = false;
   get emails(): string[] {
     return Array.from(new Set(
       [(this.data.MainSurgeonEmail1 || '').trim(),
@@ -204,23 +280,52 @@ export class MainSurgeryDialogComponent {
   }
 
   // Create .eml with the PDF attached
-  async downloadEmlWithPdf() {
-    const to = this.emails.join(',');
-    const subject = `דו"ח ניתוח - ${this.data.CaseNumber || ''} - ${this.data.PatientName || ''}`.trim();
-    const bodyText = this.buildEmailBody();
+// Create .eml with just the body (no PDF)
+  
+// Replace your downloadEmlWithPdf() with this:
+// Always create an .eml draft with full body (no mailto, no copy/paste)
+sendEmail() {
+  if (this.emails.length === 0) return;
 
-    const pdfBlob = await this.generatePdfBlob();
-    const pdfB64 = await this.blobToBase64(pdfBlob);
-    const filename = `Surgery_${this.data.CaseNumber || 'Details'}.pdf`;
+  const to = this.emails.join(',');
+  const subject = `דו"ח ניתוח - ${this.data.CaseNumber || ''} - ${this.data.PatientName || ''}`.trim();
+  const body = this.buildEmailBody().replace(/\r\n/g, '\n').replace(/\n/g, '\r\n'); // CRLF
 
-    const eml = this.buildEmlWithAttachment(to, subject, bodyText, filename, pdfB64);
-    const emlBlob = new Blob([eml], { type: 'message/rfc822' });
-    const url = URL.createObjectURL(emlBlob);
+  const href = `mailto:${to}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
 
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `${this.data.CaseNumber || 'message'}.eml`;
-    a.click();
-    URL.revokeObjectURL(url);
+  // Outlook/Windows often fails around ~1800–2000 chars
+  if (href.length <= 1800) {
+    window.location.href = href;  // opens with body inline
+    return;
   }
+
+  // Fallback: full body via .eml (no copy/paste)
+  const eml = this.buildPlainEml(to, subject, body);
+  const blob = new Blob([eml], { type: 'message/rfc822' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `${this.data.CaseNumber || 'message'}.eml`;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+
+
+private buildPlainEml(toCsv: string, subject: string, bodyText: string): string {
+  const headers =
+    `From: noreply@example.com\r\n` +
+    `To: ${toCsv}\r\n` +
+    `Date: ${new Date().toUTCString()}\r\n` +
+    `Subject: ${subject}\r\n` +
+    `MIME-Version: 1.0\r\n` +
+    `Content-Type: text/plain; charset=UTF-8\r\n` +
+    `Content-Transfer-Encoding: 8bit\r\n\r\n`;
+
+  return headers + bodyText.replace(/\n/g, '\r\n');
+}
+
+
+
 }
