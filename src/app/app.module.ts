@@ -189,6 +189,7 @@ import { ApplicationsListDeptComponent } from './ApplicationsListDept/applicatio
 import { ApplicationsListDeptDialogComponent } from './ApplicationsListDept/applications-list-dept-dialog/applications-list-dept-dialog.component';
 import { MainSurgeryComponent } from './chameleon-reports/main-surgery/main-surgery.component';
 import { MainSurgeryDialogComponent } from './chameleon-reports/main-surgery/main-surgery-dialog/main-surgery-dialog.component';
+import { WelcomeSplashComponent } from './chameleon-reports/main-surgery/welcome-splash/welcome-splash.component';
 
 
 export const MY_DATE_FORMATS: MatDateFormats = {
@@ -354,8 +355,9 @@ export function playerFactory() {
     ApplicationsListDeptComponent,
     ApplicationsListDeptDialogComponent,
     MainSurgeryComponent,
-    MainSurgeryDialogComponent   
-     
+    MainSurgeryDialogComponent,
+    WelcomeSplashComponent
+
   
   ],
   imports: [

@@ -12,6 +12,7 @@ import { MainSurgeryDialogComponent, MainSurgeryDialogData } from './main-surger
 
 import * as XLSX from 'xlsx';
 import { environment } from '../../../environments/environment';
+import { finalize } from 'rxjs/operators'; // ⬅ add
 
 
 
@@ -25,6 +26,14 @@ interface FormControls {
   styleUrls: ['./main-surgery.component.scss']
 })
 export class MainSurgeryComponent implements OnInit {
+
+  isLoading = true;
+
+  // 👤 User/profile (you can overwrite these from your auth service/localStorage)
+  UserName = 'משתמש';
+  profilePictureUrl = 'assets/user.png';
+  backgroundImageUrl = 'assets/bg.jpg';   // put your background here
+  logoUrl = 'assets/logo.png';
 
   showGraph = false;
 
@@ -81,6 +90,8 @@ allFields: string[] = [
   }
 
   ngOnInit() {
+    this.loadUserProfile();      // ⬅ optional helper below
+
     this.fetchData();
     this.filterForm.get('DepartmentFilter')?.valueChanges
     .pipe(debounceTime(50))        // avoid distinctUntilChanged on arrays
@@ -106,7 +117,24 @@ allFields: string[] = [
       .pipe(debounceTime(100), distinctUntilChanged())
       .subscribe(() => this.applyFilters());
   }
+  onSplashDone() {
+    // do something after splash hides, if you want
+  }
+  
+  private loadUserProfile() {
+    this.isLoading = true;
 
+    // Example: pull from localStorage / auth service
+    const displayName = localStorage.getItem('displayName');
+    const photoUrl = localStorage.getItem('photoUrl');
+    const bgUrl = localStorage.getItem('bgUrl');
+    const logo = localStorage.getItem('logoUrl');
+
+    if (displayName) this.UserName = displayName;
+    if (photoUrl) this.profilePictureUrl = photoUrl;
+    if (bgUrl) this.backgroundImageUrl = bgUrl;
+    if (logo) this.logoUrl = logo;
+  }
   // Load once (front-end filtering). If you want server-side filtering, see fetchWithBackendFilters()
   fetchData(): void {
     // Optional: pass backend date range if provided (keeps payload smaller)

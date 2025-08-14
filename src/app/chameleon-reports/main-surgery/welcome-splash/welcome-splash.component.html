@@ -1,0 +1,49 @@
+<div
+  class="splash-container"
+  *ngIf="visible"
+  (click)="onOverlayClick()"
+  [ngStyle]="{
+    'background-size': 'cover',
+    'background-position': 'center',
+    'background-repeat': 'no-repeat'
+  }"
+  dir="rtl"
+>
+  <!-- animated gradient glow -->
+  <div class="splash-gradient"></div>
+
+  <!-- dark overlay -->
+  <div class="splash-overlay"></div>
+
+  <!-- floating decor orbs -->
+  <div class="orbs">
+    <span class="orb orb-1"></span>
+    <span class="orb orb-2"></span>
+    <span class="orb orb-3"></span>
+  </div>
+
+  <div class="splash-content">
+    <!-- glass “card” -->
+    <div class="glass-card">
+      <div class="avatar-wrap">
+        <img [src]="profilePictureUrl" alt="User" class="splash-avatar" />
+        <span class="avatar-ring"></span>
+      </div>
+
+      <div class="splash-welcome">
+        <span class="shine">ברוך הבא</span> {{ userName }}
+      </div>
+      <div class="splash-sub">{{ subText }}</div>
+
+      <!-- <img [src]="logoUrl" alt="Logo" class="splash-logo" /> -->
+      <h1 class="splash-title">{{ titleText }}</h1>
+    </div>
+  </div>
+
+  <!-- gentle animated waves -->
+  <div class="waves">
+    <svg viewBox="0 0 1440 120" preserveAspectRatio="none">
+      <path d="M0,80 C240,20 480,20 720,80 C960,140 1200,140 1440,80 L1440,120 L0,120 Z"></path>
+    </svg>
+  </div>
+</div>
