@@ -148,8 +148,10 @@ allFields: string[] = [
     this.http.get<any[]>(environment.apiUrl + 'MainSurgery/GetAll', { params })
       .subscribe(data => {
         this.dataSource = data || [];
-        this.filteredData = [...this.dataSource];
-        this.matTableDataSource = new MatTableDataSource(this.filteredData);
+        //this.filteredData = [...this.dataSource];
+        //this.matTableDataSource = new MatTableDataSource(this.filteredData);
+        this.applyFilters();
+
         this.matTableDataSource.paginator = this.paginator;
         this.matTableDataSource.sort = this.sort;
         this.totalResults = this.filteredData.length;
@@ -259,58 +261,61 @@ allFields: string[] = [
     const filters = this.filterForm.value;
     const globalFilter = (filters['globalFilter'] || '').toLowerCase();
     const fromDate = filters['fromDate'] ? new Date(filters['fromDate']) : null;
-    const toDate = filters['toDate'] ? new Date(filters['toDate']) : null;
-
+    const toDate   = filters['toDate']   ? new Date(filters['toDate'])   : null;
+  
     this.filteredData = this.dataSource.filter((item) => {
-      // Per-column contains
+      // per-column contains
       const perColumnOk = this.columns.every((column) => {
         const filterVal = (filters[column] || '').toString().trim().toLowerCase();
         if (!filterVal) return true;
         const cell = (item[column] ?? '').toString().toLowerCase();
         return cell.includes(filterVal);
       });
-
       if (!perColumnOk) return false;
-
-      // Global contains
-      const globalOk =
-        !globalFilter ||
+  
+      // global contains
+      const globalOk = !globalFilter ||
         this.columns.some((column) => ((item[column] ?? '').toString().toLowerCase().includes(globalFilter)));
-
       if (!globalOk) return false;
-
-      // Date range (by SurgeryDate)
+  
+      // date range (SurgeryDate)
       if (fromDate || toDate) {
         const dVal = item['SurgeryDate'] ? new Date(item['SurgeryDate']) : null;
         if (!dVal) return false;
         if (fromDate && dVal < fromDate) return false;
         if (toDate) {
-          // include the whole 'to' day
           const toPlus = new Date(toDate);
           toPlus.setHours(23, 59, 59, 999);
           if (dVal > toPlus) return false;
         }
       }
-// Department multi-select filter
-const depSel: string[] = this.filterForm.get('DepartmentFilter')?.value || [];
-if (depSel.length) {
-  const curDep = (item['Department'] ?? '').toString().toLowerCase();
-  const match = depSel.some(d => d.toLowerCase() === curDep);
-  if (!match) return false;
-}
-
+  
+      // Department multi-select
+      const depSel: string[] = this.filterForm.get('DepartmentFilter')?.value || [];
+      if (depSel.length) {
+        const curDep = (item['Department'] ?? '').toString().toLowerCase();
+        const match = depSel.some(d => d.toLowerCase() === curDep);
+        if (!match) return false;
+      }
+  
       return true;
     });
-
+  
     this.totalResults = this.filteredData.length;
-    this.matTableDataSource.data = this.filteredData;
-    this.matTableDataSource.paginator = this.paginator;
-    this.matTableDataSource.sort = this.sort;
-    this.graphData = this.filteredData;
-
-    // Return to first page whenever filters change
+  
+    // (Re)bind table here
+    if (!this.matTableDataSource) {
+      this.matTableDataSource = new MatTableDataSource<any>(this.filteredData);
+      this.matTableDataSource.paginator = this.paginator;
+      this.matTableDataSource.sort = this.sort;
+    } else {
+      this.matTableDataSource.data = this.filteredData;
+    }
+  
+    // go back to first page on filter change
     setTimeout(() => this.paginator?.firstPage(), 0);
   }
+  
 
   resetFilters() {
     const pageSize = this.filterForm.get('pageSize')?.value || 5;
