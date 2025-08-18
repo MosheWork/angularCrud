@@ -65,7 +65,8 @@ columns: string[] = [
   'SurgeryRunk',
   'RegistrarBillingRecommendation',
   'RegistrarComments',
-  'RegistrarRequestForReportCorrection'
+  'RegistrarRequestForReportCorrection',
+  'SurgeryCodeList','SecretaryDRG'
 ];
 
 // (optional) keep this if you want a list of ALL data fields for other logic
@@ -247,9 +248,9 @@ allFields: string[] = [
       DiagCode: 'קוד אבחנה',
       DiagDesc: 'תיאור אבחנה',
       // NEW:
-      RegistrarBillingRecommendation: 'המלצת רושמת לחיוב',
-      RegistrarComments: 'הערות רושמת',
-      RegistrarRequestForReportCorrection: 'פניית רושמת לתיקון דוח'
+      RegistrarBillingRecommendation: 'המלצת רשמת לחיוב',
+      RegistrarComments: 'הערות רשמת',
+      RegistrarRequestForReportCorrection: 'פניית רשמת לתיקון דוח'
     };
     return labels[column] || column;
   }

@@ -23,7 +23,7 @@
       <div class="value">{{ data.Department || '—' }}</div>
     </div>
     <div class="row">
-      <div class="label">קודי אבחנה:</div>
+      <div class="label">קוד DRG :</div>
       <div class="value">{{ data.DRG || '—' }}</div>
     </div>
     <div class="row">
@@ -96,20 +96,20 @@
 
     <!-- Registrar comments section (bound to form) -->
     <div dir="rtl" style="margin-top:12px;">
-      <div style="font-weight:600; margin-bottom:8px;">הערות רושמת</div>
+      <div style="font-weight:600; margin-bottom:8px;">הערות רשמת</div>
 
       <mat-form-field appearance="outline" style="width:100%; margin-bottom:8px;">
-        <mat-label>המלצת רושמת לחיוב</mat-label>
+        <mat-label>המלצת רשמת לחיוב</mat-label>
         <textarea matInput rows="2" formControlName="RegistrarBillingRecommendation"></textarea>
       </mat-form-field>
 
       <mat-form-field appearance="outline" style="width:100%; margin-bottom:8px;">
-        <mat-label>הערות רושמת</mat-label>
+        <mat-label>הערות רשמת</mat-label>
         <textarea matInput rows="3" formControlName="RegistrarComments"></textarea>
       </mat-form-field>
 
       <mat-form-field appearance="outline" style="width:100%; margin-bottom:8px;">
-        <mat-label>פניית רושמת לתיקון דוח ניתוח</mat-label>
+        <mat-label>פניית רשמת לתיקון דוח ניתוח</mat-label>
         <textarea matInput rows="3" formControlName="RegistrarRequestForReportCorrection"></textarea>
       </mat-form-field>
     </div>

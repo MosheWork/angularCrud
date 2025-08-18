@@ -239,6 +239,23 @@
         {{ element.DiagCode }}
       </mat-cell>
     </ng-container>
+
+    <ng-container matColumnDef="SecretaryDRG">
+      <mat-header-cell *matHeaderCellDef mat-sort-header>
+        {{ getColumnLabel('SecretaryDRG') }}
+      </mat-header-cell>
+      <mat-cell *matCellDef="let element">
+        {{ element.SecretaryDRG }}
+      </mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="SurgeryCodeList">
+      <mat-header-cell *matHeaderCellDef mat-sort-header>
+        {{ getColumnLabel('SurgeryCodeList') }}
+      </mat-header-cell>
+      <mat-cell *matCellDef="let element">
+        {{ element.SurgeryCodeList }}
+      </mat-cell>
+    </ng-container>
   
     <mat-header-row *matHeaderRowDef="columns"></mat-header-row>
     <mat-row
