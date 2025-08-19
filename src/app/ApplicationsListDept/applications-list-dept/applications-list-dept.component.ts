@@ -21,6 +21,14 @@ import { MatDialog } from '@angular/material/dialog';
 export class ApplicationsListDeptComponent implements OnInit {
   title: string = 'רשימת מערכות לפי מחלקות';
   totalResults = 0;
+// counters
+totalApps = 0;
+appsWithGuides = 0;
+filteredApps = 0;
+filteredWithGuides = 0;
+// add these fields
+missingTotal = 0;
+missingFiltered = 0;
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
@@ -56,17 +64,21 @@ export class ApplicationsListDeptComponent implements OnInit {
   }
   
   fetchData(): void {
-    this.http.get<any[]>(environment.apiUrl + 'ApplicationsListDept/GetAll')
-      .subscribe(raw => {
-        const data = raw.map(r => this.computeGuideFields(r)); // <-- shared mapping
-        this.dataSource = data;
-        this.filteredData = [...data];
-        this.matTableDataSource = new MatTableDataSource(this.filteredData);
-        this.matTableDataSource.paginator = this.paginator;
-        this.matTableDataSource.sort = this.sort;
-        this.totalResults = data.length;
-      });
+    this.http.get<any[]>(environment.apiUrl + 'ApplicationsListDept/GetAll').subscribe(raw => {
+      const data = raw.map(r => this.computeGuideFields(r)); // your existing mapping
+      this.dataSource = data;
+      this.filteredData = [...data];
+      this.matTableDataSource.data = this.filteredData;
+      this.totalResults = data.length;
+      this.matTableDataSource.paginator = this.paginator;
+      this.matTableDataSource.sort = this.sort;
+  
+      this.computeStats(); // <-- add
+      this.computeMissingStats(); // update counters
+
+    });
   }
+  
   /** One place to compute guideUrl/guideLabel (and icon) */
 private computeGuideFields(r: any) {
   const guides = r.Guides || '';
@@ -94,7 +106,7 @@ private computeGuideFields(r: any) {
 private iconForExt(ext: string) {
   if (ext === 'pdf') return '../../../assets/pdf.png';
   if (ext === 'doc' || ext === 'docx') return '../../../assets/word.png';
-  return 'assets/icons/file.svg';
+  return '';
 }
   private createFilterForm(): FormGroup {
     const formControls: { [key: string]: FormControl } = {};
@@ -114,6 +126,10 @@ private iconForExt(ext: string) {
 
     this.totalResults = this.filteredData.length;
     this.matTableDataSource.data = this.filteredData;
+    this.computeStats(); // <-- add
+    this.computeMissingStats(); // update counters
+
+
   }
 
   resetFilters(): void {
@@ -183,5 +199,50 @@ private iconForExt(ext: string) {
       default: return column;
     }
   }
+
+  private computeStats() {
+    // totals across ALL data
+    this.totalApps = this.dataSource.length;
+    this.appsWithGuides = this.dataSource.filter(x =>
+      !!(x.guides || x.Guides) || !!x.guideUrl
+    ).length;
+  
+    // totals for CURRENT filtered view
+    this.filteredApps = this.filteredData.length;
+    this.filteredWithGuides = this.filteredData.filter(x =>
+      !!(x.guides || x.Guides) || !!x.guideUrl
+    ).length;
+  }
+  private computeMissingFields(r: any): string[] {
+    const m: string[] = [];
+    if (!(`${r.PrimaryReference || ''}`.trim())) m.push('רפרנט ראשי');
+    if (!(`${r.Phones || ''}`.trim()))          m.push('טלפונים');
+    if (!(`${r.companyName || ''}`.trim()))     m.push('חברה');
+    if (!(`${r.AppDescription || ''}`.trim()))  m.push('הסבר על המערכת');
+    return m;
+  }
+  
+  private decorateRow(r: any) {
+    const _missing = this.computeMissingFields(r);
+    return { ...r, _missing };
+  }
+  
+  private computeMissingStats(): void {
+    this.missingTotal = this.dataSource.filter(r => this.hasMissing(r)).length;
+  }
+
+  // treat empty/null/placeholder values as missing
+private isEmpty(v: any): boolean {
+  const s = `${v ?? ''}`.replace(/\u00A0/g, ' ').trim(); // handles &nbsp;
+  return s === '' || s === '-' || s === '—' || s.toLowerCase() === 'null' || s.toLowerCase() === 'undefined';
+}
+
+// does a row miss at least one required field?
+private hasMissing(r: any): boolean {
+  return this.isEmpty(r.PrimaryReference)
+      || this.isEmpty(r.Phones)
+      || this.isEmpty(r.companyName)
+      || this.isEmpty(r.AppDescription);
+}
 }
 

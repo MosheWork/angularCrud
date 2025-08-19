@@ -1,13 +1,37 @@
 <div class="body">
+  <!-- 📊 Stats -->
+<div class="stats-cards" dir="rtl">
+  <mat-card class="stat">
+    <div class="stat-value">{{ totalApps }}</div>
+    <div class="stat-label">סה״כ יישומים</div>
+  </mat-card>
+
+  <mat-card class="stat">
+    <div class="stat-value">{{ appsWithGuides }}</div>
+    <div class="stat-label">יישומים עם מדריך</div>
+    <div class="stat-sub">
+      {{ (appsWithGuides / (totalApps || 1) * 100) | number:'1.0-0' }}%
+    </div>
+  </mat-card>
+  <mat-card class="stat">
+    <div class="stat-value">{{ missingTotal }}</div>
+    <div class="stat-label">אפליקציות עם מידע חסר</div>
+    <div class="stat-sub">
+      מתוך {{ totalApps }} ({{ (missingTotal / (totalApps || 1) * 100) | number:'1.0-0' }}%)
+    </div>
+  </mat-card>
+</div>
+
     <!-- 🔍 Filter + Actions Form -->
     <form [formGroup]="filterForm" dir="rtl" class="filter-form">
       <div class="form-footer">
         <!-- Global Filter -->
-        <mat-form-field class="long-search-bar">
+        <mat-form-field class="long-search-bar" appearance="fill">
           <mat-label>חיפוש</mat-label>
           <input matInput [formControlName]="'globalFilter'" />
         </mat-form-field>
-  
+
+        
         <!-- Reset Filters -->
         <button mat-raised-button color="primary" (click)="resetFilters()" matTooltip="איפוס סינונים">
           <i class="material-icons">refresh</i>
