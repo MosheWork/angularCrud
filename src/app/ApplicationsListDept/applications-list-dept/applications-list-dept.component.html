@@ -38,15 +38,16 @@
         <mat-cell *matCellDef="let element" [ngClass]="column + '-col'">
           <ng-container [ngSwitch]="column">
     
-            <!-- Single guide link -->
-            <ng-container *ngSwitchCase="'Guides'">
-              <a *ngIf="element.guideUrl; else noGuide"
-                 [href]="element.guideUrl" target="_blank" rel="noopener">
-                {{ element.guideLabel }}
-              </a>
-              <ng-template #noGuide>—</ng-template>
-            </ng-container>
-            
+      <!-- Guides column -->
+<ng-container *ngSwitchCase="'Guides'">
+  <a *ngIf="element.guideUrl; else noGuide"
+     [href]="element.guideUrl" target="_blank" rel="noopener"
+     class="guide-link">
+    <img [src]="element.guideIcon" class="doc-icon" alt="" />
+    <span class="visually-hidden">{{ element.guideLabel }}</span>
+  </a>
+  <ng-template #noGuide>—</ng-template>
+</ng-container>
     
             <!-- Default text -->
             <ng-container *ngSwitchDefault>

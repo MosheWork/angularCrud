@@ -10,6 +10,8 @@ import { environment } from '../../../environments/environment';
 import { ApplicationsListDeptDialogComponent } from '../applications-list-dept-dialog/applications-list-dept-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
 
+
+
 @Component({
   selector: 'app-applications-list-dept',
   templateUrl: './applications-list-dept.component.html',
@@ -45,49 +47,55 @@ export class ApplicationsListDeptComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.http.get<any[]>(environment.apiUrl + 'ApplicationsListDept/GetAll').subscribe(data => {
-      this.dataSource = data;
-      this.filteredData = [...data];
-      this.matTableDataSource = new MatTableDataSource(this.filteredData);
-      this.matTableDataSource.paginator = this.paginator;
-      this.matTableDataSource.sort = this.sort;
-      this.totalResults = data.length;
-
-      this.filterForm.valueChanges
-        .pipe(debounceTime(300), distinctUntilChanged())
-        .subscribe(() => this.applyFilters());
-    });
+    this.fetchData(); // <- do the mapped load
+  
+    // set up reactive filters once
+    this.filterForm.valueChanges
+      .pipe(debounceTime(300), distinctUntilChanged())
+      .subscribe(() => this.applyFilters());
   }
-
+  
   fetchData(): void {
-    this.http.get<any[]>(environment.apiUrl + 'ApplicationsListDept/GetAll').subscribe(raw => {
-      // מוסיפים לכל שורה: guideUrl (לינק פתיחה) ו-guideLabel (שם לתצוגה)
-      const data = raw.map(r => {
-        const guides = r.Guides || '';
-        const isAbsolute = /^https?:\/\//i.test(guides);
-        const guideUrl = guides
-          ? (isAbsolute
-              ? guides
-              : `${environment.apiUrl}ApplicationsListDept/Guide?fileName=${encodeURIComponent(guides)}`)
-          : '';
-  
-        const lastSeg = (guides.split('/').pop() || guides);
-        let guideLabel: string;
-        try { guideLabel = decodeURIComponent(lastSeg); } catch { guideLabel = lastSeg; }
-  
-        return { ...r, guideUrl, guideLabel };
+    this.http.get<any[]>(environment.apiUrl + 'ApplicationsListDept/GetAll')
+      .subscribe(raw => {
+        const data = raw.map(r => this.computeGuideFields(r)); // <-- shared mapping
+        this.dataSource = data;
+        this.filteredData = [...data];
+        this.matTableDataSource = new MatTableDataSource(this.filteredData);
+        this.matTableDataSource.paginator = this.paginator;
+        this.matTableDataSource.sort = this.sort;
+        this.totalResults = data.length;
       });
-  
-      this.dataSource = data;
-      this.filteredData = [...data];
-      this.matTableDataSource.data = this.filteredData;
-      this.totalResults = data.length;
-      this.matTableDataSource.paginator = this.paginator;
-      this.matTableDataSource.sort = this.sort;
-    });
   }
-  
-  
+  /** One place to compute guideUrl/guideLabel (and icon) */
+private computeGuideFields(r: any) {
+  const guides = r.Guides || '';
+  const isAbsolute = /^https?:\/\//i.test(guides);
+
+  const guideUrl = guides
+    ? (isAbsolute
+        ? guides
+        : `${environment.apiUrl}ApplicationsListDept/Guide?fileName=${encodeURIComponent(guides)}`)
+    : '';
+
+  const lastSeg = (guides.split('/').pop() || guides);
+  let guideLabel: string;
+  try { guideLabel = decodeURIComponent(lastSeg); } catch { guideLabel = lastSeg; }
+
+  const ext = (lastSeg.split('.').pop() || '').toLowerCase();
+  const guideIcon = this.iconForExt(ext);
+
+  // (optional) display AppName as label instead of filename
+  const displayLabel = r.AppName || guideLabel;
+
+  return { ...r, guideUrl, guideLabel: displayLabel, guideIcon, _guideExt: ext };
+}
+
+private iconForExt(ext: string) {
+  if (ext === 'pdf') return '../../../assets/pdf.png';
+  if (ext === 'doc' || ext === 'docx') return '../../../assets/word.png';
+  return 'assets/icons/file.svg';
+}
   private createFilterForm(): FormGroup {
     const formControls: { [key: string]: FormControl } = {};
     this.columns.forEach(col => formControls[col] = new FormControl(''));

@@ -40,3 +40,10 @@
     overflow: hidden;
     text-overflow: ellipsis;
   }
+
+  .doc-icon { width: 20px; height: 20px; vertical-align: middle; }
+.guide-link { display: inline-flex; align-items: center; gap: .25rem; }
+.visually-hidden {
+  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0;
+}
