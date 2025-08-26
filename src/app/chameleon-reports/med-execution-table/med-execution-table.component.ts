@@ -390,17 +390,18 @@ aggregatedDisplayedColumns: string[] = [
     // 🔹 Fetch data for Aggregated Table
     this.http.get<AggregatedMedExecutionModel[]>(`${environment.apiUrl}MedExecutionAPI/GetAggregatedData`, { params }).subscribe(
       data => {
-        this.aggregatedData = data.map(item => ({
-          Unit_Satellite_Name: item.Unit_Satellite_Name,
-          Generic_Name_ForDisplay: item.Generic_Name_ForDisplay,
-          Way_Of_Giving: item.Way_Of_Giving,
-          Dosage_Unit_InOrder: item.Dosage_Unit_InOrder,
-          Dosage_InOrder: item.Dosage_InOrder,
-          Count_Dosage_InOrder: item.Count_Dosage_InOrder,
-          Sum_Dosage_InOrder2: item.Sum_Dosage_InOrder2
-        })); // ✅ Ensure correct data structure
-    
-        this.aggregatedDataSource.data = [...this.aggregatedData]; // ✅ Correct assignment
+      // after the GET to GetAggregatedData
+this.aggregatedData = data.map((item: any) => ({
+  Unit_Satellite_Name: item.Unit_Satellite_Name ?? item.unit_Satellite_Name,
+  Generic_Name_ForDisplay: item.Generic_Name_ForDisplay ?? item.generic_Name_ForDisplay,
+  Way_Of_Giving: item.Way_Of_Giving ?? item.way_Of_Giving,
+  Dosage_Unit_InOrder: item.Dosage_Unit_InOrder ?? item.dosage_Unit_InOrder,
+  Dosage_InOrder: item.Dosage_InOrder ?? item.dosage_InOrder,
+  Count_Dosage_InOrder: item.Count_Dosage_InOrder ?? item.count_Dosage_InOrder,
+  Sum_Dosage_InOrder2: item.Sum_Dosage_InOrder2 ?? item.sum_Dosage_InOrder2,
+}));
+this.aggregatedDataSource.data = [...this.aggregatedData];
+
       },
       error => {
         console.error('Error loading aggregated data:', error);

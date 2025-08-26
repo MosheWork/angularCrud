@@ -112,51 +112,51 @@
   <mat-table *ngIf="!showGraph && !loading" [dataSource]="dataSource" matSort dir="rtl" class="mat-elevation-z8">
     <ng-container matColumnDef="Basic_Name">
       <mat-header-cell *matHeaderCellDef mat-sort-header>שם תרופה</mat-header-cell>
-      <mat-cell *matCellDef="let element"> {{ element.Basic_Name }} </mat-cell>
+      <mat-cell *matCellDef="let element"> {{ element.basic_Name }} </mat-cell>
     </ng-container>
     <ng-container matColumnDef="Drug">
       <mat-header-cell *matHeaderCellDef mat-sort-header>קוד התרופה</mat-header-cell>
-      <mat-cell *matCellDef="let element"> {{ element.Drug }} </mat-cell>
+      <mat-cell *matCellDef="let element"> {{ element.drug }} </mat-cell>
     </ng-container>
     <ng-container matColumnDef="Execution_Date">
       <mat-header-cell *matHeaderCellDef mat-sort-header>תאריך ביצוע</mat-header-cell>
-      <mat-cell *matCellDef="let element"> {{ element.Execution_Date | date: 'dd-MM-yyyy HH:mm' }} </mat-cell>
+      <mat-cell *matCellDef="let element"> {{ element.execution_Date | date: 'dd-MM-yyyy HH:mm' }} </mat-cell>
     </ng-container>
     <ng-container matColumnDef="Category_Name">
       <mat-header-cell *matHeaderCellDef mat-sort-header> קטגוריה</mat-header-cell>
-      <mat-cell *matCellDef="let element"> {{ element.Category_Name }} </mat-cell>
+      <mat-cell *matCellDef="let element"> {{ element.category_Name }} </mat-cell>
     </ng-container>
     <ng-container matColumnDef="Execution_UnitName">
       <mat-header-cell *matHeaderCellDef mat-sort-header>שם יחידת ביצוע</mat-header-cell>
-      <mat-cell *matCellDef="let element"> {{ element.Execution_UnitName }} </mat-cell>
+      <mat-cell *matCellDef="let element"> {{ element.execution_UnitName }} </mat-cell>
     </ng-container>
     <ng-container matColumnDef="Generic_Name_ForDisplay">
       <mat-header-cell *matHeaderCellDef mat-sort-header>שם גנרי</mat-header-cell>
-      <mat-cell *matCellDef="let element"> {{ element.Generic_Name_ForDisplay }} </mat-cell>
+      <mat-cell *matCellDef="let element"> {{ element.generic_Name_ForDisplay }} </mat-cell>
     </ng-container>
     <ng-container matColumnDef="Dosage_InOrder">
       <mat-header-cell *matHeaderCellDef mat-sort-header>מינון </mat-header-cell>
-      <mat-cell *matCellDef="let element"> {{ element.Dosage_InOrder }} </mat-cell>
+      <mat-cell *matCellDef="let element"> {{ element.dosage_InOrder }} </mat-cell>
     </ng-container>
     <ng-container matColumnDef="Dosage_Unit_InOrder">
       <mat-header-cell *matHeaderCellDef mat-sort-header>יחידת מינון </mat-header-cell>
-      <mat-cell *matCellDef="let element"> {{ element.Dosage_Unit_InOrder }} </mat-cell>
+      <mat-cell *matCellDef="let element"> {{ element.dosage_Unit_InOrder }} </mat-cell>
     </ng-container>
     <ng-container matColumnDef="Way_Of_Giving">
       <mat-header-cell *matHeaderCellDef mat-sort-header>דרך מתן</mat-header-cell>
-      <mat-cell *matCellDef="let element"> {{ element.Way_Of_Giving }} </mat-cell>
+      <mat-cell *matCellDef="let element"> {{ element.way_Of_Giving }} </mat-cell>
     </ng-container>
     <ng-container matColumnDef="Id_Num">
       <mat-header-cell *matHeaderCellDef mat-sort-header> תעודת זהות</mat-header-cell>
-      <mat-cell *matCellDef="let element"> {{ element.Id_Num }} </mat-cell>
+      <mat-cell *matCellDef="let element"> {{ element.id_Num }} </mat-cell>
     </ng-container>
     <ng-container matColumnDef="Full_Name">
       <mat-header-cell *matHeaderCellDef mat-sort-header>שם מלא</mat-header-cell>
-      <mat-cell *matCellDef="let element"> {{ element.Full_Name }} </mat-cell>
+      <mat-cell *matCellDef="let element"> {{ element.full_Name }} </mat-cell>
     </ng-container>
     <ng-container matColumnDef="Unit_Satellite_Name">
       <mat-header-cell *matHeaderCellDef mat-sort-header>מחלקת לווין </mat-header-cell>
-      <mat-cell *matCellDef="let element"> {{ element.Unit_Satellite_Name }} </mat-cell>
+      <mat-cell *matCellDef="let element"> {{ element.unit_Satellite_Name }} </mat-cell>
     </ng-container>
     <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
     <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
@@ -169,38 +169,53 @@
     <div class="icon" matTooltip="Download Aggregated Excel">
       <img src="../../assets/excel.png" alt="Download" (click)="exportToExcel2()" class="download-icon" />
     </div>
-    <mat-table *ngIf="!loading" [dataSource]="aggregatedDataSource" matSort dir="rtl" class="mat-elevation-z8">
+    <mat-table *ngIf="!loading" [dataSource]="aggregatedDataSource" matSort dir="rtl" class="mat-elevation-z8" #aggSort="matSort">
       <ng-container matColumnDef="Unit_Satellite_Name">
         <mat-header-cell *matHeaderCellDef mat-sort-header>מחלקת לווין</mat-header-cell>
-        <mat-cell *matCellDef="let element"> {{ element.Unit_Satellite_Name }} </mat-cell>
+        <mat-cell *matCellDef="let element">{{ element.Unit_Satellite_Name }}</mat-cell>
       </ng-container>
+    
       <ng-container matColumnDef="Generic_Name_ForDisplay">
         <mat-header-cell *matHeaderCellDef mat-sort-header>שם תרופה גנרי</mat-header-cell>
-        <mat-cell *matCellDef="let element"> {{ element.Generic_Name_ForDisplay }} </mat-cell>
+        <mat-cell *matCellDef="let element">{{ element.Generic_Name_ForDisplay }}</mat-cell>
       </ng-container>
+    
       <ng-container matColumnDef="Way_Of_Giving">
         <mat-header-cell *matHeaderCellDef mat-sort-header>סוג מתן</mat-header-cell>
-        <mat-cell *matCellDef="let element"> {{ element.Way_Of_Giving }} </mat-cell>
+        <mat-cell *matCellDef="let element">{{ element.Way_Of_Giving }}</mat-cell>
       </ng-container>
+    
       <ng-container matColumnDef="Dosage_Unit_InOrder">
         <mat-header-cell *matHeaderCellDef mat-sort-header>Dosage Unit</mat-header-cell>
-        <mat-cell *matCellDef="let element"> {{ element.Dosage_Unit_InOrder }} </mat-cell>
+        <mat-cell *matCellDef="let element">{{ element.Dosage_Unit_InOrder }}</mat-cell>
       </ng-container>
+    
       <ng-container matColumnDef="Dosage_InOrder">
         <mat-header-cell *matHeaderCellDef mat-sort-header>Dosage In Order</mat-header-cell>
-        <mat-cell *matCellDef="let element"> {{ element.Dosage_InOrder }} </mat-cell>
+        <mat-cell *matCellDef="let element">{{ element.Dosage_InOrder }}</mat-cell>
       </ng-container>
+    
       <ng-container matColumnDef="Count_Dosage_InOrder">
         <mat-header-cell *matHeaderCellDef mat-sort-header>Count Dosage</mat-header-cell>
-        <mat-cell *matCellDef="let element"> {{ element.Count_Dosage_InOrder }} </mat-cell>
+        <mat-cell *matCellDef="let element">{{ element.Count_Dosage_InOrder }}</mat-cell>
       </ng-container>
+    
       <ng-container matColumnDef="Sum_Dosage_InOrder2">
         <mat-header-cell *matHeaderCellDef mat-sort-header>Sum Dosage</mat-header-cell>
-        <mat-cell *matCellDef="let element"> {{ element.Sum_Dosage_InOrder2 }} </mat-cell>
+        <mat-cell *matCellDef="let element">{{ element.Sum_Dosage_InOrder2 }}</mat-cell>
       </ng-container>
+    
       <mat-header-row *matHeaderRowDef="aggregatedDisplayedColumns"></mat-header-row>
       <mat-row *matRowDef="let row; columns: aggregatedDisplayedColumns;"></mat-row>
     </mat-table>
+    
+    <mat-paginator
+      [length]="aggregatedDataSource.data.length"
+      [pageSize]="10"
+      [pageSizeOptions]="[10, 25, 50]"
+      #aggregatedPaginator>
+    </mat-paginator>
+    
     <mat-paginator [length]="aggregatedDataSource.data.length" [pageSize]="10" [pageSizeOptions]="[10, 25, 50]" #aggregatedPaginator></mat-paginator>
   </mat-tab>
 </mat-tab-group>
