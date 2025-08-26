@@ -1,0 +1,82 @@
+<div class="wrap">
+    <!-- Single-symbol console -->
+    <div class="card">
+      <h3>Interactive Brokers — Single Quote & Trade</h3>
+  
+      <div class="row">
+        <div class="col">
+          <label>Symbol</label>
+          <input [formControl]="form.controls.symbol" placeholder="AAPL" />
+        </div>
+        <div class="col">
+          <label>Qty</label>
+          <input type="number" [formControl]="form.controls.quantity" min="1" />
+        </div>
+        <div class="col">
+          <label>Side</label>
+          <select [formControl]="form.controls.side">
+            <option>BUY</option>
+            <option>SELL</option>
+          </select>
+        </div>
+        <div class="col actions">
+          <button (click)="startQuote()">Start Quote</button>
+          <button (click)="stopQuote()">Stop</button>
+          <button (click)="placeOrder()" [disabled]="placing || !form.controls.symbol.value">Place Order</button>
+        </div>
+      </div>
+  
+      <div class="muted" *ngIf="reqId">reqId: {{ reqId }}</div>
+  
+      <div class="quote" *ngIf="quote">
+        <div><b>Bid:</b> {{ quote.bid ?? '—' }}</div>
+        <div><b>Ask:</b> {{ quote.ask ?? '—' }}</div>
+        <div><b>Last:</b> {{ quote.last ?? '—' }}</div>
+      </div>
+  
+      <div class="msg">{{ message }}</div>
+    </div>
+  
+    <!-- Multi-symbol live table -->
+    <div class="card">
+      <h3>Live Quotes Table</h3>
+  
+      <div class="row">
+        <div class="col grow">
+          <label>Symbols (comma separated)</label>
+          <input [formControl]="symbolsCtrl" placeholder="AAPL,MSFT,GOOG,AMZN,TSLA" />
+        </div>
+        <div class="col actions">
+          <button (click)="startTable()">Start</button>
+          <button (click)="stopTable()">Stop</button>
+        </div>
+      </div>
+  
+      <table class="table" *ngIf="rows.length">
+        <thead>
+          <tr>
+            <th>Symbol</th>
+            <th>Bid</th>
+            <th>Ask</th>
+            <th>Last</th>
+            <th>Trade</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let r of rows">
+            <td>{{ symbolFor(r.reqId) }}</td>
+            <td>{{ r.bid ?? '—' }}</td>
+            <td>{{ r.ask ?? '—' }}</td>
+            <td>{{ r.last ?? '—' }}</td>
+            <td class="trade">
+              <button (click)="buy(symbolFor(r.reqId))">Buy 1</button>
+              <button (click)="sell(symbolFor(r.reqId))">Sell 1</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+  
+      <div *ngIf="!rows.length" class="muted">No rows yet — click Start.</div>
+    </div>
+  </div>
+  

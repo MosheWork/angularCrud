@@ -1,0 +1,79 @@
+.wrap {
+    padding: 16px;
+    max-width: 1000px;
+    margin: 0 auto;
+  }
+  
+  .card {
+    border-radius: 12px;
+    padding: 16px;
+    box-shadow: 0 2px 8px rgba(0,0,0,.08);
+    background: #fff;
+    margin-bottom: 16px;
+  }
+  
+  .row {
+    display: flex;
+    gap: 12px;
+    align-items: flex-end;
+    flex-wrap: wrap;
+  }
+  
+  .col {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  
+    &.grow { flex: 1; min-width: 280px; }
+  }
+  
+  .actions {
+    display: flex;
+    gap: 8px;
+  }
+  
+  input, select {
+    padding: 8px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    min-width: 120px;
+  }
+  
+  button {
+    padding: 8px 14px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    background: #fafafa;
+    cursor: pointer;
+    transition: transform .04s ease;
+    &:active { transform: translateY(1px); }
+  }
+  
+  .muted { opacity: .7; margin-top: 8px; }
+  
+  .quote {
+    display: flex; gap: 18px; margin-top: 8px;
+  }
+  
+  .msg {
+    margin-top: 12px;
+    color: #0a7;
+  }
+  
+  .table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+  
+    th, td {
+      border: 1px solid #e5e5e5;
+      padding: 8px;
+      text-align: left;
+    }
+  
+    td.trade {
+      white-space: nowrap;
+      button { margin-right: 6px; }
+    }
+  }
+  
