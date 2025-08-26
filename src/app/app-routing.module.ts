@@ -100,6 +100,7 @@ import { MedicationReconciliationComponent } from './chameleon-reports/medicatio
 import { ApplicationsListDeptComponent } from './ApplicationsListDept/applications-list-dept/applications-list-dept.component';
 import { MainSurgeryComponent } from './chameleon-reports/main-surgery/main-surgery.component';
 import { InteractivebrokersComponent } from './interactivebrokers/interactivebrokers.component';
+import { OnlineLogsComponent } from './online-logs/online-logs.component';
 
 const routes: Routes = [
   { path: 'users', component: UsersComponent },
@@ -248,7 +249,12 @@ const routes: Routes = [
 
 
 //משה אינטראקטיב
-{ path: 'interactivebrokers', component: InteractivebrokersComponent , data: { title: 'interactivebrokers ' }}
+{ path: 'interactivebrokers', component: InteractivebrokersComponent , data: { title: 'interactivebrokers ' }},
+// משה לוגים
+{ path: 'OnlineLogs', component: OnlineLogsComponent, data: { title: 'לוגים אונליין' } }
+
+
+
 
 ];
 

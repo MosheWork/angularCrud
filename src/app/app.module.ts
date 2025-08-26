@@ -191,6 +191,7 @@ import { MainSurgeryComponent } from './chameleon-reports/main-surgery/main-surg
 import { MainSurgeryDialogComponent } from './chameleon-reports/main-surgery/main-surgery-dialog/main-surgery-dialog.component';
 import { WelcomeSplashComponent } from './chameleon-reports/main-surgery/welcome-splash/welcome-splash.component';
 import { InteractivebrokersComponent } from './interactivebrokers/interactivebrokers.component';
+import { OnlineLogsComponent } from './online-logs/online-logs.component';
 
 
 export const MY_DATE_FORMATS: MatDateFormats = {
@@ -358,7 +359,9 @@ export function playerFactory() {
     MainSurgeryComponent,
     MainSurgeryDialogComponent,
     WelcomeSplashComponent,
-    InteractivebrokersComponent
+    InteractivebrokersComponent,
+    OnlineLogsComponent
+ 
 
   
   ],
