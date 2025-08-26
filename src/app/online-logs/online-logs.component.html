@@ -1,14 +1,10 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
 
 <div class="body">
-  <!-- Title (same classes) -->
-  <div class="nine">
-    <h1>{{ titleUnit }}<span>{{ Title1 }}{{ Title2 }}{{ totalResults }}</span></h1>
-  </div>
 
 <!-- כרטיס גרף Top-5 -->
-<mat-card class="chart-card mat-elevation-z4" dir="rtl">
-    <div class="chart-header">
+<mat-card class="chart-card" dir="rtl">
+    <div class="chart-card__head">
       <div class="chart-title">Top-5 Routes</div>
       <mat-button-toggle-group [value]="period" (change)="periodChanged($event.value)">
         <mat-button-toggle value="today">היום</mat-button-toggle>

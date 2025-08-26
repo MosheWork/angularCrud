@@ -319,27 +319,47 @@ margin-bottom: 50px;
     align-items: stretch;
   }
   .chart-card {
-    margin: 16px 0;
-    padding: 12px 16px;
-    border-radius: 12px;
+    background: color-mix(in srgb, var(--mat-card-background, #fff) 88%, #d4a373); // גוון חמים עדין
+    border: 1px solid rgba(0, 0, 0, .08);
+    border-radius: 16px;
+    padding: 12px;
+    box-shadow: 0 2px 10px rgba(0,0,0,.04);
   
-    .chart-header {
+    &__head {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 12px;
-      margin-bottom: 8px;
+      gap: .5rem;
+      margin-bottom: .5rem;
+    }
   
-      .chart-title {
-        font-size: 18px;
-        font-weight: 600;
+    &__title {
+      font-weight: 700;
+      font-size: 1.1rem;
+      color: var(--mat-app-text-color, #1f2937);
+    }
+  
+    &__switch {
+      display: flex;
+      gap: .5rem;
+  
+      ::ng-deep .mat-mdc-stroked-button {
+        border-radius: 10px;
+        padding-inline: .9rem;
+        height: 34px;
+        line-height: 34px;
       }
     }
   
-    .chart-wrapper {
+    &__body {
       position: relative;
-      height: 320px;  // שומר יחס טוב
-      width: 100%;
+      height: 360px; // שיהיה נוח
     }
   }
+  
+  /* RTL עידון לטקסט בתוך ה-Tooltip של Chart.js */
+  :host {
+    direction: rtl;
+  }
+  
   

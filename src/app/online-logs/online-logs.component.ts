@@ -282,50 +282,90 @@ export class OnlineLogsComponent implements OnInit {
       .sort((a, b) => b.hits - a.hits)
       .slice(0, n);
   }
+  // call this after data is ready and ViewChild exists
   private rebuildChart(): void {
-    // להבטיח שיש קנבס בדום
     if (!this.topChartCanvas) return;
-
+  
     const top = this.getTopRoutesForPeriod(5, this.period);
     const labels = top.map(x => x.route);
     const data = top.map(x => x.hits);
-
-    // ניקוי גרף קודם
-    if (this.chartRef) {
-      this.chartRef.destroy();
-      this.chartRef = null;
-    }
-
+  
+    const primary    = this.getCssVar('--mdc-theme-primary', '#1976d2');
+    const textColor  = this.getCssVar('--mat-app-text-color', this.isDark() ? '#e5e7eb' : '#1f2937');
+    const gridColor  = this.isDark() ? 'rgba(255,255,255,.12)' : 'rgba(0,0,0,.08)';
+  
+    Chart.defaults.font = { family: 'Heebo, "Segoe UI", Arial, sans-serif', size: 12 };
+    Chart.defaults.color = textColor;
+    Chart.defaults.locale = 'he-IL';
+  
+    if (this.chartRef) { this.chartRef.destroy(); this.chartRef = null; }
+  
     this.chartRef = new Chart(this.topChartCanvas.nativeElement.getContext('2d')!, {
       type: 'bar',
       data: {
         labels,
         datasets: [{
-          label: this.period === 'today' ? 'היום'
-               : this.period === 'month' ? 'החודש'
-               : 'כל הזמנים',
-          data
-          // בלי צבעים מיוחדים – Chart.js יבחר ברירת־מחדל
+          label: this.period === 'today' ? 'היום' : this.period === 'month' ? 'החודש' : 'כל הזמנים',
+          data,
+          backgroundColor: primary + (primary.startsWith('#') ? 'cc' : ''),
+          hoverBackgroundColor: primary,
+          borderWidth: 0,
+          borderSkipped: false,
+          borderRadius: 8,
+          barPercentage: 0.7,
+          categoryPercentage: 0.8
         }]
       },
       options: {
         responsive: true,
         maintainAspectRatio: false,
+        locale: 'he-IL',
+        layout: { padding: { top: 8, right: 6, bottom: 2, left: 6 } },
         plugins: {
-          legend: { display: false },
-          tooltip: { enabled: true }
+          // ❌ remove labels.rtl (not typed) — keep point style only
+          legend: { display: false, labels: { usePointStyle: true } },
+          tooltip: {
+            rtl: true,                                // ✔ tooltip supports rtl
+            backgroundColor: this.isDark() ? '#111827' : '#ffffff',
+            titleColor: this.isDark() ? '#e5e7eb' : '#111827',
+            bodyColor:  this.isDark() ? '#e5e7eb' : '#111827',
+            borderColor: gridColor,
+            borderWidth: 1,
+            displayColors: false,
+            padding: 10,
+            callbacks: { label: (ctx) => `  ${ctx.parsed.y?.toLocaleString('he-IL') ?? 0} בקשות` }
+          }
         },
         scales: {
-          x: { ticks: { autoSkip: false } },
-          y: { beginAtZero: true, ticks: { precision: 0 } }
+          x: {
+            // ❌ drawBorder moved — use scale.border.display instead
+            grid:   { color: gridColor },
+            border: { display: false },
+            ticks:  { maxRotation: 0, autoSkip: false, font: { weight: 500 } } // number, not '500'
+          },
+          y: {
+            beginAtZero: true,
+            grid:   { color: gridColor },
+            border: { display: false },
+            ticks:  { precision: 0, stepSize: 1 }
+          }
         }
       }
     });
   }
+  
 
   periodChanged(next: Period) {
     this.period = next;
     this.rebuildChart();
   }
-
+  // ---- helpers to read Material theme colors / detect dark ----
+  private getCssVar(name: string, fallback: string): string {
+    const v = getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+    return v || fallback;
+  }
+  private isDark(): boolean {
+    return document.documentElement.classList.contains('dark')
+      || (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
+  }
 }
