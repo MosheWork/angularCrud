@@ -70,43 +70,43 @@
     <!-- ICD9 Column -->
     <ng-container matColumnDef="ICD9">
       <mat-header-cell *matHeaderCellDef mat-sort-header> קוד ICD9 </mat-header-cell>
-      <mat-cell *matCellDef="let element"> {{ element.ICD9 }} </mat-cell>
+      <mat-cell *matCellDef="let element"> {{ element.icD9 }} </mat-cell>
     </ng-container>
 
     <!-- Name Column -->
     <ng-container matColumnDef="Name">
       <mat-header-cell *matHeaderCellDef mat-sort-header> שם </mat-header-cell>
-      <mat-cell *matCellDef="let element"> {{ element.Name }} </mat-cell>
+      <mat-cell *matCellDef="let element"> {{ element.name }} </mat-cell>
     </ng-container>
 
     <!-- Admission_No Column -->
     <ng-container matColumnDef="AdmissionNo">
       <mat-header-cell *matHeaderCellDef mat-sort-header> מספר אשפוז </mat-header-cell>
-      <mat-cell *matCellDef="let element"> {{ element.AdmissionNo }} </mat-cell>
+      <mat-cell *matCellDef="let element"> {{ element.admissionNo }} </mat-cell>
     </ng-container>
 
     <!-- First_Name Column -->
     <ng-container matColumnDef="FirstName">
       <mat-header-cell *matHeaderCellDef mat-sort-header> שם פרטי </mat-header-cell>
-      <mat-cell *matCellDef="let element"> {{ element.FirstName }} </mat-cell>
+      <mat-cell *matCellDef="let element"> {{ element.firstName }} </mat-cell>
     </ng-container>
 
     <!-- Last_Name Column -->
     <ng-container matColumnDef="LastName">
       <mat-header-cell *matHeaderCellDef mat-sort-header> שם משפחה </mat-header-cell>
-      <mat-cell *matCellDef="let element"> {{ element.LastName }} </mat-cell>
+      <mat-cell *matCellDef="let element"> {{ element.lastName }} </mat-cell>
     </ng-container>
 
     <!-- Id_Num Column -->
     <ng-container matColumnDef="IdNum">
       <mat-header-cell *matHeaderCellDef mat-sort-header> ת.ז. </mat-header-cell>
-      <mat-cell *matCellDef="let element"> {{ element.IdNum }} </mat-cell>
+      <mat-cell *matCellDef="let element"> {{ element.idNum }} </mat-cell>
     </ng-container>
 
     <!-- Entry_Date Column (Formatted Date) -->
     <ng-container matColumnDef="EntryDate">
       <mat-header-cell *matHeaderCellDef mat-sort-header> תאריך כניסה </mat-header-cell>
-      <mat-cell *matCellDef="let element"> {{ element.EntryDate | date: 'dd/MM/yyyy' }} </mat-cell>
+      <mat-cell *matCellDef="let element"> {{ element.entryDate | date: 'dd/MM/yyyy' }} </mat-cell>
     </ng-container>
 
     <!-- Table Header Row Definition -->
