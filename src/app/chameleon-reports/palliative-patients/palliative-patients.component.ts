@@ -65,7 +65,7 @@ export class PalliativePatientsComponent implements OnInit {
   getColumnLabel(column: string): string {
     const columnLabels: Record<string, string> = {
       FirstName: 'שם פרטי',
-      LastName: 'שם משפחה',
+      lastName: 'שם משפחה',
       IdNum: 'תעודת זהות',
       EntryDate: 'תאריך עדכון',
       ResultComboText: 'הגדרת חולה ',

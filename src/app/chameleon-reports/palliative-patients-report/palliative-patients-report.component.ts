@@ -34,25 +34,25 @@ export interface PalliativePatientsReportModel {
 })
 export class PalliativePatientsReportComponent implements OnInit, AfterViewInit {
   displayedColumns: string[] = [
-    'PatientName',
+    'patientName',
     'name',
-    'IdNum',
-    'AdmissionNo',
-    'AdmissionDate',
-    'ResultCognitive',
-    'ResultEntryDate',
+    'idNum',
+    'admissionNo',
+    'admissionDate',
+    'resultCognitive',
+    'resultEntryDate',
     //'DescriptionCognitive',
     //'DescriptionEntryDate'
   ];
 
   columnHeaders: { [key: string]: string } = {
-    PatientName: 'שם המטופל',
+    patientName: 'שם המטופל',
     name: 'מחלקה',
-    IdNum: 'תעודת זהות',
-    AdmissionNo: 'מספר מקרה',
-    AdmissionDate: 'תאריך קבלה',
-    ResultCognitive:'הגדרת החולה',
-    ResultEntryDate:'תאריך הגדרה',
+    idNum: 'תעודת זהות',
+    admissionNo: 'מספר מקרה',
+    admissionDate: 'תאריך קבלה',
+    resultCognitive:'הגדרת החולה',
+    resultEntryDate:'תאריך הגדרה',
     //DescriptionCognitive:'תיעוד רופא מלל חופשי',
     //DescriptionEntryDate:' תאריך התיעוד',
   };

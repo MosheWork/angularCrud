@@ -30,10 +30,10 @@
         <mat-header-cell *matHeaderCellDef mat-sort-header> שם אפליקציה </mat-header-cell>
         <mat-cell *matCellDef="let element">
           <ng-container *ngIf="element.isNew || element.isEditing; else displayAppName">
-            <input [(ngModel)]="element.AppName" placeholder="שם אפליקציה" />
+            <input [(ngModel)]="element.appName" placeholder="שם אפליקציה" />
           </ng-container>
           <ng-template #displayAppName>
-            {{ element.AppName }}
+            {{ element.appName }}
           </ng-template>
         </mat-cell>
       </ng-container>
@@ -43,10 +43,10 @@
         <mat-header-cell *matHeaderCellDef mat-sort-header> קישור </mat-header-cell>
         <mat-cell *matCellDef="let element">
           <ng-container *ngIf="element.isNew || element.isEditing; else displayLink">
-            <input [(ngModel)]="element.Link" placeholder="קישור" />
+            <input [(ngModel)]="element.link" placeholder="קישור" />
           </ng-container>
           <ng-template #displayLink>
-            <a [href]="element.Link" target="_blank">{{ element.Link }}</a>
+            <a [href]="element.link" target="_blank">{{ element.link }}</a>
           </ng-template>
         </mat-cell>
       </ng-container>
@@ -55,11 +55,11 @@
       <ng-container matColumnDef="Comments">
         <mat-header-cell *matHeaderCellDef mat-sort-header> הערות </mat-header-cell>
         <mat-cell *matCellDef="let element">
-          <ng-container *ngIf="element.isNew || element.isEditing; else displayComments">
-            <input [(ngModel)]="element.Comments" placeholder="הערות" />
+          <ng-container *ngIf="element.isNew || element.isEditing; else displaycomments">
+            <input [(ngModel)]="element.comments" placeholder="הערות" />
           </ng-container>
-          <ng-template #displayComments>
-            {{ element.Comments }}
+          <ng-template #displaycomments>
+            {{ element.comments }}
           </ng-template>
         </mat-cell>
       </ng-container>
