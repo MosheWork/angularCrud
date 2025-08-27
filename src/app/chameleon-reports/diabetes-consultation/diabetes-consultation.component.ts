@@ -89,28 +89,14 @@ icd9WithEstimationPercentage: number = 0;
   selectedSourceFilter: string = 'All'; // Temporary storage for selected toggle
 
   displayedColumnsDiabeticFootEstimation: string[] = [
-    'Admission_No',
-    'Admission_Date',
-    'Release_Date',
-    'Hospitalization_Patient',
-    'Admission_Medical_Record',
-    'Id_Num',
-    'First_Name',
-    'Last_Name',
-    'Grade',
-    'UnitName',
+    'Admission_No','Admission_Date','Release_Date','Hospitalization_Patient',
+    'Admission_Medical_Record','Id_Num','First_Name','Last_Name','Grade','UnitName'
   ];
+  
 
   sugerAbove180Columns: string[] = [
-    'Admission_No',
-    'Admission_Date',
-    'First_Name',
-    'Last_Name',
-    'Count_Above_180_Less_48h',
-    'Release_Date', 
-    'UnitName',
-    'LastTestResult',
-    'Age_Years'
+    'Admission_No','Admission_Date','First_Name','Last_Name','Count_Above_180_Less_48h',
+    'Release_Date','UnitName','LastTestResult','Age_Years'
   ];
   insulinColumns: string[] = [
     'Admission_No',
