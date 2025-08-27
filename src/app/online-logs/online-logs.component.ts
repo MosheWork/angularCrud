@@ -7,6 +7,8 @@ import { MatSort } from '@angular/material/sort';
 import * as XLSX from 'xlsx';
 import { environment } from '../../environments/environment';
 import { Chart } from 'chart.js/auto'; // ← Chart.js
+// +++ imports +++
+import { Router, Routes } from '@angular/router';
 
 interface RouteHitDto {
   Id?: number; id?: number;
@@ -34,7 +36,11 @@ interface RouteSummary {
   today: number;
   month: number;
   total: number;
+  // flags for UI
+  isMissing?: boolean; // מוגדר ברואטר אך ללא פגיעות
+  isUnknown?: boolean; // הופיע בטלמטריה אך לא קיים ברואטר
 }
+
 type Period = 'today' | 'month' | 'all';
 
 @Component({
@@ -48,6 +54,7 @@ export class OnlineLogsComponent implements OnInit {
   titleUnit = 'סטטיסטיקת ניווט לפי Route';
   Title1 = ' סה״כ תוצאות: ';
   Title2 = '';
+  missingRoutes: string[] = [];
 
   // main table
   displayedColumns: string[] = ['tsUtc', 'route', 'clientIp', 'host', 'userAgent'];
@@ -74,11 +81,7 @@ export class OnlineLogsComponent implements OnInit {
   topN = 5;
   top5: TopRoute[] = [];
 
-  constructor(private http: HttpClient, private fb: FormBuilder) {
-    this.filterForm = this.fb.group({
-      globalFilter: ['']
-    });
-  }
+
 
   ngOnInit(): void {
     this.fetchData();
@@ -141,6 +144,8 @@ export class OnlineLogsComponent implements OnInit {
         error: err => {
           console.error('Error loading route-hits', err);
           this.originalData = [];
+          this.missingRoutes = this.computeMissingRoutes();
+
           this.top5 = [];
           this.dataSourceCounts.data = [];
           this.applyFilters();
@@ -218,37 +223,52 @@ export class OnlineLogsComponent implements OnInit {
   // ---------- Summaries (today / this month / total) ----------
   private recomputeSummaries(): void {
     const now = new Date();
-
-    // local day/month boundaries
-    const startOfToday = new Date(now);
-    startOfToday.setHours(0, 0, 0, 0);
-
+    const startOfToday = new Date(now); startOfToday.setHours(0,0,0,0);
     const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
-
+  
     const map = new Map<string, RouteSummary>();
-
+  
+    // 4.1 לבנות סיכומים מהטלמטריה (כולל "לא ברואטר" — יסומן בהמשך)
     for (const r of this.originalData) {
-      const key = r.route || '';
-      if (!map.has(key)) {
-        map.set(key, { route: key, today: 0, month: 0, total: 0 });
-      }
+      const key = this.canonical(r.route || '');
+      if (!map.has(key)) map.set(key, { route: key, today: 0, month: 0, total: 0 });
       const entry = map.get(key)!;
       entry.total += 1;
       if (r.tsUtcDate >= startOfToday) entry.today += 1;
       if (r.tsUtcDate >= startOfMonth) entry.month += 1;
     }
-
+  
+    // 4.2 הוספת ראוטים חסרים (ברואטר אך ללא פגיעות)
+    for (const pat of this.computeMissingRoutes()) {
+      if (!map.has(pat)) {
+        map.set(pat, { route: pat, today: 0, month: 0, total: 0, isMissing: true });
+      } else {
+        // אם איכשהו יש — ודאו סימון
+        map.get(pat)!.isMissing = true;
+      }
+    }
+  
+    // 4.3 סימון "לא ברואטר" עבור ראוטים שהופיעו בטלמטריה אך לא קיימים ברואטר
+    for (const unk of this.computeUnknownHits()) {
+      const e = map.get(unk);
+      if (e) e.isUnknown = true;
+    }
+  
+    // 4.4 מיון (חופשי): קודם לפי total, ואז "חסרים" בסוף
     const list = Array.from(map.values())
-      .sort((a, b) => b.total - a.total);
-
+      .sort((a, b) => {
+        if ((a.isMissing ? 1 : 0) !== (b.isMissing ? 1 : 0)) return (a.isMissing ? 1 : 0) - (b.isMissing ? 1 : 0);
+        return b.total - a.total;
+      });
+  
     this.dataSourceCounts.data = list;
-
+  
     setTimeout(() => {
       if (this.countsPaginator) this.dataSourceCounts.paginator = this.countsPaginator;
       if (this.countsSort) this.dataSourceCounts.sort = this.countsSort;
     });
   }
-
+  
   applyCountsFilter(val: string) {
     this.dataSourceCounts.filterPredicate = (r, f) => {
       f = (f || '').trim().toLowerCase();
@@ -368,4 +388,62 @@ export class OnlineLogsComponent implements OnInit {
     return document.documentElement.classList.contains('dark')
       || (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
   }
+
+  constructor(private http: HttpClient, private fb: FormBuilder, private router: Router) {
+    this.filterForm = this.fb.group({ globalFilter: [''] });
+  }
+// Better canonical: strips ?, #/, leading/trailing slashes, matrix params (;foo=bar), and lowercases
+private canonical(path: string): string {
+  return (path || '')
+    .replace(/^#\/+/, '')      // remove hash-prefix if present
+    .split('?')[0]             // remove query string
+    .replace(/;[^/]+/g, '')    // remove matrix params from each segment
+    .replace(/^\/+/, '')       // trim leading slashes
+    .replace(/\/+$/, '')       // trim trailing slashes
+    .toLowerCase();
+}
+
+// Turn 'contacts/:applicationID' into a regex that matches 'contacts/123' etc.
+private patternToRegex(pattern: string): RegExp {
+  const canon = this.canonical(pattern);
+  const parts = canon.split('/').map(seg =>
+    seg.startsWith(':')
+      ? '[^/]+'                                         // param segment
+      : seg.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')      // escape literal segment
+  );
+  return new RegExp('^' + parts.join('/') + '$', 'i');
+}
+
+// Flatten router config -> list of real, non-redirect route patterns (strings)
+private extractRoutePatterns(): string[] {
+  const out: string[] = [];
+  const walk = (cfg: Routes, prefix = '') => {
+    for (const r of cfg) {
+      if (!r) continue;
+      if (r.redirectTo) continue;                         // skip redirects
+      const p = r.path ?? '';
+      const full = [prefix, p].filter(Boolean).join('/').replace(/\/+/g, '/');
+      // keep only real pages (have a component) and non-empty path
+      if (r.component && p !== '') out.push(this.canonical(full));
+      if (r.children) walk(r.children, full);
+      // NOTE: if you have lazy routes (loadChildren), you could push full here too:
+      // if (!r.component && !r.children && r.loadChildren && p !== '') out.push(this.canonical(full));
+    }
+  };
+  walk(this.router.config);
+  return Array.from(new Set(out)); // unique
+}
+
+// Compute which router-defined patterns were never matched by telemetry rows
+private computeMissingRoutes(): string[] {
+  const patterns = this.extractRoutePatterns(); // e.g. ['contacts', 'contacts/:applicationID', 'sql', ...]
+  const used = Array.from(new Set(this.originalData.map(r => this.canonical(r.route))));
+  return patterns.filter(pat => !used.some(u => this.patternToRegex(pat).test(u)));
+}
+// ראוטים שנצפו בטלמטריה אך לא קיימים ברואטר
+private computeUnknownHits(): string[] {
+  const patterns = this.extractRoutePatterns();
+  const used = Array.from(new Set(this.originalData.map(r => this.canonical(r.route))));
+  return used.filter(u => !patterns.some(p => this.patternToRegex(p).test(u)));
+}
 }

@@ -21,7 +21,7 @@
   <!-- ===== Tabs ===== -->
   <mat-tab-group>
     <!-- Tab 1: rows table -->
-    <mat-tab label="רשומות">
+    <mat-tab label="לוגים">
       <!-- Filters (same structure/classes) -->
       <form [formGroup]="filterForm" dir="rtl" class="filter-form">
         <div dir="rtl" class="form-footer" style="display: flex; justify-content: space-between;">
@@ -80,7 +80,7 @@
     </mat-tab>
 
     <!-- Tab 2: counts per route (today / month / total) -->
-    <mat-tab label="סיכומי מסלולים">
+    <mat-tab label="סיכום ">
       <div dir="rtl" class="filter-form" style="margin: 10px 0;">
         <div class="form-footer" style="display: flex; justify-content: space-between;">
           <mat-form-field class="long-search-bar" style="flex: 1;">
@@ -92,10 +92,15 @@
 
       <table mat-table [dataSource]="dataSourceCounts" matSort #countsSort="matSort" class="mat-elevation-z8" dir="rtl">
 
-        <ng-container matColumnDef="route">
-          <mat-header-cell *matHeaderCellDef mat-sort-header> Route </mat-header-cell>
-          <mat-cell *matCellDef="let element"> {{ element.route }} </mat-cell>
-        </ng-container>
+        <!-- route column cell in the summary table -->
+<ng-container matColumnDef="route">
+    <mat-header-cell *matHeaderCellDef mat-sort-header> Route </mat-header-cell>
+    <mat-cell *matCellDef="let e">
+      <span>{{ e.route }}</span>
+      <span *ngIf="e.isMissing" class="chip chip-warn">לא בשימוש</span>
+      <span *ngIf="e.isUnknown" class="chip chip-accent">לא ברואטר</span>
+    </mat-cell>
+  </ng-container>
 
         <ng-container matColumnDef="today">
           <mat-header-cell *matHeaderCellDef mat-sort-header> היום </mat-header-cell>
@@ -118,5 +123,6 @@
 
       <mat-paginator #countsPaginator [pageSize]="10" [pageSizeOptions]="[10, 25, 50]" showFirstLastButtons></mat-paginator>
     </mat-tab>
+    
   </mat-tab-group>
 </div>

@@ -103,56 +103,53 @@ import { InteractivebrokersComponent } from './interactivebrokers/interactivebro
 import { OnlineLogsComponent } from './online-logs/online-logs.component';
 
 const routes: Routes = [
-  { path: 'users', component: UsersComponent },
-  { path: 'sql', component: SQLComponent },
-  { path: 'MainPageReports', component: MainPageReportsComponent },
-  { path: 'reports-permissions', component: ReportsPermissionsComponent },
-  { path: 'UserDashboard', component: UserDashboardComponent },
+  //', component: UsersComponent },
+  //{ path: 'sql', component: SQLComponent },
+  //{ path: 'MainPageReports', component: MainPageReportsComponent },
+  //{ path: 'reports-permissions', component: ReportsPermissionsComponent },
+  //{ path: 'UserDashboard', component: UserDashboardComponent },
   { path: 'AdminDashboard', component: AdminDashboardComponent },
-  { path: 'ApplicationList', component: ApplicationsListComponent },
-  { path: 'applications', component: ApplicationsListComponent },
-  { path: 'contacts', component: ContactsComponent },
-  { path: 'contacts/:applicationID', component: ContactsComponent }, // Add this line
+  //{ path: 'ApplicationList', component: ApplicationsListComponent },
+  //{ path: 'applications', component: ApplicationsListComponent },
+  //{ path: 'contacts', component: ContactsComponent },
+  //{ path: 'contacts/:applicationID', component: ContactsComponent }, // Add this line
   
 
-  { path: 'SysAid', component: SysAidComponent },
-  { path: 'sys-graph', component: SysGraphComponent },
-  {
-    path: 'MainServiceCallsScreen',
-    component: MainServiceCallsScreenComponent,
-  },
-  { path: 'serviceCallsScreenIt', component: ServiceCallsScreenITComponent },
-  { path: 'AdminHomePage', component: AdminHomePageComponent },
-  { path: 'GuidesList', component: GuidesListComponent },
-  { path: 'NewGuid', component: NewGuideFormComponent },
-  { path: 'guide/:id', component: ViewGuideComponent },
-  { path: 'Editguide/:id', component: EditGuideFormComponent },
+  //{ path: 'SysAid', component: SysAidComponent },
+  //{ path: 'sys-graph', component: SysGraphComponent },
+  //{path: 'MainServiceCallsScreen',component: MainServiceCallsScreenComponent,  },
+
+                              
+  //{ path: 'serviceCallsScreenIt', component: ServiceCallsScreenITComponent },
+  //{ path: 'AdminHomePage', component: AdminHomePageComponent },
+ // { path: 'GuidesList', component: GuidesListComponent },
+  //{ path: 'NewGuid', component: NewGuideFormComponent },
+  //{ path: 'guide/:id', component: ViewGuideComponent },
+  //{ path: 'Editguide/:id', component: EditGuideFormComponent },
   { path: 'ServersStatus', component: ServerPingCheckAppComponent },
   { path: 'manage-servers', component: ManageServersComponent },
-  {
-    path: 'departmentLoadDashboard',
-    component: DepartmentLoadDashboardComponent,
-  },
-  { path: 'department-detail/:id', component: DepartmentDetailDialogComponent },
-  { path: 'current-patients', component: CurrentPatientsComponent },
-  { path: '', redirectTo: '/applications', pathMatch: 'full' },
+  //{ path: 'departmentLoadDashboard',component: DepartmentLoadDashboardComponent,},
+ 
+  //{ path: 'department-detail/:id', component: DepartmentDetailDialogComponent },
+  //{ path: 'current-patients', component: CurrentPatientsComponent },
+  //{ path: '', redirectTo: '/applications', pathMatch: 'full' },
 
   // shift
-  { path: 'shifts', component: ShiftManagementComponent },
+  //{ path: 'shifts', component: ShiftManagementComponent },
 
   //monday
-  { path: 'boards', component: BoardsComponent },
-  { path: 'boards/:boardId/tasks', component: TasksComponent },
-  { path: '', redirectTo: '/boards', pathMatch: 'full' },
-  { path: 'taskSummary', component: TaskSummaryComponent },
+ // { path: 'boards', component: BoardsComponent },
+  //{ path: 'boards/:boardId/tasks', component: TasksComponent },
+ // { path: '', redirectTo: '/boards', pathMatch: 'full' },
+ // { path: 'taskSummary', component: TaskSummaryComponent },
 
   //ilana
-  { path: 'Ilanatasks', component: TaskListComponent },
-  { path: 'Ilanatasks-add-task', component: AddTaskComponent },
+ // { path: 'Ilanatasks', component: TaskListComponent },
+  //{ path: 'Ilanatasks-add-task', component: AddTaskComponent },
 
   //guide new
-  { path: 'guideList', component: GuideListComponent },
-  { path: 'NewGuide', component: UploadGuideComponent },
+ // { path: 'guideList', component: GuideListComponent },
+  //{ path: 'NewGuide', component: UploadGuideComponent },
 
   
 // Reports report
@@ -165,8 +162,8 @@ const routes: Routes = [
   { path: 'UserLogPerCaseNumberReport', component: UserLogPerCaseNumberReportComponent, data: { title: 'בטיחות הטיפול - לוגים קמיליון' }}, // בטיחות הטיפול - לוגים קמיליון
   { path: 'icd9-report', component: Icd9ReportComponent, data: { title: 'חיפוש מטופלים על פי קוד ICD 9' }}, // חיפוש מטופלים על פי קוד ICD 9
   { path: 'ssri-protocol', component: SSRIProtocolComponent, data: { title: 'צטופלים שהופעלה להם הוראה קלינית SSRI' }}, // צטופלים שהופעלה להם הוראה קלינית SSRI
-{ path: 'hemo-dialysis', component: HemoDialysisReportComponent, data: { title: 'דוח לדיאליזה' }}, // דוח לדיאליזה
-{ path: 'SearchByCaseNumber', component: SearchByCaseNumberComponent, data: { title: 'חיפוש על פי מספרי מקרה-מחלקה משחררת' }}, // חיפוש על פי מספרי מקרה-מחלקה משחררת
+  { path: 'hemo-dialysis', component: HemoDialysisReportComponent, data: { title: 'דוח לדיאליזה' }}, // דוח לדיאליזה
+  { path: 'SearchByCaseNumber', component: SearchByCaseNumberComponent, data: { title: 'חיפוש על פי מספרי מקרה-מחלקה משחררת' }}, // חיפוש על פי מספרי מקרה-מחלקה משחררת
 { path: 'palliative-patients-report', component: PalliativePatientsReportComponent, data: { title: 'מטופלים פליאטים ' }}, // מטופלים פליאטים לרווטיל
 { path: 'GeriatricsDrugsOnVacation', component: GeriatricsDrugsOnVacationComponent, data: { title: 'דוח תרופות לחולים גריאטרים שיוצאים לחופשה ' }}, // דוח תרופות לחולים גריאטרים שיוצאים לחופשה - עוד לא אושר
 { path: 'stazerim', component: StazerimComponent, data: { title: 'דוח הרשאות לסטזארים' }}, // דוח הרשאות לסטזארים
@@ -203,8 +200,8 @@ const routes: Routes = [
 //chemelondashboard
    { path: 'DepartmentCapacity', component: DepartmentCapacityComponent }, // פרוייקט אישי
 //shift-table
-   { path: 'shift-table', component: ShiftTableComponent },
-   { path: 'shift-calendar', component: ShiftCalendarComponent },
+   //{ path: 'shift-table', component: ShiftTableComponent },
+   //{ path: 'shift-calendar', component: ShiftCalendarComponent },
 
    // דוח מיתב
    { path: 'MitavMobility', component: MitavMobilityComponent , data: { title: 'מיתב ניידות' }},
@@ -238,7 +235,7 @@ const routes: Routes = [
    { path: 'MeasurementDef', component: MeasurementDefComponent , data: { title: 'פרוייקט מרא"ה - עדכון מדדים   ' }},
 
 //מכבי תל אביב לצביקה
-{ path: 'maccabi-tel-aviv', component: MaccabiTelAvivComponent , data: { title: 'מכבי תל אביב' }},
+//{ path: 'maccabi-tel-aviv', component: MaccabiTelAvivComponent , data: { title: 'מכבי תל אביב' }},
 
 // מערכת לקישורים לתיקיות 
 { path: 'ApplicationsComponent', component: ApplicationsComponent , data: { title: ' קישורים חשובים של מערכות ' }},
@@ -249,7 +246,7 @@ const routes: Routes = [
 
 
 //משה אינטראקטיב
-{ path: 'interactivebrokers', component: InteractivebrokersComponent , data: { title: 'interactivebrokers ' }},
+//{ path: 'interactivebrokers', component: InteractivebrokersComponent , data: { title: 'interactivebrokers ' }},
 // משה לוגים
 { path: 'OnlineLogs', component: OnlineLogsComponent, data: { title: 'לוגים אונליין' } }
 
