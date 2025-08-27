@@ -36,7 +36,7 @@ interface RouteSummary {
   today: number;
   month: number;
   total: number;
-  // flags for UI
+  title?: string;  
   isMissing?: boolean; // מוגדר ברואטר אך ללא פגיעות
   isUnknown?: boolean; // הופיע בטלמטריה אך לא קיים ברואטר
 }
@@ -62,7 +62,7 @@ export class OnlineLogsComponent implements OnInit {
   originalData: RouteHit[] = [];
 
   // summaries tab
-  displayedColumnsCounts: string[] = ['route', 'today', 'month', 'total'];
+  displayedColumnsCounts: string[] = ['title', 'route', 'today', 'month', 'total'];
   dataSourceCounts: MatTableDataSource<RouteSummary> = new MatTableDataSource<RouteSummary>([]);
   @ViewChild('countsPaginator') countsPaginator!: MatPaginator;
   @ViewChild('countsSort') countsSort!: MatSort;
@@ -223,43 +223,53 @@ export class OnlineLogsComponent implements OnInit {
   // ---------- Summaries (today / this month / total) ----------
   private recomputeSummaries(): void {
     const now = new Date();
-    const startOfToday = new Date(now); startOfToday.setHours(0,0,0,0);
+    const startOfToday = new Date(now); startOfToday.setHours(0, 0, 0, 0);
     const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
   
+    const meta = this.extractRouteMeta();
+    const used = Array.from(new Set(this.originalData.map(r => this.canonical(r.route))));
     const map = new Map<string, RouteSummary>();
   
-    // 4.1 לבנות סיכומים מהטלמטריה (כולל "לא ברואטר" — יסומן בהמשך)
+    // counts from telemetry
     for (const r of this.originalData) {
       const key = this.canonical(r.route || '');
       if (!map.has(key)) map.set(key, { route: key, today: 0, month: 0, total: 0 });
-      const entry = map.get(key)!;
-      entry.total += 1;
-      if (r.tsUtcDate >= startOfToday) entry.today += 1;
-      if (r.tsUtcDate >= startOfMonth) entry.month += 1;
+      const e = map.get(key)!;
+      e.total += 1;
+      if (r.tsUtcDate >= startOfToday) e.today += 1;
+      if (r.tsUtcDate >= startOfMonth) e.month += 1;
     }
   
-    // 4.2 הוספת ראוטים חסרים (ברואטר אך ללא פגיעות)
-    for (const pat of this.computeMissingRoutes()) {
-      if (!map.has(pat)) {
-        map.set(pat, { route: pat, today: 0, month: 0, total: 0, isMissing: true });
+    // tag titles for used routes; mark unknown
+    for (const e of map.values()) {
+      const m = meta.find(m => m.regex.test(e.route));
+      if (m) e.title = m.title;
+      else   e.isUnknown = true;  // appeared in telemetry, not in router
+    }
+  
+    // add missing routes (in router but never used) with title
+    const missing = meta.filter(m => !used.some(u => m.regex.test(u)));
+    for (const m of missing) {
+      if (!map.has(m.pattern)) {
+        map.set(m.pattern, {
+          route: m.pattern,
+          today: 0, month: 0, total: 0,
+          title: m.title,
+          isMissing: true
+        });
       } else {
-        // אם איכשהו יש — ודאו סימון
-        map.get(pat)!.isMissing = true;
+        const e = map.get(m.pattern)!;
+        e.isMissing = true;
+        if (!e.title) e.title = m.title;
       }
     }
   
-    // 4.3 סימון "לא ברואטר" עבור ראוטים שהופיעו בטלמטריה אך לא קיימים ברואטר
-    for (const unk of this.computeUnknownHits()) {
-      const e = map.get(unk);
-      if (e) e.isUnknown = true;
-    }
-  
-    // 4.4 מיון (חופשי): קודם לפי total, ואז "חסרים" בסוף
-    const list = Array.from(map.values())
-      .sort((a, b) => {
-        if ((a.isMissing ? 1 : 0) !== (b.isMissing ? 1 : 0)) return (a.isMissing ? 1 : 0) - (b.isMissing ? 1 : 0);
-        return b.total - a.total;
-      });
+    // sort: used first by total desc, then “missing”
+    const list = Array.from(map.values()).sort((a, b) => {
+      const missA = a.isMissing ? 1 : 0, missB = b.isMissing ? 1 : 0;
+      if (missA !== missB) return missA - missB;  // missing last
+      return b.total - a.total;
+    });
   
     this.dataSourceCounts.data = list;
   
@@ -268,11 +278,12 @@ export class OnlineLogsComponent implements OnInit {
       if (this.countsSort) this.dataSourceCounts.sort = this.countsSort;
     });
   }
-  
+    
   applyCountsFilter(val: string) {
     this.dataSourceCounts.filterPredicate = (r, f) => {
       f = (f || '').trim().toLowerCase();
-      return (r.route || '').toLowerCase().includes(f)
+      return (r.title || '').toLowerCase().includes(f)
+          || (r.route || '').toLowerCase().includes(f)
           || String(r.today).includes(f)
           || String(r.month).includes(f)
           || String(r.total).includes(f);
@@ -407,9 +418,7 @@ private canonical(path: string): string {
 private patternToRegex(pattern: string): RegExp {
   const canon = this.canonical(pattern);
   const parts = canon.split('/').map(seg =>
-    seg.startsWith(':')
-      ? '[^/]+'                                         // param segment
-      : seg.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')      // escape literal segment
+    seg.startsWith(':') ? '[^/]+' : seg.replace(/[.*+?^${}()|[\\]\\\\]/g, '\\$&')
   );
   return new RegExp('^' + parts.join('/') + '$', 'i');
 }
@@ -445,5 +454,30 @@ private computeUnknownHits(): string[] {
   const patterns = this.extractRoutePatterns();
   const used = Array.from(new Set(this.originalData.map(r => this.canonical(r.route))));
   return used.filter(u => !patterns.some(p => this.patternToRegex(p).test(u)));
+}
+
+// read patterns + titles from router
+private extractRouteMeta(): { pattern: string; regex: RegExp; title?: string }[] {
+  const out: { pattern: string; regex: RegExp; title?: string }[] = [];
+  const walk = (cfg: Routes, prefix = '') => {
+    for (const r of cfg) {
+      if (!r) continue;
+      if (r.redirectTo) continue;
+      const p = r.path ?? '';
+      const full = [prefix, p].filter(Boolean).join('/').replace(/\/+/g, '/');
+
+      // keep only “real pages”
+      if (r.component && p !== '') {
+        const pattern = this.canonical(full);
+        out.push({ pattern, regex: this.patternToRegex(pattern), title: (r.data as any)?.title });
+      }
+      if (r.children) walk(r.children, full);
+      // If you rely on lazy routes only, you can also push when r.loadChildren && !r.children
+    }
+  };
+  walk(this.router.config);
+  // unique by pattern
+  const seen = new Set<string>();
+  return out.filter(m => (seen.has(m.pattern) ? false : (seen.add(m.pattern), true)));
 }
 }

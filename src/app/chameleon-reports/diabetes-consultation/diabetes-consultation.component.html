@@ -329,12 +329,12 @@ class="custom-toggle-group"
         <table mat-table [dataSource]="DiagnosisICD9dataSource" class="mat-elevation-z8" matSort #sort4="matSort" style="table-layout: fixed; width: 100%">
 
         
-          <ng-container matColumnDef="Admission_No">
+          <ng-container matColumnDef="admission_No">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>
               Admission No
             </th>
             <td mat-cell *matCellDef="let element">
-              {{ element.Admission_No }}
+              {{ element.admission_No }}
             </td>
           </ng-container>
           <ng-container matColumnDef="Admission_Date">
@@ -404,12 +404,12 @@ class="custom-toggle-group"
         </ng-template>
         <table mat-table [dataSource]="sugerAbove180" class="mat-elevation-z8" matSort #sort1="matSort" style="table-layout: fixed; width: 100%">
 
-          <ng-container matColumnDef="Admission_No">
+          <ng-container matColumnDef="admission_No">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>
               Admission No
             </th>
             <td mat-cell *matCellDef="let element">
-              {{ element.Admission_No }}
+              {{ element.admission_No }}
             </td>
           </ng-container>
           <ng-container matColumnDef="Admission_Date">
@@ -481,9 +481,9 @@ class="custom-toggle-group"
       <mat-tab label="מעל 180 ללא אינסולין">
         <table mat-table [dataSource]="LabResultsWithoutInsulinDataSource" class="mat-elevation-z8" matSort #sortWithoutInsulin="matSort" style="table-layout: fixed; width: 100%">
 
-          <ng-container matColumnDef="Admission_No">
+          <ng-container matColumnDef="admission_No">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>מספר אשפוז</th>
-            <td mat-cell *matCellDef="let element">{{ element.Admission_No }}</td>
+            <td mat-cell *matCellDef="let element">{{ element.admission_No }}</td>
           </ng-container>
           <ng-container matColumnDef="Admission_Date">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>תאריך קבלה</th>
@@ -533,12 +533,12 @@ class="custom-toggle-group"
               {{ element.Hospitalization_Patient }}
             </td>
           </ng-container>
-          <ng-container matColumnDef="Admission_No">
+          <ng-container matColumnDef="admission_No">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>
               Admission No
             </th>
             <td mat-cell *matCellDef="let element">
-              {{ element.Admission_No }}
+              {{ element.admission_No }}
             </td>
           </ng-container>
           <ng-container matColumnDef="Admission_Date">
@@ -673,11 +673,11 @@ class="custom-toggle-group"
         </ng-template>
         <table mat-table [dataSource]="dataSourceBelow70" class="mat-elevation-z8" matSort #sortBelow70="matSort" style="table-layout: fixed; width: 100%">
 
-          <ng-container matColumnDef="Admission_No">
+          <ng-container matColumnDef="admission_No">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>
               Admission No
             </th>
-            <td mat-cell *matCellDef="let element">{{ element.Admission_No }}</td>
+            <td mat-cell *matCellDef="let element">{{ element.admission_No }}</td>
           </ng-container>
           <ng-container matColumnDef="Admission_Date">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>
@@ -826,9 +826,9 @@ class="custom-toggle-group"
         <table mat-table [dataSource]="PatientWithICD9AndHaveDiabetesEstimationDataSource" class="mat-elevation-z8"  matSort
         #sortICD9HaveEstimation="matSort" style="table-layout: fixed; width: 100%">
       
-          <ng-container matColumnDef="Admission_No">
+          <ng-container matColumnDef="admission_No">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>מספר אשפוז</th>
-            <td mat-cell *matCellDef="let element">{{ element.Admission_No }}</td>
+            <td mat-cell *matCellDef="let element">{{ element.admission_No }}</td>
           </ng-container>
       
           <ng-container matColumnDef="Admission_Date">
@@ -872,9 +872,9 @@ class="custom-toggle-group"
       <mat-tab label="ICD9 ללא אומדן סכרת">
         <table mat-table [dataSource]="PatientWithICD9AndDontHaveDiabetesEstimationDataSource" class="mat-elevation-z8" matSort #sortICD9NoEstimation="matSort" style="table-layout: fixed; width: 100%">
 
-          <ng-container matColumnDef="Admission_No">
+          <ng-container matColumnDef="admission_No">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>מספר אשפוז</th>
-            <td mat-cell *matCellDef="let element">{{ element.Admission_No }}</td>
+            <td mat-cell *matCellDef="let element">{{ element.admission_No }}</td>
           </ng-container>
           <ng-container matColumnDef="Admission_Date">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>תאריך קבלה</th>
@@ -920,12 +920,12 @@ class="custom-toggle-group"
         </ng-template>
         <table mat-table [dataSource]="DiabeticFootEstimationDataSource" class="mat-elevation-z8" matSort #sortDiabeticFootEstimation="matSort" style="table-layout: fixed; width: 100%">
 
-          <ng-container matColumnDef="Admission_No">
+          <ng-container matColumnDef="admission_No">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>
               Admission No
             </th>
             <td mat-cell *matCellDef="let element">
-              {{ element.Admission_No }}
+              {{ element.admission_No }}
             </td>
           </ng-container>
           <ng-container matColumnDef="Admission_Date">
@@ -992,9 +992,9 @@ class="custom-toggle-group"
       <mat-tab label="מטופלים סוכרתיים עם קטטר ">
         <table mat-table [dataSource]="DiabeticPatientsWithCatheterOrdersDataSource" class="mat-elevation-z8" matSort #sortCatheterOrders="matSort" style="table-layout: fixed; width: 100%">
       
-          <ng-container matColumnDef="Admission_No">
+          <ng-container matColumnDef="admission_No">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>מספר אשפוז</th>
-            <td mat-cell *matCellDef="let element">{{ element.Admission_No }}</td>
+            <td mat-cell *matCellDef="let element">{{ element.admission_No }}</td>
           </ng-container>
       
           <ng-container matColumnDef="Admission_Date">

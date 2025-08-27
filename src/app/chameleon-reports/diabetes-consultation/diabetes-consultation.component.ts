@@ -126,7 +126,7 @@ icd9WithEstimationPercentage: number = 0;
   ];
   DiagnosisICD9: string[] = [
   
-    'Admission_No',
+    'admission_No',
     'Admission_Date',
     'Id_Num',
     'First_Name',

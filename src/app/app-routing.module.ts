@@ -108,6 +108,7 @@ const routes: Routes = [
   //{ path: 'MainPageReports', component: MainPageReportsComponent },
   //{ path: 'reports-permissions', component: ReportsPermissionsComponent },
   //{ path: 'UserDashboard', component: UserDashboardComponent },
+  
   { path: 'AdminDashboard', component: AdminDashboardComponent },
   //{ path: 'ApplicationList', component: ApplicationsListComponent },
   //{ path: 'applications', component: ApplicationsListComponent },
@@ -153,7 +154,7 @@ const routes: Routes = [
 
   
 // Reports report
-  { path: 'PalliativePatients', component: PalliativePatientsComponent, data: { title: 'לא בשימוש' }}, // לא בשימוש
+ // { path: 'PalliativePatients', component: PalliativePatientsComponent, data: { title: 'לא בשימוש' }}, // לא בשימוש
   { path: 'med-execution-table', component: MedExecutionTableComponent, data: { title: 'דוח ביצוע תרופות לבית מרקחת' }}, // דוח ביצוע תרופות לבית מרקחת
   { path: 'SkinIntegrityReport', component: SkinIntegrityReportComponent, data: { title: 'אומדן שלמות העור' }}, // אומדן שלמות העור
   { path: 'patient-guidance-report', component: PatientGuidanceReportComponent, data: { title: 'דוח הנחיות למטופלים' }}, // דוח הנחיות למטופלים

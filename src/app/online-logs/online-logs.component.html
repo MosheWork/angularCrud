@@ -93,14 +93,22 @@
       <table mat-table [dataSource]="dataSourceCounts" matSort #countsSort="matSort" class="mat-elevation-z8" dir="rtl">
 
         <!-- route column cell in the summary table -->
+<!-- Title column -->
+<ng-container matColumnDef="title">
+  <mat-header-cell *matHeaderCellDef mat-sort-header> כותרת </mat-header-cell>
+  <mat-cell *matCellDef="let e">
+    <span>{{ e.title || '—' }}</span>
+  </mat-cell>
+</ng-container>
+<!-- Route column (with chips) -->
 <ng-container matColumnDef="route">
-    <mat-header-cell *matHeaderCellDef mat-sort-header> Route </mat-header-cell>
-    <mat-cell *matCellDef="let e">
-      <span>{{ e.route }}</span>
-      <span *ngIf="e.isMissing" class="chip chip-warn">לא נכנסו </span>
-      <span *ngIf="e.isUnknown" class="chip chip-accent">לא ברואטר</span>
-    </mat-cell>
-  </ng-container>
+  <mat-header-cell *matHeaderCellDef mat-sort-header> Route </mat-header-cell>
+  <mat-cell *matCellDef="let e">
+    <span class="route-path">{{ e.route }}</span>
+    <span *ngIf="e.isMissing" class="chip chip-warn">לא בשימוש</span>
+    <span *ngIf="e.isUnknown" class="chip chip-accent">לא ברואטר</span>
+  </mat-cell>
+</ng-container>
 
         <ng-container matColumnDef="today">
           <mat-header-cell *matHeaderCellDef mat-sort-header> היום </mat-header-cell>
