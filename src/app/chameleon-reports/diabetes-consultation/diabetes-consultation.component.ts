@@ -628,7 +628,7 @@ fetchDiagnosisData(): void {
       departments.length === 0 || departments.includes(item.UnitName);
   
     const matchesDate = (item: any) => {
-      const dateField = item.Admission_Date || item.Entry_Date || null;
+      const dateField = item.admission_Date || item.Entry_Date || null;
       if (!dateField) return true; // If no date, include by default
       const recordDate = new Date(dateField);
       if (start && recordDate < start) return false;
@@ -871,26 +871,26 @@ console.log('ICD9 WITH Diabetic Estimation %:', this.icd9WithEstimationPercentag
     // Filter data for each table
 
   this.DiabeticFootEstimationDataSource.data = this.originalDiabeticFootEstimation.filter((item) =>
-  isWithinDateRange(item.Admission_Date)
+  isWithinDateRange(item.admission_Date)
 );
 
 console.log('Filtered DiabeticFootEstimationDataSource after date filter:', this.DiabeticFootEstimationDataSource.data);
     this.sugerAbove180.data = this.originalSugerAbove180.filter((item) =>
-      isWithinDateRange(item.Admission_Date)
+      isWithinDateRange(item.admission_Date)
     );
   
     this.InsulinDataSource.data = this.originalDataSource3.filter((item) =>
-      isWithinDateRange(item.Admission_Date)
+      isWithinDateRange(item.admission_Date)
     );
   
     this.DiagnosisICD9dataSource.data = this.originalDataSourceDiagnosisICD9.filter((item) =>
-      isWithinDateRange(item.Admission_Date)
+      isWithinDateRange(item.admission_Date)
     );
   
     console.log('Filtered InsulinDataSource after date filter:', this.InsulinDataSource.data);
   
     this.dataSourceHemoglobin.data = this.originalDataSourceHemoglobin.filter((item) =>
-      isWithinDateRange(item.Admission_Date)
+      isWithinDateRange(item.admission_Date)
     );
   
     this.dataSourceAllConsiliums.data = this.originalDataSourceAllConsiliums.filter((item) =>
@@ -898,7 +898,7 @@ console.log('Filtered DiabeticFootEstimationDataSource after date filter:', this
     );
   
     this.dataSourceBelow70.data = this.originalDataSourceBelow70.filter((item) =>
-      isWithinDateRange(item.Admission_Date)
+      isWithinDateRange(item.admission_Date)
     );
   
     // Recalculate counts and percentages
@@ -906,20 +906,20 @@ console.log('Filtered DiabeticFootEstimationDataSource after date filter:', this
     console.log('Global Date Filter Applied:', this.globalDateFilter);
 
     this.LabResultsWithoutInsulinDataSource.data = this.originalLabResultsWithoutInsulin.filter(
-      (item) => isWithinDateRange(item.Admission_Date)
+      (item) => isWithinDateRange(item.admission_Date)
     );
     this.PatientWithICD9AndDontHaveDiabetesEstimationDataSource.data = 
   this.PatientWithICD9AndDontHaveDiabetesEstimationDataSource.data.filter((item) =>
-    isWithinDateRange(item.Admission_Date)
+    isWithinDateRange(item.admission_Date)
 );
 
 this.DiabeticPatientsWithCatheterOrdersDataSource.data = 
   this.DiabeticPatientsWithCatheterOrdersDataSource.data.filter((item) =>
-    isWithinDateRange(item.Admission_Date)
+    isWithinDateRange(item.admission_Date)
 );
 this.PatientWithICD9AndHaveDiabetesEstimationDataSource.data =
   this.originalPatientWithICD9AndHaveDiabetesEstimation.filter((item) =>
-    isWithinDateRange(item.Admission_Date)
+    isWithinDateRange(item.admission_Date)
   );
   }
   
@@ -1005,35 +1005,35 @@ this.PatientWithICD9AndHaveDiabetesEstimationDataSource.data =
     
       // Filter data based on date range for each table
       const filteredData = this.originalSugerAbove180.filter((item) =>
-        this.isWithinDateRange(item.Admission_Date)
+        this.isWithinDateRange(item.admission_Date)
       );
     
       const filteredBelow70 = this.originalDataSourceBelow70.filter((item) =>
-        this.isWithinDateRange(item.Admission_Date)
+        this.isWithinDateRange(item.admission_Date)
       );
     
       const filteredICD9 = this.originalDataSourceDiagnosisICD9.filter((item) =>
-        this.isWithinDateRange(item.Admission_Date)
+        this.isWithinDateRange(item.admission_Date)
       );
     
       const filteredInsulin = this.originalDataSource3.filter((item) =>
-        this.isWithinDateRange(item.Admission_Date)
+        this.isWithinDateRange(item.admission_Date)
       );
 
       const filteredDiabeticFootEstimation = this.originalDiabeticFootEstimation.filter((item) =>
-      this.isWithinDateRange(item.Admission_Date)
+      this.isWithinDateRange(item.admission_Date)
     );
     const filteredWithoutInsulin = this.originalLabResultsWithoutInsulin.filter((item) =>
-  this.isWithinDateRange(item.Admission_Date)
+  this.isWithinDateRange(item.admission_Date)
 );
 const filteredICD9NoEstimation = this.originalPatientWithICD9AndDontHaveDiabetesEstimation.filter((item) =>
-  this.isWithinDateRange(item.Admission_Date)
+  this.isWithinDateRange(item.admission_Date)
 );
 const filteredCatheterOrders = this.originalDiabeticPatientsWithCatheterOrders.filter((item) =>
-  this.isWithinDateRange(item.Admission_Date)
+  this.isWithinDateRange(item.admission_Date)
 );
 const filteredICD9HaveEstimation = this.originalPatientWithICD9AndHaveDiabetesEstimation.filter((item) =>
-this.isWithinDateRange(item.Admission_Date)
+this.isWithinDateRange(item.admission_Date)
 );
     
       if (this.globalSourceTableFilter === 'מאושפזים') {
@@ -1146,7 +1146,7 @@ this.isWithinDateRange(item.Admission_Date)
     openDialog(row: any): void {
       const data = {
         Patient: row.Hospitalization_Patient || row.Patient,
-        AdmissionDate: row.Admission_Date,
+        AdmissionDate: row.admission_Date,
         FirstName: row.First_Name,
         LastName: row.Last_Name,
         IdNum: row.Id_Num,

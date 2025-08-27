@@ -507,7 +507,7 @@ class="custom-toggle-group"
             </ng-container>
   
             <ng-container matColumnDef="release_Date">
-              <th mat-header-cell *matHeaderCellDef mat-sort-header>Release_Date</th>
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>release_Date</th>
               <td mat-cell *matCellDef="let element">{{ element.release_Date | date }}</td>
             </ng-container>
   
@@ -954,35 +954,35 @@ class="custom-toggle-group"
               {{ element.admission_No }}
             </td>
           </ng-container>
-          <ng-container matColumnDef="Admission_Date">
+          <ng-container matColumnDef="admission_Date">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>
               Admission Date
             </th>
             <td mat-cell *matCellDef="let element">
-              {{ element.Admission_Date | date }}
+              {{ element.admission_Date | date }}
             </td>
           </ng-container>
-          <ng-container matColumnDef="Id_Num">
+          <ng-container matColumnDef="id_Num">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>ID Number</th>
-            <td mat-cell *matCellDef="let element">{{ element.Id_Num }}</td>
+            <td mat-cell *matCellDef="let element">{{ element.id_Num }}</td>
           </ng-container>
-          <ng-container matColumnDef="First_Name">
+          <ng-container matColumnDef="first_Name">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>
               First Name
             </th>
-            <td mat-cell *matCellDef="let element">{{ element.First_Name }}</td>
+            <td mat-cell *matCellDef="let element">{{ element.first_Name }}</td>
           </ng-container>
-          <ng-container matColumnDef="Last_Name">
+          <ng-container matColumnDef="last_Name">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>Last Name</th>
-            <td mat-cell *matCellDef="let element">{{ element.Last_Name }}</td>
+            <td mat-cell *matCellDef="let element">{{ element.last_Name }}</td>
           </ng-container>
-          <ng-container matColumnDef="ICD9">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>ICD9</th>
-            <td mat-cell *matCellDef="let element">{{ element.ICD9 }}</td>
+          <ng-container matColumnDef="iCD9">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>iCD9</th>
+            <td mat-cell *matCellDef="let element">{{ element.iCD9 }}</td>
           </ng-container>
-          <ng-container matColumnDef="Name">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>Name</th>
-            <td mat-cell *matCellDef="let element">{{ element.Name }}</td>
+          <ng-container matColumnDef="name">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>name</th>
+            <td mat-cell *matCellDef="let element">{{ element.name }}</td>
           </ng-container>
           <!-- <ng-container matColumnDef="Entry_Date">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>
@@ -992,13 +992,13 @@ class="custom-toggle-group"
               {{ element.Entry_Date | date }}
             </td>
           </ng-container> -->
-          <ng-container matColumnDef="Release_Date">
+          <ng-container matColumnDef="release_Date">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>Release Date</th>
-            <td mat-cell *matCellDef="let element">{{ element.Release_Date | date }}</td>
+            <td mat-cell *matCellDef="let element">{{ element.release_Date | date }}</td>
           </ng-container>
-          <ng-container matColumnDef="UnitName">
+          <ng-container matColumnDef="unitName">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>מחלקה </th>
-            <td mat-cell *matCellDef="let element">{{ element.UnitName }}</td>
+            <td mat-cell *matCellDef="let element">{{ element.unitName }}</td>
           </ng-container>
           <tr mat-header-row *matHeaderRowDef="DiagnosisICD9"></tr>
           <tr mat-row *matRowDef="let row; columns: DiagnosisICD9"></tr>
@@ -1029,44 +1029,44 @@ class="custom-toggle-group"
               {{ element.admission_No }}
             </td>
           </ng-container>
-          <ng-container matColumnDef="Admission_Date">
+          <ng-container matColumnDef="admission_Date">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>
               Admission Date
             </th>
             <td mat-cell *matCellDef="let element">
-              {{ element.Admission_Date | date }}
+              {{ element.admission_Date | date }}
             </td>
           </ng-container>
         
-          <ng-container matColumnDef="First_Name">
+          <ng-container matColumnDef="first_Name">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>
               First Name
             </th>
-            <td mat-cell *matCellDef="let element">{{ element.First_Name }}</td>
+            <td mat-cell *matCellDef="let element">{{ element.first_Name }}</td>
           </ng-container>
-          <ng-container matColumnDef="Last_Name">
+          <ng-container matColumnDef="last_Name">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>Last Name</th>
-            <td mat-cell *matCellDef="let element">{{ element.Last_Name }}</td>
+            <td mat-cell *matCellDef="let element">{{ element.last_Name }}</td>
           </ng-container>
           <ng-container matColumnDef="Age_Years">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>גיל</th>
             <td mat-cell *matCellDef="let element">{{ element.Age_Years }}</td>
           </ng-container>
-          <ng-container matColumnDef="Count_Above_180_Less_48h">
+          <ng-container matColumnDef="count_Above_180_Less_48h">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>
               Count > 180
             </th>
             <td mat-cell *matCellDef="let element">
-              {{ element.Count_Above_180_Less_48h }}
+              {{ element.count_Above_180_Less_48h }}
             </td>
           </ng-container>
-          <ng-container matColumnDef="Release_Date">
+          <ng-container matColumnDef="release_Date">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>Release Date</th>
-            <td mat-cell *matCellDef="let element">{{ element.Release_Date | date }}</td>
+            <td mat-cell *matCellDef="let element">{{ element.release_Date | date }}</td>
           </ng-container>
-          <ng-container matColumnDef="UnitName">
+          <ng-container matColumnDef="unitName">
             <th mat-header-cell *matHeaderCellDef mat-sort-header> מחלקה</th>
-            <td mat-cell *matCellDef="let element">{{ element.UnitName }}</td>
+            <td mat-cell *matCellDef="let element">{{ element.unitName }}</td>
           </ng-container>
           <ng-container matColumnDef="LastTestResult">
             <th mat-header-cell *matHeaderCellDef mat-sort-header> בדיקה אחרונה</th>
@@ -1102,29 +1102,29 @@ class="custom-toggle-group"
             <th mat-header-cell *matHeaderCellDef mat-sort-header>מספר אשפוז</th>
             <td mat-cell *matCellDef="let element">{{ element.admission_No }}</td>
           </ng-container>
-          <ng-container matColumnDef="Admission_Date">
+          <ng-container matColumnDef="admission_Date">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>תאריך קבלה</th>
-            <td mat-cell *matCellDef="let element">{{ element.Admission_Date | date }}</td>
+            <td mat-cell *matCellDef="let element">{{ element.admission_Date | date }}</td>
           </ng-container>
-          <ng-container matColumnDef="First_Name">
+          <ng-container matColumnDef="first_Name">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>שם פרטי</th>
-            <td mat-cell *matCellDef="let element">{{ element.First_Name }}</td>
+            <td mat-cell *matCellDef="let element">{{ element.first_Name }}</td>
           </ng-container>
-          <ng-container matColumnDef="Last_Name">
+          <ng-container matColumnDef="last_Name">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>שם משפחה</th>
-            <td mat-cell *matCellDef="let element">{{ element.Last_Name }}</td>
+            <td mat-cell *matCellDef="let element">{{ element.last_Name }}</td>
           </ng-container>
-          <ng-container matColumnDef="Count_Above_180_Less_48h">
+          <ng-container matColumnDef="count_Above_180_Less_48h">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>מדידות מעל 180 ב-72 שעות</th>
-            <td mat-cell *matCellDef="let element">{{ element.Count_Above_180_Less_48h }}</td>
+            <td mat-cell *matCellDef="let element">{{ element.count_Above_180_Less_48h }}</td>
           </ng-container>
-          <ng-container matColumnDef="Release_Date">
+          <ng-container matColumnDef="release_Date">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>תאריך שחרור</th>
-            <td mat-cell *matCellDef="let element">{{ element.Release_Date | date }}</td>
+            <td mat-cell *matCellDef="let element">{{ element.release_Date | date }}</td>
           </ng-container>
-          <ng-container matColumnDef="UnitName">
+          <ng-container matColumnDef="unitName">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>מחלקה </th>
-            <td mat-cell *matCellDef="let element">{{ element.UnitName }}</td>
+            <td mat-cell *matCellDef="let element">{{ element.unitName }}</td>
           </ng-container>
           <tr mat-header-row *matHeaderRowDef="displayedColumnsLabResultsWithoutInsulin"></tr>
           <tr mat-row *matRowDef="let row; columns: displayedColumnsLabResultsWithoutInsulin;"></tr>
@@ -1158,35 +1158,35 @@ class="custom-toggle-group"
               {{ element.admission_No }}
             </td>
           </ng-container>
-          <ng-container matColumnDef="Admission_Date">
+          <ng-container matColumnDef="admission_Date">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>
               Admission Date
             </th>
             <td mat-cell *matCellDef="let element">
-              {{ element.Admission_Date | date }}
+              {{ element.admission_Date | date }}
             </td>
           </ng-container>
-          <ng-container matColumnDef="Id_Num">
+          <ng-container matColumnDef="id_Num">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>ID Number</th>
-            <td mat-cell *matCellDef="let element">{{ element.Id_Num }}</td>
+            <td mat-cell *matCellDef="let element">{{ element.id_Num }}</td>
           </ng-container>
-          <ng-container matColumnDef="First_Name">
+          <ng-container matColumnDef="first_Name">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>
               First Name
             </th>
-            <td mat-cell *matCellDef="let element">{{ element.First_Name }}</td>
+            <td mat-cell *matCellDef="let element">{{ element.first_Name }}</td>
           </ng-container>
-          <ng-container matColumnDef="Last_Name">
+          <ng-container matColumnDef="last_Name">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>Last Name</th>
-            <td mat-cell *matCellDef="let element">{{ element.Last_Name }}</td>
+            <td mat-cell *matCellDef="let element">{{ element.last_Name }}</td>
           </ng-container>
           <ng-container matColumnDef="Main_Drug">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>Main Drug</th>
             <td mat-cell *matCellDef="let element">{{ element.Main_Drug }}</td>
           </ng-container>
-          <ng-container matColumnDef="Name">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>Drug Name</th>
-            <td mat-cell *matCellDef="let element">{{ element.Name }}</td>
+          <ng-container matColumnDef="name">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Drug name</th>
+            <td mat-cell *matCellDef="let element">{{ element.name }}</td>
           </ng-container>
           <ng-container matColumnDef="Entry_Date">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>
@@ -1196,17 +1196,17 @@ class="custom-toggle-group"
               {{ element.Entry_Date | date }}
             </td>
           </ng-container>
-          <ng-container matColumnDef="Release_Date">
+          <ng-container matColumnDef="release_Date">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>
-              Release_Date
+              release_Date
             </th>
             <td mat-cell *matCellDef="let element">
-              {{ element.Release_Date | date }}
+              {{ element.release_Date | date }}
             </td>
           </ng-container>
-          <ng-container matColumnDef="UnitName">
+          <ng-container matColumnDef="unitName">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>מחלקה </th>
-            <td mat-cell *matCellDef="let element">{{ element.UnitName }}</td>
+            <td mat-cell *matCellDef="let element">{{ element.unitName }}</td>
           </ng-container>
           <tr mat-header-row *matHeaderRowDef="insulinColumns"></tr>
           <tr mat-row *matRowDef="let row; columns: insulinColumns"></tr>
@@ -1226,12 +1226,12 @@ class="custom-toggle-group"
         </ng-template>
         <table mat-table [dataSource]="dataSourceHemoglobin" class="mat-elevation-z8" matSort #sortHemoglobin="matSort" style="table-layout: fixed; width: 100%">
 
-          <ng-container matColumnDef="Admission_Date">
+          <ng-container matColumnDef="admission_Date">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>
               Admission Date
             </th>
             <td mat-cell *matCellDef="let element">
-              {{ element.Admission_Date | date }}
+              {{ element.admission_Date | date }}
             </td>
           </ng-container>
           <ng-container matColumnDef="TestCode">
@@ -1252,19 +1252,19 @@ class="custom-toggle-group"
               {{ element.TestDate | date }}
             </td>
           </ng-container>
-          <ng-container matColumnDef="Id_Num">
+          <ng-container matColumnDef="id_Num">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>ID Number</th>
-            <td mat-cell *matCellDef="let element">{{ element.Id_Num }}</td>
+            <td mat-cell *matCellDef="let element">{{ element.id_Num }}</td>
           </ng-container>
-          <ng-container matColumnDef="First_Name">
+          <ng-container matColumnDef="first_Name">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>
               First Name
             </th>
-            <td mat-cell *matCellDef="let element">{{ element.First_Name }}</td>
+            <td mat-cell *matCellDef="let element">{{ element.first_Name }}</td>
           </ng-container>
-          <ng-container matColumnDef="Last_Name">
+          <ng-container matColumnDef="last_Name">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>Last Name</th>
-            <td mat-cell *matCellDef="let element">{{ element.Last_Name }}</td>
+            <td mat-cell *matCellDef="let element">{{ element.last_Name }}</td>
           </ng-container>
           <tr mat-header-row *matHeaderRowDef="displayedColumnsHemoglobin"></tr>
           <tr 
@@ -1296,29 +1296,29 @@ class="custom-toggle-group"
             </th>
             <td mat-cell *matCellDef="let element">{{ element.admission_No }}</td>
           </ng-container>
-          <ng-container matColumnDef="Admission_Date">
+          <ng-container matColumnDef="admission_Date">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>
               Admission Date
             </th>
             <td mat-cell *matCellDef="let element">
-              {{ element.Admission_Date | date }}
+              {{ element.admission_Date | date }}
             </td>
           </ng-container>
-          <ng-container matColumnDef="First_Name">
+          <ng-container matColumnDef="first_Name">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>
               First Name
             </th>
-            <td mat-cell *matCellDef="let element">{{ element.First_Name }}</td>
+            <td mat-cell *matCellDef="let element">{{ element.first_Name }}</td>
           </ng-container>
           <ng-container matColumnDef="Age_Years">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>גיל</th>
             <td mat-cell *matCellDef="let element">{{ element.Age_Years }}</td>
           </ng-container>
-          <ng-container matColumnDef="Last_Name">
+          <ng-container matColumnDef="last_Name">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>
               Last Name
             </th>
-            <td mat-cell *matCellDef="let element">{{ element.Last_Name }}</td>
+            <td mat-cell *matCellDef="let element">{{ element.last_Name }}</td>
           </ng-container>
           <ng-container matColumnDef="Count_Less_70_Less_48h">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>
@@ -1328,13 +1328,13 @@ class="custom-toggle-group"
               {{ element.Count_Less_70_Less_48h }}
             </td>
           </ng-container>
-          <ng-container matColumnDef="Release_Date">
+          <ng-container matColumnDef="release_Date">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>Release Date</th>
-            <td mat-cell *matCellDef="let element">{{ element.Release_Date | date }}</td>
+            <td mat-cell *matCellDef="let element">{{ element.release_Date | date }}</td>
           </ng-container>
-          <ng-container matColumnDef="UnitName">
+          <ng-container matColumnDef="unitName">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>מחלקה </th>
-            <td mat-cell *matCellDef="let element">{{ element.UnitName }}</td>
+            <td mat-cell *matCellDef="let element">{{ element.unitName }}</td>
           </ng-container>
           <tr mat-header-row *matHeaderRowDef="displayedColumnsBelow70"></tr>
 
@@ -1354,26 +1354,26 @@ class="custom-toggle-group"
   
       <mat-tab label="ייעוצים">
         <table mat-table [dataSource]="dataSourceAllConsiliums" class="mat-elevation-z8" matSort #sortAllConsiliums="matSort" style="table-layout: fixed; width: 100%">
-          <ng-container matColumnDef="Id_Num">
+          <ng-container matColumnDef="id_Num">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>ID</th>
-            <td mat-cell *matCellDef="let element">{{ element.Id_Num }}</td>
+            <td mat-cell *matCellDef="let element">{{ element.id_Num }}</td>
           </ng-container>
 
-          <ng-container matColumnDef="First_Name">
+          <ng-container matColumnDef="first_Name">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>
               First Name
             </th>
-            <td mat-cell *matCellDef="let element">{{ element.First_Name }}</td>
+            <td mat-cell *matCellDef="let element">{{ element.first_Name }}</td>
           </ng-container>
 
-          <ng-container matColumnDef="Last_Name">
+          <ng-container matColumnDef="last_Name">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>Last Name</th>
-            <td mat-cell *matCellDef="let element">{{ element.Last_Name }}</td>
+            <td mat-cell *matCellDef="let element">{{ element.last_Name }}</td>
           </ng-container>
 
-          <ng-container matColumnDef="UnitName">
+          <ng-container matColumnDef="unitName">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>Unit</th>
-            <td mat-cell *matCellDef="let element">{{ element.UnitName }}</td>
+            <td mat-cell *matCellDef="let element">{{ element.unitName }}</td>
           </ng-container>
 
           <ng-container matColumnDef="Entry_Date">
@@ -1448,19 +1448,19 @@ class="custom-toggle-group"
             <td mat-cell *matCellDef="let element">{{ element.admission_No }}</td>
           </ng-container>
       
-          <ng-container matColumnDef="Admission_Date">
+          <ng-container matColumnDef="admission_Date">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>תאריך קבלה</th>
-            <td mat-cell *matCellDef="let element">{{ element.Admission_Date | date }}</td>
+            <td mat-cell *matCellDef="let element">{{ element.admission_Date | date }}</td>
           </ng-container>
       
-          <ng-container matColumnDef="First_Name">
+          <ng-container matColumnDef="first_Name">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>שם פרטי</th>
-            <td mat-cell *matCellDef="let element">{{ element.First_Name }}</td>
+            <td mat-cell *matCellDef="let element">{{ element.first_Name }}</td>
           </ng-container>
       
-          <ng-container matColumnDef="Last_Name">
+          <ng-container matColumnDef="last_Name">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>שם משפחה</th>
-            <td mat-cell *matCellDef="let element">{{ element.Last_Name }}</td>
+            <td mat-cell *matCellDef="let element">{{ element.last_Name }}</td>
           </ng-container>
       
           <ng-container matColumnDef="Admission_Medical_Record">
@@ -1468,14 +1468,14 @@ class="custom-toggle-group"
             <td mat-cell *matCellDef="let element">{{ element.Admission_Medical_Record }}</td>
           </ng-container>
       
-          <ng-container matColumnDef="UnitName">
+          <ng-container matColumnDef="unitName">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>מחלקה</th>
-            <td mat-cell *matCellDef="let element">{{ element.UnitName }}</td>
+            <td mat-cell *matCellDef="let element">{{ element.unitName }}</td>
           </ng-container>
       
-          <ng-container matColumnDef="Release_Date">
+          <ng-container matColumnDef="release_Date">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>תאריך שחרור</th>
-            <td mat-cell *matCellDef="let element">{{ element.Release_Date | date }}</td>
+            <td mat-cell *matCellDef="let element">{{ element.release_Date | date }}</td>
           </ng-container>
       
           <tr mat-header-row *matHeaderRowDef="displayedColumnsPatientWithICD9AndDontHaveDiabetesEstimation"></tr>
@@ -1493,29 +1493,29 @@ class="custom-toggle-group"
             <th mat-header-cell *matHeaderCellDef mat-sort-header>מספר אשפוז</th>
             <td mat-cell *matCellDef="let element">{{ element.admission_No }}</td>
           </ng-container>
-          <ng-container matColumnDef="Admission_Date">
+          <ng-container matColumnDef="admission_Date">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>תאריך קבלה</th>
-            <td mat-cell *matCellDef="let element">{{ element.Admission_Date | date }}</td>
+            <td mat-cell *matCellDef="let element">{{ element.admission_Date | date }}</td>
           </ng-container>
-          <ng-container matColumnDef="First_Name">
+          <ng-container matColumnDef="first_Name">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>שם פרטי</th>
-            <td mat-cell *matCellDef="let element">{{ element.First_Name }}</td>
+            <td mat-cell *matCellDef="let element">{{ element.first_Name }}</td>
           </ng-container>
-          <ng-container matColumnDef="Last_Name">
+          <ng-container matColumnDef="last_Name">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>שם משפחה</th>
-            <td mat-cell *matCellDef="let element">{{ element.Last_Name }}</td>
+            <td mat-cell *matCellDef="let element">{{ element.last_Name }}</td>
           </ng-container>
           <ng-container matColumnDef="Admission_Medical_Record">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>מספר תיק קבלה</th>
             <td mat-cell *matCellDef="let element">{{ element.Admission_Medical_Record }}</td>
           </ng-container>
-          <ng-container matColumnDef="UnitName">
+          <ng-container matColumnDef="unitName">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>מחלקה</th>
-            <td mat-cell *matCellDef="let element">{{ element.UnitName }}</td>
+            <td mat-cell *matCellDef="let element">{{ element.unitName }}</td>
           </ng-container>
-          <ng-container matColumnDef="Release_Date">
+          <ng-container matColumnDef="release_Date">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>תאריך שחרור</th>
-            <td mat-cell *matCellDef="let element">{{ element.Release_Date | date }}</td>
+            <td mat-cell *matCellDef="let element">{{ element.release_Date | date }}</td>
           </ng-container>
       
           <tr mat-header-row *matHeaderRowDef="displayedColumnsPatientWithICD9AndDontHaveDiabetesEstimation"></tr>
@@ -1545,20 +1545,20 @@ class="custom-toggle-group"
               {{ element.admission_No }}
             </td>
           </ng-container>
-          <ng-container matColumnDef="Admission_Date">
+          <ng-container matColumnDef="admission_Date">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>
               Admission Date
             </th>
             <td mat-cell *matCellDef="let element">
-              {{ element.Admission_Date | date: 'dd/MM/yyyy HH:mm' }}
+              {{ element.admission_Date | date: 'dd/MM/yyyy HH:mm' }}
             </td>
           </ng-container>
-          <ng-container matColumnDef="Release_Date">
+          <ng-container matColumnDef="release_Date">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>
               Release Date
             </th>
             <td mat-cell *matCellDef="let element">
-              {{ element.Release_Date | date: 'dd/MM/yyyy HH:mm' }}
+              {{ element.release_Date | date: 'dd/MM/yyyy HH:mm' }}
             </td>
           </ng-container>
           <ng-container matColumnDef="Hospitalization_Patient">
@@ -1577,25 +1577,25 @@ class="custom-toggle-group"
               {{ element.Admission_Medical_Record }}
             </td>
           </ng-container>
-          <ng-container matColumnDef="Id_Num">
+          <ng-container matColumnDef="id_Num">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>ID Number</th>
-            <td mat-cell *matCellDef="let element">{{ element.Id_Num }}</td>
+            <td mat-cell *matCellDef="let element">{{ element.id_Num }}</td>
           </ng-container>
-          <ng-container matColumnDef="First_Name">
+          <ng-container matColumnDef="first_Name">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>First Name</th>
-            <td mat-cell *matCellDef="let element">{{ element.First_Name }}</td>
+            <td mat-cell *matCellDef="let element">{{ element.first_Name }}</td>
           </ng-container>
-          <ng-container matColumnDef="Last_Name">
+          <ng-container matColumnDef="last_Name">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>Last Name</th>
-            <td mat-cell *matCellDef="let element">{{ element.Last_Name }}</td>
+            <td mat-cell *matCellDef="let element">{{ element.last_Name }}</td>
           </ng-container>
           <ng-container matColumnDef="Grade">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>Grade</th>
             <td mat-cell *matCellDef="let element">{{ element.Grade }}</td>
           </ng-container>
-          <ng-container matColumnDef="UnitName">
+          <ng-container matColumnDef="unitName">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>מחלקה </th>
-            <td mat-cell *matCellDef="let element">{{ element.UnitName }}</td>
+            <td mat-cell *matCellDef="let element">{{ element.unitName }}</td>
           </ng-container>
           <tr mat-header-row *matHeaderRowDef="displayedColumnsDiabeticFootEstimation"></tr>
           <tr mat-row *matRowDef="let row; columns: displayedColumnsDiabeticFootEstimation"></tr>
@@ -1614,19 +1614,19 @@ class="custom-toggle-group"
             <td mat-cell *matCellDef="let element">{{ element.admission_No }}</td>
           </ng-container>
       
-          <ng-container matColumnDef="Admission_Date">
+          <ng-container matColumnDef="admission_Date">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>תאריך קבלה</th>
-            <td mat-cell *matCellDef="let element">{{ element.Admission_Date | date }}</td>
+            <td mat-cell *matCellDef="let element">{{ element.admission_Date | date }}</td>
           </ng-container>
       
-          <ng-container matColumnDef="First_Name">
+          <ng-container matColumnDef="first_Name">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>שם פרטי</th>
-            <td mat-cell *matCellDef="let element">{{ element.First_Name }}</td>
+            <td mat-cell *matCellDef="let element">{{ element.first_Name }}</td>
           </ng-container>
       
-          <ng-container matColumnDef="Last_Name">
+          <ng-container matColumnDef="last_Name">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>שם משפחה</th>
-            <td mat-cell *matCellDef="let element">{{ element.Last_Name }}</td>
+            <td mat-cell *matCellDef="let element">{{ element.last_Name }}</td>
           </ng-container>
       
           <ng-container matColumnDef="ICD9">
@@ -1649,14 +1649,14 @@ class="custom-toggle-group"
             <td mat-cell *matCellDef="let element">{{ element.Parameter }}</td>
           </ng-container>
       
-          <ng-container matColumnDef="Release_Date">
+          <ng-container matColumnDef="release_Date">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>תאריך שחרור</th>
-            <td mat-cell *matCellDef="let element">{{ element.Release_Date | date }}</td>
+            <td mat-cell *matCellDef="let element">{{ element.release_Date | date }}</td>
           </ng-container>
       
-          <ng-container matColumnDef="UnitName">
+          <ng-container matColumnDef="unitName">
             <th mat-header-cell *matHeaderCellDef mat-sort-header> מחלקה</th>
-            <td mat-cell *matCellDef="let element">{{ element.UnitName }}</td>
+            <td mat-cell *matCellDef="let element">{{ element.unitName }}</td>
           </ng-container>
           <tr mat-header-row *matHeaderRowDef="displayedColumnsDiabeticPatientsWithCatheterOrders"></tr>
           <tr mat-row *matRowDef="let row; columns: displayedColumnsDiabeticPatientsWithCatheterOrders;"></tr>
