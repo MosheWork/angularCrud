@@ -40,36 +40,36 @@ export class CommunicationTherapistComponent implements OnInit {
   anamnesisResultsDataSource = new MatTableDataSource<any>([]);
   fullListDataSource = new MatTableDataSource<any>([]);
 
-  dailyFollowUpColumns: string[] = ['EmployeeName', 'SimpleA', 'ComplexB', 'VeryComplexC', 'GroupD'];
-  anamnesisResultsColumns: string[] = ['EmployeeName', 'Simple', 'Complex', 'VeryComplex'];
+  dailyFollowUpColumns: string[] = ['employeeName', 'simpleA', 'complexB', 'veryComplexC', 'groupD'];
+  anamnesisResultsColumns: string[] = ['employeeName', 'simple', 'complex', 'veryComplex'];
   fullListColumns: string[] = [
-    'AdmissionNo',
-    'IdNum',
-    'FirstName',
-    'LastName',
-    'EmployeeName',
-    'Entry_Date',
-    'AnswerType',
-    'FreeText'
+    'admissionNo',
+    'idNum',
+    'firstName',
+    'lastName',
+    'employeeName',
+    'entry_Date',
+    'answerType',
+    'freeText'
   ];
 
   columnDisplayNames2: { [key: string]: string } = {
-    'EmployeeName': 'שם עובד',
-    'Simple': 'טיפול פשוט',
-    'Complex': 'טיפול מורכב',
-    'VeryComplex': 'טיפול מאוד מורכב'
+    'employeeName': 'שם עובד',
+    'simple': 'טיפול פשוט',
+    'complex': 'טיפול מורכב',
+    'veryComplex': 'טיפול מאוד מורכב'
   };
   
 // Define Hebrew display names for the columns
 columnDisplayNames: { [key: string]: string } = {
-  AdmissionNo: 'מספר מקרה',
-  IdNum: 'מספר זהות',
-  FirstName: 'שם פרטי',
-  LastName: 'שם משפחה',
-  EmployeeName: 'שם העובד',
-  Entry_Date: 'תאריך כניסה',
-  AnswerType: 'סוג תשובה',
-  FreeText: 'טקסט חופשי'
+  admissionNo: 'מספר מקרה',
+  idNum: 'מספר זהות',
+  firstName: 'שם פרטי',
+  lastName: 'שם משפחה',
+  employeeName: 'שם העובד',
+  entry_Date: 'תאריך כניסה',
+  answerType: 'סוג תשובה',
+  freeText: 'טקסט חופשי'
 };
   // Filters
   filterForm: FormGroup;
