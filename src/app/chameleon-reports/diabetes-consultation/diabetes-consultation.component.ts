@@ -89,128 +89,134 @@ icd9WithEstimationPercentage: number = 0;
   selectedSourceFilter: string = 'All'; // Temporary storage for selected toggle
 
   displayedColumnsDiabeticFootEstimation: string[] = [
-    'Admission_No','Admission_Date','Release_Date','Hospitalization_Patient',
-    'Admission_Medical_Record','Id_Num','First_Name','Last_Name','Grade','UnitName'
+    'admission_No','admission_Date','release_Date','hospitalization_Patient',
+    'admission_Medical_Record','id_Num','first_Name','last_Name','grade','unitName'
   ];
   
-
   sugerAbove180Columns: string[] = [
-    'Admission_No','Admission_Date','First_Name','Last_Name','Count_Above_180_Less_48h',
-    'Release_Date','UnitName','LastTestResult','Age_Years'
+    'admission_No','admission_Date','first_Name','last_Name','count_Above_180_Less_48h',
+    'release_Date','unitName','lastTestResult','age_Years'
   ];
-  insulinColumns: string[] = [
-    'Admission_No',
-    'Admission_Date',
-    'Id_Num',
-    'First_Name',
-    'Last_Name',
-    'Name',
-    'Main_Drug',
-    'Entry_Date',
-    'Release_Date',
-    'UnitName',
-  ];
-  DiagnosisICD9: string[] = [
   
+  insulinColumns: string[] = [
     'admission_No',
-    'Admission_Date',
-    'Id_Num',
-    'First_Name',
-    'Last_Name',
-    'ICD9',
-    'Name',
-    'Release_Date',
-    'UnitName',
+    'admission_Date',
+    'id_Num',
+    'first_Name',
+    'last_Name',
+    'name',
+    'main_Drug',
+    'entry_Date',
+    'release_Date',
+    'unitName',
   ];
+  
+  DiagnosisICD9: string[] = [
+    'admission_No',
+    'admission_Date',
+    'id_Num',
+    'first_Name',
+    'last_Name',
+    'iCD9',
+    'name',
+    'release_Date',
+    'unitName',
+  ];
+  
   displayedColumnsHemoglobin: string[] = [
-    'Admission_Date',
-    'TestCode',
-    'TestName',
-    'Result',
-    'TestDate',
-    'Id_Num',
-    'First_Name',
-    'Last_Name',
+    'admission_Date',
+    'testCode',
+    'testName',
+    'result',
+    'testDate',
+    'id_Num',
+    'first_Name',
+    'last_Name',
   ];
+  
   displayedColumnsAllConsiliums: string[] = [
-    'Id_Num',
-    'First_Name',
-    'Last_Name',
-    'UnitName',
-    'Question',
-    'Diagnosis_Text',
-    'Consulted_Unit',
-    'Entry_Date',
-    'Answer_Text',
-    'Answer_Date',
+    'id_Num',
+    'first_Name',
+    'last_Name',
+    'unitName',
+    'question',
+    'diagnosis_Text',
+    'consulted_Unit',
+    'entry_Date',
+    'answer_Text',
+    'answer_Date',
   ];
+  
   displayedColumnsBelow70: string[] = [
-    'Admission_No',
-    'Admission_Date',
-    'First_Name',
-    'Last_Name',
-    'Count_Less_70_Less_48h',
-    'Release_Date', 
-    'UnitName',
-    'Age_Years'
+    'admission_No',
+    'admission_Date',
+    'first_Name',
+    'last_Name',
+    'count_Less_70_Less_48h',
+    'release_Date',
+    'unitName',
+    'age_Years',
   ];
+  
   displayedColumnsLabResultsWithoutInsulin: string[] = [
-    'Admission_No',
-    'Admission_Date',
-    'First_Name',
-    'Last_Name',
-    'Count_Above_180_Less_48h',
-    'Release_Date',
-    'UnitName'
+    'admission_No',
+    'admission_Date',
+    'first_Name',
+    'last_Name',
+    'count_Above_180_Less_48h',
+    'release_Date',
+    'unitName',
   ];
   
   DiabeticFootEstimationOnlHosDataSource = new MatTableDataSource<any>();
-displayedColumnsDiabeticFootEstimationOnlHos: string[] = [
-  'Admission_No',
-  'Admission_Date',
-  'Release_Date',
-  //'Hospitalization_Patient',
-  'Admission_Medical_Record',
-  'Id_Num',
-  'First_Name',
-  'Last_Name',
-  'UnitName',
-  'Unit',
-];
-
-displayedColumnsPatientWithICD9AndDontHaveDiabetesEstimation: string[] = [
-  'Admission_No',
-  'Admission_Date',
+  displayedColumnsDiabeticFootEstimationOnlHos: string[] = [
+    'admission_No',
+    'admission_Date',
+    'release_Date',
+    // 'Hospitalization_Patient',
+    'admission_Medical_Record',
+    'id_Num',
+    'first_Name',
+    'last_Name',
+    'unitName',
+    'unit',
+  ];
   
-  //'Admission_Medical_Record',
-  //'Id_Num',
-  'First_Name',
-  'Last_Name',
-  'UnitName',
-  'Release_Date',
- // 'Unit',
-];
-displayedColumnsDiabeticPatientsWithCatheterOrders: string[] = [
-  'Admission_No',
-  'Admission_Date',
-  //'Id_Num',
-  'First_Name',
-  'Last_Name',
-  'ICD9',
-  'DiagnosisName',
-  //'Entry_Date',
-  'Release_Date',
-  'Parameter',
-  'UnitName'
-];
-displayedColumnsPatientWithICD9AndHaveDiabetesEstimation: string[] = [
-  'Admission_No',
-  'Admission_Date',
-  'First_Name',
-  'Last_Name',
-  'UnitName',
-  'Release_Date',
-];
+  displayedColumnsPatientWithICD9AndDontHaveDiabetesEstimation: string[] = [
+    'admission_No',
+    'admission_Date',
+    // 'Admission_Medical_Record',
+    // 'Id_Num',
+    'first_Name',
+    'last_Name',
+    'unitName',
+    'release_Date',
+    // 'Unit',
+  ];
+  
+  displayedColumnsDiabeticPatientsWithCatheterOrders: string[] = [
+    'admission_No',
+    'admission_Date',
+    // 'Id_Num',
+    'first_Name',
+    'last_Name',
+    'iCD9',
+    'diagnosisName',
+    // 'Entry_Date',
+    'release_Date',
+    'parameter',
+    'unitName',
+  ];
+  
+  displayedColumnsPatientWithICD9AndHaveDiabetesEstimation: string[] = [
+    'admission_No',
+    'admission_Date',
+    'first_Name',
+    'last_Name',
+    'unitName',
+    'release_Date',
+  ];
+  
 departments: string[] = [
   'אשפוז יום כירורגי', 'מחלקת שיקום ילדים', 'מחלקת ילדים', 'מחלקת פנימית ב', 
   'מחלקת פנימית א', 'מחלקת נוירולוגיה ושבץ מוחי', 'המחלקה לגריאטריה שיקומית',
