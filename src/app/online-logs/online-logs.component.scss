@@ -359,4 +359,16 @@ margin-bottom: 50px;
   
 
   
-  
+  /* online-logs.component.scss */
+.chip {
+    display:inline-block;
+    margin-inline-start: .5rem;
+    padding: 0 .5rem;
+    border-radius: 12px;
+    font-size: 12px;
+    line-height: 20px;
+    vertical-align: middle;
+    background: rgba(0,0,0,.06);
+  }
+  .chip-warn   { background: #fff3cd; color: #8a6d3b; }  /* לא בשימוש */
+  .chip-accent { background: #e0f2ff; color: #0b6aa2; }  /* לא ברואטר */

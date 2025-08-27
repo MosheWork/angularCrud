@@ -97,7 +97,7 @@
     <mat-header-cell *matHeaderCellDef mat-sort-header> Route </mat-header-cell>
     <mat-cell *matCellDef="let e">
       <span>{{ e.route }}</span>
-      <span *ngIf="e.isMissing" class="chip chip-warn">לא בשימוש</span>
+      <span *ngIf="e.isMissing" class="chip chip-warn">לא נכנסו </span>
       <span *ngIf="e.isUnknown" class="chip chip-accent">לא ברואטר</span>
     </mat-cell>
   </ng-container>
