@@ -1,9 +1,7 @@
 <app-spinner [isLoading]="isLoading"></app-spinner>
 
 <div class="body" *ngIf="!isLoading">
-  <div class="nine">
-    <h1>{{ titleUnit }}<span>{{ Title1 }}{{ Title2 }}{{ totalResults }}</span></h1>
-  </div>
+ 
 
   <div class="filter-card">
     <form [formGroup]="filterForm" class="filter-form">
