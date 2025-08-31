@@ -12,31 +12,31 @@ import { FormControl, FormGroup, FormBuilder } from '@angular/forms';
 import { environment } from '../../../environments/environment';
 
 interface TraumaPatient {
-  CaseNumber: string;
-  AdmissionDepartment: string;
-  AdmissionTime: string;
-  ERReleaseTime: string;
-  HospitalReleaseTime: string;
-  CTTime: string | null;
-  ChestXRayTime: string | null;
-  DeathTime: string | null;
-  SurgeryTime: string | null;
-  UltrasoundTechTime: string | null;
-  ShockRoom: string;
-  PatientName: string;
-  DepartmentName: string;
-  ERDoctor: string;
-  ERNurse: string;
-  ReceiveCause: string;
-  ReceiveCauseDescription: string;
-  Remarks: string;
-  Relevant: number | null;
-  Month: number;
-  Week: number;
-  Year: number;
-  TransferToOtherInstitution: string; 
-  ExecutionDetails: string; 
-
+  caseNumber: string;
+  admissionDepartment: string;
+  admissionTime: string;
+  erReleaseTime: string;
+  hospitalReleaseTime: string;
+  ctTime: string | null;
+  chestXRayTime: string | null;
+  deathTime: string | null;
+  surgeryTime: string | null;
+  ultrasoundTechTime: string | null;
+  shockRoom: string;
+  patientName: string;
+  departmentName: string;
+  erDoctor: string;
+  erNurse: string;
+  receiveCause: string;
+  receiveCauseDescription: string;
+  remarks: string;
+  relevant: number | null;
+  month: number;
+  week: number;
+  year: number;
+  transferToOtherInstitution: string;
+  executionDetails: string;
+  icdName?: string;
 }
 
 @Component({
@@ -46,80 +46,74 @@ interface TraumaPatient {
 })
 export class TraumaPatientsComponent implements OnInit {
   displayedColumns: string[] = [
-    'RelevantToggle',
-    'Remarks',
-    'Relevant',
-    'CaseNumber',
-    'PatientName',
-    'AdmissionDepartment',
-    'DepartmentName',
-    'AdmissionTime',
-    'ERReleaseTime',
-    'HospitalReleaseTime',
-    'CTTime',
-    'ChestXRayTime',
-    'DeathTime',
-    'SurgeryTime',
-    'UltrasoundTechTime',
-    'ShockRoom',
-    'ICDName',  // ✅ Added missing ICDName
-    'Month',  // ✅ Added missing Month
-    'Week',  // ✅ Added missing Week
-    'Year',  // ✅ Added missing Year
-
-    'ReceiveCause',
-    'ReceiveCauseDescription',
-    'ERDoctor',
-    'ERNurse',  // ✅ Added missing ERNurse
-    'TransferToOtherInstitution' ,
-    'ExecutionDetails'
-     
-    
- 
+    'relevantToggle',
+    'remarks',
+    'relevant',
+    'caseNumber',
+    'patientName',
+    'admissionDepartment',
+    'departmentName',
+    'admissionTime',
+    'erReleaseTime',
+    'hospitalReleaseTime',
+    'ctTime',
+    'chestXRayTime',
+    'deathTime',
+    'surgeryTime',
+    'ultrasoundTechTime',
+    'shockRoom',
+    'icdName',
+    'month',
+    'week',
+    'year',
+    'receiveCause',
+    'receiveCauseDescription',
+    'erDoctor',
+    'erNurse',
+    'transferToOtherInstitution',
+    'executionDetails'
   ];
 
   isDateColumn(column: string): boolean {
     return [
-      'AdmissionTime',
-      'ERReleaseTime',
-      'HospitalReleaseTime',
-      'CTTime',
-      'ChestXRayTime',
-      'DeathTime',
-      'SurgeryTime',
-      'UltrasoundTechTime'
+      'admissionTime',
+      'erReleaseTime',
+      'hospitalReleaseTime',
+      'ctTime',
+      'chestXRayTime',
+      'deathTime',
+      'surgeryTime',
+      'ultrasoundTechTime'
     ].includes(column);
   }
 
-
+  // כותרות בעברית לפי המפתחות החדשים (camelCase)
   columnHeaders: { [key: string]: string } = {
-    'Remarks': 'הערות',
-    'Relevant': 'רלוונטי',
-    'CaseNumber': 'מס מקרה',
-    'PatientName': 'שם מטופל',
-    'AdmissionDepartment': 'מחלקה בקבלה',
-    'DepartmentName': 'מחלקה מאשפזת',
-    'ShockRoom': 'חדר הלם',
-    'AdmissionTime': 'זמן קבלה',
-    'ERReleaseTime': 'זמן שחרור ממיון',
-    'HospitalReleaseTime': 'זמן שחרור בית חולים',
-    'TransferToOtherInstitution': 'העברה למוסד אחר',
-    'DeathTime': 'זמן פטירה',
-    'CTTime': 'זמן CT',
-    'SurgeryTime': 'זמן ניתוחים',
-    'ICDName': 'תאור פעולה',
-    'Year': 'שנה',
-    'Month': 'חודש',
-    'Week': 'שבוע',
-    
-    'ReceiveCauseDescription': 'סיבת קבלה',
-    'ERDoctor': 'רופא במיון',
-    'ERNurse': 'אח/ות במיון',
-    'ChestXRayTime': 'זמן צילום חזה',
-    'UltrasoundTechTime': 'זמן טכנאי אולטרסאונד',
-    'ExecutionDetails':'ExecutionDetails'
-    
-};
+    remarks: 'הערות',
+    relevant: 'רלוונטי',
+    caseNumber: 'מס מקרה',
+    patientName: 'שם מטופל',
+    admissionDepartment: 'מחלקה בקבלה',
+    departmentName: 'מחלקה מאשפזת',
+    shockRoom: 'חדר הלם',
+    admissionTime: 'זמן קבלה',
+    erReleaseTime: 'זמן שחרור ממיון',
+    hospitalReleaseTime: 'זמן שחרור בית חולים',
+    transferToOtherInstitution: 'העברה למוסד אחר',
+    deathTime: 'זמן פטירה',
+    ctTime: 'זמן CT',
+    surgeryTime: 'זמן ניתוחים',
+    icdName: 'תאור פעולה',
+    year: 'שנה',
+    month: 'חודש',
+    week: 'שבוע',
+    receiveCauseDescription: 'סיבת קבלה',
+    erDoctor: 'רופא במיון',
+    erNurse: 'אח/ות במיון',
+    chestXRayTime: 'זמן צילום חזה',
+    ultrasoundTechTime: 'זמן טכנאי אולטרסאונד',
+    executionDetails: 'פרטי ביצוע'
+  };
 
   filterForm: FormGroup;
   totalResults: number = 0;
@@ -180,35 +174,36 @@ export class TraumaPatientsComponent implements OnInit {
 
     this.http.get<TraumaPatient[]>(environment.apiUrl + 'Trauma/GetTraumaPatients').subscribe(
       (data) => {
-        this.originalData = [...data]; // ✅ Store the original data
-        this.dataSource.data = data;
+        // הנתונים כבר ב-camelCase מה־backend
+        this.originalData = [...data];
         this.filteredData = [...data];
+        this.dataSource.data = this.filteredData;
         this.totalResults = data.length;
-  // ✅ Set initial data into table
-  this.dataSource.data = this.filteredData;
-       // Extract unique values for filters
-       this.uniqueYears = [...new Set(data.map(item => item.Year).filter(Boolean))].sort((a, b) => b - a);
-       this.uniqueMonths = [...new Set(data.map(item => item.Month).filter(Boolean))].sort((a, b) => b - a);
-       this.uniqueWeeks = [...new Set(data.map(item => item.Week).filter(Boolean))].sort((a, b) => b - a);
-       this.uniqueAdmissionDepartments = [...new Set(data.map(item => item.AdmissionDepartment).filter(Boolean))].sort();
-       this.uniqueShockRooms = [...new Set(data.map(item => item.ShockRoom).filter(Boolean))].sort();
-       this.uniqueTransfers = [...new Set(data.map(item => item.TransferToOtherInstitution).filter(Boolean))].sort();
-       this.uniqueReceiveCauses = [...new Set(data.map(item => item.ReceiveCauseDescription).filter(Boolean))].sort();
-  // ✅ Apply initial filters automatically
-  this.isLoading = false;
 
-  setTimeout(() => this.applyFilters(), 100);
-        // ✅ Initialize forms for each row
-        data.forEach(patient => {
-          this.editForms[patient.CaseNumber] = new FormGroup({
-            CaseNumber: new FormControl(patient.CaseNumber),
-            Remarks: new FormControl(patient.Remarks),
-            Relevant: new FormControl(patient.Relevant)
+        // סט ערכים ייחודיים לפילטרים
+        this.uniqueYears = [...new Set(data.map(i => i.year).filter(Boolean))].sort((a, b) => b - a);
+        this.uniqueMonths = [...new Set(data.map(i => i.month).filter(Boolean))].sort((a, b) => b - a);
+        this.uniqueWeeks = [...new Set(data.map(i => i.week).filter(Boolean))].sort((a, b) => b - a);
+        this.uniqueAdmissionDepartments = [...new Set(data.map(i => i.admissionDepartment).filter(Boolean))].sort();
+        this.uniqueShockRooms = [...new Set(data.map(i => i.shockRoom).filter(Boolean))].sort();
+        this.uniqueTransfers = [...new Set(data.map(i => i.transferToOtherInstitution).filter(Boolean))].sort();
+        this.uniqueReceiveCauses = [...new Set(data.map(i => i.receiveCauseDescription).filter(Boolean))].sort();
+
+        // טפסי עריכה לשורות
+        data.forEach(p => {
+          this.editForms[p.caseNumber] = new FormGroup({
+            CaseNumber: new FormControl(p.caseNumber), // נשאר PascalCase ל־POST
+            Remarks: new FormControl(p.remarks),
+            Relevant: new FormControl(p.relevant)
           });
         });
+
+        this.isLoading = false;
+        setTimeout(() => this.applyFilters(), 100);
       },
       (error) => {
         console.error('Error fetching trauma patients:', error);
+        this.isLoading = false;
       }
     );
   }
@@ -217,7 +212,7 @@ export class TraumaPatientsComponent implements OnInit {
   private createFilterForm(): FormGroup {
     return this.fb.group({
       globalFilter: new FormControl(''),
-      relevantFilter: new FormControl(''), // ✅ Default value is "לא עודכן"
+      relevantFilter: new FormControl(''),
       YearFilter: new FormControl([]),
       MonthFilter: new FormControl([]),
       WeekFilter: new FormControl([]),
@@ -227,46 +222,40 @@ export class TraumaPatientsComponent implements OnInit {
       ReceiveCauseDesFilter: new FormControl([])
     });
   }
-  
+
   applyFilters() {
-    const filters = this.filterForm.value;
-    const globalFilter = (filters.globalFilter || '').toLowerCase();
-    const relevantFilter = filters.relevantFilter;
-    
-    const selectedYears = filters.YearFilter || [];
-    const selectedMonths = filters.MonthFilter || [];
-    const selectedWeeks = filters.WeekFilter || [];
-    const selectedAdmissionDepartments = filters.AdmissionDepartmentFilter || [];
-    const selectedShockRooms = filters.ShockRoomFilter || [];
-    const selectedTransfers = filters.TransferFilter || [];
-    const selectedReceiveCauses = filters.ReceiveCauseDesFilter || [];
-  
-    this.filteredData = this.originalData.filter((item: TraumaPatient) => {
-      const matchesGlobalFilter = globalFilter
-        ? Object.values(item).some((val) => val && val.toString().toLowerCase().includes(globalFilter))
+    const f = this.filterForm.value;
+    const globalFilter = (f.globalFilter || '').toLowerCase();
+    const relevantFilter = f.relevantFilter;
+
+    const selectedYears = f.YearFilter || [];
+    const selectedMonths = f.MonthFilter || [];
+    const selectedWeeks = f.WeekFilter || [];
+    const selectedAdmissionDepartments = f.AdmissionDepartmentFilter || [];
+    const selectedShockRooms = f.ShockRoomFilter || [];
+    const selectedTransfers = f.TransferFilter || [];
+    const selectedReceiveCauses = f.ReceiveCauseDesFilter || [];
+
+    this.filteredData = this.originalData.filter((item) => {
+      const matchesGlobal = globalFilter
+        ? Object.values(item as any).some(v => v && v.toString().toLowerCase().includes(globalFilter))
         : true;
-  
-      let matchesRelevantFilter = true;
-      if (relevantFilter === "לא עודכן") {
-        matchesRelevantFilter = item.Relevant === null;
-      } else if (relevantFilter === "1") {
-        matchesRelevantFilter = item.Relevant === 1;
-      } else if (relevantFilter === "2") {
-        matchesRelevantFilter = item.Relevant === 2;
-      } else if (relevantFilter === "") {
-        matchesRelevantFilter = true;
-      }
-  
-      const matchesYear = selectedYears.length ? selectedYears.includes(item.Year) : true;
-      const matchesMonth = selectedMonths.length ? selectedMonths.includes(item.Month) : true;
-      const matchesWeek = selectedWeeks.length ? selectedWeeks.includes(item.Week) : true;
-      const matchesAdmissionDepartment = selectedAdmissionDepartments.length ? selectedAdmissionDepartments.includes(item.AdmissionDepartment) : true;
-      const matchesShockRoom = selectedShockRooms.length ? selectedShockRooms.includes(item.ShockRoom) : true;
-      const matchesTransfer = selectedTransfers.length ? selectedTransfers.includes(item.TransferToOtherInstitution) : true;
-      const matchesReceiveCause = selectedReceiveCauses.length ? selectedReceiveCauses.includes(item.ReceiveCauseDescription) : true;
-  
-      return matchesGlobalFilter &&
-             matchesRelevantFilter &&
+
+      let matchesRelevant = true;
+      if (relevantFilter === 'לא עודכן') matchesRelevant = item.relevant === null;
+      else if (relevantFilter === '1') matchesRelevant = item.relevant === 1;
+      else if (relevantFilter === '2') matchesRelevant = item.relevant === 2;
+
+      const matchesYear = selectedYears.length ? selectedYears.includes(item.year) : true;
+      const matchesMonth = selectedMonths.length ? selectedMonths.includes(item.month) : true;
+      const matchesWeek = selectedWeeks.length ? selectedWeeks.includes(item.week) : true;
+      const matchesAdmissionDepartment = selectedAdmissionDepartments.length ? selectedAdmissionDepartments.includes(item.admissionDepartment) : true;
+      const matchesShockRoom = selectedShockRooms.length ? selectedShockRooms.includes(item.shockRoom) : true;
+      const matchesTransfer = selectedTransfers.length ? selectedTransfers.includes(item.transferToOtherInstitution) : true;
+      const matchesReceiveCause = selectedReceiveCauses.length ? selectedReceiveCauses.includes(item.receiveCauseDescription) : true;
+
+      return matchesGlobal &&
+             matchesRelevant &&
              matchesYear &&
              matchesMonth &&
              matchesWeek &&
@@ -275,10 +264,10 @@ export class TraumaPatientsComponent implements OnInit {
              matchesTransfer &&
              matchesReceiveCause;
     });
-  
+
     this.dataSource.data = this.filteredData;
     this.totalResults = this.filteredData.length;
-  
+
     setTimeout(() => {
       if (this.paginator) {
         this.paginator.firstPage();
@@ -286,13 +275,7 @@ export class TraumaPatientsComponent implements OnInit {
       }
     });
   }
-  
-  
-  
-  
-  
-  
-  
+
   resetFilters() {
     this.filterForm.reset({
       globalFilter: '',
@@ -305,11 +288,11 @@ export class TraumaPatientsComponent implements OnInit {
       TransferFilter: [],
       ReceiveCauseDesFilter: []
     });
-  
-    this.filteredData = [...this.originalData]; 
+
+    this.filteredData = [...this.originalData];
     this.dataSource.data = this.filteredData;
     this.totalResults = this.filteredData.length;
-  
+
     setTimeout(() => {
       if (this.paginator) {
         this.paginator.firstPage();
@@ -317,7 +300,7 @@ export class TraumaPatientsComponent implements OnInit {
       }
     });
   }
-  
+
   
   
 
@@ -326,53 +309,22 @@ export class TraumaPatientsComponent implements OnInit {
       console.warn('No data available to export.');
       return;
     }
-  
-    // ✅ Hebrew column headers mapping
-    const columnHeaders: { [key: string]: string } = {
-      CaseNumber: 'מס מקרה',
-      PatientName: 'שם מטופל',
-      AdmissionDepartment: 'מחלקה בקבלה',
-      ShockRoom: 'חדר הלם',
-      AdmissionTime: 'זמן קבלה',
-      ERReleaseTime: 'זמן שחרור ממיון',
-      HospitalReleaseTime: 'זמן שחרור בית חולים',
-      TransferToOtherInstitution: 'העברה למוסד אחר',
-      DeathTime: 'זמן פטירה',
-      CTTime: 'זמן CT',
-      SurgeryTime: 'זמן ניתוחים',
-      ReceiveCauseDescription: 'ReceiveCauseDes(סיבת קבלה)',
-      Year: 'שנה',
-      Month: 'חודש',
-      Week: 'שבוע',
-      DepartmentName: 'מחלקה מאשפזת',
-      ReceiveCause: 'תאור פעולה',
-      ERDoctor: 'רופא במיון',
-      ERNurse: 'אח/ות במיון',
-      ChestXRayTime: 'זמן צילום חזה',
-      UltrasoundTechTime: 'זמן טכנאי אולטרסאונד',
-      Remarks: 'הערות',
-      Relevant: 'רלוונטי',
-      ExecutionDetails: 'פרטי ביצוע'
 
-    };
-  
-    // ✅ Format data with Hebrew headers
-    const formattedData = this.filteredData.map(item => {
-      let newItem: any = {};
-      Object.keys(item).forEach(key => {
+    const columnHeaders: { [key: string]: string } = this.columnHeaders;
+
+    const formatted = this.filteredData.map(item => {
+      const row: any = {};
+      Object.keys(item).forEach((key) => {
         if (columnHeaders[key]) {
-          newItem[columnHeaders[key]] = item[key]; // ✅ Assign Hebrew names
+          row[columnHeaders[key]] = (item as any)[key];
         }
       });
-      return newItem;
+      return row;
     });
-  
-    // ✅ Convert to Excel sheet
-    const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(formattedData);
-    const workbook: XLSX.WorkBook = { Sheets: { 'טראומה': worksheet }, SheetNames: ['טראומה'] };
-    
-    // ✅ Export as Excel file
-    XLSX.writeFile(workbook, 'טראומה.xlsx');
+
+    const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(formatted);
+    const wb: XLSX.WorkBook = { Sheets: { 'טראומה': ws }, SheetNames: ['טראומה'] };
+    XLSX.writeFile(wb, 'טראומה.xlsx');
   }
   
   enableEdit(caseNumber: string): void {
@@ -414,26 +366,19 @@ export class TraumaPatientsComponent implements OnInit {
     return date.getFullYear() === 1900;
   }
 
-  onRelevantToggle(element: any, isChecked: boolean) {
-    // Update the local value
-    element.Relevant = isChecked ? 1 : 0;
-  
-    // Create the same payload your dialog uses
+  onRelevantToggle(element: TraumaPatient, isChecked: boolean) {
+    element.relevant = isChecked ? 1 : 0;
+
+    // שומר ל־backend בפורמט PascalCase (כמו קודם)
     const updatedData = {
-      CaseNumber: element.CaseNumber,
-      Relevant: element.Relevant,
-      Remarks: element.Remarks || ''  // or pull from element if needed
+      CaseNumber: element.caseNumber,
+      Relevant: element.relevant,
+      Remarks: element.remarks || ''
     };
-  
-    // Call backend same as saveEdit()
+
     this.http.post(environment.apiUrl + 'Trauma/InsertTraumaRemark', updatedData).subscribe(
-      () => {
-        console.log('Relevant updated successfully');
-        this.fetchTraumaPatients(); // Refresh
-      },
-      (error) => {
-        console.error('Error updating Relevant:', error);
-      }
+      () => this.fetchTraumaPatients(),
+      (error) => console.error('Error updating Relevant:', error)
     );
   }
   formatDialogValue(column: string, value: any): string {
@@ -442,5 +387,4 @@ export class TraumaPatientsComponent implements OnInit {
     }
     return value;
   }
-  
 }

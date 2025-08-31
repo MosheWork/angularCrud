@@ -1,207 +1,185 @@
 <app-spinner [isLoading]="isLoading"></app-spinner>
 
-<div class="body" *ngIf="!isLoading" >
-    <div class="nine">
-      <h1>{{ titleUnit }}<span>{{ Title1 }}{{ Title2 }}{{ totalResults }}</span></h1>
-    </div>
+<div class="body" *ngIf="!isLoading">
+  <div class="nine">
+    <h1>{{ titleUnit }}<span>{{ Title1 }}{{ Title2 }}{{ totalResults }}</span></h1>
+  </div>
 
-    <div class="filter-card">
-      <form [formGroup]="filterForm" class="filter-form">
-        <button mat-button (click)="resetFilters()" mat-raised-button color="primary">
-          איפוס מסננים
-        </button>
-        <img src="../../assets/excel.png" alt="Download" (click)="exportToExcel()" class="download-icon" width="50px" />
-         
+  <div class="filter-card">
+    <form [formGroup]="filterForm" class="filter-form">
+      <button mat-button (click)="resetFilters()" mat-raised-button color="primary">
+        איפוס מסננים
+      </button>
+      <img src="../../assets/excel.png" alt="Download" (click)="exportToExcel()" class="download-icon" width="50px" />
 
-        <mat-form-field>
-          <mat-label>שנה</mat-label>
-          <mat-select formControlName="YearFilter" multiple>
-            <mat-option *ngFor="let year of uniqueYears" [value]="year">{{ year }}</mat-option>
-          </mat-select>
-        </mat-form-field>
-    
-        <mat-form-field>
-          <mat-label>חודש</mat-label>
-          <mat-select formControlName="MonthFilter" multiple>
-            <mat-option *ngFor="let month of uniqueMonths" [value]="month">{{ month }}</mat-option>
-          </mat-select>
-        </mat-form-field>
-    
-        <mat-form-field>
-          <mat-label>שבוע</mat-label>
-          <mat-select formControlName="WeekFilter" multiple>
-            <mat-option *ngFor="let week of uniqueWeeks" [value]="week">{{ week }}</mat-option>
-          </mat-select>
-        </mat-form-field>
-    
-        <mat-form-field>
-          <mat-label>מחלקה בקבלה</mat-label>
-          <mat-select formControlName="AdmissionDepartmentFilter" multiple>
-            <mat-option *ngFor="let department of uniqueAdmissionDepartments" [value]="department">
-              {{ department }}
-            </mat-option>
-          </mat-select>
-        </mat-form-field>
-    
-        <mat-form-field>
-          <mat-label>חדר הלם</mat-label>
-          <mat-select formControlName="ShockRoomFilter" multiple>
-            <mat-option *ngFor="let room of uniqueShockRooms" [value]="room">{{ room }}</mat-option>
-          </mat-select>
-        </mat-form-field>
-    
-        <mat-form-field>
-          <mat-label>העברה למוסד אחר</mat-label>
-          <mat-select formControlName="TransferFilter" multiple>
-            <mat-option *ngFor="let transfer of uniqueTransfers" [value]="transfer">{{ transfer }}</mat-option>
-          </mat-select>
-        </mat-form-field>
-    
-        <mat-form-field>
-          <mat-label>סיבת קבלה</mat-label>
-          <mat-select formControlName="ReceiveCauseDesFilter" multiple>
-            <mat-option *ngFor="let cause of uniqueReceiveCauses" [value]="cause">{{ cause }}</mat-option>
-          </mat-select>
-        </mat-form-field>
-   <!-- Relevant Filter (Radio Buttons) -->
-<!-- Relevant Filter (Radio Buttons) -->
-<!-- Relevant Filter (Radio Buttons) -->
-<div class="filter-radio-group" dir="rtl">
-  <span class="filter-label">רלוונטי: </span>
-  <mat-radio-group formControlName="relevantFilter" class="radio-group">
-    <mat-radio-button value="לא עודכן">לא עודכן</mat-radio-button>
-    <mat-radio-button value="1">כן</mat-radio-button>
-    <mat-radio-button value="2">לא</mat-radio-button>
-    <mat-radio-button value="">הכל</mat-radio-button>
-  </mat-radio-group>
-</div>
-
-
-  
- 
-      </form>
-    </div>
-    
-    
-    <form [formGroup]="filterForm" dir="rtl" class="filter-form">
-      <!-- Global Search -->
-      <mat-form-field class="long-search-bar">
-        <mat-label>חיפוש</mat-label>
-        <input matInput [formControlName]="'globalFilter'" />
+      <mat-form-field>
+        <mat-label>שנה</mat-label>
+        <mat-select formControlName="YearFilter" multiple>
+          <mat-option *ngFor="let year of uniqueYears" [value]="year">{{ year }}</mat-option>
+        </mat-select>
       </mat-form-field>
-    
-     
-    </form>
-    
-    
-    
-<div class="trauma-container">
-  
-    <div class="table-responsive">
-      <div class="table-responsive">
-        <mat-table [dataSource]="dataSource" matSort class="mat-elevation-z8">
-      
-         <!-- ✅ 1. Static RelevantToggle Column -->
-<ng-container matColumnDef="RelevantToggle">
-  <mat-header-cell *matHeaderCellDef> רלוונטי </mat-header-cell>
-  <mat-cell *matCellDef="let element">
-    <mat-checkbox
-      [checked]="element.Relevant === 1"
-      (change)="onRelevantToggle(element, $event.checked)">
-    </mat-checkbox>
-  </mat-cell>
-</ng-container>
 
-<!-- ✅ 2. Dynamic Columns - safe loop -->
-<ng-container *ngFor="let column of displayedColumns">
-  <ng-container *ngIf="column !== 'RelevantToggle'" [matColumnDef]="column">
-    <mat-header-cell *matHeaderCellDef mat-sort-header>
-      {{ columnHeaders[column] || column }}
-    </mat-header-cell>
+      <mat-form-field>
+        <mat-label>חודש</mat-label>
+        <mat-select formControlName="MonthFilter" multiple>
+          <mat-option *ngFor="let month of uniqueMonths" [value]="month">{{ month }}</mat-option>
+        </mat-select>
+      </mat-form-field>
 
-    <mat-cell *matCellDef="let element" (click)="openDialog(element)">
-      <!-- Relevant Column Custom Format -->
-      <ng-container *ngIf="column === 'Relevant'; else defaultColumn">
-        <span *ngIf="element.Relevant === 1">כן</span>
-        <span *ngIf="element.Relevant === 0">לא</span>
-        <span *ngIf="element.Relevant === null">לא עודכן</span>
-      </ng-container>
+      <mat-form-field>
+        <mat-label>שבוע</mat-label>
+        <mat-select formControlName="WeekFilter" multiple>
+          <mat-option *ngFor="let week of uniqueWeeks" [value]="week">{{ week }}</mat-option>
+        </mat-select>
+      </mat-form-field>
 
-      <!-- Default Format -->
-      <ng-template #defaultColumn>
-        <ng-container *ngIf="isDateColumn(column); else textContent">
-          <ng-container *ngIf="!isDefaultDate(element[column]); else emptyDate">
-            {{ element[column] | date:'dd/MM/yyyy HH:mm' }}
-          </ng-container>
-          <ng-template #emptyDate> </ng-template>
-        </ng-container>
-        <ng-template #textContent>
-          {{ element[column] }}
-        </ng-template>
-      </ng-template>
-    </mat-cell>
-  </ng-container>
-</ng-container>
+      <mat-form-field>
+        <mat-label>מחלקה בקבלה</mat-label>
+        <mat-select formControlName="AdmissionDepartmentFilter" multiple>
+          <mat-option *ngFor="let department of uniqueAdmissionDepartments" [value]="department">
+            {{ department }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
 
-      
-          <!-- ✅ 3. Table Headers & Rows -->
-          <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-          <mat-row *matRowDef="let row; columns: displayedColumns;" class="clickable-row"></mat-row>
-      
-        </mat-table>
+      <mat-form-field>
+        <mat-label>חדר הלם</mat-label>
+        <mat-select formControlName="ShockRoomFilter" multiple>
+          <mat-option *ngFor="let room of uniqueShockRooms" [value]="room">{{ room }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field>
+        <mat-label>העברה למוסד אחר</mat-label>
+        <mat-select formControlName="TransferFilter" multiple>
+          <mat-option *ngFor="let transfer of uniqueTransfers" [value]="transfer">{{ transfer }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field>
+        <mat-label>סיבת קבלה</mat-label>
+        <mat-select formControlName="ReceiveCauseDesFilter" multiple>
+          <mat-option *ngFor="let cause of uniqueReceiveCauses" [value]="cause">{{ cause }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <!-- רלוונטי -->
+      <div class="filter-radio-group" dir="rtl">
+        <span class="filter-label">רלוונטי: </span>
+        <mat-radio-group formControlName="relevantFilter" class="radio-group">
+          <mat-radio-button value="לא עודכן">לא עודכן</mat-radio-button>
+          <mat-radio-button value="1">כן</mat-radio-button>
+          <mat-radio-button value="2">לא</mat-radio-button>
+          <mat-radio-button value="">הכל</mat-radio-button>
+        </mat-radio-group>
       </div>
-      
-      
-      
+    </form>
+  </div>
+
+  <form [formGroup]="filterForm" dir="rtl" class="filter-form">
+    <mat-form-field class="long-search-bar">
+      <mat-label>חיפוש</mat-label>
+      <input matInput formControlName="globalFilter" />
+    </mat-form-field>
+  </form>
+
+  <div class="trauma-container">
+    <div class="table-responsive">
+      <mat-table [dataSource]="dataSource" matSort class="mat-elevation-z8">
+
+        <!-- ✅ 1) טוגל רלוונטי (עמודה סטטית) -->
+        <ng-container matColumnDef="relevantToggle">
+          <mat-header-cell *matHeaderCellDef> רלוונטי </mat-header-cell>
+          <mat-cell *matCellDef="let element">
+            <mat-checkbox
+              [checked]="element.relevant === 1"
+              (change)="onRelevantToggle(element, $event.checked)">
+            </mat-checkbox>
+          </mat-cell>
+        </ng-container>
+
+        <!-- ✅ 2) עמודות דינמיות בלולאה -->
+        <ng-container *ngFor="let column of displayedColumns">
+          <ng-container *ngIf="column !== 'relevantToggle'" [matColumnDef]="column">
+            <mat-header-cell *matHeaderCellDef mat-sort-header>
+              {{ columnHeaders[column] || column }}
+            </mat-header-cell>
+
+            <mat-cell *matCellDef="let element" (click)="openDialog(element)">
+              <!-- עמודת relevant בפורמט טקסט -->
+              <ng-container *ngIf="column === 'relevant'; else defaultColumn">
+                <span *ngIf="element.relevant === 1">כן</span>
+                <span *ngIf="element.relevant === 0">לא</span>
+                <span *ngIf="element.relevant === null">לא עודכן</span>
+              </ng-container>
+
+              <!-- ברירת מחדל -->
+              <ng-template #defaultColumn>
+                <ng-container *ngIf="isDateColumn(column); else textContent">
+                  <ng-container *ngIf="!isDefaultDate(element[column]); else emptyDate">
+                    {{ element[column] | date:'dd/MM/yyyy HH:mm' }}
+                  </ng-container>
+                  <ng-template #emptyDate> </ng-template>
+                </ng-container>
+                <ng-template #textContent>
+                  {{ element[column] }}
+                </ng-template>
+              </ng-template>
+            </mat-cell>
+          </ng-container>
+        </ng-container>
+
+        <!-- ✅ 3) כותרות ושורות -->
+        <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+        <mat-row *matRowDef="let row; columns: displayedColumns;" class="clickable-row"></mat-row>
+      </mat-table>
 
       <mat-paginator
-      [pageSizeOptions]="[100]"
-      showFirstLastButtons
-      class="mat-paginator">
-    </mat-paginator></div>
-    <!-- Edit Dialog (inside the same component) -->
+        [pageSizeOptions]="[100]"
+        showFirstLastButtons
+        class="mat-paginator">
+      </mat-paginator>
+    </div>
+
+    <!-- ✅ Edit Dialog -->
     <div *ngIf="selectedPatient" class="dialog-backdrop">
       <div class="dialog-box large-dialog" style="max-width: 90vw; width: 90vw; max-height: 90vh; overflow: auto;">
         <h2>עריכת מטופל טראומה</h2>
-    
-        <form [formGroup]="editForms[selectedPatient.CaseNumber]">
-    
-          <!-- ✅ Grouped readonly fields -->
+
+        <!-- הערה: המפתח לדיאלוג עבר ל-caseNumber -->
+        <form [formGroup]="editForms[selectedPatient.caseNumber]">
+
+          <!-- שדות לקריאה בלבד -->
           <div class="columns-grid" dir="rtl">
             <ng-container *ngFor="let column of displayedColumns">
-              <ng-container *ngIf="column !== 'RelevantToggle' && column !== 'Remarks' && column !== 'Relevant'">
-    
-                <mat-form-field  class="full-width">
+              <ng-container *ngIf="column !== 'relevantToggle' && column !== 'remarks' && column !== 'relevant'">
+                <mat-form-field class="full-width">
                   <mat-label>{{ columnHeaders[column] || column }}</mat-label>
                   <input matInput [value]="formatDialogValue(column, selectedPatient[column])" readonly />
                 </mat-form-field>
-    
               </ng-container>
             </ng-container>
           </div>
-    
-          <!-- ✅ Editable Remarks -->
+
+          <!-- הערות (נשאר PascalCase בטופס לצורך ה־POST) -->
           <mat-form-field appearance="outline" class="full-width">
             <mat-label>הערות</mat-label>
             <textarea matInput formControlName="Remarks" rows="5" maxlength="2000"></textarea>
           </mat-form-field>
-    
-          <!-- ✅ Editable Relevant -->
+
+          <!-- רלוונטי (נשאר PascalCase בטופס לצורך ה־POST) -->
           <mat-label>רלוונטי</mat-label>
           <mat-radio-group formControlName="Relevant" class="radio-group">
             <mat-radio-button [value]="1">כן</mat-radio-button>
             <mat-radio-button [value]="0">לא</mat-radio-button>
           </mat-radio-group>
-    
         </form>
-    
+
         <div class="dialog-actions">
           <button mat-button (click)="closeDialog()">בטל</button>
           <button mat-button color="primary" (click)="saveEdit()">שמור</button>
         </div>
       </div>
     </div>
-    
-    
   </div>
-  
+</div>
