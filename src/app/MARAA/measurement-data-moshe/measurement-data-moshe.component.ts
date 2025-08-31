@@ -34,7 +34,7 @@ export interface FailedMeasurementCaseModel {
   measurementCode: string;
   measurementShortDesc?: string;
   department: string;
-  caseNumber: string;
+  case_Number: string;
   date: string;
   mone: number;
   mechane: number;
@@ -343,7 +343,7 @@ failedCasesDisplayedColumns: string[] = [
   'mone',
   'mechane',
   'department',
-  'caseNumber',
+  'case_Number',
   'remarks',
   'entryUser',
   'entryDate',
@@ -1220,7 +1220,7 @@ profilePictureUrl: string = 'assets/default-user.png';
       mone: 'מונה',
       mechane: 'מכנה',
       department: 'מחלקה',
-      caseNumber: 'מספר מקרה',
+      case_Number: 'מספר מקרה',
       subtract: 'הפחתה',
       aprovedMabar: 'מאושר מעבר',
       entryUserSubtract: 'משתמש שהפחית',
@@ -1260,7 +1260,7 @@ profilePictureUrl: string = 'assets/default-user.png';
       width: '800px',
       data: {
         id: row.id,
-        caseNumber: row.caseNumber,
+        case_Number: row.case_Number,
         remarks: row.remarks || '',
         subtract: row.subtract ?? false,
         aprovedMabar: row.aprovedMabar ?? false,
