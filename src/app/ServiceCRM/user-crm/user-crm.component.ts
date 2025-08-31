@@ -14,60 +14,101 @@ import * as XLSX from 'xlsx';
   styleUrls: ['./user-crm.component.scss']
 })
 export class UserCRMComponent implements OnInit, AfterViewInit {
+  // ✅ all keys are lower-first to match transformed data
   displayedColumns: string[] = [
-    'CaseNumber', 'DepartmentName', 'EnterDepartDate', 'EnterDepartTime',
-    'ExitHospTime', 'FirstName', 'LastName', 'Telephone', 'Mobile',
-    'BirthDate',  'IsBirthday',
-    'CaseManagerStatus', 'CaseManagerCategory', 'CaseManagerUpdate', 'CaseManagerRemarks'
+    'caseNumber', 'departmentName', 'enterDepartDate', 'enterDepartTime',
+    'exitHospTime', 'firstName', 'lastName', 'telephone', 'mobile',
+    'birthDate', 'isBirthday',
+    'caseManagerStatus', 'caseManagerCategory', 'caseManagerUpdate', 'caseManagerRemarks'
   ];
+
   dataSource = new MatTableDataSource<any>([]);
   isLoading = true;
+
   selectedDepartments: string[] = [];
-departments: string[] = [];
+  departments: string[] = [];
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
   constructor(private http: HttpClient, private dialog: MatDialog) {}
 
+  // helper: make first letter of every key lower case
+  private lowerFirstKeys<T extends Record<string, any>>(obj: T): any {
+    const out: any = {};
+    for (const [k, v] of Object.entries(obj || {})) {
+      const nk = k.length ? k[0].toLowerCase() + k.slice(1) : k;
+      out[nk] = v;
+    }
+    return out;
+  }
+
   ngOnInit(): void {
+    // robust filter that works with our lower-first keys
     this.dataSource.filterPredicate = (data, filter) => {
-      const filters = JSON.parse(filter);
-      const deptMatch = !filters.departments.length || filters.departments.includes(data.DepartmentName?.trim());
-      const textMatch = !filters.text || Object.values(data).some(val =>
-        val?.toString().toLowerCase().includes(filters.text)
-      );
+      let parsed: { text?: string; departments?: string[] } = {};
+      try {
+        parsed = filter ? JSON.parse(filter) : {};
+      } catch {
+        parsed = {};
+      }
+
+      const text = (parsed.text || '').toLowerCase();
+      const departments = parsed.departments || [];
+
+      const deptMatch =
+        departments.length === 0 ||
+        departments.includes((data.departmentName || '').trim());
+
+      const textMatch =
+        !text ||
+        Object.values(data).some((val: any) =>
+          ((val ?? '') + '').toLowerCase().includes(text)
+        );
+
       return deptMatch && textMatch;
     };
+
+    // safe initial filter
+    this.dataSource.filter = JSON.stringify({ text: '', departments: [] });
     this.fetchData();
   }
 
   fetchData(): void {
     this.isLoading = true;
-    this.http.get<any[]>(`${environment.apiUrl}ServiceCRM/HospPast72h`).subscribe(data => {
-      this.dataSource.data = data.map(item => ({
-        ...item,
-        EnterDepartDate: item.EnterDepartDate ? new Date(item.EnterDepartDate) : null,
-        BirthDate: item.BirthDate ? new Date(item.BirthDate) : null,
-        DeathDate: item.DeathDate ? new Date(item.DeathDate) : null,
-        CaseManagerUpdate: item.CaseManagerUpdate ? new Date(item.CaseManagerUpdate) : null
-      }));
 
-      this.departments = [...new Set(data.map(d => d.DepartmentName).filter(Boolean))].sort();
+    this.http.get<any[]>(`${environment.apiUrl}ServiceCRM/HospPast72h`)
+      .subscribe(data => {
+        // ✅ normalize keys from backend to lower-first, then coerce dates
+        const normalized = (data || []).map(item => {
+          const it = this.lowerFirstKeys(item);
+          return {
+            ...it,
+            enterDepartDate: it.enterDepartDate ? new Date(it.enterDepartDate) : null,
+            birthDate: it.birthDate ? new Date(it.birthDate) : null,
+            deathDate: it.deathDate ? new Date(it.deathDate) : null,
+            caseManagerUpdate: it.caseManagerUpdate ? new Date(it.caseManagerUpdate) : null
+          };
+        });
 
-      this.isLoading = false;
+        this.dataSource.data = normalized;
 
-      setTimeout(() => {
-        this.dataSource.paginator = this.paginator;
-        this.dataSource.sort = this.sort;
+        // build departments list from normalized key
+        this.departments = [...new Set(normalized.map(d => d.departmentName).filter(Boolean))].sort();
+
+        this.isLoading = false;
+
+        setTimeout(() => {
+          if (this.paginator) this.dataSource.paginator = this.paginator;
+          if (this.sort) this.dataSource.sort = this.sort;
+        });
       });
-    });
   }
 
   ngAfterViewInit(): void {
     setTimeout(() => {
-      this.dataSource.paginator = this.paginator;
-      this.dataSource.sort = this.sort;
+      if (this.paginator) this.dataSource.paginator = this.paginator;
+      if (this.sort) this.dataSource.sort = this.sort;
     });
   }
 
@@ -78,64 +119,73 @@ departments: string[] = [];
       this.dataSource.paginator.firstPage();
     }
   }
-  
+
   onDepartmentsChange(): void {
-    this.applyFilter(); // reapply filter on department change
+    this.applyFilter();
   }
-  openPhoneCallDialog(row: any) {
+
+  openPhoneCallDialog(row: any): void {
+    // The dialog template expects PascalCase keys; provide them along with the normalized row
+    const dialogData = {
+      ...row,
+      CaseNumber: row.caseNumber,
+      DepartmentName: row.departmentName,
+      FirstName: row.firstName,
+      LastName: row.lastName,
+      Telephone: row.telephone,
+      Mobile: row.mobile,
+      EnterDepartDate: row.enterDepartDate
+    };
+
     const dialogRef = this.dialog.open(PhoneCallDialogComponent, {
       width: '600px',
-      data: row
+      data: dialogData
     });
-  
+
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        // Attach the AdmissionNo
+        // backend expects CaseNumber in PascalCase
         const payload = {
           ...result,
-          CaseNumber: row.CaseNumber
+          CaseNumber: row.caseNumber
         };
-  
-        this.http.post(`${environment.apiUrl}ServiceCRM/UpdateCaseManagerInfo`, payload).subscribe(
-          () => {
-            this.fetchData(); // 🔄 Refresh table after successful update
-          },
-          error => {
-            console.error('❌ Failed to update case manager info:', error);
-          }
-        );
+
+        this.http.post(`${environment.apiUrl}ServiceCRM/UpdateCaseManagerInfo`, payload)
+          .subscribe(
+            () => this.fetchData(),
+            error => console.error('❌ Failed to update case manager info:', error)
+          );
       }
     });
   }
+
   exportToExcelOnlyWithCaseManagerStatus(): void {
     const rowsWithStatus = this.dataSource.filteredData.filter(
-      row => row.CaseManagerStatus && row.CaseManagerStatus.trim() !== ''
+      (row: any) => row.caseManagerStatus && row.caseManagerStatus.trim() !== ''
     );
-  
+
     if (rowsWithStatus.length === 0) {
       alert('אין שורות עם סטטוס מנהל מקרה לייצוא.');
       return;
     }
-  
-    const exportData = rowsWithStatus.map(row => ({
-      'מספר מקרה': row.CaseNumber,
-      'מחלקה': row.DepartmentName,
-      'שם פרטי': row.FirstName,
-      'שם משפחה': row.LastName,
-      'סטטוס מנהל מקרה': row.CaseManagerStatus,
-      'קטגוריה': row.CaseManagerCategory,
-      'עדכון': row.CaseManagerUpdate ? new Date(row.CaseManagerUpdate).toLocaleDateString() : '',
-      'הערות': row.CaseManagerRemarks
+
+    const exportData = rowsWithStatus.map((row: any) => ({
+      'מספר מקרה': row.caseNumber,
+      'מחלקה': row.departmentName,
+      'שם פרטי': row.firstName,
+      'שם משפחה': row.lastName,
+      'סטטוס מנהל מקרה': row.caseManagerStatus,
+      'קטגוריה': row.caseManagerCategory,
+      'עדכון': row.caseManagerUpdate ? new Date(row.caseManagerUpdate).toLocaleDateString() : '',
+      'הערות': row.caseManagerRemarks
     }));
-  
+
     const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(exportData);
     const workbook: XLSX.WorkBook = {
-      Sheets: { 'סטטוס מנהל מקרה' : worksheet },
+      Sheets: { 'סטטוס מנהל מקרה': worksheet },
       SheetNames: ['סטטוס מנהל מקרה']
     };
-  
+
     XLSX.writeFile(workbook, 'CaseManagerStatusOnly.xlsx');
   }
-  
-  
 }

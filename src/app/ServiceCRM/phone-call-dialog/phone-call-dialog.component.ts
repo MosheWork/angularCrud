@@ -1,12 +1,9 @@
-import { Component, Inject,OnInit  } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { FormBuilder, FormGroup } from '@angular/forms';
-import { Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { environment } from '../../../environments/environment';
 import { HttpClient } from '@angular/common/http';
-
 import { AuthenticationService } from '../../services/authentication-service/authentication-service.component';
-
 
 @Component({
   selector: 'app-phone-call-dialog',
@@ -15,11 +12,11 @@ import { AuthenticationService } from '../../services/authentication-service/aut
 })
 export class PhoneCallDialogComponent implements OnInit {
   profilePictureUrl: string = '';
-  UserName: string = '';
-  adUser: string = ''; 
-
+  userName: string = '';
+  adUser: string = '';
 
   callForm: FormGroup;
+
   categories: string[] = [
     ' ',
     'בירור חיובים',
@@ -41,27 +38,27 @@ export class PhoneCallDialogComponent implements OnInit {
     'אובדן ציוד',
     'אחר'
   ];
-  
+
   constructor(
     public dialogRef: MatDialogRef<PhoneCallDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: any,    private authenticationService: AuthenticationService,  private http: HttpClient,
-
+    @Inject(MAT_DIALOG_DATA) public data: any,
+    private authenticationService: AuthenticationService,
+    private http: HttpClient,
     private fb: FormBuilder
   ) {
+    // ✅ read from lowerCamel first, fallback to PascalCase
     this.callForm = this.fb.group({
-      caseManagerStatus: [data.CaseManagerStatus || '', Validators.required],
-      caseManagerCategory: [data.CaseManagerCategory || ''],
-            caseManagerUpdate: [data.CaseManagerUpdate || new Date()],
-      caseManagerRemarks: [data.CaseManagerRemarks || '']
+      caseManagerStatus: [data?.caseManagerStatus ?? data?.CaseManagerStatus ?? '', Validators.required],
+      caseManagerCategory: [data?.caseManagerCategory ?? data?.CaseManagerCategory ?? ''],
+      caseManagerUpdate: [data?.caseManagerUpdate ?? data?.CaseManagerUpdate ?? new Date()],
+      caseManagerRemarks: [data?.caseManagerRemarks ?? data?.CaseManagerRemarks ?? '']
     });
   }
+
   ngOnInit(): void {
     this.authenticationService.getAuthentication().subscribe(
       (response) => {
-        this.adUser = response.message.split('\\')[1].toUpperCase();
-        console.log("🧑‍💼 AD User:", this.adUser);
-  
-        // ✅ Now only fetch user details AFTER adUser is available
+        this.adUser = (response.message.split('\\')[1] || '').toUpperCase();
         this.getUserDetailsFromDBByUserName(this.adUser);
       },
       (error) => {
@@ -69,39 +66,52 @@ export class PhoneCallDialogComponent implements OnInit {
       }
     );
   }
-  
+
   getUserDetailsFromDBByUserName(username: string): void {
-    this.http.get<any>(`${environment.apiUrl}ServiceCRM/GetEmployeeInfo?username=${username}`).subscribe(
-      (data) => {
-        this.UserName = data.UserName;
-        this.profilePictureUrl = data.ProfilePicture 
-          ? data.ProfilePicture.startsWith('http') 
-            ? data.ProfilePicture 
-            : `${environment.apiUrl}${data.ProfilePicture}`
-          : 'assets/default-user.png';
-        
-        console.log("📸 Profile Picture URL:", this.profilePictureUrl);
-      },
-      (error) => {
-        console.error('❌ Error fetching employee info:', error);
-      }
-    );
+    this.http
+      .get<any>(`${environment.apiUrl}ServiceCRM/GetEmployeeInfo?username=${username}`)
+      .subscribe(
+        (data) => {
+          this.userName = data.UserName;
+          this.profilePictureUrl = data.ProfilePicture
+            ? (data.ProfilePicture.startsWith('http') ? data.ProfilePicture : `${environment.apiUrl}${data.ProfilePicture}`)
+            : 'assets/default-user.png';
+        },
+        (error) => {
+          console.error('❌ Error fetching employee info:', error);
+        }
+      );
   }
-  
+
   save() {
     const formValue = this.callForm.value;
-    const payload = {
-      ...formValue,
-      caseManagerUpdate: new Date(new Date().getTime() + (3 * 60 * 60 * 1000)),
-      caseManagerUserName: this.adUser, // ✅ This will now be "MOSHEM"
-      CaseNumber: this.data.CaseNumber
+
+    // base (lowerCamel) fields
+    const base = {
+      caseNumber: this.data?.caseNumber ?? this.data?.CaseNumber ?? '',
+      caseManagerStatus: formValue.caseManagerStatus,
+      caseManagerCategory: formValue.caseManagerCategory,
+      caseManagerUpdate: new Date(Date.now() + 3 * 60 * 60 * 1000),
+      caseManagerRemarks: formValue.caseManagerRemarks,
+      caseManagerUserName: this.adUser
     };
+
+    // legacy duplicates (PascalCase) for compatibility
+    const legacy = {
+      CaseNumber: base.caseNumber,
+      CaseManagerStatus: base.caseManagerStatus,
+      CaseManagerCategory: base.caseManagerCategory,
+      CaseManagerUpdate: base.caseManagerUpdate,
+      CaseManagerRemarks: base.caseManagerRemarks,
+      CaseManagerUserName: base.caseManagerUserName
+    };
+
+    const payload = { ...base, ...legacy };
+
     this.dialogRef.close(payload);
-    console.log("Payload:" + payload)
   }
 
   close() {
     this.dialogRef.close();
   }
-  
 }

@@ -36,8 +36,8 @@ export class MainScreenComponent implements OnInit {
     this.http.get<any>(`${environment.apiUrl}ServiceCRM/GetEmployeeInfo?username=${username.toUpperCase()}`)
   .subscribe(
     (data) => {
-      this.UserName = data.UserName;
-      this.profilePictureUrl = `${data.ProfilePicture}`; // adjust path if needed
+      this.UserName = data.userName;
+      this.profilePictureUrl = `${data.profilePicture}`; // adjust path if needed
     },
     (error) => {
       console.error('Error fetching employee info:', error);

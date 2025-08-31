@@ -1,11 +1,10 @@
 <div cdkDrag cdkDragRootElement=".cdk-overlay-pane">
-<mat-dialog-content class="dialog-container" dir="rtl">
-  
+  <mat-dialog-content class="dialog-container" dir="rtl">
     <!-- Avatar Image -->
     <div class="avatar-container">
       <img [src]="profilePictureUrl" alt="Customer Support" class="avatar-image" />
     </div>
-  
+
     <!-- Patient Details Card -->
     <mat-card class="patient-card">
       <mat-card-content>
@@ -13,33 +12,32 @@
         <div class="patient-header">
           <h2>
             <mat-icon class="user-icon">person</mat-icon>
-            <span class="name">{{ data.FirstName }} {{ data.LastName }}</span>
-            
+            <span class="name">{{ (data.firstName || data.FirstName) }} {{ (data.lastName || data.LastName) }}</span>
           </h2>
         </div>
+
         <!-- Contact Info (2 per row) -->
         <div class="contact-info">
           <div class="contact-item">
             <mat-icon class="icon">local_hospital</mat-icon>
-            <span>{{ data.DepartmentName }}</span>
+            <span>{{ (data.departmentName || data.DepartmentName) }}</span>
           </div>
           <div class="contact-item">
             <mat-icon class="icon">event</mat-icon>
-            <span>{{ data.EnterDepartDate | date:'dd/MM/yyyy' }}</span>
+            <span>{{ (data.enterDepartDate || data.EnterDepartDate) | date:'dd/MM/yyyy' }}</span>
           </div>
-          
           <div class="contact-item">
             <mat-icon class="icon">smartphone</mat-icon>
-            <span>{{ data.Mobile }}</span>
+            <span>{{ (data.mobile || data.Mobile) }}</span>
           </div>
           <div class="contact-item">
             <mat-icon class="icon">phone</mat-icon>
-            <span>{{ data.Telephone }}</span>
+            <span>{{ (data.telephone || data.Telephone) }}</span>
           </div>
         </div>
       </mat-card-content>
     </mat-card>
-  
+
     <!-- Call Form -->
     <form [formGroup]="callForm">
       <mat-form-field appearance="outline">
@@ -47,22 +45,22 @@
         <mat-select formControlName="caseManagerStatus">
           <mat-option value=""></mat-option>
           <mat-option value="אין מענה">אין מענה</mat-option>
-          <mat-option value="פתוח">חיובי</mat-option>
+          <mat-option value="חיובי">חיובי</mat-option>
           <mat-option value="שלילי">שלילי</mat-option>
           <mat-option value="טופל">טופל</mat-option>
-          <mat-option value="המשך טיפול ">המשך טיפול </mat-option>
-          <mat-option value="נקרא">נקרא  </mat-option>
+          <mat-option value="המשך טיפול">המשך טיפול</mat-option>
+          <mat-option value="נקרא">נקרא</mat-option>
         </mat-select>
       </mat-form-field>
-  
+
       <mat-form-field appearance="outline">
         <mat-label>קטגוריה</mat-label>
-        <mat-select formControlName="caseManagerCategory" >
+        <mat-select formControlName="caseManagerCategory">
           <mat-option value=""></mat-option>
           <mat-option value="בירור חיובים">בירור חיובים</mat-option>
           <mat-option value="דחיית/ ביטול ניתוח">דחיית/ ביטול ניתוח</mat-option>
           <mat-option value="הבעת תודה">הבעת תודה</mat-option>
-          <mat-option value="היעדר מידע והסברים">היעדר מידע והסברים</mat-option>
+          <mat-option value="העברת מידע והסברים">העברת מידע והסברים</mat-option>
           <mat-option value="זמני המתנה לבדיקה רופא/ה">זמני המתנה לבדיקה רופא/ה</mat-option>
           <mat-option value="זמני המתנה למועד התור">זמני המתנה למועד התור</mat-option>
           <mat-option value="זמני המתנה לתוצאות בדיקה">זמני המתנה לתוצאות בדיקה</mat-option>
@@ -78,26 +76,19 @@
           <mat-option value="אובדן ציוד">אובדן ציוד</mat-option>
           <mat-option value="אחר">אחר</mat-option>
         </mat-select>
-       
       </mat-form-field>
-      
-  
-      <!-- <mat-form-field appearance="outline">
-        <mat-label>עדכון מנהל תיק</mat-label>
-        <input matInput formControlName="caseManagerUpdate" type="date">
-      </mat-form-field> -->
-  
+
       <mat-form-field appearance="outline">
         <mat-label>הערות</mat-label>
         <textarea matInput formControlName="caseManagerRemarks"></textarea>
       </mat-form-field>
     </form>
-  
   </mat-dialog-content>
-  
+
   <mat-dialog-actions align="end">
     <button mat-button (click)="close()">ביטול</button>
     <button mat-raised-button color="primary" (click)="save()" [disabled]="callForm.invalid">
       שמירה
-    </button>    </mat-dialog-actions>
+    </button>
+  </mat-dialog-actions>
 </div>

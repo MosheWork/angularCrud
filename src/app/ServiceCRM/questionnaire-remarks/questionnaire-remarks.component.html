@@ -2,139 +2,159 @@
 
 <mat-card *ngIf="!isLoading" class="crm-container">
   <mat-card-title>הערות סקרי שביעות רצון - 30 ימים אחרונים</mat-card-title>
- <!-- סינון לפי סוג סקר -->
- <div class="filter-row">
-  <mat-form-field appearance="fill" class="filter-field">
-    <mat-label>סוג סקר</mat-label>
-    <mat-select [(value)]="selectedSurveyDescription" (selectionChange)="onFiltersChange()">
-      <mat-option *ngFor="let type of surveyDescriptions" [value]="type">{{ type }}</mat-option>
-    </mat-select>
-  </mat-form-field>
- 
 
-      <!-- Filter by Year -->
-<mat-form-field appearance="fill" class="filter-field">
-  <mat-label>שנה</mat-label>
-  <mat-select [(value)]="selectedYears" (selectionChange)="onFiltersChange()" multiple>
-    <mat-option *ngFor="let year of uniqueYears" [value]="year">{{ year }}</mat-option>
-  </mat-select>
-</mat-form-field>
+  <!-- Filters -->
+  <div class="filter-row">
+    <!-- סינון לפי סוג סקר -->
+    <mat-form-field appearance="fill" class="filter-field">
+      <mat-label>סוג סקר</mat-label>
+      <mat-select [(value)]="selectedSurveyDescription" (selectionChange)="onFiltersChange()">
+        <mat-option *ngFor="let type of surveyDescriptions" [value]="type">{{ type }}</mat-option>
+      </mat-select>
+    </mat-form-field>
 
-<!-- Filter by Month -->
-<mat-form-field appearance="fill" class="filter-field">
-  <mat-label>חודש</mat-label>
-  <mat-select [(value)]="selectedMonths" (selectionChange)="onFiltersChange()" multiple>
-    <mat-option *ngFor="let month of uniqueMonths" [value]="month">{{ month }}</mat-option>
-  </mat-select>
-</mat-form-field>
+    <!-- שנה -->
+    <mat-form-field appearance="fill" class="filter-field">
+      <mat-label>שנה</mat-label>
+      <mat-select [(value)]="selectedYears" (selectionChange)="onFiltersChange()" multiple>
+        <mat-option *ngFor="let year of uniqueYears" [value]="year">{{ year }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <!-- חודש -->
+    <mat-form-field appearance="fill" class="filter-field">
+      <mat-label>חודש</mat-label>
+      <mat-select [(value)]="selectedMonths" (selectionChange)="onFiltersChange()" multiple>
+        <mat-option *ngFor="let month of uniqueMonths" [value]="month">{{ month }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <!-- חיפוש -->
     <mat-form-field appearance="fill" class="filter-field">
       <mat-label>חיפוש</mat-label>
       <input matInput (input)="applyFilter($event)" placeholder="הזן ערך לחיפוש..." />
     </mat-form-field>
 
+    <!-- שם המחלקה -->
     <mat-form-field appearance="fill" class="filter-field">
       <mat-label>שם המחלקה</mat-label>
       <mat-select [(value)]="selectedDepartments" (selectionChange)="onDepartmentsChange()" multiple>
         <mat-option *ngFor="let dept of departments" [value]="dept">{{ dept }}</mat-option>
       </mat-select>
     </mat-form-field>
-   
 
-  
-  <!-- סינון לפי סטטוס -->
-  <mat-form-field appearance="fill" class="filter-field">
-    <mat-label>סטטוס</mat-label>
-    <mat-select [(value)]="selectedStatus" (selectionChange)="onFiltersChange()">
-      <mat-option *ngFor="let status of caseManagerStatuses" [value]="status">
-        {{ status.trim() === '' ? 'ללא סטטוס' : status }}
-      </mat-option>
-    </mat-select>
-  </mat-form-field>
+    <!-- סטטוס -->
 
-<button mat-raised-button color="warn" (click)="resetFilters()">איפוס סינונים</button>
+<mat-form-field appearance="fill" class="filter-field">
+  <mat-label>סטטוס</mat-label>
+  <mat-select [(value)]="selectedStatus" (selectionChange)="onFiltersChange()">
+    <mat-option *ngFor="let status of caseManagerStatuses" [value]="status">
+      {{ status?.trim() === '' ? 'ללא סטטוס' : status }}
+    </mat-option>
+  </mat-select>
+</mat-form-field>
 
-<img src="../../assets/excel.png"
-alt="Download"
-(click)="exportToExcelOnlyRowsWithRemarks()"
-class="download-icon"
-width="50px"
-style="cursor: pointer; float: left; margin-bottom: 10px;" />
+    <button mat-raised-button color="warn" (click)="resetFilters()">איפוס סינונים</button>
+
+    <img
+      src="../../assets/excel.png"
+      alt="Download"
+      (click)="exportToExcelOnlyRowsWithRemarks()"
+      class="download-icon"
+      width="50px"
+      style="cursor: pointer; float: left; margin-bottom: 10px;"
+    />
   </div>
 
+  <!-- Table -->
   <div class="table-container">
     <table mat-table [dataSource]="dataSource" matSort class="mat-elevation-z8">
-        <!-- SurveyDescription -->
-<ng-container matColumnDef="SurveyDescription">
-    <th mat-header-cell *matHeaderCellDef mat-sort-header>סוג סקר </th>
-    <td mat-cell *matCellDef="let row">{{ row.SurveyDescription }}</td>
-  </ng-container>
-  
-<!-- CaseNumber -->
-<ng-container matColumnDef="CaseNumber">
-    <th mat-header-cell *matHeaderCellDef mat-sort-header>מספר מקרה</th>
-    <td mat-cell *matCellDef="let row">{{ row.CaseNumber }}</td>
-  </ng-container>
-  
-  <!-- CellNumber2 -->
-  <ng-container matColumnDef="CellNumber2">
-    <th mat-header-cell *matHeaderCellDef mat-sort-header>מספר טלפון</th>
-    <td mat-cell *matCellDef="let row">{{ row.CellNumber2 }}</td>
-  </ng-container>
-  
-  <!-- RemarkDate -->
-  <ng-container matColumnDef="RemarkDate">
-    <th mat-header-cell *matHeaderCellDef mat-sort-header>תאריך הערה</th>
-    <td mat-cell *matCellDef="let row">{{ row.RemarkDate | date: 'dd/MM/yyyy' }}</td>
-  </ng-container>
+
+      <!-- SurveyDescription (id stays PascalCase to match displayedColumns) -->
+      <ng-container matColumnDef="SurveyDescription">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>סוג סקר</th>
+        <td mat-cell *matCellDef="let row">{{ row.surveyDescription }}</td>
+      </ng-container>
+
+      <!-- CaseNumber -->
+      <ng-container matColumnDef="CaseNumber">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>מספר מקרה</th>
+        <td mat-cell *matCellDef="let row">{{ row.caseNumber }}</td>
+      </ng-container>
+
+      <!-- CellNumber2 -->
+      <ng-container matColumnDef="CellNumber2">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>מספר טלפון</th>
+        <td mat-cell *matCellDef="let row">{{ row.cellNumber2 }}</td>
+      </ng-container>
+
+      <!-- RemarkDate -->
+      <ng-container matColumnDef="RemarkDate">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>תאריך הערה</th>
+        <td mat-cell *matCellDef="let row">{{ row.remarkDate | date:'dd/MM/yyyy' }}</td>
+      </ng-container>
+
+      <!-- PatientName -->
       <ng-container matColumnDef="PatientName">
         <th mat-header-cell *matHeaderCellDef mat-sort-header>שם מטופל</th>
-        <td mat-cell *matCellDef="let row">{{ row.PatientName }}</td>
+        <td mat-cell *matCellDef="let row">{{ row.patientName }}</td>
       </ng-container>
 
+      <!-- DepartmentHebFullDesc -->
       <ng-container matColumnDef="DepartmentHebFullDesc">
         <th mat-header-cell *matHeaderCellDef mat-sort-header>מחלקה</th>
-        <td mat-cell *matCellDef="let row">{{ row.DepartmentHebFullDesc }}</td>
+        <td mat-cell *matCellDef="let row">{{ row.departmentHebFullDesc }}</td>
       </ng-container>
 
+      <!-- VisitDate -->
       <ng-container matColumnDef="VisitDate">
         <th mat-header-cell *matHeaderCellDef mat-sort-header>תאריך ביקור</th>
-        <td mat-cell *matCellDef="let row">{{ row.VisitDate | date: 'dd/MM/yyyy' }}</td>
+        <td mat-cell *matCellDef="let row">{{ row.visitDate | date:'dd/MM/yyyy' }}</td>
       </ng-container>
 
+      <!-- Remark -->
       <ng-container matColumnDef="Remark">
         <th mat-header-cell *matHeaderCellDef>הערה</th>
-        <td mat-cell *matCellDef="let row">{{ row.Remark }}</td>
+        <td mat-cell *matCellDef="let row">{{ row.remark }}</td>
       </ng-container>
 
+      <!-- CaseManagerStatus -->
       <ng-container matColumnDef="CaseManagerStatus">
         <th mat-header-cell *matHeaderCellDef>סטטוס</th>
-        <td mat-cell *matCellDef="let row">{{ row.CaseManagerStatus }}</td>
+        <td mat-cell *matCellDef="let row">{{ row.caseManagerStatus }}</td>
       </ng-container>
 
+      <!-- CaseManagerCategory -->
       <ng-container matColumnDef="CaseManagerCategory">
         <th mat-header-cell *matHeaderCellDef>קטגוריה</th>
-        <td mat-cell *matCellDef="let row">{{ row.CaseManagerCategory }}</td>
+        <td mat-cell *matCellDef="let row">{{ row.caseManagerCategory }}</td>
       </ng-container>
 
+      <!-- CaseManagerRemarks -->
       <ng-container matColumnDef="CaseManagerRemarks">
         <th mat-header-cell *matHeaderCellDef>הערות מנהל מקרה</th>
-        <td mat-cell *matCellDef="let row">{{ row.CaseManagerRemarks }}</td>
+        <td mat-cell *matCellDef="let row">{{ row.caseManagerRemarks }}</td>
       </ng-container>
 
+      <!-- ManagerRemarks -->
       <ng-container matColumnDef="ManagerRemarks">
         <th mat-header-cell *matHeaderCellDef>הערות מנהל</th>
-        <td mat-cell *matCellDef="let row">{{ row.ManagerRemarks }}</td>
-      </ng-container>
-      <ng-container matColumnDef="UserName">
-        <th mat-header-cell *matHeaderCellDef>שם נציג שטיפל </th>
-        <td mat-cell *matCellDef="let row">{{ row.UserName }}</td>
-      </ng-container>
-      <ng-container matColumnDef="EntryDate" sticky>
-        <th mat-header-cell *matHeaderCellDef>עודכן בתאריך</th>
-        <td mat-cell *matCellDef="let row">{{ row.EntryDate | date: 'dd/MM/yyyy HH:mm' }}</td>
+        <td mat-cell *matCellDef="let row">{{ row.managerRemarks }}</td>
       </ng-container>
 
-      <!-- Row Definitions -->
+      <!-- UserName -->
+      <ng-container matColumnDef="UserName">
+        <th mat-header-cell *matHeaderCellDef>שם נציג שטיפל</th>
+        <td mat-cell *matCellDef="let row">{{ row.userName }}</td>
+      </ng-container>
+
+      <!-- EntryDate -->
+      <ng-container matColumnDef="EntryDate" sticky>
+        <th mat-header-cell *matHeaderCellDef>עודכן בתאריך</th>
+        <td mat-cell *matCellDef="let row">{{ row.entryDate | date:'dd/MM/yyyy HH:mm' }}</td>
+      </ng-container>
+
+      <!-- Rows -->
       <tr mat-header-row *matHeaderRowDef="displayedColumns" sticky></tr>
       <tr mat-row *matRowDef="let row; columns: displayedColumns;" (click)="openEditDialog(row)"></tr>
     </table>

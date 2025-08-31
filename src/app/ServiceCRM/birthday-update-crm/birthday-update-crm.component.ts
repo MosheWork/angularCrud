@@ -7,9 +7,21 @@ import { environment } from '../../../environments/environment';
 import { AnimationOptions } from 'ngx-lottie';
 import { AuthenticationService } from '../../services/authentication-service/authentication-service.component';
 
-
-
-
+interface BirthdayRow {
+  caseNumber: string;
+  departmentName: string;
+  enterDepartDate: Date | null;
+  enterDepartTime: string | null;
+  exitHospTime: string | null;
+  firstName: string;
+  lastName: string;
+  telephone: string;
+  mobile: string;
+  birthDate: Date | null;
+  isBirthday: boolean;
+  birthdayUpdate: 'yes' | null;
+  birthdayUpdateDate: Date | null;
+}
 
 @Component({
   selector: 'app-birthday-update-crm',
@@ -18,16 +30,14 @@ import { AuthenticationService } from '../../services/authentication-service/aut
 })
 export class BirthdayUpdateCRMComponent implements OnInit, AfterViewInit {
 
-  
+  // ✅ Use lower-camel everywhere in the UI
   displayedColumns: string[] = [
-    'CaseNumber', 'DepartmentName', 'EnterDepartDate', 'EnterDepartTime',
-    'ExitHospTime', 'FirstName', 'LastName', 'Telephone', 'Mobile',
-    'BirthDate', 'IsBirthday', 'BirthdayUpdate', 'BirthdayUpdateDate'
-    
+    'caseNumber', 'departmentName', 'enterDepartDate', 'enterDepartTime',
+    'exitHospTime', 'firstName', 'lastName', 'telephone', 'mobile',
+    'birthDate', 'isBirthday', 'birthdayUpdate', 'birthdayUpdateDate'
   ];
-  // lottieOptions: AnimationOptions = {
-  //   path: 'https://lottie.host/51282cb2-c567-4af2-9999-2acb6364123c/yAr1WZHFmw.lottie'
-  // };
+
+  // 🎈 Lottie
   lottieOptions: AnimationOptions = {
     path: 'assets/Animation - 1743597295278.json',
     autoplay: true,
@@ -35,15 +45,10 @@ export class BirthdayUpdateCRMComponent implements OnInit, AfterViewInit {
   };
 
   currentUsername: string = '';
-  UserName: string = ''; // 👈 ADD THIS LINE
+  showLottie = false;
 
-
-  animationCreated(animationItem: any): void {
-    console.log('🎉 Birthday Lottie animation started');
-  }
-  dataSource = new MatTableDataSource<any>([]);
+  dataSource = new MatTableDataSource<BirthdayRow>([]);
   isLoading = true;
-  showLottie: boolean = false;
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
@@ -51,95 +56,114 @@ export class BirthdayUpdateCRMComponent implements OnInit, AfterViewInit {
   constructor(private http: HttpClient, private authService: AuthenticationService) {}
 
   ngOnInit(): void {
+    // get username (for audit fields)
     this.authService.getAuthentication().subscribe(
       (response) => {
-        console.log('✅ Authentication Successful:', response.message);
-        let user = response.message.split('\\')[1];
-        console.log('🧑 User:', user);
-        this.currentUsername = user.toUpperCase(); // Save to use later when sending payload
+        const user = response.message.split('\\')[1] || '';
+        this.currentUsername = user.toUpperCase();
         this.fetchData();
       },
-      (error) => {
-        console.error('❌ Authentication Failed:', error);
-      }
+      () => this.fetchData() // still fetch data even if auth fails
     );
-    this.fetchData();
-
-  }
-
-  fetchData(): void {
-    this.isLoading = true;
-    this.http.get<any[]>(`${environment.apiUrl}ServiceCRM/BirthdayPatientsPast72h`).subscribe(data => {
-      this.dataSource.data = data.map(item => ({
-        ...item,
-        EnterDepartDate: item.EnterDepartDate ? new Date(item.EnterDepartDate) : null,
-        BirthDate: item.BirthDate ? new Date(item.BirthDate) : null
-      }));
-      this.isLoading = false;
-
-      setTimeout(() => {
-        this.dataSource.paginator = this.paginator;
-        this.dataSource.sort = this.sort;
-      });
-    });
   }
 
   ngAfterViewInit(): void {
     setTimeout(() => {
-      this.dataSource.paginator = this.paginator;
-      this.dataSource.sort = this.sort;
+      if (this.paginator) this.dataSource.paginator = this.paginator;
+      if (this.sort) this.dataSource.sort = this.sort;
     });
   }
 
-  applyFilter(event: Event) {
-    const filterValue = (event.target as HTMLInputElement).value.trim().toLowerCase();
-    this.dataSource.filter = filterValue;
-    if (this.dataSource.paginator) {
-      this.dataSource.paginator.firstPage();
-    }
+  private normalize(item: any): BirthdayRow {
+    // Accept both lowerCamel and PascalCase from backend, convert dates
+    const enterDepartDate = item.enterDepartDate ?? item.EnterDepartDate ?? null;
+    const birthDate = item.birthDate ?? item.BirthDate ?? null;
+    const birthdayUpdateDate = item.birthdayUpdateDate ?? item.BirthdayUpdateDate ?? null;
+
+    return {
+      caseNumber: item.caseNumber ?? item.CaseNumber ?? '',
+      departmentName: item.departmentName ?? item.DepartmentName ?? '',
+      enterDepartDate: enterDepartDate ? new Date(enterDepartDate) : null,
+      enterDepartTime: item.enterDepartTime ?? item.EnterDepartTime ?? null,
+      exitHospTime: item.exitHospTime ?? item.ExitHospTime ?? null,
+      firstName: item.firstName ?? item.FirstName ?? '',
+      lastName: item.lastName ?? item.LastName ?? '',
+      telephone: item.telephone ?? item.Telephone ?? '',
+      mobile: item.mobile ?? item.Mobile ?? '',
+      birthDate: birthDate ? new Date(birthDate) : null,
+      isBirthday: (item.isBirthday ?? item.IsBirthday ?? false) as boolean,
+      birthdayUpdate: (item.birthdayUpdate ?? item.BirthdayUpdate ?? null) as 'yes' | null,
+      birthdayUpdateDate: birthdayUpdateDate ? new Date(birthdayUpdateDate) : null,
+    };
   }
 
+  fetchData(): void {
+    this.isLoading = true;
+    this.http.get<any[]>(`${environment.apiUrl}ServiceCRM/BirthdayPatientsPast72h`).subscribe({
+      next: (data) => {
+        this.dataSource.data = data.map(d => this.normalize(d));
+        this.isLoading = false;
 
-  onBirthdayToggle(row: any, event: any): void {
-    const isChecked = event.checked;
-  
+        setTimeout(() => {
+          if (this.paginator) this.dataSource.paginator = this.paginator;
+          if (this.sort) this.dataSource.sort = this.sort;
+        }, 0);
+
+        // robust global filter (handles Dates too)
+        this.dataSource.filterPredicate = (row: BirthdayRow, filter: string) => {
+          const values = Object.values(row).map(v =>
+            v instanceof Date ? v.toISOString() : (v ?? '').toString()
+          );
+          return values.join(' ').toLowerCase().includes(filter);
+        };
+      },
+      error: () => (this.isLoading = false)
+    });
+  }
+
+  applyFilter(event: Event): void {
+    const filterValue = (event.target as HTMLInputElement).value.trim().toLowerCase();
+    this.dataSource.filter = filterValue;
+    this.dataSource.paginator?.firstPage();
+  }
+
+  onBirthdayToggle(row: BirthdayRow, event: any): void {
+    const isChecked = !!event.checked;
+
     const confirmMsg = isChecked
       ? 'האם אתה בטוח שברצונך לעדכן למזל טוב?'
       : 'האם אתה בטוח שברצונך להסיר את סטטוס היומולדת?';
-  
-    if (confirm(confirmMsg)) {
-      const payload = {
-        CaseNumber: row.CaseNumber,
-        BirthdayUpdate: isChecked ? 'yes' : null,
-        BirthdayUserUpdate: isChecked ? this.currentUsername : null // 👈 Send username!
-      };
-  
-      this.http.post(`${environment.apiUrl}ServiceCRM/UpdateBirthday`, payload).subscribe(() => {
-        this.fetchData();
-  
-        if (isChecked) {
-          console.log('🎉 Triggering balloon animation');
-          this.showLottie = true;
-          setTimeout(() => this.showLottie = false, 5000);
-        }
-      });
-    } else {
+
+    if (!confirm(confirmMsg)) {
+      // revert UI toggle
       event.source.checked = !isChecked;
+      return;
     }
-  }
-  
-  
-  
-  
-  getUserDetailsFromDBByUserName(username: string): void {
-    this.http.get<any>(`${environment.apiUrl}ServiceCRM/GetEmployeeInfo?username=${username}`).subscribe(
-      (data) => {
-        this.UserName = data.UserName;
-      },
-      (error) => {
-        console.error('Error fetching employee info:', error);
+
+    // ✅ Send both lowerCamel and PascalCase keys for backwards compatibility
+    const payload: any = {
+      caseNumber: row.caseNumber,
+      birthdayUpdate: isChecked ? 'yes' : null,
+      birthdayUserUpdate: isChecked ? this.currentUsername : null,
+
+      // legacy duplicates (safe to include)
+      CaseNumber: row.caseNumber,
+      BirthdayUpdate: isChecked ? 'yes' : null,
+      BirthdayUserUpdate: isChecked ? this.currentUsername : null
+    };
+
+    this.http.post(`${environment.apiUrl}ServiceCRM/UpdateBirthday`, payload).subscribe(() => {
+      this.fetchData();
+
+      if (isChecked) {
+        this.showLottie = true;
+        setTimeout(() => (this.showLottie = false), 5000);
       }
-    );
+    });
   }
-  
+
+  animationCreated(animationItem: any): void {
+    // optional logging
+    // console.log('🎉 Birthday Lottie animation started', animationItem);
+  }
 }

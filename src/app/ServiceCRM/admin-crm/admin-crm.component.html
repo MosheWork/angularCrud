@@ -1,232 +1,244 @@
 <app-spinner [isLoading]="isLoading"></app-spinner>
 
-
 <mat-card *ngIf="!isLoading" class="crm-container">
 
+  <!-- Gauges -->
+  <div class="gauge-section">
+    <mat-card class="gauge-card">
+      <div class="gauge-title">פילוח סטטיסטיקות CRM</div>
 
+      <div class="gauge-row">
+        <!-- Gauge 1 -->
+        <div class="gauge-item">
+          <div class="gauge-title">סה״כ היום (הכל)</div>
+          <ngx-gauge
+            [value]="(summary?.totalToday ?? summary?.TotalToday ?? 0)"
+            [label]="'מטופלים'"
+            [type]="'full'"
+            [thick]="5"
+            [foregroundColor]="'#0d47a1'"
+            [backgroundColor]="'#e0e0e0'"
+            [cap]="'round'">
+          </ngx-gauge>
+        </div>
 
-    <div class="gauge-section">
-        <mat-card class="gauge-card">
-          <div class="gauge-title">פילוח סטטיסטיקות CRM</div>
-      
-          <div class="gauge-row">
-            <!-- Gauge 1 -->
-            <div class="gauge-item">
-              <div class="gauge-title">סה״כ היום (הכל)</div>
-              <ngx-gauge
-                [value]="summary.TotalToday || 0"
-                [label]="'מטופלים'"
-                [type]="'full'"
-                [thick]="5"
-                [foregroundColor]="'#0d47a1'"
-                [backgroundColor]="'#e0e0e0'"
-                [cap]="'round'">
-              </ngx-gauge>
-            </div>
-      
-            <!-- Gauge 2 -->
-            <div class="gauge-item">
-              <div class="gauge-title">סה״כ החודש (הכל)</div>
-              <ngx-gauge
-                [value]="summary.TotalThisMonth || 0"
-                [label]="'מטופלים'"
-                [type]="'full'"
-                [thick]="5"
-                [foregroundColor]="'#0d47a1'"
-                [backgroundColor]="'#e0e0e0'"
-                [cap]="'round'">
-              </ngx-gauge>
-            </div>
-      
-            <!-- Gauge 3 -->
-            <div class="gauge-item">
-              <div class="gauge-title">סה״כ השנה (הכל)</div>
-              <ngx-gauge
-                [value]="summary.TotalThisYear || 0"
-                [label]="'מטופלים'"
-                [type]="'full'"
-                [thick]="5"
-                [foregroundColor]="'#0d47a1'"
-                [backgroundColor]="'#e0e0e0'"
-                [cap]="'round'">
-              </ngx-gauge>
-            </div>
-      
-            <!-- Gauge 4 -->
-            <div class="gauge-item">
-              <div class="gauge-title">סה״כ כל הזמנים (הכל)</div>
-              <ngx-gauge
-                [value]="summary.TotalAllTime || 0"
-                [label]="'מטופלים'"
-                [type]="'full'"
-                [thick]="5"
-                [foregroundColor]="'#0d47a1'"
-                [backgroundColor]="'#e0e0e0'"
-                [cap]="'round'">
-              </ngx-gauge>
-            </div>
-      
-            <!-- Gauge 5 -->
-            <div class="gauge-item">
-              <div class="gauge-title">סה״כ היום (מנהל תיק)</div>
-              <ngx-gauge
-                [value]="summaryWithCaseManager.TotalToday || 0"
-                [label]="'מטופלים'"
-                [type]="'full'"
-                [thick]="5"
-                [foregroundColor]="'#0d47a1'"
-                [backgroundColor]="'#e0e0e0'"
-                [cap]="'round'">
-              </ngx-gauge>
-            </div>
-      
-            <!-- Gauge 6 -->
-            <div class="gauge-item">
-              <div class="gauge-title">סה״כ החודש (מנהל תיק)</div>
-              <ngx-gauge
-                [value]="summaryWithCaseManager.TotalThisMonth || 0"
-                [label]="'מטופלים'"
-                [type]="'full'"
-                [thick]="5"
-                [foregroundColor]="'#0d47a1'"
-                [backgroundColor]="'#e0e0e0'"
-                [cap]="'round'">
-              </ngx-gauge>
-            </div>
-      
-            <!-- Gauge 7 -->
-            <div class="gauge-item">
-              <div class="gauge-title">סה״כ השנה (מנהל תיק)</div>
-              <ngx-gauge
-                [value]="summaryWithCaseManager.TotalThisYear || 0"
-                [label]="'מטופלים'"
-                [type]="'full'"
-                [thick]="5"
-                [foregroundColor]="'#0d47a1'"
-                [backgroundColor]="'#e0e0e0'"
-                [cap]="'round'">
-              </ngx-gauge>
-            </div>
-      
-            <!-- Gauge 8 -->
-            <div class="gauge-item">
-              <div class="gauge-title">סה״כ כל הזמנים (מנהל תיק)</div>
-              <ngx-gauge
-                [value]="summaryWithCaseManager.TotalAllTime || 0"
-                [label]="'מטופלים'"
-                [type]="'full'"
-                [thick]="5"
-                [foregroundColor]="'#0d47a1'"
-                [backgroundColor]="'#e0e0e0'"
-                [cap]="'round'">
-              </ngx-gauge>
-            </div>
-      
-          </div>
-        </mat-card>
+        <!-- Gauge 2 -->
+        <div class="gauge-item">
+          <div class="gauge-title">סה״כ החודש (הכל)</div>
+          <ngx-gauge
+            [value]="(summary?.totalThisMonth ?? summary?.TotalThisMonth ?? 0)"
+            [label]="'מטופלים'"
+            [type]="'full'"
+            [thick]="5"
+            [foregroundColor]="'#0d47a1'"
+            [backgroundColor]="'#e0e0e0'"
+            [cap]="'round'">
+          </ngx-gauge>
+        </div>
+
+        <!-- Gauge 3 -->
+        <div class="gauge-item">
+          <div class="gauge-title">סה״כ השנה (הכל)</div>
+          <ngx-gauge
+            [value]="(summary?.totalThisYear ?? summary?.TotalThisYear ?? 0)"
+            [label]="'מטופלים'"
+            [type]="'full'"
+            [thick]="5"
+            [foregroundColor]="'#0d47a1'"
+            [backgroundColor]="'#e0e0e0'"
+            [cap]="'round'">
+          </ngx-gauge>
+        </div>
+
+        <!-- Gauge 4 -->
+        <div class="gauge-item">
+          <div class="gauge-title">סה״כ כל הזמנים (הכל)</div>
+          <ngx-gauge
+            [value]="(summary?.totalAllTime ?? summary?.TotalAllTime ?? 0)"
+            [label]="'מטופלים'"
+            [type]="'full'"
+            [thick]="5"
+            [foregroundColor]="'#0d47a1'"
+            [backgroundColor]="'#e0e0e0'"
+            [cap]="'round'">
+          </ngx-gauge>
+        </div>
+
+        <!-- Gauge 5 -->
+        <div class="gauge-item">
+          <div class="gauge-title">סה״כ היום (מנהל תיק)</div>
+          <ngx-gauge
+            [value]="(summaryWithCaseManager?.totalToday ?? summaryWithCaseManager?.TotalToday ?? 0)"
+            [label]="'מטופלים'"
+            [type]="'full'"
+            [thick]="5"
+            [foregroundColor]="'#0d47a1'"
+            [backgroundColor]="'#e0e0e0'"
+            [cap]="'round'">
+          </ngx-gauge>
+        </div>
+
+        <!-- Gauge 6 -->
+        <div class="gauge-item">
+          <div class="gauge-title">סה״כ החודש (מנהל תיק)</div>
+          <ngx-gauge
+            [value]="(summaryWithCaseManager?.totalThisMonth ?? summaryWithCaseManager?.TotalThisMonth ?? 0)"
+            [label]="'מטופלים'"
+            [type]="'full'"
+            [thick]="5"
+            [foregroundColor]="'#0d47a1'"
+            [backgroundColor]="'#e0e0e0'"
+            [cap]="'round'">
+          </ngx-gauge>
+        </div>
+
+        <!-- Gauge 7 -->
+        <div class="gauge-item">
+          <div class="gauge-title">סה״כ השנה (מנהל תיק)</div>
+          <ngx-gauge
+            [value]="(summaryWithCaseManager?.totalThisYear ?? summaryWithCaseManager?.TotalThisYear ?? 0)"
+            [label]="'מטופלים'"
+            [type]="'full'"
+            [thick]="5"
+            [foregroundColor]="'#0d47a1'"
+            [backgroundColor]="'#e0e0e0'"
+            [cap]="'round'">
+          </ngx-gauge>
+        </div>
+
+        <!-- Gauge 8 -->
+        <div class="gauge-item">
+          <div class="gauge-title">סה״כ כל הזמנים (מנהל תיק)</div>
+          <ngx-gauge
+            [value]="(summaryWithCaseManager?.totalAllTime ?? summaryWithCaseManager?.TotalAllTime ?? 0)"
+            [label]="'מטופלים'"
+            [type]="'full'"
+            [thick]="5"
+            [foregroundColor]="'#0d47a1'"
+            [backgroundColor]="'#e0e0e0'"
+            [cap]="'round'">
+          </ngx-gauge>
+        </div>
       </div>
-      
-      
+    </mat-card>
+  </div>
 
-  <!-- 🟢 Search Filter -->
+  <!-- Search Filter -->
   <mat-form-field class="long-search-bar" style="flex: 1; margin-right: 10px;">
     <mat-label class="filters" style="color: blue">חיפוש</mat-label>
     <input matInput (keyup)="applyFilter($event)" class="search-input" />
   </mat-form-field>
 
-  <!-- 🟢 Data Table -->
+  <!-- Data Table -->
   <div class="table-container">
     <table mat-table [dataSource]="dataSource" matSort class="mat-elevation-z8">
 
-      <ng-container matColumnDef="CaseNumber">
+      <!-- caseNumber -->
+      <ng-container matColumnDef="caseNumber">
         <th mat-header-cell *matHeaderCellDef mat-sort-header>מספר תיק</th>
-        <td mat-cell *matCellDef="let element"> {{ element.CaseNumber }} </td>
+        <td mat-cell *matCellDef="let element"> {{ element.caseNumber }} </td>
       </ng-container>
 
-      <ng-container matColumnDef="DepartmentName">
+      <!-- departmentName -->
+      <ng-container matColumnDef="departmentName">
         <th mat-header-cell *matHeaderCellDef mat-sort-header>שם מחלקה</th>
-        <td mat-cell *matCellDef="let element"> {{ element.DepartmentName }} </td>
+        <td mat-cell *matCellDef="let element"> {{ element.departmentName }} </td>
       </ng-container>
 
-      <ng-container matColumnDef="EnterDepartDate">
+      <!-- enterDepartDate -->
+      <ng-container matColumnDef="enterDepartDate">
         <th mat-header-cell *matHeaderCellDef mat-sort-header>תאריך כניסה</th>
-        <td mat-cell *matCellDef="let element"> {{ element.EnterDepartDate | date:'dd/MM/yyyy' }} </td>
+        <td mat-cell *matCellDef="let element"> {{ element.enterDepartDate | date:'dd/MM/yyyy' }} </td>
       </ng-container>
 
-      <ng-container matColumnDef="EnterDepartTime">
+      <!-- enterDepartTime -->
+      <ng-container matColumnDef="enterDepartTime">
         <th mat-header-cell *matHeaderCellDef mat-sort-header>שעת כניסה</th>
-        <td mat-cell *matCellDef="let element"> {{ element.EnterDepartTime }} </td>
+        <td mat-cell *matCellDef="let element"> {{ element.enterDepartTime }} </td>
       </ng-container>
 
-      <ng-container matColumnDef="ExitHospTime">
+      <!-- exitHospTime -->
+      <ng-container matColumnDef="exitHospTime">
         <th mat-header-cell *matHeaderCellDef mat-sort-header>שעת יציאה</th>
-        <td mat-cell *matCellDef="let element"> {{ element.ExitHospTime }} </td>
+        <td mat-cell *matCellDef="let element"> {{ element.exitHospTime }} </td>
       </ng-container>
 
-      <ng-container matColumnDef="LastName">
+      <!-- lastName -->
+      <ng-container matColumnDef="lastName">
         <th mat-header-cell *matHeaderCellDef mat-sort-header>שם משפחה</th>
-        <td mat-cell *matCellDef="let element"> {{ element.LastName }} </td>
+        <td mat-cell *matCellDef="let element"> {{ element.lastName }} </td>
       </ng-container>
 
-      <ng-container matColumnDef="FirstName">
+      <!-- firstName -->
+      <ng-container matColumnDef="firstName">
         <th mat-header-cell *matHeaderCellDef mat-sort-header>שם פרטי</th>
-        <td mat-cell *matCellDef="let element"> {{ element.FirstName }} </td>
+        <td mat-cell *matCellDef="let element"> {{ element.firstName }} </td>
       </ng-container>
 
-      <ng-container matColumnDef="Telephone">
+      <!-- telephone -->
+      <ng-container matColumnDef="telephone">
         <th mat-header-cell *matHeaderCellDef mat-sort-header>טלפון</th>
-        <td mat-cell *matCellDef="let element"> {{ element.Telephone }} </td>
+        <td mat-cell *matCellDef="let element"> {{ element.telephone }} </td>
       </ng-container>
 
-      <ng-container matColumnDef="Mobile">
+      <!-- mobile -->
+      <ng-container matColumnDef="mobile">
         <th mat-header-cell *matHeaderCellDef mat-sort-header>נייד</th>
-        <td mat-cell *matCellDef="let element"> {{ element.Mobile }} </td>
+        <td mat-cell *matCellDef="let element"> {{ element.mobile }} </td>
       </ng-container>
 
-      <ng-container matColumnDef="BirthDate">
+      <!-- birthDate -->
+      <ng-container matColumnDef="birthDate">
         <th mat-header-cell *matHeaderCellDef mat-sort-header>תאריך לידה</th>
-        <td mat-cell *matCellDef="let element"> {{ element.BirthDate | date:'dd/MM/yyyy' }} </td>
+        <td mat-cell *matCellDef="let element"> {{ element.birthDate | date:'dd/MM/yyyy' }} </td>
       </ng-container>
 
-      <ng-container matColumnDef="DeathDate">
+      <!-- deathDate -->
+      <ng-container matColumnDef="deathDate">
         <th mat-header-cell *matHeaderCellDef mat-sort-header>תאריך פטירה</th>
-        <td mat-cell *matCellDef="let element"> {{ element.DeathDate | date:'dd/MM/yyyy' }} </td>
+        <td mat-cell *matCellDef="let element"> {{ element.deathDate | date:'dd/MM/yyyy' }} </td>
       </ng-container>
 
-      <ng-container matColumnDef="IsBirthday">
+      <!-- isBirthday -->
+      <ng-container matColumnDef="isBirthday">
         <th mat-header-cell *matHeaderCellDef mat-sort-header>יום הולדת</th>
-        <td mat-cell *matCellDef="let element"> {{ element.IsBirthday ? 'כן' : 'לא' }} </td>
+        <td mat-cell *matCellDef="let element"> {{ element.isBirthday ? 'כן' : 'לא' }} </td>
       </ng-container>
 
-      <ng-container matColumnDef="CaseManagerStatus">
+      <!-- caseManagerStatus -->
+      <ng-container matColumnDef="caseManagerStatus">
         <th mat-header-cell *matHeaderCellDef mat-sort-header>סטטוס מנהל תיק</th>
-        <td mat-cell *matCellDef="let element"> {{ element.CaseManagerStatus }} </td>
+        <td mat-cell *matCellDef="let element"> {{ element.caseManagerStatus }} </td>
       </ng-container>
 
-      <ng-container matColumnDef="CaseManagerRemarks">
+      <!-- caseManagerRemarks -->
+      <ng-container matColumnDef="caseManagerRemarks">
         <th mat-header-cell *matHeaderCellDef mat-sort-header>הערות</th>
-        <td mat-cell *matCellDef="let element"> {{ element.CaseManagerRemarks }} </td>
+        <td mat-cell *matCellDef="let element"> {{ element.caseManagerRemarks }} </td>
       </ng-container>
 
-      <ng-container matColumnDef="CaseManagerCategory">
+      <!-- caseManagerCategory -->
+      <ng-container matColumnDef="caseManagerCategory">
         <th mat-header-cell *matHeaderCellDef mat-sort-header>קטגוריה</th>
-        <td mat-cell *matCellDef="let element"> {{ element.CaseManagerCategory }} </td>
+        <td mat-cell *matCellDef="let element"> {{ element.caseManagerCategory }} </td>
       </ng-container>
 
-      <ng-container matColumnDef="CaseManagerUpdate">
+      <!-- caseManagerUpdate -->
+      <ng-container matColumnDef="caseManagerUpdate">
         <th mat-header-cell *matHeaderCellDef mat-sort-header>עדכון מנהל תיק</th>
-        <td mat-cell *matCellDef="let element"> {{ element.CaseManagerUpdate | date:'dd/MM/yyyy' }} </td>
+        <td mat-cell *matCellDef="let element"> {{ element.caseManagerUpdate | date:'dd/MM/yyyy' }} </td>
       </ng-container>
 
       <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
       <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
     </table>
 
-    <mat-paginator 
-  [length]="dataSource.data.length"
-  [pageSize]="5"
-  [pageSizeOptions]="[5, 20, 50, 100]">
-</mat-paginator>
+    <mat-paginator
+      [length]="dataSource.data.length"
+      [pageSize]="5"
+      [pageSizeOptions]="[5, 20, 50, 100]"
+      showFirstLastButtons>
+    </mat-paginator>
   </div>
 
 </mat-card>
