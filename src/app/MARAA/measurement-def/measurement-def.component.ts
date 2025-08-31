@@ -10,26 +10,40 @@ import { MatSort } from '@angular/material/sort';
 import { AuthenticationService } from '../../services/authentication-service/authentication-service.component';
 
 export interface MeasurementDefModel {
-  MeasurementCode: string;
-  MeasurementShortDesc?: string;
+  measurementCode: string;
+  measurementShortDesc?: string;
   date: string;
   department: string;
-  DefaultDepartment?: string;
-  EntryUser?: string;
-  EntryDate?: string;
+  defaultDepartment?: string;
+  entryUser?: string;
+  entryDate?: string;
   isNew?: boolean;
-  CountRecords?: number;
-  Active?: boolean;
-  HasPDF?: boolean; // 👈 add this
+  countRecords?: number;
+  active?: boolean;
+  hasPDF?: boolean; // was HasPDF
 }
+
 @Component({
   selector: 'app-measurement-def',
   templateUrl: './measurement-def.component.html',
   styleUrls: ['./measurement-def.component.scss']
 })
 export class MeasurementDefComponent implements OnInit, AfterViewInit {
-  displayedColumns: string[] = ['MeasurementCode', 'MeasurementShortDesc', 'date', 'department', 'DefaultDepartment',  'Active','CountRecords','EntryUser', 'EntryDate' ,  'actions', 'HasPDF','pdf'];
-  dataSource = new MatTableDataSource<MeasurementDefModel>();
+  displayedColumns: string[] = [
+    'measurementCode',
+    'measurementShortDesc',
+    'date',
+    'department',
+    'defaultDepartment',
+    'active',
+    'countRecords',
+    'entryUser',
+    'entryDate',
+    'actions',
+    'hasPDF',
+    'pdf'
+  ];
+    dataSource = new MatTableDataSource<MeasurementDefModel>();
   formMap: { [code: string]: FormGroup } = {};
   loginUserName: string = '';
   existingCodes: Set<string> = new Set();
@@ -63,12 +77,13 @@ export class MeasurementDefComponent implements OnInit, AfterViewInit {
         this.dataSource.sort = this.sort;
 
         data.forEach(row => {
-          this.formMap[row.MeasurementCode] = this.fb.group({
+          this.formMap[row.measurementCode] = this.fb.group({
             Department: [row.department || ''],
             Date: [row.date || ''],
-            DefaultDepartment: [row.DefaultDepartment || '']
+            DefaultDepartment: [row.defaultDepartment || '']
           });
         });
+        
       });
   }
 
@@ -82,7 +97,7 @@ export class MeasurementDefComponent implements OnInit, AfterViewInit {
       .subscribe({
         next: () => {
           alert('✅ נשמר בהצלחה');
-          this.existingCodes.add(row.MeasurementCode);
+          this.existingCodes.add(row.measurementCode);
           this.loadData();
         },
         error: err => {
@@ -94,14 +109,14 @@ export class MeasurementDefComponent implements OnInit, AfterViewInit {
 
   addNewRow(): void {
     const newRow: MeasurementDefModel = {
-      MeasurementCode: '',
-      MeasurementShortDesc: '',
+      measurementCode: '',
+      measurementShortDesc: '',
       date: '',
       department: '',
-      DefaultDepartment: '',
+      defaultDepartment: '',
       isNew: true
     };
-    this.dataSource.data = [newRow, ...this.dataSource.data];
+    
   }
 
   deleteRow(measurementCode: string): void {
@@ -114,7 +129,7 @@ export class MeasurementDefComponent implements OnInit, AfterViewInit {
       params: { measurementCode }
     }).subscribe({
       next: () => {
-        this.dataSource.data = this.dataSource.data.filter(row => row.MeasurementCode !== measurementCode);
+        this.dataSource.data = this.dataSource.data.filter(row => row.measurementCode !== measurementCode);
       },
       error: err => {
         console.error('❌ Error deleting row:', err);
@@ -127,7 +142,7 @@ export class MeasurementDefComponent implements OnInit, AfterViewInit {
     this.http.get<MeasurementDefModel[]>(`${environment.apiUrl}/MeasurementDataMoshe/GetMeasurementColDef`)
       .subscribe(data => {
         this.dataSource.data = data;
-        this.existingCodes = new Set(data.map(row => row.MeasurementCode));
+        this.existingCodes = new Set(data.map(row => row.measurementCode));
       });
   }
 

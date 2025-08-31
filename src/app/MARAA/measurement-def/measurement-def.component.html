@@ -1,29 +1,31 @@
 <mat-card class="measurement-def-card" dir="rtl">
   <mat-card-title>הגדרות מדדים</mat-card-title>
+
   <mat-form-field appearance="outline" style="width: 300px; margin: 16px 0;">
     <mat-label>חיפוש גלובלי</mat-label>
     <input matInput (keyup)="applyGlobalFilter($event)" placeholder="חפש...">
   </mat-form-field>
+
   <div class="table-container">
     <table mat-table [dataSource]="dataSource" class="mat-elevation-z8" matSort>
 
-      <!-- MeasurementCode Column -->
-      <ng-container matColumnDef="MeasurementCode">
+      <!-- measurementCode -->
+      <ng-container matColumnDef="measurementCode">
         <th mat-header-cell *matHeaderCellDef mat-sort-header>קוד מדד</th>
         <td mat-cell *matCellDef="let row">
-          <input matInput [(ngModel)]="row.MeasurementCode" [readonly]="!row.isNew">
+          <input matInput [(ngModel)]="row.measurementCode" [readonly]="!row.isNew">
         </td>
       </ng-container>
 
-      <!-- MeasurementShortDesc Column -->
-      <ng-container matColumnDef="MeasurementShortDesc">
+      <!-- measurementShortDesc -->
+      <ng-container matColumnDef="measurementShortDesc">
         <th mat-header-cell *matHeaderCellDef mat-sort-header>תיאור</th>
         <td mat-cell *matCellDef="let row">
-          <input matInput [(ngModel)]="row.MeasurementShortDesc">
+          <input matInput [(ngModel)]="row.measurementShortDesc">
         </td>
       </ng-container>
 
-      <!-- Date Column -->
+      <!-- date -->
       <ng-container matColumnDef="date">
         <th mat-header-cell *matHeaderCellDef mat-sort-header>תאריך עמודה</th>
         <td mat-cell *matCellDef="let row">
@@ -31,7 +33,7 @@
         </td>
       </ng-container>
 
-      <!-- Department Column -->
+      <!-- department -->
       <ng-container matColumnDef="department">
         <th mat-header-cell *matHeaderCellDef mat-sort-header>מחלקה עמודה</th>
         <td mat-cell *matCellDef="let row">
@@ -39,82 +41,85 @@
         </td>
       </ng-container>
 
-      <!-- DefaultDepartment Column -->
-      <ng-container matColumnDef="DefaultDepartment">
+      <!-- defaultDepartment -->
+      <ng-container matColumnDef="defaultDepartment">
         <th mat-header-cell *matHeaderCellDef mat-sort-header>מחלקה ברירת מחדל</th>
         <td mat-cell *matCellDef="let row">
-          <input matInput [(ngModel)]="row.DefaultDepartment" placeholder="ברירת מחדל">
+          <input matInput [(ngModel)]="row.defaultDepartment" placeholder="ברירת מחדל">
         </td>
       </ng-container>
-<!-- Active Column -->
-<ng-container matColumnDef="Active">
-  <th mat-header-cell *matHeaderCellDef mat-sort-header>פעיל</th>
-  <td mat-cell *matCellDef="let row">
-    <mat-checkbox [(ngModel)]="row.Active" color="primary"></mat-checkbox>
-  </td>
-</ng-container>
-      <!-- EntryUser Column -->
-      <ng-container matColumnDef="EntryUser">
+
+      <!-- active -->
+      <ng-container matColumnDef="active">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>פעיל</th>
+        <td mat-cell *matCellDef="let row">
+          <mat-checkbox [(ngModel)]="row.active" color="primary"></mat-checkbox>
+        </td>
+      </ng-container>
+
+      <!-- countRecords -->
+      <ng-container matColumnDef="countRecords">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>רשומות במערכת</th>
+        <td mat-cell *matCellDef="let row">{{ row.countRecords }}</td>
+      </ng-container>
+
+      <!-- entryUser -->
+      <ng-container matColumnDef="entryUser">
         <th mat-header-cell *matHeaderCellDef mat-sort-header>משתמש</th>
-        <td mat-cell *matCellDef="let row">{{ row.EntryUser }}</td>
+        <td mat-cell *matCellDef="let row">{{ row.entryUser }}</td>
       </ng-container>
-        <!-- EntryUser Column -->
-        <ng-container matColumnDef="CountRecords">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>רשומות במערכת</th>
-          <td mat-cell *matCellDef="let row">{{ row.CountRecords }}</td>
-        </ng-container>
-  
 
-      <!-- EntryDate Column -->
-      <ng-container matColumnDef="EntryDate">
+      <!-- entryDate -->
+      <ng-container matColumnDef="entryDate">
         <th mat-header-cell *matHeaderCellDef mat-sort-header>תאריך עדכון</th>
-        <td mat-cell *matCellDef="let row">{{ row.EntryDate | date: 'dd/MM/yyyy HH:mm' }}</td>
+        <td mat-cell *matCellDef="let row">{{ row.entryDate | date:'dd/MM/yyyy HH:mm' }}</td>
       </ng-container>
-      <!-- HasPDF Column -->
-<ng-container matColumnDef="HasPDF">
-  <th mat-header-cell *matHeaderCellDef>קובץ קיים?</th>
-  <td mat-cell *matCellDef="let row">
-    <mat-icon *ngIf="row.HasPDF" color="primary">check_circle</mat-icon>
-    <mat-icon *ngIf="!row.HasPDF" color="warn">cancel</mat-icon>
-  </td>
-</ng-container>
-<!-- PDF Column -->
-<ng-container matColumnDef="pdf">
-  <th mat-header-cell *matHeaderCellDef>PDF</th>
-  <td mat-cell *matCellDef="let row">
-    <!-- View PDF -->
-    <button mat-icon-button color="primary"
-            matTooltip="צפה בקובץ PDF"
-            (click)="viewPDF(row.MeasurementCode)">
-      <mat-icon>visibility</mat-icon>
-    </button>
 
-    <!-- Upload PDF -->
-    <input type="file" accept="application/pdf" hidden #fileInput (change)="uploadPDF($event, row.MeasurementCode)">
-    <button mat-icon-button color="accent"
-            matTooltip="העלה קובץ PDF"
-            (click)="fileInput.click()">
-      <mat-icon>upload_file</mat-icon>
-    </button>
+      <!-- hasPDF -->
+      <ng-container matColumnDef="hasPDF">
+        <th mat-header-cell *matHeaderCellDef>קובץ קיים?</th>
+        <td mat-cell *matCellDef="let row">
+          <mat-icon *ngIf="row.hasPDF" color="primary">check_circle</mat-icon>
+          <mat-icon *ngIf="!row.hasPDF" color="warn">cancel</mat-icon>
+        </td>
+      </ng-container>
 
-    <!-- Delete PDF -->
-    <button mat-icon-button color="warn"
-            matTooltip="מחק קובץ PDF"
-            (click)="deletePDF(row.MeasurementCode)">
-      <mat-icon>delete</mat-icon>
-    </button>
-  </td>
-</ng-container>
+      <!-- pdf (actions for PDF) -->
+      <ng-container matColumnDef="pdf">
+        <th mat-header-cell *matHeaderCellDef>PDF</th>
+        <td mat-cell *matCellDef="let row">
+          <!-- View PDF -->
+          <button mat-icon-button color="primary"
+                  matTooltip="צפה בקובץ PDF"
+                  (click)="viewPDF(row.measurementCode)">
+            <mat-icon>visibility</mat-icon>
+          </button>
 
-<!-- Actions Column -->
-<ng-container matColumnDef="actions">
-  <th mat-header-cell *matHeaderCellDef>פעולות</th>
-  <td mat-cell *matCellDef="let row">
-    <button mat-button color="primary" (click)="save(row)">שמור</button>
-    <!-- <button mat-button color="warn" (click)="deleteRow(row.MeasurementCode)">מחק</button> -->
-  
-  </td>
-</ng-container>
+          <!-- Upload PDF -->
+          <input type="file" accept="application/pdf" hidden #fileInput (change)="uploadPDF($event, row.measurementCode)">
+          <button mat-icon-button color="accent"
+                  matTooltip="העלה קובץ PDF"
+                  (click)="fileInput.click()">
+            <mat-icon>upload_file</mat-icon>
+          </button>
+
+          <!-- Delete PDF -->
+          <button mat-icon-button color="warn"
+                  matTooltip="מחק קובץ PDF"
+                  (click)="deletePDF(row.measurementCode)">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </td>
+      </ng-container>
+
+      <!-- actions -->
+      <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef>פעולות</th>
+        <td mat-cell *matCellDef="let row">
+          <button mat-button color="primary" (click)="save(row)">שמור</button>
+          <!-- <button mat-button color="warn" (click)="deleteRow(row.measurementCode)">מחק</button> -->
+        </td>
+      </ng-container>
 
       <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
       <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>

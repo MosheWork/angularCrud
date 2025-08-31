@@ -24,9 +24,10 @@ export class MeasurementRemarksDialogComponent implements OnInit {
     private http: HttpClient,
     private authenticationService: AuthenticationService
   ) {
-    this.remarks = data.Remarks || '';
-    this.subtract = data.Subtract ?? false;
-    this.aprovedMabar = data.AprovedMabar ?? false;
+    // accept both lower-case and legacy cased inputs
+    this.remarks = data.remarks ?? data.Remarks ?? '';
+    this.subtract = data.subtract ?? data.Subtract ?? false;
+    this.aprovedMabar = data.aprovedMabar ?? data.AprovedMabar ?? false;
   }
 
   ngOnInit(): void {
@@ -44,31 +45,44 @@ export class MeasurementRemarksDialogComponent implements OnInit {
   }
 
   submit(): void {
+    // normalize possible incoming keys for id/case
+    const measId =
+      this.data.measurment_id ??
+      this.data.measurment_ID ??
+      this.data.measurementCode ??
+      this.data.measurementCode ??
+      '';
+
+    const caseNum =
+      this.data.case_number ??
+      this.data.Case_Number ??
+      this.data.caseNumber ??
+      this.data.CaseNumber ??
+      '';
+
+    // keep API payload keys as originally expected by backend
     const payload: any = {
-      Measurment_ID: this.data.Measurment_ID,
-      Case_Number: this.data.Case_Number,
+      Measurment_ID: measId,
+      Case_Number: caseNum,
       Remarks: this.remarks,
       Subtract: this.subtract,
       AprovedMabar: this.aprovedMabar,
-      EntryUser: this.loginUserName // ✅ always set main EntryUser
+      EntryUser: this.loginUserName
     };
-  
+
     if (this.subtract) {
       payload.EntryUserSubtract = this.loginUserName;
     }
-  
     if (this.aprovedMabar) {
       payload.EntryUserAprovedMabar = this.loginUserName;
     }
-  
-    this.http.post(`${environment.apiUrl}/MeasurementDataMoshe/UpdateRemarks`, payload)
-      .subscribe({
-        next: () => this.dialogRef.close(true),
-        error: err => {
-          console.error('❌ Failed to update remarks', err);
-          alert('שגיאה בשמירת ההערה');
-        }
-      });
+
+    this.http.post(`${environment.apiUrl}/MeasurementDataMoshe/UpdateRemarks`, payload).subscribe({
+      next: () => this.dialogRef.close(true),
+      error: err => {
+        console.error('❌ Failed to update remarks', err);
+        alert('שגיאה בשמירת ההערה');
+      }
+    });
   }
-  
 }
