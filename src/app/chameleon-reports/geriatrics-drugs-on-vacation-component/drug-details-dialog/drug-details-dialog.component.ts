@@ -9,7 +9,8 @@ import html2canvas from 'html2canvas';
   styleUrls: ['./drug-details-dialog.component.scss'],
 })
 export class DrugDetailsDialogComponent implements AfterViewInit {
-  displayedColumns: string[] = ['select', 'Way_Of_Giving', 'Drugs_Text', 'FrequencyText', 'SpecificTime'];
+  displayedColumns: string[] = ['select', 'way_Of_Giving', 'drugs_Text', 'frequencyText', 
+  'specificTime'];
   dataSource: any[] = [];
 
   @ViewChild('pdfTable', { static: false }) pdfTable!: ElementRef;
@@ -55,7 +56,7 @@ export class DrugDetailsDialogComponent implements AfterViewInit {
       return;
     }
   
-    const { Id_Num, First_Name, Last_Name, Admission_No, Father_Name } = this.data.patientDetails;
+    const { id_Num, first_Name, last_Name, admission_No, father_Name } = this.data.patientDetails;
     const now = new Date();
     const releaseDate = now.toLocaleDateString('he-IL');
     const releaseTime = now.toLocaleTimeString('he-IL', { hour: '2-digit', minute: '2-digit' });
@@ -67,11 +68,11 @@ export class DrugDetailsDialogComponent implements AfterViewInit {
         <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px;">
           <!-- Personal Details -->
           <div style="text-align: right; font-size: 18px;">
-            <p><strong>תעודת זהות:</strong> ${Id_Num}</p>
-            <p><strong>שם פרטי:</strong> ${First_Name}</p>
-            <p><strong>שם משפחה:</strong> ${Last_Name}</p>
-            <p><strong>שם האב:</strong> ${Father_Name}</p>
-            <p><strong>מספר מקרה:</strong> ${Admission_No}</p>
+            <p><strong>תעודת זהות:</strong> ${id_Num}</p>
+            <p><strong>שם פרטי:</strong> ${first_Name}</p>
+            <p><strong>שם משפחה:</strong> ${last_Name}</p>
+            <p><strong>שם האב:</strong> ${father_Name}</p>
+            <p><strong>מספר מקרה:</strong> ${admission_No}</p>
           </div>
           <!-- Large Icon -->
           <img src="assets/poria icon.jpg" alt="Icon" style="width: 200px; height: 100px;">
@@ -97,10 +98,10 @@ export class DrugDetailsDialogComponent implements AfterViewInit {
               .map(
                 (row) => `
                 <tr>
-                  <td style="padding: 8px; border: 1px solid #ddd;">${row.Way_Of_Giving}</td>
-                  <td style="padding: 8px; border: 1px solid #ddd;">${row.Drugs_Text}</td>
-                  <td style="padding: 8px; border: 1px solid #ddd;">${row.FrequencyText}</td>
-                  <td style="padding: 8px; border: 1px solid #ddd;">${row.SpecificTime}</td>
+                  <td style="padding: 8px; border: 1px solid #ddd;">${row.way_Of_Giving}</td>
+                  <td style="padding: 8px; border: 1px solid #ddd;">${row.drugs_Text}</td>
+                  <td style="padding: 8px; border: 1px solid #ddd;">${row.frequencyText}</td>
+                  <td style="padding: 8px; border: 1px solid #ddd;">${row.specificTime}</td>
                 </tr>
               `
               )

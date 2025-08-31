@@ -31,12 +31,12 @@ export class GeriatricsDrugsOnVacationComponent implements OnInit {
   filteredData: any[] = [];
   matTableDataSource: MatTableDataSource<any>;
   columns: string[] = [
-    'Name',
-    'Id_Num',
-    'First_Name',
-    'Last_Name',
-    'Father_Name',
-    'Admission_No',
+    'name',
+    'id_Num',
+    'first_Name',
+    'last_Name',
+    'father_Name',
+    'admission_No',
   ];
 
   constructor(
@@ -120,12 +120,12 @@ export class GeriatricsDrugsOnVacationComponent implements OnInit {
   
   getColumnLabel(column: string): string {
     const columnLabels: Record<string, string> = {
-      Name: 'מחלקה ',
-      Id_Num: 'תעודת זהות',
-      First_Name: 'שם פרטי',
-      Last_Name: 'שם משפחה',
-      Admission_No: 'מספר מקרה',
-      Father_Name: 'שם האב',
+      name: 'מחלקה ',
+      id_Num: 'תעודת זהות',
+      first_Name: 'שם פרטי',
+      last_Name: 'שם משפחה',
+      admission_No: 'מספר מקרה',
+      father_Name: 'שם האב',
     };
     return columnLabels[column] || column;
   }
@@ -138,7 +138,7 @@ export class GeriatricsDrugsOnVacationComponent implements OnInit {
     this.filterForm.reset();
   
     // Explicitly reset multi-select (Name)
-    this.filterForm.get('Name')?.setValue([]); 
+    this.filterForm.get('name')?.setValue([]); 
   
     // Explicitly reset the global filter
     this.filterForm.get('globalFilter')?.setValue('');
@@ -169,7 +169,7 @@ export class GeriatricsDrugsOnVacationComponent implements OnInit {
   }
 
   openDrugDetails(row: any): void {
-    const idNum = row.Id_Num; // Extract the ID number
+    const idNum = row.id_Num; // Extract the ID number
     const apiUrl = `${environment.apiUrl}GeriatricsDrugsOnVacation/GetPatientDetails/${idNum}`;
 
     // Fetch the drug details from the API
@@ -184,11 +184,11 @@ export class GeriatricsDrugsOnVacationComponent implements OnInit {
           height: 'auto', // Adjust height
           data: {
             patientDetails: {
-              Id_Num: row.Id_Num,
-              First_Name: row.First_Name,
-              Last_Name: row.Last_Name,
-              Father_Name: row.Father_Name,
-              Admission_No: row.Admission_No,
+              id_Num: row.id_Num,
+              first_Name: row.first_Name,
+              last_Name: row.last_Name,
+              father_Name: row.father_Name,
+              admission_No: row.admission_No,
             },
             drugDetails: Array.isArray(data) ? data : [], // Ensure drugDetails is an array
           },
