@@ -18,29 +18,29 @@ import { MatDialog } from '@angular/material/dialog';
 export class MitavDeliriumComponent implements OnInit {
 
   displayedColumns: string[] = [
-    'Name',
-    'Admission_No',
-    'Age_Years',
-    'ATD_Admission_Date',
-    'AdmissionCAMGrade',
-    'Grade',
-    'GradeEntryDate',
-    'PatientWithDelirium',
-    'PatientWithDeliriumEntryDate',
-    'DeliriumDaysCount',
-    'DeliriumConsiliumsOpened',
-    'DeliriumConsiliumsDate',
-    'HoursDifference',
-    //'PreventionAndInterventionCAM',
-    'PreventionORInterventionCAM',
-   'GradeCount',
-   'DrugForDelirium',
-   'ReleaseCAM',
-   'CAMGradeChanged',
-   'Release_Date',
-  
-  
+    'name',
+    'admission_No',
+    'age_Years',
+    'atD_Admission_Date',
+    'admissionCAMGrade',
+    'grade',
+    'gradeEntryDate',
+    'patientWithDelirium',
+    'patientWithDeliriumEntryDate',
+    'deliriumDaysCount',
+    'deliriumConsiliumsOpened',
+    'deliriumConsiliumsDate',
+    'hoursDifference',
+    'preventionORInterventionCAM',
+    'gradeCount',
+    'drugForDelirium',
+    'releaseCAM',
+    'cAMGradeChanged',
+    'release_Date',
   ];
+  
+  
+ 
   showGraph: boolean = false;
   departmentWiseCAMData: { department: string; validPercentage: number }[] = [];
   showDepartmentSummary: boolean = false; // New state for department summary view
@@ -112,13 +112,13 @@ constructor(private http: HttpClient, public dialog: MatDialog) {
         // Convert Grade to string to prevent .trim() errors
       this.dataSource.data = data.map(item => ({
         ...item,
-        Grade: item.Grade !== null && item.Grade !== undefined ? String(item.Grade) : 'אין תיעוד'
+        grade: item.grade !== null && item.grade !== undefined ? String(item.grade) : 'אין תיעוד'
       }));
         this.originalData = data;
 // Calculate Gauge Data
 this.totalCAMCases = data.length;
 this.validCAMCount = data.filter(item => 
-  String(item.Grade).trim() !== '' && String(item.Grade) !== 'אין תיעוד'
+  String(item.grade).trim() !== '' && String(item.grade) !== 'אין תיעוד'
 ).length;
 this.invalidCAMCount = this.totalCAMCases - this.validCAMCount;
 
@@ -130,14 +130,14 @@ this.camAssessmentGauge = this.totalCAMCases > 0
   ? Math.round((this.validCAMCount / this.totalCAMCases) * 100)
   : 0;
   
-        // ✅ Extract Unique Years from ATD_Admission_Date & Release_Date
+        // ✅ Extract Unique Years from atD_Admission_Date & Release_Date
         const years = new Set<number>();
         data.forEach(item => {
-          if (item.ATD_Admission_Date) {
-            years.add(new Date(item.ATD_Admission_Date).getFullYear());
+          if (item.atD_Admission_Date) {
+            years.add(new Date(item.atD_Admission_Date).getFullYear());
           }
-          if (item.Release_Date) {
-            years.add(new Date(item.Release_Date).getFullYear());
+          if (item.release_Date) {
+            years.add(new Date(item.release_Date).getFullYear());
           }
           if (item.DeliriumConsiliumsDate) {
             years.add(new Date(item.DeliriumConsiliumsDate).getFullYear());
@@ -146,22 +146,21 @@ this.camAssessmentGauge = this.totalCAMCases > 0
 
       
   
-// ✅ Extract Unique Years from ATD_Admission_Date & Release_Date
-this.yearList = Array.from(
-  new Set(
-    this.originalData
-      .map((item: any) => [
-        item.ATD_Admission_Date ? new Date(item.ATD_Admission_Date).getFullYear() : null,
-        item.Release_Date ? new Date(item.Release_Date).getFullYear() : null,
-        item.DeliriumConsiliumsDate ? new Date(item.DeliriumConsiliumsDate).getFullYear() : null
-      ])
-      .reduce((acc, val) => acc.concat(val), []) // ✅ Fix flatMap() issue
-      .filter((year: number | null): year is number => year !== null) // ✅ Ensure only numbers
-  )
-).sort((a, b) => b - a); // ✅ Sort in descending order
+// ✅ Extract Unique Years from atD_Admission_Date & Release_Date
+this.yearList = Array.from(new Set(
+  this.originalData
+    .map(item => [
+      item.atD_Admission_Date ? new Date(item.atD_Admission_Date).getFullYear() : null,
+      item.release_Date ? new Date(item.release_Date).getFullYear() : null,
+      item.deliriumConsiliumsDate ? new Date(item.deliriumConsiliumsDate).getFullYear() : null
+    ])
+    .reduce((a,b)=>a.concat(b),[])
+    .filter((y: number|null): y is number => y !== null)
+)).sort((a,b)=>b-a);
+
   
         // ✅ Populate Department List
-        this.departmentList = Array.from(new Set(data.map((item) => item.Name || 'Unknown')));
+        this.departmentList = Array.from(new Set(this.originalData.map(i => i.name || 'Unknown')));
   
         setTimeout(() => {
           if (this.paginator) {
@@ -189,8 +188,9 @@ this.yearList = Array.from(
     // ✅ Apply Date Filter
     if (this.startDate || this.endDate) {
       filteredData = filteredData.filter((item) => {
-        const admissionDate = item.ATD_Admission_Date ? new Date(item.ATD_Admission_Date) : null;
-        const releaseDate = item.Release_Date ? new Date(item.Release_Date) : null;
+        const admissionDate = item.atD_Admission_Date ? new Date(item.atD_Admission_Date) : null;
+        const releaseDate = item.release_Date ? new Date(item.release_Date) : null;
+        
         const start = this.startDate ? new Date(this.startDate.setHours(0, 0, 0, 0)) : null;
         const end = this.endDate ? new Date(this.endDate.setHours(23, 59, 59, 999)) : null;
   
@@ -204,15 +204,15 @@ this.yearList = Array.from(
     // ✅ Apply Department Filter
     if (this.selectedDepartments.length > 0) {
       filteredData = filteredData.filter((item) =>
-        this.selectedDepartments.includes(item.Name)
+        this.selectedDepartments.includes(item.name)
       );
     }
   
     // ✅ Apply Year Filter
     if (this.selectedYear) {
       filteredData = filteredData.filter((item) => {
-        const admissionYear = item.ATD_Admission_Date ? new Date(item.ATD_Admission_Date).getFullYear() : null;
-        const releaseYear = item.Release_Date ? new Date(item.Release_Date).getFullYear() : null;
+        const admissionYear = item.atD_Admission_Date ? new Date(item.atD_Admission_Date).getFullYear() : null;
+        const releaseYear = item.release_Date ? new Date(item.release_Date).getFullYear() : null;
   
         return (admissionYear === this.selectedYear) || (releaseYear === this.selectedYear);
       });
@@ -231,9 +231,9 @@ this.yearList = Array.from(
       
       if (selectedMonths) {
         filteredData = filteredData.filter((item) => {
-          const admissionMonth = item.ATD_Admission_Date ? new Date(item.ATD_Admission_Date).getMonth() + 1 : null;
+          const admissionMonth = item.atD_Admission_Date ? new Date(item.atD_Admission_Date).getMonth() + 1 : null;
     
-          return admissionMonth && selectedMonths.includes(admissionMonth); // ✅ Apply only on ATD_Admission_Date
+          return admissionMonth && selectedMonths.includes(admissionMonth); // ✅ Apply only on atD_Admission_Date
         });
       }
     }
@@ -244,7 +244,7 @@ this.yearList = Array.from(
   
     // ✅ Update Gauge Data Based on Filtered Data
     this.totalCAMCases = filteredData.length;
-    this.validCAMCount = filteredData.filter(item => item.Grade && item.Grade.trim() !== '' && item.Grade !== 'אין תיעוד').length;
+    this.validCAMCount = filteredData.filter(item => item.grade && item.grade.trim() !== '' && item.grade !== 'אין תיעוד').length;
     this.invalidCAMCount = this.totalCAMCases - this.validCAMCount;
   
     // ✅ Update Gauge Percentage
@@ -267,7 +267,7 @@ this.yearList = Array.from(
   
     // ✅ Reset Gauge Values
     this.totalCAMCases = this.originalData.length;
-    this.validCAMCount = this.originalData.filter(item => item.Grade && item.Grade.trim() !== '' && item.Grade !== 'אין תיעוד').length;
+    this.validCAMCount = this.originalData.filter(item => item.grade && item.grade.trim() !== '' && item.grade !== 'אין תיעוד').length;
     this.invalidCAMCount = this.totalCAMCases - this.validCAMCount;
     this.camAssessmentGauge = this.totalCAMCases > 0 ? (this.validCAMCount / this.totalCAMCases) * 100 : 0;
   
@@ -294,8 +294,8 @@ this.yearList = Array.from(
     const departmentMap = new Map<string, { totalCases: number; validCases: number }>();
   
     data.forEach(item => {
-      const department = item.Name || 'Unknown';
-      const isValid = item.Grade && item.Grade.trim() !== '' && item.Grade !== 'אין תיעוד';
+      const department = item.name || 'Unknown';
+      const isValid = item.grade && item.grade.trim() !== '' && item.grade !== 'אין תיעוד';
   
       if (!departmentMap.has(department)) {
         departmentMap.set(department, { totalCases: 0, validCases: 0 });
@@ -399,8 +399,8 @@ this.yearList = Array.from(
     const departmentMap = new Map<string, { totalCases: number; validCases: number }>();
   
     this.dataSource.data.forEach(item => {
-      const department = item.Name || 'Unknown';
-      const isValid = item.Grade && item.Grade.trim() !== '' && item.Grade !== 'אין תיעוד';
+      const department = item.name || 'Unknown';
+      const isValid = item.grade && item.grade.trim() !== '' && item.grade !== 'אין תיעוד';
   
       if (!departmentMap.has(department)) {
         departmentMap.set(department, { totalCases: 0, validCases: 0 });

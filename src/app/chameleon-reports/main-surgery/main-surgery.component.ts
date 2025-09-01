@@ -53,30 +53,30 @@ export class MainSurgeryComponent implements OnInit {
   // Displayed columns (you can re-order/trim if needed)
 // Columns actually shown in the table (no comments)
 columns: string[] = [
-  'CaseNumber',
-  'PatientName',
-  'SurgeryDate',
-
-  'DRG',
-  'SURGERY_NAME',
-  'Department',
-  'DiagCode',
-  'ICD9',
-  'SurgeryRunk',
-  'RegistrarBillingRecommendation',
-  'RegistrarComments',
-  'RegistrarRequestForReportCorrection',
-  'SurgeryCodeList','SecretaryDRG'
+  'caseNumber',
+  'patientName',
+  'surgeryDate',
+  'drg',
+  'surgerY_NAME',
+  'department',
+  'diagCode',
+  'icd9',
+  'keren',
+  'surgeryRunk',
+  'registrarBillingRecommendation',
+  'registrarComments',
+  'registrarRequestForReportCorrection',
+  'surgeryCodeList',
+  'secretaryDRG'
 ];
 
 // (optional) keep this if you want a list of ALL data fields for other logic
 allFields: string[] = [
-  'CaseNumber','PatientName','SurgeryDate','HDayOfWeek','Keren','DRG','SURGERY_NAME',
-  'Department','ICD9','DischargeDate','SurgeryLangth','SurgeryRunk','DoingText',
-  'MainSurgeonNameFirst1','MainSurgeonNameLast1','MainSurgeonEmail1','MainSurgeonCell1',
-  'MainSurgeonNameFirst2','MainSurgeonNameLast2','MainSurgeonEmail2','MainSurgeonCell2',
-  'DiagCode','DiagDesc',  'RegistrarBillingRecommendation','RegistrarComments','RegistrarRequestForReportCorrection'
-
+  'caseNumber','patientName','surgeryDate','hDayOfWeek','keren','drg','surgerY_NAME',
+  'department','icd9','dischargeDate','surgeryLangth','surgeryRunk','doingText',
+  'mainSurgeonNameFirst1','mainSurgeonNameLast1','mainSurgeonEmail1','mainSurgeonCell1',
+  'mainSurgeonNameFirst2','mainSurgeonNameLast2','mainSurgeonEmail2','mainSurgeonCell2',
+  'diagCode','diagDesc','registrarBillingRecommendation','registrarComments','registrarRequestForReportCorrection'
 ];
 
 
@@ -158,9 +158,9 @@ allFields: string[] = [
         this.graphData = this.filteredData;
         this.departmentOptions = Array.from(new Set(
           (this.dataSource || [])
-            .map(r => (r.Department ?? '').toString().trim())
+            .map(r => (r.department ?? '').toString().trim())
             .filter(v => v.length > 0)
-        )).sort((a, b) => a.localeCompare(b, 'he')); // nice for Hebrew
+        )).sort((a, b) => a.localeCompare(b, 'he'));
         
       });
   }
@@ -174,10 +174,12 @@ allFields: string[] = [
     if (to) params = params.set('to', this.toApiDate(to));
 
     // Back-end supports departments, icd9, drg, keyword (comma-separated)
-    const dep = (this.filterForm.get('Department')?.value || '').trim();
-    const icd9 = (this.filterForm.get('ICD9')?.value || '').trim();
-    const drg = (this.filterForm.get('DRG')?.value || '').trim();
-    const kw = (this.filterForm.get('SURGERY_NAME')?.value || this.filterForm.get('PatientName')?.value || '').trim();
+ // Back-end supports departments, icd9, drg, keyword (comma-separated)
+const dep = (this.filterForm.get('department')?.value || '').trim();
+const icd9 = (this.filterForm.get('icd9')?.value || '').trim();
+const drg  = (this.filterForm.get('drg')?.value  || '').trim();
+const kw   = (this.filterForm.get('surgeryName')?.value || this.filterForm.get('patientName')?.value || '').trim();
+
 
     if (dep) params = params.set('departments', dep);
     if (icd9) params = params.set('icd9', icd9);
@@ -226,36 +228,36 @@ allFields: string[] = [
 
   getColumnLabel(column: string): string {
     const labels: Record<string, string> = {
-      CaseNumber: 'מספר מקרה',
-      PatientName: 'שם מטופל',
-      SurgeryDate: 'תאריך ניתוח',
-      HDayOfWeek: 'יום בשבוע',
-      Keren: 'קרן',
-      DRG: ' לפי זימון DRG',
-      SURGERY_NAME: 'שם ניתוח',
-      Department: 'מחלקה',
-      ICD9: 'פעולה - ICD9',
-      DischargeDate: 'תאריך שחרור',
-      SurgeryLangth: 'משך ניתוח',
-      SurgeryRunk: 'דירוג ניתוח',
-      DoingText: 'סטטוס ביצוע',
-      MainSurgeonNameFirst1: 'מנתח 1 - שם פרטי',
-      MainSurgeonNameLast1: 'מנתח 1 - שם משפחה',
-      MainSurgeonEmail1: 'מנתח 1 - אימייל',
-      MainSurgeonCell1: 'מנתח 1 - נייד',
-      MainSurgeonNameFirst2: 'מנתח 2 - שם פרטי',
-      MainSurgeonNameLast2: 'מנתח 2 - שם משפחה',
-      MainSurgeonEmail2: 'מנתח 2 - אימייל',
-      MainSurgeonCell2: 'מנתח 2 - נייד',
-      DiagCode: 'קוד אבחנה',
-      DiagDesc: 'תיאור אבחנה',
-      // NEW:
-      RegistrarBillingRecommendation: 'המלצת רשמת לחיוב',
-      RegistrarComments: 'הערות רשמת',
-      RegistrarRequestForReportCorrection: 'פניית רשמת לתיקון דוח'
+      caseNumber: 'מספר מקרה',
+      patientName: 'שם מטופל',
+      surgeryDate: 'תאריך ניתוח',
+      hDayOfWeek: 'יום בשבוע',
+      keren: 'קרן',
+      drg: ' לפי זימון DRG',
+      surgerY_NAME: 'שם ניתוח',
+      department: 'מחלקה',
+      icd9: 'פעולה - ICD9',
+      dischargeDate: 'תאריך שחרור',
+      surgeryLangth: 'משך ניתוח',
+      surgeryRunk: 'דירוג ניתוח',
+      doingText: 'סטטוס ביצוע',
+      mainSurgeonNameFirst1: 'מנתח 1 - שם פרטי',
+      mainSurgeonNameLast1: 'מנתח 1 - שם משפחה',
+      mainSurgeonEmail1: 'מנתח 1 - אימייל',
+      mainSurgeonCell1: 'מנתח 1 - נייד',
+      mainSurgeonNameFirst2: 'מנתח 2 - שם פרטי',
+      mainSurgeonNameLast2: 'מנתח 2 - שם משפחה',
+      mainSurgeonEmail2: 'מנתח 2 - אימייל',
+      mainSurgeonCell2: 'מנתח 2 - נייד',
+      diagCode: 'קוד אבחנה',
+      diagDesc: 'תיאור אבחנה',
+      registrarBillingRecommendation: 'המלצת רשמת לחיוב',
+      registrarComments: 'הערות רשמת',
+      registrarRequestForReportCorrection: 'פניית רשמת לתיקון דוח'
     };
     return labels[column] || column;
   }
+  
 
   applyFilters() {
     const filters = this.filterForm.value;
@@ -278,25 +280,27 @@ allFields: string[] = [
         this.columns.some((column) => ((item[column] ?? '').toString().toLowerCase().includes(globalFilter)));
       if (!globalOk) return false;
   
-      // date range (SurgeryDate)
-      if (fromDate || toDate) {
-        const dVal = item['SurgeryDate'] ? new Date(item['SurgeryDate']) : null;
-        if (!dVal) return false;
-        if (fromDate && dVal < fromDate) return false;
-        if (toDate) {
-          const toPlus = new Date(toDate);
-          toPlus.setHours(23, 59, 59, 999);
-          if (dVal > toPlus) return false;
-        }
-      }
-  
-      // Department multi-select
-      const depSel: string[] = this.filterForm.get('DepartmentFilter')?.value || [];
-      if (depSel.length) {
-        const curDep = (item['Department'] ?? '').toString().toLowerCase();
-        const match = depSel.some(d => d.toLowerCase() === curDep);
-        if (!match) return false;
-      }
+   // date range (surgeryDate)
+if (fromDate || toDate) {
+  const dVal = item['surgeryDate'] ? new Date(item['surgeryDate']) : null;
+  if (!dVal) return false;
+  if (fromDate && dVal < fromDate) return false;
+  if (toDate) {
+    const toPlus = new Date(toDate);
+    toPlus.setHours(23, 59, 59, 999);
+    if (dVal > toPlus) return false;
+  }
+}
+
+
+   // Department multi-select
+const depSel: string[] = this.filterForm.get('DepartmentFilter')?.value || [];
+if (depSel.length) {
+  const curDep = (item['department'] ?? '').toString().toLowerCase();
+  const match = depSel.some(d => d.toLowerCase() === curDep);
+  if (!match) return false;
+}
+
   
       return true;
     });
@@ -350,33 +354,33 @@ openDetails(row: any) {
     width: '600px',
     direction: 'rtl',
     data: {
-      // core fields the dialog shows
-      CaseNumber: row.CaseNumber,
-      PatientName: row.PatientName,
-      SurgeryDate: row.SurgeryDate ? new Date(row.SurgeryDate) : null, // 👈 this is the line you asked about
-      Department: row.Department,
-      DRG: row.DRG,
-      DiagCode: row.DiagCode,
-      ICD9: row.ICD9,
-      SURGERY_NAME: row.SURGERY_NAME,
-      SurgeryRunk: row.SurgeryRunk,
-      DoingText: row.DoingText,
-
-      MainSurgeonNameFirst1: row.MainSurgeonNameFirst1,
-      MainSurgeonNameLast1:  row.MainSurgeonNameLast1,
-      MainSurgeonEmail1:     (row.MainSurgeonEmail1 || '').trim(),
-      MainSurgeonCell1:      (row.MainSurgeonCell1  || '').trim(),
-      MainSurgeonNameFirst2: row.MainSurgeonNameFirst2,
-      MainSurgeonNameLast2:  row.MainSurgeonNameLast2,
-      MainSurgeonEmail2:     (row.MainSurgeonEmail2 || '').trim(),
-      MainSurgeonCell2:      (row.MainSurgeonCell2  || '').trim(),
-
-      // latest comment snapshot (if you added it to GetAll)
-      RegistrarBillingRecommendation: row.RegistrarBillingRecommendation ?? '',
-      RegistrarComments: row.RegistrarComments ?? '',
-      RegistrarRequestForReportCorrection: row.RegistrarRequestForReportCorrection ?? '',
-      CommentDate: row.CommentDate ? new Date(row.CommentDate) : null,  // optional
-      CommentId: row.CommentId ?? null                                   // optional
+      // core fields the dialog shows (keys kept as dialog expects)
+      CaseNumber: row.caseNumber,
+      PatientName: row.patientName,
+      SurgeryDate: row.surgeryDate ? new Date(row.surgeryDate) : null,
+      Department: row.department,
+      DRG: row.drg,
+      DiagCode: row.diagCode,
+      ICD9: row.icd9,
+      SURGERY_NAME: row.surgeryName,
+      SurgeryRunk: row.surgeryRunk,
+      DoingText: row.doingText,
+    
+      MainSurgeonNameFirst1: row.mainSurgeonNameFirst1,
+      MainSurgeonNameLast1:  row.mainSurgeonNameLast1,
+      MainSurgeonEmail1:     (row.mainSurgeonEmail1 || '').trim(),
+      MainSurgeonCell1:      (row.mainSurgeonCell1  || '').trim(),
+      MainSurgeonNameFirst2: row.mainSurgeonNameFirst2,
+      MainSurgeonNameLast2:  row.mainSurgeonNameLast2,
+      MainSurgeonEmail2:     (row.mainSurgeonEmail2 || '').trim(),
+      MainSurgeonCell2:      (row.mainSurgeonCell2  || '').trim(),
+    
+      // latest comment snapshot
+      RegistrarBillingRecommendation: row.registrarBillingRecommendation ?? '',
+      RegistrarComments: row.registrarComments ?? '',
+      RegistrarRequestForReportCorrection: row.registrarRequestForReportCorrection ?? '',
+      CommentDate: row.commentDate ? new Date(row.commentDate) : null,
+      CommentId: row.commentId ?? null
     } as MainSurgeryDialogData & {
       RegistrarBillingRecommendation?: string;
       RegistrarComments?: string;
@@ -384,6 +388,7 @@ openDetails(row: any) {
       CommentDate?: Date | null;
       CommentId?: number | null;
     }
+    
   });
 
   // refresh table after saving in dialog

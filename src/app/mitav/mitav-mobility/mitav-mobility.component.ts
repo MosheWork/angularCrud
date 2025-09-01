@@ -23,33 +23,29 @@ import { Chart, ChartData, ChartType, registerables } from 'chart.js';
 })
 export class MitavMobilityComponent implements OnInit, AfterViewInit {
 
-  
   displayedColumns: string[] = [
-    'AdmissionNo',
-    'UnitName',
-    'AgeYears',
-    'AdmissionDate',
-    'ReleaseDate',
-    'MobilityGrade',
-    'EntryDate15478', // ✅ Added
-    'ComboText15478', // ✅ Added
-    'MobilityAssessmentAtDischarge', // ✅ Added
-    'MobilityStatus',
-    'ConsultationStatus',
-    'RecommendationForWalking',
-    'RequiredAssistiveDevice',
-    'RecommendedWalkingDistance',
-    //'MorningShiftCount',
-    //'NightShiftCount',
-    'DatesWithBothShifts',
-    'TotalDaysInHospital',
-    'TotalPercentage',
-    'IsRecordMatchingReleaseDate',
-    'HasRecordPerDate',
-    //'CognitiveFunctionBeforeHospitalization',  // Added
-    //'MobilityBeforeHospitalization',          // Added
-    'BasicFunctionBeforeHospitalization'
+    'admissionNo',
+    'unitName',
+    'ageYears',
+    'admissionDate',
+    'releaseDate',
+    'mobilityGrade',
+    'entryDate15478',
+    'comboText15478',
+    'mobilityAssessmentAtDischarge',
+    'mobilityStatus',
+    'consultationStatus',
+    'recommendationForWalking',
+    'requiredAssistiveDevice',
+    'recommendedWalkingDistance',
+    'datesWithBothShifts',
+    'totalDaysInHospital',
+    'totalPercentage',
+    'isRecordMatchingReleaseDate',
+    'hasRecordPerDate',
+    'basicFunctionBeforeHospitalization'
   ];
+  
   globalFilterValue: string = ''; // Store global filter text
   deliriumDataSource = new MatTableDataSource<any>();
   filteredData: any[] = [];
@@ -196,16 +192,17 @@ invalidMobilityCasesBelowThreshold: number = 0;
           new Set(
             this.originalData
               .map((item: any) => [
-                item.AdmissionDate ? new Date(item.AdmissionDate).getFullYear() : null,
-                item.ReleaseDate ? new Date(item.ReleaseDate).getFullYear() : null
+                item.admissionDate ? new Date(item.admissionDate).getFullYear() : null,
+                item.releaseDate ? new Date(item.releaseDate).getFullYear() : null
               ])
-              .reduce((acc, val) => acc.concat(val), []) // ✅ Replace flatMap with reduce
-              .filter((year: number | null): year is number => year !== null) // ✅ Ensure valid numbers
+              .reduce((acc, val) => acc.concat(val), [])
+              .filter((year: number | null): year is number => year !== null)
           )
-        ).sort((a, b) => b - a); // ✅ Ensure sorting works
+        ).sort((a, b) => b - a);
+        
         
 
-        this.departmentList = Array.from(new Set(data.map((item) => item.UnitName || 'Unknown')));
+        this.departmentList = Array.from(new Set(data.map((item) => item.unitName || 'Unknown')));
       },
       (error) => {
         console.error('❌ Error fetching Mobility Report data:', error);
@@ -222,8 +219,8 @@ applyFilters(): void {
   // ✅ Apply Date Filter (Check Admission and Release Dates)
   if (this.startDate || this.endDate) {
     filteredData = filteredData.filter((item) => {
-      const admissionDate = item.AdmissionDate ? new Date(item.AdmissionDate) : null;
-      const releaseDate = item.ReleaseDate ? new Date(item.ReleaseDate) : null;
+      const admissionDate = item.admissionDate? new Date(item.AdmissionDate) : null;
+      const releaseDate = item.releaseDate? new Date(item.releaseDate) : null;
       return (
         (!this.startDate || (admissionDate && admissionDate >= this.startDate) || (releaseDate && releaseDate >= this.startDate)) &&
         (!this.endDate || (admissionDate && admissionDate <= this.endDate) || (releaseDate && releaseDate <= this.endDate))
@@ -234,15 +231,15 @@ applyFilters(): void {
   // ✅ Apply Department Filter
   if (this.selectedDepartments.length > 0) {
     filteredData = filteredData.filter((item) =>
-      this.selectedDepartments.includes(item.UnitName)
+      this.selectedDepartments.includes(item.unitName)
     );
   }
 
   // ✅ Apply Year Filter (Check Both Dates)
   if (this.selectedYear) {
     filteredData = filteredData.filter((item) => {
-      const admissionYear = item.AdmissionDate ? new Date(item.AdmissionDate).getFullYear() : null;
-      const releaseYear = item.ReleaseDate ? new Date(item.ReleaseDate).getFullYear() : null;
+      const admissionYear = item.admissionDate? new Date(item.admissionDate).getFullYear() : null;
+      const releaseYear = item.releaseDate? new Date(item.releaseDate).getFullYear() : null;
       return (admissionYear === this.selectedYear) || (releaseYear === this.selectedYear);
     });
   }
@@ -260,7 +257,7 @@ applyFilters(): void {
   
     if (selectedQuarterMonths) {
       filteredData = filteredData.filter((item) => {
-        const admissionMonth = item.AdmissionDate ? new Date(item.AdmissionDate).getMonth() + 1 : null;
+        const admissionMonth = item.admissionDate? new Date(item.AdmissionDate).getMonth() + 1 : null;
   
         return admissionMonth && selectedQuarterMonths.includes(admissionMonth); // ✅ Apply only to AdmissionDate
       });
@@ -299,11 +296,11 @@ applyFilters(): void {
   
   calculateGaugeValue(data: any[]): void {
     const totalDatesWithBothShifts = data
-      .map((item) => item.DatesWithBothShifts || 0)
+      .map((item) => item.datesWithBothShifts || 0)
       .reduce((sum, value) => sum + value, 0);
   
     const totalDaysInHospital = data
-      .map((item) => item.TotalDaysInHospital || 1) // Avoid division by zero
+      .map((item) => item.totalDaysInHospital || 1) // Avoid division by zero
       .reduce((sum, value) => sum + value, 0);
   
     this.totalMobilityPercentage = totalDaysInHospital > 0
@@ -365,25 +362,25 @@ applyFilters(): void {
   //   }
 
   //   this.dataSource.data = this.originalData.filter((item) =>
-  //     this.selectedDepartments.includes(item.UnitName)
+  //     this.selectedDepartments.includes(item.unitName)
   //   );
   // }
 
   calculateMobilityGradeAverage(): void {
     if (this.dataSource.data.length > 0) {
       const totalMobilityGrade = this.dataSource.data
-        .map(item => item.MobilityGrade || 0)
+        .map(item => item.mobilityGrade || 0)
         .reduce((sum, grade) => sum + grade, 0);
       
       this.mobilityGradeAverage = totalMobilityGrade / this.dataSource.data.length;
   
-      // Calculate Gauge Value: (Total DatesWithBothShifts / TotalDaysInHospital) * 100
+      // Calculate Gauge Value: (Total datesWithBothShifts / TotalDaysInHospital) * 100
       const totalDatesWithBothShifts = this.dataSource.data
-        .map(item => item.DatesWithBothShifts || 0)
+        .map(item => item.datesWithBothShifts || 0)
         .reduce((sum, value) => sum + value, 0);
   
       const totalDaysInHospital = this.dataSource.data
-        .map(item => item.TotalDaysInHospital || 1) // Avoid division by zero
+        .map(item => item.totalDaysInHospital || 1) // Avoid division by zero
         .reduce((sum, value) => sum + value, 0);
   
       this.gaugeValue = totalDaysInHospital > 0 
@@ -398,12 +395,12 @@ applyFilters(): void {
     const departmentMap = new Map<string, { totalShifts: number; totalDays: number }>();
   
     this.dataSource.data.forEach(item => {
-      const unitName = item.UnitName || 'Unknown';
+      const unitName = item.unitName || 'Unknown';
       if (!departmentMap.has(unitName)) {
         departmentMap.set(unitName, { totalShifts: 0, totalDays: 0 });
       }
-      departmentMap.get(unitName)!.totalShifts += item.DatesWithBothShifts || 0;
-      departmentMap.get(unitName)!.totalDays += item.TotalDaysInHospital || 1;
+      departmentMap.get(unitName)!.totalShifts += item.datesWithBothShifts || 0;
+      departmentMap.get(unitName)!.totalDays += item.totalDaysInHospital || 1;
     });
   
     this.departmentPercentages = Array.from(departmentMap.entries()).map(([unitName, data]) => ({
@@ -431,13 +428,13 @@ openDepartmentPercentagesDialog(): void {
   }>();
 
   this.dataSource.data.forEach(item => {
-    const unitName = item.UnitName || 'Unknown';
-    const mobilityGrade = item.MobilityGrade;
-    const recommendation = item.RecommendationForWalking;
+    const unitName = item.unitName || 'Unknown';
+    const mobilityGrade = item.mobilityGrade;
+    const recommendation = item.recommendationForWalking;
     const cognitive = item.CognitiveFunctionBeforeHospitalization;
     const mobility = item.MobilityBeforeHospitalization;
     const basic = item.BasicFunctionBeforeHospitalization;
-    const consultationStatus = item.ConsultationStatus;
+    const consultationStatus = item.consultationStatus;
     const departmentPercentages = this.calculateDepartmentPercentages();
 
     if (!departmentMap.has(unitName)) {
@@ -454,8 +451,8 @@ openDepartmentPercentagesDialog(): void {
     }
 
     const department = departmentMap.get(unitName)!;
-    department.totalShifts += item.DatesWithBothShifts || 0;
-    department.totalDays += item.TotalDaysInHospital || 1;
+    department.totalShifts += item.datesWithBothShifts || 0;
+    department.totalDays += item.totalDaysInHospital || 1;
 
     if (mobilityGrade !== null && mobilityGrade !== undefined && mobilityGrade !== '') {
       department.mobilityGrades.push(mobilityGrade);
@@ -579,7 +576,7 @@ initializeChartData(): void {
   const gradeCounts = new Map<string, number>();
 
   this.dataSource.data.forEach((item) => {
-    const grade = item.MobilityGrade || 'אין תיעוד'; // Default value
+    const grade = item.mobilityGrade || 'אין תיעוד'; // Default value
     gradeCounts.set(grade, (gradeCounts.get(grade) || 0) + 1);
   });
 
@@ -702,7 +699,7 @@ prepareChartData(): void {
   const tags = ['Low', 'Medium', 'High', 'Unknown']; // Example tags for categories
 
   this.dataSource.data.forEach((item) => {
-    const grade = item.MobilityGrade || 'Unknown'; // Default for missing grades
+    const grade = item.mobilityGrade || 'Unknown'; // Default for missing grades
     gradeCounts.set(grade, (gradeCounts.get(grade) || 0) + 1);
   });
 
@@ -722,13 +719,13 @@ prepareChartData(): void {
 calculateRecommendationForWalking(data: any[]): void {
   console.log('🔄 Calculating מרשם הליכה (Recommendation for Walking)...');
 
-  // ✅ Step 1: Filter only cases where MobilityGrade is 'מאוד מוגבל - 2' or 'מעט לקויה - 3'
+  // ✅ Step 1: Filter only cases where mobilityGrade is 'מאוד מוגבל - 2' or 'מעט לקויה - 3'
   const filteredData = data.filter(item => 
-    item.MobilityGrade === 'מאוד מוגבל - 2' || item.MobilityGrade === 'מעט לקויה - 3'
+    item.mobilityGrade === 'מאוד מוגבל - 2' || item.mobilityGrade === 'מעט לקויה - 3'
   );
 
   const totalCases = filteredData.length;
-  console.log(`📌 Found ${totalCases} cases with MobilityGrade 'מאוד מוגבל - 2' or 'מעט לקויה - 3'`);
+  console.log(`📌 Found ${totalCases} cases with mobilityGrade 'מאוד מוגבל - 2' or 'מעט לקויה - 3'`);
 
   if (totalCases === 0) {
     this.validWalkingCases = 0;
@@ -740,7 +737,7 @@ calculateRecommendationForWalking(data: any[]): void {
 
   // ✅ Step 2: Count cases with המלצה להליכה
   this.validWalkingCases = filteredData.filter(item => 
-    item.RecommendationForWalking && item.RecommendationForWalking.trim() !== 'אין תיעוד'
+    item.recommendationForWalking && item.recommendationForWalking.trim() !== 'אין תיעוד'
   ).length;
 
   this.invalidWalkingCases = totalCases - this.validWalkingCases;
@@ -770,7 +767,7 @@ calculateConsultationPercentage(filteredData: any[]): void {
   }
 
   const filteredConsultations = filteredData
-    .map(item => item.ConsultationStatus)
+    .map(item => item.consultationStatus)
     .filter(status => status && status.trim().toLowerCase() === 'yes').length;
 
   const consultationPercentage = allCases > 0
@@ -832,7 +829,7 @@ calculateFunctionalStatePercentage(data: any[]): void {
     return;
   }
 
-  const validCases = data.filter(item => item.CognitiveFunctionBeforeHospitalization && item.CognitiveFunctionBeforeHospitalization !== 'אין תיעוד').length;
+  const validCases = data.filter(item => item.cognitiveFunctionBeforeHospitalization && item.cognitiveFunctionBeforeHospitalization !== 'אין תיעוד').length;
   this.functionalStateGauge = Math.round((validCases / totalCases) * 100);
   this.validFunctionalCases = validCases;
   this.invalidFunctionalCases = totalCases - validCases;
@@ -847,9 +844,9 @@ calculateMobilityCases(data: any[]): void {
     return;
   }
 
-  // ✅ Filter cases where TotalPercentage is 70% or higher
+  // ✅ Filter cases where totalPercentage is 70% or higher
   this.validMobilityCasesAboveThreshold = data.filter(item => 
-    item.TotalPercentage && Number(item.TotalPercentage) >= 70
+    item.totalPercentage && Number(item.TotalPercentage) >= 70
   ).length;
 
   // ✅ The rest are invalid cases
@@ -868,14 +865,14 @@ calculateRecommendationCases(data: any[]): void {
     return;
   }
 
-  this.validWalkingCases = data.filter(item => item.RecommendationForWalking && item.RecommendationForWalking !== 'אין תיעוד').length;
+  this.validWalkingCases = data.filter(item => item.recommendationForWalking && item.recommendationForWalking !== 'אין תיעוד').length;
   this.invalidWalkingCases = totalCases - this.validWalkingCases;
 }
 calculateConsultationCases(data: any[]): void {
   console.log('🔍 Starting calculateConsultationCases...');
   
   const filteredData = data.filter(item =>
-    item.MobilityGrade === 'מאוד מוגבל - 2' || item.MobilityGrade === 'מעט לקויה - 3'
+    item.mobilityGrade === 'מאוד מוגבל - 2' || item.mobilityGrade === 'מעט לקויה - 3'
   );
   
 
@@ -891,9 +888,9 @@ calculateConsultationCases(data: any[]): void {
   }
 
   this.validConsultationCases = filteredData.filter(item => {
-    const status = item.ConsultationStatus?.toString().trim().toLowerCase();
+    const status = item.consultationStatus?.toString().trim().toLowerCase();
     const isValid = status === 'yes';
-    console.log(`✔️ Checking status: "${item.ConsultationStatus}" => ${isValid ? '✅ valid' : '❌ invalid'}`);
+    console.log(`✔️ Checking status: "${item.consultationStatus}" => ${isValid ? '✅ valid' : '❌ invalid'}`);
     return isValid;
   }).length;
 
@@ -915,7 +912,7 @@ calculateCognitiveCases(data: any[]): void {
     return;
   }
 
-  this.validCognitiveCases = data.filter(item => item.CognitiveFunctionBeforeHospitalization && item.CognitiveFunctionBeforeHospitalization !== 'אין תיעוד').length;
+  this.validCognitiveCases = data.filter(item => item.cognitiveFunctionBeforeHospitalization && item.cognitiveFunctionBeforeHospitalization !== 'אין תיעוד').length;
   this.invalidCognitiveCases = totalCases - this.validCognitiveCases;
 }
 
@@ -960,20 +957,20 @@ exportToExcel() {
   // ✅ Define Hebrew column headers
   const columnHeaders: { [key: string]: string } = {
     AdmissionNo: "מספר אשפוז",
-    UnitName: "מחלקה",
-    AgeYears: "גיל (שנים)",
+    unitName: "מחלקה",
+    ageYears: "גיל (שנים)",
     AdmissionDate: "תאריך כניסה",
-    ReleaseDate: "תאריך שחרור",
-    MobilityGrade: "דרגת ניידות",
-    ConsultationStatus: "סטטוס ייעוץ",
-    RecommendationForWalking: "המלצה להליכה",
-    RequiredAssistiveDevice: "אביזר עזר נדרש",
-    RecommendedWalkingDistance: "מרחק הליכה מומלץ",
-    DatesWithBothShifts: "הליכה בפועל (בימים)",
+    releaseDate: "תאריך שחרור",
+    mobilityGrade: "דרגת ניידות",
+    consultationStatus: "סטטוס ייעוץ",
+    recommendationForWalking: "המלצה להליכה",
+    requiredAssistiveDevice: "אביזר עזר נדרש",
+    recommendedWalkingDistance: "מרחק הליכה מומלץ",
+    datesWithBothShifts: "הליכה בפועל (בימים)",
     TotalDaysInHospital: "סך הימים באשפוז",
     TotalPercentage: "אחוז כולל ( יעד מעל 70%)",
-    IsRecordMatchingReleaseDate: "תואם תאריך שחרור",
-    HasRecordPerDate: "רשומה לפי תאריך"
+    isRecordMatchingReleaseDate: "תואם תאריך שחרור",
+    hasRecordPerDate: "רשומה לפי תאריך"
   };
 
   // ✅ Convert filtered data to Hebrew format
@@ -993,10 +990,10 @@ exportToExcel() {
   XLSX.writeFile(workbook, 'פילוח_מחלקתי.xlsx');
 }
 calculateMobilityDeteriorationGauge(data: any[]): void {
-  const filtered = data.filter(item => item.MobilityStatus !== 'אין תיעוד'); // ✅ Exclude "לא ידוע"
+  const filtered = data.filter(item => item.mobilityStatus  !== 'אין תיעוד'); // ✅ Exclude "לא ידוע"
 
   this.totalRowsCount = filtered.length;
-  this.deterioratedMobilityCount = filtered.filter(item => item.MobilityStatus === 'הרעה בניידות').length;
+  this.deterioratedMobilityCount = filtered.filter(item => item.mobilityStatus  === 'הרעה בניידות').length;
 
   this.mobilityDeteriorationGauge = Math.round((this.deterioratedMobilityCount / this.totalRowsCount) * 100);
 

@@ -1,311 +1,272 @@
 <!-- Loader (Full Page) -->
+<div class="body">
 <app-spinner [isLoading]="isLoading"></app-spinner>
-<!-- <div *ngIf="isLoading" class="loading-screen">
-    <div class="bed-doctor-loader">
-      <div class="animation">
-        🏥 ➡️ 🏥 ➡️ 🏥 ➡️ 👨‍⚕️
-      </div>
-      <mat-progress-bar mode="indeterminate" color="accent"></mat-progress-bar>
-      <p>מעבד מידע רפואי...</p>
-    </div>  <p>אוסף נתונים לדוח מיתב....</p>
-  </div> -->
 
+<div *ngIf="!isLoading" class="body">
+  <!-- Title Section -->
 
-  <div *ngIf="!isLoading" class="body">
-    <!-- Title Section -->
-    <div class="nine">
-      <h1>דאשבורד מיתב - דליריום </h1>
-    </div>
-<div class="table-container">
-  
-  <!-- Filters Section -->
-<div class="filter-card">
-    <div dir="rtl" class="card mat-elevation-z8">
-      <div class="card-body">
-        <div class="filter-container">
-          <!-- Department Multi-Select -->
-          <mat-form-field appearance="outline">
-            <mat-label>Search</mat-label>
-            <input matInput (keyup)="applyGlobalFilter($event)" placeholder="Search across all columns">
-          </mat-form-field>
-          <mat-form-field class="filter-field">
-            <mat-label>בחר מחלקות</mat-label>
-            <mat-select [(ngModel)]="selectedDepartments" multiple (selectionChange)="applyFilters()">
-              <mat-option *ngFor="let department of departmentList" [value]="department">
-                {{ department }}
-              </mat-option>
-            </mat-select>
-          </mat-form-field>
-  
-          <!-- Start Date Filter -->
-          <mat-form-field class="filter-field">
-            <mat-label>תאריך התחלה</mat-label>
-            <input matInput [matDatepicker]="startDatePicker" [(ngModel)]="startDate" (ngModelChange)="applyFilters()" />
-            <mat-datepicker-toggle matSuffix [for]="startDatePicker"></mat-datepicker-toggle>
-            <mat-datepicker #startDatePicker></mat-datepicker>
-          </mat-form-field>
-  
-          <!-- End Date Filter -->
-          <mat-form-field class="filter-field">
-            <mat-label>תאריך סיום</mat-label>
-            <input matInput [matDatepicker]="endDatePicker" [(ngModel)]="endDate" (ngModelChange)="applyFilters()" />
-            <mat-datepicker-toggle matSuffix [for]="endDatePicker"></mat-datepicker-toggle>
-            <mat-datepicker #endDatePicker></mat-datepicker>
-          </mat-form-field>
-  
-          <!-- Year Filter -->
-        
-          <mat-form-field class="filter-field">
-            <mat-label>בחר שנה</mat-label>
-            <mat-select [(ngModel)]="selectedYear" (selectionChange)="selectedQuarter = null; applyFilters()">
-              <mat-option *ngFor="let year of yearList" [value]="year">
-                {{ year }}
-              </mat-option>
-            </mat-select>
-          </mat-form-field>
-  
-          <!-- Quarter Filter -->
-          <mat-form-field class="filter-field">
-            <mat-label>בחר רבעון</mat-label>
-            <mat-select [(ngModel)]="selectedQuarter" (selectionChange)="applyFilters()">
-              <mat-option *ngFor="let quarter of ['רבעון 1', 'רבעון 2', 'רבעון 3', 'רבעון 4']" [value]="quarter">
-                {{ quarter }}
-              </mat-option>
-            </mat-select>
-          </mat-form-field>
-  
-          <!-- Filter Buttons -->
-          <div class="filter-buttons" style="margin-top: 10px; text-align: right;">
-            <button mat-raised-button color="warn" (click)="resetFilters()">איפוס</button>
+  <div class="table-container">
+    <!-- Filters Section -->
+    <div class="filter-card">
+      <div dir="rtl" class="card mat-elevation-z8">
+        <div class="card-body">
+          <div class="filter-container">
+            <!-- Global Search -->
+            <mat-form-field appearance="outline">
+              <mat-label>Search</mat-label>
+              <input matInput (keyup)="applyGlobalFilter($event)" placeholder="Search across all columns">
+            </mat-form-field>
+
+            <!-- Department Multi-Select -->
+            <mat-form-field class="filter-field">
+              <mat-label>בחר מחלקות</mat-label>
+              <mat-select [(ngModel)]="selectedDepartments" multiple (selectionChange)="applyFilters()">
+                <mat-option *ngFor="let department of departmentList" [value]="department">
+                  {{ department }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+
+            <!-- Start Date Filter -->
+            <mat-form-field class="filter-field">
+              <mat-label>תאריך התחלה</mat-label>
+              <input matInput [matDatepicker]="startDatePicker" [(ngModel)]="startDate" (ngModelChange)="applyFilters()" />
+              <mat-datepicker-toggle matSuffix [for]="startDatePicker"></mat-datepicker-toggle>
+              <mat-datepicker #startDatePicker></mat-datepicker>
+            </mat-form-field>
+
+            <!-- End Date Filter -->
+            <mat-form-field class="filter-field">
+              <mat-label>תאריך סיום</mat-label>
+              <input matInput [matDatepicker]="endDatePicker" [(ngModel)]="endDate" (ngModelChange)="applyFilters()" />
+              <mat-datepicker-toggle matSuffix [for]="endDatePicker"></mat-datepicker-toggle>
+              <mat-datepicker #endDatePicker></mat-datepicker>
+            </mat-form-field>
+
+            <!-- Year Filter -->
+            <mat-form-field class="filter-field">
+              <mat-label>בחר שנה</mat-label>
+              <mat-select [(ngModel)]="selectedYear" (selectionChange)="selectedQuarter = null; applyFilters()">
+                <mat-option *ngFor="let year of yearList" [value]="year">
+                  {{ year }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+
+            <!-- Quarter Filter -->
+            <mat-form-field class="filter-field">
+              <mat-label>בחר רבעון</mat-label>
+              <mat-select [(ngModel)]="selectedQuarter" (selectionChange)="applyFilters()">
+                <mat-option *ngFor="let quarter of ['רבעון 1', 'רבעון 2', 'רבעון 3', 'רבעון 4']" [value]="quarter">
+                  {{ quarter }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+
+            <!-- Filter Buttons -->
+            <div class="filter-buttons" style="margin-top: 10px; text-align: right;">
+              <button mat-raised-button color="warn" (click)="resetFilters()">איפוס</button>
+            </div>
+
           </div>
-        
         </div>
       </div>
     </div>
-  </div>
 
-  <!-- CAM Assessment Gauge (אומדן CAM) -->
-<div class="gauge-item">
-  <div class="gauge-title">אומדן CAM</div>
-  <ngx-gauge
-    [value]="camAssessmentGauge"
-    [min]="0"
-    [max]="100"
-    [label]="''"
-    [append]="'%'"
-    [foregroundColor]="camAssessmentGaugeColor()"> 
-  </ngx-gauge>
-  <div class="gauge-info">
-    <strong> תקין {{ validCAMCount }} / לא תקין {{ invalidCAMCount }} / סה"כ - {{ totalCAMCases }} </strong>
+    <!-- CAM Assessment Gauge -->
+    <div class="gauge-item">
+      <div class="gauge-title">אומדן CAM</div>
+      <ngx-gauge
+        [value]="camAssessmentGauge"
+        [min]="0"
+        [max]="100"
+        [label]="''"
+        [append]="'%'"
+        [foregroundColor]="camAssessmentGaugeColor()">
+      </ngx-gauge>
+      <div class="gauge-info">
+        <strong> תקין {{ validCAMCount }} / לא תקין {{ invalidCAMCount }} / סה"כ - {{ totalCAMCases }} </strong>
+      </div>
+    </div>
+
+    <div class="toggle-container">
+      <img (click)="toggleView()" matTooltip="הצג גרף" src="../../../../assets/graphIcon.png" width="50px" />
+      <button mat-raised-button color="primary" (click)="openDepartmentSummaryDialog()">סיכום לפי מחלקות</button>
+    </div>
+
+    <div *ngIf="showGraph" class="chart-container">
+      <canvas #barChart></canvas>
+    </div>
+
+    <div *ngIf="showDepartmentSummary" class="department-summary">
+      <h2> סיכום לפי מחלקות</h2>
+      <mat-table [dataSource]="departmentSummaryData" class="mat-elevation-z8" dir="rtl">
+        <ng-container matColumnDef="department">
+          <mat-header-cell *matHeaderCellDef> מחלקה </mat-header-cell>
+          <mat-cell *matCellDef="let element"> {{ element.department }} </mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="totalCAMCases">
+          <mat-header-cell *matHeaderCellDef> סה"כ מקרים </mat-header-cell>
+          <mat-cell *matCellDef="let element"> {{ element.totalCAMCases }} </mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="validCAMCount">
+          <mat-header-cell *matHeaderCellDef> תקין </mat-header-cell>
+          <mat-cell *matCellDef="let element"> {{ element.validCAMCount }} </mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="validPercentage">
+          <mat-header-cell *matHeaderCellDef> אחוז תקינות </mat-header-cell>
+          <mat-cell *matCellDef="let element">
+            {{ element.validPercentage | number: '1.0-2' }}%
+          </mat-cell>
+        </ng-container>
+
+        <mat-header-row *matHeaderRowDef="['department', 'totalCAMCases', 'validCAMCount', 'validPercentage']"></mat-header-row>
+        <mat-row *matRowDef="let row; columns: ['department', 'totalCAMCases', 'validCAMCount', 'validPercentage'];"></mat-row>
+      </mat-table>
+    </div>
+
+    <div *ngIf="!showGraph" class="table-section">
+      <mat-table [dataSource]="dataSource" matSort class="mat-elevation-z8" dir="rtl">
+
+        <!-- תאריך קבלה -->
+        <ng-container matColumnDef="atD_Admission_Date">
+          <mat-header-cell *matHeaderCellDef mat-sort-header> תאריך קבלה </mat-header-cell>
+          <mat-cell *matCellDef="let element"> {{ element.atD_Admission_Date | date: 'dd/MM/yyyy HH:mm' }} </mat-cell>
+        </ng-container>
+
+        <!-- תאריך שחרור -->
+        <ng-container matColumnDef="release_Date">
+          <mat-header-cell *matHeaderCellDef mat-sort-header> תאריך שחרור </mat-header-cell>
+          <mat-cell *matCellDef="let element"> {{ element.release_Date | date: 'dd/MM/yyyy HH:mm' }} </mat-cell>
+        </ng-container>
+
+        <!-- מספר מטופל -->
+        <ng-container matColumnDef="patient">
+          <mat-header-cell *matHeaderCellDef mat-sort-header> מספר מטופל </mat-header-cell>
+          <mat-cell *matCellDef="let element"> {{ element.patient }} </mat-cell>
+        </ng-container>
+
+        <!-- מספר מקרה -->
+        <ng-container matColumnDef="admission_No">
+          <mat-header-cell *matHeaderCellDef mat-sort-header> מספר מקרה </mat-header-cell>
+          <mat-cell *matCellDef="let element"> {{ element.admission_No }} </mat-cell>
+        </ng-container>
+
+        <!-- יחידה -->
+        <ng-container matColumnDef="name">
+          <mat-header-cell *matHeaderCellDef mat-sort-header> יחידה </mat-header-cell>
+          <mat-cell *matCellDef="let element"> {{ element.name }} </mat-cell>
+        </ng-container>
+
+        <!-- ציון אומדן CAM -->
+        <ng-container matColumnDef="grade">
+          <mat-header-cell *matHeaderCellDef mat-sort-header> ציון אומדן CAM </mat-header-cell>
+          <mat-cell *matCellDef="let element">
+            {{ element.grade && element.grade.trim() !== '' ? element.grade : 'אין תיעוד' }}
+          </mat-cell>
+        </ng-container>
+
+        <!-- תאריך ביצוע האומדן -->
+        <ng-container matColumnDef="gradeEntryDate">
+          <mat-header-cell *matHeaderCellDef mat-sort-header> תאריך ביצוע האומדן</mat-header-cell>
+          <mat-cell *matCellDef="let element"> {{ element.gradeEntryDate | date: 'dd/MM/yyyy ' }} </mat-cell>
+        </ng-container>
+
+        <!-- גיל -->
+        <ng-container matColumnDef="age_Years">
+          <mat-header-cell *matHeaderCellDef mat-sort-header> גיל </mat-header-cell>
+          <mat-cell *matCellDef="let element"> {{ element.age_Years }} </mat-cell>
+        </ng-container>
+
+        <!-- דליריום -->
+        <ng-container matColumnDef="patientWithDelirium">
+          <mat-header-cell *matHeaderCellDef mat-sort-header> דליריום </mat-header-cell>
+          <mat-cell *matCellDef="let element"> {{ element.patientWithDelirium }} </mat-cell>
+        </ng-container>
+
+        <!-- תאריך הופעת דליריום -->
+        <ng-container matColumnDef="patientWithDeliriumEntryDate">
+          <mat-header-cell *matHeaderCellDef mat-sort-header> תאריך הופעת דליריום </mat-header-cell>
+          <mat-cell *matCellDef="let element">
+            {{ element.patientWithDeliriumEntryDate ? (element.patientWithDeliriumEntryDate | date: 'dd/MM/yyyy ') : 'לא רלוונטי '}}
+          </mat-cell>
+        </ng-container>
+
+        <!-- מספר ימים עם דליריום -->
+        <ng-container matColumnDef="deliriumDaysCount">
+          <mat-header-cell *matHeaderCellDef mat-sort-header> מספר ימים עם דליריום </mat-header-cell>
+          <mat-cell *matCellDef="let element"> {{ element.deliriumDaysCount }} </mat-cell>
+        </ng-container>
+
+        <!-- הוזמן ייעוץ ריפוי בעיסוק -->
+        <ng-container matColumnDef="deliriumConsiliumsOpened">
+          <mat-header-cell *matHeaderCellDef mat-sort-header> הוזמן ייעוץ ריפוי בעיסוק</mat-header-cell>
+          <mat-cell *matCellDef="let element"> {{ element.deliriumConsiliumsOpened }} </mat-cell>
+        </ng-container>
+
+        <!-- תאריך הזמנת הייעוץ -->
+        <ng-container matColumnDef="deliriumConsiliumsDate">
+          <mat-header-cell *matHeaderCellDef mat-sort-header> תאריך הזמנת הייעוץ </mat-header-cell>
+          <mat-cell *matCellDef="let element">
+            {{ element.deliriumConsiliumsDate ? (element.deliriumConsiliumsDate | date: 'dd/MM/yyyy HH:mm') : 'אין נתונים' }}
+          </mat-cell>
+        </ng-container>
+
+        <!-- הפרש שעות בין דליריום להזמנת ייעוץ -->
+        <ng-container matColumnDef="hoursDifference">
+          <mat-header-cell *matHeaderCellDef mat-sort-header>הפרש שעות בין דליריום להזמנת ייעוץ </mat-header-cell>
+          <mat-cell *matCellDef="let element"> {{ element.hoursDifference !== null ? element.hoursDifference : 'אין נתונים' }} </mat-cell>
+        </ng-container>
+
+        <!-- ציון אומדן CAM בקבלה -->
+        <ng-container matColumnDef="admissionCAMGrade">
+          <mat-header-cell *matHeaderCellDef mat-sort-header> ציון אומדן בקבלה CAM </mat-header-cell>
+          <mat-cell *matCellDef="let element">
+            {{ element.admissionCAMGrade && element.admissionCAMGrade.trim() !== '' ? element.admissionCAMGrade : 'אין תיעוד' }}
+          </mat-cell>
+        </ng-container>
+
+        <!-- מניעה או התערבות CAM -->
+        <ng-container matColumnDef="preventionORInterventionCAM">
+          <mat-header-cell *matHeaderCellDef mat-sort-header> מניעה או התערבות CAM </mat-header-cell>
+          <mat-cell *matCellDef="let element"> {{ element.preventionORInterventionCAM }} </mat-cell>
+        </ng-container>
+
+        <!-- האם חל שינוי במצבו -->
+        <ng-container matColumnDef="cAMGradeChanged">
+          <mat-header-cell *matHeaderCellDef mat-sort-header> האם חל שינוי במצבו </mat-header-cell>
+          <mat-cell *matCellDef="let element"> {{ element.cAMGradeChanged }} </mat-cell>
+        </ng-container>
+
+        <!-- CAM בשחרור -->
+        <ng-container matColumnDef="releaseCAM">
+          <mat-header-cell *matHeaderCellDef mat-sort-header> CAM בשחרור </mat-header-cell>
+          <mat-cell *matCellDef="let element"> {{ element.releaseCAM }} </mat-cell>
+        </ng-container>
+
+        <!-- האם בוצע אומדן CAM חוזר -->
+        <ng-container matColumnDef="gradeCount">
+          <mat-header-cell *matHeaderCellDef mat-sort-header> האם בוצע אומדן CAM חוזר למטופל שהוא חיובי </mat-header-cell>
+          <mat-cell *matCellDef="let element"> {{ element.gradeCount }} </mat-cell>
+        </ng-container>
+
+        <!-- התחלת טיפול תרופתי -->
+        <ng-container matColumnDef="drugForDelirium">
+          <mat-header-cell *matHeaderCellDef mat-sort-header> התחלת טיפול תרופתי </mat-header-cell>
+          <mat-cell *matCellDef="let element"> {{ element.drugForDelirium }} </mat-cell>
+        </ng-container>
+
+        <!-- Header & Row Definitions -->
+        <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+        <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+
+      </mat-table>
+
+      <mat-paginator [pageSizeOptions]="[5, 25, 50]" showFirstLastButtons></mat-paginator>
+    </div>
   </div>
 </div>
-<div class="toggle-container">
-  <img (click)="toggleView()" matTooltip="הצג גרף" src="../../../../assets/graphIcon.png" width="50px" />
-  <button mat-raised-button color="primary" (click)="openDepartmentSummaryDialog()">סיכום לפי מחלקות</button>
 </div>
-
-
-<div *ngIf="showGraph" class="chart-container">
-  <canvas #barChart></canvas>
-</div>
-
-<div *ngIf="showDepartmentSummary" class="department-summary">
-  <h2> סיכום לפי מחלקות</h2>
-  <mat-table [dataSource]="departmentSummaryData" class="mat-elevation-z8" dir="rtl">
-    
-    <!-- מחלקה -->
-    <ng-container matColumnDef="department">
-      <mat-header-cell *matHeaderCellDef> מחלקה </mat-header-cell>
-      <mat-cell *matCellDef="let element"> {{ element.department }} </mat-cell>
-    </ng-container>
-
-    <!-- מספר מקרים -->
-    <ng-container matColumnDef="totalCAMCases">
-      <mat-header-cell *matHeaderCellDef> סה"כ מקרים </mat-header-cell>
-      <mat-cell *matCellDef="let element"> {{ element.totalCAMCases }} </mat-cell>
-    </ng-container>
-
-    <!-- מספר תקינים -->
-    <ng-container matColumnDef="validCAMCount">
-      <mat-header-cell *matHeaderCellDef> תקין </mat-header-cell>
-      <mat-cell *matCellDef="let element"> {{ element.validCAMCount }} </mat-cell>
-    </ng-container>
-
-    <!-- אחוז תקינות -->
-    <ng-container matColumnDef="validPercentage">
-      <mat-header-cell *matHeaderCellDef> אחוז תקינות </mat-header-cell>
-      <mat-cell *matCellDef="let element"> 
-        {{ element.validPercentage | number: '1.0-2' }}%
-      </mat-cell>
-    </ng-container>
-
-    <mat-header-row *matHeaderRowDef="['department', 'totalCAMCases', 'validCAMCount', 'validPercentage']"></mat-header-row>
-    <mat-row *matRowDef="let row; columns: ['department', 'totalCAMCases', 'validCAMCount', 'validPercentage'];"></mat-row>
-
-  </mat-table>
-</div>
-
-
-
-<div *ngIf="showGraph" class="chart-container">
-  <canvas #barChart></canvas>
-</div>
-  <div *ngIf="!showGraph" class="table-section">
-    <mat-table [dataSource]="dataSource" matSort class="mat-elevation-z8" dir="rtl">
-  
-      <!-- תאריך קבלה -->
-      <ng-container matColumnDef="ATD_Admission_Date">
-        <mat-header-cell *matHeaderCellDef mat-sort-header> תאריך קבלה </mat-header-cell>
-        <mat-cell *matCellDef="let element"> {{ element.ATD_Admission_Date | date: 'dd/MM/yyyy HH:mm' }} </mat-cell>
-      </ng-container>
-  
-      <!-- תאריך שחרור -->
-      <ng-container matColumnDef="Release_Date">
-        <mat-header-cell *matHeaderCellDef mat-sort-header> תאריך שחרור </mat-header-cell>
-        <mat-cell *matCellDef="let element"> {{ element.Release_Date | date: 'dd/MM/yyyy HH:mm' }} </mat-cell>
-      </ng-container>
-  
-      <!-- מספר מטופל -->
-      <ng-container matColumnDef="Patient">
-        <mat-header-cell *matHeaderCellDef mat-sort-header> מספר מטופל </mat-header-cell>
-        <mat-cell *matCellDef="let element"> {{ element.Patient }} </mat-cell>
-      </ng-container>
-  
-      <!-- מספר אשפוז -->
-      <ng-container matColumnDef="Admission_No">
-        <mat-header-cell *matHeaderCellDef mat-sort-header> מספר מקרה </mat-header-cell>
-        <mat-cell *matCellDef="let element"> {{ element.Admission_No }} </mat-cell>
-      </ng-container>
-  
-      <!-- יחידה -->
-      <ng-container matColumnDef="Name">
-        <mat-header-cell *matHeaderCellDef mat-sort-header> יחידה </mat-header-cell>
-        <mat-cell *matCellDef="let element"> {{ element.Name }} </mat-cell>
-      </ng-container>
-  
-      <!-- תיק רפואי מעקב
-      <ng-container matColumnDef="FollowUp_Medical_Record">
-        <mat-header-cell *matHeaderCellDef mat-sort-header> תיק רפואי מעקב </mat-header-cell>
-        <mat-cell *matCellDef="let element"> {{ element.FollowUp_Medical_Record }} </mat-cell>
-      </ng-container>
-  
-      
-      <ng-container matColumnDef="Admission_Medical_Record">
-        <mat-header-cell *matHeaderCellDef mat-sort-header> תיק רפואי קבלה </mat-header-cell>
-        <mat-cell *matCellDef="let element"> {{ element.Admission_Medical_Record }} </mat-cell>
-      </ng-container>
-  
-     
-      <ng-container matColumnDef="Release_Medical_Record">
-        <mat-header-cell *matHeaderCellDef mat-sort-header> תיק רפואי שחרור </mat-header-cell>
-        <mat-cell *matCellDef="let element"> {{ element.Release_Medical_Record }} </mat-cell>
-      </ng-container> -->
-  
-      <!-- ציון -->
-      <ng-container matColumnDef="Grade">
-        <mat-header-cell *matHeaderCellDef mat-sort-header> ציון אומדן  CAM </mat-header-cell>
-        <mat-cell *matCellDef="let element"> 
-          {{ element.Grade && element.Grade.trim() !== '' ? element.Grade : 'אין תיעוד' }} 
-        </mat-cell>
-      </ng-container>
-
-      <ng-container matColumnDef="GradeEntryDate">
-        <mat-header-cell *matHeaderCellDef mat-sort-header> תאריך ביצוע האומדן</mat-header-cell>
-        <mat-cell *matCellDef="let element"> {{ element.GradeEntryDate | date: 'dd/MM/yyyy ' }} </mat-cell>
-      </ng-container>
-  <!-- גיל -->
-  <ng-container matColumnDef="Age_Years">
-    <mat-header-cell *matHeaderCellDef mat-sort-header> גיל </mat-header-cell>
-    <mat-cell *matCellDef="let element"> {{ element.Age_Years }} </mat-cell>
-  </ng-container>
-      <!-- דליריום -->
-      <ng-container matColumnDef="PatientWithDelirium">
-        <mat-header-cell *matHeaderCellDef mat-sort-header> דליריום </mat-header-cell>
-        <mat-cell *matCellDef="let element"> {{ element.PatientWithDelirium }} </mat-cell>
-      </ng-container>
-  
-      <!-- תאריך הופעת דליריום -->
-      <ng-container matColumnDef="PatientWithDeliriumEntryDate">
-        <mat-header-cell *matHeaderCellDef mat-sort-header> תאריך הופעת דליריום </mat-header-cell>
-        <mat-cell *matCellDef="let element">
-          {{ element.PatientWithDeliriumEntryDate ? (element.PatientWithDeliriumEntryDate | date: 'dd/MM/yyyy ') : 'לא רלוונטי '}}
-        </mat-cell>
-      </ng-container>
-  
-      <!-- מספר ימים עם דליריום -->
-      <ng-container matColumnDef="DeliriumDaysCount">
-        <mat-header-cell *matHeaderCellDef mat-sort-header> מספר ימים עם דליריום </mat-header-cell>
-        <mat-cell *matCellDef="let element"> {{ element.DeliriumDaysCount }} </mat-cell>
-      </ng-container>
-  
-      <!-- האם נפתח קונסיליום -->
-      <ng-container matColumnDef="DeliriumConsiliumsOpened">
-        <mat-header-cell *matHeaderCellDef mat-sort-header> הוזמן ייעוץ ריפוי בעיסוק</mat-header-cell>
-        <mat-cell *matCellDef="let element"> {{ element.DeliriumConsiliumsOpened }} </mat-cell>HoursDifference
-      </ng-container>
-  
-      <!-- תאריך קונסיליום -->
-      <ng-container matColumnDef="DeliriumConsiliumsDate">
-        <mat-header-cell *matHeaderCellDef mat-sort-header> תאריך הזמנת הייעוץ </mat-header-cell>
-        <mat-cell *matCellDef="let element">
-          {{ element.DeliriumConsiliumsDate ? (element.DeliriumConsiliumsDate | date: 'dd/MM/yyyy HH:mm') : 'אין נתונים' }}
-        </mat-cell>
-      </ng-container>
-  
-      <!-- הפרש שעות בין דליריום לקונסיליום -->
-      <ng-container matColumnDef="HoursDifference">
-        <mat-header-cell *matHeaderCellDef mat-sort-header>הפרש שעות בין דליריום להזמנת ייעוץ </mat-header-cell>
-        <mat-cell *matCellDef="let element"> {{ element.HoursDifference !== null ? element.HoursDifference : 'אין נתונים' }} </mat-cell>
-      </ng-container>
-
- <!-- AdmissionCAMGrade בקבלה ציון אומדן CAM -->
-<ng-container matColumnDef="AdmissionCAMGrade">
-  <mat-header-cell *matHeaderCellDef mat-sort-header> ציון אומדן בקבלה CAM </mat-header-cell>
-  <mat-cell *matCellDef="let element"> 
-    {{ element.AdmissionCAMGrade && element.AdmissionCAMGrade.trim() !== '' ? element.AdmissionCAMGrade : 'אין תיעוד' }} 
-  </mat-cell>
-</ng-container>
-      <!-- התערבות CAM -->
-      <!-- <ng-container matColumnDef="PreventionAndInterventionCAM">
-        <mat-header-cell *matHeaderCellDef mat-sort-header> התערבות CAM </mat-header-cell>
-        <mat-cell *matCellDef="let element"> {{ element.PreventionAndInterventionCAM }} </mat-cell>
-      </ng-container> -->
-  
-      <!-- מניעה או התערבות CAM -->
-      <ng-container matColumnDef="PreventionORInterventionCAM">
-        <mat-header-cell *matHeaderCellDef mat-sort-header> מניעה או התערבות CAM </mat-header-cell>
-        <mat-cell *matCellDef="let element"> {{ element.PreventionORInterventionCAM }} </mat-cell>
-      </ng-container>
-       <!-- האח חל שינוי במצבו CAM -->
-       <ng-container matColumnDef="CAMGradeChanged">
-        <mat-header-cell *matHeaderCellDef mat-sort-header> האם חל שינוי במצבו </mat-header-cell>
-        <mat-cell *matCellDef="let element"> {{ element.CAMGradeChanged }} </mat-cell>
-      </ng-container>
-      <!-- CAM בשחרור -->
-      <ng-container matColumnDef="ReleaseCAM">
-        <mat-header-cell *matHeaderCellDef mat-sort-header> CAM בשחרור </mat-header-cell>
-        <mat-cell *matCellDef="let element"> {{ element.ReleaseCAM }} </mat-cell>
-      </ng-container>
-       <!-- האם בוצע אומדן CAM חוזר למטופל שהוא חיובי -->
-       <ng-container matColumnDef="GradeCount">
-        <mat-header-cell *matHeaderCellDef mat-sort-header> האם בוצע אומדן CAM חוזר למטופל שהוא חיובי </mat-header-cell>
-        <mat-cell *matCellDef="let element"> {{ element.GradeCount }} </mat-cell>
-      </ng-container>
-   <!-- DrugForDelirium  האם הותחל טיפול תרפותי -->
-   <ng-container matColumnDef="DrugForDelirium">
-    <mat-header-cell *matHeaderCellDef mat-sort-header>התחלת טיפול תרופתי </mat-header-cell>
-    <mat-cell *matCellDef="let element"> {{ element.DrugForDelirium }} </mat-cell>
-  </ng-container>
-      <!-- Header & Row Definitions -->
-      <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-      <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
-      
-  
-    </mat-table>
-  
-    <mat-paginator [pageSizeOptions]="[5, 25, 50]" showFirstLastButtons></mat-paginator>
-  </div>
-  
-  </div>
-  </div>
-  
