@@ -15,7 +15,7 @@ export class MitavGradeListDialogComponent implements OnInit {
   constructor(
     private http: HttpClient,
     public dialogRef: MatDialogRef<MitavGradeListDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: { Admission_Medical_Record: string; FollowUp_Medical_Record: string; Release_Medical_Record: string }
+    @Inject(MAT_DIALOG_DATA) public data: { admission_Medical_Record: string; followUp_Medical_Record: string; release_Medical_Record: string }
   ) {}
 
   ngOnInit(): void {
@@ -25,9 +25,9 @@ export class MitavGradeListDialogComponent implements OnInit {
   fetchGrades() {
     const requestData = {
       MedicalRecords: [
-        this.data.Admission_Medical_Record,
-        this.data.FollowUp_Medical_Record,
-        this.data.Release_Medical_Record
+        this.data.admission_Medical_Record,
+        this.data.followUp_Medical_Record,
+        this.data.release_Medical_Record
       ].filter(record => record !== null) // Remove null values
     };
 

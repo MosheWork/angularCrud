@@ -26,23 +26,23 @@
         </mat-cell>
       </ng-container>
       <!-- Grade Column -->
-      <ng-container matColumnDef="Grade">
+      <ng-container matColumnDef="grade">
         <mat-header-cell *matHeaderCellDef>ציון אומדן</mat-header-cell>
         <mat-cell *matCellDef="let element">
-          <span [ngClass]="{'highlight-red': element.Grade === null}">
-            {{ element.Grade ?? 'לא בוצע' }}
+          <span [ngClass]="{'highlight-red': element.grade === null}">
+            {{ element.grade ?? 'לא בוצע' }}
           </span>
         </mat-cell>
       </ng-container>
   
       <!-- Entry Date Column -->
-      <ng-container matColumnDef="Entry_Date">
+      <ng-container matColumnDef="entry_Date">
         <mat-header-cell *matHeaderCellDef>תאריך</mat-header-cell>
-        <mat-cell *matCellDef="let element">{{ element.Entry_Date | date: 'dd/MM/yyyy' }}</mat-cell>
+        <mat-cell *matCellDef="let element">{{ element.entry_Date | date: 'dd/MM/yyyy' }}</mat-cell>
       </ng-container>
   
-      <mat-header-row *matHeaderRowDef="['index', 'Grade', 'Entry_Date']"></mat-header-row>
-      <mat-row *matRowDef="let row; columns: ['index', 'Grade', 'Entry_Date'];"></mat-row>
+      <mat-header-row *matHeaderRowDef="['index', 'grade', 'entry_Date']"></mat-header-row>
+      <mat-row *matRowDef="let row; columns: ['index', 'grade', 'entry_Date'];"></mat-row>
       
     </table>
   </div>

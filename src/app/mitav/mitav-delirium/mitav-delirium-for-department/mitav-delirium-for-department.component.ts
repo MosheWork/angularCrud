@@ -38,35 +38,36 @@ export class MitavDeliriumForDepartmentComponent implements OnInit {
 
 
   displayedColumns: string[] = [
-    'ATD_Admission_Date', 'Pname','AdmissionNo', 'AgeYears',   'AdmissionCAMGrade','PreventionORInterventionCAM',
-    'Grade', 'GradeEntryDate', 'PatientWithDelirium', 'PatientWithDeliriumEntryDate',
-    'DeliriumDaysCount',  'DrugForDelirium', 'TotalEstimationGradesCount',
-    'GradeCount', 'DeliriumConsiliumsOpened', 'DeliriumConsiliumsDate', 'HoursDifference',
-    'CAMGradeChanged'
+    'atd_Admission_Date', 'pname','admissionNo', 'ageYears','admissionCAMGrade','preventionORInterventionCAM',
+    'grade', 'gradeEntryDate', 'patientWithDelirium', 'patientWithDeliriumEntryDate',
+    'deliriumDaysCount', 'drugForDelirium', 'totalEstimationGradesCount',
+    'gradeCount', 'deliriumConsiliumsOpened', 'deliriumConsiliumsDate', 'hoursDifference',
+    'camGradeChanged'
   ];
+  
 
   columnLabels: { [key: string]: string } = {
-    ATD_Admission_Date: 'תאריך קבלה',
-    Pname: ' שם מטופל',
-    AdmissionNo: 'מספר מקרה',
-    AgeYears: 'גיל',
-    SystemUnitName: 'מחלקה',
-    //TotalHospDays: 'סה"כ ימי אשפוז',
-    Grade: 'ציון אומדן',
-    GradeEntryDate: 'תאריך אומדן',
-    PatientWithDelirium: 'דליריום',
-    PatientWithDeliriumEntryDate: 'תאריך דליריום',
-    DeliriumDaysCount: 'ימי דליריום',
-    AdmissionCAMGrade: 'ציון CAM בקבלה',
-    DrugForDelirium: 'טיפול תרופתי לדליריום',
-    TotalEstimationGradesCount: 'סה"כ אומדנים',
-    GradeCount: 'יחס אומדנים לימי אשפוז',
-    DeliriumConsiliumsOpened: 'הזמנת ייעוץ ריפוי בעיסוק ',
-    DeliriumConsiliumsDate: 'תאריך ייעוץ',
-    HoursDifference: 'שעות בין דליריום ייעוץ',
-    CAMGradeChanged: 'שינוי בציון CAM',
-    PreventionORInterventionCAM: 'מניעה/התערבות'
+    atd_Admission_Date: 'תאריך קבלה',
+    pname: 'שם מטופל',
+    admissionNo: 'מספר מקרה',
+    ageYears: 'גיל',
+    systemUnitName: 'מחלקה',
+    grade: 'ציון אומדן',
+    gradeEntryDate: 'תאריך אומדן',
+    patientWithDelirium: 'דליריום',
+    patientWithDeliriumEntryDate: 'תאריך דליריום',
+    deliriumDaysCount: 'ימי דליריום',
+    admissionCAMGrade: 'ציון CAM בקבלה',
+    drugForDelirium: 'טיפול תרופתי לדליריום',
+    totalEstimationGradesCount: 'סה"כ אומדנים',
+    gradeCount: 'יחס אומדנים לימי אשפוז',
+    deliriumConsiliumsOpened: 'הזמנת ייעוץ ריפוי בעיסוק ',
+    deliriumConsiliumsDate: 'תאריך ייעוץ',
+    hoursDifference: 'שעות בין דליריום ייעוץ',
+    camGradeChanged: 'שינוי בציון CAM',
+    preventionORInterventionCAM: 'מניעה/התערבות'
   };
+  
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
@@ -228,7 +229,7 @@ loadData(): void {
   
   calculateGradeStats() {
     const totalRows = this.dataSource.filteredData.length; // ✅ Use filtered data
-    const validGrades = this.dataSource.filteredData.filter(row => row.Grade !== null && row.Grade !== 'לא בוצע').length;
+    const validGrades = this.dataSource.filteredData.filter(row => row.grade !== null && row.grade !== 'לא בוצע').length;
   
     const percentage = totalRows > 0 ? ((validGrades / totalRows) * 100).toFixed(0) : '0';
   
