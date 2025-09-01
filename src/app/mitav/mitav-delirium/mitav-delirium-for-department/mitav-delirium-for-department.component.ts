@@ -266,9 +266,9 @@ loadData(): void {
     this.dialog.open(MitavGradeListDialogComponent, {
       width: '600px',
       data: {
-        Admission_Medical_Record: row.Admission_Medical_Record,
-        FollowUp_Medical_Record: row.FollowUp_Medical_Record,
-        Release_Medical_Record: row.Release_Medical_Record
+        admission_Medical_Record: row.admission_Medical_Record,
+        followUp_Medical_Record: row.followUp_Medical_Record,
+        release_Medical_Record: row.release_Medical_Record
       }
     });
   }
