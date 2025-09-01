@@ -53,46 +53,41 @@ DisplayUserName: string = '';
   noDrugsDataSource: any[] = [];
   filteredNoDrugsData: any[] = [];
   noDrugsMatTableDataSource = new MatTableDataSource<any>([]);
-  noDrugsColumns: string[] = [
-    'AdmissionNo',
-    'OperationStartTime',
-    'OperationEndTime',
-    'OperationDurationHHMM',
-    'GiveOrderName',
-    'MainDoctor',
-    'Anesthetic',
-    'ProcedureICD9',
-    'ProcedureName',
-    'SurgeryDepartment'
-  ];
-  
-  
-  
-  columns: string[] = [
-    'AdmissionNo',
-    //'OrderID',
-    'Drug',
-    'BasicName',
-    'DrugGiveTime',
-    'OperationStartTime',
-    'OperationEndTime',
-    'MinutesDiff',
-    //'EntryUser',
-    'GiveOrderName',
-    'MainDoctor',
-    'Anesthetic',
-    //'ExecStatusName',
-    'ProcedureICD9',
-    'ProcedureName',
-    'SurgeryDepartment',
-'OperationDurationHHMM',
-    //'DrugGivenInOtherUnitsAfterOp',
-    //'HoursFromOperationToDrug',
-    'DrugGivenAfterOperationEnd',         
-    'Execution_UnitNameAfterOrderStop',  
-    'HoursFromOperationEndToOrderStop',
-  ];
-  
+// Main table
+columns: string[] = [
+  'admissionNo',
+  'drug',
+  'basicName',
+  'drugGiveTime',
+  'operationStartTime',
+  'operationEndTime',
+  'minutesDiff',
+  'giveOrderName',
+  'mainDoctor',
+  'anesthetic',
+  'procedureICD9',
+  'procedureName',
+  'surgeryDepartment',
+  'operationDurationHHMM',
+  'drugGivenAfterOperationEnd',
+  'execution_UnitNameAfterOrderStop',
+  'hoursFromOperationEndToOrderStop',
+];
+
+// "No drugs" table
+noDrugsColumns: string[] = [
+  'admissionNo',
+  'operationStartTime',
+  'operationEndTime',
+  'operationDurationHHMM',
+  'giveOrderName',
+  'mainDoctor',
+  'anesthetic',
+  'procedureICD9',
+  'procedureName',
+  'surgeryDepartment'
+];
+
 
   constructor(private http: HttpClient, private fb: FormBuilder, private router: Router,private dialog: MatDialog,private authenticationService: AuthenticationService, private cdr: ChangeDetectorRef) {
     this.filterForm = this.createFilterForm();
@@ -181,33 +176,30 @@ DisplayUserName: string = '';
 
   getColumnLabel(column: string): string {
     const columnLabels: Record<string, string> = {
-      AdmissionNo: 'מספר מקרה',
-      OrderID: 'מזהה הזמנה',
-      Drug: 'קוד אנטיביוטיקה',
-      BasicName: 'אנטיביוטיקה ',
-      DrugGiveTime: 'זמן מתן תרופה',
-      OperationStartTime: 'זמן תחילת ניתוח',
-      OperationEndTime:'זמן סיום ניתוח',
-      MinutesDiff: 'זמן ממתן תרופה עד חתך (בדקות)',
-      EntryUser: 'מקודד',
-      GiveOrderName: 'נותן התרופה',
-      MainDoctor: 'רופא מנתח',
-      Anesthetic: 'מרדים',
-      ExecStatusName: 'סטטוס מתן',
-      ProcedureICD9: 'קוד פרוצדורה',
-      ProcedureName: 'שם פרוצדורה',
-      SurgeryDepartment: 'מחלקת ניתוח',
-      OperationDurationHHMM:'משך ניתוח',
-     // DrugGivenInOtherUnitsAfterOp: 'נרשמה תרופה במחלקה אחרת לאחר ניתוח',
-     // HoursFromOperationToDrug: '  המשך מתן תרופה לאחר סיום ניתוח (שעות)  ',
-      DrugGivenAfterOperationEnd: 'נרשמה תרופה לאחר סיום ניתוח',
-      Execution_UnitNameAfterOrderStop: 'שם מחלקה נותנת תרופה',
-      HoursFromOperationEndToOrderStop: 'המשך מתן תרופה לאחר סיום ניתוח (שעות) ',
-
-     
+      admissionNo: 'מספר מקרה',
+      orderID: 'מזהה הזמנה',
+      drug: 'קוד אנטיביוטיקה',
+      basicName: 'אנטיביוטיקה ',
+      drugGiveTime: 'זמן מתן תרופה',
+      operationStartTime: 'זמן תחילת ניתוח',
+      operationEndTime: 'זמן סיום ניתוח',
+      minutesDiff: 'זמן ממתן תרופה עד חתך (בדקות)',
+      entryUser: 'מקודד',
+      giveOrderName: 'נותן התרופה',
+      mainDoctor: 'רופא מנתח',
+      anesthetic: 'מרדים',
+      execStatusName: 'סטטוס מתן',
+      procedureICD9: 'קוד פרוצדורה',
+      procedureName: 'שם פרוצדורה',
+      surgeryDepartment: 'מחלקת ניתוח',
+      operationDurationHHMM: 'משך ניתוח',
+      drugGivenAfterOperationEnd: 'נרשמה תרופה לאחר סיום ניתוח',
+      execution_UnitNameAfterOrderStop: 'שם מחלקה נותנת תרופה',
+      hoursFromOperationEndToOrderStop: 'המשך מתן תרופה לאחר סיום ניתוח (שעות)',
     };
     return columnLabels[column] || column;
   }
+  
   
 
   resetFilters() {
@@ -245,10 +237,9 @@ DisplayUserName: string = '';
     // Step 1: Prepare a copy with real Date objects
     const dataToExport = this.filteredData.map(item => ({
       ...item,
-      OperationStartTime: item.OperationStartTime ? new Date(item.OperationStartTime) : null,
-      OperationEndTime: item.OperationEndTime ? new Date(item.OperationEndTime) : null,
-      DrugGiveTime: item.DrugGiveTime ? new Date(item.DrugGiveTime) : null
-      // Add other date fields if needed
+      operationStartTime: item.operationStartTime ? new Date(item.operationStartTime) : null,
+      operationEndTime: item.operationEndTime ? new Date(item.operationEndTime) : null,
+      drugGiveTime: item.drugGiveTime ? new Date(item.drugGiveTime) : null
     }));
   
     // Step 2: Convert to worksheet
@@ -283,49 +274,45 @@ DisplayUserName: string = '';
   navigateToGraphPage() {
     this.showGraph = !this.showGraph;
   }
-  getCellClass(column: string, value: any): string {
-    if (column === 'MinutesDiff') {
-      if (value >= 60) return 'cell-red';
-      else if (value >= 30) return 'cell-green';
-      else if (value >= 0) return 'cell-orange';
-    }
-    return '';
+// Color classes
+getCellClass(column: string, value: any): string {
+  if (column === 'minutesDiff') {
+    if (value >= 60) return 'cell-red';
+    else if (value >= 30) return 'cell-green';
+    else if (value >= 0) return 'cell-orange';
   }
-  summary = { green: 0, orange: 0, red: 0, negativeOrEmpty: 0, total: 0 };
-  selectedColor: string | null = null;
-  originalData: any[] = [];
+  return '';
+}
+
+// Summary calc
+calculateSummary(data: any[]): void {
+  this.summary = { green: 0, orange: 0, red: 0, negativeOrEmpty: 0, total: data.length };
+  this.originalData = data;
+
+  data.forEach(row => {
+    const minutes = Number(row.minutesDiff);
+    if (minutes == null || isNaN(minutes) || minutes < 0) this.summary.negativeOrEmpty++;
+    else if (minutes > 60) this.summary.red++;
+    else if (minutes >= 30) this.summary.green++;
+    else if (minutes >= 0) this.summary.orange++;
+  });
+}
   
-  calculateSummary(data: any[]): void {
-    this.summary = { green: 0, orange: 0, red: 0, negativeOrEmpty: 0, total: data.length };
-    this.originalData = data; // Save for clearing later
-  
-    data.forEach(row => {
-      const minutes = Number(row.MinutesDiff);
-      if (minutes == null || isNaN(minutes) || minutes < 0) {
-        this.summary.negativeOrEmpty++;
-      } else if (minutes > 60) {
-        this.summary.red++;
-      } else if (minutes >= 30) {
-        this.summary.green++;
-      } else if (minutes >= 0) {
-        this.summary.orange++;
-      }
-    });
-  }
-  
-  applyColorFilter(color: string): void {
-    this.selectedColor = color;
-  
-    const filtered = this.originalData.filter(row => {
-      const minutes = Number(row.MinutesDiff);
-      if (color === 'green') return minutes >= 30 && minutes <= 60;
-      if (color === 'orange') return minutes >= 0 && minutes < 30;
-      if (color === 'red') return minutes > 60;
-      return true;
-    });
-  
-    this.matTableDataSource.data = filtered;
-  }
+summary = { green: 0, orange: 0, red: 0, negativeOrEmpty: 0, total: 0 };
+selectedColor: string | null = null;
+originalData: any[] = [];
+applyColorFilter(color: string): void {
+  this.selectedColor = color;
+  const filtered = this.originalData.filter(row => {
+    const minutes = Number(row.minutesDiff);
+    if (color === 'green')  return minutes >= 30 && minutes <= 60;
+    if (color === 'orange') return minutes >= 0  && minutes < 30;
+    if (color === 'red')    return minutes > 60;
+    return true;
+  });
+  this.matTableDataSource.data = filtered;
+}
+
   
   clearColorFilter(): void {
     this.selectedColor = null;
@@ -348,12 +335,10 @@ DisplayUserName: string = '';
 
   applyNegativeOrEmptyFilter(): void {
     this.selectedColor = 'negativeOrEmpty';
-  
     const filtered = this.originalData.filter(row => {
-      const minutes = Number(row.MinutesDiff);
-      return minutes == null ||  isNaN(minutes) || minutes < 0;
+      const minutes = Number(row.minutesDiff);
+      return minutes == null || isNaN(minutes) || minutes < 0;
     });
-  
     this.matTableDataSource.data = filtered;
   }
  
