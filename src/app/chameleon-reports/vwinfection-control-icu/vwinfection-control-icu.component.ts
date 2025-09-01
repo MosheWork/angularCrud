@@ -7,7 +7,6 @@ import { MatTableDataSource } from '@angular/material/table';
 import { MatSort } from '@angular/material/sort';
 import { Router } from '@angular/router';
 import * as XLSX from 'xlsx';
-
 import { environment } from '../../../environments/environment';
 
 @Component({
@@ -25,99 +24,100 @@ export class VWInfectionControlICUComponent implements OnInit {
 
   // Updated columns list based on the new SQL View
   columns: string[] = [
-    'PersonalID',
-    'PersonalFirstName',
-    'PersonalLastName',
-    'DateOfFill',
-    'DiagnosticVaP',
-    'DiagnosticDate',
-    'BadNum',
-    'VentilationDay',
-    'Mucus',
-    'AntibuoticTrerment',
-    'WBC',
-    'Fever',
-    'FIO2',
-    'PEEP',
-    'VentilationType',
-    'MucusCalture',
-    'VapControl',
-    'HeartTritment',
-    'BrathFisoterapy',
-    'Lying30Degry',
-    'StopSadation',
-    'ActubationChech',
-    'DiagnosticCLABSI',
-    'CateterInsertDate1',
-    'CateterPlace1',
-    'CateterOutDate1',
-    'CateterInsertDate2',
-    'CateterPlace2',
-    'CateterOutDate2',
-    'PreventionCLABSI',
-    'InfectionSigns',
-    'ChangeBnded',
-    'BandedCloresidin',
-    'DryClean',
-    'NEEDLESSUse',
-    'ChateterNeed1',
-    'ChateterNeed2',
-    'CheckWondAfterSurgery',
-    'CheckWondChangeBandedGood',
-    'LiquidQuantityAndType',
-    'CultureGrowWound',
-    'StartAntibuticTritment',
-    'StartAntibuticTritmentType',
-    'Department'
+    'personalID',
+    'personalFirstName',
+    'personalLastName',
+    'dateOfFill',
+    'diagnosticVaP',
+    'diagnosticDate',
+    'badNum',
+    'ventilationDay',
+    'mucus',
+    'antibuoticTrerment',
+    'wbc',
+    'fever',
+    'fio2',
+    'peep',
+    'ventilationType',
+    'mucusCalture',
+    'vapControl',
+    'heartTritment',
+    'brathFisoterapy',
+    'lying30Degry',
+    'stopSadation',
+    'actubationChech',
+    'diagnosticCLABSI',
+    'cateterInsertDate1',
+    'cateterPlace1',
+    'cateterOutDate1',
+    'cateterInsertDate2',
+    'cateterPlace2',
+    'cateterOutDate2',
+    'preventionCLABSI',
+    'infectionSigns',
+    'changeBnded',
+    'bandedCloresidin',
+    'dryClean',
+    'needlessUse',
+    'chateterNeed1',
+    'chateterNeed2',
+    'checkWondAfterSurgery',
+    'checkWondChangeBandedGood',
+    'liquidQuantityAndType',
+    'cultureGrowWound',
+    'startAntibuticTritment',
+    'startAntibuticTritmentType',
+    'department'
   ];
+  
 
   columnHeaders: { [key: string]: string } = {
-    PersonalID: 'תעודת זהות',
-    PersonalFirstName: 'שם פרטי',
-    PersonalLastName: 'שם משפחה',
-    DateOfFill: 'תאריך מילוי',
-    DiagnosticVaP: 'אבחון של VAP',
-    DiagnosticDate: 'תאריך אבחון',
-    BadNum: 'מספר מיטה',
-    VentilationDay: 'יום הנשמה',
-    Mucus: 'כיח',
-    AntibuoticTrerment: 'טיפול אנטיביוטי',
-    WBC: 'WBC',
-    Fever: 'חום',
-    FIO2: 'FIO2',
-    PEEP: 'PEEP',
-    VentilationType: 'דרך / סוג הנשמה',
-    MucusCalture: 'לקיחת כיח לתרבית',
-    VapControl: 'מניעה של VAP',
-    HeartTritment: 'טיפול לב',
-    BrathFisoterapy: 'פיזיותרפיה נשימתית',
-    Lying30Degry: 'השכבה 30 מעלות',
-    StopSadation: 'הפסקת סדציה',
-    ActubationChech: 'בדיקת אפשרות לאקסטובציה',
-    DiagnosticCLABSI: 'אבחון CLABSI',
-    CateterInsertDate1: 'תאריך הכנסת צנתר 1',
-    CateterPlace1: 'מיקום צנתר 1',
-    CateterOutDate1: 'תאריך הוצאת צנתר 1',
-    CateterInsertDate2: 'תאריך הכנסת צנתר 2',
-    CateterPlace2: 'מיקום צנתר 2',
-    CateterOutDate2: 'תאריך הוצאת צנתר 2',
-    PreventionCLABSI: 'מניעת CLABSI',
-    InfectionSigns: 'סימני זיהום',
-    ChangeBnded: 'החלפת חבישה',
-    BandedCloresidin: 'חבישה עם כלורהקסידין',
-    DryClean: 'רחצה יבשה',
-    NEEDLESSUse: 'שימוש ב NEEDLESS',
-    ChateterNeed1: 'קיימת נחיצות לצנתר 1',
-    ChateterNeed2: 'קיימת נחיצות לצנתר 2',
-    CheckWondAfterSurgery: 'מעקב אחרי פצע ניתוח',
-    CheckWondChangeBandedGood: 'בדיקת פצע בהחלפת חבישה תקין',
-    LiquidQuantityAndType: 'סוג הפרשה וכמות',
-    CultureGrowWound: 'צמיחה תרבית מהפצע',
-    StartAntibuticTritment: 'התחלת טיפול אנטיביוטי טיפולי',
-    StartAntibuticTritmentType: 'התחלת טיפול אנטיביוטי וסוג',
-    Department: 'מחלקה'
+    personalID: 'תעודת זהות',
+    personalFirstName: 'שם פרטי',
+    personalLastName: 'שם משפחה',
+    dateOfFill: 'תאריך מילוי',
+    diagnosticVaP: 'אבחון של VAP',
+    diagnosticDate: 'תאריך אבחון',
+    badNum: 'מספר מיטה',
+    ventilationDay: 'יום הנשמה',
+    mucus: 'כיח',
+    antibuoticTrerment: 'טיפול אנטיביוטי',
+    wbc: 'WBC',
+    fever: 'חום',
+    fio2: 'FIO2',
+    peep: 'PEEP',
+    ventilationType: 'דרך / סוג הנשמה',
+    mucusCalture: 'לקיחת כיח לתרבית',
+    vapControl: 'מניעה של VAP',
+    heartTritment: 'טיפול לב',
+    brathFisoterapy: 'פיזיותרפיה נשימתית',
+    lying30Degry: 'השכבה 30 מעלות',
+    stopSadation: 'הפסקת סדציה',
+    actubationChech: 'בדיקת אפשרות לאקסטובציה',
+    diagnosticCLABSI: 'אבחון CLABSI',
+    cateterInsertDate1: 'תאריך הכנסת צנתר 1',
+    cateterPlace1: 'מיקום צנתר 1',
+    cateterOutDate1: 'תאריך הוצאת צנתר 1',
+    cateterInsertDate2: 'תאריך הכנסת צנתר 2',
+    cateterPlace2: 'מיקום צנתר 2',
+    cateterOutDate2: 'תאריך הוצאת צנתר 2',
+    preventionCLABSI: 'מניעת CLABSI',
+    infectionSigns: 'סימני זיהום',
+    changeBnded: 'החלפת חבישה',
+    bandedCloresidin: 'חבישה עם כלורהקסידין',
+    dryClean: 'רחצה יבשה',
+    needlessUse: 'שימוש ב NEEDLESS',
+    chateterNeed1: 'קיימת נחיצות לצנתר 1',
+    chateterNeed2: 'קיימת נחיצות לצנתר 2',
+    checkWondAfterSurgery: 'מעקב אחרי פצע ניתוח',
+    checkWondChangeBandedGood: 'בדיקת פצע בהחלפת חבישה תקין',
+    liquidQuantityAndType: 'סוג הפרשה וכמות',
+    cultureGrowWound: 'צמיחה תרבית מהפצע',
+    startAntibuticTritment: 'התחלת טיפול אנטיביוטי טיפולי',
+    startAntibuticTritmentType: 'התחלת טיפול אנטיביוטי וסוג',
+    department: 'מחלקה'
   };
-
+  
   dataSource: any[] = [];
   filteredData: any[] = [];
   matTableDataSource: MatTableDataSource<any>;
@@ -148,7 +148,7 @@ export class VWInfectionControlICUComponent implements OnInit {
         });
 
         this.isLoading = false;
-        this.uniqueDepartments = Array.from(new Set(data.map(item => item.Department))).filter(d => d);
+        this.uniqueDepartments = Array.from(new Set(data.map(item => item.department))).filter(d => d);
 
         this.columns.forEach((column) => {
           this.filterForm.get(column)?.valueChanges
@@ -189,7 +189,7 @@ export class VWInfectionControlICUComponent implements OnInit {
     const globalFilter = filters['globalFilter'] ? filters['globalFilter'].toLowerCase() : '';
   
     this.filteredData = this.dataSource.filter(item => {
-      const itemDate = new Date(item.DateOfFill);
+      const itemDate = new Date(item.dateOfFill); // היה DateOfFill
       const itemDateOnly = new Date(itemDate.getFullYear(), itemDate.getMonth(), itemDate.getDate());
       const startDateOnly = startDate ? new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate()) : null;
       const endDateOnly = endDate ? new Date(endDate.getFullYear(), endDate.getMonth(), endDate.getDate()) : null;
@@ -209,7 +209,7 @@ export class VWInfectionControlICUComponent implements OnInit {
       }
    // Department multi-select filter
    if (departmentFilter && departmentFilter.length > 0) {
-    if (!departmentFilter.includes(item.Department)) return false;
+    if (!departmentFilter.includes(item.department)) return false; // היה item.Department
   }
 
       // Filter by individual columns

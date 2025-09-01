@@ -2,59 +2,85 @@
 
 <!-- Main Content (Hidden While Loading) -->
 <div class="body" *ngIf="!isLoading">
-    <div class="nine">
-      <h1>{{ titleUnit }}<span>{{ Title1 }}{{ Title2 }}{{ totalResults }}</span></h1>
-    </div>
+  <div class="nine">
+    <h1>
+      {{ titleUnit }}
+      <span>{{ Title1 }}{{ Title2 }}{{ totalResults }}</span>
+    </h1>
+  </div>
 
-    <form [formGroup]="filterForm" dir="rtl" class="filter-form">
-      <mat-form-field class="long-search-bar">
-        <mat-label>חיפוש</mat-label>
-        <input matInput [formControlName]="'globalFilter'" />
-      </mat-form-field>
+  <form [formGroup]="filterForm" dir="rtl" class="filter-form">
+    <mat-form-field class="long-search-bar">
+      <mat-label>חיפוש</mat-label>
+      <input matInput [formControlName]="'globalFilter'" />
+    </mat-form-field>
+
     <!-- Department Multi-Select Filter -->
-<mat-form-field class="multi-select-department">
-  <mat-label>בחר מחלקה</mat-label>
-  <mat-select formControlName="DepartmentFilter" multiple>
-    <mat-option *ngFor="let dept of uniqueDepartments" [value]="dept">{{ dept || '-' }}</mat-option>
-  </mat-select>
-</mat-form-field>
-      <!-- ✅ Start Date -->
-      <mat-form-field>
-        <mat-label>תאריך התחלה</mat-label>
-        <input matInput [matDatepicker]="pickerStart" formControlName="startDate">
-        <mat-datepicker-toggle matSuffix [for]="pickerStart"></mat-datepicker-toggle>
-        <mat-datepicker #pickerStart></mat-datepicker>
-      </mat-form-field>
-    
-      <!-- ✅ End Date -->
-      <mat-form-field>
-        <mat-label>תאריך סיום</mat-label>
-        <input matInput [matDatepicker]="pickerEnd" formControlName="endDate">
-        <mat-datepicker-toggle matSuffix [for]="pickerEnd"></mat-datepicker-toggle>
-        <mat-datepicker #pickerEnd></mat-datepicker>
-      </mat-form-field>
-    
-      <button mat-button (click)="resetFilters()" mat-raised-button color="primary">
-        איפוס מסננים
-      </button>
-      <img src="../../assets/excel.png" alt="Download" (click)="exportToExcel()" class="download-icon" width="50px" />
-    </form>
-    
+    <mat-form-field class="multi-select-department">
+      <mat-label>בחר מחלקה</mat-label>
+      <mat-select formControlName="DepartmentFilter" multiple>
+        <mat-option *ngFor="let dept of uniqueDepartments" [value]="dept">
+          {{ dept || '-' }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
 
-    <!-- Scrollable Table Container -->
-    <div class="table-responsive">
-        <mat-table [dataSource]="matTableDataSource" matSort dir="rtl" class="mat-elevation-z8">
-            <ng-container *ngFor="let column of columns" [matColumnDef]="column">
-              <mat-header-cell *matHeaderCellDef mat-sort-header>
-                {{ columnHeaders[column] || column }}
-              </mat-header-cell>
-              <mat-cell *matCellDef="let element"> {{ element[column] || '-' }} </mat-cell>
-            </ng-container>
-        
-            <mat-header-row *matHeaderRowDef="columns"></mat-header-row>
-            <mat-row *matRowDef="let row; columns: columns"></mat-row>
-          </mat-table>
-    </div>
+    <!-- ✅ Start Date -->
+    <mat-form-field>
+      <mat-label>תאריך התחלה</mat-label>
+      <input matInput [matDatepicker]="pickerStart" formControlName="startDate" />
+      <mat-datepicker-toggle matSuffix [for]="pickerStart"></mat-datepicker-toggle>
+      <mat-datepicker #pickerStart></mat-datepicker>
+    </mat-form-field>
 
-    <mat-paginator [length]="totalResults" [pageSize]="30" [pageSizeOptions]="[30, 100, 500]"></mat-paginator>
+    <!-- ✅ End Date -->
+    <mat-form-field>
+      <mat-label>תאריך סיום</mat-label>
+      <input matInput [matDatepicker]="pickerEnd" formControlName="endDate" />
+      <mat-datepicker-toggle matSuffix [for]="pickerEnd"></mat-datepicker-toggle>
+      <mat-datepicker #pickerEnd></mat-datepicker>
+    </mat-form-field>
+
+    <button mat-button (click)="resetFilters()" mat-raised-button color="primary">
+      איפוס מסננים
+    </button>
+
+    <img
+      src="../../assets/excel.png"
+      alt="Download"
+      (click)="exportToExcel()"
+      class="download-icon"
+      width="50px"
+    />
+  </form>
+
+  <!-- Scrollable Table Container -->
+  <div class="table-responsive">
+    <mat-table
+      [dataSource]="matTableDataSource"
+      matSort
+      #sort="matSort"
+      dir="rtl"
+      class="mat-elevation-z8"
+    >
+      <ng-container *ngFor="let column of columns" [matColumnDef]="column">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>
+          {{ columnHeaders[column] || column }}
+        </mat-header-cell>
+        <mat-cell *matCellDef="let element">
+          {{ element[column] || '-' }}
+        </mat-cell>
+      </ng-container>
+
+      <mat-header-row *matHeaderRowDef="columns"></mat-header-row>
+      <mat-row *matRowDef="let row; columns: columns"></mat-row>
+    </mat-table>
+  </div>
+
+  <mat-paginator
+    #paginator
+    [length]="totalResults"
+    [pageSize]="30"
+    [pageSizeOptions]="[30, 100, 500]"
+  ></mat-paginator>
 </div>
