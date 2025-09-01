@@ -8,26 +8,21 @@
 
   <!-- Filter Form for Table -->
   <form [formGroup]="filterForm" dir="rtl" class="filter-form">
-    <!-- Global Search Input
-    <mat-form-field class="long-search-bar">
-      <mat-label class="filters" style="color: blue">חיפוש</mat-label>
-      <input matInput formControlName="globalFilter" class="search-input" />
-    </mat-form-field>
-   -->
     <!-- Date Pickers -->
     <mat-form-field>
       <mat-label>בחר תאריך קבלה</mat-label>
-      <input matInput [matDatepicker]="recordDatePicker" formControlName="Record_Date">
+      <input matInput [matDatepicker]="recordDatePicker" formControlName="record_Date" />
       <mat-datepicker-toggle matSuffix [for]="recordDatePicker"></mat-datepicker-toggle>
       <mat-datepicker #recordDatePicker></mat-datepicker>
     </mat-form-field>
-  
+
     <mat-form-field>
       <mat-label>בחר תאריך דיווח</mat-label>
-      <input matInput [matDatepicker]="entryDatePicker" formControlName="Entry_Date">
+      <input matInput [matDatepicker]="entryDatePicker" formControlName="entry_Date" />
       <mat-datepicker-toggle matSuffix [for]="entryDatePicker"></mat-datepicker-toggle>
       <mat-datepicker #entryDatePicker></mat-datepicker>
     </mat-form-field>
+
     <mat-form-field appearance="fill" style="min-width: 200px; margin-left: 10px;">
       <mat-label>סטטוס אשפוז</mat-label>
       <mat-select formControlName="ReleaseStatus">
@@ -36,6 +31,7 @@
         <mat-option value="hospitalized">מאושפזים</mat-option>
       </mat-select>
     </mat-form-field>
+
     <!-- Form Footer with Search, Reset, and Export Options -->
     <div dir="rtl" class="form-footer" style="display: flex; justify-content: space-between;">
       <!-- Global Search Input with Full Width -->
@@ -66,92 +62,95 @@
   <!-- Data Table (Conditionally Displayed) -->
   <mat-table *ngIf="!showGraph" [dataSource]="matTableDataSource" matSort dir="rtl" class="mat-elevation-z8">
     <!-- Name Column -->
-    <ng-container matColumnDef="Name">
-        <mat-header-cell *matHeaderCellDef mat-sort-header> שם </mat-header-cell>
-        <mat-cell *matCellDef="let element"> {{ element.Name }} </mat-cell>
+    <ng-container matColumnDef="name">
+      <mat-header-cell *matHeaderCellDef mat-sort-header> שם </mat-header-cell>
+      <mat-cell *matCellDef="let element"> {{ element.name }} </mat-cell>
     </ng-container>
-    
-    <!-- Id_Num Column -->
-    <ng-container matColumnDef="Id_Num">
+
+    <!-- id_Num Column -->
+    <ng-container matColumnDef="id_Num">
       <mat-header-cell *matHeaderCellDef mat-sort-header> ת.ז. </mat-header-cell>
-      <mat-cell *matCellDef="let element"> {{ element.Id_Num }} </mat-cell>
+      <mat-cell *matCellDef="let element"> {{ element.id_Num }} </mat-cell>
     </ng-container>
 
-    <!-- Admission_No Column -->
-    <ng-container matColumnDef="Admission_No">
+    <!-- admission_No Column -->
+    <ng-container matColumnDef="admission_No">
       <mat-header-cell *matHeaderCellDef mat-sort-header> מספר אשפוז </mat-header-cell>
-      <mat-cell *matCellDef="let element"> {{ element.Admission_No }} </mat-cell>
+      <mat-cell *matCellDef="let element"> {{ element.admission_No }} </mat-cell>
     </ng-container>
 
-    <!-- First_Name Column -->
-    <ng-container matColumnDef="First_Name">
+    <!-- first_Name Column -->
+    <ng-container matColumnDef="first_Name">
       <mat-header-cell *matHeaderCellDef mat-sort-header> שם פרטי </mat-header-cell>
-      <mat-cell *matCellDef="let element"> {{ element.First_Name }} </mat-cell>
+      <mat-cell *matCellDef="let element"> {{ element.first_Name }} </mat-cell>
     </ng-container>
 
-    <!-- Last_Name Column -->
-    <ng-container matColumnDef="Last_Name">
+    <!-- last_Name Column -->
+    <ng-container matColumnDef="last_Name">
       <mat-header-cell *matHeaderCellDef mat-sort-header> שם משפחה </mat-header-cell>
-      <mat-cell *matCellDef="let element"> {{ element.Last_Name }} </mat-cell>
+      <mat-cell *matCellDef="let element"> {{ element.last_Name }} </mat-cell>
     </ng-container>
 
-    <!-- Age_Years Column -->
-    <ng-container matColumnDef="Age_Years">
+    <!-- age_Years Column -->
+    <ng-container matColumnDef="age_Years">
       <mat-header-cell *matHeaderCellDef mat-sort-header> גיל </mat-header-cell>
-      <mat-cell *matCellDef="let element"> {{ element.Age_Years }} </mat-cell>
+      <mat-cell *matCellDef="let element"> {{ element.age_Years }} </mat-cell>
     </ng-container>
 
-    <!-- Record_Date Column (Formatted Date) -->
-    <ng-container matColumnDef="Record_Date">
+    <!-- record_Date Column (Formatted Date) -->
+    <ng-container matColumnDef="record_Date">
       <mat-header-cell *matHeaderCellDef mat-sort-header> תאריך רשומה </mat-header-cell>
-      <mat-cell *matCellDef="let element"> {{ element.Record_Date | date: 'dd/MM/yyyy' }} </mat-cell>
+      <mat-cell *matCellDef="let element"> {{ element.record_Date | date: 'dd/MM/yyyy' }} </mat-cell>
     </ng-container>
 
-    <!-- Entry_Date Column (Formatted Date) -->
-    <ng-container matColumnDef="Entry_Date">
+    <!-- entry_Date Column (Formatted Date) -->
+    <ng-container matColumnDef="entry_Date">
       <mat-header-cell *matHeaderCellDef mat-sort-header> תאריך כניסה </mat-header-cell>
-      <mat-cell *matCellDef="let element"> {{ element.Entry_Date | date: 'dd/MM/yyyy' }} </mat-cell>
+      <mat-cell *matCellDef="let element"> {{ element.entry_Date | date: 'dd/MM/yyyy' }} </mat-cell>
     </ng-container>
 
-    <!-- Pain Column -->
-    <ng-container matColumnDef="Pain">
+    <!-- pain Column -->
+    <ng-container matColumnDef="pain">
       <mat-header-cell *matHeaderCellDef mat-sort-header> כאב </mat-header-cell>
-      <mat-cell *matCellDef="let element"> {{ element.Pain }} </mat-cell>
+      <mat-cell *matCellDef="let element"> {{ element.pain }} </mat-cell>
     </ng-container>
 
-    <!-- Description_Text Column -->
-    <ng-container matColumnDef="Description_Text">
+    <!-- description_Text Column -->
+    <ng-container matColumnDef="description_Text">
       <mat-header-cell *matHeaderCellDef mat-sort-header> תיאור </mat-header-cell>
-      <mat-cell *matCellDef="let element"> {{ element.Description_Text }} </mat-cell>
+      <mat-cell *matCellDef="let element"> {{ element.description_Text }} </mat-cell>
     </ng-container>
 
-    <!-- Degree_Text Column -->
-    <ng-container matColumnDef="Degree_Text">
+    <!-- degree_Text Column -->
+    <ng-container matColumnDef="degree_Text">
       <mat-header-cell *matHeaderCellDef mat-sort-header> דרגה </mat-header-cell>
-      <mat-cell *matCellDef="let element"> {{ element.Degree_Text }} </mat-cell>
+      <mat-cell *matCellDef="let element"> {{ element.degree_Text }} </mat-cell>
     </ng-container>
 
-    <!-- Location_Text Column -->
-    <ng-container matColumnDef="Location_Text">
+    <!-- location_Text Column -->
+    <ng-container matColumnDef="location_Text">
       <mat-header-cell *matHeaderCellDef mat-sort-header> מיקום </mat-header-cell>
-      <mat-cell *matCellDef="let element"> {{ element.Location_Text }} </mat-cell>
+      <mat-cell *matCellDef="let element"> {{ element.location_Text }} </mat-cell>
     </ng-container>
 
-    <!-- Made_In_Text Column -->
-    <ng-container matColumnDef="Made_In_Text">
+    <!-- made_In_Text Column -->
+    <ng-container matColumnDef="made_In_Text">
       <mat-header-cell *matHeaderCellDef mat-sort-header> נוצר ב </mat-header-cell>
-      <mat-cell *matCellDef="let element"> {{ element.Made_In_Text }} </mat-cell>
+      <mat-cell *matCellDef="let element"> {{ element.made_In_Text }} </mat-cell>
     </ng-container>
 
-    <!-- Support_Device_Text Column -->
-    <ng-container matColumnDef="Support_Device_Text">
+    <!-- support_Device_Text Column -->
+    <ng-container matColumnDef="support_Device_Text">
       <mat-header-cell *matHeaderCellDef mat-sort-header> התקן תמיכה </mat-header-cell>
-      <mat-cell *matCellDef="let element"> {{ element.Support_Device_Text }} </mat-cell>
+      <mat-cell *matCellDef="let element"> {{ element.support_Device_Text }} </mat-cell>
     </ng-container>
-    <ng-container matColumnDef="Release_Date">
+
+    <!-- release_Date Column -->
+    <ng-container matColumnDef="release_Date">
       <mat-header-cell *matHeaderCellDef mat-sort-header> תאריך שחרור </mat-header-cell>
-      <mat-cell *matCellDef="let element"> {{ element.Release_Date | date: 'dd/MM/yyyy' }} </mat-cell>
+      <mat-cell *matCellDef="let element"> {{ element.release_Date | date: 'dd/MM/yyyy' }} </mat-cell>
     </ng-container>
+
     <!-- Table Header Row Definition -->
     <mat-header-row *matHeaderRowDef="columns"></mat-header-row>
 
@@ -160,10 +159,9 @@
   </mat-table>
 
   <!-- Paginator Component -->
-  <mat-paginator 
-    [length]="matTableDataSource.paginator?.length || 0"
-    [pageIndex]="matTableDataSource.paginator?.pageIndex"
-    [pageSize]="matTableDataSource.paginator?.pageSize"
+  <mat-paginator
+    [length]="totalResults"
+    [pageSize]="15"
     [pageSizeOptions]="[15, 50, 100]">
   </mat-paginator>
 </div>

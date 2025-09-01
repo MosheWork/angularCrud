@@ -5,22 +5,23 @@
 
     <!-- Dynamic Columns -->
     <ng-container *ngFor="let column of dialogColumns" [matColumnDef]="column">
-      <mat-header-cell *matHeaderCellDef class="header-cell"> 
-        {{ columnLabels[column] }} 
+      <mat-header-cell *matHeaderCellDef class="header-cell">
+        {{ columnLabels[column] }}
       </mat-header-cell>
-      <mat-cell *matCellDef="let element" [ngClass]="{'wide-column': column === 'DescriptionCognitive'}">
-        
-        <!-- Special Handling for DescriptionCognitive -->
-        <ng-container *ngIf="column === 'DescriptionCognitive'; else normalCell">
+
+      <mat-cell *matCellDef="let element" [ngClass]="{ 'wide-column': column === 'descriptionCognitive' }">
+
+        <!-- Special Handling for descriptionCognitive -->
+        <ng-container *ngIf="column === 'descriptionCognitive'; else normalCell">
           <textarea class="cognitive-textarea" readonly>{{ element[column] || 'אין נתונים' }}</textarea>
         </ng-container>
 
         <!-- Default Cells -->
         <ng-template #normalCell>
-          <ng-container *ngIf="column === 'EntryDate' || column === 'DescriptionEntryDate'; else normalText">
+          <ng-container *ngIf="column === 'entryDate' || column === 'descriptionEntryDate'; else normalText">
             {{ element[column] | date: 'dd/MM/yyyy HH:mm' }}
           </ng-container>
-          
+
           <ng-template #normalText>
             {{ element[column] || 'אין נתונים' }}
           </ng-template>

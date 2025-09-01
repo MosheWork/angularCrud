@@ -34,28 +34,29 @@ interface FormControls {
 export class SkinIntegrityReportComponent implements OnInit {
   totalResults: number = 0;
   titleUnit: string = 'אומדן שלמות העור ';
-  Title1: string = ' סה"כ תוצאות: ';  // Title1 for display
-  Title2: string = '';              // Title2 for display
+  Title1: string = ' סה"כ תוצאות: ';
+  Title2: string = '';
 
-  showGraph: boolean = false;       // Flag for showing graph
-  graphData: any[] = [];            // Data for the graph
+  showGraph: boolean = false;
+  graphData: any[] = [];
 
+  // ⬇️ first-letter lower keys
   columns: string[] = [
-    'Name',
-    'Id_Num',
-    'Admission_No',
-    'First_Name',
-    'Last_Name',
-    'Age_Years',
-    'Record_Date',
-    'Entry_Date',
-    'Pain',
-    'Description_Text',
-    'Degree_Text',
-    'Location_Text',
-    'Made_In_Text',
-    'Support_Device_Text',
-    'Release_Date'
+    'name',
+    'id_Num',
+    'admission_No',
+    'first_Name',
+    'last_Name',
+    'age_Years',
+    'record_Date',
+    'entry_Date',
+    'pain',
+    'description_Text',
+    'degree_Text',
+    'location_Text',
+    'made_In_Text',
+    'support_Device_Text',
+    'release_Date'
   ];
 
   dataSource: any[] = [];
@@ -68,13 +69,11 @@ export class SkinIntegrityReportComponent implements OnInit {
   @ViewChild(MatSort) sort!: MatSort;
 
   constructor(private http: HttpClient, private fb: FormBuilder, private router: Router) {
-    // Initialize the form group and data source
     this.filterForm = this.createFilterForm();
     this.matTableDataSource = new MatTableDataSource<any>([]);
   }
 
   ngOnInit() {
-    // Fetch the data from the API
     this.http.get<any[]>(environment.apiUrl + 'SkinIntegrityReportAPI').subscribe((data) => {
       this.dataSource = data;
       this.filteredData = [...data];
@@ -82,115 +81,116 @@ export class SkinIntegrityReportComponent implements OnInit {
       this.matTableDataSource.paginator = this.paginator;
       this.matTableDataSource.sort = this.sort;
 
-      // Add value changes listener to all form controls
+      // per-column filters
       this.columns.forEach((column) => {
-        this.filterForm.get(column)?.valueChanges.pipe(debounceTime(300), distinctUntilChanged()).subscribe(() => this.applyFilters());
+        this.filterForm.get(column)?.valueChanges
+          .pipe(debounceTime(300), distinctUntilChanged())
+          .subscribe(() => this.applyFilters());
       });
 
-      // Global filter value change listener
+      // global filters
       this.filterForm.valueChanges.subscribe(() => {
         this.applyFilters();
-        this.paginator.firstPage(); // Reset to first page after filtering
+        this.paginator.firstPage();
       });
 
-      // Initial filter application
       this.applyFilters();
     });
   }
 
-  // Create the filter form with form controls for all columns and global filter
+  // form with lower-first control names + ReleaseStatus
   private createFilterForm(): FormGroup {
     const formControls: FormControls = {};
     this.columns.forEach((column) => {
       formControls[column] = new FormControl('');
     });
-  
+
     formControls['globalFilter'] = new FormControl('');
-    formControls['ReleaseStatus'] = new FormControl(''); // ✅ Add this line
-  
+    formControls['ReleaseStatus'] = new FormControl(''); // '', 'discharged', 'hospitalized'
+
     return this.fb.group(formControls);
   }
-  
 
-  // Apply the filters to the data source
   applyFilters() {
     const filters = this.filterForm.value;
     const globalFilter = (filters['globalFilter'] || '').toLowerCase();
     const releaseStatus = filters['ReleaseStatus'];
-  
+
     this.filteredData = this.dataSource.filter((item) => {
       const matchesColumns = this.columns.every((column) => {
         const value = item[column];
         const filterValue = filters[column];
-  
-        if (column === 'Record_Date' || column === 'Entry_Date') {
+
+        // date equality for record_Date / entry_Date
+        if (column === 'record_Date' || column === 'entry_Date') {
           if (!filterValue) return true;
-          const formattedDate = this.formatDate(new Date(value));
-          const filterDate = this.formatDate(new Date(filterValue));
-          return formattedDate === filterDate;
+          const formattedValue = this.formatDate(new Date(value));
+          const formattedFilter = this.formatDate(new Date(filterValue));
+          return formattedValue === formattedFilter;
         }
-  
-        const stringValue = typeof value === 'string' ? value.toLowerCase() : String(value).toLowerCase();
+
+        const stringValue = typeof value === 'string' ? value.toLowerCase() : String(value ?? '').toLowerCase();
         const filterString = typeof filterValue === 'string' ? filterValue.toLowerCase() : filterValue;
-  
-        return (!filterString || stringValue.includes(filterString)) &&
-               (!globalFilter || this.columns.some((col) => String(item[col]).toLowerCase().includes(globalFilter)));
+
+        const byColumn = !filterString || stringValue.includes(filterString);
+        const byGlobal =
+          !globalFilter ||
+          this.columns.some((col) => String(item[col] ?? '').toLowerCase().includes(globalFilter));
+
+        return byColumn && byGlobal;
       });
-  
-      // ✅ NEW ReleaseStatus Filter
+
+      // ReleaseStatus: uses lower-first release_Date
       const matchesReleaseStatus =
-        releaseStatus === '' ||  // הכל
-        (releaseStatus === 'discharged' && item.Release_Date) ||
-        (releaseStatus === 'hospitalized' && !item.Release_Date);
-  
+        releaseStatus === '' ||
+        (releaseStatus === 'discharged' && !!item.release_Date) ||
+        (releaseStatus === 'hospitalized' && !item.release_Date);
+
       return matchesColumns && matchesReleaseStatus;
     });
-  
+
     this.totalResults = this.filteredData.length;
     this.matTableDataSource.data = this.filteredData;
     this.matTableDataSource.paginator = this.paginator;
     this.graphData = this.filteredData;
   }
-  
-  
-  // Utility method to format the date in DD/MM/YYYY format
+
   formatDate(date: Date): string {
-    const day = ('0' + date.getDate()).slice(-2);
-    const month = ('0' + (date.getMonth() + 1)).slice(-2); // Months are 0-based
-    const year = date.getFullYear();
+    const d = new Date(date);
+    const day = ('0' + d.getDate()).slice(-2);
+    const month = ('0' + (d.getMonth() + 1)).slice(-2);
+    const year = d.getFullYear();
     return `${day}/${month}/${year}`;
   }
-  
 
-  // Reset filters and reapply
   resetFilters() {
-    this.filterForm.reset();  // Reset all filters
-    this.filterForm.get('globalFilter')?.setValue('');  // Clear global filter
-    this.applyFilters();  // Reapply filters
+    this.filterForm.reset();
+    this.filterForm.get('globalFilter')?.setValue('');
+    this.applyFilters();
   }
 
-  // Method to get column labels for display
+  // labels keyed by lower-first
   getColumnLabel(column: string): string {
     const columnLabels: Record<string, string> = {
-      Name: 'שם',
-      Id_Num: 'ת.ז.',
-      Admission_No: 'מספר אשפוז',
-      First_Name: 'שם פרטי',
-      Last_Name: 'שם משפחה',
-      Age_Years: 'גיל',
-      Record_Date: 'תאריך קבלה',
-      Entry_Date: 'תאריך דיווח',
-      Pain: 'כאב',
-      Description_Text: 'תיאור',
-      Degree_Text: 'דרגה',
-      Location_Text: 'מיקום',
-      Made_In_Text: 'נוצר ב',
-      Support_Device_Text: 'התקן תמיכה'
+      name: 'שם',
+      id_Num: 'ת.ז.',
+      admission_No: 'מספר אשפוז',
+      first_Name: 'שם פרטי',
+      last_Name: 'שם משפחה',
+      age_Years: 'גיל',
+      record_Date: 'תאריך קבלה',
+      entry_Date: 'תאריך דיווח',
+      pain: 'כאב',
+      description_Text: 'תיאור',
+      degree_Text: 'דרגה',
+      location_Text: 'מיקום',
+      made_In_Text: 'נוצר ב',
+      support_Device_Text: 'התקן תמיכה',
+      release_Date: 'תאריך שחרור'
     };
     return columnLabels[column] || column;
   }
 
-  // Export filtered data to Excel
   exportToExcel() {
     const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(this.filteredData);
     const workbook: XLSX.WorkBook = { Sheets: { data: worksheet }, SheetNames: ['data'] };
@@ -203,12 +203,10 @@ export class SkinIntegrityReportComponent implements OnInit {
     link.click();
   }
 
-  // Toggle graph view
   navigateToGraphPage() {
     this.showGraph = !this.showGraph;
   }
 
-  // Navigate to the home page
   goToHome() {
     this.router.navigate(['/MainPageReports']);
   }

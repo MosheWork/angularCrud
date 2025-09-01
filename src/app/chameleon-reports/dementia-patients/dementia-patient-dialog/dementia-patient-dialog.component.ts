@@ -7,15 +7,17 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
   styleUrls: ['./dementia-patient-dialog.component.scss']
 })
 export class DementiaPatientDialogComponent {
-  dialogColumns: string[] = ['EntryDate', 'ICD9', 'DiagnosisName', 'DescriptionEntryDate','heading', 'DescriptionCognitive'];
+  // ⬇️ lower-first keys
+  dialogColumns: string[] = ['entryDate', 'iCD9', 'diagnosisName', 'descriptionEntryDate', 'heading', 'descriptionCognitive'];
 
+  // ⬇️ labels mapped to the new lower-first keys
   columnLabels: { [key: string]: string } = {
-    'EntryDate': 'תאריך דיווח',
-    'ICD9': 'קוד ICD9',
-    'DiagnosisName': 'אבחנה',
-    'DescriptionEntryDate': 'תאריך תיעוד',
-    'heading': ' שם הרכיב',
-    'DescriptionCognitive': ' מלל'
+    entryDate: 'תאריך דיווח',
+    iCD9: 'קוד ICD9',
+    diagnosisName: 'אבחנה',
+    descriptionEntryDate: 'תאריך תיעוד',
+    heading: 'שם הרכיב',
+    descriptionCognitive: 'מלל'
   };
 
   constructor(
