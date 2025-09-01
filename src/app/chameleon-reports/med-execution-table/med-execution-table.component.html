@@ -13,63 +13,76 @@
             <div dir="rtl" class="card">
               <div dir="rtl" class="card-body">
                 <div class="filter-container">
+                  <!-- שם התרופה -->
                   <mat-form-field class="filter-field">
                     <mat-label>שם התרופה</mat-label>
-                    <input type="text" matInput [formControl]="basicNamesControl" [matAutocomplete]="autoBasic">
+                    <input type="text" matInput [formControl]="basicNamesControl" [matAutocomplete]="autoBasic" />
                     <mat-autocomplete #autoBasic="matAutocomplete" [displayWith]="displayBasicName">
                       <mat-option *ngFor="let option of filteredBasicNameOptions | async" [value]="option">
                         {{ option }}
                       </mat-option>
                     </mat-autocomplete>
                   </mat-form-field>
+
+                  <!-- קטגוריה -->
                   <mat-form-field class="filter-field">
                     <mat-label>שם קטגוריה</mat-label>
-                    <input matInput [formControlName]="'Category_Name'" />
+                    <input matInput formControlName="Category_Name" />
                   </mat-form-field>
+
+                  <!-- שם יחידת ביצוע (רב-בחירה + חיפוש) -->
                   <mat-form-field class="filter-field">
                     <mat-label>שם יחידת ביצוע</mat-label>
                     <mat-select formControlName="Execution_UnitNames" multiple>
                       <mat-select-header>
-                        <input matInput placeholder="חפש..." [(ngModel)]="unitNameFilter" (ngModelChange)="filterUnitNames()" [ngModelOptions]="{standalone: true}" />
+                        <input
+                          matInput
+                          placeholder="חפש..."
+                          [(ngModel)]="unitNameFilter"
+                          (ngModelChange)="filterUnitNames()
+                          "
+                          [ngModelOptions]="{ standalone: true }"
+                        />
                       </mat-select-header>
                       <mat-option *ngFor="let option of filteredUnitNameOptions" [value]="option">
                         {{ option }}
                       </mat-option>
                     </mat-select>
                   </mat-form-field>
-                  
-                  
+
+                  <!-- Unit Satellite Names (רב-בחירה) -->
                   <mat-form-field appearance="outline">
                     <mat-label>Unit Satellite Names</mat-label>
-                    <mat-select
-                      [formControl]="unitSatelliteNamesControl"
-                      multiple>
-                      <mat-option
-                        *ngFor="let name of unitSatelliteNameOptions"
-                        [value]="name">
+                    <mat-select [formControl]="unitSatelliteNamesControl" multiple>
+                      <mat-option *ngFor="let name of unitSatelliteNameOptions" [value]="name">
                         {{ name }}
                       </mat-option>
                     </mat-select>
                   </mat-form-field>
-                  
+
+                  <!-- שם גנרי -->
                   <mat-form-field class="filter-field">
                     <mat-label>שם גנרי</mat-label>
-                    <input type="text" matInput [formControl]="genericNamesControl" [matAutocomplete]="autoGeneric">
+                    <input type="text" matInput [formControl]="genericNamesControl" [matAutocomplete]="autoGeneric" />
                     <mat-autocomplete #autoGeneric="matAutocomplete" [displayWith]="displayGenericName">
                       <mat-option *ngFor="let option of filteredGenericNameOptions | async" [value]="option">
                         {{ option }}
                       </mat-option>
                     </mat-autocomplete>
                   </mat-form-field>
+
+                  <!-- תאריך התחלה -->
                   <mat-form-field class="filter-field">
                     <mat-label>תאריך התחלה</mat-label>
-                    <input matInput [formControlName]="'StartDate'" [matDatepicker]="startDatePicker" />
+                    <input matInput formControlName="StartDate" [matDatepicker]="startDatePicker" />
                     <mat-datepicker-toggle matSuffix [for]="startDatePicker"></mat-datepicker-toggle>
                     <mat-datepicker #startDatePicker></mat-datepicker>
                   </mat-form-field>
+
+                  <!-- תאריך סיום -->
                   <mat-form-field class="filter-field">
                     <mat-label>תאריך סיום</mat-label>
-                    <input matInput [formControlName]="'EndDate'" [matDatepicker]="endDatePicker" />
+                    <input matInput formControlName="EndDate" [matDatepicker]="endDatePicker" />
                     <mat-datepicker-toggle matSuffix [for]="endDatePicker"></mat-datepicker-toggle>
                     <mat-datepicker #endDatePicker></mat-datepicker>
                   </mat-form-field>
@@ -84,13 +97,26 @@
 
   <div class="button-card">
     <div class="button-container">
-      <button mat-button (click)="search()" mat-raised-button color="primary" class="custom-button" matTooltip="חפש">
+      <button
+        mat-button
+        (click)="search()"
+        mat-raised-button
+        color="primary"
+        class="custom-button"
+        matTooltip="חפש"
+      >
         <mat-icon>search</mat-icon>
       </button>
-    
     </div>
     <div class="button-container">
-      <button mat-button (click)="resetFilters()" mat-raised-button color="primary" class="custom-button" matTooltip="איפוס מסננים">
+      <button
+        mat-button
+        (click)="resetFilters()"
+        mat-raised-button
+        color="primary"
+        class="custom-button"
+        matTooltip="איפוס מסננים"
+      >
         <i class="material-icons">refresh</i>
       </button>
     </div>
@@ -104,119 +130,163 @@
   <div *ngIf="showMessage" class="creator-message">
     הדוח נוצר על ידי משה ממן
   </div>
+
   <mat-tab-group>
+    <!-- 🔹 טבלה ראשית -->
     <mat-tab label="טבלה ראשית">
       <div class="icon" matTooltip="Download Excel">
-        <img src="../../assets/excel.png" alt="Download" (click)="exportToExcel()" class="download-icon" />
+        <img
+          src="../../assets/excel.png"
+          alt="Download"
+          (click)="exportToExcel()"
+          class="download-icon"
+        />
       </div>
-  <mat-table *ngIf="!showGraph && !loading" [dataSource]="dataSource" matSort dir="rtl" class="mat-elevation-z8">
-    <ng-container matColumnDef="Basic_Name">
-      <mat-header-cell *matHeaderCellDef mat-sort-header>שם תרופה</mat-header-cell>
-      <mat-cell *matCellDef="let element"> {{ element.basic_Name }} </mat-cell>
-    </ng-container>
-    <ng-container matColumnDef="Drug">
-      <mat-header-cell *matHeaderCellDef mat-sort-header>קוד התרופה</mat-header-cell>
-      <mat-cell *matCellDef="let element"> {{ element.drug }} </mat-cell>
-    </ng-container>
-    <ng-container matColumnDef="Execution_Date">
-      <mat-header-cell *matHeaderCellDef mat-sort-header>תאריך ביצוע</mat-header-cell>
-      <mat-cell *matCellDef="let element"> {{ element.execution_Date | date: 'dd-MM-yyyy HH:mm' }} </mat-cell>
-    </ng-container>
-    <ng-container matColumnDef="Category_Name">
-      <mat-header-cell *matHeaderCellDef mat-sort-header> קטגוריה</mat-header-cell>
-      <mat-cell *matCellDef="let element"> {{ element.category_Name }} </mat-cell>
-    </ng-container>
-    <ng-container matColumnDef="Execution_UnitName">
-      <mat-header-cell *matHeaderCellDef mat-sort-header>שם יחידת ביצוע</mat-header-cell>
-      <mat-cell *matCellDef="let element"> {{ element.execution_UnitName }} </mat-cell>
-    </ng-container>
-    <ng-container matColumnDef="Generic_Name_ForDisplay">
-      <mat-header-cell *matHeaderCellDef mat-sort-header>שם גנרי</mat-header-cell>
-      <mat-cell *matCellDef="let element"> {{ element.generic_Name_ForDisplay }} </mat-cell>
-    </ng-container>
-    <ng-container matColumnDef="Dosage_InOrder">
-      <mat-header-cell *matHeaderCellDef mat-sort-header>מינון </mat-header-cell>
-      <mat-cell *matCellDef="let element"> {{ element.dosage_InOrder }} </mat-cell>
-    </ng-container>
-    <ng-container matColumnDef="Dosage_Unit_InOrder">
-      <mat-header-cell *matHeaderCellDef mat-sort-header>יחידת מינון </mat-header-cell>
-      <mat-cell *matCellDef="let element"> {{ element.dosage_Unit_InOrder }} </mat-cell>
-    </ng-container>
-    <ng-container matColumnDef="Way_Of_Giving">
-      <mat-header-cell *matHeaderCellDef mat-sort-header>דרך מתן</mat-header-cell>
-      <mat-cell *matCellDef="let element"> {{ element.way_Of_Giving }} </mat-cell>
-    </ng-container>
-    <ng-container matColumnDef="Id_Num">
-      <mat-header-cell *matHeaderCellDef mat-sort-header> תעודת זהות</mat-header-cell>
-      <mat-cell *matCellDef="let element"> {{ element.id_Num }} </mat-cell>
-    </ng-container>
-    <ng-container matColumnDef="Full_Name">
-      <mat-header-cell *matHeaderCellDef mat-sort-header>שם מלא</mat-header-cell>
-      <mat-cell *matCellDef="let element"> {{ element.full_Name }} </mat-cell>
-    </ng-container>
-    <ng-container matColumnDef="Unit_Satellite_Name">
-      <mat-header-cell *matHeaderCellDef mat-sort-header>מחלקת לווין </mat-header-cell>
-      <mat-cell *matCellDef="let element"> {{ element.unit_Satellite_Name }} </mat-cell>
-    </ng-container>
-    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-    <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
-  </mat-table>
-  <mat-paginator [length]="totalResults" [pageSize]="10" [pageSizeOptions]="[10, 25, 50]"></mat-paginator>
-</mat-tab>
-  <!-- 🔹 Second Tab: Aggregated Data -->
- 
-  <mat-tab label="טבלה מסוכמת">
-    <div class="icon" matTooltip="Download Aggregated Excel">
-      <img src="../../assets/excel.png" alt="Download" (click)="exportToExcel2()" class="download-icon" />
-    </div>
-    <mat-table *ngIf="!loading" [dataSource]="aggregatedDataSource" matSort dir="rtl" class="mat-elevation-z8" #aggSort="matSort">
-      <ng-container matColumnDef="Unit_Satellite_Name">
-        <mat-header-cell *matHeaderCellDef mat-sort-header>מחלקת לווין</mat-header-cell>
-        <mat-cell *matCellDef="let element">{{ element.Unit_Satellite_Name }}</mat-cell>
-      </ng-container>
-    
-      <ng-container matColumnDef="Generic_Name_ForDisplay">
-        <mat-header-cell *matHeaderCellDef mat-sort-header>שם תרופה גנרי</mat-header-cell>
-        <mat-cell *matCellDef="let element">{{ element.Generic_Name_ForDisplay }}</mat-cell>
-      </ng-container>
-    
-      <ng-container matColumnDef="Way_Of_Giving">
-        <mat-header-cell *matHeaderCellDef mat-sort-header>סוג מתן</mat-header-cell>
-        <mat-cell *matCellDef="let element">{{ element.Way_Of_Giving }}</mat-cell>
-      </ng-container>
-    
-      <ng-container matColumnDef="Dosage_Unit_InOrder">
-        <mat-header-cell *matHeaderCellDef mat-sort-header>Dosage Unit</mat-header-cell>
-        <mat-cell *matCellDef="let element">{{ element.Dosage_Unit_InOrder }}</mat-cell>
-      </ng-container>
-    
-      <ng-container matColumnDef="Dosage_InOrder">
-        <mat-header-cell *matHeaderCellDef mat-sort-header>Dosage In Order</mat-header-cell>
-        <mat-cell *matCellDef="let element">{{ element.Dosage_InOrder }}</mat-cell>
-      </ng-container>
-    
-      <ng-container matColumnDef="Count_Dosage_InOrder">
-        <mat-header-cell *matHeaderCellDef mat-sort-header>Count Dosage</mat-header-cell>
-        <mat-cell *matCellDef="let element">{{ element.Count_Dosage_InOrder }}</mat-cell>
-      </ng-container>
-    
-      <ng-container matColumnDef="Sum_Dosage_InOrder2">
-        <mat-header-cell *matHeaderCellDef mat-sort-header>Sum Dosage</mat-header-cell>
-        <mat-cell *matCellDef="let element">{{ element.Sum_Dosage_InOrder2 }}</mat-cell>
-      </ng-container>
-    
-      <mat-header-row *matHeaderRowDef="aggregatedDisplayedColumns"></mat-header-row>
-      <mat-row *matRowDef="let row; columns: aggregatedDisplayedColumns;"></mat-row>
-    </mat-table>
-    
-    <mat-paginator
-      [length]="aggregatedDataSource.data.length"
-      [pageSize]="10"
-      [pageSizeOptions]="[10, 25, 50]"
-      #aggregatedPaginator>
-    </mat-paginator>
-    
-    <mat-paginator [length]="aggregatedDataSource.data.length" [pageSize]="10" [pageSizeOptions]="[10, 25, 50]" #aggregatedPaginator></mat-paginator>
-  </mat-tab>
-</mat-tab-group>
+
+      <mat-table
+        *ngIf="!showGraph && !loading"
+        [dataSource]="dataSource"
+        matSort
+        dir="rtl"
+        class="mat-elevation-z8"
+      >
+        <!-- עמודות: חשוב שהmatColumnDef יתאים בדיוק למפתחות ב-displayedColumns (lower-first) -->
+
+        <ng-container matColumnDef="basic_Name">
+          <mat-header-cell *matHeaderCellDef mat-sort-header>שם תרופה</mat-header-cell>
+          <mat-cell *matCellDef="let element">{{ element.basic_Name }}</mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="drug">
+          <mat-header-cell *matHeaderCellDef mat-sort-header>קוד התרופה</mat-header-cell>
+          <mat-cell *matCellDef="let element">{{ element.drug }}</mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="execution_Date">
+          <mat-header-cell *matHeaderCellDef mat-sort-header>תאריך ביצוע</mat-header-cell>
+          <mat-cell *matCellDef="let element">
+            {{ element.execution_Date | date: 'dd-MM-yyyy HH:mm' }}
+          </mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="category_Name">
+          <mat-header-cell *matHeaderCellDef mat-sort-header>קטגוריה</mat-header-cell>
+          <mat-cell *matCellDef="let element">{{ element.category_Name }}</mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="execution_UnitName">
+          <mat-header-cell *matHeaderCellDef mat-sort-header>שם יחידת ביצוע</mat-header-cell>
+          <mat-cell *matCellDef="let element">{{ element.execution_UnitName }}</mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="generic_Name_ForDisplay">
+          <mat-header-cell *matHeaderCellDef mat-sort-header>שם גנרי</mat-header-cell>
+          <mat-cell *matCellDef="let element">{{ element.generic_Name_ForDisplay }}</mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="dosage_InOrder">
+          <mat-header-cell *matHeaderCellDef mat-sort-header>מינון</mat-header-cell>
+          <mat-cell *matCellDef="let element">{{ element.dosage_InOrder }}</mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="dosage_Unit_InOrder">
+          <mat-header-cell *matHeaderCellDef mat-sort-header>יחידת מינון</mat-header-cell>
+          <mat-cell *matCellDef="let element">{{ element.dosage_Unit_InOrder }}</mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="way_Of_Giving">
+          <mat-header-cell *matHeaderCellDef mat-sort-header>דרך מתן</mat-header-cell>
+          <mat-cell *matCellDef="let element">{{ element.way_Of_Giving }}</mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="id_Num">
+          <mat-header-cell *matHeaderCellDef mat-sort-header>תעודת זהות</mat-header-cell>
+          <mat-cell *matCellDef="let element">{{ element.id_Num }}</mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="full_Name">
+          <mat-header-cell *matHeaderCellDef mat-sort-header>שם מלא</mat-header-cell>
+          <mat-cell *matCellDef="let element">{{ element.full_Name }}</mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="unit_Satellite_Name">
+          <mat-header-cell *matHeaderCellDef mat-sort-header>מחלקת לווין</mat-header-cell>
+          <mat-cell *matCellDef="let element">{{ element.unit_Satellite_Name }}</mat-cell>
+        </ng-container>
+
+        <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+        <mat-row *matRowDef="let row; columns: displayedColumns"></mat-row>
+      </mat-table>
+
+      <mat-paginator
+        [length]="totalResults"
+        [pageSize]="10"
+        [pageSizeOptions]="[10, 25, 50]"
+      ></mat-paginator>
+    </mat-tab>
+
+    <!-- 🔹 טבלה מסוכמת -->
+    <mat-tab label="טבלה מסוכמת">
+      <div class="icon" matTooltip="Download Aggregated Excel">
+        <img
+          src="../../assets/excel.png"
+          alt="Download"
+          (click)="exportToExcel2()"
+          class="download-icon"
+        />
+      </div>
+
+      <mat-table
+        *ngIf="!loading"
+        [dataSource]="aggregatedDataSource"
+        matSort
+        dir="rtl"
+        class="mat-elevation-z8"
+      >
+        <ng-container matColumnDef="unit_Satellite_Name">
+          <mat-header-cell *matHeaderCellDef mat-sort-header>מחלקת לווין</mat-header-cell>
+          <mat-cell *matCellDef="let element">{{ element.unit_Satellite_Name }}</mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="generic_Name_ForDisplay">
+          <mat-header-cell *matHeaderCellDef mat-sort-header>שם תרופה גנרי</mat-header-cell>
+          <mat-cell *matCellDef="let element">{{ element.generic_Name_ForDisplay }}</mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="way_Of_Giving">
+          <mat-header-cell *matHeaderCellDef mat-sort-header>סוג מתן</mat-header-cell>
+          <mat-cell *matCellDef="let element">{{ element.way_Of_Giving }}</mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="dosage_Unit_InOrder">
+          <mat-header-cell *matHeaderCellDef mat-sort-header>Dosage Unit</mat-header-cell>
+          <mat-cell *matCellDef="let element">{{ element.dosage_Unit_InOrder }}</mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="dosage_InOrder">
+          <mat-header-cell *matHeaderCellDef mat-sort-header>Dosage In Order</mat-header-cell>
+          <mat-cell *matCellDef="let element">{{ element.dosage_InOrder }}</mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="count_Dosage_InOrder">
+          <mat-header-cell *matHeaderCellDef mat-sort-header>Count Dosage</mat-header-cell>
+          <mat-cell *matCellDef="let element">{{ element.count_Dosage_InOrder }}</mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="sum_Dosage_InOrder2">
+          <mat-header-cell *matHeaderCellDef mat-sort-header>Sum Dosage</mat-header-cell>
+          <mat-cell *matCellDef="let element">{{ element.sum_Dosage_InOrder2 }}</mat-cell>
+        </ng-container>
+
+        <mat-header-row *matHeaderRowDef="aggregatedDisplayedColumns"></mat-header-row>
+        <mat-row *matRowDef="let row; columns: aggregatedDisplayedColumns"></mat-row>
+      </mat-table>
+
+      <mat-paginator
+        [length]="aggregatedDataSource.data.length"
+        [pageSize]="10"
+        [pageSizeOptions]="[10, 25, 50]"
+      ></mat-paginator>
+    </mat-tab>
+  </mat-tab-group>
 </div>

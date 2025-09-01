@@ -11,31 +11,32 @@ import { map, startWith } from 'rxjs/operators';
 import * as XLSX from 'xlsx';
 
 interface MedExecutionModel {
-  Basic_Name: string;
-  Drug: string;
-  Exec_Status: number;
-  Exec_Status_Name: string;
-  Execution_Date: Date;
-  Category_Name: string;
-  Execution_UnitName: string;
-  Admission_No: string;
-  Generic_Name_ForDisplay: string;
-  Dosage_InOrder: number;
-  Dosage_Unit_InOrder: string;
-  Way_Of_Giving: string;
-  Id_Num: string;
-  Full_Name: string;
-  Depart_Name: string;
-  Unit_Satellite_Name: string; // Add this property
+  basic_Name: string;
+  drug: string;
+  exec_Status: number;
+  exec_Status_Name: string;
+  execution_Date: Date;
+  category_Name: string;
+  execution_UnitName: string;
+  admission_No: string;
+  generic_Name_ForDisplay: string;
+  dosage_InOrder: number;
+  dosage_Unit_InOrder: string;
+  way_Of_Giving: string;
+  id_Num: string;
+  full_Name: string;
+  depart_Name: string;
+  unit_Satellite_Name: string;
 }
+
 interface AggregatedMedExecutionModel {
-  Unit_Satellite_Name: string;
-  Generic_Name_ForDisplay: string;
-  Way_Of_Giving: string;
-  Dosage_Unit_InOrder: string;
-  Dosage_InOrder: number;
-  Count_Dosage_InOrder: number;
-  Sum_Dosage_InOrder2: number;
+  unit_Satellite_Name: string;
+  generic_Name_ForDisplay: string;
+  way_Of_Giving: string;
+  dosage_Unit_InOrder: string;
+  dosage_InOrder: number;
+  count_Dosage_InOrder: number;
+  sum_Dosage_InOrder2: number;
 }
 
 @Component({
@@ -46,19 +47,20 @@ interface AggregatedMedExecutionModel {
 })
 export class MedExecutionTableComponent implements OnInit, AfterViewInit {
   displayedColumns: string[] = [
-    'Basic_Name',
-    'Drug',
-    'Execution_Date',
-    'Category_Name',
-    'Execution_UnitName',
-    'Generic_Name_ForDisplay',
-    'Dosage_InOrder',
-    'Dosage_Unit_InOrder',
-    'Way_Of_Giving',
-    'Id_Num',
-    'Full_Name',
-    'Unit_Satellite_Name'
+    'basic_Name',
+    'drug',
+    'execution_Date',
+    'category_Name',
+    'execution_UnitName',
+    'generic_Name_ForDisplay',
+    'dosage_InOrder',
+    'dosage_Unit_InOrder',
+    'way_Of_Giving',
+    'id_Num',
+    'full_Name',
+    'unit_Satellite_Name'
   ];
+  
   unitSatelliteNameOptions: string[] = [
     'קבלה לחדר ניתוח כללי',
     'אולטראסאונד למיילדות וגניקולוגיה',
@@ -68,7 +70,6 @@ export class MedExecutionTableComponent implements OnInit, AfterViewInit {
     'אשפוז יום כאב',
     'אשפוז יום ראומטולוגי',
     'אשפוז יום שיקומי מבוגרים',
-    'בדיקה חדשה 123',
     'גסטרואנטולוגיה - מכון',
     'היחידה לדיאליזה פריטוניאלית',
     'היחידה לרפואת הפה',
@@ -99,11 +100,8 @@ export class MedExecutionTableComponent implements OnInit, AfterViewInit {
     'כירורגית חזה',
     'כירורגית כלי דם',
     'כירורגית לב',
-    'מודולים סופיים לפריסה',
     'מחלקה אונקולוגית',
-    'מחלקה גנרית פנימית - לא פעילה',
-    'מחלקה גנרית פנימית מנהלת פוריה',
-    'מחלקה גנרית פנימית מנהלת פוריה- חדש',
+  
     'מחלקה גריאטרית',
     'מחלקה כירורגית',
     'מחלקה לרפואה דחופה',
@@ -202,13 +200,13 @@ export class MedExecutionTableComponent implements OnInit, AfterViewInit {
 
 
 aggregatedDisplayedColumns: string[] = [
-  'Unit_Satellite_Name',
-  'Generic_Name_ForDisplay',
-  'Way_Of_Giving',
-  'Dosage_Unit_InOrder',
-  'Dosage_InOrder',
-  'Count_Dosage_InOrder',
-  'Sum_Dosage_InOrder2'
+  'unit_Satellite_Name',
+  'generic_Name_ForDisplay',
+  'way_Of_Giving',
+  'dosage_Unit_InOrder',
+  'dosage_InOrder',
+  'count_Dosage_InOrder',
+  'sum_Dosage_InOrder2'
 ];
 @ViewChild('aggregatedPaginator') aggregatedPaginator!: MatPaginator;
 @ViewChild('aggregatedSort') aggregatedSort!: MatSort;
@@ -376,8 +374,8 @@ aggregatedDisplayedColumns: string[] = [
         this.totalResults = data.length;
         this.loading = false;
     
-        // ✅ Extract unique Unit_Satellite_Name values
-        const uniqueUnitNames = [...new Set(data.map(item => item.Unit_Satellite_Name).filter(Boolean))];
+        // ✅ unique Unit Satellite names from the new key
+        const uniqueUnitNames = [...new Set(data.map(item => item.unit_Satellite_Name).filter(Boolean))];
         this.unitSatelliteNameOptions = uniqueUnitNames.sort();
       },
       error => {
@@ -390,23 +388,22 @@ aggregatedDisplayedColumns: string[] = [
     // 🔹 Fetch data for Aggregated Table
     this.http.get<AggregatedMedExecutionModel[]>(`${environment.apiUrl}MedExecutionAPI/GetAggregatedData`, { params }).subscribe(
       data => {
-      // after the GET to GetAggregatedData
-this.aggregatedData = data.map((item: any) => ({
-  Unit_Satellite_Name: item.Unit_Satellite_Name ?? item.unit_Satellite_Name,
-  Generic_Name_ForDisplay: item.Generic_Name_ForDisplay ?? item.generic_Name_ForDisplay,
-  Way_Of_Giving: item.Way_Of_Giving ?? item.way_Of_Giving,
-  Dosage_Unit_InOrder: item.Dosage_Unit_InOrder ?? item.dosage_Unit_InOrder,
-  Dosage_InOrder: item.Dosage_InOrder ?? item.dosage_InOrder,
-  Count_Dosage_InOrder: item.Count_Dosage_InOrder ?? item.count_Dosage_InOrder,
-  Sum_Dosage_InOrder2: item.Sum_Dosage_InOrder2 ?? item.sum_Dosage_InOrder2,
-}));
-this.aggregatedDataSource.data = [...this.aggregatedData];
-
+        this.aggregatedData = data.map((item: any) => ({
+          unit_Satellite_Name:     item.unit_Satellite_Name     ?? item.Unit_Satellite_Name,
+          generic_Name_ForDisplay: item.generic_Name_ForDisplay ?? item.Generic_Name_ForDisplay,
+          way_Of_Giving:           item.way_Of_Giving           ?? item.Way_Of_Giving,
+          dosage_Unit_InOrder:     item.dosage_Unit_InOrder     ?? item.Dosage_Unit_InOrder,
+          dosage_InOrder:          item.dosage_InOrder          ?? item.Dosage_InOrder,
+          count_Dosage_InOrder:    item.count_Dosage_InOrder    ?? item.Count_Dosage_InOrder,
+          sum_Dosage_InOrder2:     item.sum_Dosage_InOrder2     ?? item.Sum_Dosage_InOrder2,
+        }));
+        this.aggregatedDataSource.data = [...this.aggregatedData];
       },
       error => {
         console.error('Error loading aggregated data:', error);
       }
     );
+    
     
   }
   
@@ -443,16 +440,17 @@ this.aggregatedDataSource.data = [...this.aggregatedData];
 
   getColumnLabel(column: string): string {
     const columnLabels: Record<string, string> = {
-      Basic_Name: 'Basic Name',
-      Drug: 'Drug',
-      Execution_Date: 'Execution Date',
-      Category_Name: 'Category Name',
-      Execution_UnitName: 'Execution Unit Name',
-      Admission_No: 'Admission No',
-      Generic_Name_ForDisplay: 'Generic Name'
+      basic_Name: 'Basic Name',
+      drug: 'Drug',
+      execution_Date: 'Execution Date',
+      category_Name: 'Category Name',
+      execution_UnitName: 'Execution Unit Name',
+      admission_No: 'Admission No',
+      generic_Name_ForDisplay: 'Generic Name'
     };
     return columnLabels[column] || column;
   }
+  
 
   resetFilters() {
     this.filterForm.reset();
@@ -481,13 +479,13 @@ this.aggregatedDataSource.data = [...this.aggregatedData];
 
   exportToExcel2() {
     const exportData = this.aggregatedDataSource.data.map(item => ({
-      'Unit Satellite Name': item.Unit_Satellite_Name,
-      'Generic Name For Display': item.Generic_Name_ForDisplay,
-      'Way Of Giving': item.Way_Of_Giving,
-      'Dosage Unit In Order': item.Dosage_Unit_InOrder,
-      'Dosage In Order': item.Dosage_InOrder,
-      'Count of Dosage In Order': item.Count_Dosage_InOrder, // ✅ Ensure correct mapping
-      'Total Dosage Sum': item.Sum_Dosage_InOrder2
+      'Unit Satellite Name': item.unit_Satellite_Name,
+      'Generic Name For Display': item.generic_Name_ForDisplay,
+      'Way Of Giving': item.way_Of_Giving,
+      'Dosage Unit In Order': item.dosage_Unit_InOrder,
+      'Dosage In Order': item.dosage_InOrder,
+      'Count of Dosage In Order': item.count_Dosage_InOrder, // ✅ Ensure correct mapping
+      'Total Dosage Sum': item.sum_Dosage_InOrder2
     }));
   
     const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(exportData);
@@ -535,22 +533,17 @@ this.aggregatedDataSource.data = [...this.aggregatedData];
 
   filterUnitSatelliteNames(selectedUnitSatelliteNames: string[]): void {
     if (selectedUnitSatelliteNames.length > 0) {
-      // 🔹 Filter Main Table
       this.dataSource.data = this.originalData.filter(item =>
-        selectedUnitSatelliteNames.includes(item.Unit_Satellite_Name)
+        selectedUnitSatelliteNames.includes(item.unit_Satellite_Name)
       );
   
-      // 🔹 Filter Aggregated Table
       this.aggregatedDataSource.data = this.aggregatedData.filter(item =>
-        selectedUnitSatelliteNames.includes(item.Unit_Satellite_Name)
+        selectedUnitSatelliteNames.includes(item.unit_Satellite_Name)
       );
     } else {
-      // 🔹 Restore Original Data in Both Tables
       this.dataSource.data = [...this.originalData];
       this.aggregatedDataSource.data = [...this.aggregatedData];
     }
-  
-    // Update total results count
     this.totalResults = this.dataSource.data.length;
   }
   
