@@ -117,7 +117,7 @@ icd9WithEstimationPercentage: number = 0;
     'id_Num',
     'first_Name',
     'last_Name',
-    'iCD9',
+    'icD9',
     'name',
     'release_Date',
     'unitName',
@@ -135,16 +135,8 @@ icd9WithEstimationPercentage: number = 0;
   ];
   
   displayedColumnsAllConsiliums: string[] = [
-    'id_Num',
-    'first_Name',
-    'last_Name',
-    'unitName',
-    'question',
-    'diagnosis_Text',
-    'consulted_Unit',
-    'entry_Date',
-    'answer_Text',
-    'answer_Date',
+    'id_Num','first_Name','last_Name','unitName',
+    'entry_Date','question','diagnosis_Text','consulted_Unit','answer_Text','answer_Date'
   ];
   
   displayedColumnsBelow70: string[] = [
@@ -200,7 +192,7 @@ icd9WithEstimationPercentage: number = 0;
     // 'Id_Num',
     'first_Name',
     'last_Name',
-    'iCD9',
+    'icD9',
     'diagnosisName',
     // 'Entry_Date',
     'release_Date',
