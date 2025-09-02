@@ -28,6 +28,7 @@ interface FormControls {
 export class MainSurgeryComponent implements OnInit {
 
   isLoading = true;
+  kerenOptions: string[] = [];
 
   // 👤 User/profile (you can overwrite these from your auth service/localStorage)
   UserName = 'משתמש';
@@ -105,6 +106,7 @@ allFields: string[] = [
         .subscribe(() => this.applyFilters());
     });
 
+
     // Global + range filters
     this.filterForm.get('globalFilter')?.valueChanges
       .pipe(debounceTime(300), distinctUntilChanged())
@@ -117,6 +119,9 @@ allFields: string[] = [
     this.filterForm.get('toDate')?.valueChanges
       .pipe(debounceTime(100), distinctUntilChanged())
       .subscribe(() => this.applyFilters());
+      this.filterForm.get('KerenFilter')?.valueChanges
+  .pipe(debounceTime(50))
+  .subscribe(() => this.applyFilters());
   }
   onSplashDone() {
     // do something after splash hides, if you want
@@ -150,6 +155,12 @@ allFields: string[] = [
         this.dataSource = data || [];
         //this.filteredData = [...this.dataSource];
         //this.matTableDataSource = new MatTableDataSource(this.filteredData);
+        // ✅ Build Keren options AFTER data arrives
+this.kerenOptions = Array.from(new Set(
+  (this.dataSource || [])
+    .map(r => (r.keren ?? r.Keren ?? r['KEREN'] ?? '').toString().trim())
+    .filter(v => v.length > 0)
+)).sort((a, b) => a.localeCompare(b, 'he'));
         this.applyFilters();
 
         this.matTableDataSource.paginator = this.paginator;
@@ -219,6 +230,8 @@ const kw   = (this.filterForm.get('surgeryName')?.value || this.filterForm.get('
     formControls['fromDate'] = new FormControl(from);  // last 30 days start
     formControls['toDate'] = new FormControl(to);      // today end-of-day
     formControls['DepartmentFilter'] = new FormControl<string[]>([]);
+    formControls['KerenFilter'] = new FormControl<string[]>([]);
+
   
     return this.fb.group(formControls);
   }
@@ -301,7 +314,13 @@ if (depSel.length) {
   if (!match) return false;
 }
 
-  
+  // Keren multi-select
+const kerenSel: string[] = this.filterForm.get('KerenFilter')?.value || [];
+if (kerenSel.length) {
+  const curKeren = (item['keren'] ?? '').toString().toLowerCase();
+  const matchK = kerenSel.some(k => (k || '').toLowerCase() === curKeren);
+  if (!matchK) return false;
+}
       return true;
     });
   
@@ -326,7 +345,9 @@ if (depSel.length) {
     this.filterForm.reset();
     this.filterForm.get('pageSize')?.setValue(pageSize);
     this.filterForm.get('globalFilter')?.setValue('');
-    this.filterForm.get('DepartmentFilter')?.setValue([]);   // NEW
+    this.filterForm.get('DepartmentFilter')?.setValue([]);   
+    this.filterForm.get('KerenFilter')?.setValue([]);
+
 
     this.applyFilters();
   }
