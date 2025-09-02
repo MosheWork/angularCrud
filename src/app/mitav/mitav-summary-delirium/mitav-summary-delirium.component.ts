@@ -90,7 +90,7 @@ dateTo: Date | null = null;
     this.http.get<any[]>(`${environment.apiUrl}MitavSummary/GeriatricConsiliumsRaw`).subscribe(
       (res: any[]) => {
         const filtered = res.filter(entry => {
-          const date = new Date(entry.Entry_Date);
+          const date = new Date(entry.entry_Date);
           if (!date || isNaN(date.getTime())) return false;
   
           const year = date.getFullYear();
@@ -104,7 +104,7 @@ dateTo: Date | null = null;
         console.log('📊 Filtered rows:', filtered.length);
         console.log('📊 Raw rows:', res.length);
         console.log(filtered);
-console.log(filtered.map(row => row.Admission_No));
+console.log(filtered.map(row => row.admission_No));
   
         // ✅ Your Row_IDs should already be unique thanks to SQL, but you can wrap a Set if you want safety:
         const totalConsiliums = filtered.length;
@@ -114,11 +114,11 @@ console.log(filtered.map(row => row.Admission_No));
           console.warn('⚠️ Row_ID duplicates found in response! Double-check your SQL join.');
         }
   
-        const uniqueAdmissions = new Set(filtered.map(row => row.Admission_No)).size;
+        const uniqueAdmissions = new Set(filtered.map(row => row.admission_No)).size;
   
         this.geriatricSummary = {
-          UniqueAdmissions: uniqueAdmissions,
-          TotalConsiliums: totalConsiliums
+          uniqueAdmissions: uniqueAdmissions,
+          totalConsiliums: totalConsiliums
         };
   
         console.log('✅ Geriatric Summary:', this.geriatricSummary);
@@ -144,22 +144,22 @@ console.log(filtered.map(row => row.Admission_No));
     const data = this.deliriumData;
     console.log('📊 Delirium Data sample:', this.deliriumData.slice(0, 5));
     this.totalPatients75Plus = data.length;
-    this.screenedForDelirium = data.filter(p => p.Grade !== null).length;
-    this.diagnosedWithDelirium = data.filter(p => (p.PatientWithDelirium || '').trim() === 'כן').length;
+    this.screenedForDelirium = data.filter(p => p.grade !== null).length;
+    this.diagnosedWithDelirium = data.filter(p => (p.patientWithDelirium || '').trim() === 'כן').length;
     this.treatedDelirium = data.filter(p =>
-      p.PatientWithDelirium === 'כן' &&
-      p.PreventionORInterventionCAM &&
-      p.PreventionORInterventionCAM.trim() !== 'לא בוצע'
+      p.patientWithDelirium === 'כן' &&
+      p.preventionORInterventionCAM &&
+      p.preventionORInterventionCAM.trim() !== 'לא בוצע'
     ).length;
     this.treatedWithDrug = data.filter(p =>
-      p.PatientWithDelirium === 'כן' &&
-      typeof p.PreventionORInterventionCAM === 'string' &&
-      p.PreventionORInterventionCAM.includes('התערבות')
+      p.patientWithDelirium === 'כן' &&
+      typeof p.preventionORInterventionCAM === 'string' &&
+      p.preventionORInterventionCAM.includes('התערבות')
     ).length;   
     this.treatedWithoutDrug = data.filter(p =>
-      p.PatientWithDelirium === 'כן' &&
-      typeof p.PreventionORInterventionCAM === 'string' &&
-      p.PreventionORInterventionCAM.includes('מניעה')
+      p.patientWithDelirium === 'כן' &&
+      typeof p.preventionORInterventionCAM === 'string' &&
+      p.preventionORInterventionCAM.includes('מניעה')
     ).length;  
     const summary: any = {
       '75-84': { זכר: { total: 0, screened: 0, delirium: 0, treated: 0 }, נקבה: { total: 0, screened: 0, delirium: 0, treated: 0 } },
@@ -167,8 +167,8 @@ console.log(filtered.map(row => row.Admission_No));
     };
   
     data.forEach(p => {
-      const ageGroup = p.Age_Years >= 85 ? '85+' : '75-84';
-      const gender = (p.Gender_Text || '').trim();
+      const ageGroup = p.age_Years >= 85 ? '85+' : '75-84';
+      const gender = (p.gender_Text || '').trim();
   
       if (!summary[ageGroup]) summary[ageGroup] = {};
       if (!summary[ageGroup][gender]) {
@@ -176,9 +176,9 @@ console.log(filtered.map(row => row.Admission_No));
       }
   
       summary[ageGroup][gender].total++;
-      if (p.Grade !== null) summary[ageGroup][gender].screened++;
-      if (p.PatientWithDelirium === 'כן') summary[ageGroup][gender].delirium++;
-      if (p.PatientWithDelirium === 'כן' && p.DrugForDelirium === 'כן') {
+      if (p.grade !== null) summary[ageGroup][gender].screened++;
+      if (p.patientWithDelirium === 'כן') summary[ageGroup][gender].delirium++;
+      if (p.patientWithDelirium === 'כן' && p.drugForDelirium === 'כן') {
         summary[ageGroup][gender].treated++;
       }
           });
@@ -236,8 +236,8 @@ console.log(filtered.map(row => row.Admission_No));
     };
   
     this.deliriumData.forEach((p: any) => {
-      const ageGroup = p.Age_Years >= 85 ? '85+' : '75-84';
-      const days = p.TotalHospDays;
+      const ageGroup = p.age_Years >= 85 ? '85+' : '75-84';
+      const days = p.totalHospDays;
   
       let category = '';
       if (days <= 3) category = 'days3';
@@ -245,7 +245,7 @@ console.log(filtered.map(row => row.Admission_No));
       else category = 'days6plus';
   
       summary[ageGroup].total[category]++;
-      if (p.Grade !== null) {
+      if (p.grade !== null) {
         summary[ageGroup].screened[category]++;
       }
     });
@@ -296,8 +296,8 @@ calculateSummaryByStay(): void {
   };
 
   this.deliriumData.forEach(p => {
-    const ageGroup = p.Age_Years >= 85 ? '85+' : '75-84';
-    const days = p.TotalHospDays;
+    const ageGroup = p.age_Years >= 85 ? '85+' : '75-84';
+    const days = p.totalHospDays;
     let category = '';
     if (days <= 3) category = 'days3';
     else if (days >= 4 && days <= 5) category = 'days4to5';
@@ -305,10 +305,10 @@ calculateSummaryByStay(): void {
 
     if (!category) return;
 
-    if (p.PatientWithDelirium === 'כן') {
+    if (p.patientWithDelirium === 'כן') {
       summary[ageGroup].delirium[category]++;
     }
-    if (p.PatientWithDelirium === 'כן' && p.DrugForDelirium === 'כן') {
+    if (p.patientWithDelirium === 'כן' && p.drugForDelirium === 'כן') {
       summary[ageGroup].treated[category]++;
     }
   });
@@ -349,9 +349,9 @@ applyFilter(): void {
   const data = this.originalData;
 
   this.filteredData = data.filter((row: any) => {
-    if (!row.ATD_Admission_Date) return false;
+    if (!row.atD_Admission_Date) return false;
 
-    const date = new Date(row.ATD_Admission_Date);
+    const date = new Date(row.atD_Admission_Date);
     if (isNaN(date.getTime())) return false;
 
     const year = date.getFullYear();

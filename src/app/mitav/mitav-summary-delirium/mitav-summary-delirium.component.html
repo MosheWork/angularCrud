@@ -1,300 +1,304 @@
 <app-spinner [isLoading]="isLoading"></app-spinner>
 
-<div *ngIf="!isLoading" class="body">
-
-  <mat-card class="filter-card" dir="rtl">
+<div *ngIf="!isLoading" class="body" dir="rtl">
+  <!-- Filters -->
+  <mat-card class="filter-card">
     <mat-card-content class="filters">
       <div class="filter-fields">
-  
         <mat-form-field>
           <mat-label>שנה</mat-label>
           <mat-select [(value)]="selectedYear">
-            <mat-option [value]="null">הכל</mat-option>
+            <mat-option [value]="null">הכול</mat-option>
             <mat-option *ngFor="let y of availableYears" [value]="y.value">{{ y.label }}</mat-option>
           </mat-select>
         </mat-form-field>
-  
+
         <mat-form-field>
           <mat-label>רבעון</mat-label>
           <mat-select [(value)]="selectedQuarter">
-            <mat-option [value]="null">הכל</mat-option>
+            <mat-option [value]="null">הכול</mat-option>
             <mat-option *ngFor="let q of availableQuarters" [value]="q.value">{{ q.label }}</mat-option>
           </mat-select>
         </mat-form-field>
-  
+
         <button mat-raised-button color="primary" (click)="applyFilter()">סנן</button>
-  
-        <img src="../../assets/excel.png" alt="Download" (click)="exportAllTables()" class="download-icon icon" width="50px" style="margin-right: 10px;" />
-  
+
+        <img
+          src="../../assets/excel.png"
+          alt="הורדה"
+          (click)="exportAllTables()"
+          class="download-icon icon"
+          width="50"
+          style="margin-right: 10px;"
+        />
       </div>
     </mat-card-content>
   </mat-card>
-  
-  <!-- 🔹 Summary Section -->
-  <mat-card class="summary-card" dir="rtl">
+
+  <!-- 1. Summary -->
+  <mat-card class="summary-card">
     <mat-card-content>
       <h3>1. סיקור דליריום וטיפול בו</h3>
       <table class="summary-table">
-        <tr>
-          <th>תיאור</th>
-          <th>לוגיקה</th>
-        </tr>
-        <tr>
-          <td>סה"כ המאושפזים בגיל 75+</td>
-          <td>{{ totalPatients75Plus }}</td>
-        </tr>
-        <tr>
-          <td>סה"כ המאושפזים בגיל 75+ שעברו סיקור לדליריום</td>
-          <td>{{ screenedForDelirium }}</td>
-        </tr>
-        <tr>
-          <td>סה"כ המאושפזים בגיל 75+ שאובחנו עם דליריום</td>
-          <td>{{ diagnosedWithDelirium }}</td>
-        </tr>
-        <tr>
-          <td>סה"כ שקיבלו טיפול לדליריום (כולל לא-תרופתי)</td>
-          <td>{{ treatedDelirium }}</td>
-        </tr>
-        <tr>
-          <td>סה"כ שקיבלו טיפול תרופתי לדליריום</td>
-          <td>{{ treatedWithDrug }}</td>
-        </tr>
-        <tr>
-          <td>סה"כ שקיבלו טיפול לא-תרופתי לדליריום</td>
-          <td>{{ treatedWithoutDrug }}</td>
-        </tr>
+        <thead>
+          <tr>
+            <th>תיאור</th>
+            <th>ערך</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>סה"כ המאושפזים בגיל 75+</td>
+            <td>{{ totalPatients75Plus }}</td>
+          </tr>
+          <tr>
+            <td>סה"כ המאושפזים בגיל 75+ שעברו סיקור לדליריום</td>
+            <td>{{ screenedForDelirium }}</td>
+          </tr>
+          <tr>
+            <td>סה"כ המאושפזים בגיל 75+ שאובחנו עם דליריום</td>
+            <td>{{ diagnosedWithDelirium }}</td>
+          </tr>
+          <tr>
+            <td>סה"כ שטופלו לדליריום (כולל טיפול לא-תרופתי)</td>
+            <td>{{ treatedDelirium }}</td>
+          </tr>
+          <tr>
+            <td>סה"כ שקיבלו טיפול תרופתי לדליריום</td>
+            <td>{{ treatedWithDrug }}</td>
+          </tr>
+          <tr>
+            <td>סה"כ שקיבלו טיפול לא-תרופתי לדליריום</td>
+            <td>{{ treatedWithoutDrug }}</td>
+          </tr>
+        </tbody>
       </table>
     </mat-card-content>
   </mat-card>
-  <h2 class="table-title">2. משתתפים בתכנית למניעה, איתור וטיפול בדלריום, לפי מין וגיל</h2>
 
-  <table mat-table [dataSource]="genderAgeSummary" class="mat-elevation-z8" dir="rtl">
-  
-    <!-- Grouped Header Row -->
+  <!-- 2. By Gender & Age -->
+  <h2 class="table-title">2. משתתפים לפי מין וגיל</h2>
+
+  <table mat-table [dataSource]="genderAgeSummary" class="mat-elevation-z8">
+    <!-- Grouped headers row -->
     <ng-container matColumnDef="groupedHeader1">
-      <th mat-header-cell *matHeaderCellDef [attr.colspan]="1" class="group-header"> אוכלוסיית מאושפזים </th>
-    </ng-container>
-  
-    <ng-container matColumnDef="groupedHeader2">
-      <th mat-header-cell *matHeaderCellDef [attr.colspan]="2" class="group-header"> סה"כ מאושפזים בני 75+ בבית החולים </th>
-    </ng-container>
-  
-    <ng-container matColumnDef="groupedHeader3">
-      <th mat-header-cell *matHeaderCellDef [attr.colspan]="2" class="group-header"> סה"כ מאושפזים שעברו סיקור לדיליריום </th>
-    </ng-container>
-  
-    <ng-container matColumnDef="groupedHeader4">
-      <th mat-header-cell *matHeaderCellDef [attr.colspan]="2" class="group-header"> סה"כ מאושפזים שאובחנו עם דליריום </th>
-    </ng-container>
-  
-    <ng-container matColumnDef="groupedHeader5">
-      <th mat-header-cell *matHeaderCellDef [attr.colspan]="2" class="group-header"> סה"כ מאושפזים שטופלו לדליריום </th>
-    </ng-container>
-  
-    <!-- Column Headers -->
-    <ng-container matColumnDef="ageGroup">
-      <th mat-header-cell *matHeaderCellDef> גיל / מין </th>
-      <td mat-cell *matCellDef="let row"> {{ row.ageGroup }} </td>
-    </ng-container>
-  
-    <ng-container matColumnDef="totalMale">
-      <th mat-header-cell *matHeaderCellDef> זכר </th>
-      <td mat-cell *matCellDef="let row"> {{ row.totalMale }} </td>
-    </ng-container>
-    <ng-container matColumnDef="totalFemale">
-      <th mat-header-cell *matHeaderCellDef> נקבה </th>
-      <td mat-cell *matCellDef="let row"> {{ row.totalFemale }} </td>
-    </ng-container>
-  
-    <ng-container matColumnDef="screenedMale">
-      <th mat-header-cell *matHeaderCellDef> זכר </th>
-      <td mat-cell *matCellDef="let row"> {{ row.screenedMale }} </td>
-    </ng-container>
-    <ng-container matColumnDef="screenedFemale">
-      <th mat-header-cell *matHeaderCellDef> נקבה </th>
-      <td mat-cell *matCellDef="let row"> {{ row.screenedFemale }} </td>
-    </ng-container>
-  
-    <ng-container matColumnDef="deliriumMale">
-      <th mat-header-cell *matHeaderCellDef> זכר </th>
-      <td mat-cell *matCellDef="let row"> {{ row.deliriumMale }} </td>
-    </ng-container>
-    <ng-container matColumnDef="deliriumFemale">
-      <th mat-header-cell *matHeaderCellDef> נקבה </th>
-      <td mat-cell *matCellDef="let row"> {{ row.deliriumFemale }} </td>
-    </ng-container>
-  
-    <ng-container matColumnDef="treatedMale">
-      <th mat-header-cell *matHeaderCellDef> זכר </th>
-      <td mat-cell *matCellDef="let row"> {{ row.treatedMale }} </td>
-    </ng-container>
-    <ng-container matColumnDef="treatedFemale">
-      <th mat-header-cell *matHeaderCellDef> נקבה </th>
-      <td mat-cell *matCellDef="let row"> {{ row.treatedFemale }} </td>
-    </ng-container>
-  
-    <!-- First header row: Grouped headers -->
-    <tr mat-header-row *matHeaderRowDef="['groupedHeader1', 'groupedHeader2', 'groupedHeader3', 'groupedHeader4', 'groupedHeader5']"></tr>
-  
-    <!-- Second header row: Actual column names -->
-    <tr mat-header-row *matHeaderRowDef="['ageGroup', 'totalMale', 'totalFemale', 'screenedMale', 'screenedFemale', 'deliriumMale', 'deliriumFemale', 'treatedMale', 'treatedFemale']"></tr>
-  
-    <!-- Data Rows -->
-    <tr mat-row *matRowDef="let row; columns: ['ageGroup', 'totalMale', 'totalFemale', 'screenedMale', 'screenedFemale', 'deliriumMale', 'deliriumFemale', 'treatedMale', 'treatedFemale']"></tr>
-  
-  </table>
-  
-  <div class="table-wrapper">
-    <h2 class="table-title">3. א. משתתפים בתכנית למניעה, איתור וטיפול בדיליריום, לפי גיל ומשך האשפוז</h2>
-  
-    <table mat-table [dataSource]="lengthOfStaySummary" class="mat-elevation-z8" dir="rtl">
-  
-      <!-- GROUP HEADERS -->
-      <ng-container matColumnDef="group-header1">
-        <th mat-header-cell *matHeaderCellDef colspan="1" class="group-header">אוכלוסיית מאושפזים</th>
-      </ng-container>
-  
-      <ng-container matColumnDef="group-header2">
-        <th mat-header-cell *matHeaderCellDef colspan="3" class="group-header">סה"כ מאושפזים בני 75+ בבית החולים</th>
-      </ng-container>
-  
-      <ng-container matColumnDef="group-header3">
-        <th mat-header-cell *matHeaderCellDef colspan="3" class="group-header">סה"כ מאושפזים שעברו סיקור לדיליריום</th>
-      </ng-container>
-  
-      <!-- DATA COLUMNS -->
-      <ng-container matColumnDef="ageGroup">
-        <th mat-header-cell *matHeaderCellDef> גיל / משך אשפוז </th>
-        <td mat-cell *matCellDef="let row"> {{ row.ageGroup }} </td>
-      </ng-container>
-  
-      <ng-container matColumnDef="totalDays3">
-        <th mat-header-cell *matHeaderCellDef> עד 3 ימים </th>
-        <td mat-cell *matCellDef="let row"> {{ row.totalDays3 }} </td>
-      </ng-container>
-  
-      <ng-container matColumnDef="totalDays4to5">
-        <th mat-header-cell *matHeaderCellDef> 4-5 ימים </th>
-        <td mat-cell *matCellDef="let row"> {{ row.totalDays4to5 }} </td>
-      </ng-container>
-  
-      <ng-container matColumnDef="totalDays6plus">
-        <th mat-header-cell *matHeaderCellDef> 6 ימים ומעלה </th>
-        <td mat-cell *matCellDef="let row"> {{ row.totalDays6plus }} </td>
-      </ng-container>
-  
-      <ng-container matColumnDef="screenedDays3">
-        <th mat-header-cell *matHeaderCellDef> עד 3 ימים </th>
-        <td mat-cell *matCellDef="let row"> {{ row.screenedDays3 }} </td>
-      </ng-container>
-  
-      <ng-container matColumnDef="screenedDays4to5">
-        <th mat-header-cell *matHeaderCellDef> 4-5 ימים </th>
-        <td mat-cell *matCellDef="let row"> {{ row.screenedDays4to5 }} </td>
-      </ng-container>
-  
-      <ng-container matColumnDef="screenedDays6plus">
-        <th mat-header-cell *matHeaderCellDef> 6 ימים ומעלה </th>
-        <td mat-cell *matCellDef="let row"> {{ row.screenedDays6plus }} </td>
-      </ng-container>
-  
-      <!-- HEADER ROWS -->
-      <tr mat-header-row *matHeaderRowDef="['group-header1', 'group-header2', 'group-header3']"></tr>
-      <tr mat-header-row *matHeaderRowDef="['ageGroup', 'totalDays3', 'totalDays4to5', 'totalDays6plus', 'screenedDays3', 'screenedDays4to5', 'screenedDays6plus']"></tr>
-  
-      <!-- DATA ROWS -->
-      <tr mat-row *matRowDef="let row; columns: ['ageGroup', 'totalDays3', 'totalDays4to5', 'totalDays6plus', 'screenedDays3', 'screenedDays4to5', 'screenedDays6plus'];"></tr>
-  
-    </table>
-
-  </div>
-  <div class="table-wrapper">
-  <h2 class="table-title">3. ב. משתתפים בתכנית למניעה, איתור וטיפול בדליריום, לפי גיל ומשך האשפוז</h2>
-
-  <!-- First header row (merged groups) -->
-  <table mat-table [dataSource]="lengthOfStayDeliriumTable" class="mat-elevation-z8" dir="rtl">
-    <ng-container matColumnDef="group-header">
       <th mat-header-cell *matHeaderCellDef colspan="1" class="group-header">אוכלוסיית מאושפזים</th>
     </ng-container>
 
-    <ng-container matColumnDef="group-delirium">
-      <th mat-header-cell *matHeaderCellDef colspan="3" class="group-header">סה"כ מאושפזים שאובחנו עם דליריום</th>
+    <ng-container matColumnDef="groupedHeader2">
+      <th mat-header-cell *matHeaderCellDef colspan="2" class="group-header">סה"כ מאושפזים בני 75+</th>
     </ng-container>
 
-    <ng-container matColumnDef="group-treated">
-      <th mat-header-cell *matHeaderCellDef colspan="3" class="group-header">סה"כ מאושפזים שטופלו לדליריום</th>
+    <ng-container matColumnDef="groupedHeader3">
+      <th mat-header-cell *matHeaderCellDef colspan="2" class="group-header">עברו סיקור לדליריום</th>
     </ng-container>
 
-    <tr mat-header-row *matHeaderRowDef="['group-header', 'group-delirium', 'group-treated']"></tr>
+    <ng-container matColumnDef="groupedHeader4">
+      <th mat-header-cell *matHeaderCellDef colspan="2" class="group-header">אובחנו עם דליריום</th>
+    </ng-container>
 
-    <!-- Second header row (column names) -->
+    <ng-container matColumnDef="groupedHeader5">
+      <th mat-header-cell *matHeaderCellDef colspan="2" class="group-header">טופלו לדליריום</th>
+    </ng-container>
+
+    <!-- Data columns -->
     <ng-container matColumnDef="ageGroup">
-      <th mat-header-cell *matHeaderCellDef> גיל / משך אשפוז </th>
-      <td mat-cell *matCellDef="let row"> {{ row.ageGroup }} </td>
+      <th mat-header-cell *matHeaderCellDef>גיל / מין</th>
+      <td mat-cell *matCellDef="let row">{{ row.ageGroup }}</td>
     </ng-container>
 
-    <ng-container matColumnDef="deliriumDays3">
-      <th mat-header-cell *matHeaderCellDef> עד 3 ימים </th>
-      <td mat-cell *matCellDef="let row"> {{ row.deliriumDays3 }} </td>
+    <ng-container matColumnDef="totalMale">
+      <th mat-header-cell *matHeaderCellDef>זכר</th>
+      <td mat-cell *matCellDef="let row">{{ row.totalMale }}</td>
     </ng-container>
 
-    <ng-container matColumnDef="deliriumDays4to5">
-      <th mat-header-cell *matHeaderCellDef> 4-5 ימים </th>
-      <td mat-cell *matCellDef="let row"> {{ row.deliriumDays4to5 }} </td>
+    <ng-container matColumnDef="totalFemale">
+      <th mat-header-cell *matHeaderCellDef>נקבה</th>
+      <td mat-cell *matCellDef="let row">{{ row.totalFemale }}</td>
     </ng-container>
 
-    <ng-container matColumnDef="deliriumDays6plus">
-      <th mat-header-cell *matHeaderCellDef> 6 ימים ומעלה </th>
-      <td mat-cell *matCellDef="let row"> {{ row.deliriumDays6plus }} </td>
+    <ng-container matColumnDef="screenedMale">
+      <th mat-header-cell *matHeaderCellDef>זכר</th>
+      <td mat-cell *matCellDef="let row">{{ row.screenedMale }}</td>
     </ng-container>
 
-    <ng-container matColumnDef="treatedDays3">
-      <th mat-header-cell *matHeaderCellDef> עד 3 ימים </th>
-      <td mat-cell *matCellDef="let row"> {{ row.treatedDays3 }} </td>
+    <ng-container matColumnDef="screenedFemale">
+      <th mat-header-cell *matHeaderCellDef>נקבה</th>
+      <td mat-cell *matCellDef="let row">{{ row.screenedFemale }}</td>
     </ng-container>
 
-    <ng-container matColumnDef="treatedDays4to5">
-      <th mat-header-cell *matHeaderCellDef> 4-5 ימים </th>
-      <td mat-cell *matCellDef="let row"> {{ row.treatedDays4to5 }} </td>
+    <ng-container matColumnDef="deliriumMale">
+      <th mat-header-cell *matHeaderCellDef>זכר</th>
+      <td mat-cell *matCellDef="let row">{{ row.deliriumMale }}</td>
     </ng-container>
 
-    <ng-container matColumnDef="treatedDays6plus">
-      <th mat-header-cell *matHeaderCellDef> 6 ימים ומעלה </th>
-      <td mat-cell *matCellDef="let row"> {{ row.treatedDays6plus }} </td>
+    <ng-container matColumnDef="deliriumFemale">
+      <th mat-header-cell *matHeaderCellDef>נקבה</th>
+      <td mat-cell *matCellDef="let row">{{ row.deliriumFemale }}</td>
     </ng-container>
 
-    <!-- Second header row -->
-    <tr mat-header-row *matHeaderRowDef="['ageGroup', 'deliriumDays3', 'deliriumDays4to5', 'deliriumDays6plus', 'treatedDays3', 'treatedDays4to5', 'treatedDays6plus']"></tr>
+    <ng-container matColumnDef="treatedMale">
+      <th mat-header-cell *matHeaderCellDef>זכר</th>
+      <td mat-cell *matCellDef="let row">{{ row.treatedMale }}</td>
+    </ng-container>
 
-    <!-- Data row -->
-    <tr mat-row *matRowDef="let row; columns: ['ageGroup', 'deliriumDays3', 'deliriumDays4to5', 'deliriumDays6plus', 'treatedDays3', 'treatedDays4to5', 'treatedDays6plus'];"></tr>
+    <ng-container matColumnDef="treatedFemale">
+      <th mat-header-cell *matHeaderCellDef>נקבה</th>
+      <td mat-cell *matCellDef="let row">{{ row.treatedFemale }}</td>
+    </ng-container>
+
+    <!-- Header rows -->
+    <tr mat-header-row *matHeaderRowDef="['groupedHeader1','groupedHeader2','groupedHeader3','groupedHeader4','groupedHeader5']"></tr>
+    <tr mat-header-row *matHeaderRowDef="['ageGroup','totalMale','totalFemale','screenedMale','screenedFemale','deliriumMale','deliriumFemale','treatedMale','treatedFemale']"></tr>
+
+    <!-- Data rows -->
+    <tr mat-row *matRowDef="let row; columns: ['ageGroup','totalMale','totalFemale','screenedMale','screenedFemale','deliriumMale','deliriumFemale','treatedMale','treatedFemale']"></tr>
   </table>
-</div>
 
-<h3 class="table-title">
-    4. ייעוצים גריאטרים למאושפזים בני 75+ בבית החולים
-  </h3>
-  
-  <table class="mat-elevation-z8 summary-table " dir="rtl">
+  <!-- 3a. Length of stay — screened -->
+  <div class="table-wrapper">
+    <h2 class="table-title">3. א. לפי גיל ומשך אשפוז — מאושפזים ונבדקו</h2>
+
+    <table mat-table [dataSource]="lengthOfStaySummary" class="mat-elevation-z8">
+      <!-- Group headers -->
+      <ng-container matColumnDef="group-header1">
+        <th mat-header-cell *matHeaderCellDef colspan="1" class="group-header">אוכלוסיית מאושפזים</th>
+      </ng-container>
+
+      <ng-container matColumnDef="group-header2">
+        <th mat-header-cell *matHeaderCellDef colspan="3" class="group-header">סה"כ מאושפזים בני 75+</th>
+      </ng-container>
+
+      <ng-container matColumnDef="group-header3">
+        <th mat-header-cell *matHeaderCellDef colspan="3" class="group-header">עברו סיקור לדליריום</th>
+      </ng-container>
+
+      <!-- Data columns -->
+      <ng-container matColumnDef="ageGroup">
+        <th mat-header-cell *matHeaderCellDef>גיל / משך אשפוז</th>
+        <td mat-cell *matCellDef="let row">{{ row.ageGroup }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="totalDays3">
+        <th mat-header-cell *matHeaderCellDef>עד 3 ימים</th>
+        <td mat-cell *matCellDef="let row">{{ row.totalDays3 }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="totalDays4to5">
+        <th mat-header-cell *matHeaderCellDef>4–5 ימים</th>
+        <td mat-cell *matCellDef="let row">{{ row.totalDays4to5 }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="totalDays6plus">
+        <th mat-header-cell *matHeaderCellDef>6 ימים ומעלה</th>
+        <td mat-cell *matCellDef="let row">{{ row.totalDays6plus }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="screenedDays3">
+        <th mat-header-cell *matHeaderCellDef>עד 3 ימים</th>
+        <td mat-cell *matCellDef="let row">{{ row.screenedDays3 }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="screenedDays4to5">
+        <th mat-header-cell *matHeaderCellDef>4–5 ימים</th>
+        <td mat-cell *matCellDef="let row">{{ row.screenedDays4to5 }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="screenedDays6plus">
+        <th mat-header-cell *matHeaderCellDef>6 ימים ומעלה</th>
+        <td mat-cell *matCellDef="let row">{{ row.screenedDays6plus }}</td>
+      </ng-container>
+
+      <!-- Header rows -->
+      <tr mat-header-row *matHeaderRowDef="['group-header1','group-header2','group-header3']"></tr>
+      <tr mat-header-row *matHeaderRowDef="['ageGroup','totalDays3','totalDays4to5','totalDays6plus','screenedDays3','screenedDays4to5','screenedDays6plus']"></tr>
+
+      <!-- Data rows -->
+      <tr mat-row *matRowDef="let row; columns: ['ageGroup','totalDays3','totalDays4to5','totalDays6plus','screenedDays3','screenedDays4to5','screenedDays6plus']"></tr>
+    </table>
+  </div>
+
+  <!-- 3b. Length of stay — delirium & treated -->
+  <div class="table-wrapper">
+    <h2 class="table-title">3. ב. לפי גיל ומשך אשפוז — אובחנו וטופלו לדליריום</h2>
+
+    <table mat-table [dataSource]="lengthOfStayDeliriumTable" class="mat-elevation-z8">
+      <!-- Group headers -->
+      <ng-container matColumnDef="group-header">
+        <th mat-header-cell *matHeaderCellDef colspan="1" class="group-header">אוכלוסיית מאושפזים</th>
+      </ng-container>
+
+      <ng-container matColumnDef="group-delirium">
+        <th mat-header-cell *matHeaderCellDef colspan="3" class="group-header">אובחנו עם דליריום</th>
+      </ng-container>
+
+      <ng-container matColumnDef="group-treated">
+        <th mat-header-cell *matHeaderCellDef colspan="3" class="group-header">טופלו לדליריום</th>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="['group-header','group-delirium','group-treated']"></tr>
+
+      <!-- Data columns -->
+      <ng-container matColumnDef="ageGroup">
+        <th mat-header-cell *matHeaderCellDef>גיל / משך אשפוז</th>
+        <td mat-cell *matCellDef="let row">{{ row.ageGroup }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="deliriumDays3">
+        <th mat-header-cell *matHeaderCellDef>עד 3 ימים</th>
+        <td mat-cell *matCellDef="let row">{{ row.deliriumDays3 }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="deliriumDays4to5">
+        <th mat-header-cell *matHeaderCellDef>4–5 ימים</th>
+        <td mat-cell *matCellDef="let row">{{ row.deliriumDays4to5 }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="deliriumDays6plus">
+        <th mat-header-cell *matHeaderCellDef>6 ימים ומעלה</th>
+        <td mat-cell *matCellDef="let row">{{ row.deliriumDays6plus }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="treatedDays3">
+        <th mat-header-cell *matHeaderCellDef>עד 3 ימים</th>
+        <td mat-cell *matCellDef="let row">{{ row.treatedDays3 }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="treatedDays4to5">
+        <th mat-header-cell *matHeaderCellDef>4–5 ימים</th>
+        <td mat-cell *matCellDef="let row">{{ row.treatedDays4to5 }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="treatedDays6plus">
+        <th mat-header-cell *matHeaderCellDef>6 ימים ומעלה</th>
+        <td mat-cell *matCellDef="let row">{{ row.treatedDays6plus }}</td>
+      </ng-container>
+
+      <!-- Headers & rows -->
+      <tr mat-header-row *matHeaderRowDef="['ageGroup','deliriumDays3','deliriumDays4to5','deliriumDays6plus','treatedDays3','treatedDays4to5','treatedDays6plus']"></tr>
+      <tr mat-row *matRowDef="let row; columns: ['ageGroup','deliriumDays3','deliriumDays4to5','deliriumDays6plus','treatedDays3','treatedDays4to5','treatedDays6plus']"></tr>
+    </table>
+  </div>
+
+  <!-- 4. Geriatric consiliums -->
+  <h3 class="table-title">4. ייעוצים גריאטריים למאושפזים בני 75+</h3>
+
+  <table class="mat-elevation-z8 summary-table">
     <thead>
       <tr>
-        <th>סה"כ מאושפזים 75+ בבית החולים שקיבלו ייעוץ גריאטרי</th>
-        <th>סה"כ ייעוצים גריאטרים שניתנו</th>
-        <th>כמות הייעוצים שבוצעו ע"י רופא/ה מומחה/ית בגריאטריה</th>
-        <th>כמות הייעוצים שבוצעו ע"י אח/ות מומחה קליני בסיעוד גריאטרי</th>
+        <th>סה"כ מאושפזים 75+ שקיבלו ייעוץ גריאטרי</th>
+        <th>סה"כ ייעוצים גריאטריים</th>
+        <th>ייעוצים ע"י רופא/ה מומחה/ית בגריאטריה</th>
+        <th>ייעוצים ע"י אח/ות מומחה/ית קליני/ת בסיעוד גריאטרי</th>
       </tr>
     </thead>
     <tbody>
       <tr>
-        <td>{{ geriatricSummary?.UniqueAdmissions || 0 }}</td>
-        <td>{{ geriatricSummary?.TotalConsiliums || 0 }}</td>
-        <td>{{ geriatricSummary?.TotalConsiliums || 0 }}</td> 
+        <td>{{ geriatricSummary?.uniqueAdmissions || 0 }}</td>
+        <td>{{ geriatricSummary?.totalConsiliums || 0 }}</td>
+        <td>{{ geriatricSummary?.totalConsiliums || 0 }}</td>
         <td>0</td>
-        
-
       </tr>
     </tbody>
   </table>
-
-
 </div>
