@@ -6,7 +6,6 @@ import { MatTableDataSource } from '@angular/material/table';
 import { MatSort } from '@angular/material/sort';
 import { environment } from '../../../environments/environment';
 import * as XLSX from 'xlsx';
-import { NgxGaugeModule } from 'ngx-gauge';
 
 @Component({
   selector: 'app-mitav-geriatric',
@@ -17,42 +16,57 @@ export class MitavGeriatricComponent implements OnInit {
   title: string = 'דאשבורד גריאטריה ';
   totalResults: number = 0;
   isLoading: boolean = true;
+
+  // table datasource (after mapping to camel keys)
   dataSource: MatTableDataSource<any> = new MatTableDataSource();
+  originalData: any[] = [];
+
+  // dropdowns
   unitOptions: string[] = [];
+
+  // gauges + stats
   filteredPercentage: number = 0;
   validGeriatricCount: number = 0;
   invalidGeriatricCount: number = 0;
   totalGeriatricCases: number = 0;
   geriatricAssessmentGauge: number = 0;
-  // Additional gauges
-delayUnder24hPercentage: number = 0;
-delay24to48hPercentage: number = 0;
-delayOver48hPercentage: number = 0;
-under24Count: number = 0;
-from24to48Count: number = 0;
-over48Count: number = 0;
-  displayedColumns: string[] = [
-    'ATD_Admission_Date', 'Admission_No', 'Age_Years', 'PrimaryUnit_Name', 'GeriatricConsultation',
-    'GeriatricConsultationOpenDate','Answer_Date','AnswerDelayInHours'
 
+  delayUnder24hPercentage: number = 0;
+  delay24to48hPercentage: number = 0;
+  delayOver48hPercentage: number = 0;
+  under24Count: number = 0;
+  from24to48Count: number = 0;
+  over48Count: number = 0;
+
+  // displayed columns (camel)
+  displayedColumns: string[] = [
+    'atdAdmissionDate',
+    'admissionNo',
+    'ageYears',
+    'primaryUnitName',
+    'geriatricConsultation',
+    'geriatricConsultationOpenDate',
+    'answerDate',
+    'answerDelayInHours'
   ];
 
+  // labels map
   columnLabels: { [key: string]: string } = {
-    ATD_Admission_Date: 'תאריך קבלה',
-    Admission_No: 'מספר מקרה',
-    Age_Years: 'גיל',
-    PrimaryUnit_Name: 'מחלקה',
-    GeriatricConsultation: 'ייעוץ גריאטרי',
-    GeriatricConsultationOpenDate: 'ייעוץ גריאטרי',
-    Answer_Date: 'ייעוץ גריאטרי',
-    AnswerDelayInHours: 'ייעוץ גריאטרי',
+    atdAdmissionDate: 'תאריך קבלה',
+    admissionNo: 'מספר מקרה',
+    ageYears: 'גיל',
+    primaryUnitName: 'מחלקה',
+    geriatricConsultation: 'ייעוץ גריאטרי',
+    geriatricConsultationOpenDate: 'תאריך פתיחת הייעוץ',
+    answerDate: 'תאריך תשובה על הייעוץ',
+    answerDelayInHours: 'הפרש בשעות בין פתיחת לתשובה',
   };
-
+  
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
   @ViewChild('pdfTable', { static: false }) pdfTable!: ElementRef;
 
-  // Filters
+  // Filters (template-driven + helper state)
   filterForm: FormGroup;
   departmentList: string[] = [];
   selectedDepartments: string[] = [];
@@ -61,7 +75,6 @@ over48Count: number = 0;
   yearList: number[] = [];
   startDate: Date | null = null;
   endDate: Date | null = null;
-  originalData: any[] = [];
   globalFilterValue: string = '';
 
   constructor(private http: HttpClient, private fb: FormBuilder) {
@@ -72,35 +85,48 @@ over48Count: number = 0;
 
   ngOnInit(): void {
     this.loadData();
-   
   }
 
+  // ------- Load + normalize keys from backend to camel -------
   loadData(): void {
     this.isLoading = true;
     this.http.get<any[]>(`${environment.apiUrl}MitavGeriatric`).subscribe(
       (data) => {
-        this.dataSource = new MatTableDataSource(data);
-        this.originalData = data;
-        this.totalResults = data.length;
-        this.unitOptions = [...new Set(data.map((item) => item.PrimaryUnit_Name))].sort();
-        this.updateGeriatricGauge()
-        // Extract years for filtering
+        // 🔄 normalize all incoming records to clean camelCase keys
+        const normalized = (data || []).map(r => ({
+          atdAdmissionDate: r.atD_Admission_Date ?? r.ATD_Admission_Date ?? null,
+          admissionNo: r.admission_No ?? r.Admission_No ?? null,
+          ageYears: r.age_Years ?? r.Age_Years ?? null,
+          primaryUnitName: r.primaryUnit_Name ?? r.PrimaryUnit_Name ?? null,
+          geriatricConsultation: r.geriatricConsultation ?? r.GeriatricConsultation ?? null,
+          geriatricConsultationOpenDate: r.geriatricConsultationOpenDate ?? r.GeriatricConsultationOpenDate ?? null,
+          answerDate: r.answer_Date ?? r.Answer_Date ?? null,
+          answerDelayInHours: r.answerDelayInHours ?? r.AnswerDelayInHours ?? null,
+        }));
+  
+        this.dataSource = new MatTableDataSource(normalized);
+        this.originalData = normalized;
+        this.totalResults = normalized.length;
+  
+        // ⬇ options & years based on normalized keys
+        this.departmentList = Array.from(new Set(
+          normalized
+            .map(i => (i.primaryUnitName ?? '').trim())
+            .filter(v => v.length > 0)
+        )).sort((a, b) => a.localeCompare(b, 'he'));  
         const years = new Set<number>();
-        data.forEach(item => {
-          if (item.ATD_Admission_Date) {
-            years.add(new Date(item.ATD_Admission_Date).getFullYear());
-          }
+        normalized.forEach(i => {
+          if (i.atdAdmissionDate) years.add(new Date(i.atdAdmissionDate).getFullYear());
         });
         this.yearList = Array.from(years).sort((a, b) => b - a);
-
-        this.departmentList = Array.from(new Set(data.map((item) => item.PrimaryUnit_Name || 'Unknown')));
-
+  
         setTimeout(() => {
           this.dataSource.paginator = this.paginator;
           this.dataSource.sort = this.sort;
         });
-
+  
         this.calculateGeriatricPercentage();
+        this.updateGeriatricGauge();
         this.isLoading = false;
       },
       (error) => {
@@ -109,67 +135,88 @@ over48Count: number = 0;
       }
     );
   }
+  
+
+  // ------- Filters -------
+  applyGlobalFilter(event: Event): void {
+    const filterValue = (event.target as HTMLInputElement).value.trim().toLowerCase();
+    this.globalFilterValue = filterValue;
+    this.dataSource.filterPredicate = (row, _) => {
+      if (!this.globalFilterValue) return true;
+      return Object.values(row).some(v => (v ?? '').toString().toLowerCase().includes(this.globalFilterValue));
+    };
+    this.dataSource.filter = Math.random().toString(); // trigger
+    this.totalResults = this.dataSource.filteredData.length;
+    this.updateGeriatricGauge();
+  }
 
   applyFilters(): void {
     let filteredData = [...this.originalData];
-  
-    // ✅ Apply Date Filter
+
+    // date range
     if (this.startDate || this.endDate) {
       filteredData = filteredData.filter((item) => {
-        const admissionDate = item.ATD_Admission_Date ? new Date(item.ATD_Admission_Date) : null;
-        const start = this.startDate ? new Date(this.startDate.setHours(0, 0, 0, 0)) : null;
-        const end = this.endDate ? new Date(this.endDate.setHours(23, 59, 59, 999)) : null;
-  
+        const admissionDate = item.atdAdmissionDate ? new Date(item.atdAdmissionDate) : null;
+        const start = this.startDate ? new Date(this.startDate) : null;
+        const end = this.endDate ? new Date(this.endDate) : null;
+        if (start) start.setHours(0, 0, 0, 0);
+        if (end) end.setHours(23, 59, 59, 999);
+
         return (
           (!start || (admissionDate && admissionDate >= start)) &&
           (!end || (admissionDate && admissionDate <= end))
         );
       });
     }
-  
-    // ✅ Apply Department Filter
+
+    // departments
     if (this.selectedDepartments.length > 0) {
       filteredData = filteredData.filter((item) =>
-        this.selectedDepartments.includes(item.PrimaryUnit_Name)
+        this.selectedDepartments.includes(item.primaryUnitName)
       );
     }
-  
-    // ✅ Apply Year Filter
+
+    // year
     if (this.selectedYear) {
       filteredData = filteredData.filter((item) => {
-        const admissionYear = item.ATD_Admission_Date ? new Date(item.ATD_Admission_Date).getFullYear() : null;
+        const admissionYear = item.atdAdmissionDate ? new Date(item.atdAdmissionDate).getFullYear() : null;
         return admissionYear === this.selectedYear;
       });
     }
-  
-    // ✅ Fix Quarter Filter to Ensure `selectedQuarter` is Not Null
-    if (this.selectedQuarter) {
-      const quarterMapping: { [key: string]: number[] } = {
-        'רבעון 1': [1, 2, 3],
-        'רבעון 2': [4, 5, 6],
-        'רבעון 3': [7, 8, 9],
-        'רבעון 4': [10, 11, 12]
-      };
-  
-      if (this.selectedQuarter in quarterMapping) { // ✅ Ensure `selectedQuarter` exists in the mapping
-        filteredData = filteredData.filter((item) => {
-          const admissionMonth = item.ATD_Admission_Date ? new Date(item.ATD_Admission_Date).getMonth() + 1 : null;
-          return admissionMonth && quarterMapping[this.selectedQuarter as keyof typeof quarterMapping].includes(admissionMonth);
-        });
-      }
-    }
-  
-    // ✅ Update the filtered data
-    this.dataSource.data = filteredData;
-  
-    // ✅ Update Gauge Data
-    this.totalResults = this.dataSource.filteredData.length;
 
-      // ✅ Update Gauge
-  this.updateGeriatricGauge();
+// Quarter filter (typed mapping + explicit narrowing)
+if (this.selectedQuarter) {
+  const quarterMapping: Record<'רבעון 1' | 'רבעון 2' | 'רבעון 3' | 'רבעון 4', number[]> = {
+    'רבעון 1': [1, 2, 3],
+    'רבעון 2': [4, 5, 6],
+    'רבעון 3': [7, 8, 9],
+    'רבעון 4': [10, 11, 12],
+  };
+
+  const q = this.selectedQuarter as 'רבעון 1' | 'רבעון 2' | 'רבעון 3' | 'רבעון 4';
+  const months = quarterMapping[q];
+
+  filteredData = filteredData.filter((item) => {
+    const month = item.atdAdmissionDate
+      ? new Date(item.atdAdmissionDate).getMonth() + 1
+      : null;
+    if (month === null) return false;     // 🔒 ensure it's a number
+    return months.includes(month);        // ✅ months: number[], month: number
+  });
+}
+
+
+    // apply to table
+    this.dataSource.data = filteredData;
+
+    // re-apply global text filter if exists
+    if (this.globalFilterValue) {
+      this.applyGlobalFilter({ target: { value: this.globalFilterValue } } as any as Event);
+    } else {
+      this.totalResults = this.dataSource.filteredData.length;
+      this.updateGeriatricGauge();
+    }
   }
-  
-  
 
   resetFilters(): void {
     this.filterForm.reset();
@@ -178,72 +225,69 @@ over48Count: number = 0;
     this.selectedQuarter = null;
     this.startDate = null;
     this.endDate = null;
-    this.applyFilters();
-    this.updateGeriatricGauge();
+    this.globalFilterValue = '';
 
+    this.dataSource.data = [...this.originalData];
+    this.totalResults = this.dataSource.filteredData.length;
+    this.updateGeriatricGauge();
   }
 
+  // ------- Stats & Gauges -------
   calculateGeriatricPercentage(): void {
     const total = this.dataSource.filteredData.length;
-    const withConsultation = this.dataSource.filteredData.filter(item => item.GeriatricConsultation === 'כן').length;
+    const withConsultation = this.dataSource.filteredData
+      .filter(item => item.geriatricConsultation === 'כן').length;
     this.filteredPercentage = total > 0 ? (withConsultation / total) * 100 : 0;
   }
 
-  applyGlobalFilter(event: Event): void {
-    const filterValue = (event.target as HTMLInputElement).value.trim().toLowerCase();
-    this.dataSource.filter = filterValue;
-    this.totalResults = this.dataSource.filteredData.length; // ✅ Update total results dynamically
-  }
   updateGeriatricGauge(): void {
     this.totalGeriatricCases = this.dataSource.filteredData.length;
-  
-    // All patients with a consultation marked as 'כן'
-    const geriatricYesCases = this.dataSource.filteredData.filter(item => item.GeriatricConsultation === 'כן');
-  
-    this.validGeriatricCount = geriatricYesCases.length;
+
+    // only rows with yes
+    const yesCases = this.dataSource.filteredData
+      .filter(item => item.geriatricConsultation === 'כן');
+
+    this.validGeriatricCount = yesCases.length;
     this.invalidGeriatricCount = this.totalGeriatricCases - this.validGeriatricCount;
-  
+
     this.geriatricAssessmentGauge = this.totalGeriatricCases > 0
-    ? Math.round((this.validGeriatricCount / this.totalGeriatricCases) * 100)
-    : 0;
-  
-  
-    // ✅ Filter only those that have a numeric AnswerDelayInHours
-    const delayCases = geriatricYesCases.filter(item =>
-      item.AnswerDelayInHours !== 'אין ייעוץ' && !isNaN(Number(item.AnswerDelayInHours))
+      ? Math.round((this.validGeriatricCount / this.totalGeriatricCases) * 100)
+      : 0;
+
+    // delay buckets (numbers only)
+    const delayCases = yesCases.filter(item =>
+      item.answerDelayInHours !== 'אין ייעוץ' && !isNaN(Number(item.answerDelayInHours))
     );
-  
-    // ✅ Count buckets
-    this.under24Count = delayCases.filter(item => Number(item.AnswerDelayInHours) < 24).length;
-    this.from24to48Count = delayCases.filter(item =>
-      Number(item.AnswerDelayInHours) >= 24 && Number(item.AnswerDelayInHours) <= 48
-    ).length;
-    this.over48Count = delayCases.filter(item => Number(item.AnswerDelayInHours) > 48).length;
-  
-    // ✅ Calculate percentages
+
+    this.under24Count = delayCases.filter(i => Number(i.answerDelayInHours) < 24).length;
+    this.from24to48Count = delayCases.filter(i => {
+      const v = Number(i.answerDelayInHours);
+      return v >= 24 && v <= 48;
+    }).length;
+    this.over48Count = delayCases.filter(i => Number(i.answerDelayInHours) > 48).length;
+
     this.delayUnder24hPercentage = this.validGeriatricCount > 0
-    ? Math.round((this.under24Count / this.validGeriatricCount) * 100)
-    : 0;
-  
-  this.delay24to48hPercentage = this.validGeriatricCount > 0
-    ? Math.round((this.from24to48Count / this.validGeriatricCount) * 100)
-    : 0;
-  
-  this.delayOver48hPercentage = this.validGeriatricCount > 0
-    ? Math.round((this.over48Count / this.validGeriatricCount) * 100)
-    : 0;
-  
+      ? Math.round((this.under24Count / this.validGeriatricCount) * 100)
+      : 0;
+    this.delay24to48hPercentage = this.validGeriatricCount > 0
+      ? Math.round((this.from24to48Count / this.validGeriatricCount) * 100)
+      : 0;
+    this.delayOver48hPercentage = this.validGeriatricCount > 0
+      ? Math.round((this.over48Count / this.validGeriatricCount) * 100)
+      : 0;
   }
-  
-  
+
   geriatricAssessmentGaugeColor(): string {
-    if (this.geriatricAssessmentGauge >= 75) {
-      return '#28a745'; // ✅ Green
-    } else if (this.geriatricAssessmentGauge >= 50) {
-      return '#ffc107'; // ✅ Orange
-    } else {
-      return '#dc3545'; // ✅ Red
-    }
+    if (this.geriatricAssessmentGauge >= 75) return '#28a745'; // green
+    if (this.geriatricAssessmentGauge >= 50) return '#ffc107'; // orange
+    return '#dc3545'; // red
   }
-  
+
+  // ------- Export -------
+  exportToExcel(): void {
+    const dataToExport = this.dataSource.filteredData;
+    const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(dataToExport);
+    const workbook: XLSX.WorkBook = { Sheets: { 'דו"ח גריאטריה': worksheet }, SheetNames: ['דו"ח גריאטריה'] };
+    XLSX.writeFile(workbook, 'דו"ח_גריאטריה.xlsx');
+  }
 }

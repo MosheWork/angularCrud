@@ -1,25 +1,22 @@
 <app-spinner [isLoading]="isLoading"></app-spinner>
 
-
 <div *ngIf="!isLoading" class="body">
-    <div class="nine">
-        <h1>דאשבורד מיתב - ייעוץ גריאטרי </h1>
+  <div class="nine">
+    <h1>דאשבורד מיתב - ייעוץ גריאטרי</h1>
+  </div>
 
-    </div>
-  
-    <!-- ✅ Wrap filters inside a form with [formGroup]="filterForm" -->
- <!-- Filters Section -->
-<div class="filter-card">
+  <!-- Filters Section -->
+  <div class="filter-card">
     <div dir="rtl" class="card mat-elevation-z8">
       <div class="card-body">
         <div class="filter-container">
-  
+
           <!-- Global Search -->
           <mat-form-field appearance="outline">
             <mat-label>Search</mat-label>
             <input matInput (keyup)="applyGlobalFilter($event)" placeholder="Search across all columns">
           </mat-form-field>
-  
+
           <!-- Department Multi-Select -->
           <mat-form-field class="filter-field">
             <mat-label>בחר מחלקות</mat-label>
@@ -29,7 +26,7 @@
               </mat-option>
             </mat-select>
           </mat-form-field>
-  
+
           <!-- Start Date Filter -->
           <mat-form-field class="filter-field">
             <mat-label>תאריך התחלה</mat-label>
@@ -37,7 +34,7 @@
             <mat-datepicker-toggle matSuffix [for]="startDatePicker"></mat-datepicker-toggle>
             <mat-datepicker #startDatePicker></mat-datepicker>
           </mat-form-field>
-  
+
           <!-- End Date Filter -->
           <mat-form-field class="filter-field">
             <mat-label>תאריך סיום</mat-label>
@@ -45,7 +42,7 @@
             <mat-datepicker-toggle matSuffix [for]="endDatePicker"></mat-datepicker-toggle>
             <mat-datepicker #endDatePicker></mat-datepicker>
           </mat-form-field>
-  
+
           <!-- Year Filter -->
           <mat-form-field class="filter-field">
             <mat-label>בחר שנה</mat-label>
@@ -55,7 +52,7 @@
               </mat-option>
             </mat-select>
           </mat-form-field>
-  
+
           <!-- Quarter Filter -->
           <mat-form-field class="filter-field">
             <mat-label>בחר רבעון</mat-label>
@@ -65,24 +62,23 @@
               </mat-option>
             </mat-select>
           </mat-form-field>
-  
+
           <!-- Filter Buttons -->
           <div class="filter-buttons" style="margin-top: 10px; text-align: right;">
             <button mat-raised-button color="warn" (click)="resetFilters()">איפוס</button>
+            <img src="../../assets/excel.png" alt="Download" (click)="exportToExcel()" class="download-icon" width="50px" />
           </div>
-  
+
         </div>
       </div>
     </div>
   </div>
-  
 
+  <!-- Gauges -->
   <div class="gauge-section">
     <mat-card class="gauge-card">
-  
       <div class="gauge-row">
-  
-        <!-- 🟢 Overall Geriatric Consultation -->
+        <!-- Overall Geriatric Consultation -->
         <div class="gauge-item">
           <div class="gauge-title">ייעוץ גריאטרי</div>
           <ngx-gauge
@@ -91,14 +87,14 @@
             [max]="100"
             [label]="''"
             [append]="'%'"
-            [foregroundColor]="geriatricAssessmentGaugeColor()"> 
+            [foregroundColor]="geriatricAssessmentGaugeColor()">
           </ngx-gauge>
           <div class="gauge-info">
             <strong> תקין {{ validGeriatricCount }} / לא תקין {{ invalidGeriatricCount }} / סה"כ - {{ totalGeriatricCases }} </strong>
           </div>
         </div>
-  
-        <!-- ⏱️ Under 24h -->
+
+        <!-- Under 24h -->
         <div class="gauge-item">
           <div class="gauge-title">מענה מתחת ל-24 שעות</div>
           <ngx-gauge
@@ -107,14 +103,14 @@
             [max]="100"
             [label]="''"
             [append]="'%'"
-            [foregroundColor]="geriatricAssessmentGaugeColor()"> 
+            [foregroundColor]="geriatricAssessmentGaugeColor()">
           </ngx-gauge>
           <div class="gauge-info">
             <strong>{{ under24Count }} / סה"כ - {{ validGeriatricCount }}</strong>
           </div>
         </div>
-  
-        <!-- ⏱️ 24–48h -->
+
+        <!-- 24–48h -->
         <div class="gauge-item">
           <div class="gauge-title">מענה בין 24 ל-48 שעות</div>
           <ngx-gauge
@@ -123,14 +119,14 @@
             [max]="100"
             [label]="''"
             [append]="'%'"
-            [foregroundColor]="geriatricAssessmentGaugeColor()"> 
+            [foregroundColor]="geriatricAssessmentGaugeColor()">
           </ngx-gauge>
           <div class="gauge-info">
             <strong>{{ from24to48Count }} / סה"כ - {{ validGeriatricCount }}</strong>
           </div>
         </div>
-  
-        <!-- ⏱️ Over 48h -->
+
+        <!-- Over 48h -->
         <div class="gauge-item">
           <div class="gauge-title">מענה אחרי יותר מ-48 שעות</div>
           <ngx-gauge
@@ -139,62 +135,63 @@
             [max]="100"
             [label]="''"
             [append]="'%'"
-            [foregroundColor]="geriatricAssessmentGaugeColor()"> 
+            [foregroundColor]="geriatricAssessmentGaugeColor()">
           </ngx-gauge>
           <div class="gauge-info">
             <strong>{{ over48Count }} / סה"כ - {{ validGeriatricCount }}</strong>
           </div>
         </div>
-  
-      </div> <!-- End of gauge-row -->
-  
+
+      </div>
     </mat-card>
   </div>
-  
-    <!-- ✅ Data Table -->
-    <mat-table [dataSource]="dataSource" matSort class="mat-elevation-z8" dir="rtl">
-      
-      <ng-container matColumnDef="ATD_Admission_Date">
-        <mat-header-cell *matHeaderCellDef mat-sort-header>תאריך קבלה</mat-header-cell>
-        <mat-cell *matCellDef="let element"> {{ element.ATD_Admission_Date | date: 'dd/MM/yyyy HH:mm' }} </mat-cell>
-      </ng-container>
-  
-      <ng-container matColumnDef="Admission_No">
-        <mat-header-cell *matHeaderCellDef mat-sort-header>מספר מקרה</mat-header-cell>
-        <mat-cell *matCellDef="let element"> {{ element.Admission_No }} </mat-cell>
-      </ng-container>
-  
-      <ng-container matColumnDef="Age_Years">
-        <mat-header-cell *matHeaderCellDef mat-sort-header>גיל</mat-header-cell>
-        <mat-cell *matCellDef="let element"> {{ element.Age_Years }} </mat-cell>
-      </ng-container>
-  
-      <ng-container matColumnDef="PrimaryUnit_Name">
-        <mat-header-cell *matHeaderCellDef mat-sort-header>מחלקה</mat-header-cell>
-        <mat-cell *matCellDef="let element"> {{ element.PrimaryUnit_Name }} </mat-cell>
-      </ng-container>
-  
-      <ng-container matColumnDef="GeriatricConsultation">
-        <mat-header-cell *matHeaderCellDef mat-sort-header>ייעוץ גריאטרי</mat-header-cell>
-        <mat-cell *matCellDef="let element"> {{ element.GeriatricConsultation }} </mat-cell>
-      </ng-container>
-      <ng-container matColumnDef="GeriatricConsultationOpenDate">
-        <mat-header-cell *matHeaderCellDef mat-sort-header> תאריך פתיחת הייעוץ</mat-header-cell>
-        <mat-cell *matCellDef="let element"> {{ element.GeriatricConsultationOpenDate }} </mat-cell>
-      </ng-container>
-      
-      <ng-container matColumnDef="Answer_Date">
-        <mat-header-cell *matHeaderCellDef mat-sort-header>תאריך תשובה על הייעוץ</mat-header-cell>
-        <mat-cell *matCellDef="let element"> {{ element.Answer_Date }} </mat-cell>
-      </ng-container>
-      <ng-container matColumnDef="AnswerDelayInHours">
-        <mat-header-cell *matHeaderCellDef mat-sort-header>הפרש בשעות בין פתיחת לתשובה </mat-header-cell>
-        <mat-cell *matCellDef="let element"> {{ element.AnswerDelayInHours }} </mat-cell>
-      </ng-container>
-      <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-      <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
-    </mat-table>
-  
-    <mat-paginator [pageSizeOptions]="[5, 25, 50]" showFirstLastButtons></mat-paginator>
-  </div>
- 
+
+  <!-- Table -->
+  <mat-table [dataSource]="dataSource" matSort class="mat-elevation-z8" dir="rtl">
+
+    <ng-container matColumnDef="atdAdmissionDate">
+      <mat-header-cell *matHeaderCellDef mat-sort-header>{{ columnLabels['atdAdmissionDate'] }}</mat-header-cell>
+      <mat-cell *matCellDef="let element"> {{ element.atdAdmissionDate | date: 'dd/MM/yyyy HH:mm' }} </mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="admissionNo">
+      <mat-header-cell *matHeaderCellDef mat-sort-header>{{ columnLabels['admissionNo'] }}</mat-header-cell>
+      <mat-cell *matCellDef="let element"> {{ element.admissionNo }} </mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="ageYears">
+      <mat-header-cell *matHeaderCellDef mat-sort-header>{{ columnLabels['ageYears'] }}</mat-header-cell>
+      <mat-cell *matCellDef="let element"> {{ element.ageYears }} </mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="primaryUnitName">
+      <mat-header-cell *matHeaderCellDef mat-sort-header>{{ columnLabels['primaryUnitName'] }}</mat-header-cell>
+      <mat-cell *matCellDef="let element"> {{ element.primaryUnitName }} </mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="geriatricConsultation">
+      <mat-header-cell *matHeaderCellDef mat-sort-header>{{ columnLabels['geriatricConsultation'] }}</mat-header-cell>
+      <mat-cell *matCellDef="let element"> {{ element.geriatricConsultation }} </mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="geriatricConsultationOpenDate">
+      <mat-header-cell *matHeaderCellDef mat-sort-header>{{ columnLabels['geriatricConsultationOpenDate'] }}</mat-header-cell>
+      <mat-cell *matCellDef="let element"> {{ element.geriatricConsultationOpenDate }} </mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="answerDate">
+      <mat-header-cell *matHeaderCellDef mat-sort-header>{{ columnLabels['answerDate'] }}</mat-header-cell>
+      <mat-cell *matCellDef="let element"> {{ element.answerDate }} </mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="answerDelayInHours">
+      <mat-header-cell *matHeaderCellDef mat-sort-header>{{ columnLabels['answerDelayInHours'] }}</mat-header-cell>
+      <mat-cell *matCellDef="let element"> {{ element.answerDelayInHours }} </mat-cell>
+    </ng-container>
+
+    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+    <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+  </mat-table>
+
+  <mat-paginator [pageSizeOptions]="[5, 25, 50]" showFirstLastButtons></mat-paginator>
+</div>

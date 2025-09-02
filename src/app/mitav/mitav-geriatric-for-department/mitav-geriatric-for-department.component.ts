@@ -23,17 +23,16 @@ export class MitavGeriatricForDepartmentComponent implements OnInit {
   invalidCAMCount: number = 0;
   totalCAMCases: number = 0;
   displayedColumns: string[] = [
-    'ATD_Admission_Date', 'Admission_No', 'Age_Years', 'PrimaryUnit_Name', 'GeriatricConsultation'
+    'atD_Admission_Date', 'admission_No', 'age_Years', 'primaryUnit_Name', 'geriatricConsultation'
   ];
 
   columnLabels: { [key: string]: string } = {
-    ATD_Admission_Date: 'תאריך קבלה',
-    Admission_No: 'מספר מקרה',
-    Age_Years: 'גיל',
-    PrimaryUnit_Name: 'מחלקה',
-    GeriatricConsultation: 'ייעוץ גריאטרי'
+    atD_Admission_Date: 'תאריך קבלה',
+    admission_No: 'מספר מקרה',
+    age_Years: 'גיל',
+    primaryUnit_Name: 'מחלקה',
+    geriatricConsultation: 'ייעוץ גריאטרי'
   };
-
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
   @ViewChild('pdfTable', { static: false }) pdfTable!: ElementRef;
@@ -60,7 +59,7 @@ export class MitavGeriatricForDepartmentComponent implements OnInit {
         this.totalResults = data.length;
         this.calculateCAMStats();
 
-        this.unitOptions = [...new Set(data.map((item) => item.PrimaryUnit_Name))].sort();
+        this.unitOptions = [...new Set(data.map((item) => item.primaryUnit_Name))].sort();
         setTimeout(() => {
           this.dataSource.paginator = this.paginator;
           this.dataSource.sort = this.sort;
@@ -88,7 +87,8 @@ export class MitavGeriatricForDepartmentComponent implements OnInit {
       const matchesGlobalFilter = !filterObject.global || Object.values(data).some(
         (value) => value && value.toString().toLowerCase().includes(filterObject.global)
       );
-      const matchesUnitFilter = !filterObject.unit || (data.PrimaryUnit_Name && data.PrimaryUnit_Name === filterObject.unit);
+      const matchesUnitFilter = !filterObject.unit || 
+      (data.primaryUnit_Name && data.primaryUnit_Name === filterObject.unit);
       return matchesGlobalFilter && matchesUnitFilter;
     };
 
@@ -120,7 +120,7 @@ export class MitavGeriatricForDepartmentComponent implements OnInit {
 
   calculateCAMStats(): void {
     const total = this.dataSource.filteredData.length;
-    const valid = this.dataSource.filteredData.filter((row) => row.GeriatricConsultation === 'כן').length;
+    const valid = this.dataSource.filteredData.filter((row) => row.geriatricConsultation === 'כן').length;
     const invalid = total - valid;
   
     this.validCAMCount = valid;
@@ -134,7 +134,7 @@ export class MitavGeriatricForDepartmentComponent implements OnInit {
     return this.camAssessmentGauge >= 50 ? 'green' : 'red';
   }
   isDateColumn(column: string): boolean {
-    const dateColumns = ['ATD_Admission_Date']; // ✅ Add all date column names here
+    const dateColumns = ['aTD_Admission_Date']; // ✅ Add all date column names here
     return dateColumns.includes(column);
   }
   
