@@ -18,46 +18,39 @@ export class NutritionistReportComponent implements OnInit, AfterViewInit {
   filterForm: FormGroup;
   availableYears: number[] = [2023, 2024, 2025];
   months = [
-    { name: 'ינואר', value: 1 },
-    { name: 'פברואר', value: 2 },
-    { name: 'מרץ', value: 3 },
-    { name: 'אפריל', value: 4 },
-    { name: 'מאי', value: 5 },
-    { name: 'יוני', value: 6 },
-    { name: 'יולי', value: 7 },
-    { name: 'אוגוסט', value: 8 },
-    { name: 'ספטמבר', value: 9 },
-    { name: 'אוקטובר', value: 10 },
-    { name: 'נובמבר', value: 11 },
-    { name: 'דצמבר', value: 12 }
+    { name: 'ינואר', value: 1 }, { name: 'פברואר', value: 2 }, { name: 'מרץ', value: 3 },
+    { name: 'אפריל', value: 4 }, { name: 'מאי', value: 5 }, { name: 'יוני', value: 6 },
+    { name: 'יולי', value: 7 }, { name: 'אוגוסט', value: 8 }, { name: 'ספטמבר', value: 9 },
+    { name: 'אוקטובר', value: 10 }, { name: 'נובמבר', value: 11 }, { name: 'דצמבר', value: 12 }
   ];
 
   summaryDataSource = new MatTableDataSource<any>([]);
   detailedDataSource = new MatTableDataSource<any>([]);
 
-  summaryColumns: string[] = ['EmployeeName', 'Simple', 'Complex', 'VeryComplex', 'Team'];
-  detailedColumns: string[] = ['AdmissionNo', 'IdNum', 'FirstName', 'LastName', 'EmployeeName', 'Entry_Date', 'AnswerType'];
+  // 🔻 columns use lower-first keys
+  summaryColumns: string[] = ['employeeName', 'simple', 'complex', 'veryComplex', 'team'];
+  detailedColumns: string[] = ['admissionNo', 'idNum', 'firstName', 'lastName', 'employeeName', 'entry_Date', 'answerType'];
 
+  // 🔻 display maps use the same lower-first keys
   columnDisplayNamesSummary: { [key: string]: string } = {
-    EmployeeName: 'שם עובד',
-    Simple: 'טיפול פשוט',
-    Complex: 'טיפול מורכב',
-    VeryComplex: 'טיפול מורכב מאוד',
-     Team: 'טיפול קבוצתי'
-
+    employeeName: 'שם עובד',
+    simple: 'טיפול פשוט',
+    complex: 'טיפול מורכב',
+    veryComplex: 'טיפול מורכב מאוד',
+    team: 'טיפול קבוצתי'
   };
 
   columnDisplayNamesDetail: { [key: string]: string } = {
-    AdmissionNo: 'מספר מקרה',
-    IdNum: 'מספר זהות',
-    FirstName: 'שם פרטי',
-    LastName: 'שם משפחה',
-    EmployeeName: 'שם העובד',
-    Entry_Date: 'תאריך כניסה',
-    AnswerType: 'סוג תשובה'
+    admissionNo: 'מספר מקרה',
+    idNum: 'מספר זהות',
+    firstName: 'שם פרטי',
+    lastName: 'שם משפחה',
+    employeeName: 'שם העובד',
+    entry_Date: 'תאריך כניסה',
+    answerType: 'סוג תשובה'
   };
 
-  columnDisplayNames: { [key: string]: string } = {}; // will be initialized in constructor
+  columnDisplayNames: { [key: string]: string } = {};
 
   @ViewChild('summaryPaginator') summaryPaginator!: MatPaginator;
   @ViewChild('summarySort') summarySort!: MatSort;
@@ -71,7 +64,6 @@ export class NutritionistReportComponent implements OnInit, AfterViewInit {
       month: new FormControl(null)
     });
 
-    // ✅ Correct way to initialize merged map
     this.columnDisplayNames = {
       ...this.columnDisplayNamesSummary,
       ...this.columnDisplayNamesDetail
@@ -88,14 +80,12 @@ export class NutritionistReportComponent implements OnInit, AfterViewInit {
         this.summaryDataSource.paginator = this.summaryPaginator;
         this.summaryDataSource.sort = this.summarySort;
       }
-  
       if (this.detailedPaginator && this.detailedSort) {
         this.detailedDataSource.paginator = this.detailedPaginator;
         this.detailedDataSource.sort = this.detailedSort;
       }
     });
   }
-  
 
   applyFilters(): void {
     const { year, month } = this.filterForm.value;
@@ -111,34 +101,54 @@ export class NutritionistReportComponent implements OnInit, AfterViewInit {
     this.applyFilters();
   }
 
+  // 🔻 GET + normalize keys inline (first letter -> lower)
   fetchSummaryData(year?: number, month?: number): void {
     this.loading = true;
     const params: any = {};
     if (year) params.year = year;
     if (month) params.month = month;
 
-    this.http.get<any[]>(`${environment.apiUrl}Nutritionist/Summary`, { params }).subscribe(data => {
-      this.summaryDataSource.data = data;
-      setTimeout(() => {
-        this.summaryDataSource.paginator = this.summaryPaginator;
-        this.summaryDataSource.sort = this.summarySort;
-      });
-      this.loading = false;
-    });
+    this.http.get<any[]>(`${environment.apiUrl}Nutritionist/Summary`, { params })
+      .subscribe(data => {
+        const normalized = (data || []).map((row: any) =>
+          Object.entries(row).reduce((acc: any, [k, v]) => {
+            const nk = k ? k.charAt(0).toLowerCase() + k.slice(1) : k;
+            acc[nk] = v;
+            return acc;
+          }, {})
+        );
+        this.summaryDataSource.data = normalized;
+
+        setTimeout(() => {
+          this.summaryDataSource.paginator = this.summaryPaginator;
+          this.summaryDataSource.sort = this.summarySort;
+        });
+        this.loading = false;
+      }, _ => this.loading = false);
   }
 
+  // 🔻 GET + normalize keys inline (first letter -> lower)
   fetchDetailedData(year?: number, month?: number): void {
     this.loading = true;
     const params: any = {};
     if (year) params.year = year;
     if (month) params.month = month;
 
-    this.http.get<any[]>(`${environment.apiUrl}Nutritionist/Detailed`, { params }).subscribe(data => {
-      this.detailedDataSource.data = data;
-      this.detailedDataSource.paginator = this.detailedPaginator;
-      this.detailedDataSource.sort = this.detailedSort;
-      this.loading = false;
-    });
+    this.http.get<any[]>(`${environment.apiUrl}Nutritionist/Detailed`, { params })
+      .subscribe(data => {
+        const normalized = (data || []).map((row: any) =>
+          Object.entries(row).reduce((acc: any, [k, v]) => {
+            const nk = k ? k.charAt(0).toLowerCase() + k.slice(1) : k;
+            acc[nk] = v;
+            return acc;
+          }, {})
+        );
+        this.detailedDataSource.data = normalized;
+
+        this.detailedDataSource.paginator = this.detailedPaginator;
+        this.detailedDataSource.sort = this.detailedSort;
+        this.loading = false;
+      }, _ => this.loading = false);
   }
 
   exportSummaryToExcel(): void {
@@ -149,7 +159,11 @@ export class NutritionistReportComponent implements OnInit, AfterViewInit {
     this.exportToExcel(this.detailedDataSource, 'Nutritionist_Details.xlsx', this.columnDisplayNamesDetail);
   }
 
-  private exportToExcel(dataSource: MatTableDataSource<any>, fileName: string, displayMap: { [key: string]: string }): void {
+  private exportToExcel(
+    dataSource: MatTableDataSource<any>,
+    fileName: string,
+    displayMap: { [key: string]: string }
+  ): void {
     const data = dataSource.data.map(row => {
       const transformed: any = {};
       Object.keys(row).forEach(key => {
@@ -157,17 +171,16 @@ export class NutritionistReportComponent implements OnInit, AfterViewInit {
       });
       return transformed;
     });
-  
-    const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(data); // ✅ fixed
+
+    const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(data);
     worksheet['!cols'] = [{ width: 20 }];
-    worksheet['!dir'] = 'rtl';
-  
+    (worksheet as any)['!dir'] = 'rtl';
+
     const workbook: XLSX.WorkBook = {
       Sheets: { 'נתונים': worksheet },
       SheetNames: ['נתונים']
     };
-  
+
     XLSX.writeFile(workbook, fileName);
   }
-  
 }

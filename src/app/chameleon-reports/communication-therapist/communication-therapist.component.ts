@@ -8,7 +8,6 @@ import { Chart, ChartData, ChartType, registerables } from 'chart.js';
 import { environment } from '../../../environments/environment';
 import * as XLSX from 'xlsx';
 
-
 @Component({
   selector: 'app-communication-therapist',
   templateUrl: './communication-therapist.component.html',
@@ -16,9 +15,8 @@ import * as XLSX from 'xlsx';
 })
 export class CommunicationTherapistComponent implements OnInit {
   loading: boolean = false;
-  isGraphVisible: boolean = false; // Initialize `isGraphVisible`
+  isGraphVisible: boolean = false;
 
-  // Chart configuration
   chart: Chart | null = null;
   chartType: ChartType = 'bar';
   chartData: ChartData<'bar'> = {
@@ -34,8 +32,7 @@ export class CommunicationTherapistComponent implements OnInit {
     ],
   };
 
- 
-  // Data Sources and Columns
+  // Data Sources and Columns (all lower-first keys)
   dailyFollowUpDataSource = new MatTableDataSource<any>([]);
   anamnesisResultsDataSource = new MatTableDataSource<any>([]);
   fullListDataSource = new MatTableDataSource<any>([]);
@@ -54,24 +51,23 @@ export class CommunicationTherapistComponent implements OnInit {
   ];
 
   columnDisplayNames2: { [key: string]: string } = {
-    'employeeName': 'שם עובד',
-    'simple': 'טיפול פשוט',
-    'complex': 'טיפול מורכב',
-    'veryComplex': 'טיפול מאוד מורכב'
+    employeeName: 'שם עובד',
+    simple: 'טיפול פשוט',
+    complex: 'טיפול מורכב',
+    veryComplex: 'טיפול מאוד מורכב'
   };
-  
-// Define Hebrew display names for the columns
-columnDisplayNames: { [key: string]: string } = {
-  admissionNo: 'מספר מקרה',
-  idNum: 'מספר זהות',
-  firstName: 'שם פרטי',
-  lastName: 'שם משפחה',
-  employeeName: 'שם העובד',
-  entry_Date: 'תאריך כניסה',
-  answerType: 'סוג תשובה',
-  freeText: 'טקסט חופשי'
-};
-  // Filters
+
+  columnDisplayNames: { [key: string]: string } = {
+    admissionNo: 'מספר מקרה',
+    idNum: 'מספר זהות',
+    firstName: 'שם פרטי',
+    lastName: 'שם משפחה',
+    employeeName: 'שם העובד',
+    entry_Date: 'תאריך כניסה',
+    answerType: 'סוג תשובה',
+    freeText: 'טקסט חופשי'
+  };
+
   filterForm: FormGroup;
   availableYears: number[] = [2023, 2024, 2025];
   months = [
@@ -90,99 +86,78 @@ columnDisplayNames: { [key: string]: string } = {
   ];
 
   @ViewChild('dailyFollowUpPaginator') dailyFollowUpPaginator!: MatPaginator;
- // @ViewChild('dailyFollowUpSort') dailyFollowUpSort!: MatSort;
-  
   @ViewChild('anamnesisResultsPaginator') anamnesisResultsPaginator!: MatPaginator;
   @ViewChild('anamnesisResultsSort') anamnesisResultsSort!: MatSort;
-  
   @ViewChild('fullListPaginator') fullListPaginator!: MatPaginator;
   @ViewChild('fullListSort') fullListSort!: MatSort;
-
   @ViewChild('chartCanvas') chartCanvas!: ElementRef<HTMLCanvasElement>;
 
   constructor(private http: HttpClient, private fb: FormBuilder) {
     this.filterForm = this.fb.group({
-      year: new FormControl(new Date().getFullYear()), // Default to current year
-      month: new FormControl(null), // Default to no month selected
+      year: new FormControl(new Date().getFullYear()),
+      month: new FormControl(null),
+      // optional extra filters (if you add inputs in the template)
+      admissionNo: new FormControl(null),
+      idNum: new FormControl(null),
     });
 
-    Chart.register(...registerables); // Register Chart.js components
+    Chart.register(...registerables);
   }
 
   ngOnInit(): void {
-    this.applyFilters(); // Fetch data for all tables on init
+    this.applyFilters();
   }
+
   ngAfterViewInit(): void {
     this.dailyFollowUpDataSource.paginator = this.dailyFollowUpPaginator;
-    //this.dailyFollowUpDataSource.sort = this.dailyFollowUpSort;
-  
+
     this.anamnesisResultsDataSource.paginator = this.anamnesisResultsPaginator;
     this.anamnesisResultsDataSource.sort = this.anamnesisResultsSort;
-  
+
     this.fullListDataSource.paginator = this.fullListPaginator;
     this.fullListDataSource.sort = this.fullListSort;
-  
-    console.log('Daily Follow-Up Paginator:', this.dailyFollowUpPaginator);
-    //console.log('Daily Follow-Up Sort:', this.dailyFollowUpSort);
   }
-  
-  
-  
 
-  
   applyFilters(): void {
-    const filters = this.filterForm.value;
-    const year = filters.year;
-    const month = filters.month;
-    const admissionNo = filters.admissionNo;
-    const idNum = filters.idNum;
+    const { year, month, admissionNo, idNum } = this.filterForm.value;
 
-
-    // Fetch data for all tables
     this.fetchDailyFollowUpData(year, month);
     this.fetchAnamnesisResultsData(year, month);
     this.fetchFullListDailyFollowUp(year, month);
     this.fetchFilteredAnamnesisResults(year, month, admissionNo, idNum);
-
   }
 
   resetFilters(): void {
     this.filterForm.reset({
-      year: new Date().getFullYear(), // Reset to current year
-      month: null, // Reset month to null
+      year: new Date().getFullYear(),
+      month: null,
+      admissionNo: null,
+      idNum: null,
     });
-    this.applyFilters(); // Re-fetch all data with default filters
+    this.applyFilters();
   }
+
   fetchDailyFollowUpData(year?: number, month?: number): void {
     this.loading = true;
-  
+
     const params: any = {};
     if (year) params.year = year;
     if (month) params.month = month;
-  
+
     this.http
       .get<any[]>(`${environment.apiUrl}CommunicationTherapist/V_DailyFollowUp`, { params })
       .subscribe(
         (data) => {
           this.dailyFollowUpDataSource.data = data;
-  
-          // Assign paginator and sort after data is loaded
           if (this.dailyFollowUpPaginator) {
             this.dailyFollowUpDataSource.paginator = this.dailyFollowUpPaginator;
           }
-         
-  
-          console.log('Daily Follow-Up Data:', this.dailyFollowUpDataSource.data);
-          console.log('Paginator:', this.dailyFollowUpPaginator);
-  
           this.loading = false;
         },
-        (error) => {
-          console.error('Error fetching Daily Follow-Up data:', error);
-          this.loading = false;
-        }
+        () => (this.loading = false)
       );
   }
+
   fetchFilteredAnamnesisResults(year?: number, month?: number, admissionNo?: string, idNum?: string): void {
     this.loading = true;
 
@@ -193,87 +168,62 @@ columnDisplayNames: { [key: string]: string } = {
     if (idNum) params.idNum = idNum;
 
     this.http
-    .get<any[]>(`${environment.apiUrl}CommunicationTherapist/FilteredAnamnesisResults`, { params })
-    .subscribe(
-      (data) => {
-        console.log('API Response:', data); // Verify the full data is returned
-        this.fullListDataSource.data = data;
-      },
-      (error) => {
-        console.error('Error fetching data:', error);
-      }
-    );
+      .get<any[]>(`${environment.apiUrl}CommunicationTherapist/FilteredAnamnesisResults`, { params })
+      .subscribe(
+        (data) => {
+          this.fullListDataSource.data = data;
+          if (this.fullListPaginator) this.fullListDataSource.paginator = this.fullListPaginator;
+          if (this.fullListSort) this.fullListDataSource.sort = this.fullListSort;
+          this.loading = false;
+        },
+        () => (this.loading = false)
+      );
   }
 
   fetchAnamnesisResultsData(year?: number, month?: number): void {
     this.loading = true;
-  
+
     const params: any = {};
     if (year) params.year = year;
     if (month) params.month = month;
-  
+
     this.http
       .get<any[]>(`${environment.apiUrl}CommunicationTherapist/AnamnesisResults`, { params })
       .subscribe(
         (data) => {
           this.anamnesisResultsDataSource.data = data;
-  
-          // Assign paginator and sort after data is loaded
           if (this.anamnesisResultsPaginator) {
             this.anamnesisResultsDataSource.paginator = this.anamnesisResultsPaginator;
           }
           if (this.anamnesisResultsSort) {
             this.anamnesisResultsDataSource.sort = this.anamnesisResultsSort;
           }
-  
-          console.log('Anamnesis Results Data:', this.anamnesisResultsDataSource.data);
-          console.log('Paginator:', this.anamnesisResultsPaginator);
-          console.log('Sort:', this.anamnesisResultsSort);
-  
           this.loading = false;
         },
-        (error) => {
-          console.error('Error fetching Anamnesis Results data:', error);
-          this.loading = false;
-        }
+        () => (this.loading = false)
       );
   }
-  
 
   fetchFullListDailyFollowUp(year?: number, month?: number): void {
     this.loading = true;
-  
+
     const params: any = {};
     if (year) params.year = year;
     if (month) params.month = month;
-  
+
     this.http
       .get<any[]>(`${environment.apiUrl}CommunicationTherapist/FullListDailyFollowUp`, { params })
       .subscribe(
         (data) => {
           this.fullListDataSource.data = data;
-  
-          // Assign paginator and sort after data is loaded
-          if (this.fullListPaginator) {
-            this.fullListDataSource.paginator = this.fullListPaginator;
-          }
-          if (this.fullListSort) {
-            this.fullListDataSource.sort = this.fullListSort;
-          }
-  
-          console.log('Full List Daily Follow-Up Data:', this.fullListDataSource.data);
-          console.log('Paginator:', this.fullListPaginator);
-          console.log('Sort:', this.fullListSort);
-  
+          if (this.fullListPaginator) this.fullListDataSource.paginator = this.fullListPaginator;
+          if (this.fullListSort) this.fullListDataSource.sort = this.fullListSort;
           this.loading = false;
         },
-        (error) => {
-          console.error('Error fetching Full List Daily Follow-Up data:', error);
-          this.loading = false;
-        }
+        () => (this.loading = false)
       );
   }
-  
+
   toggleView(): void {
     this.isGraphVisible = !this.isGraphVisible;
     if (this.isGraphVisible) {
@@ -304,56 +254,48 @@ columnDisplayNames: { [key: string]: string } = {
   exportDailyFollowUpToExcel(): void {
     this.exportToExcel(this.dailyFollowUpDataSource, 'Daily_Follow_Up_Data.xlsx');
   }
-  
+
   exportAnamnesisResultsToExcel(): void {
     this.exportToExcel(this.anamnesisResultsDataSource, 'Anamnesis_Results_Data.xlsx');
   }
-  
+
   exportFullListToExcel(): void {
     this.exportToExcel(this.fullListDataSource, 'Full_List_Daily_Follow_Up_Data.xlsx');
   }
+
   private exportToExcel(dataSource: MatTableDataSource<any>, fileName: string): void {
-    // ✅ Convert MatTableDataSource to an array
     const data = dataSource.data;
-  
-    // ✅ Hebrew column names mapping
+
+    // lower-first keys -> Hebrew headers
     const hebrewColumnNames: { [key: string]: string } = {
-      AdmissionNo: 'מספר מקרה',
-      IdNum: 'מספר זהות',
-      FirstName: 'שם פרטי',
-      LastName: 'שם משפחה',
-      EmployeeName: 'שם העובד',
-      Entry_Date: 'תאריך כניסה',
-      AnswerType: 'סוג תשובה',
-      FreeText: 'טקסט חופשי'
+      admissionNo: 'מספר מקרה',
+      idNum: 'מספר זהות',
+      firstName: 'שם פרטי',
+      lastName: 'שם משפחה',
+      employeeName: 'שם העובד',
+      entry_Date: 'תאריך כניסה',
+      answerType: 'סוג תשובה',
+      freeText: 'טקסט חופשי'
     };
-  
-    // ✅ Transform data to use Hebrew column headers
+
     const transformedData = data.map(row => {
-      let newRow: any = {};
+      const newRow: any = {};
       Object.keys(row).forEach(key => {
-        const hebrewKey = hebrewColumnNames[key] || key; // Use Hebrew name if available
+        const hebrewKey = hebrewColumnNames[key] || key;
         newRow[hebrewKey] = row[key];
       });
       return newRow;
     });
-  
-    // ✅ Create worksheet without `origin`
+
     const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(transformedData);
-  
-    // ✅ Set right-to-left formatting (RTL)
-    worksheet['!cols'] = [{ width: 20 }]; // Adjust column width
-    worksheet['!dir'] = 'rtl'; // Set direction to right-to-left
-  
-    // ✅ Create workbook
+    worksheet['!cols'] = [{ width: 20 }];
+    (worksheet as any)['!dir'] = 'rtl';
+
     const workbook: XLSX.WorkBook = {
       Sheets: { 'נתונים': worksheet },
       SheetNames: ['נתונים']
     };
-  
-    // ✅ Save the file
+
     XLSX.writeFile(workbook, fileName);
   }
-  
-  
 }
