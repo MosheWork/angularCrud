@@ -427,9 +427,9 @@ exportAllTables(): void {
       "ייעוצים ע\"י רופא/ה גריאטר/ית",
       "ייעוצים ע\"י אח/ות קליני/ת"
     ], [{
-      "סה\"כ מאושפזים 75+": this.geriatricSummary.UniqueAdmissions,
-      "סה\"כ ייעוצים": this.geriatricSummary.TotalConsiliums,
-      "ייעוצים ע\"י רופא/ה גריאטר/ית": this.geriatricSummary.TotalConsiliums,  // Or split if you have more info
+      "סה\"כ מאושפזים 75+": this.geriatricSummary.uniqueAdmissions,
+      "סה\"כ ייעוצים": this.geriatricSummary.totalConsiliums,
+      "ייעוצים ע\"י רופא/ה גריאטר/ית": this.geriatricSummary.totalConsiliums,  // Or split if you have more info
       "ייעוצים ע\"י אח/ות קליני/ת": 0
     }], [
       "סה\"כ מאושפזים 75+",
