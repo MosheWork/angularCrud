@@ -16,66 +16,67 @@
         <div class="col">
           <div dir="rtl" class="card">
             <div dir="rtl" class="card-body">
-                 <!-- Date Range Filters for Arrival Date -->
-    <div class="date-range">
-      <mat-form-field class="filter-field">
-        <mat-label>מתאריך</mat-label>
-        <input matInput [matDatepicker]="startDate" formControlName="startDate" />
-        <mat-datepicker-toggle matSuffix [for]="startDate"></mat-datepicker-toggle>
-        <mat-datepicker #startDate></mat-datepicker>
-      </mat-form-field>
+              <!-- Date Range Filters for Arrival Date -->
+              <div class="date-range">
+                <mat-form-field class="filter-field">
+                  <mat-label>מתאריך</mat-label>
+                  <input matInput [matDatepicker]="startDate" formControlName="startDate" />
+                  <mat-datepicker-toggle matSuffix [for]="startDate"></mat-datepicker-toggle>
+                  <mat-datepicker #startDate></mat-datepicker>
+                </mat-form-field>
 
-      <mat-form-field class="filter-field">
-        <mat-label>עד תאריך</mat-label>
-        <input matInput [matDatepicker]="endDate" formControlName="endDate" />
-        <mat-datepicker-toggle matSuffix [for]="endDate"></mat-datepicker-toggle>
-        <mat-datepicker #endDate></mat-datepicker>
-      </mat-form-field>
-    </div>
-              <!-- SignaturesInSheetEntryDate Filter -->
+                <mat-form-field class="filter-field">
+                  <mat-label>עד תאריך</mat-label>
+                  <input matInput [matDatepicker]="endDate" formControlName="endDate" />
+                  <mat-datepicker-toggle matSuffix [for]="endDate"></mat-datepicker-toggle>
+                  <mat-datepicker #endDate></mat-datepicker>
+                </mat-form-field>
+              </div>
+
+              <!-- signaturesInSheetEntryDate Filter -->
               <mat-form-field class="filter-field">
                 <mat-label>חתימת רופא משחרר</mat-label>
-                <mat-select formControlName="SignaturesInSheetEntryDate">
+                <mat-select formControlName="signaturesInSheetEntryDate">
                   <mat-option value="">הכל</mat-option>
                   <mat-option value="hasValue">יש תיעוד</mat-option>
                   <mat-option value="noValue">אין תיעוד</mat-option>
                 </mat-select>
               </mat-form-field>
-  
-              <!-- ComplaintTabEntryDate Filter -->
+
+              <!-- complaintTabEntryDate Filter -->
               <mat-form-field class="filter-field">
                 <mat-label>סיבת פנייה </mat-label>
-                <mat-select formControlName="ComplaintTabEntryDate">
+                <mat-select formControlName="complaintTabEntryDate">
                   <mat-option value="">הכל</mat-option>
                   <mat-option value="hasValue">יש תיעוד</mat-option>
                   <mat-option value="noValue">אין תיעוד</mat-option>
                 </mat-select>
               </mat-form-field>
-  
-              <!-- DischargeDateTabEntryDate Filter -->
+
+              <!-- dischargeDateTabEntryDate Filter -->
               <mat-form-field class="filter-field">
                 <mat-label> תאריך שחרור בפועל </mat-label>
-                <mat-select formControlName="DischargeDateTabEntryDate">
+                <mat-select formControlName="dischargeDateTabEntryDate">
                   <mat-option value="">הכל</mat-option>
                   <mat-option value="hasValue">יש תיעוד</mat-option>
                   <mat-option value="noValue">אין תיעוד</mat-option>
                 </mat-select>
               </mat-form-field>
-  
-              <!-- AdmissionTreatmentDecisionTabEntryDate Filter -->
+
+              <!-- admissionTreatmentDecisionTabEntryDate Filter -->
               <mat-form-field class="filter-field">
                 <mat-label>סיבת פנייה </mat-label>
-                <mat-select formControlName="AdmissionTreatmentDecisionTabEntryDate">
+                <mat-select formControlName="admissionTreatmentDecisionTabEntryDate">
                   <mat-option value="">הכל</mat-option>
                   <mat-option value="hasValue">יש תיעוד</mat-option>
                   <mat-option value="noValue">אין תיעוד</mat-option>
                 </mat-select>
               </mat-form-field>
-  
-              <!-- DecisionDescription Filter -->
+
+              <!-- decisionDescription Filter -->
               <mat-form-field class="filter-field">
                 <mat-label>סיום טיפול במלר"ד </mat-label>
-                <mat-select formControlName="DecisionDescription">
+                <mat-select formControlName="decisionDescription">
                   <mat-option value="">הכל</mat-option>
                   <mat-option value="אשפוז">אשפוז</mat-option>
                   <mat-option value="אשפוז בית">אשפוז בית</mat-option>
@@ -89,11 +90,12 @@
                   <mat-option value="שחרור">שחרור</mat-option>
                   <mat-option value="(ריק)">(ריק)</mat-option>
                 </mat-select>
-
               </mat-form-field>
+
+              <!-- responsibleDoctor Filter -->
               <mat-form-field class="filter-field">
                 <mat-label>סוג מיון </mat-label>
-                <mat-select formControlName="ResponsibleDoctor">
+                <mat-select formControlName="responsibleDoctor">
                   <mat-option value="">הכל</mat-option>
                   <mat-option value="פנימי">פנימי</mat-option>
                   <mat-option value="כירורגיי">כירורגיי</mat-option>
@@ -114,6 +116,7 @@
         </div>
       </div>
     </div>
+
     <div dir="rtl" style="display: flex; justify-content: space-between; align-items: center">
       <mat-form-field class="long-search-bar" style="flex: 1; padding-right: 10px">
         <mat-label class="filters" style="color: blue">חיפוש</mat-label>

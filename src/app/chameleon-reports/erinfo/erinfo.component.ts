@@ -14,80 +14,73 @@ import * as XLSX from 'xlsx';
 })
 export class ERInfoComponent implements OnInit, AfterViewInit {
   displayedColumns: string[] = [
-    'ArrivalDate',
-    'AdmissionNo',
-    'IdNum',
-    'SystemUnitName',
-    'ResponsibleDoctor', // סוג מיון
-    'AdmissionTreatmentUrgencyEntryDate',
-    'AdmissionTreatmentUrgencyEntryUser',
-    'UrgencyLevel', // Add this column
-    'FirstExecutionDate', // Add this column
-    'LastExecutionDate', // Add this column
-    'AdmissionTreatmentDecisionTabEntryDate',
-    'AdmissionTreatmentDecisionTabEntryUser',
-    'ComplaintTabEntryDate',
-    'FieldCombo18Translated', // Add this column
-    'ComplaintTabEntryUser',
-    'DecisionDescription',
-    'DischargeDateTabEntryDate',
-    'DischargeDateTabEntryUser',
-    'SignaturesInSheetEntryDate',
-    'SignaturesInSheetEntryUser',
-    
-    //'EntryUserFullName',
-    //'AdjustedAdmissionNo',
-    'ReleaseDate'
-   
-   
-   
-   
+    'arrivalDate',
+    'admissionNo',
+    'idNum',
+    'systemUnitName',
+    'responsibleDoctor', // סוג מיון
+    'admissionTreatmentUrgencyEntryDate',
+    'admissionTreatmentUrgencyEntryUser',
+    'urgencyLevel',
+    'firstExecutionDate',
+    'lastExecutionDate',
+    'admissionTreatmentDecisionTabEntryDate',
+    'admissionTreatmentDecisionTabEntryUser',
+    'complaintTabEntryDate',
+    'fieldCombo18Translated',
+    'complaintTabEntryUser',
+    'decisionDescription',
+    'dischargeDateTabEntryDate',
+    'dischargeDateTabEntryUser',
+    'signaturesInSheetEntryDate',
+    'signaturesInSheetEntryUser',
+    // 'entryUserFullName',
+    // 'adjustedAdmissionNo',
+    'releaseDate',
   ];
-  
 
   columnHeaders: { [key: string]: string } = {
-    AdmissionNo: 'מספר מקרה',
-    IdNum: 'מספר זהות',
-    SystemUnitName: 'שם יחידה',
-    AdmissionTreatmentUrgencyEntryDate: 'רמת דחיפות',
-    AdmissionTreatmentUrgencyEntryUser: 'משתמש רמת דחיפות',
-    AdmissionTreatmentDecisionTabEntryDate: 'החלטה תאריך ',
-    AdmissionTreatmentDecisionTabEntryUser: 'משתמש  החלטה',
-    ComplaintTabEntryDate: 'תלונה עיקרית',
-    ComplaintTabEntryUser: 'משתמש תלונה עיקרית',
-    DecisionDescription: 'סיום טיפול במלר"ד',
-    DischargeDateTabEntryDate: 'תאריך שחרור בפועל',
-    DischargeDateTabEntryUser: 'משתמש תאריך שחרור',
-    SignaturesInSheetEntryDate: 'חתימת רופא משחרר',
-    SignaturesInSheetEntryUser: 'משתמש חתימת רופא משחרר',
-    AdjustedAdmissionNo: 'מספר תיק מותאם',
-    ReleaseDate: 'תאריך שחרור',
-    ArrivalDate: 'תאריך הגעה',
-    ResponsibleDoctor: 'סוג מיון',
-    FirstExecutionDate: 'תאריך לחץ דם ראשון', // Add label
-    LastExecutionDate: 'תאריך לחץ דם אחרון', // Add label
-    UrgencyLevel: 'רמת דחיפות', // Add label
-    FieldCombo18Translated: ' בדיקה גופנית ?', // Add label
+    admissionNo: 'מספר מקרה',
+    idNum: 'מספר זהות',
+    systemUnitName: 'שם יחידה',
+    admissionTreatmentUrgencyEntryDate: 'רמת דחיפות',
+    admissionTreatmentUrgencyEntryUser: 'משתמש רמת דחיפות',
+    admissionTreatmentDecisionTabEntryDate: 'החלטה תאריך ',
+    admissionTreatmentDecisionTabEntryUser: 'משתמש  החלטה',
+    complaintTabEntryDate: 'תלונה עיקרית',
+    complaintTabEntryUser: 'משתמש תלונה עיקרית',
+    decisionDescription: 'סיום טיפול במלר"ד',
+    dischargeDateTabEntryDate: 'תאריך שחרור בפועל',
+    dischargeDateTabEntryUser: 'משתמש תאריך שחרור',
+    signaturesInSheetEntryDate: 'חתימת רופא משחרר',
+    signaturesInSheetEntryUser: 'משתמש חתימת רופא משחרר',
+    adjustedAdmissionNo: 'מספר תיק מותאם',
+    releaseDate: 'תאריך שחרור',
+    arrivalDate: 'תאריך הגעה',
+    responsibleDoctor: 'סוג מיון',
+    firstExecutionDate: 'תאריך לחץ דם ראשון',
+    lastExecutionDate: 'תאריך לחץ דם אחרון',
+    urgencyLevel: 'רמת דחיפות',
+    fieldCombo18Translated: ' בדיקה גופנית ?',
   };
-  
-  
+
   dataSource = new MatTableDataSource<any>([]);
   globalFilter = new FormControl('');
   filterForm: FormGroup;
-  isLoading: boolean = true;
-  totalResults: number = 0; // Add totalResults property
+  isLoading = true;
+  totalResults = 0;
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
   constructor(private http: HttpClient, private fb: FormBuilder) {
     this.filterForm = this.fb.group({
-      SignaturesInSheetEntryDate: [''],
-      ComplaintTabEntryDate: [''],
-      DischargeDateTabEntryDate: [''],
-      AdmissionTreatmentDecisionTabEntryDate: [''],
-      DecisionDescription: [''],
-      ResponsibleDoctor: [''], 
+      signaturesInSheetEntryDate: [''],
+      complaintTabEntryDate: [''],
+      dischargeDateTabEntryDate: [''],
+      admissionTreatmentDecisionTabEntryDate: [''],
+      decisionDescription: [''],
+      responsibleDoctor: [''],
       startDate: [''],
       endDate: [''],
     });
@@ -109,11 +102,10 @@ export class ERInfoComponent implements OnInit, AfterViewInit {
 
     this.http.get<any[]>(url).subscribe(
       (response: any[]) => {
-        this.dataSource.data = response;
-        this.totalResults = response.length; // Update totalResults with the length of the data
-
+        // Expecting backend to return keys with lowercase first letter
+        this.dataSource.data = response || [];
+        this.totalResults = this.dataSource.data.length;
         this.isLoading = false;
-
       },
       (error) => {
         console.error('Error loading data:', error);
@@ -121,194 +113,166 @@ export class ERInfoComponent implements OnInit, AfterViewInit {
       }
     );
   }
+
   setupGlobalFilter(): void {
-    // Subscribe to field-specific filter changes
+    // field-specific filters
     this.filterForm.valueChanges.subscribe((filterValues) => {
-      this.dataSource.filter = JSON.stringify(filterValues); // Update filter for field-specific filters
-      this.totalResults = this.dataSource.filteredData.length; // Update total results
+      this.dataSource.filter = JSON.stringify(filterValues);
+      this.totalResults = this.dataSource.filteredData.length;
     });
-  
-    // Subscribe to global filter changes
+
+    // global filter
     this.globalFilter.valueChanges.subscribe(() => {
-      this.dataSource.filter = JSON.stringify(this.filterForm.value); // Trigger filterPredicate
-      this.totalResults = this.dataSource.filteredData.length; // Update total results after global filtering
+      this.dataSource.filter = JSON.stringify(this.filterForm.value);
+      this.totalResults = this.dataSource.filteredData.length;
     });
-  
-    // Combine global filter and field-specific filters
+
+    // combined predicate
     this.dataSource.filterPredicate = (data: any, filter: string) => {
       const filterValues = JSON.parse(filter);
-  
-      // Global search (search across all columns)
+
+      // Global search
       const globalValue = this.globalFilter.value?.trim().toLowerCase() || '';
       const columnValues = Object.values(data).join(' ').toLowerCase();
       if (globalValue && !columnValues.includes(globalValue)) {
-        return false; // Exclude row if it does not match the global filter
+        return false;
       }
-  
-      // Filter by Start and End Date (תאריך הגעה)
+
+      // Start/End date on arrivalDate
       if (filterValues.startDate || filterValues.endDate) {
-        const arrivalDate = new Date(data.ArrivalDate); // Parse ArrivalDate
-        if (filterValues.startDate && arrivalDate < new Date(filterValues.startDate)) {
-          return false; // Exclude if ArrivalDate is before startDate
-        }
-        if (filterValues.endDate && arrivalDate > new Date(filterValues.endDate)) {
-          return false; // Exclude if ArrivalDate is after endDate
-        }
+        const arrivalDate = new Date(data.arrivalDate);
+        if (filterValues.startDate && arrivalDate < new Date(filterValues.startDate)) return false;
+        if (filterValues.endDate && arrivalDate > new Date(filterValues.endDate)) return false;
       }
-  
-      // Check SignaturesInSheetEntryDate filter
-      if (filterValues.SignaturesInSheetEntryDate) {
+
+      // signaturesInSheetEntryDate hasValue/noValue
+      if (filterValues.signaturesInSheetEntryDate) {
         if (
-          filterValues.SignaturesInSheetEntryDate === 'hasValue' &&
-          (!data.SignaturesInSheetEntryDate || data.SignaturesInSheetEntryDate.trim() === '')
-        ) {
-          return false; // Exclude if no value but filter expects a value
-        }
+          filterValues.signaturesInSheetEntryDate === 'hasValue' &&
+          (!data.signaturesInSheetEntryDate || String(data.signaturesInSheetEntryDate).trim() === '')
+        ) return false;
+
         if (
-          filterValues.SignaturesInSheetEntryDate === 'noValue' &&
-          data.SignaturesInSheetEntryDate &&
-          data.SignaturesInSheetEntryDate.trim() !== ''
-        ) {
-          return false; // Exclude if value exists but filter expects no value
-        }
+          filterValues.signaturesInSheetEntryDate === 'noValue' &&
+          data.signaturesInSheetEntryDate &&
+          String(data.signaturesInSheetEntryDate).trim() !== ''
+        ) return false;
       }
-  
-      // Check ComplaintTabEntryDate filter
-      if (filterValues.ComplaintTabEntryDate) {
+
+      // complaintTabEntryDate hasValue/noValue
+      if (filterValues.complaintTabEntryDate) {
         if (
-          filterValues.ComplaintTabEntryDate === 'hasValue' &&
-          (!data.ComplaintTabEntryDate || data.ComplaintTabEntryDate.trim() === '')
-        ) {
-          return false;
-        }
+          filterValues.complaintTabEntryDate === 'hasValue' &&
+          (!data.complaintTabEntryDate || String(data.complaintTabEntryDate).trim() === '')
+        ) return false;
+
         if (
-          filterValues.ComplaintTabEntryDate === 'noValue' &&
-          data.ComplaintTabEntryDate &&
-          data.ComplaintTabEntryDate.trim() !== ''
-        ) {
-          return false;
-        }
+          filterValues.complaintTabEntryDate === 'noValue' &&
+          data.complaintTabEntryDate &&
+          String(data.complaintTabEntryDate).trim() !== ''
+        ) return false;
       }
-  
-      // Check DischargeDateTabEntryDate filter
-      if (filterValues.DischargeDateTabEntryDate) {
+
+      // dischargeDateTabEntryDate hasValue/noValue
+      if (filterValues.dischargeDateTabEntryDate) {
         if (
-          filterValues.DischargeDateTabEntryDate === 'hasValue' &&
-          (!data.DischargeDateTabEntryDate || data.DischargeDateTabEntryDate.trim() === '')
-        ) {
-          return false;
-        }
+          filterValues.dischargeDateTabEntryDate === 'hasValue' &&
+          (!data.dischargeDateTabEntryDate || String(data.dischargeDateTabEntryDate).trim() === '')
+        ) return false;
+
         if (
-          filterValues.DischargeDateTabEntryDate === 'noValue' &&
-          data.DischargeDateTabEntryDate &&
-          data.DischargeDateTabEntryDate.trim() !== ''
-        ) {
-          return false;
-        }
+          filterValues.dischargeDateTabEntryDate === 'noValue' &&
+          data.dischargeDateTabEntryDate &&
+          String(data.dischargeDateTabEntryDate).trim() !== ''
+        ) return false;
       }
-  
-      // Check AdmissionTreatmentDecisionTabEntryDate filter
-      if (filterValues.AdmissionTreatmentDecisionTabEntryDate) {
+
+      // admissionTreatmentDecisionTabEntryDate hasValue/noValue
+      if (filterValues.admissionTreatmentDecisionTabEntryDate) {
         if (
-          filterValues.AdmissionTreatmentDecisionTabEntryDate === 'hasValue' &&
-          (!data.AdmissionTreatmentDecisionTabEntryDate || data.AdmissionTreatmentDecisionTabEntryDate.trim() === '')
-        ) {
-          return false;
-        }
+          filterValues.admissionTreatmentDecisionTabEntryDate === 'hasValue' &&
+          (!data.admissionTreatmentDecisionTabEntryDate || String(data.admissionTreatmentDecisionTabEntryDate).trim() === '')
+        ) return false;
+
         if (
-          filterValues.AdmissionTreatmentDecisionTabEntryDate === 'noValue' &&
-          data.AdmissionTreatmentDecisionTabEntryDate &&
-          data.AdmissionTreatmentDecisionTabEntryDate.trim() !== ''
-        ) {
+          filterValues.admissionTreatmentDecisionTabEntryDate === 'noValue' &&
+          data.admissionTreatmentDecisionTabEntryDate &&
+          String(data.admissionTreatmentDecisionTabEntryDate).trim() !== ''
+        ) return false;
+      }
+
+      // responsibleDoctor exact match or (ריק)
+      if (filterValues.responsibleDoctor) {
+        const doctor = data.responsibleDoctor ? String(data.responsibleDoctor).trim() : '';
+        if (filterValues.responsibleDoctor === '(ריק)') {
+          if (doctor !== '') return false;
+        } else if (filterValues.responsibleDoctor !== doctor) {
           return false;
         }
       }
-  
-      // Check ResponsibleDoctor filter
-      if (filterValues.ResponsibleDoctor) {
-        const doctor = data.ResponsibleDoctor ? data.ResponsibleDoctor.trim() : '';
-        if (filterValues.ResponsibleDoctor === '(ריק)') {
-          if (doctor !== '') {
-            return false; // Exclude if value exists but the filter expects '(ריק)'
-          }
-        } else if (filterValues.ResponsibleDoctor !== doctor) {
-          return false; // Exclude if value does not match the selected filter
+
+      // decisionDescription exact match if provided
+      if (filterValues.decisionDescription) {
+        if (filterValues.decisionDescription !== '' && filterValues.decisionDescription !== data.decisionDescription) {
+          return false;
         }
       }
-  
-      // Check DecisionDescription filter
-      if (filterValues.DecisionDescription) {
-        if (
-          filterValues.DecisionDescription !== '' &&
-          filterValues.DecisionDescription !== data.DecisionDescription
-        ) {
-          return false; // Exclude if the value doesn't match the selected option
-        }
-      }
-  
-      return true; // Include the row if all conditions pass
+
+      return true;
     };
   }
-  
-  
-  
-  
 
   resetFilters(): void {
     this.filterForm.reset({
-      SignaturesInSheetEntryDate: '',
-      ComplaintTabEntryDate: '',
-      DischargeDateTabEntryDate: '',
-      AdmissionTreatmentDecisionTabEntryDate: '',
-      DecisionDescription: '',
+      signaturesInSheetEntryDate: '',
+      complaintTabEntryDate: '',
+      dischargeDateTabEntryDate: '',
+      admissionTreatmentDecisionTabEntryDate: '',
+      decisionDescription: '',
+      responsibleDoctor: '',
+      startDate: '',
+      endDate: '',
     });
     this.globalFilter.setValue('');
     this.dataSource.filter = '';
-    this.totalResults = this.dataSource.data.length; // Reset total results to the full dataset
+    this.totalResults = this.dataSource.data.length;
   }
-  
-  
-  
+
   exportToExcel(): void {
-    // Map the data to include Hebrew column headers and preserve raw date formats
+    // Use displayedColumns and lowercase-first keys
     const data = this.dataSource.filteredData.map((item) => {
       return this.displayedColumns.reduce((acc, column) => {
         let value = item[column];
-  
-        // Preserve raw date format for date fields
+
+        // Format *Date fields if present
         if (column.endsWith('Date') && value) {
           const date = new Date(value);
-          value = `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')} ${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}:${date.getSeconds().toString().padStart(2, '0')}`;
+          value = `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}-${date
+            .getDate()
+            .toString()
+            .padStart(2, '0')} ${date.getHours().toString().padStart(2, '0')}:${date
+            .getMinutes()
+            .toString()
+            .padStart(2, '0')}:${date.getSeconds().toString().padStart(2, '0')}`;
         }
-  
-        acc[this.columnHeaders[column]] = value;
+
+        acc[this.columnHeaders[column] || column] = value;
         return acc;
       }, {} as any);
     });
-  
-    // Create an Excel worksheet
+
     const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(data);
-  
-    // Create a workbook with the worksheet
     const workbook: XLSX.WorkBook = { Sheets: { data: worksheet }, SheetNames: ['data'] };
-  
-    // Write the workbook to a buffer
     const excelBuffer: any = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
-  
-    // Create a Blob from the buffer
     const blob: Blob = new Blob([excelBuffer], {
       type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
     });
-  
-    // Create a download link for the Blob
+
     const url = window.URL.createObjectURL(blob);
     const anchor = document.createElement('a');
     anchor.href = url;
-    anchor.download = 'דוח_מטופלים.xlsx'; // Hebrew filename
+    anchor.download = 'דוח_מטופלים.xlsx';
     anchor.click();
     window.URL.revokeObjectURL(url);
   }
-  
-  
-  
 }
