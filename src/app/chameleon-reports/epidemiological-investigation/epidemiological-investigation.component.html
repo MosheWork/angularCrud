@@ -1,59 +1,55 @@
 <div class="body">
-  <div class="nine">
-    <h1>{{ titleUnit }}<span>סה\"כ תוצאות:{{ totalResults }}</span></h1>
-  </div>
-
   <!-- Left Card -->
   <div class="left-container">
     <form [formGroup]="detailsForm" dir="rtl" class="details-form">
       <mat-form-field>
         <mat-label>שם פרטי</mat-label>
-        <input matInput formControlName="FirstName">
+        <input matInput formControlName="firstName" />
       </mat-form-field>
 
       <mat-form-field>
         <mat-label>שם משפחה</mat-label>
-        <input matInput formControlName="LastName">
+        <input matInput formControlName="lastName" />
       </mat-form-field>
 
       <mat-form-field>
         <mat-label>גיל</mat-label>
-        <input matInput formControlName="Age">
+        <input matInput formControlName="age" />
       </mat-form-field>
 
       <mat-form-field>
         <mat-label>מין</mat-label>
-        <input matInput formControlName="GenderText">
+        <input matInput formControlName="genderText" />
       </mat-form-field>
 
       <mat-form-field>
         <mat-label>טלפון</mat-label>
-        <input matInput formControlName="Phone">
+        <input matInput formControlName="phone" />
       </mat-form-field>
 
       <mat-form-field>
         <mat-label>טלפון נייד</mat-label>
-        <input matInput formControlName="PhoneCell">
+        <input matInput formControlName="phoneCell" />
       </mat-form-field>
 
       <mat-form-field>
         <mat-label>עיר</mat-label>
-        <input matInput formControlName="City">
+        <input matInput formControlName="city" />
       </mat-form-field>
 
       <mat-form-field>
         <mat-label>רחוב</mat-label>
-        <input matInput formControlName="Street">
+        <input matInput formControlName="street" />
       </mat-form-field>
 
-      <mat-form-field *ngIf="detailsForm.get('Apartment')?.value">
+      <mat-form-field *ngIf="detailsForm.get('apartment')?.value">
         <mat-label>דירה</mat-label>
-        <input matInput formControlName="Apartment">
+        <input matInput formControlName="apartment" />
       </mat-form-field>
 
-      <mat-form-field *ngIf="detailsForm.get('HouseNo')?.value">
+      <mat-form-field *ngIf="detailsForm.get('houseNo')?.value">
         <mat-label>מספר בית</mat-label>
-        <input matInput formControlName="HouseNo">
+        <input matInput formControlName="houseNo" />
       </mat-form-field>
     </form>
   </div>
@@ -64,7 +60,7 @@
       <!-- ID Number Input -->
       <mat-form-field>
         <mat-label>הכנס מזהה</mat-label>
-        <input matInput [formControl]="idNumControl" placeholder="e.g. 12345678">
+        <input matInput [formControl]="idNumControl" placeholder="e.g. 12345678" />
       </mat-form-field>
 
       <!-- Search Button -->
@@ -73,14 +69,14 @@
       <!-- Date Range Inputs -->
       <mat-form-field>
         <mat-label>מתאריך</mat-label>
-        <input matInput [matDatepicker]="startPicker" formControlName="startDate">
+        <input matInput [matDatepicker]="startPicker" formControlName="startDate" />
         <mat-datepicker-toggle matSuffix [for]="startPicker"></mat-datepicker-toggle>
         <mat-datepicker #startPicker></mat-datepicker>
       </mat-form-field>
 
       <mat-form-field>
         <mat-label>עד תאריך</mat-label>
-        <input matInput [matDatepicker]="endPicker" formControlName="endDate">
+        <input matInput [matDatepicker]="endPicker" formControlName="endDate" />
         <mat-datepicker-toggle matSuffix [for]="endPicker"></mat-datepicker-toggle>
         <mat-datepicker #endPicker></mat-datepicker>
       </mat-form-field>
@@ -90,7 +86,7 @@
         <!-- Search Bar -->
         <mat-form-field class="long-search-bar">
           <mat-label class="filters">חיפוש</mat-label>
-          <input matInput formControlName="globalFilter" placeholder="Search...">
+          <input matInput formControlName="globalFilter" placeholder="Search..." />
         </mat-form-field>
 
         <!-- Reset Button -->
@@ -113,40 +109,40 @@
       </div>
       <div *ngIf="!loadingMainTab">
         <mat-table [dataSource]="matTableDataSource" matSort dir="rtl" class="mat-elevation-z8">
-          <!-- Medical Record Column -->
-          <ng-container matColumnDef="MedicalRecord">
+          <!-- medicalRecord (only shows if included in columns array) -->
+          <ng-container matColumnDef="medicalRecord">
             <mat-header-cell *matHeaderCellDef mat-sort-header> Medical Record </mat-header-cell>
-            <mat-cell *matCellDef="let element"> {{ element.MedicalRecord }} </mat-cell>
+            <mat-cell *matCellDef="let element"> {{ element.medicalRecord }} </mat-cell>
           </ng-container>
 
-          <!-- Entry Date Column -->
-          <ng-container matColumnDef="EntryDate">
+          <!-- entryDate -->
+          <ng-container matColumnDef="entryDate">
             <mat-header-cell *matHeaderCellDef mat-sort-header> תאריך </mat-header-cell>
-            <mat-cell *matCellDef="let element"> {{ element.EntryDate | date: 'dd/MM/yyyy' }} </mat-cell>
+            <mat-cell *matCellDef="let element"> {{ element.entryDate | date: 'dd/MM/yyyy' }} </mat-cell>
           </ng-container>
 
-          <!-- Entry User Name Column -->
-          <ng-container matColumnDef="EntryUserName">
+          <!-- entryUserName -->
+          <ng-container matColumnDef="entryUserName">
             <mat-header-cell *matHeaderCellDef mat-sort-header> שם משתמש </mat-header-cell>
-            <mat-cell *matCellDef="let element"> {{ element.EntryUserName }} </mat-cell>
+            <mat-cell *matCellDef="let element"> {{ element.entryUserName }} </mat-cell>
           </ng-container>
 
-          <!-- Heading Column -->
-          <ng-container matColumnDef="Heading">
+          <!-- heading -->
+          <ng-container matColumnDef="heading">
             <mat-header-cell *matHeaderCellDef mat-sort-header> שם רכיב </mat-header-cell>
-            <mat-cell *matCellDef="let element"> {{ element.Heading }} </mat-cell>
+            <mat-cell *matCellDef="let element"> {{ element.heading }} </mat-cell>
           </ng-container>
 
-          <!-- Unit Name Column -->
-          <ng-container matColumnDef="UnitName">
-            <mat-header-cell *matHeaderCellDef mat-sort-header> מחלקה</mat-header-cell>
-            <mat-cell *matCellDef="let element"> {{ element.UnitName }} </mat-cell>
+          <!-- unitName -->
+          <ng-container matColumnDef="unitName">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> מחלקה </mat-header-cell>
+            <mat-cell *matCellDef="let element"> {{ element.unitName }} </mat-cell>
           </ng-container>
 
-          <!-- Source Column -->
-          <ng-container matColumnDef="Source">
-            <mat-header-cell *matHeaderCellDef mat-sort-header> מקור</mat-header-cell>
-            <mat-cell *matCellDef="let element"> {{ element.Source }} </mat-cell>
+          <!-- source -->
+          <ng-container matColumnDef="source">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> מקור </mat-header-cell>
+            <mat-cell *matCellDef="let element"> {{ element.source }} </mat-cell>
           </ng-container>
 
           <!-- Header Row -->
@@ -159,7 +155,8 @@
         <mat-paginator
           [length]="matTableDataSource.paginator?.length || 0"
           [pageSize]="15"
-          [pageSizeOptions]="[15, 50, 100]">
+          [pageSizeOptions]="[15, 50, 100]"
+        >
         </mat-paginator>
       </div>
     </mat-tab>
@@ -179,7 +176,7 @@
               <div class="timeline-card">
                 <h3>{{ event.title }}</h3>
                 <p>שם רכיב: {{ event.description }}</p>
-                <p>מחלקה: {{ event.UnitName }}</p> <!-- Added UnitName -->
+                <p>מחלקה: {{ event.unitName }}</p>
                 <span class="timeline-date">{{ event.timestamp | date: ' HH:mm:ss ' }}</span>
               </div>
             </div>
@@ -196,28 +193,28 @@
       </div>
       <div *ngIf="!loadingEmployeeTab">
         <mat-table [dataSource]="employeeDataSource" matSort dir="rtl" class="mat-elevation-z8">
-          <!-- Full Name Column -->
-          <ng-container matColumnDef="FullName">
+          <!-- fullName -->
+          <ng-container matColumnDef="fullName">
             <mat-header-cell *matHeaderCellDef mat-sort-header> שם העובד </mat-header-cell>
-            <mat-cell *matCellDef="let element"> {{ element.FullName }} </mat-cell>
+            <mat-cell *matCellDef="let element"> {{ element.fullName }} </mat-cell>
           </ng-container>
 
-          <!-- Employee ID Column -->
-          <ng-container matColumnDef="EmployeeID">
+          <!-- employeeID -->
+          <ng-container matColumnDef="employeeID">
             <mat-header-cell *matHeaderCellDef mat-sort-header> מזהה עובד </mat-header-cell>
-            <mat-cell *matCellDef="let element"> {{ element.EmployeeID }} </mat-cell>
+            <mat-cell *matCellDef="let element"> {{ element.employeeID }} </mat-cell>
           </ng-container>
 
-          <!-- Department Description Column -->
-          <ng-container matColumnDef="DepartnentDescripton">
+          <!-- departnentDescripton -->
+          <ng-container matColumnDef="departnentDescripton">
             <mat-header-cell *matHeaderCellDef mat-sort-header> תיאור מחלקה </mat-header-cell>
-            <mat-cell *matCellDef="let element"> {{ element.DepartnentDescripton }} </mat-cell>
+            <mat-cell *matCellDef="let element"> {{ element.departnentDescripton }} </mat-cell>
           </ng-container>
 
-          <!-- Cell Number Column -->
-          <ng-container matColumnDef="CellNumber">
+          <!-- cellNumber -->
+          <ng-container matColumnDef="cellNumber">
             <mat-header-cell *matHeaderCellDef mat-sort-header> מספר טלפון </mat-header-cell>
-            <mat-cell *matCellDef="let element"> {{ element.CellNumber }} </mat-cell>
+            <mat-cell *matCellDef="let element"> {{ element.cellNumber }} </mat-cell>
           </ng-container>
 
           <!-- Header Row -->

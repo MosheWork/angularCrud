@@ -20,25 +20,23 @@ export class EpidemiologicalInvestigationComponent implements OnInit {
 
   timelineEvents: any[] = [];
   personalDetails: any | null = null;
-  employees: any[] = []; // Store employees data
-  loadingMainTab: boolean = false; // For the main tab
-  loadingTimelineTab: boolean = false; // For the timeline tab
-  loadingEmployeeTab: boolean = false; // For the new tab
-  columns: string[] = [
-    //'MedicalRecord',
-    'EntryDate',
-    'EntryUserName',
-    'Heading',
-    'UnitName',
-    'Source',
-  ];
-  employeeColumns: string[] = ['FullName','EmployeeID', 'DepartnentDescripton', 'CellNumber'];
+  employees: any[] = [];
+  loadingMainTab: boolean = false;
+  loadingTimelineTab: boolean = false;
+  loadingEmployeeTab: boolean = false;
+
+  // 🔑 Columns with first letter lowercased
+  columns: string[] = ['entryDate', 'entryUserName', 'heading', 'unitName', 'source'];
+
+  // 🔑 Employee table columns with first letter lowercased (rest unchanged)
+  employeeColumns: string[] = ['fullName', 'employeeID', 'departnentDescripton', 'cellNumber'];
 
   dataSource: any[] = [];
   filteredData: any[] = [];
   matTableDataSource: MatTableDataSource<any>;
   employeeDataSource: MatTableDataSource<any>;
 
+  // 🔑 Details form controls first-letter-lowercase
   detailsForm: FormGroup;
   filterForm: FormGroup;
   idNumControl: FormControl;
@@ -55,17 +53,18 @@ export class EpidemiologicalInvestigationComponent implements OnInit {
     this.matTableDataSource = new MatTableDataSource<any>([]);
     this.employeeDataSource = new MatTableDataSource<any>([]);
     this.idNumControl = new FormControl('');
+
     this.detailsForm = this.fb.group({
-      FirstName: [''],
-      LastName: [''],
-      Age: [''],
-      GenderText: [''],
-      Phone: [''],
-      PhoneCell: [''],
-      City: [''],
-      Street: [''],
-      Apartment: [''],
-      HouseNo: [''],
+      firstName: [''],
+      lastName: [''],
+      age: [''],
+      genderText: [''],
+      phone: [''],
+      phoneCell: [''],
+      city: [''],
+      street: [''],
+      apartment: [''],
+      houseNo: [''],
     });
   }
 
@@ -87,14 +86,15 @@ export class EpidemiologicalInvestigationComponent implements OnInit {
 
     this.http.get<any[]>(investigationUrl, { params: { idNum } }).subscribe(
       (data) => {
-        this.dataSource = data;
+        // Expecting lower-first keys from backend
+        this.dataSource = data || [];
         this.filteredData = [...this.dataSource];
         this.matTableDataSource = new MatTableDataSource(this.filteredData);
         this.matTableDataSource.paginator = this.paginator;
         this.matTableDataSource.sort = this.sort;
         this.applyFilters();
         this.totalResults = this.dataSource.length;
-        this.populateTimeline(data);
+        this.populateTimeline(this.filteredData);
       },
       (error) => {
         console.error('Error fetching investigation data:', error);
@@ -104,7 +104,7 @@ export class EpidemiologicalInvestigationComponent implements OnInit {
 
     this.http.get<any>(personalDetailsUrl, { params: { idNum } }).subscribe(
       (details) => {
-        if (details.length > 0) {
+        if (details && details.length > 0) {
           this.personalDetails = details[0];
           this.detailsForm.patchValue(this.personalDetails);
         } else {
@@ -119,7 +119,7 @@ export class EpidemiologicalInvestigationComponent implements OnInit {
 
     this.http.get<any[]>(employeesUrl, { params: { idNum } }).subscribe(
       (data) => {
-        this.employees = data;
+        this.employees = data || [];
         this.employeeDataSource = new MatTableDataSource(this.employees);
       },
       (error) => {
@@ -142,7 +142,7 @@ export class EpidemiologicalInvestigationComponent implements OnInit {
       .pipe(debounceTime(300), distinctUntilChanged())
       .subscribe(() => {
         this.applyFilters();
-        this.paginator.firstPage();
+        if (this.paginator) this.paginator.firstPage();
       });
   }
 
@@ -160,13 +160,9 @@ export class EpidemiologicalInvestigationComponent implements OnInit {
 
       let dateMatch = true;
       if (startDate || endDate) {
-        const entryDate = new Date(item.EntryDate);
-        if (startDate && entryDate < startDate) {
-          dateMatch = false;
-        }
-        if (endDate && entryDate > endDate) {
-          dateMatch = false;
-        }
+        const entryDate = new Date(item.entryDate); // 👈 lower-first
+        if (startDate && entryDate < startDate) dateMatch = false;
+        if (endDate && entryDate > endDate) dateMatch = false;
       }
 
       return (globalFilter === '' || globalMatch) && dateMatch;
@@ -207,10 +203,10 @@ export class EpidemiologicalInvestigationComponent implements OnInit {
 
   populateTimeline(filteredData: any[]) {
     this.timelineEvents = filteredData.map((item) => ({
-      timestamp: item.EntryDate,
-      title: item.EntryUserName,
-      UnitName: item.UnitName,
-      description: item.Heading || 'No details available',
+      timestamp: item.entryDate,          // 👈 lower-first
+      title: item.entryUserName,          // 👈 lower-first
+      UnitName: item.unitName,            // if your timeline template expects 'UnitName', keep prop name
+      description: item.heading || 'No details available', // 👈 lower-first
     }));
   }
 
