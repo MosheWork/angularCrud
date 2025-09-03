@@ -1,9 +1,9 @@
 <h2 mat-dialog-title class="table-title">
   פרטי תרופות עבור יחידה:
   {{
-    (data?.Unit_Name || data?.unit_Name)?.length
-      ? ((data.Unit_Name || data.unit_Name)[0].toLowerCase() + (data.Unit_Name || data.unit_Name).slice(1))
-      : (data?.Unit_Name || data?.unit_Name)
+    (data?.unit_Name || data?.Unit_Name)?.length
+      ? ((data.unit_Name || data.Unit_Name)[0].toLowerCase() + (data.unit_Name || data.Unit_Name).slice(1))
+      : (data?.unit_Name || data?.Unit_Name)
   }}
 </h2>
 
@@ -16,135 +16,135 @@
 <mat-dialog-content>
   <mat-table [dataSource]="dataSource" class="mat-elevation-z8" dir="rtl">
     <!-- Unit Name -->
-    <ng-container matColumnDef="Unit_Name">
+    <ng-container matColumnDef="unit_Name">
       <mat-header-cell *matHeaderCellDef> שם יחידה </mat-header-cell>
       <mat-cell *matCellDef="let element">
         {{
-          (element?.Unit_Name || element?.unit_Name)?.length
-            ? ((element.Unit_Name || element.unit_Name)[0].toLowerCase() + (element.Unit_Name || element.unit_Name).slice(1))
-            : (element?.Unit_Name || element?.unit_Name)
+          (element?.unit_Name || element?.Unit_Name)?.length
+            ? ((element.unit_Name || element.Unit_Name)[0].toLowerCase() + (element.unit_Name || element.Unit_Name).slice(1))
+            : (element?.unit_Name || element?.Unit_Name)
         }}
       </mat-cell>
     </ng-container>
 
     <!-- Order ID -->
-    <ng-container matColumnDef="Order_ID">
+    <ng-container matColumnDef="order_ID">
       <mat-header-cell *matHeaderCellDef> מזהה הזמנה </mat-header-cell>
-      <mat-cell *matCellDef="let element"> {{ element.Order_ID }} </mat-cell>
+      <mat-cell *matCellDef="let element"> {{ element.order_ID }} </mat-cell>
     </ng-container>
 
-    <!-- Drug (only if you decide to display it) -->
-    <ng-container matColumnDef="Drug">
+    <!-- Drug (only if you decide to display it; add 'drug' to displayedColumns if used) -->
+    <ng-container matColumnDef="drug">
       <mat-header-cell *matHeaderCellDef> תרופה </mat-header-cell>
-      <mat-cell *matCellDef="let element"> {{ element.Drug }} </mat-cell>
+      <mat-cell *matCellDef="let element"> {{ element.drug }} </mat-cell>
     </ng-container>
 
     <!-- Drugs Text -->
-    <ng-container matColumnDef="Drugs_Text">
+    <ng-container matColumnDef="drugs_Text">
       <mat-header-cell *matHeaderCellDef> טקסט תרופה </mat-header-cell>
-      <mat-cell *matCellDef="let element"> {{ element.Drugs_Text }} </mat-cell>
+      <mat-cell *matCellDef="let element"> {{ element.drugs_Text }} </mat-cell>
     </ng-container>
 
     <!-- Basic Name -->
-    <ng-container matColumnDef="Basic_Name">
+    <ng-container matColumnDef="basic_Name">
       <mat-header-cell *matHeaderCellDef> שם בסיסי </mat-header-cell>
-      <mat-cell *matCellDef="let element"> {{ element.Basic_Name }} </mat-cell>
+      <mat-cell *matCellDef="let element"> {{ element.basic_Name }} </mat-cell>
     </ng-container>
 
     <!-- Remarks -->
-    <ng-container matColumnDef="Remarks">
+    <ng-container matColumnDef="remarks">
       <mat-header-cell *matHeaderCellDef> הערות </mat-header-cell>
-      <mat-cell *matCellDef="let element"> {{ element.Remarks }} </mat-cell>
+      <mat-cell *matCellDef="let element"> {{ element.remarks }} </mat-cell>
     </ng-container>
 
     <!-- Execution Status -->
-    <ng-container matColumnDef="Exec_Status">
+    <ng-container matColumnDef="exec_Status">
       <mat-header-cell *matHeaderCellDef> סטטוס ביצוע </mat-header-cell>
-      <mat-cell *matCellDef="let element"> {{ element.Exec_Status }} </mat-cell>
+      <mat-cell *matCellDef="let element"> {{ element.exec_Status }} </mat-cell>
     </ng-container>
 
     <!-- Execution Status Name -->
-    <ng-container matColumnDef="Exec_Status_Name">
+    <ng-container matColumnDef="exec_Status_Name">
       <mat-header-cell *matHeaderCellDef> שם סטטוס ביצוע </mat-header-cell>
-      <mat-cell *matCellDef="let element"> {{ element.Exec_Status_Name }} </mat-cell>
+      <mat-cell *matCellDef="let element"> {{ element.exec_Status_Name }} </mat-cell>
     </ng-container>
 
     <!-- IV State -->
-    <ng-container matColumnDef="IV_State">
+    <ng-container matColumnDef="iV_State">
       <mat-header-cell *matHeaderCellDef> מצב IV </mat-header-cell>
-      <mat-cell *matCellDef="let element"> {{ element.IV_State }} </mat-cell>
+      <mat-cell *matCellDef="let element"> {{ element.iV_State }} </mat-cell>
     </ng-container>
 
     <!-- IV State Description -->
-    <ng-container matColumnDef="IV_State_Desc">
+    <ng-container matColumnDef="iV_State_Desc">
       <mat-header-cell *matHeaderCellDef> תיאור מצב IV </mat-header-cell>
-      <mat-cell *matCellDef="let element"> {{ element.IV_State_Desc }} </mat-cell>
+      <mat-cell *matCellDef="let element"> {{ element.iV_State_Desc }} </mat-cell>
     </ng-container>
 
     <!-- Way Of Giving -->
-    <ng-container matColumnDef="Way_Of_Giving">
+    <ng-container matColumnDef="way_Of_Giving">
       <mat-header-cell *matHeaderCellDef> דרך מתן </mat-header-cell>
-      <mat-cell *matCellDef="let element"> {{ element.Way_Of_Giving }} </mat-cell>
+      <mat-cell *matCellDef="let element"> {{ element.way_Of_Giving }} </mat-cell>
     </ng-container>
 
     <!-- Order Stop Date -->
-    <ng-container matColumnDef="Order_Stop_Date">
+    <ng-container matColumnDef="order_Stop_Date">
       <mat-header-cell *matHeaderCellDef> תאריך הפסקת הזמנה </mat-header-cell>
       <mat-cell *matCellDef="let element">
-        {{ element.Order_Stop_Date | date: 'dd/MM/yyyy HH:mm' }}
+        {{ element.order_Stop_Date | date: 'dd/MM/yyyy HH:mm' }}
       </mat-cell>
     </ng-container>
 
     <!-- Patient -->
-    <ng-container matColumnDef="Patient">
+    <ng-container matColumnDef="patient">
       <mat-header-cell *matHeaderCellDef> מזהה מטופל </mat-header-cell>
-      <mat-cell *matCellDef="let element"> {{ element.Patient }} </mat-cell>
+      <mat-cell *matCellDef="let element"> {{ element.patient }} </mat-cell>
     </ng-container>
 
     <!-- First Name -->
-    <ng-container matColumnDef="First_Name">
+    <ng-container matColumnDef="first_Name">
       <mat-header-cell *matHeaderCellDef> שם פרטי </mat-header-cell>
-      <mat-cell *matCellDef="let element"> {{ element.First_Name }} </mat-cell>
+      <mat-cell *matCellDef="let element"> {{ element.first_Name }} </mat-cell>
     </ng-container>
 
     <!-- Last Name -->
-    <ng-container matColumnDef="Last_Name">
+    <ng-container matColumnDef="last_Name">
       <mat-header-cell *matHeaderCellDef> שם משפחה </mat-header-cell>
-      <mat-cell *matCellDef="let element"> {{ element.Last_Name }} </mat-cell>
+      <mat-cell *matCellDef="let element"> {{ element.last_Name }} </mat-cell>
     </ng-container>
 
     <!-- ID Number -->
-    <ng-container matColumnDef="Id_Num">
+    <ng-container matColumnDef="id_Num">
       <mat-header-cell *matHeaderCellDef> תעודת זהות </mat-header-cell>
-      <mat-cell *matCellDef="let element"> {{ element.Id_Num }} </mat-cell>
+      <mat-cell *matCellDef="let element"> {{ element.id_Num }} </mat-cell>
     </ng-container>
 
     <!-- Execution Date -->
-    <ng-container matColumnDef="Execution_Date">
+    <ng-container matColumnDef="execution_Date">
       <mat-header-cell *matHeaderCellDef> תאריך ביצוע </mat-header-cell>
       <mat-cell *matCellDef="let element">
-        {{ element.Execution_Date | date: 'dd/MM/yyyy HH:mm' }}
+        {{ element.execution_Date | date: 'dd/MM/yyyy HH:mm' }}
       </mat-cell>
     </ng-container>
 
-    <!-- Next Execution Date -->
-    <ng-container matColumnDef="Next_Execution_Date">
+    <!-- Next Execution Date (include 'next_Execution_Date' in displayedColumns if you keep this) -->
+    <ng-container matColumnDef="next_Execution_Date">
       <mat-header-cell *matHeaderCellDef> תאריך ביצוע הבא </mat-header-cell>
       <mat-cell *matCellDef="let element">
-        {{ element.Next_Execution_Date | date: 'dd/MM/yyyy' }}
+        {{ element.next_Execution_Date | date: 'dd/MM/yyyy' }}
       </mat-cell>
     </ng-container>
 
     <!-- Time Difference HH:MM -->
-    <ng-container matColumnDef="Time_Difference_HHMM">
+    <ng-container matColumnDef="time_Difference_HHMM">
       <mat-header-cell *matHeaderCellDef> זמן בין ביצועים (שעות:דקות) </mat-header-cell>
       <mat-cell
         *matCellDef="let element"
         [ngStyle]="{
-          'background-color': isTimeDifferenceAboveTwoHours(element.Time_Difference_HHMM) ? '#ffcccc' : 'transparent'
+          'background-color': isTimeDifferenceAboveTwoHours(element.time_Difference_HHMM) ? '#ffcccc' : 'transparent'
         }"
       >
-        {{ element.Time_Difference_HHMM }}
+        {{ element.time_Difference_HHMM }}
       </mat-cell>
     </ng-container>
 

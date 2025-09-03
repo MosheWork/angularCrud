@@ -12,26 +12,27 @@ import * as XLSX from 'xlsx';
   styleUrls: ['./drug2h-details.component.scss'],
 })
 export class Drug2hDetailsComponent implements OnInit {
+  // 🔽 Columns now expect first-letter-lowercase keys
   displayedColumns: string[] = [
-    'Unit_Name',
-    'Order_ID',
-    // 'Drug',
-    'Drugs_Text',
-    'Basic_Name',
-    'Remarks',
-    'Exec_Status',
-    'Exec_Status_Name',
-    // 'IV_State',
-    'IV_State_Desc',
-    'Way_Of_Giving',
-    'Order_Stop_Date',
-    'Patient',
-    'First_Name',
-    'Last_Name',
-    'Id_Num',
-    'Execution_Date',
-    // 'Next_Execution_Date',
-    'Time_Difference_HHMM',
+    'unit_Name',
+    'order_ID',
+    // 'drug',
+    'drugs_Text',
+    'basic_Name',
+    'remarks',
+    'exec_Status',
+    'exec_Status_Name',
+    // 'iV_State',
+    'iV_State_Desc',
+    'way_Of_Giving',
+    'order_Stop_Date',
+    'patient',
+    'first_Name',
+    'last_Name',
+    'id_Num',
+    'execution_Date',
+    // 'next_Execution_Date',
+    'time_Difference_HHMM',
   ];
 
   dataSource: MatTableDataSource<any> = new MatTableDataSource<any>([]);
@@ -59,6 +60,22 @@ export class Drug2hDetailsComponent implements OnInit {
     }
   }
 
+  /** Lowercase only the first letter of every top-level key */
+  private normalizeKeysFirstLower<T extends Record<string, any>>(obj: T): any {
+    const out: any = {};
+    Object.keys(obj || {}).forEach((k) => {
+      if (!k.length) return;
+      const nk = k[0].toLowerCase() + k.slice(1);
+      out[nk] = obj[k];
+    });
+
+    // Compatibility shim for unit name
+    if (!out.unit_Name && (obj as any).Unit_Name) out.unit_Name = (obj as any).Unit_Name;
+    if (!out.unit_Name && (obj as any).unit_Name) out.unit_Name = (obj as any).unit_Name;
+
+    return out;
+  }
+
   fetchDrugDetails(unit: string): void {
     this.loading = true;
 
@@ -80,28 +97,25 @@ export class Drug2hDetailsComponent implements OnInit {
       (rows) => {
         this.loading = false;
 
-        // Lowercase first letter (always) on textual fields we display.
-        // No helpers; inline transform.
+        // 1) Normalize keys: First letter lowercase (Order_ID -> order_ID, etc.)
+        const normalized = (rows || []).map((r) => this.normalizeKeysFirstLower(r));
+
+        // 2) Lowercase first character of selected TEXT FIELDS (values)
         const fieldsToFix = new Set<string>([
-          'Unit_Name',
-          // 'Drug', // uncomment if you show this column
-          'Drugs_Text',
-          'Basic_Name',
-          'Remarks',
-          'Exec_Status_Name',
-          'IV_State_Desc',
-          'Way_Of_Giving',
-          'First_Name',
-          'Last_Name',
+          'unit_Name',
+          // 'drug', // uncomment if you show this column
+          'drugs_Text',
+          'basic_Name',
+          'remarks',
+          'exec_Status_Name',
+          'iV_State_Desc',
+          'way_Of_Giving',
+          'first_Name',
+          'last_Name',
         ]);
 
-        const processed = (rows || []).map((row) => {
+        const processed = normalized.map((row) => {
           const copy: any = { ...row };
-
-          // also tolerate payloads that used lowercased key "unit_Name"
-          if (!copy.Unit_Name && copy.unit_Name) {
-            copy.Unit_Name = copy.unit_Name;
-          }
 
           fieldsToFix.forEach((f) => {
             const v = copy[f];
