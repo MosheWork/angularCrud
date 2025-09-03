@@ -2,9 +2,6 @@
 
 <div class="body">
   <!-- Page Title with Dynamic Results Count -->
-  <div class="nine">
-    <h1>{{ titleUnit }}<span>{{ Title1 }}{{ Title2 }}{{ totalResults }}</span></h1>
-  </div>
 
   <!-- Filter Form for Table -->
   <form [formGroup]="filterForm" dir="rtl" class="filter-form">
@@ -14,14 +11,14 @@
     <!-- Date Pickers for Entry Date Range -->
     <mat-form-field>
       <mat-label>תאריך התחלה</mat-label>
-      <input matInput [matDatepicker]="startDatePicker" formControlName="startEntryDate">
+      <input matInput [matDatepicker]="startDatePicker" formControlName="startEntryDate" />
       <mat-datepicker-toggle matSuffix [for]="startDatePicker"></mat-datepicker-toggle>
       <mat-datepicker #startDatePicker></mat-datepicker>
     </mat-form-field>
 
     <mat-form-field>
       <mat-label>תאריך סיום</mat-label>
-      <input matInput [matDatepicker]="endDatePicker" formControlName="endEntryDate">
+      <input matInput [matDatepicker]="endDatePicker" formControlName="endEntryDate" />
       <mat-datepicker-toggle matSuffix [for]="endDatePicker"></mat-datepicker-toggle>
       <mat-datepicker #endDatePicker></mat-datepicker>
     </mat-form-field>
@@ -30,100 +27,104 @@
     <div dir="rtl" class="form-footer" style="display: flex; justify-content: space-between;">
       <mat-form-field class="long-search-bar" style="flex-grow: 1; margin-right: 10px;">
         <mat-label class="filters" style="color: blue">חיפוש</mat-label>
-        <input matInput formControlName="globalFilter" placeholder="Search...">
+        <input matInput formControlName="globalFilter" placeholder="Search..." />
       </mat-form-field>
 
       <!-- Icon Buttons for Excel Export, Graph Navigation, and Reset -->
       <div class="icon-container" style="display: flex; align-items: center;">
         <!-- Excel Export Icon -->
-        <img src="../../assets/excel.png" alt="Download" (click)="exportToExcel()" class="download-icon icon" width="50px" style="margin-left: 10px;" />
+        <img
+          src="../../assets/excel.png"
+          alt="Download"
+          (click)="exportToExcel()"
+          class="download-icon icon"
+          width="50px"
+          style="margin-left: 10px;"
+        />
 
         <!-- Graph/Table Toggle Icon -->
-        <img 
-          *ngIf="!showGraph" 
-          (click)="toggleGraphView()" 
-          matTooltip="Move To Graph" 
-          src="../../../../assets/graphIcon.png" 
-          width="50px" 
-          style="margin-left: 10px;" 
+        <img
+          *ngIf="!showGraph"
+          (click)="toggleGraphView()"
+          matTooltip="Move To Graph"
+          src="../../../../assets/graphIcon.png"
+          width="50px"
+          style="margin-left: 10px;"
         />
-        <img 
-          *ngIf="showGraph" 
-          (click)="toggleGraphView()" 
-          matTooltip="Move To Table" 
-          src="../../../../assets/TableIcon.png" 
-          width="50px" 
-          style="margin-left: 10px;" 
+        <img
+          *ngIf="showGraph"
+          (click)="toggleGraphView()"
+          matTooltip="Move To Table"
+          src="../../../../assets/TableIcon.png"
+          width="50px"
+          style="margin-left: 10px;"
         />
 
         <!-- Reset Filters Button -->
-        <button 
-          mat-button 
-          (click)="resetFilters()" 
-          mat-raised-button 
-          color="primary" 
-          class="custom-button" 
-          matTooltip="Reset Filters" 
-          style="margin-left: 10px;">
+        <button
+          mat-button
+          (click)="resetFilters()"
+          mat-raised-button
+          color="primary"
+          class="custom-button"
+          matTooltip="Reset Filters"
+          style="margin-left: 10px;"
+        >
           <i class="material-icons">refresh</i>
         </button>
       </div>
     </div>
   </form>
 
- <!-- Tabs for Graph Options -->
-<mat-tab-group *ngIf="showGraph" (selectedTabChange)="onTabChanged($event)" dir="rtl">
+  <!-- Tabs for Graph Options -->
+  <mat-tab-group *ngIf="showGraph" (selectedTabChange)="onTabChanged($event)" dir="rtl">
     <!-- Tab for HemoDialysis Indications -->
     <mat-tab label="פילוח על פי סיבה">
       <canvas #allTimeChartCanvas></canvas>
     </mat-tab>
-  
+
     <!-- Tab for Counts by Day Type -->
     <mat-tab label="פילוח לפי ימי חול/סופש">
       <canvas #yearlyChartCanvas></canvas>
     </mat-tab>
   </mat-tab-group>
-  
 
   <!-- Data Table Displayed when Graph View is Hidden -->
   <mat-table *ngIf="!showGraph" [dataSource]="matTableDataSource" matSort dir="rtl" class="mat-elevation-z8">
-    <!-- EntryDate Column -->
-    <ng-container matColumnDef="EntryDate">
+    <!-- entryDate -->
+    <ng-container matColumnDef="entryDate">
       <mat-header-cell *matHeaderCellDef mat-sort-header> תאריך כניסה </mat-header-cell>
-      <mat-cell *matCellDef="let element"> {{ element.EntryDate | date: 'dd/MM/yyyy' }} </mat-cell>
+      <mat-cell *matCellDef="let element"> {{ element.entryDate | date: 'dd/MM/yyyy' }} </mat-cell>
     </ng-container>
 
-    <!-- HemoDialysisIndication Column -->
-    <ng-container matColumnDef="HemoDialysisIndication">
+    <!-- hemoDialysisIndicationText -->
+    <ng-container matColumnDef="hemoDialysisIndicationText">
       <mat-header-cell *matHeaderCellDef mat-sort-header> אינדיקציית דיאליזה </mat-header-cell>
-      <mat-cell *matCellDef="let element"> {{ element.HemoDialysisIndication }} </mat-cell>
+      <mat-cell *matCellDef="let element"> {{ element.hemoDialysisIndicationText }} </mat-cell>
     </ng-container>
-    <ng-container matColumnDef="HemoDialysisIndicationText">
-        <mat-header-cell *matHeaderCellDef mat-sort-header> אינדיקציית דיאליזה </mat-header-cell>
-        <mat-cell *matCellDef="let element"> {{ element.HemoDialysisIndicationText }} </mat-cell>
-      </ng-container>
-    <!-- IdNum Column -->
-    <ng-container matColumnDef="IdNum">
+
+    <!-- idNum -->
+    <ng-container matColumnDef="idNum">
       <mat-header-cell *matHeaderCellDef mat-sort-header> ת.ז. </mat-header-cell>
-      <mat-cell *matCellDef="let element"> {{ element.IdNum }} </mat-cell>
+      <mat-cell *matCellDef="let element"> {{ element.idNum }} </mat-cell>
     </ng-container>
 
-    <!-- AdmissionNo Column -->
-    <ng-container matColumnDef="AdmissionNo">
+    <!-- admissionNo -->
+    <ng-container matColumnDef="admissionNo">
       <mat-header-cell *matHeaderCellDef mat-sort-header> מספר אשפוז </mat-header-cell>
-      <mat-cell *matCellDef="let element"> {{ element.AdmissionNo }} </mat-cell>
+      <mat-cell *matCellDef="let element"> {{ element.admissionNo }} </mat-cell>
     </ng-container>
 
-    <!-- FirstName Column -->
-    <ng-container matColumnDef="FirstName">
+    <!-- firstName -->
+    <ng-container matColumnDef="firstName">
       <mat-header-cell *matHeaderCellDef mat-sort-header> שם פרטי </mat-header-cell>
-      <mat-cell *matCellDef="let element"> {{ element.FirstName }} </mat-cell>
+      <mat-cell *matCellDef="let element"> {{ element.firstName }} </mat-cell>
     </ng-container>
 
-    <!-- LastName Column -->
-    <ng-container matColumnDef="LastName">
+    <!-- lastName -->
+    <ng-container matColumnDef="lastName">
       <mat-header-cell *matHeaderCellDef mat-sort-header> שם משפחה </mat-header-cell>
-      <mat-cell *matCellDef="let element"> {{ element.LastName }} </mat-cell>
+      <mat-cell *matCellDef="let element"> {{ element.lastName }} </mat-cell>
     </ng-container>
 
     <!-- Table Header Row Definition -->
@@ -135,9 +136,9 @@
 
   <!-- Paginator Component -->
   <mat-paginator 
-    [length]="matTableDataSource.paginator?.length || 0"
-    [pageIndex]="matTableDataSource.paginator?.pageIndex"
-    [pageSize]="matTableDataSource.paginator?.pageSize"
-    [pageSizeOptions]="[15, 50, 100]">
-  </mat-paginator>
+  [length]="matTableDataSource.paginator?.length || 0"
+  [pageIndex]="matTableDataSource.paginator?.pageIndex"
+  [pageSize]="matTableDataSource.paginator?.pageSize"
+  [pageSizeOptions]="[15, 50, 100]">
+</mat-paginator>
 </div>
