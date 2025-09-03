@@ -1,4 +1,11 @@
-<h2 mat-dialog-title class="table-title">פרטי תרופות עבור יחידה: {{ data.Unit_Name }}</h2>
+<h2 mat-dialog-title class="table-title">
+  פרטי תרופות עבור יחידה:
+  {{
+    (data?.Unit_Name || data?.unit_Name)?.length
+      ? ((data.Unit_Name || data.unit_Name)[0].toLowerCase() + (data.Unit_Name || data.unit_Name).slice(1))
+      : (data?.Unit_Name || data?.unit_Name)
+  }}
+</h2>
 
 <!-- Spinner -->
 <div *ngIf="loading" class="loading-container">
@@ -7,13 +14,17 @@
 </div>
 
 <mat-dialog-content>
-
-
   <mat-table [dataSource]="dataSource" class="mat-elevation-z8" dir="rtl">
     <!-- Unit Name -->
     <ng-container matColumnDef="Unit_Name">
       <mat-header-cell *matHeaderCellDef> שם יחידה </mat-header-cell>
-      <mat-cell *matCellDef="let element"> {{ element.Unit_Name }} </mat-cell>
+      <mat-cell *matCellDef="let element">
+        {{
+          (element?.Unit_Name || element?.unit_Name)?.length
+            ? ((element.Unit_Name || element.unit_Name)[0].toLowerCase() + (element.Unit_Name || element.unit_Name).slice(1))
+            : (element?.Unit_Name || element?.unit_Name)
+        }}
+      </mat-cell>
     </ng-container>
 
     <!-- Order ID -->
@@ -22,7 +33,7 @@
       <mat-cell *matCellDef="let element"> {{ element.Order_ID }} </mat-cell>
     </ng-container>
 
-    <!-- Drug -->
+    <!-- Drug (only if you decide to display it) -->
     <ng-container matColumnDef="Drug">
       <mat-header-cell *matHeaderCellDef> תרופה </mat-header-cell>
       <mat-cell *matCellDef="let element"> {{ element.Drug }} </mat-cell>
@@ -79,7 +90,9 @@
     <!-- Order Stop Date -->
     <ng-container matColumnDef="Order_Stop_Date">
       <mat-header-cell *matHeaderCellDef> תאריך הפסקת הזמנה </mat-header-cell>
-      <mat-cell *matCellDef="let element"> {{ element.Order_Stop_Date | date: 'dd/MM/yyyy hh:mm' }} </mat-cell>
+      <mat-cell *matCellDef="let element">
+        {{ element.Order_Stop_Date | date: 'dd/MM/yyyy HH:mm' }}
+      </mat-cell>
     </ng-container>
 
     <!-- Patient -->
@@ -109,34 +122,40 @@
     <!-- Execution Date -->
     <ng-container matColumnDef="Execution_Date">
       <mat-header-cell *matHeaderCellDef> תאריך ביצוע </mat-header-cell>
-      <mat-cell *matCellDef="let element"> {{ element.Execution_Date | date: 'dd/MM/yyyy HH:mm' }} </mat-cell>
+      <mat-cell *matCellDef="let element">
+        {{ element.Execution_Date | date: 'dd/MM/yyyy HH:mm' }}
+      </mat-cell>
     </ng-container>
 
     <!-- Next Execution Date -->
     <ng-container matColumnDef="Next_Execution_Date">
       <mat-header-cell *matHeaderCellDef> תאריך ביצוע הבא </mat-header-cell>
-      <mat-cell *matCellDef="let element"> {{ element.Next_Execution_Date | date: 'dd/MM/yyyy' }} </mat-cell>
+      <mat-cell *matCellDef="let element">
+        {{ element.Next_Execution_Date | date: 'dd/MM/yyyy' }}
+      </mat-cell>
     </ng-container>
 
-  <!-- Time Difference HH:MM -->
-<ng-container matColumnDef="Time_Difference_HHMM">
-  <mat-header-cell *matHeaderCellDef> זמן בין ביצועים (שעות:דקות) </mat-header-cell>
-  <mat-cell
-    *matCellDef="let element"
-    [ngStyle]="{'background-color': isTimeDifferenceAboveTwoHours(element.Time_Difference_HHMM) ? '#ffcccc' : 'transparent'}"
-  >
-    {{ element.Time_Difference_HHMM }}
-  </mat-cell>
-</ng-container>
+    <!-- Time Difference HH:MM -->
+    <ng-container matColumnDef="Time_Difference_HHMM">
+      <mat-header-cell *matHeaderCellDef> זמן בין ביצועים (שעות:דקות) </mat-header-cell>
+      <mat-cell
+        *matCellDef="let element"
+        [ngStyle]="{
+          'background-color': isTimeDifferenceAboveTwoHours(element.Time_Difference_HHMM) ? '#ffcccc' : 'transparent'
+        }"
+      >
+        {{ element.Time_Difference_HHMM }}
+      </mat-cell>
+    </ng-container>
 
-    <!-- Header and Row Definitions -->
+    <!-- Rows -->
     <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
     <mat-row *matRowDef="let row; columns: displayedColumns"></mat-row>
   </mat-table>
 </mat-dialog-content>
 
 <mat-dialog-actions align="end">
-    <img
+  <img
     src="../../assets/excel.png"
     alt="Download"
     (click)="exportToExcel()"
@@ -144,7 +163,5 @@
     width="50px"
     style="margin-left: 10px; cursor: pointer;"
   />
-    <button mat-raised-button color="primary" mat-dialog-close>
-      סגור
-    </button>
-  </mat-dialog-actions>
+  <button mat-raised-button color="primary" mat-dialog-close>סגור</button>
+</mat-dialog-actions>

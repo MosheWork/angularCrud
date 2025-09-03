@@ -6,7 +6,6 @@ import { environment } from '../../../../environments/environment';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import * as XLSX from 'xlsx';
 
-
 @Component({
   selector: 'app-drug2h-details',
   templateUrl: './drug2h-details.component.html',
@@ -16,13 +15,13 @@ export class Drug2hDetailsComponent implements OnInit {
   displayedColumns: string[] = [
     'Unit_Name',
     'Order_ID',
-    //'Drug',
+    // 'Drug',
     'Drugs_Text',
     'Basic_Name',
     'Remarks',
     'Exec_Status',
     'Exec_Status_Name',
-   // 'IV_State',
+    // 'IV_State',
     'IV_State_Desc',
     'Way_Of_Giving',
     'Order_Stop_Date',
@@ -31,12 +30,13 @@ export class Drug2hDetailsComponent implements OnInit {
     'Last_Name',
     'Id_Num',
     'Execution_Date',
-    //'Next_Execution_Date',
+    // 'Next_Execution_Date',
     'Time_Difference_HHMM',
   ];
-  dataSource: MatTableDataSource<any> = new MatTableDataSource<any>([]); // Updated to MatTableDataSource for proper integration
+
+  dataSource: MatTableDataSource<any> = new MatTableDataSource<any>([]);
   filterForm: FormGroup;
-  loading: boolean = false; // Add loading state
+  loading = false;
 
   constructor(
     private http: HttpClient,
@@ -44,14 +44,16 @@ export class Drug2hDetailsComponent implements OnInit {
     @Inject(MAT_DIALOG_DATA) public data: any
   ) {
     this.filterForm = this.fb.group({
-      unit: [data.Unit_Name || ''], // Pre-fill the unit if passed from the dialog
+      // accept both Unit_Name and unit_Name
+      unit: [data?.Unit_Name || data?.unit_Name || ''],
     });
   }
 
   ngOnInit(): void {
-    console.log('Dialog received data:', this.data); // Debug log
-    if (this.data && this.data.Unit_Name) {
-      this.fetchDrugDetails(this.data.Unit_Name);
+    console.log('Dialog received data:', this.data);
+    const unit = this.data?.Unit_Name || this.data?.unit_Name;
+    if (unit) {
+      this.fetchDrugDetails(unit);
     } else {
       console.error('No Unit_Name received in dialog data');
     }
@@ -59,26 +61,59 @@ export class Drug2hDetailsComponent implements OnInit {
 
   fetchDrugDetails(unit: string): void {
     this.loading = true;
-  
+
     let params = new HttpParams().set('unit', unit);
-  
-    // ✅ Add more filters!
-    if (this.data.year && this.data.year.length) {
+
+    if (this.data?.year?.length) {
       params = params.set('year', this.data.year.join(','));
     }
-    if (this.data.quarter && this.data.quarter.length) {
+    if (this.data?.quarter?.length) {
       params = params.set('quarter', this.data.quarter.join(','));
     }
-    if (this.data.half) {
+    if (this.data?.half) {
       params = params.set('half', this.data.half);
     }
-  
+
     console.log('Calling details API with params:', params.toString());
-  
+
     this.http.get<any[]>(`${environment.apiUrl}Drug2hReview/details`, { params }).subscribe(
-      (data) => {
+      (rows) => {
         this.loading = false;
-        this.dataSource.data = data;
+
+        // Lowercase first letter (always) on textual fields we display.
+        // No helpers; inline transform.
+        const fieldsToFix = new Set<string>([
+          'Unit_Name',
+          // 'Drug', // uncomment if you show this column
+          'Drugs_Text',
+          'Basic_Name',
+          'Remarks',
+          'Exec_Status_Name',
+          'IV_State_Desc',
+          'Way_Of_Giving',
+          'First_Name',
+          'Last_Name',
+        ]);
+
+        const processed = (rows || []).map((row) => {
+          const copy: any = { ...row };
+
+          // also tolerate payloads that used lowercased key "unit_Name"
+          if (!copy.Unit_Name && copy.unit_Name) {
+            copy.Unit_Name = copy.unit_Name;
+          }
+
+          fieldsToFix.forEach((f) => {
+            const v = copy[f];
+            if (typeof v === 'string' && v.length > 0) {
+              copy[f] = v.charAt(0).toLowerCase() + v.slice(1);
+            }
+          });
+
+          return copy;
+        });
+
+        this.dataSource.data = processed;
       },
       (error) => {
         this.loading = false;
@@ -86,53 +121,34 @@ export class Drug2hDetailsComponent implements OnInit {
       }
     );
   }
-  
-  
 
   onFilterSubmit(): void {
     const unit = this.filterForm.get('unit')?.value;
-    this.fetchDrugDetails(unit); // Fetch details when the filter form is submitted
+    this.fetchDrugDetails(unit);
   }
+
   exportToExcel(): void {
-    // Extract the actual data array from MatTableDataSource
     const data = this.dataSource.data;
-  
-    // Check if the data array exists and is not empty
     if (!data || data.length === 0) {
       console.error('No data available to export');
       return;
     }
-  
-    // Convert the data array to a worksheet
     const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(data);
-    const workbook: XLSX.WorkBook = {
-      Sheets: { data: worksheet },
-      SheetNames: ['data'],
-    };
-  
-    // Write the workbook to a buffer
+    const workbook: XLSX.WorkBook = { Sheets: { data: worksheet }, SheetNames: ['data'] };
     const excelBuffer: any = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
-  
-    // Create a Blob from the buffer
     const blob: Blob = new Blob([excelBuffer], {
       type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
     });
-  
-    // Download the Excel file
     const link = document.createElement('a');
     link.href = window.URL.createObjectURL(blob);
     link.download = 'drug2h_details.xlsx';
     link.click();
   }
+
   isTimeDifferenceAboveTwoHours(timeDifference: string): boolean {
     if (!timeDifference) return false;
-  
-    // Parse the time difference string (e.g., "2:15")
     const [hours, minutes] = timeDifference.split(':').map(Number);
     const totalMinutes = hours * 60 + minutes;
-  
-    // Check if the total minutes exceed 2 hours (120 minutes)
     return totalMinutes > 120;
   }
-  
 }

@@ -67,16 +67,16 @@
           </div>        
         <mat-table [dataSource]="bestPerformers" matSort class="mat-elevation-z8">
           
-          <ng-container matColumnDef="Unit_Name">
+          <ng-container matColumnDef="unit_Name">
             <mat-header-cell *matHeaderCellDef mat-sort-header> יחידה </mat-header-cell>
-            <mat-cell *matCellDef="let element"> {{ element.Unit_Name }} </mat-cell>
+            <mat-cell *matCellDef="let element"> {{ element.unit_Name }} </mat-cell>
           </ng-container>
-          <ng-container matColumnDef="Percent_Below_2_10H">
+          <ng-container matColumnDef="percent_Below_2_10H">
             <mat-header-cell *matHeaderCellDef mat-sort-header> אחוז מתחת ל-2 שעות </mat-header-cell>
-            <mat-cell *matCellDef="let element"> {{ element.Percent_Below_2_10H }}%</mat-cell>
+            <mat-cell *matCellDef="let element"> {{ element.percent_Below_2_10H }}%</mat-cell>
           </ng-container>
-          <mat-header-row *matHeaderRowDef="['Unit_Name', 'Percent_Below_2_10H']"></mat-header-row>
-          <mat-row *matRowDef="let row; columns: ['Unit_Name', 'Percent_Below_2_10H']"></mat-row>
+          <mat-header-row *matHeaderRowDef="['unit_Name', 'percent_Below_2_10H']"></mat-header-row>
+          <mat-row *matRowDef="let row; columns: ['unit_Name', 'percent_Below_2_10H']"></mat-row>
         </mat-table>
       </mat-card>
   
@@ -86,16 +86,16 @@
             <h3>Worst 5</h3>
           </div>  
         <mat-table [dataSource]="worstPerformers" matSort class="mat-elevation-z8">
-          <ng-container matColumnDef="Unit_Name">
+          <ng-container matColumnDef="unit_Name">
             <mat-header-cell *matHeaderCellDef mat-sort-header> יחידה </mat-header-cell>
-            <mat-cell *matCellDef="let element"> {{ element.Unit_Name }} </mat-cell>
+            <mat-cell *matCellDef="let element"> {{ element.unit_Name }} </mat-cell>
           </ng-container>
-          <ng-container matColumnDef="Percent_Below_2_10H">
+          <ng-container matColumnDef="percent_Below_2_10H">
             <mat-header-cell *matHeaderCellDef mat-sort-header> אחוז מתחת ל-2 שעות </mat-header-cell>
-            <mat-cell *matCellDef="let element"> {{ element.Percent_Below_2_10H }}%</mat-cell>
+            <mat-cell *matCellDef="let element"> {{ element.percent_Below_2_10H }}%</mat-cell>
           </ng-container>
-          <mat-header-row *matHeaderRowDef="['Unit_Name', 'Percent_Below_2_10H']"></mat-header-row>
-          <mat-row *matRowDef="let row; columns: ['Unit_Name', 'Percent_Below_2_10H']"></mat-row>
+          <mat-header-row *matHeaderRowDef="['unit_Name', 'percent_Below_2_10H']"></mat-header-row>
+          <mat-row *matRowDef="let row; columns: ['unit_Name', 'percent_Below_2_10H']"></mat-row>
         </mat-table>
       </mat-card>
   
@@ -195,29 +195,29 @@
   dir="rtl"
   class="mat-elevation-z8"
 >
-  <ng-container matColumnDef="Unit_Name">
+  <ng-container matColumnDef="unit_Name">
     <mat-header-cell *matHeaderCellDef mat-sort-header> יחידה </mat-header-cell>
-    <mat-cell *matCellDef="let element"> {{ element.Unit_Name }} </mat-cell>
+    <mat-cell *matCellDef="let element"> {{ element.unit_Name }} </mat-cell>
   </ng-container>
 
-  <ng-container matColumnDef="Next_Execution_Not_Null">
+  <ng-container matColumnDef="next_Execution_Not_Null">
     <mat-header-cell *matHeaderCellDef mat-sort-header> ביצוע הבא </mat-header-cell>
-    <mat-cell *matCellDef="let element"> {{ element.Next_Execution_Not_Null }} </mat-cell>
+    <mat-cell *matCellDef="let element"> {{ element.next_Execution_Not_Null }} </mat-cell>
   </ng-container>
 
-  <ng-container matColumnDef="Count_Above_2_10H">
+  <ng-container matColumnDef="count_Above_2_10H">
     <mat-header-cell *matHeaderCellDef mat-sort-header> מעל 2 שעות </mat-header-cell>
-    <mat-cell *matCellDef="let element"> {{ element.Count_Above_2_10H }} </mat-cell>
+    <mat-cell *matCellDef="let element"> {{ element.count_Above_2_10H }} </mat-cell>
   </ng-container>
 
-  <ng-container matColumnDef="Count_Below_2_10H">
+  <ng-container matColumnDef="count_Below_2_10H">
     <mat-header-cell *matHeaderCellDef mat-sort-header> מתחת ל-2 שעות </mat-header-cell>
-    <mat-cell *matCellDef="let element"> {{ element.Count_Below_2_10H }} </mat-cell>
+    <mat-cell *matCellDef="let element"> {{ element.count_Below_2_10H }} </mat-cell>
   </ng-container>
 
-  <ng-container matColumnDef="Percent_Below_2_10H">
+  <ng-container matColumnDef="percent_Below_2_10H">
     <mat-header-cell *matHeaderCellDef mat-sort-header> אחוז מתחת ל-2 שעות </mat-header-cell>
-    <mat-cell *matCellDef="let element"> {{ element.Percent_Below_2_10H }}%</mat-cell>
+    <mat-cell *matCellDef="let element"> {{ element.percent_Below_2_10H }}%</mat-cell>
   </ng-container>
   <ng-container matColumnDef="Year">
     <th mat-header-cell *matHeaderCellDef>שנה</th>
@@ -229,7 +229,7 @@
     <td mat-cell *matCellDef="let row">{{ row.Quarter }}</td>
   </ng-container>
   <mat-header-row *matHeaderRowDef="columns"></mat-header-row>
-  <mat-row *matRowDef="let row; columns: columns" (click)="openDrugDetailsDialog(row.Unit_Name)">
+  <mat-row *matRowDef="let row; columns: columns" (click)="openDrugDetailsDialog(row.unit_Name)">
   </mat-row>
 </mat-table>
 

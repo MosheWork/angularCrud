@@ -32,11 +32,11 @@ export class Drug2hReviewComponent implements OnInit, AfterViewInit {
 
   isGraphVisible: boolean = false; // Toggle flag for graph and table
   columns: string[] = [
-    'Unit_Name',
-    'Next_Execution_Not_Null',
-    'Count_Above_2_10H',
-    'Count_Below_2_10H',
-    'Percent_Below_2_10H'
+    'unit_Name',
+    'next_Execution_Not_Null',
+    'count_Above_2_10H',
+    'count_Below_2_10H',
+    'percent_Below_2_10H'
     , 'Year', 'Quarter'
   ];
   dataSource: any[] = [];
@@ -157,15 +157,15 @@ export class Drug2hReviewComponent implements OnInit, AfterViewInit {
       (data) => {
         this.dataSource = data;
         this.matTableDataSource.data = [...this.dataSource];
-        this.unitNames = Array.from(new Set(data.map((item) => item.Unit_Name))).sort();
+        this.unitNames = Array.from(new Set(data.map((item) => item.unit_Name))).sort();
         this.updateChartData();
   
         this.bestPerformers = [...this.dataSource]
-          .sort((a, b) => b.Percent_Below_2_10H - a.Percent_Below_2_10H)
+          .sort((a, b) => b.percent_Below_2_10H - a.percent_Below_2_10H)
           .slice(0, 5);
   
         this.worstPerformers = [...this.dataSource]
-          .sort((a, b) => a.Percent_Below_2_10H - b.Percent_Below_2_10H)
+          .sort((a, b) => a.percent_Below_2_10H - b.percent_Below_2_10H)
           .slice(0, 5);
   
         this.calculateMetrics();
@@ -185,8 +185,8 @@ export class Drug2hReviewComponent implements OnInit, AfterViewInit {
     const filteredData = this.matTableDataSource.data;
 
     this.totalUnits = filteredData.length;
-    this.totalAbove210 = filteredData.reduce((sum, item) => sum + (item.Count_Above_2_10H || 0), 0);
-    this.totalBelow210 = filteredData.reduce((sum, item) => sum + (item.Count_Below_2_10H || 0), 0);
+    this.totalAbove210 = filteredData.reduce((sum, item) => sum + (item.count_Above_2_10H || 0), 0);
+    this.totalBelow210 = filteredData.reduce((sum, item) => sum + (item.count_Below_2_10H || 0), 0);
 
     const totalExecutions = this.totalAbove210 + this.totalBelow210;
     this.percentBelow210 = totalExecutions > 0 ? (this.totalBelow210 / totalExecutions) * 100 : 0;
@@ -234,8 +234,8 @@ export class Drug2hReviewComponent implements OnInit, AfterViewInit {
   }
 
   updateChartData(): void {
-    const labels = this.dataSource.map(item => item.Unit_Name); // Unit names
-    const data = this.dataSource.map(item => item.Percent_Below_2_10H); // Percent_Below_2_10H values
+    const labels = this.dataSource.map(item => item.unit_Name); // Unit names
+    const data = this.dataSource.map(item => item.percent_Below_2_10H); // Percent_Below_2_10H values
 
     // Generate unique colors for each department
     const colors = labels.map((_, index) => this.getColor(index));

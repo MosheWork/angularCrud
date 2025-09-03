@@ -19,20 +19,33 @@ export class PCIreportComponent implements OnInit {
   totalResults: number = 0;
   titleUnit: string = 'דו״ח PCI';
   Title1: string = ' סה"כ תוצאות: ';
-  Title2: string = '';    
+  Title2: string = '';
   UserName: string = '';
   validCount: number = 0;
   invalidCount: number = 0;
   validPercentage: number = 0;
-  
 
+  // ⬇️ all backend-bound columns changed to lower-first
   displayedColumns: string[] = [
-    'CaseNumber', 'DRG_Desc_KABALA', 'DRG_DOC_Desc_KABALA',
-    'DOC_ICD9', 'DRG_Code_Invoice', 'PCI_Date', 'Hosp_Date',
-    'TimeCuttingTime','MinutesDiff', 'TimeEndSurgery', 'TimeExitingTheOperatingRoom',
-    'TimeEntranceToTheRecoveryRoom', 'TimeSendPatientBackToDepart',
-    'TimeExitRecoveryRoom','Remark','EntryUser','EntryDate'
+    'caseNumber',
+    'drG_Desc_KABALA',
+    'drG_DOC_Desc_KABALA',
+    'doC_ICD9',
+    'drG_Code_Invoice',
+    'pcI_Date',
+    'hosp_Date',
+    'timeCuttingTime',
+    'minutesDiff',
+    'timeEndSurgery',
+    'timeExitingTheOperatingRoom',
+    'timeEntranceToTheRecoveryRoom',
+    'timeSendPatientBackToDepart',
+    'timeExitRecoveryRoom',
+    'remark',
+    'entryUser',
+    'entryDate'
   ];
+  
 
   dataSource: MatTableDataSource<any> = new MatTableDataSource<any>([]);
   originalData: any[] = [];
@@ -42,7 +55,12 @@ export class PCIreportComponent implements OnInit {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
-  constructor(private fb: FormBuilder, private http: HttpClient,  public dialog: MatDialog   ,private authenticationService: AuthenticationService ) {
+  constructor(
+    private fb: FormBuilder,
+    private http: HttpClient,
+    public dialog: MatDialog,
+    private authenticationService: AuthenticationService
+  ) {
     this.filterForm = this.fb.group({
       startDate: [null],
       endDate: [null],
@@ -53,9 +71,7 @@ export class PCIreportComponent implements OnInit {
   ngOnInit() {
     this.authenticationService.getAuthentication().subscribe(
       (response) => {
-        console.log('✅ Authentication Successful:', response.message);
-        let user = response.message.split('\\')[1];
-        console.log('🧑 User:', user);
+        const user = response.message.split('\\')[1];
         this.getUserDetailsFromDBByUserName(user.toUpperCase());
       },
       (error) => {
@@ -64,76 +80,77 @@ export class PCIreportComponent implements OnInit {
     );
     this.fetchData();
   }
+
   getUserDetailsFromDBByUserName(username: string): void {
-    this.http.get<any>(`${environment.apiUrl}ServiceCRM/GetEmployeeInfo?username=${username.toUpperCase()}`)
-  .subscribe(
-    (data) => {
-      this.UserName = data.UserName;
-
-    },
-    (error) => {
-      console.error('Error fetching employee info:', error);
-    }
-  );
-
+    this.http
+      .get<any>(`${environment.apiUrl}ServiceCRM/GetEmployeeInfo?username=${username.toUpperCase()}`)
+      .subscribe(
+        (data) => {
+          this.UserName = data.UserName;
+        },
+        (error) => {
+          console.error('Error fetching employee info:', error);
+        }
+      );
   }
+
   fetchData() {
     this.isLoading = true;
-  
-    // קרא מהטופס
+
     const startDate = this.filterForm.value.startDate
       ? new Date(this.filterForm.value.startDate).toISOString().slice(0, 10)
       : null;
-  
+
     const endDate = this.filterForm.value.endDate
       ? new Date(this.filterForm.value.endDate).toISOString().slice(0, 10)
       : null;
-  
+
     const params: any = {};
-    if (startDate) params.FromDate = startDate;
+    if (startDate) params.FromDate = startDate; // query params stay as API expects
     if (endDate) params.ToDate = endDate;
-  
+
     this.http.get<any[]>(`${environment.apiUrl}PCIreport`, { params }).subscribe(
-      data => {
+      (data) => {
+        // expecting objects with lower-first keys from backend
         this.originalData = data;
         this.applyFilters();
         this.isLoading = false;
       },
-      err => {
+      (err) => {
         console.error(err);
         this.isLoading = false;
       }
     );
   }
-  
-  
 
   applyFilters() {
     const { globalFilter } = this.filterForm.value;
-  
-    const filteredData = this.originalData.filter(row =>
-      !globalFilter || Object.values(row).some(value =>
+
+    const filteredData = this.originalData.filter((row) =>
+      !globalFilter ||
+      Object.values(row).some((value) =>
         value?.toString().toLowerCase().includes(globalFilter.toLowerCase())
       )
     );
-  
+
     this.dataSource.data = [...filteredData];
     this.totalResults = this.dataSource.data.length;
-  
-    // ✅ חשב את התקינים והלא תקינים
-    this.validCount = filteredData.filter(row => row.MinutesDiff <= 90).length;
-    this.invalidCount = filteredData.filter(row => row.MinutesDiff > 90).length;
-    this.validPercentage = this.totalResults > 0 ? Math.round(this.validCount / this.totalResults * 100) : 0;
-  
+
+    // ⬇️ use lower-first field names
+    this.validCount = filteredData.filter((row) => row.minutesDiff <= 90).length;
+    this.invalidCount = filteredData.filter((row) => row.minutesDiff > 90).length;
+    this.validPercentage = this.totalResults > 0 ? Math.round((this.validCount / this.totalResults) * 100) : 0;
+
     setTimeout(() => {
       this.dataSource.paginator = this.paginator;
       this.dataSource.sort = this.sort;
     });
   }
-  
 
   resetFilters() {
     this.filterForm.setValue({
+      startDate: null,
+      endDate: null,
       globalFilter: ''
     });
     this.applyFilters();
@@ -148,25 +165,29 @@ export class PCIreportComponent implements OnInit {
     }
 
     const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(filteredData);
-    const workbook: XLSX.WorkBook = { Sheets: { 'PCI Report': worksheet }, SheetNames: ['PCI Report'] };
+    const workbook: XLSX.WorkBook = {
+      Sheets: { 'PCI Report': worksheet },
+      SheetNames: ['PCI Report']
+    };
     XLSX.writeFile(workbook, 'PCI_Report.xlsx');
   }
 
-  // הוסף לפונקציית ה-Row click:
-openRemarkDialog(row: any) {
-  this.dialog.open(PCIreportDialogComponent, {
-    width: '600px',
-    data: {
-      ...row, // כל הנתונים של השורה
-      EntryUser: this.UserName // הוסף את שם המשתמש מה־Auth
-    }
-  }).afterClosed().subscribe(result => {
-    if (result) {
-      console.log('🚩 נשמר בהצלחה — אפשר לרענן אם צריך');
-      // this.fetchData();
-    }
-  });
-}
-
-  
+  openRemarkDialog(row: any) {
+    this.dialog
+      .open(PCIreportDialogComponent, {
+        width: '600px',
+        data: {
+          ...row,
+          // ⬇️ keep dialog data consistent with lower-first too
+          entryUser: this.UserName
+        }
+      })
+      .afterClosed()
+      .subscribe((result) => {
+        if (result) {
+          console.log('🚩 נשמר בהצלחה — אפשר לרענן אם צריך');
+          // this.fetchData();
+        }
+      });
+  }
 }
