@@ -22,7 +22,7 @@ export class SearchByCaseNumberComponent implements OnInit {
   Title1: string = 'סה"כ תוצאות: ';
   Title2: string = '';
 
-  columns: string[] = ['PMCaseNumber', 'PMMoveDate',  'DepartName'];
+  columns: string[] = ['pmCaseNumber', 'pmMoveDate',  'departName'];
   dataSource: any[] = [];
   filteredData: any[] = [];
   matTableDataSource: MatTableDataSource<any>;
@@ -84,7 +84,7 @@ export class SearchByCaseNumberComponent implements OnInit {
         // Remove '00' prefix from PMCaseNumber in each item
         this.dataSource = data.map(item => ({
           ...item,
-          PMCaseNumber: item.PMCaseNumber.startsWith('00') ? item.PMCaseNumber.slice(2) : item.PMCaseNumber
+          pmCaseNumber: item.pmCaseNumber.startsWith('00') ? item.pmCaseNumber.slice(2) : item.pmCaseNumber
         }));
         
         this.filteredData = [...this.dataSource];

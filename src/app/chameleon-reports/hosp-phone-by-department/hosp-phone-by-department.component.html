@@ -2,10 +2,6 @@
 
 <div class="body">
  
-  <div class="nine">
-    <h1>{{ title }} <span>סה"כ מטופלים :{{ totalResults }} </span></h1>
-  </div>
-
   <form [formGroup]="filterForm" dir="rtl" class="filter-form">
     <div class="container-fluid mb-2">
       <div class="row search-count">
@@ -16,6 +12,7 @@
         </div>
       </div>
     </div>
+
     <div dir="rtl" class="form-footer">
       <mat-form-field class="long-search-bar">
         <mat-label class="filters" style="color: blue">חיפוש</mat-label>
@@ -29,42 +26,43 @@
         </mat-select>
       </mat-form-field>
 
-      <!-- <mat-form-field>
-        <mat-label>מחלקה סיעודית</mat-label>
-        <mat-select [formControlName]="'nurseUnitFilter'" multiple>
-          <mat-option *ngFor="let unit of nurseUnitOptions" [value]="unit">{{ unit }}</mat-option>
-        </mat-select>
-      </mat-form-field> -->
-
       <button mat-button (click)="resetFilters()" mat-raised-button color="primary" class="custom-button" matTooltip="Reset Filters">
         <i class="material-icons">refresh</i>
       </button>
+
       <img src="../../assets/excel.png" alt="Download" (click)="exportToExcel()" class="download-icon" width="50px" />
     </div>
   </form>
 
+  <!-- Table -->
+  <table mat-table [dataSource]="matTableDataSource" matSort dir="rtl" class="mat-elevation-z8">
 
-  <mat-table  [dataSource]="matTableDataSource" matSort dir="rtl" class="mat-elevation-z8">
     <ng-container *ngFor="let column of columns" [matColumnDef]="column">
-      <mat-header-cell *matHeaderCellDef mat-sort-header>
-        {{column === 'Admission_No' ? 'מספר מקרה ' :
-           column === 'PatientName' ? 'שם מטופל' :
-           column === 'IdNum' ? 'תעודת זהות' :
-           column === 'Phone' ? 'טלפון' :
-           column === 'PhoneCell' ? 'טלפון נייד' :
-           column === 'PhoneWork' ? 'טלפון עבודה' :
-           column === 'UnitSatellite' ? 'יחידה לוויינית' :
-           column === 'Unit' ? 'יחידה' :
-           column === 'UnitName' ? 'מחלקה ' :
-           column === 'NurseUnit' ? 'מחלקה סיעודית' : column }}
-      </mat-header-cell>
-      <mat-cell *matCellDef="let element">{{ element[column] }}</mat-cell>
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>
+        {{
+          column === 'admission_No' ? 'מספר מקרה ' :
+          column === 'patientName' ? 'שם מטופל' :
+          column === 'idNum' ? 'תעודת זהות' :
+          column === 'phone' ? 'טלפון' :
+          column === 'phoneCell' ? 'טלפון נייד' :
+          column === 'phoneWork' ? 'טלפון עבודה' :
+          column === 'unitSatellite' ? 'יחידה לוויינית' :
+          column === 'unit' ? 'יחידה' :
+          column === 'unitName' ? 'מחלקה ' :
+          column === 'nurseUnit' ? 'מחלקה סיעודית' : column
+        }}
+      </th>
+      <td mat-cell *matCellDef="let element">{{ element[column] }}</td>
     </ng-container>
-    <mat-header-row *matHeaderRowDef="columns"></mat-header-row>
-    <mat-row *matRowDef="let row; columns: columns" class="mat-row"></mat-row>
-  </mat-table>
 
-  <mat-paginator [length]="matTableDataSource.paginator?.length || 0" [pageIndex]="matTableDataSource.paginator?.pageIndex" 
-    [pageSize]="matTableDataSource.paginator?.pageSize" [pageSizeOptions]="[15, 50, 100]">
+    <tr mat-header-row *matHeaderRowDef="columns"></tr>
+    <tr mat-row *matRowDef="let row; columns: columns;"></tr>
+  </table>
+
+  <mat-paginator
+    [length]="matTableDataSource?.data?.length || 0"
+    [pageIndex]="matTableDataSource?.paginator?.pageIndex || 0"
+    [pageSize]="matTableDataSource?.paginator?.pageSize || 15"
+    [pageSizeOptions]="[15, 50, 100]">
   </mat-paginator>
 </div>

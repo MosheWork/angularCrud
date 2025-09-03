@@ -19,7 +19,17 @@ export class DrugsReportComponent implements OnInit {
   Title1: string = 'סך הכל תוצאות:';
   totalResults: number = 0;
 
-  columns: string[] = ['IdNum', 'FirstName', 'LastName', 'EntryDate', 'DrugName', 'FromHomeDrugs', 'ActiveDrugs'];
+  // 🔑 lower-first keys expected from backend
+  columns: string[] = [
+    'idNum',
+    'firstName',
+    'lastName',
+    'entryDate',
+    'drugName',
+    'fromHomeDrugs',
+    'activeDrugs'
+  ];
+
   dataSource: any[] = [];
   filteredData: any[] = [];
   matTableDataSource: MatTableDataSource<any>;
@@ -43,9 +53,10 @@ export class DrugsReportComponent implements OnInit {
   fetchDrugsReportData() {
     this.http.get<any[]>(`${environment.apiUrl}/DrugsReport`).subscribe(
       (data) => {
-        this.dataSource = data;
-        this.filteredData = [...data];
-        this.totalResults = data.length;
+        // use as-is assuming lower-first keys
+        this.dataSource = data || [];
+        this.filteredData = [...this.dataSource];
+        this.totalResults = this.filteredData.length;
         this.matTableDataSource = new MatTableDataSource(this.filteredData);
         this.matTableDataSource.paginator = this.paginator;
         this.matTableDataSource.sort = this.sort;
@@ -68,36 +79,33 @@ export class DrugsReportComponent implements OnInit {
 
   // Set up form value changes for live filtering
   setupFormValueChanges() {
-    this.filterForm.valueChanges.pipe(debounceTime(300), distinctUntilChanged()).subscribe(() => {
-      this.applyFilters();
-      this.paginator.firstPage(); // Reset to first page on filter change
-    });
+    this.filterForm.valueChanges
+      .pipe(debounceTime(300), distinctUntilChanged())
+      .subscribe(() => {
+        this.applyFilters();
+        if (this.paginator) this.paginator.firstPage();
+      });
   }
 
   // Apply global and date range filters
   applyFilters() {
-    const filters = this.filterForm.value;
-    const globalFilter = (filters['globalFilter'] || '').toLowerCase();
-    const startEntryDate = filters['startEntryDate'] ? new Date(filters['startEntryDate']) : null;
-    const endEntryDate = filters['endEntryDate'] ? new Date(filters['endEntryDate']) : null;
+    const { globalFilter, startEntryDate, endEntryDate } = this.filterForm.value;
+    const global = (globalFilter || '').toLowerCase();
+    const start = startEntryDate ? new Date(startEntryDate) : null;
+    const end = endEntryDate ? new Date(endEntryDate) : null;
 
     this.filteredData = this.dataSource.filter((item) => {
-      // Global filter: check all displayed columns
-      const globalMatch = this.columns.some((column) => {
-        const value = (item[column] || '').toString().toLowerCase();
-        return value.includes(globalFilter);
-      });
+      // Global filter across displayed columns
+      const globalMatch =
+        global === '' ||
+        this.columns.some((col) => String(item[col] ?? '').toLowerCase().includes(global));
 
-      // Date range filter
+      // Date range on entryDate
       let dateMatch = true;
-      if (startEntryDate || endEntryDate) {
-        const entryDate = new Date(item.EntryDate);
-        if (startEntryDate && entryDate < startEntryDate) {
-          dateMatch = false;
-        }
-        if (endEntryDate && entryDate > endEntryDate) {
-          dateMatch = false;
-        }
+      if (start || end) {
+        const d = new Date(item.entryDate);
+        if (start && d < start) dateMatch = false;
+        if (end && d > end) dateMatch = false;
       }
 
       return globalMatch && dateMatch;
@@ -121,8 +129,5 @@ export class DrugsReportComponent implements OnInit {
     XLSX.writeFile(workbook, 'drugs_report.xlsx');
   }
 
-  // Navigate back to the main reports page
-  goToHome() {
-    this.router.navigate(['/MainPageReports']);
-  }
+
 }

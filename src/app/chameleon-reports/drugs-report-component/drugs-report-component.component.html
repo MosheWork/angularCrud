@@ -1,11 +1,7 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
 
 <div class="body">
-  <!-- Page Title with Dynamic Results Count -->
-  <div class="nine">
-    <h1>{{ titleUnit }}<span>{{ Title1 }} {{ totalResults }}</span></h1>
-  </div>
-
+ 
   <!-- Filter Form for Table -->
   <form [formGroup]="filterForm" dir="rtl" class="filter-form">
     <!-- Button to fetch data -->
@@ -14,14 +10,14 @@
     <!-- Date Pickers for Entry Date Range -->
     <mat-form-field>
       <mat-label>תאריך התחלה</mat-label>
-      <input matInput [matDatepicker]="startDatePicker" formControlName="startEntryDate">
+      <input matInput [matDatepicker]="startDatePicker" formControlName="startEntryDate" />
       <mat-datepicker-toggle matSuffix [for]="startDatePicker"></mat-datepicker-toggle>
       <mat-datepicker #startDatePicker></mat-datepicker>
     </mat-form-field>
 
     <mat-form-field>
       <mat-label>תאריך סיום</mat-label>
-      <input matInput [matDatepicker]="endDatePicker" formControlName="endEntryDate">
+      <input matInput [matDatepicker]="endDatePicker" formControlName="endEntryDate" />
       <mat-datepicker-toggle matSuffix [for]="endDatePicker"></mat-datepicker-toggle>
       <mat-datepicker #endDatePicker></mat-datepicker>
     </mat-form-field>
@@ -30,7 +26,7 @@
     <div dir="rtl" class="form-footer" style="display: flex; justify-content: space-between;">
       <mat-form-field class="long-search-bar" style="flex: 1; margin-right: 10px;">
         <mat-label class="filters" style="color: blue">חיפוש</mat-label>
-        <input matInput formControlName="globalFilter" placeholder="Search...">
+        <input matInput formControlName="globalFilter" placeholder="Search..." />
       </mat-form-field>
 
       <!-- Buttons on the Right Side -->
@@ -46,46 +42,46 @@
 
   <!-- Data Table -->
   <mat-table [dataSource]="matTableDataSource" matSort dir="rtl" class="mat-elevation-z8">
-    <!-- IdNum Column -->
-    <ng-container matColumnDef="IdNum">
+    <!-- idNum -->
+    <ng-container matColumnDef="idNum">
       <mat-header-cell *matHeaderCellDef mat-sort-header> ת.ז. </mat-header-cell>
-      <mat-cell *matCellDef="let element"> {{ element.IdNum }} </mat-cell>
+      <mat-cell *matCellDef="let element"> {{ element.idNum }} </mat-cell>
     </ng-container>
 
-    <!-- FirstName Column -->
-    <ng-container matColumnDef="FirstName">
+    <!-- firstName -->
+    <ng-container matColumnDef="firstName">
       <mat-header-cell *matHeaderCellDef mat-sort-header> שם פרטי </mat-header-cell>
-      <mat-cell *matCellDef="let element"> {{ element.FirstName }} </mat-cell>
+      <mat-cell *matCellDef="let element"> {{ element.firstName }} </mat-cell>
     </ng-container>
 
-    <!-- LastName Column -->
-    <ng-container matColumnDef="LastName">
+    <!-- lastName -->
+    <ng-container matColumnDef="lastName">
       <mat-header-cell *matHeaderCellDef mat-sort-header> שם משפחה </mat-header-cell>
-      <mat-cell *matCellDef="let element"> {{ element.LastName }} </mat-cell>
+      <mat-cell *matCellDef="let element"> {{ element.lastName }} </mat-cell>
     </ng-container>
 
-    <!-- EntryDate Column -->
-    <ng-container matColumnDef="EntryDate">
+    <!-- entryDate -->
+    <ng-container matColumnDef="entryDate">
       <mat-header-cell *matHeaderCellDef mat-sort-header> תאריך </mat-header-cell>
-      <mat-cell *matCellDef="let element"> {{ element.EntryDate | date: 'dd/MM/yyyy' }} </mat-cell>
+      <mat-cell *matCellDef="let element"> {{ element.entryDate | date: 'dd/MM/yyyy' }} </mat-cell>
     </ng-container>
 
-    <!-- DrugName Column -->
-    <ng-container matColumnDef="DrugName">
+    <!-- drugName -->
+    <ng-container matColumnDef="drugName">
       <mat-header-cell *matHeaderCellDef> תרופות </mat-header-cell>
-      <mat-cell *matCellDef="let element"> {{ element.DrugName }} </mat-cell>
+      <mat-cell *matCellDef="let element"> {{ element.drugName }} </mat-cell>
     </ng-container>
 
-    <!-- FromHomeDrugs Column -->
-    <ng-container matColumnDef="FromHomeDrugs">
+    <!-- fromHomeDrugs -->
+    <ng-container matColumnDef="fromHomeDrugs">
       <mat-header-cell *matHeaderCellDef> תרופות קבועות </mat-header-cell>
-      <mat-cell *matCellDef="let element"> {{ element.FromHomeDrugs }} </mat-cell>
+      <mat-cell *matCellDef="let element"> {{ element.fromHomeDrugs }} </mat-cell>
     </ng-container>
 
-    <!-- ActiveDrugs Column -->
-    <ng-container matColumnDef="ActiveDrugs">
+    <!-- activeDrugs -->
+    <ng-container matColumnDef="activeDrugs">
       <mat-header-cell *matHeaderCellDef> תרופות פעילות </mat-header-cell>
-      <mat-cell *matCellDef="let element"> {{ element.ActiveDrugs }} </mat-cell>
+      <mat-cell *matCellDef="let element"> {{ element.activeDrugs }} </mat-cell>
     </ng-container>
 
     <!-- Table Header Row -->
@@ -96,7 +92,7 @@
   </mat-table>
 
   <!-- Paginator -->
-  <mat-paginator 
+  <mat-paginator
     [length]="totalResults"
     [pageSizeOptions]="[15, 50, 100]"
     showFirstLastButtons>

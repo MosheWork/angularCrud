@@ -1,8 +1,5 @@
 <div class="body">
     <!-- Page Title with Dynamic Results Count -->
-    <div class="nine">
-      <h1>{{ titleUnit }}<span>{{ Title1 }}{{ Title2 }}{{ totalResults }}</span></h1>
-    </div>
   
     <!-- Filter Form for Table -->
     <form [formGroup]="filterForm" dir="rtl" class="filter-form">
@@ -48,15 +45,15 @@
     <!-- Data Table -->
     <mat-table [dataSource]="matTableDataSource" matSort dir="rtl" class="mat-elevation-z8">
       <!-- Case Number Column -->
-      <ng-container matColumnDef="PMCaseNumber">
+      <ng-container matColumnDef="pmCaseNumber">
         <mat-header-cell *matHeaderCellDef mat-sort-header> מספר מקרה </mat-header-cell>
-        <mat-cell *matCellDef="let element"> {{ element.PMCaseNumber }} </mat-cell>
+        <mat-cell *matCellDef="let element"> {{ element.pmCaseNumber }} </mat-cell>
       </ng-container>
   
       <!-- Discharge Date Column -->
-      <ng-container matColumnDef="PMMoveDate">
+      <ng-container matColumnDef="pmMoveDate">
         <mat-header-cell *matHeaderCellDef mat-sort-header> תאריך שחרור </mat-header-cell>
-        <mat-cell *matCellDef="let element"> {{ element.PMMoveDate | date: 'dd/MM/yyyy' }} </mat-cell>
+        <mat-cell *matCellDef="let element"> {{ element.pmMoveDate | date: 'dd/MM/yyyy' }} </mat-cell>
       </ng-container>
   
       <!-- Discharge Time Column
@@ -66,9 +63,9 @@
       </ng-container> -->
   
       <!-- Department Name Column -->
-      <ng-container matColumnDef="DepartName">
+      <ng-container matColumnDef="departName">
         <mat-header-cell *matHeaderCellDef mat-sort-header> מחלקה משחררת </mat-header-cell>
-        <mat-cell *matCellDef="let element"> {{ element.DepartName }} </mat-cell>
+        <mat-cell *matCellDef="let element"> {{ element.departName }} </mat-cell>
       </ng-container>
   
       <!-- Table Header and Row Definitions -->

@@ -11,8 +11,8 @@ import { environment } from '../../../environments/environment';
 import { Observable, of } from 'rxjs';
 
 interface UserAutocompleteModel {
-  Code: number;
-  DisplayName: string;
+  code: number;
+  displayName: string;
 }
 
 @Component({
@@ -27,18 +27,19 @@ export class UserLogPerCaseNumberReportComponent implements OnInit {
   showGraph: boolean = false;
   graphData: any[] = [];
 
+  // 🔑 lower-first columns
   columns: string[] = [
-    'AdmissionNo',
-    'AnswerText10',
-    'AnswerText398',
-    'FirstName',
-    'LastName',
-    'IDNo',
-    'MedicalLicense',
-    'RecordName',
-    'RecordOpenDate',
-    'RecordOpenTime',
-    'UnitName'
+    'admissionNo',
+    'answerText10',
+    'answerText398',
+    'firstName',
+    'lastName',
+    'idNo',
+    'medicalLicense',
+    'recordName',
+    'recordOpenDate',
+    'recordOpenTime',
+    'unitName'
   ];
 
   dataSource: any[] = [];
@@ -59,72 +60,64 @@ export class UserLogPerCaseNumberReportComponent implements OnInit {
   }
 
   ngOnInit() {
-    // Apply global filter when the filter input changes
-    this.searchForm.get('globalFilter')?.valueChanges.pipe(
-      debounceTime(300),
-      distinctUntilChanged()
-    ).subscribe(() => {
-      this.applyFilters();
-    });
+    // global filter
+    this.searchForm.get('globalFilter')?.valueChanges
+      .pipe(debounceTime(300), distinctUntilChanged())
+      .subscribe(() => this.applyFilters());
 
-    // Apply date range filter when the date pickers value changes
-    this.searchForm.get('StartDate')?.valueChanges.subscribe(() => {
-      this.applyFilters();
-    });
+    // date range filters
+    this.searchForm.get('startDate')?.valueChanges.subscribe(() => this.applyFilters());
+    this.searchForm.get('endDate')?.valueChanges.subscribe(() => this.applyFilters());
 
-    this.searchForm.get('EndDate')?.valueChanges.subscribe(() => {
-      this.applyFilters();
-    });
-
-    // Fetch all users for the autocomplete
+    // fetch users for autocomplete
     this.fetchAllUsers();
 
-    // Initialize autocomplete options for UserCode
-    this.userCodeControl.valueChanges.pipe(
-      debounceTime(300),
-      distinctUntilChanged()
-    ).subscribe(value => {
-      if (typeof value === 'string') {
-        const filterValue = value.toLowerCase();
-        this.filteredUserOptions = this.allUsers.filter(option =>
-          option.DisplayName.toLowerCase().includes(filterValue)
-        );
-      } else {
-        this.filteredUserOptions = this.allUsers;
-      }
-    });
+    // autocomplete filtering
+    this.userCodeControl.valueChanges
+      .pipe(debounceTime(300), distinctUntilChanged())
+      .subscribe(value => {
+        if (typeof value === 'string') {
+          const filterValue = value.toLowerCase();
+          this.filteredUserOptions = this.allUsers.filter(option =>
+            option.displayName.toLowerCase().includes(filterValue)
+          );
+        } else {
+          this.filteredUserOptions = this.allUsers;
+        }
+      });
   }
 
   private fetchAllUsers() {
-    this.http.get<UserAutocompleteModel[]>(`${environment.apiUrl}UserLogPerCaseNumber/GetAllUsers`).subscribe(users => {
-      this.allUsers = users;
-      this.filteredUserOptions = this.allUsers;
-    }, error => {
-      console.error('Error fetching users:', error);
-    });
+    this.http.get<UserAutocompleteModel[]>(`${environment.apiUrl}UserLogPerCaseNumber/GetAllUsers`)
+      .subscribe(users => {
+        this.allUsers = users || [];
+        this.filteredUserOptions = this.allUsers;
+      }, error => {
+        console.error('Error fetching users:', error);
+      });
   }
 
   private createSearchForm(): FormGroup {
     return this.fb.group({
-      AdmissionNo: new FormControl(''),
-      IDNo: new FormControl(''),
-      // Removed 'UserCode' from the form group
-      StartDate: new FormControl(null),
-      EndDate: new FormControl(null),
+      admissionNo: new FormControl(''),
+      idNo: new FormControl(''),
+      // userCode handled via userCodeControl
+      startDate: new FormControl(null),
+      endDate: new FormControl(null),
       globalFilter: new FormControl('')
     });
   }
 
   fetchData() {
-    const admissionNo = this.searchForm.get('AdmissionNo')?.value;
-    const idNo = this.searchForm.get('IDNo')?.value;
-    let userCode = null;
+    const admissionNo = this.searchForm.get('admissionNo')?.value;
+    const idNo = this.searchForm.get('idNo')?.value;
+    let userCode: number | null = null;
+
     const selectedUser = this.userCodeControl.value;
 
-    if (selectedUser && typeof selectedUser === 'object' && selectedUser.Code) {
-      userCode = selectedUser.Code;
+    if (selectedUser && typeof selectedUser === 'object' && selectedUser.code) {
+      userCode = selectedUser.code;
     } else if (selectedUser && typeof selectedUser === 'string') {
-      // The user typed something manually; prompt them to select from the list
       alert('אנא בחר משתמש מהרשימה');
       return;
     }
@@ -134,39 +127,27 @@ export class UserLogPerCaseNumberReportComponent implements OnInit {
       return;
     }
 
-    // Build query parameters
-    let params = new URLSearchParams();
+    const params = new URLSearchParams();
+    if (admissionNo) params.append('admissionNo', admissionNo);
+    if (idNo) params.append('idNo', idNo);
+    if (userCode !== null) params.append('userCode', String(userCode));
 
-    if (admissionNo) {
-      params.append('admissionNo', admissionNo);
-    }
-
-    if (idNo) {
-      params.append('idNo', idNo);
-    }
-
-    if (userCode) {
-      params.append('userCode', userCode.toString());
-    }
-
-    this.http.get<any[]>(`${environment.apiUrl}UserLogPerCaseNumber?${params.toString()}`).subscribe(data => {
-      this.handleResponseData(data);
-    }, error => {
-      // Handle error
-      console.error('Error fetching data:', error);
-    });
+    this.http.get<any[]>(`${environment.apiUrl}UserLogPerCaseNumber?${params.toString()}`)
+      .subscribe(data => this.handleResponseData(data),
+        error => console.error('Error fetching data:', error));
   }
 
   displayUser(user: UserAutocompleteModel): string {
-    return user && user.DisplayName ? user.DisplayName : '';
+    return user && user.displayName ? user.displayName : '';
   }
 
   private handleResponseData(data: any[]) {
-    this.dataSource = data.map(item => ({
+    // Expecting lower-first keys from backend
+    this.dataSource = (data || []).map(item => ({
       ...item,
-      MedicalLicense: item.MedicalLicense ? item.MedicalLicense : '', // Handle null MedicalLicense
-      RecordOpenTime: item.RecordOpenTime ? new Date(`1970-01-01T${item.RecordOpenTime}`) : null, // Convert RecordOpenTime to Date object
-      RecordOpenDate: item.RecordOpenDate ? new Date(item.RecordOpenDate) : null // Ensure RecordOpenDate is a Date object
+      medicalLicense: item.medicalLicense ?? '',
+      recordOpenTime: item.recordOpenTime ? new Date(`1970-01-01T${item.recordOpenTime}`) : null,
+      recordOpenDate: item.recordOpenDate ? new Date(item.recordOpenDate) : null
     }));
 
     this.filteredData = [...this.dataSource];
@@ -179,14 +160,13 @@ export class UserLogPerCaseNumberReportComponent implements OnInit {
 
   applyFilters() {
     const globalFilter = (this.searchForm.get('globalFilter')?.value || '').toLowerCase();
-    const startDate: Date | null = this.searchForm.get('StartDate')?.value;
-    const endDate: Date | null = this.searchForm.get('EndDate')?.value;
+    const startDate: Date | null = this.searchForm.get('startDate')?.value;
+    const endDate: Date | null = this.searchForm.get('endDate')?.value;
 
     this.filteredData = this.dataSource.filter((item) => {
       let matchesGlobalFilter = true;
       let matchesDateRangeFilter = true;
 
-      // Apply global text filter
       if (globalFilter) {
         matchesGlobalFilter = this.columns.some((column) => {
           const value = item[column];
@@ -194,9 +174,8 @@ export class UserLogPerCaseNumberReportComponent implements OnInit {
         });
       }
 
-      // Apply date range filter
       if (startDate || endDate) {
-        const itemDate = item.RecordOpenDate;
+        const itemDate: Date | null = item.recordOpenDate;
         if (itemDate) {
           if (startDate && endDate) {
             matchesDateRangeFilter = itemDate >= startDate && itemDate <= endDate;
@@ -219,7 +198,7 @@ export class UserLogPerCaseNumberReportComponent implements OnInit {
 
   resetFilters() {
     this.searchForm.reset();
-    this.userCodeControl.reset(); // Reset the userCodeControl as well
+    this.userCodeControl.reset();
     this.filteredData = [...this.dataSource];
     this.matTableDataSource.data = this.filteredData;
     this.totalResults = this.filteredData.length;

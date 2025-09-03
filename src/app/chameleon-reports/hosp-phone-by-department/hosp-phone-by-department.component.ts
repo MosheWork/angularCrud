@@ -27,14 +27,15 @@ export class HospPhoneByDepartmentComponent implements OnInit {
   matTableDataSource: MatTableDataSource<any>;
   UnitOptions: string[] = [];
 
+  // 🔑 lower-first keys expected from backend
   columns: string[] = [
-    'Admission_No',
-    'UnitName',
-    'PatientName',
-    'IdNum',
-    'Phone',
-    'PhoneCell',
-    'PhoneWork'
+    'admission_No',
+    'unitName',
+    'patientName',
+    'idNum',
+    'phone',
+    'phoneCell',
+    'phoneWork'
   ];
 
   constructor(private http: HttpClient, private fb: FormBuilder) {
@@ -52,12 +53,11 @@ export class HospPhoneByDepartmentComponent implements OnInit {
         this.matTableDataSource.sort = this.sort;
 
         // Populate Unit filter dropdown options
-        this.UnitOptions = [...new Set(data.map(item => item.UnitName).filter(Boolean))];
+        this.UnitOptions = [...new Set(data.map(item => item.unitName).filter(Boolean))];
 
-        this.filterForm.valueChanges.pipe(
-          debounceTime(300),
-          distinctUntilChanged()
-        ).subscribe(() => this.applyFilters());
+        this.filterForm.valueChanges
+          .pipe(debounceTime(300), distinctUntilChanged())
+          .subscribe(() => this.applyFilters());
       },
       (error) => {
         console.error('Error fetching data:', error);
@@ -71,19 +71,27 @@ export class HospPhoneByDepartmentComponent implements OnInit {
       formControls[column] = new FormControl('');
     });
     formControls['globalFilter'] = new FormControl('');
-    formControls['UnitFilter'] = new FormControl([]);
+    formControls['UnitFilter'] = new FormControl<string[]>([]);
     return this.fb.group(formControls);
   }
 
   applyFilters() {
     const filters = this.filterForm.value;
-    const globalFilter = filters['globalFilter'].toLowerCase();
-    const selectedMedUnits = filters['UnitFilter'];
+    const globalFilter = (filters['globalFilter'] || '').toLowerCase();
+    const selectedMedUnits: string[] = filters['UnitFilter'] || [];
 
     this.filteredData = this.dataSource.filter(item =>
-      this.columns.every(column => !filters[column] || String(item[column]).toLowerCase().includes(filters[column].toLowerCase())) &&
-      (globalFilter === '' || this.columns.some(column => String(item[column]).toLowerCase().includes(globalFilter))) &&
-      (selectedMedUnits.length === 0 || selectedMedUnits.includes(item.UnitName)) 
+      // per-column filters
+      this.columns.every(column =>
+        !filters[column] || String(item[column] ?? '').toLowerCase().includes(String(filters[column]).toLowerCase())
+      )
+      // global filter
+      && (
+        globalFilter === '' ||
+        this.columns.some(column => String(item[column] ?? '').toLowerCase().includes(globalFilter))
+      )
+      // unit filter
+      && (selectedMedUnits.length === 0 || selectedMedUnits.includes(item.unitName))
     );
 
     this.totalResults = this.filteredData.length;
@@ -98,30 +106,20 @@ export class HospPhoneByDepartmentComponent implements OnInit {
   }
 
   exportToExcel() {
-    const columnHeaders = {
-      Admission_No: 'מספר מקרה',
-      UnitName: 'מחלקה',
-      PatientName: 'שם מטופל',
-      IdNum: 'תעודת זהות',
-      Phone: 'טלפון בית',
-      PhoneCell: 'טלפון נייד',
-      PhoneWork: 'טלפון עבודה'
-    };
-  
     const dataForExport = this.filteredData.map(item => ({
-      [columnHeaders.Admission_No]: item.Admission_No,
-      [columnHeaders.UnitName]: item.UnitName,
-      [columnHeaders.PatientName]: item.PatientName,
-      [columnHeaders.IdNum]: item.IdNum,
-      [columnHeaders.Phone]: item.Phone,
-      [columnHeaders.PhoneCell]: item.PhoneCell,
-      [columnHeaders.PhoneWork]: item.PhoneWork
+      'מספר מקרה': item.admission_No,
+      'מחלקה': item.unitName,
+      'שם מטופל': item.patientName,
+      'תעודת זהות': item.idNum,
+      'טלפון בית': item.phone,
+      'טלפון נייד': item.phoneCell,
+      'טלפון עבודה': item.phoneWork
     }));
-  
+
     const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(dataForExport);
     const workbook: XLSX.WorkBook = { Sheets: { 'נתונים': worksheet }, SheetNames: ['נתונים'] };
-    
+
     XLSX.writeFile(workbook, 'HospPhoneByDepartment.xlsx');
   }
-  
+
 }

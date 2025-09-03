@@ -1,63 +1,66 @@
 <div class="body">
-    <div class="nine">
-      <h1>{{ titleUnit }}<span>{{ Title1 }}{{ Title2 }}{{ totalResults }}</span></h1>
+
+  <form [formGroup]="filterForm" dir="rtl" class="filter-form" style="display: flex; justify-content: space-between; align-items: center;">
+    <mat-form-field class="long-search-bar" style="flex-grow: 1; margin-right: 10px; width: 70%;">
+      <mat-label class="filters" style="color: blue">חיפוש</mat-label>
+      <input matInput [formControlName]="'globalFilter'" class="search-input" />
+    </mat-form-field>
+
+    <div dir="rtl" class="icon-container" style="display: flex; align-items: center;">
+      <img src="../../assets/excel.png" alt="Download" (click)="exportToExcel()" class="download-icon icon" width="50px" style="margin-left: 10px;" />
+      <img (click)="navigateToGraphPage()" matTooltip="Move To Graph" src="../../../../assets/graphIcon.png" width="50px" style="margin-left: 10px;" />
+      <button mat-button (click)="resetFilters()" mat-raised-button color="primary" class="custom-button" matTooltip="Reset Filters" style="margin-left: 10px;">
+        <i class="material-icons">refresh</i>
+      </button>
     </div>
-  
-    <form [formGroup]="filterForm" dir="rtl" class="filter-form" style="display: flex; justify-content: space-between; align-items: center;">
-      <mat-form-field class="long-search-bar" style="flex-grow: 1; margin-right: 10px; width: 70%;">
-        <mat-label class="filters" style="color: blue">חיפוש</mat-label>
-        <input matInput [formControlName]="'globalFilter'" class="search-input" />
-      </mat-form-field>
-  
-      <div dir="rtl" class="icon-container" style="display: flex; align-items: center;">
-        <img src="../../assets/excel.png" alt="Download" (click)="exportToExcel()" class="download-icon icon" width="50px" style="margin-left: 10px;" />
-        <img (click)="navigateToGraphPage()" matTooltip="Move To Graph" src="../../../../assets/graphIcon.png" width="50px" style="margin-left: 10px;" />
-        <button mat-button (click)="resetFilters()" mat-raised-button color="primary" class="custom-button" matTooltip="Reset Filters" style="margin-left: 10px;">
-          <i class="material-icons">refresh</i>
-        </button>
-      </div>
-    </form>
-  
-    <mat-table *ngIf="!showGraph" [dataSource]="matTableDataSource" matSort dir="rtl" class="mat-elevation-z8">
-      <ng-container matColumnDef="Login_Name">
-        <mat-header-cell *matHeaderCellDef mat-sort-header> שם משתמש </mat-header-cell>
-        <mat-cell *matCellDef="let element"> {{ element.Login_Name }} </mat-cell>
-      </ng-container>
-  
-      <ng-container matColumnDef="ID_No">
-        <mat-header-cell *matHeaderCellDef mat-sort-header> ת.ז. </mat-header-cell>
-        <mat-cell *matCellDef="let element"> {{ element.ID_No }} </mat-cell>
-      </ng-container>
-  
-      <ng-container matColumnDef="First_Name">
-        <mat-header-cell *matHeaderCellDef mat-sort-header> שם פרטי </mat-header-cell>
-        <mat-cell *matCellDef="let element"> {{ element.First_Name }} </mat-cell>
-      </ng-container>
-  
-      <ng-container matColumnDef="Last_Name">
-        <mat-header-cell *matHeaderCellDef mat-sort-header> שם משפחה </mat-header-cell>
-        <mat-cell *matCellDef="let element"> {{ element.Last_Name }} </mat-cell>
-      </ng-container>
-  
-      <ng-container matColumnDef="End_Of_Work">
-        <mat-header-cell *matHeaderCellDef mat-sort-header> סיום עבודה </mat-header-cell>
-        <mat-cell *matCellDef="let element"> {{ element.End_Of_Work | date: 'dd/MM/yyyy' }} </mat-cell>
-      </ng-container>
-  
-      <ng-container matColumnDef="LastSuccessfulLoginDate">
-        <mat-header-cell *matHeaderCellDef mat-sort-header> תאריך התחברות אחרון </mat-header-cell>
-        <mat-cell *matCellDef="let element"> {{ element.LastSuccessfulLoginDate | date: 'dd/MM/yyyy' }} </mat-cell>
-      </ng-container>
-  
-      <mat-header-row *matHeaderRowDef="columns"></mat-header-row>
-      <mat-row *matRowDef="let row; columns: columns"></mat-row>
-    </mat-table>
-  
-    <mat-paginator 
-      [length]="matTableDataSource.paginator?.length || 0"
-      [pageIndex]="matTableDataSource.paginator?.pageIndex"
-      [pageSize]="matTableDataSource.paginator?.pageSize"
-      [pageSizeOptions]="[15, 50, 100]">
-    </mat-paginator>
-  </div>
-  
+  </form>
+
+  <!-- Use proper Material table markup -->
+  <table *ngIf="!showGraph" mat-table [dataSource]="matTableDataSource" matSort dir="rtl" class="mat-elevation-z8">
+    <!-- login_Name -->
+    <ng-container matColumnDef="login_Name">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header> שם משתמש </th>
+      <td mat-cell *matCellDef="let element"> {{ element.login_Name }} </td>
+    </ng-container>
+
+    <!-- iD_No -->
+    <ng-container matColumnDef="iD_No">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header> ת.ז. </th>
+      <td mat-cell *matCellDef="let element"> {{ element.iD_No }} </td>
+    </ng-container>
+
+    <!-- first_Name -->
+    <ng-container matColumnDef="first_Name">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header> שם פרטי </th>
+      <td mat-cell *matCellDef="let element"> {{ element.first_Name }} </td>
+    </ng-container>
+
+    <!-- last_Name -->
+    <ng-container matColumnDef="last_Name">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header> שם משפחה </th>
+      <td mat-cell *matCellDef="let element"> {{ element.last_Name }} </td>
+    </ng-container>
+
+    <!-- end_Of_Work -->
+    <ng-container matColumnDef="end_Of_Work">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header> סיום עבודה </th>
+      <td mat-cell *matCellDef="let element"> {{ element.end_Of_Work | date: 'dd/MM/yyyy' }} </td>
+    </ng-container>
+
+    <!-- lastSuccessfulLoginDate -->
+    <ng-container matColumnDef="lastSuccessfulLoginDate">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header> תאריך התחברות אחרון </th>
+      <td mat-cell *matCellDef="let element"> {{ element.lastSuccessfulLoginDate | date: 'dd/MM/yyyy' }} </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="columns"></tr>
+    <tr mat-row *matRowDef="let row; columns: columns"></tr>
+  </table>
+
+  <mat-paginator 
+    [length]="matTableDataSource.paginator?.length || 0"
+    [pageIndex]="matTableDataSource.paginator?.pageIndex"
+    [pageSize]="matTableDataSource.paginator?.pageSize"
+    [pageSizeOptions]="[15, 50, 100]">
+  </mat-paginator>
+</div>

@@ -24,13 +24,14 @@ export class UsersReportComponent implements OnInit {
   showGraph: boolean = false;
   graphData: any[] = [];
 
+  // 🔑 first letter lowercased
   columns: string[] = [
-    'Login_Name',
-    'ID_No',
-    'First_Name',
-    'Last_Name',
-    'End_Of_Work',
-    'LastSuccessfulLoginDate'
+    'login_Name',
+    'iD_No',
+    'first_Name',
+    'last_Name',
+    'end_Of_Work',
+    'lastSuccessfulLoginDate'
   ];
 
   dataSource: any[] = [];
@@ -55,18 +56,17 @@ export class UsersReportComponent implements OnInit {
       this.matTableDataSource.paginator = this.paginator;
       this.matTableDataSource.sort = this.sort;
 
-      // Add value changes listener to all form controls
       this.columns.forEach((column) => {
-        this.filterForm.get(column)?.valueChanges.pipe(debounceTime(300), distinctUntilChanged()).subscribe(() => this.applyFilters());
+        this.filterForm.get(column)?.valueChanges
+          .pipe(debounceTime(300), distinctUntilChanged())
+          .subscribe(() => this.applyFilters());
       });
 
-      // Global filter value change listener
       this.filterForm.valueChanges.subscribe(() => {
         this.applyFilters();
-        this.paginator.firstPage(); // Reset to first page after filtering
+        this.paginator.firstPage();
       });
 
-      // Initial filter application
       this.applyFilters();
     });
   }
@@ -83,27 +83,24 @@ export class UsersReportComponent implements OnInit {
   applyFilters() {
     const filters = this.filterForm.value;
     const globalFilter = (filters['globalFilter'] || '').toLowerCase();
-  
-    // Apply filters to the data source
+
     this.filteredData = this.dataSource.filter((item) =>
       this.columns.every((column) => {
         const value = item[column];
         const filterValue = filters[column];
-  
-        const stringValue = typeof value === 'string' ? value.toLowerCase() : String(value).toLowerCase();
+
+        const stringValue = typeof value === 'string' ? value.toLowerCase() : String(value ?? '').toLowerCase();
         const filterString = typeof filterValue === 'string' ? filterValue.toLowerCase() : filterValue;
-  
-        // Filter based on individual column filters and the global search filter
+
         return (!filterString || stringValue.includes(filterString)) &&
-               (!globalFilter || this.columns.some((col) => String(item[col]).toLowerCase().includes(globalFilter)));
+               (!globalFilter || this.columns.some((col) => String(item[col] ?? '').toLowerCase().includes(globalFilter)));
       })
     );
-  
-    // Update total results and table data
+
     this.totalResults = this.filteredData.length;
     this.matTableDataSource.data = this.filteredData;
     this.matTableDataSource.paginator = this.paginator;
-    this.graphData = this.filteredData;  // Update graph data
+    this.graphData = this.filteredData;
   }
 
   resetFilters() {
