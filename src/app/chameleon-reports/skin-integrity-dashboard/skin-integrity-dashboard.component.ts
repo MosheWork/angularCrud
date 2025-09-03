@@ -20,47 +20,58 @@ export class SkinIntegrityDashboardComponent implements OnInit, AfterViewInit {
   woundDataSource = new MatTableDataSource<any>();
   mattressDataSource = new MatTableDataSource<any>();
 
-  // ✅ Column Headers for Type of Wounds Table
-  woundColumns: string[] = [
-    'Department', 'Venous_Ulcer', 'Arterial_Ulcer', 'Skin_Tears', 'Other',
-    'Pressure_Ulcer', 'Tumor_Wound', 'Rash', 'Burn_Wound', 'Trauma_Injury',
-    'Diabetic_Ulcer', 'IAD_Dermatitis', 'Kennedy_Terminal_Ulcer', 'Total_Description_Count'
+  // ✅ Column Headers for Type of Wounds Table (first letter lowercased)
+  woundColumns = [
+    'department','venous_Ulcer','arterial_Ulcer','skin_Tears','other',
+    'pressure_Ulcer','tumor_Wound','rash','burn_Wound','trauma_Injury',
+    'diabetic_Ulcer','iaD_Dermatitis', // 👈 was iAD_Dermatitis
+    'kennedy_Terminal_Ulcer','total_Description_Count'
   ];
 
-  // ✅ Column Headers for Mattresses Table
+  // ✅ Column Headers for Mattresses Table (first letter lowercased)
   mattressColumns: string[] = [
-    'Department', 'Regular_Mattress', 'Egg_Crate_Mattress', 'Other_Device', 'Air_Mattress',
-    'Dynamic_Mattress', 'Seat_Cushion', 'Foam_Mattress', 'Visco_Mattress', 'Tempur_Mattress',
-    'Reactive_Mattress', 'Total_Support_Devices'
+    'department',
+    'regular_Mattress',
+    'egg_Crate_Mattress',
+    'other_Device',
+    'air_Mattress',
+    'dynamic_Mattress',
+    'seat_Cushion',
+    'foam_Mattress',
+    'visco_Mattress',
+    'tempur_Mattress',
+    'reactive_Mattress',
+    'total_Support_Devices'
   ];
+  
 
-  // ✅ Column Header Map (Hebrew Names)
+  // ✅ Column Header Map (Hebrew) — keys must match normalized (first-letter-lowercase) columns
   columnHeaderMap: { [key: string]: string } = {
-    'Department': 'מחלקה',
-    'Venous_Ulcer': 'כיב ורידי',
-    'Arterial_Ulcer': 'כיב עורקי',
-    'Skin_Tears': 'קרעים בעור',
-    'Other': 'אחר',
-    'Pressure_Ulcer': 'פצע לחץ',
-    'Tumor_Wound': 'פצע גידולי',
-    'Rash': 'פריחה',
-    'Burn_Wound': 'פצע כוויה',
-    'Trauma_Injury': 'טראומה/ חבלה',
-    'Diabetic_Ulcer': 'כיב סוכרתי',
-    'IAD_Dermatitis': 'IAD - Incontinence Associated Dermatitis',
-    'Kennedy_Terminal_Ulcer': 'Kennedy Terminal Ulcer',
-    'Total_Description_Count': 'סך הכל סוגי פצעים',
-    'Regular_Mattress': 'מזרון רגיל',
-    'Egg_Crate_Mattress': 'מזרון ביצים',
-    'Other_Device': 'אחר',
-    'Air_Mattress': 'מזרון אוויר',
-    'Dynamic_Mattress': 'מזרון דינמי',
-    'Seat_Cushion': 'כרית הושבה',
-    'Foam_Mattress': 'מזרון קצף',
-    'Visco_Mattress': 'מזרון ויסקו',
-    'Tempur_Mattress': 'מזרון טמפור',
-    'Reactive_Mattress': 'מזרון מפזר לחץ',
-    'Total_Support_Devices': 'סך הכל אביזרי תמיכה'
+    'department': 'מחלקה',
+    'venous_Ulcer': 'כיב ורידי',
+    'arterial_Ulcer': 'כיב עורקי',
+    'skin_Tears': 'קרעים בעור',
+    'other': 'אחר',
+    'pressure_Ulcer': 'פצע לחץ',
+    'tumor_Wound': 'פצע גידולי',
+    'rash': 'פריחה',
+    'burn_Wound': 'פצע כוויה',
+    'trauma_Injury': 'טראומה/ חבלה',
+    'diabetic_Ulcer': 'כיב סוכרתי',
+    'iAD_Dermatitis': 'IAD - Incontinence Associated Dermatitis',
+    'kennedy_Terminal_Ulcer': 'Kennedy Terminal Ulcer',
+    'total_Description_Count': 'סך הכל סוגי פצעים',
+    regular_Mattress: 'מזרון רגיל',
+  egg_Crate_Mattress: 'מזרון ביצים',
+  other_Device: 'אחר',
+  air_Mattress: 'מזרון אוויר',
+  dynamic_Mattress: 'מזרון דינמי',
+  seat_Cushion: 'כרית הושבה',
+  foam_Mattress: 'מזרון קצף',
+  visco_Mattress: 'מזרון ויסקו',
+  tempur_Mattress: 'מזרון טמפור',
+  reactive_Mattress: 'מזרון מפזר לחץ',
+  total_Support_Devices: 'סך הכל אביזרי תמיכה'
   };
 
   // ✅ Filters
@@ -81,7 +92,8 @@ export class SkinIntegrityDashboardComponent implements OnInit, AfterViewInit {
   ngOnInit(): void {
     this.initializeYearList();
     this.fetchWoundSummary();
- 
+    this.fetchMattressSummary(); // 👈 add this
+
   }
 
   ngAfterViewInit(): void {
@@ -89,6 +101,17 @@ export class SkinIntegrityDashboardComponent implements OnInit, AfterViewInit {
     this.mattressDataSource.paginator = this.mattressPaginator;
     this.woundDataSource.sort = this.sort;
     this.mattressDataSource.sort = this.sort;
+  }
+
+  // 🔧 Normalize only the first letter of each top-level key
+  private normalizeKeysFirstLower<T extends Record<string, any>>(obj: T): any {
+    const out: any = {};
+    Object.keys(obj || {}).forEach(k => {
+      if (!k.length) return;
+      const nk = k[0].toLowerCase() + k.slice(1);
+      out[nk] = (obj as any)[k];
+    });
+    return out;
   }
 
   // ✅ Initialize Year Selection
@@ -102,67 +125,55 @@ export class SkinIntegrityDashboardComponent implements OnInit, AfterViewInit {
   // ✅ Fetch Wound Summary Data
   fetchWoundSummary(): void {
     const params = this.buildQueryParams();
-  
-    this.http.get<any[]>(`${environment.apiUrl}/SkinIntegrityReportAPI/TypeOfWoundSummary`, { params }).subscribe(
-      (data) => {
-        this.woundDataSource.data = data;
-        this.extractUniqueDepartments(data); // populate department dropdown
-      },
-      (error) => console.error('Error fetching wound data:', error)
-    );
+
+    this.http.get<any[]>(`${environment.apiUrl}/SkinIntegrityReportAPI/TypeOfWoundSummary`, { params })
+      .subscribe(
+        (data) => {
+          const normalized = (data || []).map(r => this.normalizeKeysFirstLower(r));
+          this.woundDataSource.data = normalized;
+          this.extractUniqueDepartments(normalized); // populate department dropdown
+        },
+        (error) => console.error('Error fetching wound data:', error)
+      );
   }
-  
+
+  // ✅ Fetch Mattress Summary Data
   fetchMattressSummary(): void {
     const params = this.buildQueryParams();
-  
-    this.http.get<any[]>(`${environment.apiUrl}/SkinIntegrityReportAPI/MattressesSummary`, { params }).subscribe(
-      (data) => {
-        this.mattressDataSource.data = data;
-      },
-      (error) => console.error('Error fetching mattress data:', error)
-    );
-  }
-  
-  // ✅ Fetch Mattress Summary Data
-   and(): void {
-    let params = this.buildQueryParams();
-    this.http.get<any[]>(`${environment.apiUrl}/SkinIntegrityReportAPI/MattressesSummary`, { params }).subscribe(
-      (data) => {
-        console.log('Fetched Mattress Data:', data);
-        this.mattressDataSource.data = data;
-      },
-      (error) => console.error('Error fetching mattress data:', error)
-    );
+
+    this.http.get<any[]>(`${environment.apiUrl}/SkinIntegrityReportAPI/MattressesSummary`, { params })
+      .subscribe(
+        (data) => {
+          const normalized = (data || []).map(r => this.normalizeKeysFirstLower(r));
+          this.mattressDataSource.data = normalized;
+        },
+        (error) => console.error('Error fetching mattress data:', error)
+      );
   }
 
   // ✅ Extract Unique Departments for Filters
   extractUniqueDepartments(data: any[]): void {
-    this.departmentList = Array.from(new Set(data.map(item => item.Department)));
+    this.departmentList = Array.from(new Set((data || []).map(item => item.department).filter(Boolean)));
   }
 
   // ✅ Apply Filters
   applyFilters(): void {
     this.fetchWoundSummary();
-    this.fetchMattressSummary(); 
-
+    this.fetchMattressSummary();
   }
-  
 
   // ✅ Reset Filters
   resetFilters(): void {
     this.selectedDepartments = [];
     this.startDate = null;
     this.endDate = null;
-  
-    // Optionally reset the search input too
+
     this.woundDataSource.filter = '';
     this.mattressDataSource.filter = '';
-  
-    // Now re-fetch with empty filters
+
     this.fetchWoundSummary();
     this.fetchMattressSummary();
   }
-  
 
   // ✅ Search Across All Columns
   applyGlobalFilter(event: Event): void {
@@ -174,33 +185,32 @@ export class SkinIntegrityDashboardComponent implements OnInit, AfterViewInit {
   // ✅ Build Query Params for API Requests
   private buildQueryParams(): HttpParams {
     let params = new HttpParams();
-  
-    if (this.startDate && this.startDate instanceof Date && !isNaN(this.startDate.getTime())) {
+
+    if (this.startDate && !isNaN(this.startDate.getTime())) {
       const formattedStart = this.startDate.toISOString().split('T')[0];
       params = params.set('startDate', formattedStart);
     }
-  
-    if (this.endDate && this.endDate instanceof Date && !isNaN(this.endDate.getTime())) {
+
+    if (this.endDate && !isNaN(this.endDate.getTime())) {
       const formattedEnd = this.endDate.toISOString().split('T')[0];
       params = params.set('endDate', formattedEnd);
     }
-  
+
     if (this.selectedDepartments && this.selectedDepartments.length > 0) {
       params = params.set('departments', this.selectedDepartments.join(','));
     }
-  
+
     console.log('📦 Final HttpParams:', params.keys().map(k => `${k}=${params.get(k)}`));
     return params;
   }
-  
-  
-  
+
+  // ✅ Export (uses the normalized keys and Hebrew headers)
   exportToExcel(): void {
     const isWoundTab = this.selectedTab === 0;
     const dataSource = isWoundTab ? this.woundDataSource.filteredData : this.mattressDataSource.filteredData;
     const columns = isWoundTab ? this.woundColumns : this.mattressColumns;
-  
-    const dataForExport = dataSource.map(row => {
+
+    const dataForExport = (dataSource || []).map(row => {
       const exportRow: any = {};
       columns.forEach(col => {
         const header = this.columnHeaderMap[col] || col;
@@ -208,26 +218,29 @@ export class SkinIntegrityDashboardComponent implements OnInit, AfterViewInit {
       });
       return exportRow;
     });
-  
+
     const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(dataForExport);
     const workbook: XLSX.WorkBook = {
       Sheets: { 'סיכום': worksheet },
       SheetNames: ['סיכום']
     };
-  
+
     const fileName = isWoundTab ? 'Wound_Summary.xlsx' : 'Mattress_Summary.xlsx';
     XLSX.writeFile(workbook, fileName);
   }
+
+  // (Optional) Combined endpoint — normalize if/when you render it
   fetchSummaryByDepartment(): void {
-    let params = this.buildQueryParams();
-  
-    this.http.get<any[]>(`${environment.apiUrl}/SkinIntegrityReportAPI/SummaryByDepartment`, { params }).subscribe(
-      (data) => {
-        console.log('Fetched Combined Wound + Mattress Summary:', data);
-        // Handle this data however you want (e.g., display it in a third table)
-      },
-      (error) => console.error('Error fetching summary by department:', error)
-    );
+    const params = this.buildQueryParams();
+
+    this.http.get<any[]>(`${environment.apiUrl}/SkinIntegrityReportAPI/SummaryByDepartment`, { params })
+      .subscribe(
+        (data) => {
+          const normalized = (data || []).map(r => this.normalizeKeysFirstLower(r));
+          console.log('Fetched Combined Wound + Mattress Summary (normalized):', normalized);
+          // Handle this data however you want (e.g., display it in a third table)
+        },
+        (error) => console.error('Error fetching summary by department:', error)
+      );
   }
-    
 }
