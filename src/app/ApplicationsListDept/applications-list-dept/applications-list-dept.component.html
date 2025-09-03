@@ -1,109 +1,106 @@
 <div class="body">
   <!-- 📊 Stats -->
-<div class="stats-cards" dir="rtl">
-  <mat-card class="stat">
-    <div class="stat-value">{{ totalApps }}</div>
-    <div class="stat-label">סה״כ יישומים</div>
-  </mat-card>
+  <div class="stats-cards" dir="rtl">
+    <mat-card class="stat">
+      <div class="stat-value">{{ totalApps }}</div>
+      <div class="stat-label">סה״כ יישומים</div>
+    </mat-card>
 
-  <mat-card class="stat">
-    <div class="stat-value">{{ appsWithGuides }}</div>
-    <div class="stat-label">יישומים עם מדריך</div>
-    <div class="stat-sub">
-      {{ (appsWithGuides / (totalApps || 1) * 100) | number:'1.0-0' }}%
-    </div>
-  </mat-card>
-  <mat-card class="stat">
-    <div class="stat-value">{{ missingTotal }}</div>
-    <div class="stat-label">אפליקציות עם מידע חסר</div>
-    <div class="stat-sub">
-      מתוך {{ totalApps }} ({{ (missingTotal / (totalApps || 1) * 100) | number:'1.0-0' }}%)
-    </div>
-  </mat-card>
-</div>
-
-    <!-- 🔍 Filter + Actions Form -->
-    <form [formGroup]="filterForm" dir="rtl" class="filter-form">
-      <div class="form-footer">
-        <!-- Global Filter -->
-        <mat-form-field class="long-search-bar" appearance="fill">
-          <mat-label>חיפוש</mat-label>
-          <input matInput [formControlName]="'globalFilter'" />
-        </mat-form-field>
-
-        
-        <!-- Reset Filters -->
-        <button mat-raised-button color="primary" (click)="resetFilters()" matTooltip="איפוס סינונים">
-          <i class="material-icons">refresh</i>
-        </button>
-  
-        <!-- Export to Excel -->
-        <img
-          src="../../assets/excel.png"
-          alt="Download"
-          (click)="exportToExcel()"
-          class="download-icon"
-          width="50px"
-        />
+    <mat-card class="stat">
+      <div class="stat-value">{{ appsWithGuides }}</div>
+      <div class="stat-label">יישומים עם מדריך</div>
+      <div class="stat-sub">
+        {{ (appsWithGuides / (totalApps || 1) * 100) | number:'1.0-0' }}%
       </div>
-  
-      <!-- Add Button -->
-      <button mat-raised-button color="primary" (click)="openAddDialog()">הוסף יישום חדש</button>
-    </form>
-  
-    <!-- 📋 Applications Table -->
-    <mat-table [dataSource]="matTableDataSource" matSort dir="rtl" class="mat-elevation-z8">
-
-      <ng-container *ngFor="let column of columns" [matColumnDef]="column">
-        <mat-header-cell *matHeaderCellDef mat-sort-header [ngClass]="column + '-col'">
-          {{ getColumnLabel(column) }}
-        </mat-header-cell>
-    
-        <mat-cell *matCellDef="let element" [ngClass]="column + '-col'">
-          <ng-container [ngSwitch]="column">
-    
-      <!-- Guides column -->
-<ng-container *ngSwitchCase="'Guides'">
-  <a *ngIf="element.guideUrl; else noGuide"
-     [href]="element.guideUrl" target="_blank" rel="noopener"
-     class="guide-link">
-    <img [src]="element.guideIcon" class="doc-icon" alt="" />
-    <span class="visually-hidden">{{ element.guideLabel }}</span>
-  </a>
-  <ng-template #noGuide>—</ng-template>
-</ng-container>
-    
-            <!-- Default text -->
-            <ng-container *ngSwitchDefault>
-              {{ element[column] }}
-            </ng-container>
-    
-          </ng-container>
-        </mat-cell>
-      </ng-container>
-    
-      <!-- Actions -->
-      <ng-container matColumnDef="actions">
-        <mat-header-cell *matHeaderCellDef>פעולות</mat-header-cell>
-        <mat-cell *matCellDef="let element">
-          <button mat-icon-button (click)="openEditDialog(element)" matTooltip="עריכה">
-            <mat-icon>edit</mat-icon>
-          </button>
-        </mat-cell>
-      </ng-container>
-    
-      <mat-header-row *matHeaderRowDef="columns.concat(['actions'])"></mat-header-row>
-      <mat-row *matRowDef="let row; columns: columns.concat(['actions'])"></mat-row>
-    </mat-table>
-    
-  
-    <!-- 📄 Paginator -->
-    <mat-paginator
-      *ngIf="matTableDataSource"
-      [length]="matTableDataSource.data.length"
-      [pageSize]="5"
-      [pageSizeOptions]="[15, 50, 100]"
-    >
-    </mat-paginator>
+    </mat-card>
+    <mat-card class="stat">
+      <div class="stat-value">{{ missingTotal }}</div>
+      <div class="stat-label">אפליקציות עם מידע חסר</div>
+      <div class="stat-sub">
+        מתוך {{ totalApps }} ({{ (missingTotal / (totalApps || 1) * 100) | number:'1.0-0' }}%)
+      </div>
+    </mat-card>
   </div>
-  
+
+  <!-- 🔍 Filter + Actions Form -->
+  <form [formGroup]="filterForm" dir="rtl" class="filter-form">
+    <div class="form-footer">
+      <!-- Global Filter -->
+      <mat-form-field class="long-search-bar" appearance="fill">
+        <mat-label>חיפוש</mat-label>
+        <input matInput [formControlName]="'globalFilter'" />
+      </mat-form-field>
+
+      <!-- Reset Filters -->
+      <button mat-raised-button color="primary" (click)="resetFilters()" matTooltip="איפוס סינונים">
+        <i class="material-icons">refresh</i>
+      </button>
+
+      <!-- Export to Excel -->
+      <img
+        src="../../assets/excel.png"
+        alt="Download"
+        (click)="exportToExcel()"
+        class="download-icon"
+        width="50px"
+      />
+    </div>
+
+    <!-- Add Button -->
+    <button mat-raised-button color="primary" (click)="openAddDialog()">הוסף יישום חדש</button>
+  </form>
+
+  <!-- 📋 Applications Table -->
+  <mat-table [dataSource]="matTableDataSource" matSort dir="rtl" class="mat-elevation-z8">
+
+    <ng-container *ngFor="let column of columns" [matColumnDef]="column">
+      <mat-header-cell *matHeaderCellDef mat-sort-header [ngClass]="column + '-col'">
+        {{ getColumnLabel(column) }}
+      </mat-header-cell>
+
+      <mat-cell *matCellDef="let element" [ngClass]="column + '-col'">
+        <ng-container [ngSwitch]="column">
+
+          <!-- Guides column (lower-first key) -->
+          <ng-container *ngSwitchCase="'guides'">
+            <a *ngIf="element.guideUrl; else noGuide"
+               [href]="element.guideUrl" target="_blank" rel="noopener"
+               class="guide-link">
+              <img [src]="element.guideIcon" class="doc-icon" alt="" />
+              <span class="visually-hidden">{{ element.guideLabel }}</span>
+            </a>
+            <ng-template #noGuide>—</ng-template>
+          </ng-container>
+
+          <!-- Default text -->
+          <ng-container *ngSwitchDefault>
+            {{ element[column] }}
+          </ng-container>
+
+        </ng-container>
+      </mat-cell>
+    </ng-container>
+
+    <!-- Actions -->
+    <ng-container matColumnDef="actions">
+      <mat-header-cell *matHeaderCellDef>פעולות</mat-header-cell>
+      <mat-cell *matCellDef="let element">
+        <button mat-icon-button (click)="openEditDialog(element)" matTooltip="עריכה">
+          <mat-icon>edit</mat-icon>
+        </button>
+      </mat-cell>
+    </ng-container>
+
+    <mat-header-row *matHeaderRowDef="columns.concat(['actions'])"></mat-header-row>
+    <mat-row *matRowDef="let row; columns: columns.concat(['actions'])"></mat-row>
+  </mat-table>
+
+  <!-- 📄 Paginator -->
+  <mat-paginator
+    *ngIf="matTableDataSource"
+    [length]="matTableDataSource.data.length"
+    [pageSize]="5"
+    [pageSizeOptions]="[15, 50, 100]"
+  >
+  </mat-paginator>
+</div>

@@ -60,9 +60,9 @@
   </table>
 
   <mat-paginator
-    [length]="matTableDataSource?.data?.length || 0"
-    [pageIndex]="matTableDataSource?.paginator?.pageIndex || 0"
-    [pageSize]="matTableDataSource?.paginator?.pageSize || 15"
+    [length]="matTableDataSource.data.length || 0"
+    [pageIndex]="matTableDataSource.paginator?.pageIndex || 0"
+    [pageSize]="matTableDataSource.paginator?.pageSize || 15"
     [pageSizeOptions]="[15, 50, 100]">
   </mat-paginator>
 </div>

@@ -10,25 +10,24 @@ import { environment } from '../../../environments/environment';
 import { ApplicationsListDeptDialogComponent } from '../applications-list-dept-dialog/applications-list-dept-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
 
-
-
 @Component({
   selector: 'app-applications-list-dept',
   templateUrl: './applications-list-dept.component.html',
   styleUrls: ['./applications-list-dept.component.scss']
 })
-
 export class ApplicationsListDeptComponent implements OnInit {
   title: string = 'רשימת מערכות לפי מחלקות';
   totalResults = 0;
-// counters
-totalApps = 0;
-appsWithGuides = 0;
-filteredApps = 0;
-filteredWithGuides = 0;
-// add these fields
-missingTotal = 0;
-missingFiltered = 0;
+
+  // counters
+  totalApps = 0;
+  appsWithGuides = 0;
+  filteredApps = 0;
+  filteredWithGuides = 0;
+
+  // missing counters
+  missingTotal = 0;
+  missingFiltered = 0;
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
@@ -38,14 +37,15 @@ missingFiltered = 0;
   filteredData: any[] = [];
   matTableDataSource: MatTableDataSource<any>;
 
+  // 🔑 lower-first keys
   columns: string[] = [
-    'AppName',
-    'AppDescription',
-    'PrimaryReference',
-    'SecondaryReference',
-    'Remarks',
-    'Phones',
-    'Guides',
+    'appName',
+    'appDescription',
+    'primaryReference',
+    'secondaryReference',
+    'remarks',
+    'phones',
+    'guides',
     'companyName'
   ];
 
@@ -55,59 +55,58 @@ missingFiltered = 0;
   }
 
   ngOnInit(): void {
-    this.fetchData(); // <- do the mapped load
-  
-    // set up reactive filters once
+    this.fetchData();
+
     this.filterForm.valueChanges
       .pipe(debounceTime(300), distinctUntilChanged())
       .subscribe(() => this.applyFilters());
   }
-  
+
   fetchData(): void {
     this.http.get<any[]>(environment.apiUrl + 'ApplicationsListDept/GetAll').subscribe(raw => {
-      const data = raw.map(r => this.computeGuideFields(r)); // your existing mapping
+      const data = raw.map(r => this.computeGuideFields(r));
       this.dataSource = data;
       this.filteredData = [...data];
       this.matTableDataSource.data = this.filteredData;
       this.totalResults = data.length;
       this.matTableDataSource.paginator = this.paginator;
       this.matTableDataSource.sort = this.sort;
-  
-      this.computeStats(); // <-- add
-      this.computeMissingStats(); // update counters
 
+      this.computeStats();
+      this.computeMissingStats();
     });
   }
-  
-  /** One place to compute guideUrl/guideLabel (and icon) */
-private computeGuideFields(r: any) {
-  const guides = r.Guides || '';
-  const isAbsolute = /^https?:\/\//i.test(guides);
 
-  const guideUrl = guides
-    ? (isAbsolute
-        ? guides
-        : `${environment.apiUrl}ApplicationsListDept/Guide?fileName=${encodeURIComponent(guides)}`)
-    : '';
+  /** compute guideUrl/guideLabel/icon using lower-first keys */
+  private computeGuideFields(r: any) {
+    const guides = r.guides || '';
+    const isAbsolute = /^https?:\/\//i.test(guides);
 
-  const lastSeg = (guides.split('/').pop() || guides);
-  let guideLabel: string;
-  try { guideLabel = decodeURIComponent(lastSeg); } catch { guideLabel = lastSeg; }
+    const guideUrl = guides
+      ? (isAbsolute
+          ? guides
+          : `${environment.apiUrl}ApplicationsListDept/Guide?fileName=${encodeURIComponent(guides)}`)
+      : '';
 
-  const ext = (lastSeg.split('.').pop() || '').toLowerCase();
-  const guideIcon = this.iconForExt(ext);
+    const lastSeg = (guides.split('/').pop() || guides);
+    let guideLabel: string;
+    try { guideLabel = decodeURIComponent(lastSeg); } catch { guideLabel = lastSeg; }
 
-  // (optional) display AppName as label instead of filename
-  const displayLabel = r.AppName || guideLabel;
+    const ext = (lastSeg.split('.').pop() || '').toLowerCase();
+    const guideIcon = this.iconForExt(ext);
 
-  return { ...r, guideUrl, guideLabel: displayLabel, guideIcon, _guideExt: ext };
-}
+    // display appName as label if present
+    const displayLabel = r.appName || guideLabel;
 
-private iconForExt(ext: string) {
-  if (ext === 'pdf') return '../../../assets/pdf.png';
-  if (ext === 'doc' || ext === 'docx') return '../../../assets/word.png';
-  return '';
-}
+    return { ...r, guideUrl, guideLabel: displayLabel, guideIcon, _guideExt: ext };
+  }
+
+  private iconForExt(ext: string) {
+    if (ext === 'pdf') return '../../../assets/pdf.png';
+    if (ext === 'doc' || ext === 'docx') return '../../../assets/word.png';
+    return '';
+  }
+
   private createFilterForm(): FormGroup {
     const formControls: { [key: string]: FormControl } = {};
     this.columns.forEach(col => formControls[col] = new FormControl(''));
@@ -120,16 +119,19 @@ private iconForExt(ext: string) {
     const global = (filters['globalFilter'] || '').toLowerCase();
 
     this.filteredData = this.dataSource.filter(item =>
-      this.columns.every(col => !filters[col] || ((item[col] || '').toString().toLowerCase().includes(filters[col].toLowerCase()))) &&
-      (global === '' || this.columns.some(col => ((item[col] || '') + '').toLowerCase().includes(global)))
+      // per-column filters
+      this.columns.every(col =>
+        !filters[col] || ((item[col] || '').toString().toLowerCase().includes(filters[col].toLowerCase()))
+      )
+      // global filter
+      && (global === '' || this.columns.some(col => ((item[col] || '') + '').toLowerCase().includes(global)))
     );
 
     this.totalResults = this.filteredData.length;
     this.matTableDataSource.data = this.filteredData;
-    this.computeStats(); // <-- add
-    this.computeMissingStats(); // update counters
 
-
+    this.computeStats();
+    this.computeMissingStats();
   }
 
   resetFilters(): void {
@@ -140,24 +142,24 @@ private iconForExt(ext: string) {
 
   exportToExcel(): void {
     const headers = {
-      AppName: 'שם',
-      AppDescription: 'הסבר על המערכת',
-      PrimaryReference: 'רפרנט ראשי',
-      SecondaryReference: 'רפרנט משני',
-      Remarks: 'הערות',
-      Phones: 'טלפונים',
-      Guides: 'מדריכים',
+      appName: 'שם',
+      appDescription: 'הסבר על המערכת',
+      primaryReference: 'רפרנט ראשי',
+      secondaryReference: 'רפרנט משני',
+      remarks: 'הערות',
+      phones: 'טלפונים',
+      guides: 'מדריכים',
       companyName: 'חברה'
     };
 
     const exportData = this.filteredData.map(item => ({
-      [headers.AppName]: item.AppName,
-      [headers.AppDescription]: item.AppDescription,
-      [headers.PrimaryReference]: item.PrimaryReference,
-      [headers.SecondaryReference]: item.SecondaryReference,
-      [headers.Remarks]: item.Remarks,
-      [headers.Phones]: item.Phones,
-      [headers.Guides]: item.Guides,       // single URL string
+      [headers.appName]: item.appName,
+      [headers.appDescription]: item.appDescription,
+      [headers.primaryReference]: item.primaryReference,
+      [headers.secondaryReference]: item.secondaryReference,
+      [headers.remarks]: item.remarks,
+      [headers.phones]: item.phones,
+      [headers.guides]: item.guides,
       [headers.companyName]: item.companyName
     }));
 
@@ -188,13 +190,13 @@ private iconForExt(ext: string) {
 
   getColumnLabel(column: string): string {
     switch (column) {
-      case 'AppName': return 'שם';
-      case 'AppDescription': return 'הסבר על המערכת';
-      case 'PrimaryReference': return 'רפרנט ראשי';
-      case 'SecondaryReference': return 'רפרנט משני';
-      case 'Remarks': return 'הערות';
-      case 'Phones': return 'טלפונים';
-      case 'Guides': return 'מדריכים';
+      case 'appName': return 'שם';
+      case 'appDescription': return 'הסבר על המערכת';
+      case 'primaryReference': return 'רפרנט ראשי';
+      case 'secondaryReference': return 'רפרנט משני';
+      case 'remarks': return 'הערות';
+      case 'phones': return 'טלפונים';
+      case 'guides': return 'מדריכים';
       case 'companyName': return 'חברה';
       default: return column;
     }
@@ -204,45 +206,46 @@ private iconForExt(ext: string) {
     // totals across ALL data
     this.totalApps = this.dataSource.length;
     this.appsWithGuides = this.dataSource.filter(x =>
-      !!(x.guides || x.Guides) || !!x.guideUrl
+      !!x.guides || !!x.guideUrl
     ).length;
-  
+
     // totals for CURRENT filtered view
     this.filteredApps = this.filteredData.length;
     this.filteredWithGuides = this.filteredData.filter(x =>
-      !!(x.guides || x.Guides) || !!x.guideUrl
+      !!x.guides || !!x.guideUrl
     ).length;
   }
+
   private computeMissingFields(r: any): string[] {
     const m: string[] = [];
-    if (!(`${r.PrimaryReference || ''}`.trim())) m.push('רפרנט ראשי');
-    if (!(`${r.Phones || ''}`.trim()))          m.push('טלפונים');
+    if (!(`${r.primaryReference || ''}`.trim())) m.push('רפרנט ראשי');
+    if (!(`${r.phones || ''}`.trim()))          m.push('טלפונים');
     if (!(`${r.companyName || ''}`.trim()))     m.push('חברה');
-    if (!(`${r.AppDescription || ''}`.trim()))  m.push('הסבר על המערכת');
+    if (!(`${r.appDescription || ''}`.trim()))  m.push('הסבר על המערכת');
     return m;
   }
-  
+
   private decorateRow(r: any) {
     const _missing = this.computeMissingFields(r);
     return { ...r, _missing };
   }
-  
+
   private computeMissingStats(): void {
     this.missingTotal = this.dataSource.filter(r => this.hasMissing(r)).length;
+    this.missingFiltered = this.filteredData.filter(r => this.hasMissing(r)).length;
   }
 
   // treat empty/null/placeholder values as missing
-private isEmpty(v: any): boolean {
-  const s = `${v ?? ''}`.replace(/\u00A0/g, ' ').trim(); // handles &nbsp;
-  return s === '' || s === '-' || s === '—' || s.toLowerCase() === 'null' || s.toLowerCase() === 'undefined';
-}
+  private isEmpty(v: any): boolean {
+    const s = `${v ?? ''}`.replace(/\u00A0/g, ' ').trim(); // handles &nbsp;
+    return s === '' || s === '-' || s === '—' || s.toLowerCase() === 'null' || s.toLowerCase() === 'undefined';
+  }
 
-// does a row miss at least one required field?
-private hasMissing(r: any): boolean {
-  return this.isEmpty(r.PrimaryReference)
-      || this.isEmpty(r.Phones)
-      || this.isEmpty(r.companyName)
-      || this.isEmpty(r.AppDescription);
+  // does a row miss at least one required field?
+  private hasMissing(r: any): boolean {
+    return this.isEmpty(r.primaryReference)
+        || this.isEmpty(r.phones)
+        || this.isEmpty(r.companyName)
+        || this.isEmpty(r.appDescription);
+  }
 }
-}
-
