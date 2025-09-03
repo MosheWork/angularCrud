@@ -1,111 +1,110 @@
+<!-- occupational-therapy.component.html -->
+
 <!-- Spinner with Loading Message -->
-
-
 <div *ngIf="loading" class="loading-overlay">
-    <div class="spinner-container">
-      <mat-spinner [diameter]="150"></mat-spinner>
-      <p class="loading-text">...טוען נתונים</p>
-    </div>
+  <div class="spinner-container">
+    <mat-spinner [diameter]="150"></mat-spinner>
+    <p class="loading-text">...טוען נתונים</p>
   </div>
-  
+</div>
 
-  
-  <!-- Main Content -->
-  <div class="body" *ngIf="!loading">
-    <div class="filter-card-container">
-                <!-- 📊 Summary Card -->
-  <mat-card class="summary-card" style="flex: 1; display: flex; align-items: center; justify-content: center; text-align: center;">
-    <mat-card-content>
-      <h3>סה״כ ימי טיפול ייחודיים</h3>
-      <h1>{{ totalUniquePatientDays }}</h1>
-    </mat-card-content>
-  </mat-card>
-      <mat-card class="filter-card">
-        <mat-card-content>
-          <form [formGroup]="filterForm" class="filter-form" dir="rtl">
-            <!-- Year Dropdown -->
-            <mat-form-field appearance="outline" class="filter-field">
-              <mat-label>שנה</mat-label>
-              <mat-select formControlName="year">
-                <mat-option *ngFor="let year of availableYears" [value]="year">{{ year }}</mat-option>
-              </mat-select>
-            </mat-form-field>
-  
-            <!-- Month Dropdown -->
-            <mat-form-field appearance="outline" class="filter-field">
-              <mat-label>חודש</mat-label>
-              <mat-select formControlName="month">
-                <mat-option *ngFor="let month of months" [value]="month.value">{{ month.name }}</mat-option>
-              </mat-select>
-            </mat-form-field>
-  
-            <button mat-raised-button color="primary" (click)="applyFilters()">הפעל חיפוש</button>
-            <button mat-raised-button color="accent" (click)="resetFilters()">איפוס</button>
-          </form>
-        </mat-card-content>
-      </mat-card>
+<!-- Main Content -->
+<div class="body" *ngIf="!loading">
+  <div class="filter-card-container">
 
-    </div>
-  
-    <!-- Tables Section -->
-    <div class="dashboard-wrapper">
-      <div class="dashboard-container">
-        <!-- Summary Table -->
-        <mat-card class="dashboard-card">
-          <div class="card-title">
-            <h3>סיכום רכיב - ריפוי בעיסוק</h3>
-          </div>
-          <img src="../../assets/excel.png" alt="Download" (click)="exportAnamnesisResultsToExcel()" class="download-icon" width="50px" />
-  
-          <mat-table [dataSource]="anamnesisResultsDataSource" matSort class="mat-elevation-z8">
-            <ng-container *ngFor="let column of anamnesisResultsColumns" [matColumnDef]="column">
-              <mat-header-cell *matHeaderCellDef mat-sort-header>
-                {{ columnDisplayNames2[column] }}
-              </mat-header-cell>
-              <mat-cell *matCellDef="let element">
-                {{ element[column] }}
-              </mat-cell>
-            </ng-container>
-  
-            <mat-header-row *matHeaderRowDef="anamnesisResultsColumns"></mat-header-row>
-            <mat-row *matRowDef="let row; columns: anamnesisResultsColumns"></mat-row>
-          </mat-table>
-  
-          <mat-paginator #anamnesisResultsPaginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
-        </mat-card>
-      </div>
-    </div>
-  
-    <!-- Full List Table -->
-    <mat-card class="data-card-container">
+    <!-- 📊 Summary Card -->
+    <mat-card class="summary-card" style="flex: 1; display: flex; align-items: center; justify-content: center; text-align: center;">
       <mat-card-content>
-        <div class="card-title">
-          <h3>טבלת נתונים</h3>
-        </div>
-        <img src="../../assets/excel.png" alt="Download" (click)="exportFullListToExcel()" class="download-icon" width="50px" />
-  
-        <mat-table [dataSource]="fullListDataSource" matSort class="mat-elevation-z8">
-          <ng-container *ngFor="let column of fullListColumns" [matColumnDef]="column">
-            <mat-header-cell *matHeaderCellDef mat-sort-header>
-              {{ columnDisplayNames[column] }}
-            </mat-header-cell>
-  
-            <mat-cell *matCellDef="let element">
-              <ng-container *ngIf="column === 'Entry_Date'; else defaultCell">
-                {{ element[column] | date: 'dd/MM/yyyy' }}
-              </ng-container>
-              <ng-template #defaultCell>
-                {{ element[column] }}
-              </ng-template>
-            </mat-cell>
-          </ng-container>
-  
-          <mat-header-row *matHeaderRowDef="fullListColumns"></mat-header-row>
-          <mat-row *matRowDef="let row; columns: fullListColumns"></mat-row>
-        </mat-table>
-  
-        <mat-paginator #fullListPaginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
+        <h3>סה״כ ימי טיפול ייחודיים</h3>
+        <h1>{{ totalUniquePatientDays }}</h1>
       </mat-card-content>
     </mat-card>
+
+    <mat-card class="filter-card">
+      <mat-card-content>
+        <form [formGroup]="filterForm" class="filter-form" dir="rtl">
+          <!-- Year Dropdown -->
+          <mat-form-field appearance="outline" class="filter-field">
+            <mat-label>שנה</mat-label>
+            <mat-select formControlName="year">
+              <mat-option *ngFor="let year of availableYears" [value]="year">{{ year }}</mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <!-- Month Dropdown -->
+          <mat-form-field appearance="outline" class="filter-field">
+            <mat-label>חודש</mat-label>
+            <mat-select formControlName="month">
+              <mat-option *ngFor="let month of months" [value]="month.value">{{ month.name }}</mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <button mat-raised-button color="primary" (click)="applyFilters()">הפעל חיפוש</button>
+          <button mat-raised-button color="accent" (click)="resetFilters()">איפוס</button>
+        </form>
+      </mat-card-content>
+    </mat-card>
+
   </div>
-  
+
+  <!-- Tables Section -->
+  <div class="dashboard-wrapper">
+    <div class="dashboard-container">
+      <!-- Summary Table -->
+      <mat-card class="dashboard-card">
+        <div class="card-title">
+          <h3>סיכום רכיב - ריפוי בעיסוק</h3>
+        </div>
+        <img src="../../assets/excel.png" alt="Download" (click)="exportAnamnesisResultsToExcel()" class="download-icon" width="50px" />
+
+        <mat-table [dataSource]="anamnesisResultsDataSource" matSort class="mat-elevation-z8">
+          <ng-container *ngFor="let column of anamnesisResultsColumns" [matColumnDef]="column">
+            <mat-header-cell *matHeaderCellDef mat-sort-header>
+              {{ columnDisplayNames2[column] }}
+            </mat-header-cell>
+            <mat-cell *matCellDef="let element">
+              {{ element[column] }}
+            </mat-cell>
+          </ng-container>
+
+          <mat-header-row *matHeaderRowDef="anamnesisResultsColumns"></mat-header-row>
+          <mat-row *matRowDef="let row; columns: anamnesisResultsColumns"></mat-row>
+        </mat-table>
+
+        <mat-paginator #anamnesisResultsPaginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
+      </mat-card>
+    </div>
+  </div>
+
+  <!-- Full List Table -->
+  <mat-card class="data-card-container">
+    <mat-card-content>
+      <div class="card-title">
+        <h3>טבלת נתונים</h3>
+      </div>
+      <img src="../../assets/excel.png" alt="Download" (click)="exportFullListToExcel()" class="download-icon" width="50px" />
+
+      <mat-table [dataSource]="fullListDataSource" matSort class="mat-elevation-z8">
+        <ng-container *ngFor="let column of fullListColumns" [matColumnDef]="column">
+          <mat-header-cell *matHeaderCellDef mat-sort-header>
+            {{ columnDisplayNames[column] }}
+          </mat-header-cell>
+
+          <mat-cell *matCellDef="let element">
+            <ng-container *ngIf="column === 'entry_Date'; else defaultCell">
+              {{ element[column] | date: 'dd/MM/yyyy' }}
+            </ng-container>
+            <ng-template #defaultCell>
+              {{ element[column] }}
+            </ng-template>
+          </mat-cell>
+        </ng-container>
+
+        <mat-header-row *matHeaderRowDef="fullListColumns"></mat-header-row>
+        <mat-row *matRowDef="let row; columns: fullListColumns"></mat-row>
+      </mat-table>
+
+      <mat-paginator #fullListPaginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
+    </mat-card-content>
+  </mat-card>
+</div>

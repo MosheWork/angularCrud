@@ -1,5 +1,5 @@
-// 🔧 Updated component code for OccupationalTherapyComponent
-import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
+// occupational-therapy.component.ts
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
@@ -32,30 +32,32 @@ export class OccupationalTherapyComponent implements OnInit {
     { name: 'נובמבר', value: 11 },
     { name: 'דצמבר', value: 12 }
   ];
+
   totalUniquePatientDays: number = 0;
 
   anamnesisResultsDataSource = new MatTableDataSource<any>([]);
   fullListDataSource = new MatTableDataSource<any>([]);
 
-  anamnesisResultsColumns: string[] = ['EmployeeName', 'Simple', 'Complex', 'Group'];
-  fullListColumns: string[] = ['AdmissionNo', 'IdNum', 'FirstName', 'LastName', 'EmployeeName', 'Entry_Date', 'AnswerType'];
+  // ⬇️ lower-first keys
+  anamnesisResultsColumns: string[] = ['employeeName', 'simple', 'complex', 'group'];
+  fullListColumns: string[] = ['admissionNo', 'idNum', 'firstName', 'lastName', 'employeeName', 'entry_Date', 'answerType'];
 
+  // ⬇️ display maps keyed by the new lower-first names
   columnDisplayNames2: { [key: string]: string } = {
-    'EmployeeName': 'שם עובד',
-    'Simple': 'טיפול פשוט',
-    'Complex': 'טיפול מורכב',
-    'Group': 'טיפול קבוצתי'
+    employeeName: 'שם עובד',
+    simple: 'טיפול פשוט',
+    complex: 'טיפול מורכב',
+    group: 'טיפול קבוצתי'
   };
 
   columnDisplayNames: { [key: string]: string } = {
-    AdmissionNo: 'מספר מקרה',
-    IdNum: 'מספר זהות',
-    FirstName: 'שם פרטי',
-    LastName: 'שם משפחה',
-    EmployeeName: 'שם העובד',
-    Entry_Date: 'תאריך כניסה',
-    AnswerType: 'סוג תשובה'
-  
+    admissionNo: 'מספר מקרה',
+    idNum: 'מספר זהות',
+    firstName: 'שם פרטי',
+    lastName: 'שם משפחה',
+    employeeName: 'שם העובד',
+    entry_Date: 'תאריך כניסה',
+    answerType: 'סוג תשובה'
   };
 
   @ViewChild('anamnesisResultsPaginator') anamnesisResultsPaginator!: MatPaginator;
@@ -76,39 +78,33 @@ export class OccupationalTherapyComponent implements OnInit {
   }
 
   applyFilters(): void {
-    const filters = this.filterForm.value;
-    const year = filters.year;
-    const month = filters.month;
-
+    const { year, month } = this.filterForm.value;
     this.fetchAnamnesisResultsData(year, month);
     this.fetchFullListData(year, month);
-    this.fetchUniquePatientDays(year, month); // <-- ✅ ADD THIS
-
+    this.fetchUniquePatientDays(year, month);
   }
 
   resetFilters(): void {
     this.filterForm.reset({
       year: new Date().getFullYear(),
-      month: null,
+      month: null
     });
     this.applyFilters();
   }
+
   fetchUniquePatientDays(year?: number, month?: number): void {
     const params: any = {};
     if (year) params.year = year;
     if (month) params.month = month;
-  
+
     this.http
       .get<{ TotalUniquePatientDays: number }>(`${environment.apiUrl}OccupationalTherapy/CountUniquePatientDays`, { params })
       .subscribe(
-        (res) => {
-          this.totalUniquePatientDays = res.TotalUniquePatientDays;
-        },
-        (error) => {
-          console.error('Error fetching unique patient days:', error);
-        }
+        res => (this.totalUniquePatientDays = res.TotalUniquePatientDays),
+        err => console.error('Error fetching unique patient days:', err)
       );
   }
+
   fetchAnamnesisResultsData(year?: number, month?: number): void {
     this.loading = true;
     const params: any = {};
@@ -116,16 +112,14 @@ export class OccupationalTherapyComponent implements OnInit {
     if (month) params.month = month;
 
     this.http.get<any[]>(`${environment.apiUrl}OccupationalTherapy/Summary`, { params }).subscribe(data => {
+      // expecting lower-first keys coming from backend
       this.anamnesisResultsDataSource.data = data;
-    
       setTimeout(() => {
         this.anamnesisResultsDataSource.paginator = this.anamnesisResultsPaginator;
         this.anamnesisResultsDataSource.sort = this.anamnesisResultsSort;
       });
-    
       this.loading = false;
     });
-    
   }
 
   fetchFullListData(year?: number, month?: number): void {
@@ -135,13 +129,10 @@ export class OccupationalTherapyComponent implements OnInit {
     if (month) params.month = month;
 
     this.http.get<any[]>(`${environment.apiUrl}OccupationalTherapy/Detailed`, { params }).subscribe(data => {
+      // expecting lower-first keys coming from backend
       this.fullListDataSource.data = data;
-      if (this.fullListPaginator) {
-        this.fullListDataSource.paginator = this.fullListPaginator;
-      }
-      if (this.fullListSort) {
-        this.fullListDataSource.sort = this.fullListSort;
-      }
+      if (this.fullListPaginator) this.fullListDataSource.paginator = this.fullListPaginator;
+      if (this.fullListSort) this.fullListDataSource.sort = this.fullListSort;
       this.loading = false;
     });
   }
@@ -156,24 +147,26 @@ export class OccupationalTherapyComponent implements OnInit {
 
   private exportToExcel(dataSource: MatTableDataSource<any>, fileName: string): void {
     const data = dataSource.data;
-    const transformedData = data.map(row => {
-      let newRow: any = {};
-      Object.keys(row).forEach(key => {
-        const hebrewKey = this.columnDisplayNames[key] || this.columnDisplayNames2[key] || key;
-        newRow[hebrewKey] = row[key];
-      });
-      return newRow;
-    });
 
-    const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(transformedData);
-    worksheet['!cols'] = [{ width: 20 }];
-    worksheet['!dir'] = 'rtl';
-
-    const workbook: XLSX.WorkBook = {
-      Sheets: { 'נתונים': worksheet },
-      SheetNames: ['נתונים']
+    // merged display map for both tables (lower-first keys)
+    const displayMap: { [key: string]: string } = {
+      ...this.columnDisplayNames,
+      ...this.columnDisplayNames2
     };
 
+    const transformed = data.map(row => {
+      const out: any = {};
+      Object.keys(row).forEach(k => {
+        out[displayMap[k] || k] = row[k];
+      });
+      return out;
+    });
+
+    const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(transformed);
+    worksheet['!cols'] = [{ width: 20 }];
+    (worksheet as any)['!dir'] = 'rtl';
+
+    const workbook: XLSX.WorkBook = { Sheets: { 'נתונים': worksheet }, SheetNames: ['נתונים'] };
     XLSX.writeFile(workbook, fileName);
   }
 
@@ -181,11 +174,9 @@ export class OccupationalTherapyComponent implements OnInit {
     setTimeout(() => {
       this.anamnesisResultsDataSource.paginator = this.anamnesisResultsPaginator;
       this.anamnesisResultsDataSource.sort = this.anamnesisResultsSort;
-  
+
       this.fullListDataSource.paginator = this.fullListPaginator;
       this.fullListDataSource.sort = this.fullListSort;
     });
   }
-  
-  
 }
