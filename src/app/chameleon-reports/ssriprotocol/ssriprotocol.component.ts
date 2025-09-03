@@ -20,7 +20,9 @@ export class SSRIProtocolComponent implements OnInit {
   Title1: string = 'Total Records: ';
   Title2: string = '';
 
-  columns: string[] = ['IdNum', 'AdmissionNo', 'FirstName', 'LastName', 'OrderStartDate'];
+  // 🔑 lower-first keys expected from backend
+  columns: string[] = ['idNum', 'admissionNo', 'firstName', 'lastName', 'orderStartDate'];
+
   dataSource: any[] = [];
   filteredData: any[] = [];
   matTableDataSource: MatTableDataSource<any>;
@@ -38,80 +40,67 @@ export class SSRIProtocolComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.fetchSSRIProtocolData();  // Fetch data when the component initializes
-    this.setupFormValueChanges();  // Set up dynamic filtering on value changes
+    this.fetchSSRIProtocolData();
+    this.setupFormValueChanges();
   }
 
-  // Fetch data based on the ICD9 code entered
   fetchSSRIProtocolData() {
-    // API call to fetch data
-    this.http.get<any[]>(`${environment.apiUrl}SSRIprotocol`)
-      .subscribe((data) => {
-        this.dataSource = data;
-        this.filteredData = [...data];
+    this.http.get<any[]>(`${environment.apiUrl}SSRIprotocol`).subscribe(
+      (data) => {
+        // data is used as-is with lower-first keys
+        this.dataSource = data || [];
+        this.filteredData = [...this.dataSource];
         this.matTableDataSource = new MatTableDataSource(this.filteredData);
         this.matTableDataSource.paginator = this.paginator;
         this.matTableDataSource.sort = this.sort;
-        this.applyFilters();  // Apply initial filters
-      }, error => {
+        this.applyFilters();
+      },
+      (error) => {
         console.error('Error fetching SSRI protocol data:', error);
-      });
+      }
+    );
   }
 
-  // Create form group with global filter and column-specific filters
   createFilterForm(): FormGroup {
-    const formControls: { [key: string]: FormControl } = {};
-    this.columns.forEach((column) => {
-      formControls[column] = new FormControl(''); // Add form controls for each column
-    });
-    formControls['globalFilter'] = new FormControl(''); // Add global filter form control
-
     return this.fb.group({
       globalFilter: [''],
-      startEntryDate: [''],  // Form control for start date
-      endEntryDate: [''],    // Form control for end date
+      startEntryDate: [''], // from-date
+      endEntryDate: [''],   // to-date
     });
   }
 
-  // Set up form control value changes to trigger filtering
   setupFormValueChanges() {
     this.filterForm.valueChanges
       .pipe(debounceTime(300), distinctUntilChanged())
       .subscribe(() => {
         this.applyFilters();
-        this.paginator.firstPage();  // Reset to first page after filtering
+        if (this.paginator) this.paginator.firstPage();
       });
   }
 
-  // Apply global and column-specific filters
   applyFilters() {
-    const filters = this.filterForm.value;
-    const globalFilter = (filters['globalFilter'] || '').toLowerCase();
-    const startEntryDate = filters['startEntryDate'] ? new Date(filters['startEntryDate']) : null;
-    const endEntryDate = filters['endEntryDate'] ? new Date(filters['endEntryDate']) : null;
-  
+    const { globalFilter, startEntryDate, endEntryDate } = this.filterForm.value;
+    const global = (globalFilter || '').toLowerCase();
+    const start = startEntryDate ? new Date(startEntryDate) : null;
+    const end = endEntryDate ? new Date(endEntryDate) : null;
+
     this.filteredData = this.dataSource.filter((item) => {
-      const globalMatch = this.columns.some((column) => {
-        const value = (item[column] || '').toString().toLowerCase();
-        return value.includes(globalFilter);
-      });
-  
-      // Date filter: check if OrderStartDate is within range
-      let dateMatch = true;  // Default to true if no date range provided
-      if (startEntryDate || endEntryDate) {
-        const entryDate = new Date(item.OrderStartDate);
-        if (startEntryDate && entryDate < startEntryDate) {
-          dateMatch = false;
-        }
-        if (endEntryDate && entryDate > endEntryDate) {
-          dateMatch = false;
-        }
+      // global search across defined columns
+      const globalMatch =
+        global === '' ||
+        this.columns.some((col) => String(item[col] ?? '').toLowerCase().includes(global));
+
+      // date range on orderStartDate
+      let dateMatch = true;
+      if (start || end) {
+        const entryDate = new Date(item.orderStartDate);
+        if (start && entryDate < start) dateMatch = false;
+        if (end && entryDate > end) dateMatch = false;
       }
-  
-      return (globalFilter === '' || globalMatch) && dateMatch;
+
+      return globalMatch && dateMatch;
     });
-  
-    // Update total results and table
+
     this.totalResults = this.filteredData.length;
     this.matTableDataSource.data = this.filteredData;
     this.matTableDataSource.paginator = this.paginator;
@@ -134,7 +123,5 @@ export class SSRIProtocolComponent implements OnInit {
     link.click();
   }
 
-  goToHome() {
-    this.router.navigate(['/MainPageReports']);
-  }
+ 
 }

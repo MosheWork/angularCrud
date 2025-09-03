@@ -1,10 +1,5 @@
 <div class="body">
-  <div class="nine">
-    <h1>
-      דוח מטופלים
-      <span>סה"כ תוצאות: {{ totalResults }}</span>
-    </h1>
-  </div>
+ 
 
   <div *ngIf="isLoading" class="spinner-container">
     <mat-spinner></mat-spinner>
@@ -136,7 +131,6 @@
   </form>
 
   <!-- Data Table -->
-  <mat-paginator [pageSize]="10" [pageSizeOptions]="[10, 25, 50]" showFirstLastButtons></mat-paginator>
 
   <mat-table [dataSource]="dataSource" matSort dir="rtl" class="custom-header-table">
     <!-- Define table columns -->
@@ -154,9 +148,12 @@
         </ng-template>
       </mat-cell>
     </ng-container>
+  
 
     <!-- Header and Row Definitions -->
     <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
     <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
   </mat-table>
+  <mat-paginator [pageSize]="5" [pageSizeOptions]="[10, 25, 50]" showFirstLastButtons></mat-paginator>
+
 </div>
