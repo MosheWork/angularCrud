@@ -45,9 +45,9 @@ export class DynamicTablesComponent implements OnInit {
   matTableDataSource: MatTableDataSource<any>;
 
   columns: string[] = [
-    'Code',
-    'Description',
-    'TableName'
+    'code',
+    'description',
+    'tableName'
   ];
 
   parseDate(dateString: string | null): Date | null {
@@ -77,9 +77,9 @@ export class DynamicTablesComponent implements OnInit {
 
   getColumnLabel(column: string): string {
     const columnLabels: Record<string, string> = {
-      Code: 'קוד',
-      Description: 'תיאור',
-      TableName: 'שם טבלה'
+      code: 'קוד',
+      description: 'תיאור',
+      tableName: 'שם טבלה'
     };
     return columnLabels[column] || column;
   }
@@ -204,7 +204,7 @@ export class DynamicTablesComponent implements OnInit {
 
   fetchAnswerTextOptions() {
     this.http.get<any[]>(environment.apiUrl + 'DynamicTablesAPI').subscribe((data) => {
-      this.answerTextOptions = [...new Set(data.map((item) => item.Description))];
+      this.answerTextOptions = [...new Set(data.map((item) => item.description))];
     });
   }
 
@@ -212,8 +212,8 @@ export class DynamicTablesComponent implements OnInit {
     this.http.get<any[]>(environment.apiUrl + 'DynamicTablesAPI').subscribe((data) => {
       this.answerTextTypeOptions = [];
       data.forEach((item: any) => {
-        if (this.answerTextTypeOptions.indexOf(item.TableName) < 0 && item.TableName) {
-          this.answerTextTypeOptions.push(item.TableName);
+        if (this.answerTextTypeOptions.indexOf(item.tableName) < 0 && item.tableName) {
+          this.answerTextTypeOptions.push(item.tableName);
         }
       });
       console.log('Table Name Options:', this.answerTextTypeOptions);

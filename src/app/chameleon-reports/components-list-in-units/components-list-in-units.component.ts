@@ -46,11 +46,11 @@ export class ComponentsListInUnitsComponent implements OnInit {
 
   columns: string[] = [
     //'row_id',
-    'Unit',
-    'Heading',
-    'Name',
-    'Record_Name',
-    'Answer_Text'
+    'unit',
+    'heading',
+    'name',
+    'record_Name',
+    'answer_Text'
   ];
 
   parseDate(dateString: string | null): Date | null {
@@ -81,11 +81,11 @@ export class ComponentsListInUnitsComponent implements OnInit {
   getColumnLabel(column: string): string {
     const columnLabels: Record<string, string> = {
       //row_id: 'קוד שורה',
-      Unit: 'קוד יחידה',
-      Name: 'שם יחידה',
-      Heading: 'שם הרכיב ',
-      Record_Name: 'גיליון ',
-      Answer_Text: ' חוצץ'
+      unit: 'קוד יחידה',
+      name: 'שם יחידה',
+      heading: 'שם הרכיב ',
+      record_Name: 'גיליון ',
+      answer_Text: ' חוצץ'
     };
     return columnLabels[column] || column;
   }
