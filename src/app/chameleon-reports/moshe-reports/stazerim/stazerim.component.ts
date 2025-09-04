@@ -57,14 +57,14 @@ export class StazerimComponent implements OnInit {
   // Column names for the table
 
   columns: string[] = [
-    'InternPeriod',
-    'FirstName',
-    'LastName',
-    'CellNumber',
-    'Unit1',
-    'Unit2',
-    'ADUserName',
-    'EmployeeID',
+    'internPeriod',
+    'firstName',
+    'lastName',
+    'cellNumber',
+    'unit1',
+    'unit2',
+    'adUserName',
+    'employeeID',
 
     // 'departure_Date',
   ];

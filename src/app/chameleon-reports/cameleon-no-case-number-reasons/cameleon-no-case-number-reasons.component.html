@@ -34,6 +34,7 @@
       </div>
     </div>
   </form>
+
   <div class="gauge-container">
     <ngx-gauge
       [type]="gaugeType"
@@ -46,34 +47,33 @@
       [backgroundColor]="gaugeBackgroundColor"
       [cap]="'round'">
     </ngx-gauge>
-  
+
     <div class="gauge-info">
       <p>סה"כ רשומות: <strong>{{ totalRows }}</strong></p>
       <p>רשומות שעודכנו: <strong>{{ updatedRows }}</strong></p>
     </div>
   </div>
-  
-  
+
   <div class="table-responsive">
     <mat-table [dataSource]="matTableDataSource" matSort dir="rtl" class="mat-elevation-z8">
-   
-      
+
+      <!-- Generic dynamic columns -->
       <ng-container *ngFor="let column of columns" [matColumnDef]="column">
         <mat-header-cell *matHeaderCellDef mat-sort-header>
           {{ columnHeaders[column] || column }}
         </mat-header-cell>
+
         <mat-cell *matCellDef="let element" (click)="openDialog(element)">
-          <ng-container *ngIf="column === 'RecordDate'; else defaultColumn">
+          <ng-container *ngIf="column === 'recordDate'; else defaultColumn">
             {{ element[column] | date:'dd/MM/yyyy HH:mm' }}
           </ng-container>
-         
+
           <ng-template #defaultColumn>
             {{ element[column] || '-' }}
           </ng-template>
         </mat-cell>
       </ng-container>
-      
-      
+
       <mat-header-row *matHeaderRowDef="columns"></mat-header-row>
       <mat-row *matRowDef="let row; columns: columns" (click)="openDialog(row)"></mat-row>
     </mat-table>
@@ -81,27 +81,30 @@
 
   <mat-paginator [pageSize]="5" [pageSizeOptions]="[10, 25, 50]" showFirstLastButtons></mat-paginator>
 </div>
-<ng-template #dialogTemplate let-data >
-    <h2 mat-dialog-title class="dialog-title">הוסף סיבה</h2>
-    <mat-dialog-content class="dialog-content" dir="rtl">
-      <form [formGroup]="dialogForm" class="dialog-form">
-        <mat-form-field appearance="fill" class="full-width">
-          <mat-label>סיבת היעדר מספר מקרה</mat-label>
-          <mat-select formControlName="ReasonForNoCaseNumber">
-            <mat-option *ngFor="let reason of reasonList" [value]="reason">{{ reason }}</mat-option>
-          </mat-select>
-        </mat-form-field>
-  
-        <mat-form-field appearance="fill" class="full-width">
-          <mat-label>הערות</mat-label>
-          <textarea matInput formControlName="Comments" rows="5" class="styled-textarea"></textarea>
-        </mat-form-field>
-      </form>
-    </mat-dialog-content>
-    <mat-dialog-actions class="dialog-actions">
-        <button mat-button (click)="closeDialog()" class="cancel-button">ביטול</button>
-        <button mat-button color="primary" (click)="submitReason(dialogData.IdNum, dialogData.RecordDate)" class="submit-button">שלח</button>
-      </mat-dialog-actions>
-      
-  </ng-template>
-  
+
+<!-- Dialog -->
+<ng-template #dialogTemplate let-data>
+  <h2 mat-dialog-title class="dialog-title">הוסף סיבה</h2>
+
+  <mat-dialog-content class="dialog-content" dir="rtl">
+    <form [formGroup]="dialogForm" class="dialog-form">
+      <mat-form-field appearance="fill" class="full-width">
+        <mat-label>סיבת היעדר מספר מקרה</mat-label>
+        <mat-select formControlName="ReasonForNoCaseNumber">
+          <mat-option *ngFor="let reason of reasonList" [value]="reason">{{ reason }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="fill" class="full-width">
+        <mat-label>הערות</mat-label>
+        <textarea matInput formControlName="Comments" rows="5" class="styled-textarea"></textarea>
+      </mat-form-field>
+    </form>
+  </mat-dialog-content>
+
+  <mat-dialog-actions class="dialog-actions">
+    <button mat-button (click)="closeDialog()" class="cancel-button">ביטול</button>
+    <!-- 🔽 pass lowerCamelCase keys -->
+    <button mat-button color="primary" (click)="submitReason(dialogData.idNum, dialogData.recordDate)" class="submit-button">שלח</button>
+  </mat-dialog-actions>
+</ng-template>
