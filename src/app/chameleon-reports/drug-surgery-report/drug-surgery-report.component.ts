@@ -479,17 +479,31 @@ export class DrugSurgeryReportComponent implements OnInit, AfterViewInit {
   }
   
   private setChartDataFromCounts(): void {
+    const labels = this.timeGroupCounts.map(x => x.group);
+    const data   = this.timeGroupCounts.map(x => x.count);
+  
+    // Colors
+    const bgColors = labels.map(g =>
+      this.isGreenGroup(g) ? 'rgba(165, 214, 167, 0.85)' : 'rgba(255, 205, 210, 0.85)' // light green / light red
+    );
+    const borderColors = labels.map(g =>
+      this.isGreenGroup(g) ? 'rgba(76, 175, 80, 1)' : 'rgba(239, 83, 80, 1)'           // darker borders
+    );
+  
     this.chartData = {
-      labels: this.timeGroupCounts.map(x => x.group),
+      labels,
       datasets: [
         {
           label: 'כמות',
-          data: this.timeGroupCounts.map(x => x.count)
-          // no colors specified — Chart.js will pick defaults
+          data,
+          backgroundColor: bgColors,
+          borderColor: borderColors,
+          borderWidth: 1
         }
       ]
     };
   }
+  
   
   // ← your example, adapted to COUNTS (no %)
   initializeChart(canvas: HTMLCanvasElement): void {
@@ -559,6 +573,11 @@ export class DrugSurgeryReportComponent implements OnInit, AfterViewInit {
     }
   }
   
+  private isGreenGroup(group: string): boolean {
+    // be a bit forgiving with spacing/casing if you want:
+    const g = (group || '').toString().replace(/\s+/g, '').toLowerCase();
+    return g === '2-between30and60';
+  }
   
   trackByGroup = (_: number, item: { group: string }) => item.group;
   
