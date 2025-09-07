@@ -257,30 +257,38 @@
   </div>
 
   <mat-table
-    [dataSource]="giveOrderMatrixData"
-    matSort
-    #matrixSort="matSort"
-    dir="rtl"
-    class="mat-elevation-z8">
+  [dataSource]="giveOrderMatrixData"
+  matSort
+  #matrixSort="matSort"
+  dir="rtl"
+  class="mat-elevation-z8">
 
-    <!-- Dynamic columns: giveOrderName, each TimeGroup, total -->
-    <ng-container *ngFor="let col of giveOrderMatrixColumns" [matColumnDef]="col">
-      <mat-header-cell *matHeaderCellDef mat-sort-header>
-        <ng-container [ngSwitch]="col">
-          <ng-container *ngSwitchCase="'giveOrderName'">נותן התרופה</ng-container>
-          <ng-container *ngSwitchCase="'total'">סה״כ</ng-container>
-          <ng-container *ngSwitchDefault>{{ col }}</ng-container>
+  <ng-container *ngFor="let col of giveOrderMatrixColumns" [matColumnDef]="col">
+    <mat-header-cell *matHeaderCellDef mat-sort-header>
+      <ng-container [ngSwitch]="col">
+        <ng-container *ngSwitchCase="'giveOrderName'">נותן התרופה</ng-container>
+        <ng-container *ngSwitchCase="'total'">סה״כ</ng-container>
+        <ng-container *ngSwitchCase="'validPercent'">Valid%</ng-container>
+        <ng-container *ngSwitchDefault>{{ col }}</ng-container>
+      </ng-container>
+    </mat-header-cell>
+
+    <mat-cell *matCellDef="let row">
+      <ng-container [ngSwitch]="col">
+        <ng-container *ngSwitchCase="'validPercent'">
+          {{ row[col] | number:'1.0-1' }}%
         </ng-container>
-      </mat-header-cell>
+        <ng-container *ngSwitchDefault>
+          {{ row[col] }}
+        </ng-container>
+      </ng-container>
+    </mat-cell>
+  </ng-container>
 
-      <mat-cell *matCellDef="let row">
-        {{ row[col] }}
-      </mat-cell>
-    </ng-container>
+  <mat-header-row *matHeaderRowDef="giveOrderMatrixColumns"></mat-header-row>
+  <mat-row *matRowDef="let row; columns: giveOrderMatrixColumns"></mat-row>
+</mat-table>
 
-    <mat-header-row *matHeaderRowDef="giveOrderMatrixColumns"></mat-header-row>
-    <mat-row *matRowDef="let row; columns: giveOrderMatrixColumns"></mat-row>
-  </mat-table>
 
   <mat-paginator
     #matrixPaginator

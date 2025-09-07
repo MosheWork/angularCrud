@@ -148,6 +148,29 @@ giveOrderMatrixData = new MatTableDataSource<any>([]);
   }
 
   ngAfterViewInit() {
+    this.noDrugsMatTableDataSource.filterPredicate = (data: any, filter: string) => {
+      const fields = [
+        'admissionNo',
+        'operationStartTime',
+        'operationEndTime',
+        'operationDurationHHMM',
+        'giveOrderName',
+        'mainDoctor',
+        'anesthetic',
+        'procedureICD9',
+        'procedureName',
+        'surgeryDepartment'
+      ];
+    
+      const haystack = fields
+        .map(f => (data?.[f] ?? data?.[f[0].toUpperCase() + f.slice(1)] ?? '')) // also tolerate GiveOrderName/SurgeryDepartment
+        .join(' | ')
+        .toString()
+        .toLowerCase();
+    
+      return haystack.includes(filter);
+    };
+    
     this.matTableDataSource.paginator = this.mainPaginator;
     this.matTableDataSource.sort = this.sort;
     this.noDrugsMatTableDataSource.paginator = this.noDrugsPaginator;
@@ -302,7 +325,15 @@ this.giveOrderMatrixData.sort      = this.matrixSort;
       const deptOk  = !selDept  || String(item?.surgeryDepartment || '') === selDept;
       const giveOk  = !selGive  || String(item?.giveOrderName     || '') === selGive;
       const groupOk = !selGroup || String(item?.timeGroup         || '') === selGroup;
-  
+      this.filteredNoDrugsData = this.noDrugsDataSource.filter(item => {
+        const deptOk  = !selDept  || String(item?.surgeryDepartment ?? item?.SurgeryDepartment ?? '') === selDept;
+        const giveOk  = !selGive  || String(item?.giveOrderName     ?? item?.GiveOrderName     ?? '') === selGive;
+        const groupOk = !selGroup || String(item?.timeGroup         ?? item?.TimeGroup         ?? '') === selGroup; // harmless if missing
+        return deptOk && giveOk && groupOk;
+      });
+    
+      this.noDrugsMatTableDataSource.data = this.filteredNoDrugsData;
+      if (this.noDrugsMatTableDataSource.paginator) this.noDrugsMatTableDataSource.paginator.firstPage();
       // generic per-column text filters, but skip 'topProcedure' so it doesn't override step logic
       const perColumnOk = this.columns.every(column => {
         if (column === 'topProcedure') return true; // ⬅️ critical
@@ -640,8 +671,9 @@ this.giveOrderMatrixData.sort      = this.matrixSort;
 
   private buildGiveOrderMatrix(): void {
     const rows = this.matTableDataSource?.data ?? [];
+  
     const tgSet = new Set<string>();
-    const map = new Map<string, Map<string, number>>(); // name -> (tg -> count)
+    const map = new Map<string, Map<string, number>>(); // GiveOrderName -> (TimeGroup -> count)
   
     for (const r of rows) {
       const name = this.getRowGiveOrderName(r);
@@ -654,29 +686,38 @@ this.giveOrderMatrixData.sort      = this.matrixSort;
     }
   
     const timeGroups = Array.from(tgSet.values()).sort((a, b) => a.localeCompare(b, 'he'));
-    // Columns: name | …timeGroups… | total
-    this.giveOrderMatrixColumns = ['giveOrderName', ...timeGroups, 'total'];
+  
+    // Columns: name | …timeGroups… | total | validPercent
+    this.giveOrderMatrixColumns = ['giveOrderName', ...timeGroups, 'total', 'validPercent'];
   
     const tableRows = Array.from(map.entries()).map(([name, inner]) => {
       const row: any = { giveOrderName: name };
       let sum = 0;
+      let validCount = 0;
+  
       for (const tg of timeGroups) {
         const c = inner.get(tg) ?? 0;
         row[tg] = c;
         sum += c;
+        if (this.isGreenGroup ? this.isGreenGroup(tg) : (tg || '').replace(/\s+/g,'').toLowerCase() === '2-between30and60') {
+          validCount += c;
+        }
       }
+  
       row.total = sum;
+      row.validPercent = sum ? Number(((validCount / sum) * 100).toFixed(1)) : 0;
+  
       return row;
     });
   
     this.giveOrderMatrixData.data = tableRows;
   
-    // Attach paginator/sort once the view is ready
     Promise.resolve().then(() => {
       if (this.matrixPaginator) this.giveOrderMatrixData.paginator = this.matrixPaginator;
       if (this.matrixSort)      this.giveOrderMatrixData.sort      = this.matrixSort;
     });
   }
+  
   
   applyGiveOrderMatrixFilter(ev: Event): void {
     const value = (ev.target as HTMLInputElement)?.value ?? '';
@@ -688,22 +729,25 @@ this.giveOrderMatrixData.sort      = this.matrixSort;
     const rows = this.giveOrderMatrixData.data;
     if (!rows?.length) { alert('אין נתונים להורדה'); return; }
   
+    const dynamicCols = this.giveOrderMatrixColumns
+      .filter(c => c !== 'giveOrderName' && c !== 'total' && c !== 'validPercent');
+  
     const translated = rows.map((r: any) => {
       const out: any = { 'נותן התרופה': r.giveOrderName };
-      for (const col of this.giveOrderMatrixColumns) {
-        if (col !== 'giveOrderName' && col !== 'total') out[col] = r[col];
-      }
-      out['סה״כ'] = r.total;
+      for (const col of dynamicCols) out[col] = r[col];   // each TimeGroup column
+      out['סה״כ']  = r.total;
+      out['Valid%'] = r.validPercent;                     // numeric percent
       return out;
     });
   
     const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(translated);
     const wb: XLSX.WorkBook = {
-      Sheets: { 'ספירה לפי נותן התרופה': ws },
+      Sheets: { 'ספירה לפי נותן התרופה' : ws },
       SheetNames: ['ספירה לפי נותן התרופה']
     };
     XLSX.writeFile(wb, 'giveordername_timegroup_counts.xlsx');
   }
+  
   
    
 }
