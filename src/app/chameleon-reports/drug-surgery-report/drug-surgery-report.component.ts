@@ -12,6 +12,7 @@ import { ProcedureICD9ManagerDialogComponent } from './procedure-icd9-manager-di
 import { AuthenticationService } from '../../../app/services/authentication-service/authentication-service.component';
 import { Chart, registerables } from 'chart.js';
 Chart.register(...registerables);
+import ChartDataLabels from 'chartjs-plugin-datalabels';
 
 
 @Component({
@@ -30,7 +31,8 @@ export class DrugSurgeryReportComponent implements OnInit, AfterViewInit {
   UserName: string = '';
   totalRows: number = 0;
   noDrugsPercentage: number = 0;
-
+  lastCounts: number[] = [];
+  lastPercents: number[] = [];
 
   profilePictureUrl: string = 'assets/default-user.png';
   LoginUserName: string = '';
@@ -479,69 +481,98 @@ export class DrugSurgeryReportComponent implements OnInit, AfterViewInit {
   }
   
   private setChartDataFromCounts(): void {
-    const labels = this.timeGroupCounts.map(x => x.group);
-    const data   = this.timeGroupCounts.map(x => x.count);
+    const labels  = this.timeGroupCounts.map(x => x.group);
+    const counts  = this.timeGroupCounts.map(x => x.count);
+    const total   = counts.reduce((a, b) => a + b, 0);
+    const percents = counts.map(c => total ? +((c / total) * 100).toFixed(1) : 0);
   
-    // Colors
-    const bgColors = labels.map(g =>
-      this.isGreenGroup(g) ? 'rgba(165, 214, 167, 0.85)' : 'rgba(255, 205, 210, 0.85)' // light green / light red
+    this.lastCounts   = counts;
+    this.lastPercents = percents;
+  
+    const backgroundColor = labels.map(g =>
+      this.isGreenGroup(g) ? 'rgba(165, 214, 167, 0.85)' : 'rgba(255, 205, 210, 0.85)'
     );
-    const borderColors = labels.map(g =>
-      this.isGreenGroup(g) ? 'rgba(76, 175, 80, 1)' : 'rgba(239, 83, 80, 1)'           // darker borders
+    const borderColor = labels.map(g =>
+      this.isGreenGroup(g) ? 'rgba(76, 175, 80, 1)' : 'rgba(239, 83, 80, 1)'
     );
+  
+    // Pie → use percents; Bar → use counts
+    const datasetData = this.chartType === 'pie' ? percents : counts;
   
     this.chartData = {
       labels,
-      datasets: [
-        {
-          label: 'כמות',
-          data,
-          backgroundColor: bgColors,
-          borderColor: borderColors,
-          borderWidth: 1
-        }
-      ]
+      datasets: [{
+        label: this.chartType === 'pie' ? 'אחוזים' : 'כמות',
+        data: datasetData,
+        backgroundColor,
+        borderColor,
+        borderWidth: 1
+      }]
     };
   }
   
   
+  
+  
   // ← your example, adapted to COUNTS (no %)
   initializeChart(canvas: HTMLCanvasElement): void {
-    if (this.chart) {
-      this.chart.destroy();
-    }
+    if (this.chart) this.chart.destroy();
+  
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
+  
+    const showDatalabels = this.chartType === 'pie';
+  
+    const options: any = {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display: true, position: 'right' },
+        tooltip: {
+          callbacks: {
+            label: (context: any) => {
+              const idx   = context.dataIndex;
+              const label = context.label || '';
+              if (this.chartType === 'pie') {
+                const count = this.lastCounts[idx] ?? 0;
+                const pct   = this.lastPercents[idx] ?? context.raw;
+                return `${label}: ${count} (${pct}%)`;
+              } else {
+                const val = context.raw;
+                return `${label}: ${val}`;
+              }
+            }
+          }
+        },
+        datalabels: {
+          display: showDatalabels,
+          formatter: (value: number, _ctx: any) => `${value}%`,
+          color: '#111',            // readable on light colors
+          font: { weight: '600' },
+          anchor: 'center',
+          align: 'center',
+          clip: false
+        }
+      }
+    };
+  
+    if (this.chartType === 'bar') {
+      options.scales = {
+        y: {
+          beginAtZero: true,
+          ticks: { callback: (value: any) => `${value}` }
+        }
+      };
+    }
   
     this.chart = new Chart(ctx, {
       type: this.chartType,
       data: this.chartData,
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        scales: {
-          y: {
-            beginAtZero: true,
-            ticks: {
-              // show counts, not percentage
-              callback: (value: any) => `${value}`
-            }
-          }
-        },
-        plugins: {
-          tooltip: {
-            callbacks: {
-              // show the raw count in tooltip
-              label: (context: any) => ` ${context.dataset.label}: ${context.raw}`
-            }
-          },
-          legend: {
-            display: true
-          }
-        }
-      }
+      options
     });
   }
+  
+  
   
   private refreshChart(): void {
     // rebuild counts from current filtered table, update chart
@@ -574,11 +605,18 @@ export class DrugSurgeryReportComponent implements OnInit, AfterViewInit {
   }
   
   private isGreenGroup(group: string): boolean {
-    // be a bit forgiving with spacing/casing if you want:
     const g = (group || '').toString().replace(/\s+/g, '').toLowerCase();
     return g === '2-between30and60';
   }
   
   trackByGroup = (_: number, item: { group: string }) => item.group;
+
+  setChartType(type: 'bar' | 'pie'): void {
+    if (this.chartType === type) return;
+    this.chartType = type;
+    if (this.chart) { this.chart.destroy(); this.chart = null; }
+    setTimeout(() => this.refreshChart(), 0);
+  }
+  
   
 }

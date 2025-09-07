@@ -91,152 +91,71 @@
     <!-- TAB 1: דו״ח תרופות וניתוחים -->
     <mat-tab label="דו״ח תרופות וניתוחים">
       <!-- Controls row -->
-   <!-- Controls row -->
-<!-- Controls row -->
-<div style="display:flex; align-items:center; gap:12px; margin:8px 0;">
-  <img
-    *ngIf="!showGraph"
-    src="../../assets/excel.png"
-    alt="Download"
-    (click)="exportToExcelMain()"
-    class="download-icon"
-    width="50"
-    matTooltip="הורדת אקסל"
-  />
-
-  <button mat-stroked-button (click)="toggleGraph()">
-    <mat-icon>{{ showGraph ? 'table_chart' : 'bar_chart' }}</mat-icon>
-    {{ showGraph ? 'הצג טבלה' : 'הצג גרף' }}
-  </button>
-
-  <mat-form-field appearance="outline" *ngIf="!showGraph" style="margin-inline-start:auto;">
-    <mat-label>חיפוש בטבלה</mat-label>
-    <input matInput (keyup)="applyMainFilter($event)" placeholder="חפש בטבלה" />
-  </mat-form-field>
-</div>
-
-<!-- Graph view: Chart.js canvas -->
-<div *ngIf="showGraph" style="margin-top:12px; height: 360px;">
-  <h3 style="margin:0 0 8px;">התפלגות לפי קבוצת זמן (TimeGroup)</h3>
-  <div *ngIf="!timeGroupCounts.length" style="opacity:.7;">אין נתונים להצגה</div>
-  <canvas #timeGroupCanvas style="width:100%; height:100%;"></canvas>
-</div>
-
-<!-- Table view -->
-<mat-table
-  *ngIf="!showGraph"
-  [dataSource]="matTableDataSource"
-  matSort
-  #mainSort="matSort"
-  dir="rtl"
-  class="mat-elevation-z8"
->
-  <ng-container *ngFor="let column of columns" [matColumnDef]="column">
-    <mat-header-cell *matHeaderCellDef mat-sort-header>
-      {{ getColumnLabel(column) }}
-    </mat-header-cell>
-
-    <mat-cell *matCellDef="let row" [ngClass]="getCellClass(column, row[column])">
-      <ng-container [ngSwitch]="column">
-        <ng-container *ngSwitchCase="'drugGiveTime'">
-          {{ row[column] | date: 'yyyy-MM-dd HH:mm' }}
-        </ng-container>
-        <ng-container *ngSwitchCase="'operationStartTime'">
-          {{ row[column] | date: 'yyyy-MM-dd HH:mm' }}
-        </ng-container>
-        <ng-container *ngSwitchCase="'operationEndTime'">
-          {{ row[column] | date: 'yyyy-MM-dd HH:mm' }}
-        </ng-container>
-        <ng-container *ngSwitchDefault>
-          {{ row[column] }}
-        </ng-container>
-      </ng-container>
-    </mat-cell>
-  </ng-container>
-
-  <mat-header-row *matHeaderRowDef="columns"></mat-header-row>
-  <mat-row *matRowDef="let row; columns: columns"></mat-row>
-</mat-table>
-
-<mat-paginator
-  *ngIf="!showGraph"
-  #mainPaginator
-  [length]="matTableDataSource.data.length || 0"
-  [pageSize]="5"
-  [pageSizeOptions]="[5, 50, 100]"
->
-</mat-paginator>
-
-<!-- Table view -->
-<mat-table
-  *ngIf="!showGraph"
-  [dataSource]="matTableDataSource"
-  matSort
-  #mainSort="matSort"
-  dir="rtl"
-  class="mat-elevation-z8"
->
-  <ng-container *ngFor="let column of columns" [matColumnDef]="column">
-    <mat-header-cell *matHeaderCellDef mat-sort-header>
-      {{ getColumnLabel(column) }}
-    </mat-header-cell>
-
-    <mat-cell *matCellDef="let row" [ngClass]="getCellClass(column, row[column])">
-      <ng-container [ngSwitch]="column">
-        <ng-container *ngSwitchCase="'drugGiveTime'">
-          {{ row[column] | date: 'yyyy-MM-dd HH:mm' }}
-        </ng-container>
-        <ng-container *ngSwitchCase="'operationStartTime'">
-          {{ row[column] | date: 'yyyy-MM-dd HH:mm' }}
-        </ng-container>
-        <ng-container *ngSwitchCase="'operationEndTime'">
-          {{ row[column] | date: 'yyyy-MM-dd HH:mm' }}
-        </ng-container>
-        <ng-container *ngSwitchDefault>
-          {{ row[column] }}
-        </ng-container>
-      </ng-container>
-    </mat-cell>
-  </ng-container>
-
-  <mat-header-row *matHeaderRowDef="columns"></mat-header-row>
-  <mat-row *matRowDef="let row; columns: columns"></mat-row>
-</mat-table>
-
-<mat-paginator
-  *ngIf="!showGraph"
-  #mainPaginator
-  [length]="matTableDataSource.data.length || 0"
-  [pageSize]="5"
-  [pageSizeOptions]="[5, 50, 100]"
->
-</mat-paginator>
-
-      <mat-form-field appearance="outline" *ngIf="!showGraph">
-        <mat-label>חיפוש</mat-label>
-        <input matInput (keyup)="applyMainFilter($event)" placeholder="חפש בטבלה" />
-      </mat-form-field>
-      
+      <div style="display:flex; align-items:center; gap:12px; margin:8px 0;">
+        <!-- Export (table only) -->
+        <img
+          *ngIf="!showGraph"
+          src="../../assets/excel.png"
+          alt="Download"
+          (click)="exportToExcelMain()"
+          class="download-icon"
+          width="50"
+          matTooltip="הורדת אקסל"
+        />
+  
+        <!-- Table/Graph toggle -->
+        <button mat-stroked-button (click)="toggleGraph()">
+          <mat-icon>{{ showGraph ? 'table_chart' : 'bar_chart' }}</mat-icon>
+          {{ showGraph ? 'הצג טבלה' : 'הצג גרף' }}
+        </button>
+  
+        <!-- Chart type buttons (only when graph is shown) -->
+        <button
+          *ngIf="showGraph"
+          mat-stroked-button
+          (click)="setChartType('bar')"
+          [disabled]="chartType === 'bar'">
+          <mat-icon>bar_chart</mat-icon>
+          עמודות
+        </button>
+  
+        <button
+          *ngIf="showGraph"
+          mat-stroked-button
+          (click)="setChartType('pie')"
+          [disabled]="chartType === 'pie'">
+          <mat-icon>pie_chart</mat-icon>
+          עוגה
+        </button>
+  
+        <!-- Table search (table only) -->
+        <mat-form-field appearance="outline" *ngIf="!showGraph" style="margin-inline-start:auto;">
+          <mat-label>חיפוש בטבלה</mat-label>
+          <input matInput (keyup)="applyMainFilter($event)" placeholder="חפש בטבלה" />
+        </mat-form-field>
+      </div>
+  
       <!-- Graph view: Chart.js canvas -->
       <div *ngIf="showGraph" style="margin-top:12px; height: 360px;">
         <h3 style="margin:0 0 8px;">התפלגות לפי קבוצת זמן (TimeGroup)</h3>
         <div *ngIf="!timeGroupCounts.length" style="opacity:.7;">אין נתונים להצגה</div>
         <canvas #timeGroupCanvas style="width:100%; height:100%;"></canvas>
       </div>
-      
+  
       <!-- Table view -->
       <mat-table
         *ngIf="!showGraph"
         [dataSource]="matTableDataSource"
         matSort
         #mainSort="matSort"
+        dir="rtl"
         class="mat-elevation-z8"
       >
         <ng-container *ngFor="let column of columns" [matColumnDef]="column">
           <mat-header-cell *matHeaderCellDef mat-sort-header>
             {{ getColumnLabel(column) }}
           </mat-header-cell>
-
+  
           <mat-cell *matCellDef="let row" [ngClass]="getCellClass(column, row[column])">
             <ng-container [ngSwitch]="column">
               <ng-container *ngSwitchCase="'drugGiveTime'">
@@ -254,21 +173,20 @@
             </ng-container>
           </mat-cell>
         </ng-container>
-
+  
         <mat-header-row *matHeaderRowDef="columns"></mat-header-row>
         <mat-row *matRowDef="let row; columns: columns"></mat-row>
       </mat-table>
-
+  
       <mat-paginator
         *ngIf="!showGraph"
         #mainPaginator
         [length]="matTableDataSource.data.length || 0"
         [pageSize]="5"
-        [pageSizeOptions]="[5, 50, 100]"
-      >
+        [pageSizeOptions]="[5, 50, 100]">
       </mat-paginator>
     </mat-tab>
-
+  
     <!-- TAB 2: ללא תרופות ברשימה -->
     <mat-tab label="ללא תרופות ברשימה">
       <div style="display:flex; align-items:center; gap:12px; margin:8px 0;">
@@ -280,17 +198,18 @@
           width="50"
           matTooltip="הורדת אקסל"
         />
-
+  
         <mat-form-field appearance="outline" style="margin-inline-start:auto;">
           <mat-label>חיפוש</mat-label>
           <input matInput (keyup)="applyNoDrugsFilter($event)" placeholder="חפש בטבלה" />
         </mat-form-field>
       </div>
-
+  
       <mat-table
         [dataSource]="noDrugsMatTableDataSource"
         matSort
         #noDrugsSort="matSort"
+        dir="rtl"
         class="mat-elevation-z8"
       >
         <ng-container *ngFor="let column of noDrugsColumns" [matColumnDef]="column">
@@ -301,18 +220,18 @@
             {{ row[column] }}
           </mat-cell>
         </ng-container>
-
+  
         <mat-header-row *matHeaderRowDef="noDrugsColumns"></mat-header-row>
         <mat-row *matRowDef="let row; columns: noDrugsColumns"></mat-row>
       </mat-table>
-
+  
       <mat-paginator
         #noDrugsPaginator
         [length]="noDrugsMatTableDataSource.data.length || 0"
         [pageSize]="5"
-        [pageSizeOptions]="[10, 50, 100]"
-      >
+        [pageSizeOptions]="[10, 50, 100]">
       </mat-paginator>
     </mat-tab>
   </mat-tab-group>
+  
 </div>
