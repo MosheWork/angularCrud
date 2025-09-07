@@ -46,6 +46,14 @@ export class DrugSurgeryReportComponent implements OnInit, AfterViewInit {
   @ViewChild('noDrugsSort') noDrugsSort!: MatSort;
   @ViewChild('timeGroupCanvas') timeGroupCanvas!: ElementRef<HTMLCanvasElement>;
 
+// ▼ Pivot for "GiveOrderName × TimeGroup"
+giveOrderMatrixColumns: string[] = ['giveOrderName', 'total']; // safe initial columns
+giveOrderMatrixData = new MatTableDataSource<any>([]);
+
+@ViewChild('matrixPaginator') matrixPaginator!: MatPaginator;
+@ViewChild('matrixSort') matrixSort!: MatSort;
+
+
   timeGroupCounts: Array<{ group: string; count: number }> = [];
   maxTimeGroupCount = 0;
   chart: Chart | null = null;
@@ -122,6 +130,8 @@ export class DrugSurgeryReportComponent implements OnInit, AfterViewInit {
       this.dataSource = data;
       this.filteredData = [...data];
       this.matTableDataSource.data = this.filteredData;
+      this.buildGiveOrderMatrix();   // ← add this
+
       this.calculateSummary(data);
       this.updateGauge();
 
@@ -142,6 +152,8 @@ export class DrugSurgeryReportComponent implements OnInit, AfterViewInit {
     this.matTableDataSource.sort = this.sort;
     this.noDrugsMatTableDataSource.paginator = this.noDrugsPaginator;
     this.noDrugsMatTableDataSource.sort = this.noDrugsSort;
+    this.giveOrderMatrixData.paginator = this.matrixPaginator;
+this.giveOrderMatrixData.sort      = this.matrixSort;
   }
 
   // 🔹 Build distinct/sorted options for dropdowns
@@ -308,6 +320,7 @@ export class DrugSurgeryReportComponent implements OnInit, AfterViewInit {
   
     this.totalResults = this.filteredData.length;
     this.matTableDataSource.data = this.filteredData;
+    this.buildGiveOrderMatrix();
     if (this.showGraph) {
       this.refreshChart();
     }
@@ -618,5 +631,79 @@ export class DrugSurgeryReportComponent implements OnInit, AfterViewInit {
     setTimeout(() => this.refreshChart(), 0);
   }
   
+  private getRowTimeGroup(row: any): string {
+    return String((row?.timeGroup ?? row?.TimeGroup ?? '')).trim() || 'ללא';
+  }
+  private getRowGiveOrderName(row: any): string {
+    return String((row?.giveOrderName ?? row?.GiveOrderName ?? '')).trim() || 'ללא';
+  }
+
+  private buildGiveOrderMatrix(): void {
+    const rows = this.matTableDataSource?.data ?? [];
+    const tgSet = new Set<string>();
+    const map = new Map<string, Map<string, number>>(); // name -> (tg -> count)
   
+    for (const r of rows) {
+      const name = this.getRowGiveOrderName(r);
+      const tg   = this.getRowTimeGroup(r);
+      tgSet.add(tg);
+  
+      if (!map.has(name)) map.set(name, new Map<string, number>());
+      const inner = map.get(name)!;
+      inner.set(tg, (inner.get(tg) ?? 0) + 1);
+    }
+  
+    const timeGroups = Array.from(tgSet.values()).sort((a, b) => a.localeCompare(b, 'he'));
+    // Columns: name | …timeGroups… | total
+    this.giveOrderMatrixColumns = ['giveOrderName', ...timeGroups, 'total'];
+  
+    const tableRows = Array.from(map.entries()).map(([name, inner]) => {
+      const row: any = { giveOrderName: name };
+      let sum = 0;
+      for (const tg of timeGroups) {
+        const c = inner.get(tg) ?? 0;
+        row[tg] = c;
+        sum += c;
+      }
+      row.total = sum;
+      return row;
+    });
+  
+    this.giveOrderMatrixData.data = tableRows;
+  
+    // Attach paginator/sort once the view is ready
+    Promise.resolve().then(() => {
+      if (this.matrixPaginator) this.giveOrderMatrixData.paginator = this.matrixPaginator;
+      if (this.matrixSort)      this.giveOrderMatrixData.sort      = this.matrixSort;
+    });
+  }
+  
+  applyGiveOrderMatrixFilter(ev: Event): void {
+    const value = (ev.target as HTMLInputElement)?.value ?? '';
+    this.giveOrderMatrixData.filter = value.trim().toLowerCase();
+  }
+  
+  // If you used the earlier arrow-function version, keep it or use this method form:
+  exportGiveOrderMatrix(): void {
+    const rows = this.giveOrderMatrixData.data;
+    if (!rows?.length) { alert('אין נתונים להורדה'); return; }
+  
+    const translated = rows.map((r: any) => {
+      const out: any = { 'נותן התרופה': r.giveOrderName };
+      for (const col of this.giveOrderMatrixColumns) {
+        if (col !== 'giveOrderName' && col !== 'total') out[col] = r[col];
+      }
+      out['סה״כ'] = r.total;
+      return out;
+    });
+  
+    const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(translated);
+    const wb: XLSX.WorkBook = {
+      Sheets: { 'ספירה לפי נותן התרופה': ws },
+      SheetNames: ['ספירה לפי נותן התרופה']
+    };
+    XLSX.writeFile(wb, 'giveordername_timegroup_counts.xlsx');
+  }
+  
+   
 }
