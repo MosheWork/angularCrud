@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, AfterViewInit, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, ViewChild, AfterViewInit, ChangeDetectorRef ,ElementRef,} from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { FormControl, FormGroup, FormBuilder } from '@angular/forms';
 import { MatPaginator } from '@angular/material/paginator';
@@ -10,6 +10,9 @@ import { environment } from '../../../environments/environment';
 import { MatDialog } from '@angular/material/dialog';
 import { ProcedureICD9ManagerDialogComponent } from './procedure-icd9-manager-dialog/procedure-icd9-manager-dialog.component';
 import { AuthenticationService } from '../../../app/services/authentication-service/authentication-service.component';
+import { Chart, registerables } from 'chart.js';
+Chart.register(...registerables);
+
 
 @Component({
   selector: 'app-drug-surgery-report',
@@ -28,6 +31,7 @@ export class DrugSurgeryReportComponent implements OnInit, AfterViewInit {
   totalRows: number = 0;
   noDrugsPercentage: number = 0;
 
+
   profilePictureUrl: string = 'assets/default-user.png';
   LoginUserName: string = '';
   DisplayUserName: string = '';
@@ -38,7 +42,13 @@ export class DrugSurgeryReportComponent implements OnInit, AfterViewInit {
   @ViewChild('mainPaginator') mainPaginator!: MatPaginator;
   @ViewChild('noDrugsPaginator') noDrugsPaginator!: MatPaginator;
   @ViewChild('noDrugsSort') noDrugsSort!: MatSort;
+  @ViewChild('timeGroupCanvas') timeGroupCanvas!: ElementRef<HTMLCanvasElement>;
 
+  timeGroupCounts: Array<{ group: string; count: number }> = [];
+  maxTimeGroupCount = 0;
+  chart: Chart | null = null;
+  chartType: any = 'bar';
+  chartData: any = { labels: [], datasets: [{ label: 'כמות', data: [] }] };
   filterForm: FormGroup;
   graphData: any[] = [];
   dataSource: any[] = [];
@@ -134,22 +144,17 @@ export class DrugSurgeryReportComponent implements OnInit, AfterViewInit {
 
   // 🔹 Build distinct/sorted options for dropdowns
   private buildFilterOptions(data: any[]) {
-    // TopProcedure numeric options
-    const nums = Array.from(
-      new Set(
-        (data || [])
-          .map(r => Number(r?.topProcedure))
-          .filter(n => !isNaN(n))
-      )
+    this.topProcedureOptions = Array.from(
+      new Set((data || []).map(r => this.parseTopProcedure(r?.topProcedure))
+        .filter((n): n is number => typeof n === 'number' && !isNaN(n)))
     ).sort((a, b) => a - b);
-    this.topProcedureOptions = nums;
-
-    // Generic text options
+  
     this.surgeryDepartmentOptions = this.distinctSorted(data.map(r => r?.surgeryDepartment));
-    this.giveOrderNameOptions = this.distinctSorted(data.map(r => r?.giveOrderName));
-    this.timeGroupOptions = this.distinctSorted(data.map(r => r?.timeGroup)); // assumes backend returns `timeGroup`
+    this.giveOrderNameOptions     = this.distinctSorted(data.map(r => r?.giveOrderName));
+    this.timeGroupOptions         = this.distinctSorted(data.map(r => r?.timeGroup));
   }
-
+  
+  
   private distinctSorted(arr: any[]): string[] {
     return Array.from(
       new Set(
@@ -200,7 +205,8 @@ export class DrugSurgeryReportComponent implements OnInit, AfterViewInit {
     formControls['topProcedure'] = new FormControl(null);         // number, threshold filter (<=)
     formControls['surgeryDepartmentFilter'] = new FormControl(''); // text equality
     formControls['giveOrderNameFilter'] = new FormControl('');     // text equality
-    formControls['timeGroup'] = new FormControl('');               // text equality
+    formControls['timeGroup'] = new FormControl('');      
+    formControls['topProcedureFilter'] = new FormControl<number | null>(null);
 
     return this.fb.group(formControls);
   }
@@ -256,57 +262,60 @@ export class DrugSurgeryReportComponent implements OnInit, AfterViewInit {
 
   // 🔹 Apply the 4 new filters in addition to your existing logic
   applyFilters() {
+    if (this.showGraph) this.buildTimeGroupCounts();
+
     const f = this.filterForm.value;
     const globalFilter = (f['globalFilter'] || '').toLowerCase();
   
-    // ✅ Normalize topProcedure to number | null
-    const selTopRaw = this.filterForm.get('topProcedure')?.value;
+    // read from the separate control
+    const selTopRaw = this.filterForm.get('topProcedureFilter')?.value;
     const selTop: number | null =
-      selTopRaw === null || selTopRaw === undefined || selTopRaw === ''
-        ? null
-        : Number(selTopRaw);
+      selTopRaw === null || selTopRaw === undefined || selTopRaw === '' ? null : Number(selTopRaw);
   
-    const selDept: string = (f['surgeryDepartmentFilter'] || '').trim();
-    const selGive: string = (f['giveOrderNameFilter'] || '').trim();
-    const selGroup: string = (f['timeGroup'] || '').trim();
+    const selDept  = (f['surgeryDepartmentFilter'] || '').trim();
+    const selGive  = (f['giveOrderNameFilter'] || '').trim();
+    const selGroup = (f['timeGroup'] || '').trim();
   
-    this.filteredData = this.dataSource.filter((item) => {
-      // ✅ TopProcedure threshold (<=)
-      const itemTopNum =
-        item?.topProcedure === null || item?.topProcedure === undefined || item?.topProcedure === ''
-          ? null
-          : Number(item.topProcedure);
+    // steps set: if 40 selected, [10,20,30,40] (derived from existing options)
+    const allowedSteps = selTop === null ? null : this.topProcedureOptions.filter(n => n <= selTop);
   
-      const topOk =
-        selTop === null || (itemTopNum !== null && !isNaN(itemTopNum) && itemTopNum <= selTop);
+    this.filteredData = this.dataSource.filter(item => {
+      const itemTop = this.parseTopProcedure(item?.topProcedure);
   
-      // Equality filters (skip when empty)
-      const deptOk = !selDept || String(item?.surgeryDepartment || '') === selDept;
-      const giveOk = !selGive || String(item?.giveOrderName || '') === selGive;
-      const groupOk = !selGroup || String(item?.timeGroup || '') === selGroup;
+      // step logic (choose 20 -> allow 10 & 20)
+      const topOk = allowedSteps === null ? true : (itemTop !== null && allowedSteps.includes(itemTop));
   
-      // Existing per-column text filters
-      const perColumnOk = this.columns.every((column) => {
+      const deptOk  = !selDept  || String(item?.surgeryDepartment || '') === selDept;
+      const giveOk  = !selGive  || String(item?.giveOrderName     || '') === selGive;
+      const groupOk = !selGroup || String(item?.timeGroup         || '') === selGroup;
+  
+      // generic per-column text filters, but skip 'topProcedure' so it doesn't override step logic
+      const perColumnOk = this.columns.every(column => {
+        if (column === 'topProcedure') return true; // ⬅️ critical
         const ctlVal = f[column];
         if (!ctlVal) return true;
         const value = String(item[column] ?? '').toLowerCase();
         return value.includes(String(ctlVal).toLowerCase());
       });
   
-      // Global search
-      const globalOk =
-        !globalFilter ||
-        this.columns.some((column) => String(item[column] || '').toLowerCase().includes(globalFilter));
+      const globalOk = !globalFilter ||
+        this.columns.some(column => String(item[column] || '').toLowerCase().includes(globalFilter));
   
       return perColumnOk && globalOk && topOk && deptOk && giveOk && groupOk;
     });
   
     this.totalResults = this.filteredData.length;
     this.matTableDataSource.data = this.filteredData;
-    this.matTableDataSource.paginator = this.paginator;
+    if (this.showGraph) {
+      this.refreshChart();
+    }
+    this.matTableDataSource.filter = ''; // don’t let MatTable’s built-in filter fight ours
+    this.matTableDataSource.paginator = this.mainPaginator;
     this.graphData = this.filteredData;
     this.updateGauge();
   }
+  
+  
   
 
   exportToExcel() {
@@ -444,4 +453,113 @@ export class DrugSurgeryReportComponent implements OnInit, AfterViewInit {
     const filterValue = (event.target as HTMLInputElement).value.trim().toLowerCase();
     this.noDrugsMatTableDataSource.filter = filterValue;
   }
+
+  private parseTopProcedure(v: any): number | null {
+    if (v === null || v === undefined) return null;
+    const m = String(v).match(/\d+/);
+    return m ? Number(m[0]) : null;
+  }
+  private buildTimeGroupCounts(): void {
+    const rows = this.matTableDataSource?.data ?? [];
+    const map = new Map<string, number>();
+  
+    for (const r of rows) {
+      // Support both timeGroup and TimeGroup keys
+      const key = String((r?.timeGroup ?? r?.TimeGroup ?? '')).trim() || 'ללא';
+      map.set(key, (map.get(key) ?? 0) + 1);
+    }
+  
+    this.timeGroupCounts = Array.from(map.entries())
+      .map(([group, count]) => ({ group, count }))
+      .sort((a, b) => b.count - a.count);
+  
+    this.maxTimeGroupCount = this.timeGroupCounts.length
+      ? Math.max(...this.timeGroupCounts.map(x => x.count))
+      : 0;
+  }
+  
+  private setChartDataFromCounts(): void {
+    this.chartData = {
+      labels: this.timeGroupCounts.map(x => x.group),
+      datasets: [
+        {
+          label: 'כמות',
+          data: this.timeGroupCounts.map(x => x.count)
+          // no colors specified — Chart.js will pick defaults
+        }
+      ]
+    };
+  }
+  
+  // ← your example, adapted to COUNTS (no %)
+  initializeChart(canvas: HTMLCanvasElement): void {
+    if (this.chart) {
+      this.chart.destroy();
+    }
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+  
+    this.chart = new Chart(ctx, {
+      type: this.chartType,
+      data: this.chartData,
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+          y: {
+            beginAtZero: true,
+            ticks: {
+              // show counts, not percentage
+              callback: (value: any) => `${value}`
+            }
+          }
+        },
+        plugins: {
+          tooltip: {
+            callbacks: {
+              // show the raw count in tooltip
+              label: (context: any) => ` ${context.dataset.label}: ${context.raw}`
+            }
+          },
+          legend: {
+            display: true
+          }
+        }
+      }
+    });
+  }
+  
+  private refreshChart(): void {
+    // rebuild counts from current filtered table, update chart
+    this.buildTimeGroupCounts();
+    this.setChartDataFromCounts();
+  
+    if (this.chart) {
+      this.chart.data.labels = this.chartData.labels;
+      this.chart.data.datasets = this.chartData.datasets;
+      this.chart.update();
+    } else if (this.timeGroupCanvas?.nativeElement) {
+      // first render after toggle
+      setTimeout(() => this.initializeChart(this.timeGroupCanvas.nativeElement));
+    }
+  }
+  
+  toggleGraph(): void {
+    this.showGraph = !this.showGraph;
+  
+    if (this.showGraph) {
+      // wait for *ngIf to insert the canvas, then render
+      setTimeout(() => this.refreshChart(), 0);
+    } else {
+      // optional: clean up when hiding
+      if (this.chart) {
+        this.chart.destroy();
+        this.chart = null;
+      }
+    }
+  }
+  
+  
+  trackByGroup = (_: number, item: { group: string }) => item.group;
+  
 }
