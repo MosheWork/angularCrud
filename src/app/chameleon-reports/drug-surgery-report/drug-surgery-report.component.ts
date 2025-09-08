@@ -52,7 +52,9 @@ giveOrderMatrixData = new MatTableDataSource<any>([]);
 
 @ViewChild('matrixPaginator') matrixPaginator!: MatPaginator;
 @ViewChild('matrixSort') matrixSort!: MatSort;
-
+showMatrixGraph = false;
+@ViewChild('matrixCanvas') matrixCanvas!: ElementRef<HTMLCanvasElement>;
+matrixChart: Chart | null = null;
 
   timeGroupCounts: Array<{ group: string; count: number }> = [];
   maxTimeGroupCount = 0;
@@ -64,7 +66,9 @@ giveOrderMatrixData = new MatTableDataSource<any>([]);
   dataSource: any[] = [];
   filteredData: any[] = [];
   matTableDataSource: MatTableDataSource<any>;
-
+// --- sizes (px) you like
+chartHeightMain  =820;   // main TimeGroup chart (tab 1)
+chartHeightMatrix = 820;  // matrix Valid% chart (tab 3)
   noDrugsDataSource: any[] = [];
   filteredNoDrugsData: any[] = [];
   noDrugsMatTableDataSource = new MatTableDataSource<any>([]);
@@ -716,6 +720,11 @@ this.giveOrderMatrixData.sort      = this.matrixSort;
       if (this.matrixPaginator) this.giveOrderMatrixData.paginator = this.matrixPaginator;
       if (this.matrixSort)      this.giveOrderMatrixData.sort      = this.matrixSort;
     });
+
+    if (this.showMatrixGraph) {
+      // keep chart in sync with current pivot
+      setTimeout(() => this.refreshMatrixChart(), 0);
+    }
   }
   
   
@@ -748,6 +757,115 @@ this.giveOrderMatrixData.sort      = this.matrixSort;
     XLSX.writeFile(wb, 'giveordername_timegroup_counts.xlsx');
   }
   
-  
+ // Sum the "valid" (green) bucket(s) for a pivot row
+private computeValidCountForRow(row: any): number {
+  let valid = 0;
+  for (const col of this.giveOrderMatrixColumns) {
+    if (col === 'giveOrderName' || col === 'total' || col === 'validPercent') continue;
+    if (this.isGreenGroup(col)) {
+      valid += Number(row[col] ?? 0);
+    }
+  }
+  return valid;
+}
+
+// Build + render (or update) the matrix chart
+private refreshMatrixChart(): void {
+  const rows = this.giveOrderMatrixData?.data ?? [];
+
+  // ✅ sort high → low by Valid%
+  const sorted = [...rows].sort(
+    (a, b) => Number(b.validPercent ?? 0) - Number(a.validPercent ?? 0)
+  );
+
+  const labels = sorted.map(r => r.giveOrderName);
+  const data   = sorted.map(r => Number(r.validPercent ?? 0));
+
+  const backgroundColor = 'rgba(165, 214, 167, 0.85)';
+  const borderColor     = 'rgba(76, 175, 80, 1)';
+
+  const chartData = {
+    labels,
+    datasets: [{
+      label: 'Valid%',
+      data,
+      backgroundColor,
+      borderColor,
+      borderWidth: 1
+    }]
+  };
+
+  if (this.matrixChart) {
+    this.matrixChart.data = chartData as any;
+    this.matrixChart.update();
+    return;
+  }
+
+  const canvas = this.matrixCanvas?.nativeElement;
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  if (!ctx) return;
+
+  this.matrixChart = new Chart(ctx, {
+    type: 'bar',
+    data: chartData,
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      indexAxis: 'y', // horizontal bars, top = highest
+      scales: {
+        x: { min: 0, max: 100, ticks: { callback: (v:any) => `${v}%` } }
+      },
+      plugins: {
+        legend: { display: false },
+        datalabels: {
+          display: true,
+          formatter: (v:number) => `${Number(v).toFixed(1)}%`,
+          color: '#111',
+          font: { weight: 600 },
+          anchor: 'center',
+          align: 'center',
+          clip: false
+        }
+      }
+    }
+  });
+}
+// Toggle table/graph in the 3rd tab
+toggleMatrixGraph(): void {
+  this.showMatrixGraph = !this.showMatrixGraph;
+  if (this.showMatrixGraph) {
+    // ensure canvas exists after *ngIf
+    setTimeout(() => this.refreshMatrixChart(), 0);
+  } else {
+    if (this.matrixChart) {
+      this.matrixChart.destroy();
+      this.matrixChart = null;
+    }
+  }
+}
+onTabChange(ev: any): void {
+  // index 2 = third tab
+  if (ev?.index === 2) {
+    // ensure the table gets its paginator/sort once tab is rendered
+    setTimeout(() => {
+      if (this.matrixPaginator) this.giveOrderMatrixData.paginator = this.matrixPaginator;
+      if (this.matrixSort)      this.giveOrderMatrixData.sort      = this.matrixSort;
+
+      // if graph is toggled on, (re)build it now that canvas exists
+      if (this.showMatrixGraph) this.refreshMatrixChart();
+    }, 0);
+  }
+}
+setMainChartHeight(h: number) {
+  this.chartHeightMain = h;
+  // let Angular paint then tell Chart.js to recompute layout
+  setTimeout(() => this.chart?.resize(), 0);
+}
+
+setMatrixChartHeight(h: number) {
+  this.chartHeightMatrix = h;
+  setTimeout(() => this.matrixChart?.resize(), 0);
+}
    
 }
