@@ -13,6 +13,7 @@ import { AuthenticationService } from '../../../app/services/authentication-serv
 import { Chart, registerables } from 'chart.js';
 Chart.register(...registerables);
 import ChartDataLabels from 'chartjs-plugin-datalabels';
+Chart.register(ChartDataLabels);  // ← add this
 
 
 @Component({
@@ -569,46 +570,63 @@ this.giveOrderMatrixData.sort      = this.matrixSort;
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
   
-    const showDatalabels = this.chartType === 'pie';
+    const isPie = this.chartType === 'pie';
   
     const options: any = {
       responsive: true,
       maintainAspectRatio: false,
+      layout: { padding: { top: 24 } }, // room for top labels
       plugins: {
-        legend: { display: true, position: 'right' },
+        legend: { display: true, position: isPie ? 'right' : 'top' },
         tooltip: {
           callbacks: {
             label: (context: any) => {
               const idx   = context.dataIndex;
               const label = context.label || '';
-              if (this.chartType === 'pie') {
+              if (isPie) {
                 const count = this.lastCounts[idx] ?? 0;
                 const pct   = this.lastPercents[idx] ?? context.raw;
                 return `${label}: ${count} (${pct}%)`;
               } else {
-                const val = context.raw;
-                return `${label}: ${val}`;
+                const count = this.lastCounts[idx] ?? context.raw;
+                const pct   = this.lastPercents[idx] ?? 0;
+                return `${label}: ${count} (${pct}%)`;
               }
             }
           }
         },
         datalabels: {
-          display: showDatalabels,
-          formatter: (value: number, _ctx: any) => `${value}%`,
-          color: '#111',            // readable on light colors
+          // ✅ show labels on BOTH pie and bar
+          display: true,
+          formatter: (value: number, ctx: any) => {
+            const i = ctx.dataIndex;
+            if (isPie) {
+              // value already percent for pie
+              return `${Number(value).toFixed(1)}%`;
+            } else {
+              const count = this.lastCounts[i] ?? value;
+              const pct   = this.lastPercents[i] ?? 0;
+              // Hide tiny bars if you want:
+              // if (count < 1) return '';
+              return `${count} (${pct}%)`;
+            }
+          },
+          color: '#111',
           font: { weight: '600' },
-          anchor: 'center',
-          align: 'center',
+          // 🔼 put label above the bar
+          anchor: isPie ? 'center' : 'end',
+          align:  isPie ? 'center' : 'end',
+          offset: isPie ? 0 : 6,
           clip: false
         }
       }
     };
   
-    if (this.chartType === 'bar') {
+    if (!isPie) {
       options.scales = {
         y: {
           beginAtZero: true,
-          ticks: { callback: (value: any) => `${value}` }
+          ticks: { callback: (v: any) => `${v}` }
         }
       };
     }
@@ -641,21 +659,54 @@ this.giveOrderMatrixData.sort      = this.matrixSort;
     this.showGraph = !this.showGraph;
   
     if (this.showGraph) {
-      // wait for *ngIf to insert the canvas, then render
+      // show graph
       setTimeout(() => this.refreshChart(), 0);
     } else {
-      // optional: clean up when hiding
-      if (this.chart) {
-        this.chart.destroy();
-        this.chart = null;
-      }
+      // show table → rebind sort/paginator after *ngIf renders
+      setTimeout(() => {
+        this.matTableDataSource.paginator = this.mainPaginator;
+        this.matTableDataSource.sort = this.sort;
+        this.cdr.detectChanges();
+      }, 0);
     }
   }
   
-  private isGreenGroup(group: string): boolean {
-    const g = (group || '').toString().replace(/\s+/g, '').toLowerCase();
-    return g === '2-between30and60';
-  }
+  
+ // Replace the current isGreenGroup with this:
+private isGreenGroup(group: string): boolean {
+  if (!group) return false;
+
+  // Normalize: lowercase, unify dashes, strip diacritics, remove spaces
+  const g = group
+    .toString()
+    .normalize('NFKC')
+    .toLowerCase()
+    .replace(/[‐-–—−]/g, '-')     // all dash types -> '-'
+    .replace(/\s+/g, '');         // remove spaces
+
+  // Common aliases seen in data (English/Hebrew/compact)
+  const aliases = new Set([
+    '2-between30and60',
+    'between30and60',
+    '30-60',
+    '30to60',
+    '3060',
+    'בין30ל-60',     // likely Hebrew compact
+    'בין30ל60',
+    '2-30-60'        // sometimes prefixed with bucket index
+  ]);
+
+  if (aliases.has(g)) return true;
+
+  // Fallback: any form that clearly indicates 30..60 window
+  // e.g., "2 - between 30 and 60", "בין 30 ל 60", "30 – 60", etc.
+  const digitsOnly = g.replace(/[^0-9]/g, '');
+  if (digitsOnly === '3060') return true;
+
+  // Generic regex: contains "30" then "60" (any non-digits between)
+  return /30\D*60/.test(g);
+}
+
   
   trackByGroup = (_: number, item: { group: string }) => item.group;
 
@@ -712,6 +763,11 @@ this.giveOrderMatrixData.sort      = this.matrixSort;
       row.validPercent = sum ? Number(((validCount / sum) * 100).toFixed(1)) : 0;
   
       return row;
+
+      this.giveOrderMatrixData.data = tableRows;
+      setTimeout(() => this.attachMatrixTableAdapters(), 0);
+
+      if (this.showMatrixGraph) setTimeout(() => this.refreshMatrixChart(), 0);
     });
   
     this.giveOrderMatrixData.data = tableRows;
@@ -773,30 +829,101 @@ private computeValidCountForRow(row: any): number {
 private refreshMatrixChart(): void {
   const rows = this.giveOrderMatrixData?.data ?? [];
 
-  // ✅ sort high → low by Valid%
+  // Sort by Valid% desc
   const sorted = [...rows].sort(
     (a, b) => Number(b.validPercent ?? 0) - Number(a.validPercent ?? 0)
   );
 
-  const labels = sorted.map(r => r.giveOrderName);
-  const data   = sorted.map(r => Number(r.validPercent ?? 0));
+  const labels: string[] = [];
+  const validPercents: number[] = [];
+  const invalidPercents: number[] = [];
+  const validCounts: number[] = [];
+  const invalidCounts: number[] = [];
 
-  const backgroundColor = 'rgba(165, 214, 167, 0.85)';
-  const borderColor     = 'rgba(76, 175, 80, 1)';
+  for (const r of sorted) {
+    const total = Number(r.total ?? 0);
+    const vCount = this.computeValidCountForRow(r);
+    const iCount = Math.max(0, total - vCount);
+
+    const vPct = total ? +(vCount / total * 100).toFixed(1) : 0;
+    const iPct = +(100 - vPct).toFixed(1);
+
+    labels.push(r.giveOrderName);
+    validPercents.push(vPct);
+    invalidPercents.push(iPct);
+    validCounts.push(vCount);
+    invalidCounts.push(iCount);
+  }
 
   const chartData = {
     labels,
-    datasets: [{
-      label: 'Valid%',
-      data,
-      backgroundColor,
-      borderColor,
-      borderWidth: 1
-    }]
+    datasets: [
+      {
+        label: 'Valid%',
+        data: validPercents,
+        backgroundColor: 'rgba(165, 214, 167, 0.85)',
+        borderColor: 'rgba(76, 175, 80, 1)',
+        borderWidth: 1,
+        stack: 'percent'
+      },
+      {
+        label: 'Not valid%',
+        data: invalidPercents,
+        backgroundColor: 'rgba(255, 205, 210, 0.85)',
+        borderColor: 'rgba(239, 83, 80, 1)',
+        borderWidth: 1,
+        stack: 'percent'
+      }
+    ]
+  };
+
+  const options: any = {
+    responsive: true,
+    maintainAspectRatio: false,
+    indexAxis: 'y', // horizontal bars
+    scales: {
+      x: {
+        min: 0,
+        max: 100,
+        stacked: true,                 // ← stack along X
+        ticks: { callback: (v: any) => `${v}%` }
+      },
+      y: { stacked: true }             // ← and stack categories
+    },
+    plugins: {
+      legend: { display: true, position: 'top' },
+      tooltip: {
+        callbacks: {
+          // Show counts + percents in tooltip
+          label: (ctx: any) => {
+            const i = ctx.dataIndex;
+            if (ctx.datasetIndex === 0) {
+              return `Valid: ${validCounts[i]} (${validPercents[i]}%)`;
+            } else {
+              return `Not valid: ${invalidCounts[i]} (${invalidPercents[i]}%)`;
+            }
+          }
+        }
+      },
+      datalabels: {
+        display: true,
+        formatter: (value: number, ctx: any) => {
+          // Hide tiny slivers to reduce clutter
+          if (value < 5) return '';
+          return `${Number(value).toFixed(1)}%`;
+        },
+        color: '#111',
+        font: { weight: 600 },
+        anchor: 'center',
+        align: 'center',
+        clip: false
+      }
+    }
   };
 
   if (this.matrixChart) {
     this.matrixChart.data = chartData as any;
+    this.matrixChart.options = options;
     this.matrixChart.update();
     return;
   }
@@ -806,57 +933,30 @@ private refreshMatrixChart(): void {
   const ctx = canvas.getContext('2d');
   if (!ctx) return;
 
-  this.matrixChart = new Chart(ctx, {
-    type: 'bar',
-    data: chartData,
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      indexAxis: 'y', // horizontal bars, top = highest
-      scales: {
-        x: { min: 0, max: 100, ticks: { callback: (v:any) => `${v}%` } }
-      },
-      plugins: {
-        legend: { display: false },
-        datalabels: {
-          display: true,
-          formatter: (v:number) => `${Number(v).toFixed(1)}%`,
-          color: '#111',
-          font: { weight: 600 },
-          anchor: 'center',
-          align: 'center',
-          clip: false
-        }
-      }
-    }
-  });
+  this.matrixChart = new Chart(ctx, { type: 'bar', data: chartData as any, options });
 }
+
 // Toggle table/graph in the 3rd tab
 toggleMatrixGraph(): void {
   this.showMatrixGraph = !this.showMatrixGraph;
   if (this.showMatrixGraph) {
-    // ensure canvas exists after *ngIf
     setTimeout(() => this.refreshMatrixChart(), 0);
   } else {
-    if (this.matrixChart) {
-      this.matrixChart.destroy();
-      this.matrixChart = null;
-    }
+    // table is shown now
+    setTimeout(() => this.attachMatrixTableAdapters(), 0);
+    if (this.matrixChart) { this.matrixChart.destroy(); this.matrixChart = null; }
   }
 }
-onTabChange(ev: any): void {
-  // index 2 = third tab
-  if (ev?.index === 2) {
-    // ensure the table gets its paginator/sort once tab is rendered
-    setTimeout(() => {
-      if (this.matrixPaginator) this.giveOrderMatrixData.paginator = this.matrixPaginator;
-      if (this.matrixSort)      this.giveOrderMatrixData.sort      = this.matrixSort;
 
-      // if graph is toggled on, (re)build it now that canvas exists
+onTabChange(ev: any): void {
+  if (ev?.index === 2) {
+    setTimeout(() => {
+      this.attachMatrixTableAdapters();
       if (this.showMatrixGraph) this.refreshMatrixChart();
     }, 0);
   }
 }
+
 setMainChartHeight(h: number) {
   this.chartHeightMain = h;
   // let Angular paint then tell Chart.js to recompute layout
@@ -867,5 +967,31 @@ setMatrixChartHeight(h: number) {
   this.chartHeightMatrix = h;
   setTimeout(() => this.matrixChart?.resize(), 0);
 }
-   
+ 
+
+private attachMatrixTableAdapters(): void {
+  if (!this.giveOrderMatrixData) return;
+
+  // IMPORTANT: define the accessor BEFORE assigning .sort
+  this.giveOrderMatrixData.sortingDataAccessor = (item: any, property: string) => {
+    // numeric columns
+    if (property === 'total' || property === 'validPercent' || this.giveOrderMatrixColumns.includes(property)) {
+      const v = item?.[property];
+      const n = Number(v);
+      return isNaN(n) ? -Infinity : n; // put missing at the bottom
+    }
+    // default string compare
+    const s = (item?.[property] ?? '').toString().toLowerCase();
+    return s;
+  };
+
+  // Re-attach paginator & sort after DOM exists
+  this.giveOrderMatrixData.paginator = this.matrixPaginator;
+  this.giveOrderMatrixData.sort = this.matrixSort;
+
+  // Nudge Angular + MatSort
+  this.cdr.detectChanges();
+  this.matrixSort?.sortChange.emit(this.matrixSort.active ? {active: this.matrixSort.active, direction: this.matrixSort.direction} : {active: 'total', direction: 'desc'});
+}
+
 }
