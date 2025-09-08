@@ -337,7 +337,7 @@ yearlyDisplayedColumns: string[] = [];
 
 failedCasesDataSource = new MatTableDataSource<FailedMeasurementCaseModel>();
 failedCasesDisplayedColumns: string[] = [
-  'measurementCode',
+  'measurment_ID',
   'measurementShortDesc',
   'date',
   'mone',
@@ -468,7 +468,7 @@ profilePictureUrl: string = 'assets/default-user.png';
       this.fetchFailedCases();
       this.fetchYearlyPivot();
       this.assignTableConfig();
-      console.log('✅ ViewChildren initialized');
+      
 
       this.quarterlyDataSource.paginator = this.quarterlyPaginator;
       this.quarterlyDataSource.sort = this.quarterlySort;
@@ -531,11 +531,7 @@ profilePictureUrl: string = 'assets/default-user.png';
           if (this.measurementPaginator && this.measurementSort) {
             this.measurementDataSource.paginator = this.measurementPaginator;
             this.measurementDataSource.sort = this.measurementSort;
-            console.log('Paginator:', this.measurementPaginator);
-            console.log('Sort:', this.measurementSort);
-            console.log('✅ Paginator and Sort assigned');
-          } else {
-            console.warn('❌ Paginator or Sort not available');
+          
           }
         });
       });
@@ -1256,33 +1252,63 @@ profilePictureUrl: string = 'assets/default-user.png';
     this.exportExcelFromTable(this.departmentDataSource.filteredData, 'סיכום_לפי_מחלקה', headersMap);
   }
   openRemarksDialog(row: FailedMeasurementCaseModel): void {
+    // Prefer the actual code fields over row.id
+    const measurmentId =
+      (row as any).measurment_ID ??   // ← your grid shows this
+      (row as any).measurementCode ?? // fallback
+      (row as any).Measurment_ID ??
+      (row as any).Measurement_ID ??
+      (row as any).code ??
+      (row as any).measurement ??
+      (row as any).id?.toString?.() ?? '';
+  
+    const caseNumber =
+      (row as any).Case_Number ??
+      (row as any).case_Number ??
+      (row as any).caseNumber ??
+      (row as any).case_number ?? '';
+  
+    if (!measurmentId || !caseNumber) {
+      console.error('[openRemarksDialog] Missing Measurment_ID or Case_Number', { row, measurmentId, caseNumber });
+      alert('חסר Measurment_ID או Case_Number');
+      return;
+    }
+  
+    const data = {
+      // ✅ EXACT keys backend expects
+      Measurment_ID: String(measurmentId),
+      Case_Number:   String(caseNumber),
+  
+      // dialog fields
+      Remarks:       row.remarks ?? '',
+      Subtract:      row.subtract ?? false,
+      AprovedMabar:  row.aprovedMabar ?? false,
+  
+      // extra context for display (optional)
+      MeasurementShortDesc: row.measurementShortDesc,
+      Date: row.date,
+      Department: row.department,
+      Mone: row.mone,
+      Mechane: row.mechane,
+  
+      EntryUserSubtract:        row.entryUserSubtract || '',
+      EntryDateSubtract:        row.entryDateSubtract ?? null,
+      EntryUserAprovedMabar:    row.entryUserAprovedMabar || '',
+      EntryDateAprovedMabar:    row.entryDateAprovedMabar ?? null
+    };
+  
+    console.log('[openRemarksDialog] passing data → dialog', data);
+  
     const dialogRef = this.dialog.open(MeasurementRemarksDialogComponent, {
       width: '800px',
-      data: {
-        id: row.id,
-        case_Number: row.case_Number,
-        remarks: row.remarks || '',
-        subtract: row.subtract ?? false,
-        aprovedMabar: row.aprovedMabar ?? false,
-        measurementShortDesc: row.measurementShortDesc,
-        date: row.date,
-        department: row.department,
-        mone: row.mone,
-        mechane: row.mechane,
-
-        entryUserSubtract: row.entryUserSubtract,
-        entryDateSubtract: row.entryDateSubtract,
-        entryUserAprovedMabar: row.entryUserAprovedMabar,
-        entryDateAprovedMabar: row.entryDateAprovedMabar
-      }
+      data
     });
-
-    dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        this.fetchFailedCases(); // Refresh after save
-      }
-    });
+  
+    dialogRef.afterClosed().subscribe(ok => ok && this.fetchFailedCases());
   }
+  
+  
+  
 
   private extractMeasurementCodes(): string[] {
     return this.selectedMeasurements.map(label => label.split(' ')[0]);
@@ -1305,16 +1331,13 @@ profilePictureUrl: string = 'assets/default-user.png';
       t => t.measurementCode === measurementCode && t.mYear === selectedYear
     );
 
-    console.log(`🔍 Checking target for MeasurementCode: ${measurementCode}, Year: ${selectedYear}`);
-    console.log('📋 Available measurementTargets:', this.measurementTargets);
-    console.log('✅ Matches found:', matches);
+
 
     const target = matches[0]?.mTarget ?? null;
 
     if (target === null) {
-      console.warn(`❌ No target found for ${measurementCode} in ${selectedYear}`);
     } else {
-      console.log(`🎯 Found target: ${target}`);
+  
     }
 
     return target;
@@ -1425,7 +1448,6 @@ profilePictureUrl: string = 'assets/default-user.png';
   }
 
   setGaugeFromData(): void {
-    console.log('📊 Setting gauge values from monthlyData:', this.monthlyData);
 
     // Year
     const totalMone = this.monthlyData.reduce((sum, row) => sum + row.Mone, 0);
@@ -1459,9 +1481,7 @@ profilePictureUrl: string = 'assets/default-user.png';
     this.monthGaugeValue = mMechane === 0 ? null : Math.round((mMone / mMechane) * 100);
     this.monthGaugeTarget = this.getAverageTarget(currentMonth);
 
-    console.log('📈 Year Gauge:', this.yearGaugeValue);
-    console.log('📈 Quarter Gauge:', this.quarterGaugeValue);
-    console.log('📈 Month Gauge:', this.monthGaugeValue);
+    
   }
 
   getAverageTarget(data: any[]): number | null {

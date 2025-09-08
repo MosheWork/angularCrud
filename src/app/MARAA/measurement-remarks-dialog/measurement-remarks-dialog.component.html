@@ -4,16 +4,10 @@
   <mat-card class="info-card">
     <mat-card-content>
       <div class="info-grid">
-        <div><strong>קוד מדד:</strong>
-          {{ data?.measurment_id
-             || data?.measurement_id
-             || data?.Measurment_ID
-             || data?.Measurement_ID
-             || data?.measurementCode
-             || data?.MeasurementCode
-             || data?.code }}
+        <div>
+          <div><strong>קוד מדד:</strong> {{ data?.Measurment_ID }}</div>
+          <div><strong>מספר מקרה:</strong> {{ data?.Case_Number }}</div>
         </div>        <div><strong>תיאור:</strong> {{ (data?.measurementShortDesc || data?.measurementShortDesc) }}</div>
-        <div><strong>מספר מקרה:</strong> {{ (data?.case_number || data?.caseNumber || data?.case_Number || data?.caseNumber) }}</div>
         <div><strong>תאריך:</strong> {{ (data?.date || data?.Date) | date:'dd/MM/yyyy' }}</div>
         <div><strong>מונה:</strong> {{ (data?.mone || data?.Mone) }}</div>
         <div><strong>מכנה:</strong> {{ (data?.mechane || data?.Mechane) }}</div>

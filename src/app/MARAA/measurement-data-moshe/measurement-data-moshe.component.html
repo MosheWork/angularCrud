@@ -530,9 +530,9 @@
 
         <table mat-table [dataSource]="failedCasesDataSource" class="mat-elevation-z8" matSort #failedSort="matSort">
 
-          <ng-container matColumnDef="measurementCode">
+          <ng-container matColumnDef="measurment_ID">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>קוד מדד</th>
-            <td mat-cell *matCellDef="let row">{{ row.measurementCode }}</td>
+            <td mat-cell *matCellDef="let row">{{ row.measurment_ID }}</td>
           </ng-container>
 
           <ng-container matColumnDef="measurementShortDesc">

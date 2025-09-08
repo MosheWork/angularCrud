@@ -74,6 +74,7 @@ chartHeightMatrix = 820;  // matrix Valid% chart (tab 3)
   filteredNoDrugsData: any[] = [];
   noDrugsMatTableDataSource = new MatTableDataSource<any>([]);
 
+  
   // 🔹 Main table columns — added `topProcedure`
   columns: string[] = [
     'admissionNo',
@@ -512,22 +513,33 @@ this.giveOrderMatrixData.sort      = this.matrixSort;
   }
   private buildTimeGroupCounts(): void {
     const rows = this.matTableDataSource?.data ?? [];
-    const map = new Map<string, number>();
+    const raw = new Map<string, number>();
   
     for (const r of rows) {
-      // Support both timeGroup and TimeGroup keys
-      const key = String((r?.timeGroup ?? r?.TimeGroup ?? '')).trim() || 'ללא';
-      map.set(key, (map.get(key) ?? 0) + 1);
+      const label = this.normalizeTimeGroupLabel(this.getRowTimeGroup(r));
+      raw.set(label, (raw.get(label) ?? 0) + 1);
     }
   
-    this.timeGroupCounts = Array.from(map.entries())
+    // 1) exact order for the five wanted buckets (include zeroes)
+    const preferred = this.TIMEGROUP_ORDER.map(l => ({
+      group: l,
+      count: raw.get(l) ?? 0
+    }));
+  
+    // 2) any extras after the five (by count desc)
+    const extras = Array.from(raw.entries())
+      .filter(([l]) => !this.TIMEGROUP_ORDER.includes(l))
       .map(([group, count]) => ({ group, count }))
       .sort((a, b) => b.count - a.count);
+  
+    this.timeGroupCounts = [...preferred, ...extras];
   
     this.maxTimeGroupCount = this.timeGroupCounts.length
       ? Math.max(...this.timeGroupCounts.map(x => x.count))
       : 0;
   }
+  
+  
   
   private setChartDataFromCounts(): void {
     const labels  = this.timeGroupCounts.map(x => x.group);
@@ -641,16 +653,28 @@ this.giveOrderMatrixData.sort      = this.matrixSort;
   
   
   private refreshChart(): void {
-    // rebuild counts from current filtered table, update chart
     this.buildTimeGroupCounts();
     this.setChartDataFromCounts();
+  
+    // 🔒 ensure category order is applied
+    if (this.chart) {
+      const oldLabels = (this.chart.data?.labels as string[]) ?? [];
+      const newLabels = (this.chartData.labels as string[]) ?? [];
+      const sameOrder =
+        oldLabels.length === newLabels.length &&
+        oldLabels.every((v, i) => v === newLabels[i]);
+  
+      if (!sameOrder) {
+        this.chart.destroy();
+        this.chart = null;
+      }
+    }
   
     if (this.chart) {
       this.chart.data.labels = this.chartData.labels;
       this.chart.data.datasets = this.chartData.datasets;
       this.chart.update();
     } else if (this.timeGroupCanvas?.nativeElement) {
-      // first render after toggle
       setTimeout(() => this.initializeChart(this.timeGroupCanvas.nativeElement));
     }
   }
@@ -764,10 +788,7 @@ private isGreenGroup(group: string): boolean {
   
       return row;
 
-      this.giveOrderMatrixData.data = tableRows;
-      setTimeout(() => this.attachMatrixTableAdapters(), 0);
-
-      if (this.showMatrixGraph) setTimeout(() => this.refreshMatrixChart(), 0);
+     
     });
   
     this.giveOrderMatrixData.data = tableRows;
@@ -992,6 +1013,34 @@ private attachMatrixTableAdapters(): void {
   // Nudge Angular + MatSort
   this.cdr.detectChanges();
   this.matrixSort?.sortChange.emit(this.matrixSort.active ? {active: this.matrixSort.active, direction: this.matrixSort.direction} : {active: 'total', direction: 'desc'});
+}
+// Desired order for the first-tab graph:
+private readonly TIMEGROUP_ORDER = [
+  'In30Min',
+  'Between30And60',
+  'Morethen60',
+  'AfterStart',
+  'NoTime'
+];
+
+// Map any backend label variant → our canonical display label above
+private normalizeTimeGroupLabel(raw: string): string {
+  const s = (raw || '')
+    .toString()
+    .normalize('NFKC')
+    .toLowerCase()
+    .replace(/[‐–—−-]/g, '-')   // unify dashes
+    .replace(/\s+/g, '');       // remove spaces
+
+  if (/(between|בין).*30.*60/.test(s) || s === '2-between30and60') return 'Between30And60';
+  if (/(morethen60|morethan60|over60|>60|60\+)/.test(s) || s === '3-morethen60') return 'Morethen60';
+  if (/(afterstart|after-incision|afterincision|<0|minus|negative)/.test(s) || s === '4-afterstart') return 'AfterStart';
+  if (/(notime|ללא|איןשעה|missing|null)/.test(s) || s === '5-notime' || s === 'ללא') return 'NoTime';
+  if (/(in30|min30|<=30|upto30|under30|עד30|0-30)/.test(s) || s === '1-in30min') return 'In30Min';
+
+  // default fallback: keep original (trimmed) or map to NoTime if empty
+  const trimmed = (raw || '').toString().trim();
+  return trimmed ? trimmed : 'NoTime';
 }
 
 }
