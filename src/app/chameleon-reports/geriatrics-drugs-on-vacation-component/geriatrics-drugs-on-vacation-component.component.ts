@@ -61,7 +61,7 @@ export class GeriatricsDrugsOnVacationComponent implements OnInit {
           this.matTableDataSource = new MatTableDataSource(this.filteredData);
           this.matTableDataSource.paginator = this.paginator;
           this.matTableDataSource.sort = this.sort;
-          this.uniqueNames = [...new Set(data.map((item) => item.Name))];
+          this.uniqueNames = [...new Set(data.map(item => item.name))].filter(Boolean).sort();
 
           this.columns.forEach((column) => {
             this.getFormControl(column)
@@ -83,40 +83,43 @@ export class GeriatricsDrugsOnVacationComponent implements OnInit {
   private createFilterForm(): FormGroup {
     const formControls: { [key: string]: FormControl } = {};
     this.columns.forEach((column) => {
-      formControls[column] = new FormControl('');
+      formControls[column] = new FormControl(''); // ברירת מחדל לטקסט
     });
-
+  
+    // name הוא multi-select → צריך מערך, דורש override אחרי הלולאה
+    formControls['name'] = new FormControl<string[]>([]);
+  
     formControls['globalFilter'] = new FormControl('');
     return this.fb.group(formControls);
   }
-
   applyFilters() {
     const filters = this.filterForm.value;
-    const globalFilter = filters['globalFilter']?.toLowerCase() || '';
-    const selectedNames: string[] = filters['Name']; // Get selected names
+    const globalFilter = (filters['globalFilter'] || '').toLowerCase();
+    const selectedNames: string[] = filters['name'] || []; // ← name קטן ותמיד מערך
   
-    this.filteredData = this.dataSource.filter(
-      (item) =>
-        // Multi-select filter for Name
-        (selectedNames.length === 0 || selectedNames.includes(item.Name)) &&
-        this.columns.every((column) => {
-          if (column === 'Name') return true; // Skip Name because it has its own filter
-  
-          const columnFilter = filters[column]?.toLowerCase() || '';
-          const value = String(item[column] || '').toLowerCase();
-          return !columnFilter || value.includes(columnFilter);
-        }) &&
-        (globalFilter === '' ||
-          this.columns.some((column) =>
-            String(item[column] || '')
-              .toLowerCase()
-              .includes(globalFilter)
-          ))
+    this.filteredData = this.dataSource.filter((item) =>
+      // Multi-select על name
+      (selectedNames.length === 0 || selectedNames.includes(item.name)) &&
+      // שאר השדות כטקסט
+      this.columns.every((column) => {
+        if (column === 'name') return true; // לא מסננים כאן, הוא ב־multi-select
+        const columnFilter = (filters[column] || '').toLowerCase();
+        const value = String(item[column] ?? '').toLowerCase();
+        return !columnFilter || value.includes(columnFilter);
+      }) &&
+      // חיפוש כללי
+      (
+        !globalFilter ||
+        this.columns.some((column) =>
+          String(item[column] ?? '').toLowerCase().includes(globalFilter)
+        )
+      )
     );
   
     this.totalResults = this.filteredData.length;
     this.matTableDataSource.data = this.filteredData;
   }
+  
   
   getColumnLabel(column: string): string {
     const columnLabels: Record<string, string> = {
@@ -136,16 +139,11 @@ export class GeriatricsDrugsOnVacationComponent implements OnInit {
 
   resetFilters() {
     this.filterForm.reset();
-  
-    // Explicitly reset multi-select (Name)
-    this.filterForm.get('name')?.setValue([]); 
-  
-    // Explicitly reset the global filter
+    this.filterForm.get('name')?.setValue([]);        // ← name קטן
     this.filterForm.get('globalFilter')?.setValue('');
-  
-    // Apply filters again to reflect changes
     this.applyFilters();
   }
+  
 
   exportToExcel() {
     const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(
