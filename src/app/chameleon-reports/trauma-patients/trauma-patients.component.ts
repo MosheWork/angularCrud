@@ -335,21 +335,41 @@ export class TraumaPatientsComponent implements OnInit {
     this.editMode[caseNumber] = false;
   }
 
-  saveEdit() {  // ✅ Fix: No parameter needed
+  saveEdit(): void {
     if (!this.selectedPatient) return;
-
-    const updatedData = this.editForms[this.selectedPatient.CaseNumber].value;
-    this.http.post(environment.apiUrl + 'Trauma/InsertTraumaRemark', updatedData).subscribe(
-      () => {
-        console.log('Update successful');
-        this.fetchTraumaPatients(); // Refresh data
+  
+    // ✅ form is stored under camelCase key
+    const key = this.selectedPatient.caseNumber;
+    const fg = this.editForms[key];
+    if (!fg) {
+      console.error('[saveEdit] form group not found for', key);
+      return;
+    }
+  
+    // ✅ send PascalCase keys to match backend model
+    const payload = {
+      CaseNumber: this.selectedPatient.caseNumber,
+      Remarks:    fg.get('Remarks')?.value ?? '',
+      Relevant:   Number(fg.get('Relevant')?.value ?? this.selectedPatient.relevant ?? 0)
+    };
+  
+    console.log('[saveEdit] POST InsertTraumaRemark', payload);
+  
+    const url = `${environment.apiUrl}`.replace(/\/$/, '') + '/Trauma/InsertTraumaRemark';
+    this.http.post(url, payload).subscribe({
+      next: (res) => {
+        console.log('✅ saved', res);
+        this.fetchTraumaPatients(); // reload table with remarks + relevant
         this.closeDialog();
       },
-      (error) => {
-        console.error('Error updating trauma remark:', error);
+      error: (err) => {
+        console.error('❌ save error', err, payload);
+        alert('שגיאה בשמירה');
       }
-    );
+    });
   }
+  
+  
 
   getFormControl(caseNumber: string, field: string): FormControl {
     return this.editForms[caseNumber]?.get(field) as FormControl;
@@ -387,4 +407,29 @@ export class TraumaPatientsComponent implements OnInit {
     }
     return value;
   }
+  onDialogRelevantToggle(checked: boolean): void {
+    if (!this.selectedPatient) return;
+  
+    // 1) call the same backend/update logic you use in the table
+    this.onRelevantToggle(this.selectedPatient, checked);
+  
+    // 2) keep dialog model in sync
+    const newVal = checked ? 1 : 0;
+    this.selectedPatient = { ...this.selectedPatient, relevant: newVal };
+  
+    // 3) keep the dialog form control (Relevant) in sync, if present
+    const fg = this.editForms?.[this.selectedPatient.caseNumber];
+    fg?.get('Relevant')?.setValue(newVal, { emitEvent: false });
+  
+    // 4) (optional) reflect immediately in the table’s datasource
+    const idx = this.dataSource.data.findIndex(
+      (r: any) => r.caseNumber === this.selectedPatient.caseNumber
+    );
+    if (idx > -1) {
+      const copy = [...this.dataSource.data];
+      copy[idx] = { ...copy[idx], relevant: newVal };
+      this.dataSource.data = copy;
+    }
+  }
+  
 }
