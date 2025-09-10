@@ -101,6 +101,8 @@ import { ApplicationsListDeptComponent } from './ApplicationsListDept/applicatio
 import { MainSurgeryComponent } from './chameleon-reports/main-surgery/main-surgery.component';
 import { InteractivebrokersComponent } from './interactivebrokers/interactivebrokers.component';
 import { OnlineLogsComponent } from './online-logs/online-logs.component';
+import { SitemapComponent } from './sitemap/sitemap.component';
+import { LinksLogComponent } from './links-log/links-log.component';
 
 const routes: Routes = [
   //', component: UsersComponent },
@@ -249,7 +251,11 @@ const routes: Routes = [
 //משה אינטראקטיב
 //{ path: 'interactivebrokers', component: InteractivebrokersComponent , data: { title: 'interactivebrokers ' }},
 // משה לוגים
-{ path: 'OnlineLogs', component: OnlineLogsComponent, data: { title: 'לוגים אונליין' } }
+{ path: 'OnlineLogs', component: OnlineLogsComponent, data: { title: 'לוגים אונליין' } },
+
+{ path: 'sitemap', component: SitemapComponent , data: { title: 'צילומי מסך' } },
+{ path: 'links-log', component: LinksLogComponent , data: { title: 'לוגים אונליין' } }
+
 
 
 

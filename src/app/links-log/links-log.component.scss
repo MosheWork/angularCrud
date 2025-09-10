@@ -1,0 +1,54 @@
+.page {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  
+  .toolbar {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+  
+    .spacer { flex: 1 1 auto; }
+    .from-field { width: 220px; margin-inline: 12px; }
+  }
+  
+  .summary {
+    display: flex;
+    justify-content: flex-end;
+    padding: 0 8px;
+    color: #555;
+  }
+  
+  .filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: flex-end;
+  
+    .filter { width: clamp(180px, 24vw, 320px); }
+  }
+  
+  .table-wrap {
+    overflow: auto;
+    max-height: calc(100vh - 260px);
+    border-radius: 10px;
+    border: 1px solid rgba(0,0,0,.08);
+    background: #fff;
+  }
+  
+  table { width: 100%; }
+  
+  .no-data td {
+    padding: 24px;
+    text-align: center;
+  }
+  
+  code {
+    direction: ltr;
+    unicode-bidi: embed;
+  }
+  .body {
+    margin-top: 50px;
+    margin-bottom: 50px;
+  }
