@@ -1,20 +1,29 @@
-import { Component, OnInit, AfterViewInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup } from '@angular/forms';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
-import * as XLSX from 'xlsx';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
+import { ChangeDetectorRef } from '@angular/core';
+
 
 export interface LinkLogSummary {
   linkDescription: string;
   linkId: string;
   employee_Name: string;
-  tq: number;   // quarter
-  ty: number;   // year
+  tq: number;
+  ty: number;
   userCountPerLink: number;
+}
+
+/** PascalCase to match your C# POCO JSON (no JsonProperty attributes) */
+interface KpiCompareDto {
+  Today: number; TodayLY: number;
+  ThisMonth: number; ThisMonthLY: number;
+  ThisQuarter: number; ThisQuarterLY: number;
+  ThisYear: number; ThisYearLY: number;
 }
 
 export interface LinkLogPeriodTotals {
@@ -31,54 +40,57 @@ export interface LinkLogPeriodTotals {
   templateUrl: './links-log.component.html',
   styleUrls: ['./links-log.component.scss']
 })
-export class LinksLogComponent implements OnInit, AfterViewInit {
+export class LinksLogComponent implements OnInit {
+  /** which tab is selected (0 = summary, 1 = totals) */
+  selectedTab = 0;
 
-  // Titles
-  Title1 = 'דו״ח שימוש בקישורים - ';
-  Title2 = 'סה״כ תוצאות ';
-  titleUnit = 'רשומות';
-
-  // Loading flags
-  loadingSummary = false;
-  loadingTotals  = false;
-
-  // ===== Tab 1 (summary per employee/quarter) =====
-  columns: string[] = [
-    'linkDescription',
-    'linkId',
-    'employee_Name',
-    'period',
-    'userCountPerLink'
-  ];
-
+  // ===================== TAB 1: Summary =====================
+  columns: string[] = ['linkDescription', 'linkId', 'employee_Name', 'period', 'userCountPerLink'];
   filterForm!: FormGroup;
 
+  matTableDataSource = new MatTableDataSource<LinkLogSummary>([]);
   dataSource: LinkLogSummary[] = [];
   filteredData: LinkLogSummary[] = [];
-  matTableDataSource = new MatTableDataSource<LinkLogSummary>([]);
   totalResults = 0;
+  loadingSummary = false;
 
-  @ViewChild('paginatorSummary') paginator!: MatPaginator;
-  @ViewChild('sortSummary')      sort!: MatSort;
+  // ===================== TAB 2: Totals ======================
+  totalsColumns: string[] = ['linkDescription', 'today', 'thisMonth', 'thisQuarter', 'thisYear', 'allTime'];
+  totalsForm!: FormGroup;
 
-  // ===== Tab 2 (period totals) =====
-  totalsColumns: string[] = [
-    'linkDescription', 'today', 'thisMonth', 'thisQuarter', 'thisYear', 'allTime'
-  ];
-  totalsFilterCtrl = new FormControl('');
   matTableDataSourceTotals = new MatTableDataSource<LinkLogPeriodTotals>([]);
   totalResultsTotals = 0;
+  loadingTotals = false;
 
-  @ViewChild('paginatorTotals') paginatorTotals!: MatPaginator;
-  @ViewChild('sortTotals')      sortTotals!: MatSort;
+  /** KPI compare (global, to-date vs last year, coming from /periodTotalsCompare) */
+  kpiCmp: KpiCompareDto | null = null;
 
-  constructor(private http: HttpClient, private fb: FormBuilder) {}
+  @ViewChild('paginatorSummary') paginatorSummary!: MatPaginator;
+  @ViewChild('sortSummary')      sortSummary!: MatSort;
+
+  @ViewChild('paginatorTotals')  paginatorTotals!: MatPaginator;
+  @ViewChild('sortTotals')       sortTotals!: MatSort;
+
+  constructor(private http: HttpClient, private fb: FormBuilder, private cdr: ChangeDetectorRef) {}
 
   ngOnInit(): void {
-    // Form for Tab 1
-    this.filterForm = this.createFilterForm();
+    const jan1 = new Date(new Date().getFullYear(), 0, 1);
 
-    // Summary table filter predicate (global text search over several fields)
+    // Summary filters (outside tabs)
+    this.filterForm = this.fb.group({
+      globalFilter: [''],
+      fromDate: [jan1],
+      toDate: [null]
+    });
+
+    // Totals filters (outside tabs)
+    this.totalsForm = this.fb.group({
+      globalFilter: [''],
+      dummyStart: [null],
+      dummyEnd: [null]
+    });
+
+    // Summary table predicate
     this.matTableDataSource.filterPredicate = (row, filter) => {
       const hay = [
         row.linkDescription || '',
@@ -90,19 +102,15 @@ export class LinksLogComponent implements OnInit, AfterViewInit {
       return hay.includes(filter);
     };
 
-    // Wire column + global filters (Tab 1)
-    ['linkDescription', 'linkId', 'employee_Name', 'globalFilter'].forEach(ctrl => {
-      this.filterForm.get(ctrl)?.valueChanges
-        .pipe(debounceTime(200), distinctUntilChanged())
-        .subscribe(() => this.applyFilters());
-    });
+    // Reapply summary filters on change
+    this.filterForm.valueChanges
+      .pipe(debounceTime(250), distinctUntilChanged())
+      .subscribe(() => {
+        this.applySummaryFilters();
+        if (this.paginatorSummary) this.paginatorSummary.firstPage();
+      });
 
-    // Date change reloads summary (Tab 1)
-    this.filterForm.get('fromDate')?.valueChanges
-      .pipe(debounceTime(200), distinctUntilChanged())
-      .subscribe(() => this.loadSummary());
-
-    // Totals table filter predicate (Tab 2)
+    // Totals table predicate (simple global text)
     this.matTableDataSourceTotals.filterPredicate = (row, filter) => {
       const hay = [
         row.linkDescription || '',
@@ -111,44 +119,22 @@ export class LinksLogComponent implements OnInit, AfterViewInit {
       return hay.includes(filter);
     };
 
-    // Wire totals filter box
-    this.totalsFilterCtrl.valueChanges
-      .pipe(debounceTime(200), distinctUntilChanged())
+    this.totalsForm.get('globalFilter')?.valueChanges
+      .pipe(debounceTime(250), distinctUntilChanged())
       .subscribe(val => {
         this.matTableDataSourceTotals.filter = (val || '').toLowerCase();
-        if (this.matTableDataSourceTotals.paginator) this.matTableDataSourceTotals.paginator.firstPage();
-        this.totalResultsTotals = this.matTableDataSourceTotals.filteredData.length;
+        if (this.paginatorTotals) this.paginatorTotals.firstPage();
+        this.totalResultsTotals = this.matTableDataSourceTotals.filteredData.length || this.matTableDataSourceTotals.data.length;
       });
 
     // Initial loads
-    this.loadSummary();
-    this.loadTotals();
+    this.fetchSummaryData();
+    this.fetchTotalsData();
+    this.fetchKpiCompare(); // <— new
   }
 
-  ngAfterViewInit(): void {
-    // Attach sort/paginator after view init (they’ll be reattached after data loads too)
-    this.matTableDataSource.paginator = this.paginator;
-    this.matTableDataSource.sort      = this.sort;
-
-    this.matTableDataSourceTotals.paginator = this.paginatorTotals;
-    this.matTableDataSourceTotals.sort      = this.sortTotals;
-  }
-
-  // -------- Tab 1: Summary --------
-  private createFilterForm(): FormGroup {
-    const jan1 = new Date(new Date().getFullYear(), 0, 1);
-    return this.fb.group({
-      linkDescription: new FormControl(''),
-      linkId:          new FormControl(''),
-      employee_Name:   new FormControl(''),
-      globalFilter:    new FormControl(''),
-      fromDate:        new FormControl(jan1),
-      pageSize:        new FormControl(25),
-      pageIndex:       new FormControl(0)
-    });
-  }
-
-  loadSummary(): void {
+  // ================= TAB 1: Summary =================
+  fetchSummaryData(): void {
     const from: Date = this.filterForm.get('fromDate')?.value || new Date();
     const fromISO = this.toISO(from);
     this.loadingSummary = true;
@@ -157,108 +143,89 @@ export class LinksLogComponent implements OnInit, AfterViewInit {
     this.http.get<LinkLogSummary[]>(environment.apiUrl + 'LinksLog', { params })
       .subscribe({
         next: rows => {
-          this.dataSource = rows;
-          this.filteredData = [...rows];
+          this.dataSource = rows || [];
+          this.filteredData = [...this.dataSource];
 
           this.matTableDataSource.data = this.filteredData;
-          this.matTableDataSource.paginator = this.paginator;
-          this.matTableDataSource.sort      = this.sort;
+          if (this.paginatorSummary) this.matTableDataSource.paginator = this.paginatorSummary;
+          if (this.sortSummary)      this.matTableDataSource.sort      = this.sortSummary;
 
-          this.applyFilters();
+          this.totalResults = this.filteredData.length;
+          this.applySummaryFilters();
           this.loadingSummary = false;
         },
         error: _ => { this.loadingSummary = false; }
       });
   }
 
-  applyFilters(): void {
-    const f = this.filterForm.value;
-    const global = (f.globalFilter || '').toLowerCase();
-    const desc   = (f.linkDescription || '').toLowerCase();
-    const linkId = (f.linkId || '').toLowerCase();
-    const emp    = (f.employee_Name || '').toLowerCase();
-
-    this.filteredData = this.dataSource.filter(row =>
-      (!desc   || (row.linkDescription || '').toLowerCase().includes(desc)) &&
-      (!linkId || (row.linkId || '').toLowerCase().includes(linkId)) &&
-      (!emp    || (row.employee_Name || '').toLowerCase().includes(emp)) &&
-      (!global || this.matTableDataSource.filterPredicate(row, global))
+  applySummaryFilters(): void {
+    const global = (this.filterForm.get('globalFilter')?.value || '').toLowerCase();
+    const filtered = this.dataSource.filter(row =>
+      !global || this.matTableDataSource.filterPredicate(row, global)
     );
-
-    this.totalResults = this.filteredData.length;
-    this.matTableDataSource.data = this.filteredData;
-    if (this.matTableDataSource.paginator) this.matTableDataSource.paginator.firstPage();
+    this.filteredData = filtered;
+    this.totalResults = filtered.length;
+    this.matTableDataSource.data = filtered;
   }
 
-  clearGlobal(): void {
-    this.filterForm.get('globalFilter')?.setValue('');
+  resetSummaryFilters(): void {
+    const jan1 = new Date(new Date().getFullYear(), 0, 1);
+    this.filterForm.reset({ globalFilter: '', fromDate: jan1, toDate: null });
+    this.applySummaryFilters();
   }
 
-  exportSummaryToExcel(): void {
-    const rows = this.filteredData.length ? this.filteredData : this.dataSource;
-    const shaped = rows.map(r => ({
-      LinkDescription: r.linkDescription,
-      LinkId: r.linkId,
-      Employee_Name: r.employee_Name,
-      Quarter: `Q${r.tq}`,
-      Year: r.ty,
-      UserCountPerLink: r.userCountPerLink
-    }));
-
-    const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(shaped);
-    const wb: XLSX.WorkBook = { Sheets: { data: ws }, SheetNames: ['data'] };
-    const buf = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
-    this.downloadBlob(buf, 'links-log-summary.xlsx');
-  }
-
-  // -------- Tab 2: Totals --------
-  loadTotals(): void {
+  // ================= TAB 2: Totals =================
+  fetchTotalsData(): void {
     this.loadingTotals = true;
     this.http.get<LinkLogPeriodTotals[]>(environment.apiUrl + 'LinksLog/periodTotals')
       .subscribe({
         next: rows => {
-          this.matTableDataSourceTotals.data = rows;
-          this.matTableDataSourceTotals.paginator = this.paginatorTotals;
-          this.matTableDataSourceTotals.sort      = this.sortTotals;
-          this.totalResultsTotals = rows.length;
+          this.matTableDataSourceTotals.data = rows || [];
+          if (this.paginatorTotals) this.matTableDataSourceTotals.paginator = this.paginatorTotals;
+          if (this.sortTotals)      this.matTableDataSourceTotals.sort      = this.sortTotals;
+          this.totalResultsTotals = this.matTableDataSourceTotals.data.length;
           this.loadingTotals = false;
         },
         error: _ => { this.loadingTotals = false; }
       });
   }
 
-  exportTotalsToExcel(): void {
-    const rows = this.matTableDataSourceTotals.filteredData.length
-      ? this.matTableDataSourceTotals.filteredData
-      : this.matTableDataSourceTotals.data;
-
-    const shaped = rows.map(r => ({
-      LinkDescription: r.linkDescription,
-      Today: r.today,
-      ThisMonth: r.thisMonth,
-      ThisQuarter: r.thisQuarter,
-      ThisYear: r.thisYear,
-      AllTime: r.allTime
-    }));
-
-    const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(shaped);
-    const wb: XLSX.WorkBook = { Sheets: { data: ws }, SheetNames: ['data'] };
-    const buf = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
-    this.downloadBlob(buf, 'links-log-period-totals.xlsx');
+  resetTotalsFilters(): void {
+    this.totalsForm.reset({ globalFilter: '', dummyStart: null, dummyEnd: null });
+    this.matTableDataSourceTotals.filter = '';
+    this.totalResultsTotals = this.matTableDataSourceTotals.data.length;
   }
 
-  // -------- Utils --------
+  // ============== KPIs (compare to last year) ==============
+  /** Calls: GET /api/LinksLog/periodTotalsCompare */
+  fetchKpiCompare(): void {
+    this.http.get<KpiCompareDto>(environment.apiUrl + 'LinksLog/periodTotalsCompare')
+      .subscribe({
+        next: dto => {
+          this.kpiCmp = dto;
+          console.log('kpiCmp =>', dto); // DEBUG: verify data in console
+          this.cdr.markForCheck();        // safe even if not OnPush
+        },
+        error: _ => this.kpiCmp = null
+      });
+  }
+  /** percentage delta vs last year */
+  delta(curr: number, prev: number): number {
+    if (!prev) return curr ? 100 : 0;
+    return Math.round(((curr - prev) / prev) * 100);
+  }
+
+  /** CSS class for up/flat/down */
+  trendClass(curr: number, prev: number): string {
+    if (!prev && curr > 0) return 'up';
+    if (curr === prev) return 'flat';
+    return curr > prev ? 'up' : 'down';
+  }
+
+  // ================= Utils =================
   private toISO(d: Date): string {
     const m = (d.getMonth() + 1).toString().padStart(2, '0');
     const day = d.getDate().toString().padStart(2, '0');
     return `${d.getFullYear()}-${m}-${day}`;
-  }
-
-  private downloadBlob(buf: ArrayBuffer, filename: string) {
-    const blob = new Blob([buf], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url; a.download = filename; a.click();
-    URL.revokeObjectURL(url);
   }
 }

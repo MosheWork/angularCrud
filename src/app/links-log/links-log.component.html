@@ -1,167 +1,216 @@
-<mat-tab-group>
-    <!-- TAB 1: Summary (by employee & quarter) -->
-    <mat-tab label="סיכום משתמש/רבעון">
-      <form class="page" dir="rtl" [formGroup]="filterForm">
-        <mat-toolbar color="primary" class="toolbar">
-          <span>{{ Title1 }}</span>
-          <span class="spacer"></span>
+<div class="body">
+<!-- Text KPIs comparing same-length periods to last year (MTD/QTD/YTD aligned) -->
+<!-- DEBUG: show raw JSON to confirm binding -->
+<pre style="direction:ltr; font-size:11px; background:#f7f7f7; padding:6px; border:1px dashed #ccc;"
+     *ngIf="kpiCmp">{{ kpiCmp | json }}</pre>
+
+<!-- KPIs (compare to last year). 'as k' avoids ?. everywhere -->
+<div class="kpi-text" dir="rtl" *ngIf="kpiCmp as k"
+     style="display:flex; gap:18px; flex-wrap:wrap; margin:8px 0 12px;">
+
+  <!-- Today -->
+  <div class="kpi-chip" [ngClass]="trendClass(k.Today, k.TodayLY)"
+       style="padding:10px 14px; border-radius:10px; border:1px solid rgba(0,0,0,.12);">
+    <div style="font-weight:600;">היום</div>
+    <div>
+      {{ k.Today | number }}
+      <span>&nbsp;(<span [ngClass]="trendClass(k.Today, k.TodayLY)">
+        {{ delta(k.Today, k.TodayLY) }}%
+      </span> מול שנה שעברה)</span>
+    </div>
+  </div>
+
+  <!-- Month-to-date -->
+  <div class="kpi-chip" [ngClass]="trendClass(k.ThisMonth, k.ThisMonthLY)"
+       style="padding:10px 14px; border-radius:10px; border:1px solid rgba(0,0,0,.12);">
+    <div style="font-weight:600;">החודש (עד היום)</div>
+    <div>
+      {{ k.ThisMonth | number }}
+      <span>&nbsp;(<span [ngClass]="trendClass(k.ThisMonth, k.ThisMonthLY)">
+        {{ delta(k.ThisMonth, k.ThisMonthLY) }}%
+      </span> מול שנה שעברה)</span>
+    </div>
+  </div>
+
+  <!-- Quarter-to-date -->
+  <div class="kpi-chip" [ngClass]="trendClass(k.ThisQuarter, k.ThisQuarterLY)"
+       style="padding:10px 14px; border-radius:10px; border:1px solid rgba(0,0,0,.12);">
+    <div style="font-weight:600;">הרבעון (עד היום)</div>
+    <div>
+      {{ k.ThisQuarter | number }}
+      <span>&nbsp;(<span [ngClass]="trendClass(k.ThisQuarter, k.ThisQuarterLY)">
+        {{ delta(k.ThisQuarter, k.ThisQuarterLY) }}%
+      </span> מול שנה שעברה)</span>
+    </div>
+  </div>
+</div>
+
   
-          <mat-form-field class="from-field" appearance="outline">
-            <mat-label>מתאריך</mat-label>
-            <input matInput [matDatepicker]="picker" formControlName="fromDate">
-            <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-            <mat-datepicker #picker></mat-datepicker>
+  
+  
+    <!-- ===== Filters OUTSIDE the tab group ===== -->
+    <ng-container [ngSwitch]="selectedTab">
+  
+      <!-- TAB 0 filters: Summary -->
+      <form *ngSwitchCase="0" [formGroup]="filterForm" dir="rtl" class="filter-form">
+        <!-- <button mat-raised-button color="primary" (click)="fetchSummaryData()" [disabled]="loadingSummary">הפעל</button>
+  
+        <mat-form-field>
+          <mat-label>תאריך התחלה</mat-label>
+          <input matInput [matDatepicker]="startSummaryPicker" formControlName="fromDate" />
+          <mat-datepicker-toggle matSuffix [for]="startSummaryPicker"></mat-datepicker-toggle>
+          <mat-datepicker #startSummaryPicker></mat-datepicker>
+        </mat-form-field>
+  
+        <mat-form-field>
+          <mat-label>תאריך סיום</mat-label>
+          <input matInput [matDatepicker]="endSummaryPicker" formControlName="toDate" />
+          <mat-datepicker-toggle matSuffix [for]="endSummaryPicker"></mat-datepicker-toggle>
+          <mat-datepicker #endSummaryPicker></mat-datepicker>
+        </mat-form-field> -->
+  
+        <div dir="rtl" class="form-footer" style="display:flex;justify-content:space-between;">
+          <mat-form-field class="long-search-bar" style="flex:1;margin-right:10px;">
+            <mat-label class="filters" style="color:blue">חיפוש</mat-label>
+            <input matInput formControlName="globalFilter" placeholder="Search..." />
           </mat-form-field>
   
-          <button mat-raised-button color="accent" (click)="loadSummary()" [disabled]="loadingSummary">רענן</button>
-          <button mat-button (click)="exportSummaryToExcel()" [disabled]="loadingSummary || !matTableDataSource.data.length">
-            ייצוא Excel
-          </button>
-        </mat-toolbar>
-  
-        <mat-progress-bar *ngIf="loadingSummary" mode="indeterminate"></mat-progress-bar>
-  
-        <div class="summary">
-          <span>{{ Title2 }} {{ totalResults | number }} {{ titleUnit }}</span>
-        </div>
-  
-        <div class="filters">
-          <mat-form-field appearance="outline" class="filter">
-            <mat-label>סינון כללי</mat-label>
-            <input matInput placeholder="הקלד לחיפוש..." formControlName="globalFilter">
-            <button mat-icon-button matSuffix *ngIf="filterForm.get('globalFilter')?.value" (click)="clearGlobal()">
-              <mat-icon>close</mat-icon>
+          <div class="button-container" style="display:flex;align-items:center;">
+            <button mat-button (click)="resetSummaryFilters()" mat-raised-button color="primary" class="custom-button" matTooltip="Reset Filters">
+              <i class="material-icons">refresh</i>
             </button>
-          </mat-form-field>
   
-          <mat-form-field appearance="outline" class="filter">
-            <mat-label>תיאור קישור</mat-label>
-            <input matInput formControlName="linkDescription">
-          </mat-form-field>
-  
-          <mat-form-field appearance="outline" class="filter">
-            <mat-label>LinkId</mat-label>
-            <input matInput formControlName="linkId">
-          </mat-form-field>
-  
-          <mat-form-field appearance="outline" class="filter">
-            <mat-label>עובד</mat-label>
-            <input matInput formControlName="employee_Name">
-          </mat-form-field>
+          </div>
         </div>
       </form>
   
-      <div class="table-wrap">
-        <table mat-table [dataSource]="matTableDataSource" matSort #sortSummary="matSort" matSortDisableClear>
+      <!-- TAB 1 filters: Period Totals -->
+      <form *ngSwitchCase="1" [formGroup]="totalsForm" dir="rtl" class="filter-form">
+        <!-- <button mat-raised-button color="primary" (click)="fetchTotalsData()" [disabled]="loadingTotals">הפעל</button>
   
+        <mat-form-field>
+          <mat-label>תאריך התחלה</mat-label>
+          <input matInput [matDatepicker]="startTotalsPicker" formControlName="dummyStart" />
+          <mat-datepicker-toggle matSuffix [for]="startTotalsPicker"></mat-datepicker-toggle>
+          <mat-datepicker #startTotalsPicker></mat-datepicker>
+        </mat-form-field>
+  
+        <mat-form-field>
+          <mat-label>תאריך סיום</mat-label>
+          <input matInput [matDatepicker]="endTotalsPicker" formControlName="dummyEnd" />
+          <mat-datepicker-toggle matSuffix [for]="endTotalsPicker"></mat-datepicker-toggle>
+          <mat-datepicker #endTotalsPicker></mat-datepicker>
+        </mat-form-field> -->
+  
+        <div dir="rtl" class="form-footer" style="display:flex;justify-content:space-between;">
+          <mat-form-field class="long-search-bar" style="flex:1;margin-right:10px;">
+            <mat-label class="filters" style="color:blue">חיפוש</mat-label>
+            <input matInput formControlName="globalFilter" placeholder="Search..." />
+          </mat-form-field>
+  
+          <div class="button-container" style="display:flex;align-items:center;">
+            <button mat-button (click)="resetTotalsFilters()" mat-raised-button color="primary" class="custom-button" matTooltip="Reset Filters">
+              <i class="material-icons">refresh</i>
+            </button>
+  
+          </div>
+        </div>
+      </form>
+  
+    </ng-container>
+    <!-- ===== /Filters OUTSIDE ===== -->
+  
+    <!-- Tabs only contain the tables + paginators -->
+    <mat-tab-group [(selectedIndex)]="selectedTab">
+      <!-- TAB 0: Summary -->
+      <mat-tab label="סיכום משתמש/רבעון">
+        <mat-progress-bar *ngIf="loadingSummary" mode="indeterminate"></mat-progress-bar>
+  
+        <mat-table [dataSource]="matTableDataSource" matSort #sortSummary="matSort" dir="rtl" class="mat-elevation-z8">
           <ng-container matColumnDef="linkDescription">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header> תיאור קישור </th>
-            <td mat-cell *matCellDef="let r">{{ r.linkDescription }}</td>
+            <mat-header-cell *matHeaderCellDef mat-sort-header> תיאור קישור </mat-header-cell>
+            <mat-cell *matCellDef="let r"> {{ r.linkDescription }} </mat-cell>
           </ng-container>
   
           <ng-container matColumnDef="linkId">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header> LinkId </th>
-            <td mat-cell *matCellDef="let r"><code>{{ r.linkId }}</code></td>
+            <mat-header-cell *matHeaderCellDef mat-sort-header> LinkId </mat-header-cell>
+            <mat-cell *matCellDef="let r"><code>{{ r.linkId }}</code></mat-cell>
           </ng-container>
   
           <ng-container matColumnDef="employee_Name">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header> עובד </th>
-            <td mat-cell *matCellDef="let r">{{ r.employee_Name }}</td>
+            <mat-header-cell *matHeaderCellDef mat-sort-header> עובד </mat-header-cell>
+            <mat-cell *matCellDef="let r"> {{ r.employee_Name }} </mat-cell>
           </ng-container>
   
           <ng-container matColumnDef="period">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header> תקופה </th>
-            <td mat-cell *matCellDef="let r">Q{{ r.tq }} {{ r.ty }}</td>
+            <mat-header-cell *matHeaderCellDef mat-sort-header> תקופה </mat-header-cell>
+            <mat-cell *matCellDef="let r"> Q{{ r.tq }} {{ r.ty }} </mat-cell>
           </ng-container>
   
           <ng-container matColumnDef="userCountPerLink">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header> ספירה </th>
-            <td mat-cell *matCellDef="let r">{{ r.userCountPerLink | number }}</td>
+            <mat-header-cell *matHeaderCellDef mat-sort-header> ספירה </mat-header-cell>
+            <mat-cell *matCellDef="let r"> {{ r.userCountPerLink | number }} </mat-cell>
           </ng-container>
   
-          <tr mat-header-row *matHeaderRowDef="columns; sticky: true"></tr>
-          <tr mat-row *matRowDef="let row; columns: columns;"></tr>
+          <mat-header-row *matHeaderRowDef="columns"></mat-header-row>
+          <mat-row *matRowDef="let row; columns: columns"></mat-row>
+        </mat-table>
   
-          <tr class="no-data" *matNoDataRow>
-            <td colspan="5">אין נתונים להצגה</td>
-          </tr>
-        </table>
-      </div>
+        <mat-paginator
+          #paginatorSummary
+          [length]="totalResults"
+          [pageSizeOptions]="[5, 50, 100]"
+          showFirstLastButtons>
+        </mat-paginator>
+      </mat-tab>
   
-      <mat-paginator #paginatorSummary [pageSizeOptions]="[10,25,50,100]" [pageSize]="25" showFirstLastButtons></mat-paginator>
-    </mat-tab>
-  
-    <!-- TAB 2: Period totals -->
-    <mat-tab label="סיכומי תקופות">
-      <div class="page" dir="rtl">
-        <mat-toolbar color="primary" class="toolbar">
-          <span>סיכומי תקופות לפי קישור</span>
-          <span class="spacer"></span>
-  
-          <mat-form-field appearance="outline" class="filter">
-            <mat-label>סינון</mat-label>
-            <input matInput placeholder="חפש..." [formControl]="totalsFilterCtrl">
-            <button mat-icon-button matSuffix *ngIf="totalsFilterCtrl.value" (click)="totalsFilterCtrl.setValue('')">
-              <mat-icon>close</mat-icon>
-            </button>
-          </mat-form-field>
-  
-          <button mat-raised-button color="accent" (click)="loadTotals()" [disabled]="loadingTotals">רענן</button>
-          <button mat-button (click)="exportTotalsToExcel()" [disabled]="loadingTotals || !matTableDataSourceTotals.data.length">
-            ייצוא Excel
-          </button>
-        </mat-toolbar>
-  
+      <!-- TAB 1: Period Totals -->
+      <mat-tab label="סיכומי תקופות">
         <mat-progress-bar *ngIf="loadingTotals" mode="indeterminate"></mat-progress-bar>
   
-        <div class="summary">
-          <span>{{ totalResultsTotals | number }} רשומות</span>
-        </div>
+        <mat-table [dataSource]="matTableDataSourceTotals" matSort #sortTotals="matSort" dir="rtl" class="mat-elevation-z8">
+          <ng-container matColumnDef="linkDescription">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> תיאור קישור </mat-header-cell>
+            <mat-cell *matCellDef="let r"> {{ r.linkDescription }} </mat-cell>
+          </ng-container>
   
-        <div class="table-wrap">
-          <table mat-table [dataSource]="matTableDataSourceTotals" matSort #sortTotals="matSort" matSortDisableClear>
+          <ng-container matColumnDef="today">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> היום </mat-header-cell>
+            <mat-cell *matCellDef="let r"> {{ r.today }} </mat-cell>
+          </ng-container>
   
-            <ng-container matColumnDef="linkDescription">
-              <th mat-header-cell *matHeaderCellDef mat-sort-header> תיאור קישור </th>
-              <td mat-cell *matCellDef="let r">{{ r.linkDescription }}</td>
-            </ng-container>
+          <ng-container matColumnDef="thisMonth">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> החודש </mat-header-cell>
+            <mat-cell *matCellDef="let r"> {{ r.thisMonth }} </mat-cell>
+          </ng-container>
   
-            <ng-container matColumnDef="today">
-              <th mat-header-cell *matHeaderCellDef mat-sort-header> היום </th>
-              <td mat-cell *matCellDef="let r">{{ r.today }}</td>
-            </ng-container>
+          <ng-container matColumnDef="thisQuarter">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> רבעון </mat-header-cell>
+            <mat-cell *matCellDef="let r"> {{ r.thisQuarter }} </mat-cell>
+          </ng-container>
   
-            <ng-container matColumnDef="thisMonth">
-              <th mat-header-cell *matHeaderCellDef mat-sort-header> החודש </th>
-              <td mat-cell *matCellDef="let r">{{ r.thisMonth }}</td>
-            </ng-container>
+          <ng-container matColumnDef="thisYear">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> השנה </mat-header-cell>
+            <mat-cell *matCellDef="let r"> {{ r.thisYear }} </mat-cell>
+          </ng-container>
   
-            <ng-container matColumnDef="thisQuarter">
-              <th mat-header-cell *matHeaderCellDef mat-sort-header> רבעון </th>
-              <td mat-cell *matCellDef="let r">{{ r.thisQuarter }}</td>
-            </ng-container>
+          <ng-container matColumnDef="allTime">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> כל הזמנים </mat-header-cell>
+            <mat-cell *matCellDef="let r"> {{ r.allTime }} </mat-cell>
+          </ng-container>
   
-            <ng-container matColumnDef="thisYear">
-              <th mat-header-cell *matHeaderCellDef mat-sort-header> השנה </th>
-              <td mat-cell *matCellDef="let r">{{ r.thisYear }}</td>
-            </ng-container>
+          <mat-header-row *matHeaderRowDef="totalsColumns"></mat-header-row>
+          <mat-row *matRowDef="let row; columns: totalsColumns"></mat-row>
+        </mat-table>
   
-            <ng-container matColumnDef="allTime">
-              <th mat-header-cell *matHeaderCellDef mat-sort-header> כל הזמנים </th>
-              <td mat-cell *matCellDef="let r">{{ r.allTime }}</td>
-            </ng-container>
+        <mat-paginator
+          #paginatorTotals
+          [length]="totalResultsTotals"
+          [pageSizeOptions]="[5, 50, 100]"
+          showFirstLastButtons>
+        </mat-paginator>
+      </mat-tab>
+    </mat-tab-group>
   
-            <tr mat-header-row *matHeaderRowDef="totalsColumns; sticky: true"></tr>
-            <tr mat-row *matRowDef="let row; columns: totalsColumns;"></tr>
-  
-            <tr class="no-data" *matNoDataRow>
-              <td colspan="6">אין נתונים להצגה</td>
-            </tr>
-          </table>
-        </div>
-  
-        <mat-paginator #paginatorTotals [pageSizeOptions]="[10,25,50,100]" [pageSize]="25" showFirstLastButtons></mat-paginator>
-      </div>
-    </mat-tab>
-  </mat-tab-group>
+  </div>
   
