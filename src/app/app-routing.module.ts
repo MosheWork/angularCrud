@@ -103,6 +103,8 @@ import { InteractivebrokersComponent } from './interactivebrokers/interactivebro
 import { OnlineLogsComponent } from './online-logs/online-logs.component';
 import { SitemapComponent } from './sitemap/sitemap.component';
 import { LinksLogComponent } from './links-log/links-log.component';
+import { PptDuplicateComponent } from './ppt-duplicate/ppt-duplicate.component';
+import { DoctorAuthorizationsComponent } from './doctor-authorizations/doctor-authorizations.component';
 
 const routes: Routes = [
   //', component: UsersComponent },
@@ -254,7 +256,13 @@ const routes: Routes = [
 { path: 'OnlineLogs', component: OnlineLogsComponent, data: { title: 'לוגים אונליין' } },
 
 { path: 'sitemap', component: SitemapComponent , data: { title: 'צילומי מסך' } },
-{ path: 'links-log', component: LinksLogComponent , data: { title: 'לוגים אונליין' } }
+{ path: 'links-log', component: LinksLogComponent , data: { title: 'לוגים אונליין' } },
+
+
+//
+{ path: 'ppt-duplicate', component: PptDuplicateComponent , data: { title: 'מצגות ' } },
+{ path: 'doctor-authorizations', component: DoctorAuthorizationsComponent , data: { title: 'הרשאות רפואיות - רופאים' } }
+
 
 
 

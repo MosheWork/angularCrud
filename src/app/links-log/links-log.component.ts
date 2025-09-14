@@ -19,6 +19,7 @@ export interface LinkLogSummary {
 }
 
 /** PascalCase to match your C# POCO JSON (no JsonProperty attributes) */
+// השאר את ה-DTO ה"פנימי" כפי שה-HTML מצפה
 interface KpiCompareDto {
   Today: number; TodayLY: number;
   ThisMonth: number; ThisMonthLY: number;
@@ -26,6 +27,13 @@ interface KpiCompareDto {
   ThisYear: number; ThisYearLY: number;
 }
 
+// מה שמגיע מהשרת (camelCase + thisMonthly)
+type KpiWireDto = {
+  today?: number; todayLY?: number;
+  thisMonth?: number; thisMonthLY?: number; thisMonthly?: number;
+  thisQuarter?: number; thisQuarterLY?: number;
+  thisYear?: number; thisYearLY?: number;
+};
 export interface LinkLogPeriodTotals {
   linkDescription: string;
   today: number;
@@ -199,14 +207,10 @@ export class LinksLogComponent implements OnInit {
   // ============== KPIs (compare to last year) ==============
   /** Calls: GET /api/LinksLog/periodTotalsCompare */
   fetchKpiCompare(): void {
-    this.http.get<KpiCompareDto>(environment.apiUrl + 'LinksLog/periodTotalsCompare')
+    this.http.get<KpiWireDto>(environment.apiUrl + 'LinksLog/periodTotalsCompare')
       .subscribe({
-        next: dto => {
-          this.kpiCmp = dto;
-          console.log('kpiCmp =>', dto); // DEBUG: verify data in console
-          this.cdr.markForCheck();        // safe even if not OnPush
-        },
-        error: _ => this.kpiCmp = null
+        next: dto => { this.kpiCmp = this.toViewModel(dto); },
+        error: _ => { this.kpiCmp = null; }
       });
   }
   /** percentage delta vs last year */
@@ -228,4 +232,29 @@ export class LinksLogComponent implements OnInit {
     const day = d.getDate().toString().padStart(2, '0');
     return `${d.getFullYear()}-${m}-${day}`;
   }
+
+  private toViewModel(dto: KpiWireDto): KpiCompareDto {
+    return {
+      Today: dto.today ?? 0,
+      TodayLY: dto.todayLY ?? 0,
+      ThisMonth: dto.thisMonth ?? 0,
+      // תמיכה בשני השמות: thisMonthLY או thisMonthly
+      ThisMonthLY: dto.thisMonthLY ?? dto.thisMonthly ?? 0,
+      ThisQuarter: dto.thisQuarter ?? 0,
+      ThisQuarterLY: dto.thisQuarterLY ?? 0,
+      ThisYear: dto.thisYear ?? 0,
+      ThisYearLY: dto.thisYearLY ?? 0,
+    };
+  }
+  
+  deltaAbs(curr: number, prev: number): number {
+    return (curr || 0) - (prev || 0);
+  }
+  
+  sign(n: number): string {
+    if (n > 0) return '+';
+    if (n < 0) return '−'; // nice minus sign; use '-' if you prefer
+    return '±';
+  }
+  
 }

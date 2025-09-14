@@ -1,0 +1,149 @@
+<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
+
+<div class="body">
+  <div class="top-right-container">
+    <button mat-icon-button (click)="goToHome()" matTooltip="Go to Home">
+      <mat-icon>home</mat-icon>
+    </button>
+  </div>
+
+  <div class="nine">
+    <h1>
+      {{ titleUnit }}
+      <span>{{ Title1 }}{{ Title2 }}{{ totalResults }}</span>
+    </h1>
+  </div>
+
+  <form [formGroup]="filterForm" dir="rtl" class="filter-form">
+    <div class="container-fluid mb-2">
+      <div class="row search-count">
+        <div class="col">
+          <div dir="rtl" class="card">
+            <div dir="rtl" class="card-body">
+              <ng-container *ngFor="let column of columns; let i = index">
+                <div class="filter-row" *ngIf="i % 4 === 0"></div>
+
+                <!-- Department with autocomplete -->
+                <mat-form-field class="filter-field" *ngIf="column === 'departnentDescripton'">
+                  <mat-label class="filters">{{ getColumnLabel(column) }}</mat-label>
+                  <input type="text"
+                         matInput
+                         [formControl]="$any(getFormControl(column))"
+                         [matAutocomplete]="deptAuto" />
+                  <mat-autocomplete #deptAuto="matAutocomplete">
+                    <mat-option *ngFor="let opt of filteredResponsibilities | async" [value]="opt">
+                      {{ opt }}
+                    </mat-option>
+                  </mat-autocomplete>
+                </mat-form-field>
+
+                <!-- Other text filters -->
+                <mat-form-field class="filter-field" *ngIf="column !== 'departnentDescripton'">
+                  <mat-label class="filters">{{ getColumnLabel(column) }}</mat-label>
+                  <input matInput [formControl]="$any(getFormControl(column))" class="filter-input" />
+                </mat-form-field>
+              </ng-container>
+            </div>
+
+            <div class="reset-button-container">
+              <button mat-button (click)="resetFilters()" mat-raised-button color="primary"
+                      class="custom-button" matTooltip="Reset Filters">
+                <i class="material-icons">refresh</i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div dir="rtl" style="display:flex; justify-content:space-between; align-items:center">
+      <mat-form-field class="long-search-bar" style="flex:1; padding-right:10px">
+        <mat-label class="filters" style="color: blue"> חיפוש</mat-label>
+        <input matInput [formControlName]="'globalFilter'" class="search-input" />
+      </mat-form-field>
+
+      <div class="graph-button-container">
+        <img (click)="navigateToGraphPage()" matTooltip="Move To Graph"
+             src="../../../../assets/graphIcon.png" width="50px" />
+      </div>
+
+      <div class="icon" matTooltip="Download Excel">
+        <img src="../../assets/excel.png" alt="Download"
+             (click)="exportToExcel()" class="download-icon" width="50px" />
+      </div>
+    </div>
+  </form>
+
+  <!-- table -->
+  <mat-table *ngIf="!showGraph"
+  [dataSource]="matTableDataSource"
+  matSort dir="rtl"
+  class="mat-elevation-z8">
+
+<!-- Generic columns (everything EXCEPT 'link') -->
+<ng-container *ngFor="let column of columns">
+<ng-container *ngIf="column !== 'link'" [matColumnDef]="column">
+<mat-header-cell *matHeaderCellDef mat-sort-header>
+{{ getColumnLabel(column) }}
+</mat-header-cell>
+<mat-cell *matCellDef="let element">
+{{ element[column] }}
+</mat-cell>
+</ng-container>
+</ng-container>
+
+<!-- Dedicated 'link' column as a button -->
+<!-- <ng-container matColumnDef="link">
+<mat-header-cell *matHeaderCellDef mat-sort-header>
+{{ getColumnLabel('link') }}
+</mat-header-cell>
+<mat-cell *matCellDef="let element">
+<button mat-stroked-button color="primary"
+     class="press-link-btn"
+     [disabled]="!element?.link"
+     matTooltip="Open link"
+     (click)="openLink(element?.link)">
+<mat-icon style="margin-inline-end:6px;">open_in_new</mat-icon>
+קישור
+</button>
+</mat-cell>
+</ng-container> -->
+<!-- Dedicated 'link' column with actions -->
+<ng-container matColumnDef="link">
+  <mat-header-cell *matHeaderCellDef mat-sort-header>
+    {{ getColumnLabel('link') }}
+  </mat-header-cell>
+
+  <mat-cell *matCellDef="let element" class="link-actions">
+    <button mat-stroked-button color="primary"
+            class="press-link-btn"
+            [disabled]="!(element?.link || element?.cellNumber)"
+            matTooltip="פתח קישור"
+            (click)="openPerm(element)">
+      <mat-icon style="margin-inline-end:6px;">open_in_new</mat-icon>
+      קישור
+    </button>
+
+    <button mat-icon-button
+    class="pdf-btn"
+    [disabled]="!(element?.link || element?.cellNumber)"
+    matTooltip="הורד PDF של הדף"
+    (click)="downloadPermPdf(element)"
+    aria-label="הורד PDF">
+<img src="assets/PDF.jfif" class="pdf-icon" alt="PDF" draggable="false" />
+</button>
+  </mat-cell>
+</ng-container>
+
+<mat-header-row *matHeaderRowDef="columns"></mat-header-row>
+<mat-row *matRowDef="let row; columns: columns" class="mat-row"></mat-row>
+</mat-table>
+
+
+  <mat-paginator
+    [length]="matTableDataSource.data.length"
+    [pageSize]="5"
+    [pageSizeOptions]="[5, 50, 100]">
+  </mat-paginator>
+</div>
+

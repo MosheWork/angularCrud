@@ -1,0 +1,46 @@
+<mat-card class="card" dir="rtl">
+    <h2>שכפול שקף והחלפת תמונה</h2>
+  
+    <!-- bind the FormGroup once -->
+    <form [formGroup]="form">
+      <div class="row">
+        <label class="lbl">PowerPoint (PPTX):</label>
+        <input type="file" accept=".pptx" (change)="onPickPptx($event)">
+        <span class="hint" *ngIf="pptxFile">{{ pptxFile.name }}</span>
+      </div>
+  
+      <div class="row">
+        <label class="lbl">תמונה:</label>
+        <input type="file" accept="image/*" (change)="onPickImage($event)">
+        <span class="hint" *ngIf="imageFile">{{ imageFile.name }}</span>
+      </div>
+  
+      <div class="row">
+        <mat-form-field appearance="fill">
+          <mat-label>מס׳ שקף לשכפול</mat-label>
+          <!-- use formControlName instead of [formControl] -->
+          <input matInput type="number" min="1" formControlName="slideNumber">
+          <mat-error *ngIf="form.controls['slideNumber'].invalid">
+            הזן מספר שקף חוקי
+          </mat-error>
+        </mat-form-field>
+      </div>
+  
+      <div class="row">
+        <button mat-raised-button color="primary"
+                (click)="submit()"
+                [disabled]="uploading || !pptxFile || !imageFile || form.invalid">
+          שלח והורד
+        </button>
+      </div>
+    </form>
+  
+    <mat-progress-bar *ngIf="uploading" [value]="progress" mode="determinate"></mat-progress-bar>
+  
+    <div class="status"
+         [class.ok]="!uploading && status && status.includes('הקובץ ירד')"
+         [class.err]="!uploading && status && !status.includes('הקובץ ירד')">
+      {{ status }}
+    </div>
+  </mat-card>
+  

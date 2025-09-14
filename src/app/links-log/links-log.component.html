@@ -1,8 +1,4 @@
 <div class="body">
-<!-- Text KPIs comparing same-length periods to last year (MTD/QTD/YTD aligned) -->
-<!-- DEBUG: show raw JSON to confirm binding -->
-<pre style="direction:ltr; font-size:11px; background:#f7f7f7; padding:6px; border:1px dashed #ccc;"
-     *ngIf="kpiCmp">{{ kpiCmp | json }}</pre>
 
 <!-- KPIs (compare to last year). 'as k' avoids ?. everywhere -->
 <div class="kpi-text" dir="rtl" *ngIf="kpiCmp as k"
@@ -10,41 +6,40 @@
 
   <!-- Today -->
   <div class="kpi-chip" [ngClass]="trendClass(k.Today, k.TodayLY)"
-       style="padding:10px 14px; border-radius:10px; border:1px solid rgba(0,0,0,.12);">
+       style="padding:10px 14px; border-radius:10px; border:1px solid rgba(0,0,0,.12); min-width:230px;">
     <div style="font-weight:600;">היום</div>
-    <div>
-      {{ k.Today | number }}
-      <span>&nbsp;(<span [ngClass]="trendClass(k.Today, k.TodayLY)">
-        {{ delta(k.Today, k.TodayLY) }}%
-      </span> מול שנה שעברה)</span>
+    <div style="font-size:20px;">{{ k.Today | number }}</div>
+    <div class="muted" style="font-size:12px; color:#666;">שנה שעברה: {{ k.TodayLY | number }}</div>
+    <div class="kpi-delta" [ngClass]="trendClass(k.Today, k.TodayLY)" style="font-weight:600;">
+      {{ sign(deltaAbs(k.Today, k.TodayLY)) }}{{ deltaAbs(k.Today, k.TodayLY) | number }}
+      ({{ delta(k.Today, k.TodayLY) }}%)
     </div>
   </div>
 
   <!-- Month-to-date -->
   <div class="kpi-chip" [ngClass]="trendClass(k.ThisMonth, k.ThisMonthLY)"
-       style="padding:10px 14px; border-radius:10px; border:1px solid rgba(0,0,0,.12);">
+       style="padding:10px 14px; border-radius:10px; border:1px solid rgba(0,0,0,.12); min-width:230px;">
     <div style="font-weight:600;">החודש (עד היום)</div>
-    <div>
-      {{ k.ThisMonth | number }}
-      <span>&nbsp;(<span [ngClass]="trendClass(k.ThisMonth, k.ThisMonthLY)">
-        {{ delta(k.ThisMonth, k.ThisMonthLY) }}%
-      </span> מול שנה שעברה)</span>
+    <div style="font-size:20px;">{{ k.ThisMonth | number }}</div>
+    <div class="muted" style="font-size:12px; color:#666;">שנה שעברה: {{ k.ThisMonthLY | number }}</div>
+    <div class="kpi-delta" [ngClass]="trendClass(k.ThisMonth, k.ThisMonthLY)" style="font-weight:600;">
+      {{ sign(deltaAbs(k.ThisMonth, k.ThisMonthLY)) }}{{ deltaAbs(k.ThisMonth, k.ThisMonthLY) | number }}
+      ({{ delta(k.ThisMonth, k.ThisMonthLY) }}%)
     </div>
   </div>
 
   <!-- Quarter-to-date -->
   <div class="kpi-chip" [ngClass]="trendClass(k.ThisQuarter, k.ThisQuarterLY)"
-       style="padding:10px 14px; border-radius:10px; border:1px solid rgba(0,0,0,.12);">
+       style="padding:10px 14px; border-radius:10px; border:1px solid rgba(0,0,0,.12); min-width:230px;">
     <div style="font-weight:600;">הרבעון (עד היום)</div>
-    <div>
-      {{ k.ThisQuarter | number }}
-      <span>&nbsp;(<span [ngClass]="trendClass(k.ThisQuarter, k.ThisQuarterLY)">
-        {{ delta(k.ThisQuarter, k.ThisQuarterLY) }}%
-      </span> מול שנה שעברה)</span>
+    <div style="font-size:20px;">{{ k.ThisQuarter | number }}</div>
+    <div class="muted" style="font-size:12px; color:#666;">שנה שעברה: {{ k.ThisQuarterLY | number }}</div>
+    <div class="kpi-delta" [ngClass]="trendClass(k.ThisQuarter, k.ThisQuarterLY)" style="font-weight:600;">
+      {{ sign(deltaAbs(k.ThisQuarter, k.ThisQuarterLY)) }}{{ deltaAbs(k.ThisQuarter, k.ThisQuarterLY) | number }}
+      ({{ delta(k.ThisQuarter, k.ThisQuarterLY) }}%)
     </div>
   </div>
 </div>
-
   
   
   

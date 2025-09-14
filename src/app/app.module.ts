@@ -194,6 +194,8 @@ import { InteractivebrokersComponent } from './interactivebrokers/interactivebro
 import { OnlineLogsComponent } from './online-logs/online-logs.component';
 import { SitemapComponent } from './sitemap/sitemap.component';
 import { LinksLogComponent } from './links-log/links-log.component';
+import { PptDuplicateComponent } from './ppt-duplicate/ppt-duplicate.component';
+import { DoctorAuthorizationsComponent } from './doctor-authorizations/doctor-authorizations.component';
 
 
 export const MY_DATE_FORMATS: MatDateFormats = {
@@ -364,7 +366,9 @@ export function playerFactory() {
     InteractivebrokersComponent,
     OnlineLogsComponent,
     SitemapComponent,
-    LinksLogComponent
+    LinksLogComponent,
+    PptDuplicateComponent,
+    DoctorAuthorizationsComponent
  
 
   
