@@ -1,19 +1,9 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
 
 <div class="body">
-  <div class="top-right-container">
-    <button mat-icon-button (click)="goToHome()" matTooltip="Go to Home">
-      <mat-icon>home</mat-icon>
-    </button>
-  </div>
 
-  <div class="nine">
-    <h1>
-      {{ titleUnit }}
-      <span>{{ Title1 }}{{ Title2 }}{{ totalResults }}</span>
-    </h1>
-  </div>
 
+  
   <form [formGroup]="filterForm" dir="rtl" class="filter-form">
     <div class="container-fluid mb-2">
       <div class="row search-count">
@@ -62,11 +52,7 @@
         <input matInput [formControlName]="'globalFilter'" class="search-input" />
       </mat-form-field>
 
-      <div class="graph-button-container">
-        <img (click)="navigateToGraphPage()" matTooltip="Move To Graph"
-             src="../../../../assets/graphIcon.png" width="50px" />
-      </div>
-
+      
       <div class="icon" matTooltip="Download Excel">
         <img src="../../assets/excel.png" alt="Download"
              (click)="exportToExcel()" class="download-icon" width="50px" />
@@ -127,11 +113,12 @@
     <button mat-icon-button
     class="pdf-btn"
     [disabled]="!(element?.link || element?.cellNumber)"
-    matTooltip="הורד PDF של הדף"
-    (click)="downloadPermPdf(element)"
+    matTooltip="הורד PDF הכרטיס"
+    (click)="downloadCardPdf(element)"
     aria-label="הורד PDF">
-<img src="assets/PDF.jfif" class="pdf-icon" alt="PDF" draggable="false" />
+<img src="../../assets/PDF.jfif" class="pdf-icon" alt="PDF" draggable="false" />
 </button>
+
   </mat-cell>
 </ng-container>
 

@@ -24,7 +24,7 @@ export class ApplicationsListDeptDialogComponent implements OnInit {
   ) {
     this.form = this.fb.group({
       ID: [data?.ID || null],
-      AppName: [data?.AppName || '', Validators.required],
+      appName: [data?.appName || '', Validators.required],
       companyName: [data?.companyName || ''],
       AppDescription: [data?.AppDescription || ''],
       PrimaryReference: [data?.PrimaryReference || ''],
