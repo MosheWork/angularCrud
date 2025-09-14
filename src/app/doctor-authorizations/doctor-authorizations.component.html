@@ -113,12 +113,11 @@
     <button mat-icon-button
     class="pdf-btn"
     [disabled]="!(element?.link || element?.cellNumber)"
-    matTooltip="הורד PDF הכרטיס"
-    (click)="downloadCardPdf(element)"
+    matTooltip="הורד PDF של הדף"
+    (click)="downloadPermPdf(element)"
     aria-label="הורד PDF">
-<img src="../../assets/PDF.jfif" class="pdf-icon" alt="PDF" draggable="false" />
+<img src="assets/PDF.jfif" class="pdf-icon" alt="PDF" draggable="false" />
 </button>
-
   </mat-cell>
 </ng-container>
 

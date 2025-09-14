@@ -239,50 +239,43 @@ openPerm(row: Row) {
 
 // Download the perm page as PDF via backend (Edge headless route)
 downloadPermPdf(row: Row) {
+  const url = this.resolvePermUrl(row); // from earlier snippet
+  if (!url) return;
+
+  // doctor name from row (support both 'docname' and 'DOCNAME' just in case)
   const doctor = (row as any).docname || (row as any).DOCNAME || 'doctor';
-  const date = this.formatDateYMD();
-  const fileName = `${this.sanitizeFileName(doctor)} - ${date}.pdf`;
+  const date = this.formatDateYMD(new Date());
+  const base = this.sanitizeFileName(`${doctor} - ${date}`);
+  const fileName = `${base}.pdf`;
 
-  const api = `${(environment as any).apiUrl?.replace(/\/?$/, '/') || '/api/'}doctor-auth/pdf-perm-with-overlay-edge/${encodeURIComponent(doctor)}`;
+  const api = `${(environment as any).apiUrl?.replace(/\/?$/, '/') || '/api/'}doctor-auth/pdf-from-url-edge`;
 
-  this.http.get(api, { params: { fileName, waitMs: 12000, allPages: false }, responseType: 'blob' })
+  // pass fileName to backend (so Content-Disposition is nice), and still set a.download as a fallback
+  const params: any = { url, waitMs: 12000, maxAttempts: 2, fileName };
+
+  this.http.get(api, { params, responseType: 'blob' })
     .subscribe(blob => {
       const a = document.createElement('a');
       a.href = URL.createObjectURL(blob);
-      a.download = fileName;
+      a.download = fileName;            // <-- doctor name + date
       a.click();
       URL.revokeObjectURL(a.href);
     }, _ => alert('PDF יצירה נכשלה'));
 }
-
-
 private formatDateYMD(d: Date = new Date()): string {
   const y = d.getFullYear();
   const m = String(d.getMonth() + 1).padStart(2, '0');
   const day = String(d.getDate()).padStart(2, '0');
-  return `${y}-${m}-${day}`;
+  return `${y}-${m}-${day}`; // e.g., 2025-09-14
 }
+
 private sanitizeFileName(s: string): string {
-  return (s || '').replace(/[\\\/:*?"<>|]/g, ' ').replace(/\s+/g, ' ').trim();
+  // remove characters Windows/macOS won’t allow in file names
+  return (s || '')
+    .replace(/[\\\/:*?"<>|]/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
 }
 
-downloadCardPdf(row: Row) {
-  // Prefer docname (lowercase in your Row), but also tolerate DOCNAME from backend
-  const doctor = (row as any).docname || (row as any).DOCNAME || 'doctor';
-  const date = this.formatDateYMD();
-  const fileName = `${this.sanitizeFileName(doctor)} - ${date}.pdf`;
-
-  const api = `${(environment as any).apiUrl?.replace(/\/?$/, '/') || '/api/'}doctor-auth/pdf-card-by-name-edge/${encodeURIComponent(doctor)}`;
-
-  // Pass fileName (server sets Content-Disposition) AND set a.download as a fallback
-  this.http.get(api, { params: { fileName }, responseType: 'blob' })
-    .subscribe(blob => {
-      const a = document.createElement('a');
-      a.href = URL.createObjectURL(blob);
-      a.download = fileName;
-      a.click();
-      URL.revokeObjectURL(a.href);
-    }, _ => alert('PDF יצירה נכשלה'));
-}
 
 }
