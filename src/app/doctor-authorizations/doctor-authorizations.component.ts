@@ -15,11 +15,19 @@ type Row = {
   functionDescription: string;
   cellNumber: string;
   docname: string;
- // email: string;
+  email?: string;
   link: string;
   directManager: string;
   directManager2: string;
+
+  // NEW
+  doctorSignDateTime?: string | Date | null;
+  directManagerSignDateTime?: string | Date | null;
+  headManagerSignDateTime?: string | Date | null;
+  directManagerFunction?: string | null;
+  directManagerFunction2?: string | null;
 };
+
 
 @Component({
   selector: 'app-doctor-authorizations',
@@ -32,18 +40,24 @@ export class DoctorAuthorizationsComponent implements OnInit, AfterViewInit {
   Title2 = 'סה״כ תוצאות ';
   totalResults = 0;
   showGraph = false; // present to keep the same layout API as your template (unused)
+  visibleFilterFields: (keyof Row)[] = [];
 
   columns: (keyof Row)[] = [
     'departnentDescripton',
     'functionDescription',
     'docname',
     'cellNumber',
-   // 'email',
-    'link',
+    'email',                      // NEW
     'directManager',
-    'directManager2'
- 
+    'directManagerFunction',      // NEW
+    'directManagerSignDateTime',  // NEW
+    'directManager2',
+    'directManagerFunction2',     // NEW
+    'headManagerSignDateTime',    // NEW
+    'doctorSignDateTime',         // NEW
+    'link'
   ];
+  
 
   filterForm: FormGroup;
   matTableDataSource = new MatTableDataSource<Row>([]);
@@ -64,7 +78,9 @@ export class DoctorAuthorizationsComponent implements OnInit, AfterViewInit {
   ) {
     // build dynamic form controls for each column + globals
     const group: Record<string, FormControl> = {};
-    this.columns.forEach(c => (group[c] = new FormControl('')));
+    this.filterFields.forEach(f => {
+      if (f !== 'globalFilter') group[f as string] = new FormControl('');
+    });
     group['globalFilter'] = new FormControl('', Validators.maxLength(200));
     this.filterForm = this.fb.group(group);
   }
@@ -86,6 +102,9 @@ export class DoctorAuthorizationsComponent implements OnInit, AfterViewInit {
         .pipe(debounceTime(250), distinctUntilChanged())
         .subscribe(() => this.applyFilters());
     });
+
+    this.visibleFilterFields = (this.filterFields as (keyof Row | 'globalFilter')[])
+  .filter(f => f !== 'globalFilter') as (keyof Row)[];
   }
 
   ngAfterViewInit(): void {
@@ -114,19 +133,27 @@ export class DoctorAuthorizationsComponent implements OnInit, AfterViewInit {
     return this.filterForm.get(column) as FormControl;
   }
 
-  getColumnLabel(column: keyof Row): string {
-    const labels: Record<keyof Row, string> = {
+  getColumnLabel(column: keyof Row | 'globalFilter'): string {
+    const labels: Record<string, string> = {
       departnentDescripton: 'מחלקה',
       functionDescription: 'תפקיד',
-      cellNumber: 'נייד',
       docname: 'שם רופא',
-      //email: 'דוא״ל',
+      cellNumber: 'נייד',
+      email: 'דוא״ל',
       link: 'קישור',
       directManager: 'מנהל ישיר',
       directManager2: 'מנהל עקיף',
+      directManagerFunction: 'תפקיד מנהל ישיר',
+      directManagerFunction2: 'תפקיד מנהל עקיף',
+      doctorSignDateTime: 'תאריך/שעת אישור רופא',
+      directManagerSignDateTime: 'תאריך/שעת אישור מנהל ישיר',
+      headManagerSignDateTime: 'תאריך/שעת אישור מנהל מחלקה',
+      globalFilter: 'חיפוש', // <-- new
     };
-    return labels[column] ?? column;
+    return labels[column as string] ?? (column as string);
   }
+  
+  
 
   private filterDept(value: string): string[] {
     const v = (value || '').toLowerCase();
@@ -146,30 +173,31 @@ export class DoctorAuthorizationsComponent implements OnInit, AfterViewInit {
   applyFilters(): void {
     const formVals = this.filterForm.value as Record<string, string>;
     const global = (formVals['globalFilter'] || '').toString().toLowerCase();
-
+  
+    const keyedFilters = this.filterFields.filter(f => f !== 'globalFilter') as (keyof Row)[];
+  
     this.filteredData = this.dataSource.filter(row => {
-      // per-column contains
-      const perCol = this.columns.every(col => {
-        const ctlVal = (formVals[col] || '').toString().toLowerCase().trim();
+      // per-field filters (only those you kept)
+      const perCol = keyedFilters.every(col => {
+        const ctlVal = (formVals[col as string] || '').toString().toLowerCase().trim();
         if (!ctlVal) return true;
-        const val = ((row[col] ?? '') + '').toLowerCase();
+        const val = (((row[col] as any) ?? '') + '').toLowerCase();
         return val.includes(ctlVal);
       });
-
-      // global contains across any column
+  
+      // global search across table columns
       const globalOk =
-        !global ||
-        this.columns.some(col => (((row[col] ?? '') + '').toLowerCase().includes(global)));
-
+        !global || this.columns.some(col => ((((row[col] as any) ?? '') + '').toLowerCase().includes(global)));
+  
       return perCol && globalOk;
     });
-
+  
     this.totalResults = this.filteredData.length;
     this.matTableDataSource.data = this.filteredData;
     this.matTableDataSource.paginator = this.paginator;
     this.matTableDataSource.sort = this.sort;
   }
-
+  
   exportToExcel(): void {
     const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(this.filteredData);
     const wb: XLSX.WorkBook = { Sheets: { Data: ws }, SheetNames: ['Data'] };
@@ -239,29 +267,45 @@ openPerm(row: Row) {
 
 // Download the perm page as PDF via backend (Edge headless route)
 downloadPermPdf(row: Row) {
-  const url = this.resolvePermUrl(row); // from earlier snippet
+  const url = this.resolvePermUrl(row);
   if (!url) return;
 
-  // doctor name from row (support both 'docname' and 'DOCNAME' just in case)
   const doctor = (row as any).docname || (row as any).DOCNAME || 'doctor';
   const date = this.formatDateYMD(new Date());
-  const base = this.sanitizeFileName(`${doctor} - ${date}`);
-  const fileName = `${base}.pdf`;
+  const fileName = this.sanitizeFileName(`${doctor} - ${date}.pdf`);
 
   const api = `${(environment as any).apiUrl?.replace(/\/?$/, '/') || '/api/'}doctor-auth/pdf-from-url-edge`;
 
-  // pass fileName to backend (so Content-Disposition is nice), and still set a.download as a fallback
-  const params: any = { url, waitMs: 12000, maxAttempts: 2, fileName };
+  const params: any = {
+    url,
+    fileName,
+    waitMs: 12000,
+    maxAttempts: 2,
 
-  this.http.get(api, { params, responseType: 'blob' })
-    .subscribe(blob => {
-      const a = document.createElement('a');
-      a.href = URL.createObjectURL(blob);
-      a.download = fileName;            // <-- doctor name + date
-      a.click();
-      URL.revokeObjectURL(a.href);
-    }, _ => alert('PDF יצירה נכשלה'));
+    // >>> send metadata so the info page will be created
+    departnentDescripton: (row as any).departnentDescripton ?? '',
+    functionDescription: (row as any).functionDescription ?? '',
+    docName: (row as any).docname ?? '',
+    doctorSignDateTime: (row as any).doctorSignDateTime ?? '',
+
+    directManager: (row as any).directManager ?? '',
+    directManagerFunction: (row as any).directManagerFunction ?? '',
+    directManagerSignDateTime: (row as any).directManagerSignDateTime ?? '',
+
+    directManager2: (row as any).directManager2 ?? '',
+    directManagerFunction2: (row as any).directManagerFunction2 ?? '',
+    headManagerSignDateTime: (row as any).headManagerSignDateTime ?? ''
+  };
+
+  this.http.get(api, { params, responseType: 'blob' }).subscribe(blob => {
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = fileName;
+    a.click();
+    URL.revokeObjectURL(a.href);
+  }, _ => alert('PDF יצירה נכשלה'));
 }
+
 private formatDateYMD(d: Date = new Date()): string {
   const y = d.getFullYear();
   const m = String(d.getMonth() + 1).padStart(2, '0');
@@ -276,6 +320,22 @@ private sanitizeFileName(s: string): string {
     .replace(/\s+/g, ' ')
     .trim();
 }
+dateColumns: (keyof Row)[] = [
+  'doctorSignDateTime',
+  'directManagerSignDateTime',
+  'headManagerSignDateTime'
+];
+dateColumnsMap: Record<string, boolean> =
+  this.dateColumns.reduce((m, k) => ((m[k as string] = true), m), {} as Record<string, boolean>);
 
-
+// show filters ONLY for these fields:
+filterFields: (keyof Row | 'globalFilter')[] = [
+  'departnentDescripton',
+  'functionDescription',
+  'docname',
+  'cellNumber',
+  'directManager',
+  'directManager2',
+  'globalFilter' // keep global search
+];
 }
