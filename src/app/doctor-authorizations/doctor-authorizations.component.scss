@@ -235,3 +235,44 @@
     margin-top: 70px;
     margin-bottom: 50px;
   }
+
+  /* Make only this table fit its text */
+.doctor-table {
+  table-layout: auto !important;   /* let columns size by content */
+  width: 100%;
+}
+
+.doctor-table .mat-header-row,
+.doctor-table .mat-row {
+  height: auto;                     /* rows grow with content */
+}
+
+.doctor-table .mat-header-cell,
+.doctor-table .mat-cell {
+  white-space: normal !important;   /* allow wrapping */
+  overflow: visible !important;     /* no clipping */
+  text-overflow: clip !important;   /* disable ellipsis */
+  overflow-wrap: anywhere;          /* break long words/URLs */
+  word-break: break-word;           /* fallback */
+  vertical-align: top;              /* nicer multi-line look */
+  line-height: 1.25;
+  padding-block: 10px;              /* a little breathing room */
+}
+
+/* keep the link + pdf inline (no wrapping for that tiny cluster) */
+.doctor-table .link-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap;
+}
+
+/* email stays LTR but still wraps across lines */
+.doctor-table .email-link {
+  direction: ltr;
+  unicode-bidi: plaintext;
+  white-space: normal;
+}
+
+/* (optional) if you previously fixed widths for email, remove them */
+ /* .mat-column-email, .email-cell { flex: 0 0 260px; max-width: 300px; } */

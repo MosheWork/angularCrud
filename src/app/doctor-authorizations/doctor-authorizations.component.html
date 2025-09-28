@@ -76,8 +76,7 @@
     [dataSource]="matTableDataSource"
     matSort
     dir="rtl"
-    class="mat-elevation-z8 w-wrap">
-
+    class="mat-elevation-z8 doctor-table"> 
     <!-- Dynamic columns (handle dates specially, link as actions) -->
     <ng-container *ngFor="let column of columns" [matColumnDef]="column">
       <mat-header-cell *matHeaderCellDef mat-sort-header>
