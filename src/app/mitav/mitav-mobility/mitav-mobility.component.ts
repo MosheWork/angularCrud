@@ -219,7 +219,7 @@ applyFilters(): void {
   // ✅ Apply Date Filter (Check Admission and Release Dates)
   if (this.startDate || this.endDate) {
     filteredData = filteredData.filter((item) => {
-      const admissionDate = item.admissionDate? new Date(item.AdmissionDate) : null;
+      const admissionDate = item.admissionDate? new Date(item.admissionDate) : null;
       const releaseDate = item.releaseDate? new Date(item.releaseDate) : null;
       return (
         (!this.startDate || (admissionDate && admissionDate >= this.startDate) || (releaseDate && releaseDate >= this.startDate)) &&
@@ -257,7 +257,7 @@ applyFilters(): void {
   
     if (selectedQuarterMonths) {
       filteredData = filteredData.filter((item) => {
-        const admissionMonth = item.admissionDate? new Date(item.AdmissionDate).getMonth() + 1 : null;
+        const admissionMonth = item.admissionDate? new Date(item.admissionDate).getMonth() + 1 : null;
   
         return admissionMonth && selectedQuarterMonths.includes(admissionMonth); // ✅ Apply only to AdmissionDate
       });
@@ -431,9 +431,9 @@ openDepartmentPercentagesDialog(): void {
     const unitName = item.unitName || 'Unknown';
     const mobilityGrade = item.mobilityGrade;
     const recommendation = item.recommendationForWalking;
-    const cognitive = item.CognitiveFunctionBeforeHospitalization;
-    const mobility = item.MobilityBeforeHospitalization;
-    const basic = item.BasicFunctionBeforeHospitalization;
+    const cognitive = item.cognitiveFunctionBeforeHospitalization;
+    const mobility = item.mobilityBeforeHospitalization;
+    const basic = item.basicFunctionBeforeHospitalization;
     const consultationStatus = item.consultationStatus;
     const departmentPercentages = this.calculateDepartmentPercentages();
 
@@ -789,7 +789,7 @@ calculateCognitiveStatePercentage(filteredData: any[]): void {
   }
 
   const validCognitiveStates = filteredData
-    .map(item => item.CognitiveFunctionBeforeHospitalization)
+    .map(item => item.cognitiveFunctionBeforeHospitalization)
     .filter(state => state && state !== 'אין תיעוד').length;
 
   const cognitiveStatePercentage = allCases > 0
@@ -810,7 +810,7 @@ calculateMobilityStatePercentage(filteredData: any[]): void {
   }
 
   const validMobilityStates = filteredData
-    .map(item => item.MobilityBeforeHospitalization)
+    .map(item => item.mobilityBeforeHospitalization)
     .filter(state => state && state !== 'אין תיעוד').length;
 
     const mobilityStatePercentage = allCases > 0
@@ -846,7 +846,7 @@ calculateMobilityCases(data: any[]): void {
 
   // ✅ Filter cases where totalPercentage is 70% or higher
   this.validMobilityCasesAboveThreshold = data.filter(item => 
-    item.totalPercentage && Number(item.TotalPercentage) >= 70
+    item.totalPercentage && Number(item.totalPercentage) >= 70
   ).length;
 
   // ✅ The rest are invalid cases
@@ -924,7 +924,7 @@ calculateMobilityStateCases(data: any[]): void {
     return;
   }
 
-  this.validMobilityStateCases = data.filter(item => item.MobilityBeforeHospitalization && item.MobilityBeforeHospitalization !== 'אין תיעוד').length;
+  this.validMobilityStateCases = data.filter(item => item.mobilityBeforeHospitalization && item.mobilityBeforeHospitalization !== 'אין תיעוד').length;
   this.invalidMobilityStateCases = totalCases - this.validMobilityStateCases;
 }
 
@@ -959,7 +959,7 @@ exportToExcel() {
     AdmissionNo: "מספר אשפוז",
     unitName: "מחלקה",
     ageYears: "גיל (שנים)",
-    AdmissionDate: "תאריך כניסה",
+    admissionDate: "תאריך כניסה",
     releaseDate: "תאריך שחרור",
     mobilityGrade: "דרגת ניידות",
     consultationStatus: "סטטוס ייעוץ",
@@ -967,8 +967,8 @@ exportToExcel() {
     requiredAssistiveDevice: "אביזר עזר נדרש",
     recommendedWalkingDistance: "מרחק הליכה מומלץ",
     datesWithBothShifts: "הליכה בפועל (בימים)",
-    TotalDaysInHospital: "סך הימים באשפוז",
-    TotalPercentage: "אחוז כולל ( יעד מעל 70%)",
+    totalDaysInHospital: "סך הימים באשפוז",
+    totalPercentage: "אחוז כולל ( יעד מעל 70%)",
     isRecordMatchingReleaseDate: "תואם תאריך שחרור",
     hasRecordPerDate: "רשומה לפי תאריך"
   };
