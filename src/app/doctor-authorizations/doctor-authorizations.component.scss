@@ -236,43 +236,31 @@
     margin-bottom: 50px;
   }
 
-  /* Make only this table fit its text */
-.doctor-table {
-  table-layout: auto !important;   /* let columns size by content */
-  width: 100%;
-}
-
-.doctor-table .mat-header-row,
-.doctor-table .mat-row {
-  height: auto;                     /* rows grow with content */
-}
-
-.doctor-table .mat-header-cell,
-.doctor-table .mat-cell {
-  white-space: normal !important;   /* allow wrapping */
-  overflow: visible !important;     /* no clipping */
-  text-overflow: clip !important;   /* disable ellipsis */
-  overflow-wrap: anywhere;          /* break long words/URLs */
-  word-break: break-word;           /* fallback */
-  vertical-align: top;              /* nicer multi-line look */
+/* Size & wrap ONLY inside this table */
+.doctor-table { table-layout: auto !important; width: 100%; }
+.doctor-table .mat-header-row, .doctor-table .mat-row { height: auto; }
+.doctor-table .mat-header-cell, .doctor-table .mat-cell {
+  white-space: normal !important;
+  overflow: visible !important;
+  text-overflow: clip !important;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  vertical-align: top;
   line-height: 1.25;
-  padding-block: 10px;              /* a little breathing room */
+  padding-block: 5px;
 }
 
-/* keep the link + pdf inline (no wrapping for that tiny cluster) */
+/* Give the email column more room and allow LTR wrapping */
+.doctor-table .mat-column-email { flex: 2.5 1 10px; min-width: 10px; }
+.doctor-table .email-cell { direction: ltr; unicode-bidi: plaintext; }
+.doctor-table .email-link { white-space: normal; overflow-wrap: anywhere; }
+
+/* Keep קישור + both icons on one line, nicely spaced */
 .doctor-table .link-actions {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
+  gap: 2px;
   white-space: nowrap;
 }
-
-/* email stays LTR but still wraps across lines */
-.doctor-table .email-link {
-  direction: ltr;
-  unicode-bidi: plaintext;
-  white-space: normal;
-}
-
-/* (optional) if you previously fixed widths for email, remove them */
- /* .mat-column-email, .email-cell { flex: 0 0 260px; max-width: 300px; } */
+.doctor-table .link-label { margin-inline-start: 0.25rem; }
+.doctor-table .pdf-icon { width: 20px; height: auto; display: inline-block; }
