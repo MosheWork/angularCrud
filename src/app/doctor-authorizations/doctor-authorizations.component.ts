@@ -47,15 +47,16 @@ export class DoctorAuthorizationsComponent implements OnInit, AfterViewInit {
     'functionDescription',
     'docname',
     'cellNumber',
-    'email',                      // NEW
+    'link',
+   // 'email',                      // NEW
     'directManager',
     'directManagerFunction',      // NEW
     'directManagerSignDateTime',  // NEW
     'directManager2',
     'directManagerFunction2',     // NEW
     'headManagerSignDateTime',    // NEW
-    'doctorSignDateTime',         // NEW
-    'link'
+    'doctorSignDateTime'      // NEW
+   
   ];
   
 
