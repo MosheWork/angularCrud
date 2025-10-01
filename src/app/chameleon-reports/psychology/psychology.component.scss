@@ -1,0 +1,671 @@
+#rolesDetailsBtn {
+    position: fixed;
+    bottom: 50px;
+    left: 125px;
+    z-index: 10;
+  }
+  table {
+    width: 95%;
+    margin: 20px 23px 1px 0px;
+  
+  }
+  .mat-row:nth-child(odd) {
+    background-color: white;
+  }
+  .spinner {
+    left: 50%;
+    display: unset;
+  }
+  .mat-row:nth-child(even) {
+    background-color: aliceblue;
+  }
+  .mat-row:hover {
+    background-color: darkgray;
+    cursor: pointer;
+  }
+  .container {
+    min-width: 100%;
+  }
+  mat-card:hover {
+    cursor: pointer;
+  }
+  mat-card {
+    width: 48%;
+    //margin-top: 10%;
+    text-align: center;
+    margin-right: 2%;
+    background: burlywood;
+  }
+  mat-card-content {
+    font-size: 30px;
+    font-weight: bold;
+  }
+  a {
+    cursor: pointer;
+  }
+  
+  .filter-form {
+    border: 1px solid #ccc; /* Light gray border */
+    border-radius: 10px; /* Rounded corners */
+    padding: 15px; /* Padding inside the form */
+    margin-bottom: 20px; /* Space below the form */
+    background-color: #fff; /* White background */
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+  }
+  
+  /* Style the 'name' select box */
+  .name-select {
+    /* Set a fixed width to match other input fields */
+    width: auto; /* or specify a width in pixels or percentage */
+    display: flex;
+    align-items: center;
+  }
+  
+  /* Add this CSS to your stylesheet */
+  .name-select .mat-select-arrow {
+    position: absolute !important;
+    top: 5px !important; /* Adjust this value to position the arrow vertically as needed */
+    left: 5px !important; /* Adjust this value to position the arrow horizontally as needed */
+  }
+  /* Add this CSS to your stylesheet */
+  .name-select {
+    width: 170px; /* Adjust the width to your desired size */
+    height: 0px;
+  }
+  /* Add margin to the mat-form-field elements */
+  .filter-field {
+    margin-right: 20px; /* Adjust the margin as needed */
+  }
+  /* Set a fixed width and height for the mat-form-field elements */
+  .filter-field {
+    width: 315px; /* Adjust the width as needed */
+    height: 80px; /* Adjust the height as needed */
+    width: calc(25% - 20px); /* 25% to fit four filters in a row with spacing */
+    padding-top: 5px; /* Adjust this value to control the vertical spacing */
+    //padding-left: -15px;
+    //padding-right: 0px;
+  }
+  
+  // /* Add this CSS to your stylesheet */
+  // .name-select {
+  //   width: 170px !important; /* Adjust the width to your desired size */
+  //   display: flex !important;
+  //   align-items: center !important;
+  //   position: relative !important; /* Add this line to make it a positioned container */
+  // }
+  
+  // /* Adjust the position of the select arrow */
+  // .name-select {
+  //   position: absolute !important;
+  //   top: 70% !important; /* Center vertically */
+  //   left: 1px !important; /* Adjust this value to position the arrow to the right */
+  //   transform: translateY(
+  //     -50%
+  //   ) !important; /* Center vertically using translation */
+  // }
+  
+  /* Change the font family, color, and font size of the filter labels */
+  .filter-field mat-label {
+    font-family: Arial, sans-serif; /* Change to your desired font family */
+    color: black; /* Change to your desired color */
+    font-size: 16px;
+    //padding-right: none;
+  }
+  /* CSS */
+  .filter-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .filter-field {
+    flex-grow: 1;
+    margin-right: 20px;
+    width: calc(25% - 20px); /* 25% to fit four filters in a row with spacing */
+  }
+  
+  /* Add this CSS to ensure proper alignment of name-select */
+  .name-select {
+    width: 100%;
+  }
+  
+  /* Remove the width and height of name-select */
+  .name-select-wrapper .mat-select-arrow {
+    position: absolute !important;
+    top: 5px !important;
+    left: 5px !important;
+    /* Adjust this value to position the arrow horizontally as needed */
+  }
+  
+  /* Move the reset button to the bottom-left corner of the card-body */
+  .reset-button-container {
+    position: absolute;
+    bottom: 10px; /* Adjust the bottom position as needed */
+    left: 10px; /* Adjust the left position as needed */
+  }
+  
+  /* Adjust the padding of the card-body to make space for the reset button */
+  .card-body {
+    position: relative;
+    padding-left: 40px; /* Adjust the padding-left to make space for the button */
+  }
+  /* Add space between the end of the search bar and the start of the Excel icon */
+  .icon {
+    margin-right: 50px; /* Adjust the margin as needed for spacing */
+  }
+  /* Add this CSS to your stylesheet */
+  .filter-input {
+    text-align: right; /* Align the input text to the right */
+    direction: rtl; /* Set the text direction to right-to-left */
+  }
+  /* Add this CSS to your stylesheet */
+  .name-select .mat-select-value {
+    text-align: right; /* Align the selected text to the right */
+    direction: rtl; /* Set the text direction to right-to-left */
+  }
+  /* Use ::ng-deep to override Angular's View Encapsulation */
+  ::ng-deep .mat-select-trigger {
+    text-align: right !important;
+    direction: rtl !important;
+  }
+  
+  .nine h1 {
+    text-align: center;
+    font-size: 50px;
+    text-transform: uppercase;
+    color: rgb(54, 10, 214);
+    letter-spacing: 1px;
+    font-family: "Playfair Display", serif;
+    font-weight: 400;
+  }
+  .nine h1 span {
+    margin-top: 5px;
+    font-size: 15px;
+    color: rgb(159, 52, 235);
+    word-spacing: 1px;
+    font-weight: normal;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    font-family: "Raleway", sans-serif;
+    font-weight: 500;
+  
+    display: grid;
+    grid-template-columns: 1fr max-content 1fr;
+    grid-template-rows: 27px 0;
+    grid-gap: 20px;
+    align-items: center;
+  }
+  
+  .nine h1 span:after,
+  .nine h1 span:before {
+    content: " ";
+    display: block;
+    // border-bottom: 1px solid rgb(60, 15, 223);
+    // border-top: 1px solid rgb(60, 15, 223);
+    //height: 5px;
+    //background-color: rgb(187, 215, 254);
+  }
+  /* Adjust the position of the date picker icon */
+  ::ng-deep .mat-datepicker-toggle {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    align-items: center;
+    justify-content: flex-start;
+    padding-left: 5px; /* Adjust as needed for positioning */
+  }
+  
+  /* Adjust the input padding to avoid overlap with the icon */
+  ::ng-deep .mat-form-field-infix {
+    padding-left: 30px; /* Adjust the padding to accommodate the icon size */
+  }
+  
+  /* If needed, adjust the alignment of the datepicker input text */
+  ::ng-deep .mat-input-element {
+    text-align: right; /* or 'left' depending on your layout */
+  }
+  .gauge-container {
+    display: flex;
+    justify-content: space-between; /* Align gauge and info container */
+    align-items: center;
+    gap: 20px; /* Add space between gauge and info container */
+  }
+  
+  .dashboard-container {
+    display: flex;
+    justify-content: space-between; /* Ensures proper spacing between the cards */
+    gap: 20px; /* Adds spacing between the cards */
+  }
+  
+  .gauge-card {
+    width: 30%; /* Set the gauge card to take 30% of the width */
+    text-align: center;
+    border-radius: 10px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    background-color: #fff;
+  }
+  .mat-card {
+    width: 100%; /* Ensure cards take full width of the container */
+  }
+  
+  .filter-form {
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px; /* Add space between filter elements */
+  }
+  
+  .mat-table {
+    width: 100%; /* Ensure table stretches to the container */
+    margin: 0 auto; /* Center the table horizontally */
+  }
+  
+  .mat-paginator {
+    margin-top: 10px;
+    text-align: center; /* Center-align paginator controls */
+  }
+  
+  /* Style for the ngx-gauge component */
+  .gauge-card .mat-card-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 10px;
+  
+    ngx-gauge {
+      position: relative;
+      width: 100%;
+      height: 200px; /* Adjust as necessary */
+    }
+    ngx-gauge .value {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 16px; /* Adjust font size to fit */
+      font-weight: bold;
+      color: black; /* Ensure contrast for visibility */
+      white-space: nowrap; /* Prevent text wrapping */
+    }
+  
+    ::ng-deep ngx-gauge .reading-block {
+      font-size: 25px !important; /* Desired font size */
+      transform: translateY(78px) !important;
+      font-weight: 400;
+      color: black !important;
+    }
+  }
+  
+  ngx-gauge ::ng-deep .reading-block {
+    font-size: 25px !important; /* Override the inline font-size */
+  }
+  
+  .info-container {
+    text-align: right;
+    margin-top: 5x;
+    font-family: 'Roboto', sans-serif;
+    display: flex;
+    flex-direction: column;
+    gap: 10px; /* Adds spacing between rows */
+    border: 1px solid #ccc; /* Add a light gray border */
+  
+  }
+  
+  .stat-row {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 10px; /* Adds spacing between label and value */
+  }
+  
+  .stat-label {
+    font-size: 14px;
+    font-weight: 500;
+    color: rgba(0, 0, 0, 0.7); /* Subtle text color for labels */
+  }
+  
+  .stat-value {
+    font-size: 16px;
+    font-weight: 700;
+    color: rgba(0, 0, 0, 0.9); /* Slightly darker color for values */
+  }
+  
+  .data-card {
+    width: 70%; /* Set the additional card to take 70% of the width */
+    border-radius: 10px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    background-color: transparent; /* Set to transparent to remove the background */
+    border: 1px solid #ccc; /* Add a light gray border */
+  
+  }
+  .dashboard-container {
+    display: flex;
+    gap: 10px;
+  }
+  
+  .side-by-side-tables {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  }
+  
+  .table-container {
+  flex: 1;
+  max-width: 30%; /* Restrict width to 30% of the page */
+  border: 1px solid #ccc; /* Add a light gray border */
+  
+  }
+  
+  .best-worst-card h3 {
+  text-align: center;
+  margin-bottom: 5px;
+  }
+  .best-worst-card {
+  flex: 7;
+  border-radius: 10px;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  padding: 5px;
+  background-color: #fff; /* Match the background of the gauge-card */
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  border: 1px solid #ccc; /* Add a light gray border */
+  
+  }
+  
+  .table-container {
+  flex: 1;
+  max-width: 48%; /* Adjust to fit nicely side by side */
+  border: 1px solid #ccc; /* Add a light gray border */
+  
+  }
+  
+  .table-container h3 {
+  text-align: center;
+  margin-bottom: 5px;
+  border: 1px solid #ccc; /* Add a light gray border */
+  
+  }
+  
+  .dashboard-container {
+  display: flex;
+  gap: 5px;
+  }
+  
+  .gauge-card {
+  flex: 3;
+  border-radius: 10px;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  padding: 5px;
+  background-color: #fff; /* Same background color */
+  border: 1px solid #ccc; /* Add a light gray border */
+  
+  }
+  /* Adjust the margin of the title */
+  h1 {
+  margin-bottom: 0; /* Remove space below the title */
+  }
+  
+  /* Adjust the padding or margin of the dashboard container */
+  .dashboard-container {
+  margin-top: 0; /* Remove space above the cards */
+  }
+  .page-container {
+  margin: 0; /* Remove any margin applied to the parent container */
+  padding: 0;
+  }
+  
+  h1 {
+  margin-bottom: 0; /* Remove space below the title */
+  }
+  
+  html, body {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  }
+  .body {
+  margin: 0;
+  padding: 0;
+  margin-top: 50px; // ✅ Add this line
+  
+  }
+  
+  .dashboard-container {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  }
+  .filter-card-container {
+  width: 100%; /* Ensure it spans the full width of the page */
+  margin-bottom: 5px; /* Add spacing below the card */
+  display: flex;
+  justify-content: center; /* Center the card horizontally */
+  
+  }
+  
+  .filter-card {
+  width: 100%; /* Match the width of other cards */
+  max-width: 1200px; /* Set a max width for better responsiveness */
+  padding: 5px; /* Add internal padding */
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* Card shadow */
+  border-radius: 10px; /* Rounded corners */
+  border: 1px solid #ccc; /* Add a light gray border */
+  background-color: #fff; /* White background for consistency */
+  }
+  
+  
+  .filter-row {
+  display: flex; /* Arrange items in a row */
+  justify-content: space-between; /* Add space between filters */
+  align-items: center; /* Align filters vertically */
+  gap: 5px; /* Add spacing between filter elements */
+  width: 100%;
+  }
+  
+  .filter-field {
+  width: 30%; /* Adjust field width for consistency */
+  min-width: 200px; /* Ensure a minimum width for small screens */
+  }
+  
+  button {
+  align-self: center; /* Center-align the button with the fields */
+  padding: 10px 20px; /* Adjust button padding for consistency */
+  }
+  .mat-elevation-z8 {
+  border: 1px solid #ccc; /* Light gray border */
+  border-radius: 10px; /* Rounded corners */
+  overflow: hidden; /* Prevent content from spilling out */
+  margin-top: 5px; /* Add space above the table */
+  background-color: #fff; /* White background */
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+  }
+  .mat-row {
+  border-bottom: 1px solid #e0e0e0; /* Light border between rows */
+  }
+  
+  .mat-header-row {
+  border-bottom: 2px solid #ccc; /* Slightly thicker border for the header row */
+  }
+  .data-card-container {
+  width: 100%; /* Full-width card */
+  max-width: 100%; /* Maximum width for responsiveness */
+  margin: 5px auto; /* Center the card and add spacing */
+  padding: 5px; /* Internal padding for content */
+  border: 1px solid #ccc; /* Light gray border */
+  border-radius: 10px; /* Rounded corners */
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+  background-color: #fff; /* White background for consistency */
+  }
+  
+  .filter-form {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 5px; /* Space between filter and table */
+  gap: 5px; /* Space between filter and icons */
+  }
+  
+  .mat-table {
+  margin-top: 5px; /* Space between table and search */
+  border: 1px solid #ccc; /* Add border to the table */
+  border-radius: 5px; /* Add rounded corners */
+  background-color: #fff; /* Match the card background */
+  overflow: hidden; /* Prevent overflow */
+  }
+  
+  .mat-elevation-z8 {
+  border: none; /* Remove the double border */
+  box-shadow: none; /* Remove elevation shadow */
+  overflow: auto; /* Allow table content to scroll if needed */
+  
+  }
+  
+  .mat-paginator {
+  margin-top: 5px; /* Space between table and paginator */
+  }
+  .dashboard-wrapper {
+  width:auto; /* Full width for the dashboard */
+  max-width: 100%; /* Restrict max width for responsiveness */
+  margin: 0 auto; /* Center align */
+  padding: 0 5px; /* Add padding for spacing */
+  }
+  
+  .dashboard-container {
+  display: flex; /* Flexbox for alignment */
+  justify-content: space-between; /* Space between each card */
+  align-items: stretch; /* Ensure all cards have the same height */
+  gap: 5px; /* Add spacing between cards */
+  }
+  
+  .dashboard-card {
+  flex: 1; /* Ensure all cards take the same width */
+  border-radius: 10px;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+  padding: 5px; /* Padding inside cards */
+  background-color: #fff; /* White background for cards */
+  border: 1px solid #ccc; /* Light gray border */
+  display: flex; /* Ensure proper layout for card content */
+  flex-direction: column; /* Stack card content vertically */
+  justify-content: space-between; /* Evenly distribute content */
+  }
+  
+  h3 {
+  text-align: center;
+  margin-bottom: 5px; /* Add space below the title */
+  }
+  
+  .mat-table {
+  width: 100%; /* Ensure table takes full width of the card */
+  }
+  
+  ngx-gauge {
+  margin: auto; /* Center the gauge inside the card */
+  }
+  
+  .info-container {
+  margin-top: 5px; /* Add spacing above the info container */
+  display: flex;
+  flex-direction: column; /* Stack rows vertically */
+  gap: 10px; /* Add spacing between rows */
+  }
+  
+  .stat-row {
+  display: flex;
+  justify-content: space-between; /* Align label and value */
+  }
+  .card-title h3 {
+  text-align: center;
+  font-size: 30px; /* Smaller than h1 */
+  text-transform: uppercase;
+  color: rgb(54, 10, 214); /* Same color as h1 */
+  letter-spacing: 1px;
+  font-family: "Playfair Display", serif; /* Match the font family */
+  font-weight: 400;
+  margin-bottom: 5px; /* Space below the title */
+  }
+  
+  .info-container {
+  text-align: right; /* Right-to-left alignment for Hebrew */
+  font-family: 'Arial', sans-serif; /* Use a clean, modern font */
+  margin: 10px 0; /* Add some spacing around the container */
+  padding: 10px; /* Add padding for better spacing */
+  border: 1px solid #ccc; /* Optional: add a border */
+  border-radius: 5px; /* Optional: round corners */
+  background-color: #f9f9f9; /* Optional: light background */
+  }
+  
+  .stat-row {
+  display: flex;
+  justify-content: flex-end; /* Align items to the right */
+  gap: 10px; /* Add space between value and label */
+  margin-bottom: 5px; /* Add spacing between rows */
+  }
+  
+  .stat-label {
+  font-size: 14px;
+  font-weight: 500;
+  color: rgba(0, 0, 0, 0.7); /* Subtle text color for labels */
+  }
+  
+  .stat-value {
+  font-size: 16px;
+  font-weight: bold;
+  color: rgba(0, 0, 0, 0.9); /* Slightly darker color for values */
+  }
+  /* drug2h-review.component.scss */
+  /* drug2h-review.component.scss */
+  .loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.8); /* Semi-transparent background */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000; /* Ensure it's above other elements */
+  }
+  .loading-text{
+  font-size: x-large;
+  font-weight: bolder;
+  }
+  .data-card-container {
+  height: auto; /* Ensure dynamic height for container */
+  }
+  
+  
+  .summary-card {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #fff;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    padding: 20px;
+    text-align: center;
+    border: 1px solid #ccc;
+  }
+  
+  .summary-card mat-card-content h3 {
+    font-size: 16px;
+    color: #444;
+    margin-bottom: 10px;
+  }
+  
+  .summary-card mat-card-content h1 {
+    font-size: 36px;
+    color: #2e7d32;
+    font-weight: bold;
+    margin: 0;
+  }
+  .body {
+    margin-top: 50px;
+    margin-bottom: 50px;
+  }

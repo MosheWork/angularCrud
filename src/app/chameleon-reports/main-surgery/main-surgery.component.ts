@@ -15,6 +15,11 @@ import { environment } from '../../../environments/environment';
 import { finalize } from 'rxjs/operators'; // ⬅ add
 
 
+interface ExcelCol {
+  keys: string[];
+  label: string;
+  isDate?: boolean;
+}
 
 interface FormControls {
   [key: string]: FormControl;
@@ -352,18 +357,98 @@ if (kerenSel.length) {
     this.applyFilters();
   }
 
-  exportToExcel() {
-    const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(this.filteredData);
-    const workbook: XLSX.WorkBook = { Sheets: { data: worksheet }, SheetNames: ['data'] };
-    const excelBuffer: any = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
-    const blob = new Blob([excelBuffer], {
-      type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-    });
-    const link = document.createElement('a');
-    link.href = window.URL.createObjectURL(blob);
-    link.download = 'MainSurgery_filtered.xlsx';
-    link.click();
+/** Helper: return the first non-null/undefined value by a list of keys
+ *  (lets us support both lowerCamel and server casing)
+ */
+private pick(row: any, ...keys: string[]) {
+  for (const k of keys) {
+    const v = row?.[k];
+    if (v !== undefined && v !== null) return v;
   }
+  return '';
+}
+
+/** Helper: format a date-like value as dd/MM/yyyy */
+private fmtDate(v: any): string {
+  if (!v) return '';
+  const d = new Date(v);
+  if (isNaN(d.getTime())) return (v ?? '').toString();
+  const dd = String(d.getDate()).padStart(2, '0');
+  const mm = String(d.getMonth() + 1).padStart(2, '0');
+  const yy = d.getFullYear();
+  return `${dd}/${mm}/${yy}`;
+}
+
+exportToExcel() {
+  const baseCols: ExcelCol[] = this.columns.map(col => ({
+    keys: [col],
+    label: this.getColumnLabel(col)
+  }));
+
+  const extraCols: ExcelCol[] = [
+    { keys: ['timeRoomEnter', 'TIME_ROOM_ENTER'],                label: 'כניסה לחדר ניתוח' },
+    { keys: ['timeRoomExit',  'TIME_ROOM_EXIT'],                 label: 'יציאה מחדר ניתוח' },
+    { keys: ['invoiceDate',   'InvoiceDate'],                    label: 'תאריך חשבונית', isDate: true },
+    { keys: ['invoiceNumber', 'InvoiceNumber'],                  label: 'מס׳ חשבונית' },
+    { keys: ['invoiceTotalAmount','InvoiceTotalAmount'],         label: 'סכום חשבונית' },
+    { keys: ['hospType',      'HospType'],                       label: 'סוג אשפוז' },
+    { keys: ['secretaryDRG',  'SecretaryDRG'],                   label: 'DRG מזכירות' },
+    { keys: ['surgeryCodeList','SurgeryCodeList'],               label: 'רשימת קודי ניתוח' },
+    { keys: ['diagCodeList',  'DiagCodeList'],                   label: 'רשימת קודי אבחנה' },
+    { keys: ['topProcedure',  'TopProcedure'],                   label: 'הליך עיקרי' },
+    { keys: ['timeGroup',     'TimeGroup'],                      label: 'קבוצת זמן' },
+
+    { keys: ['nurseScrub',            'NurseScrub'],            label: 'אחות סקרב' },
+    { keys: ['nurseScrubEnter',       'NurseScrubEnter'],       label: 'אחות סקרב - כניסה' },
+    { keys: ['nurseScrubExit',        'NurseScrubExit'],        label: 'אחות סקרב - יציאה' },
+
+    { keys: ['nurseCirculating',      'NurseCirculating'],      label: 'אחות סירקולטורית' },
+    { keys: ['nurseCirculatingEnter', 'NurseCirculatingEnter'], label: 'אחות סירקולטורית - כניסה' },
+    { keys: ['nurseCirculatingExit',  'NurseCirculatingExit'],  label: 'אחות סירקולטורית - יציאה' },
+
+    { keys: ['nurseRecovery',         'NurseRecovery'],         label: 'אחות התאוששות' },
+    { keys: ['nurseRecoveryEnter',    'NurseRecoveryEnter'],    label: 'אחות התאוששות - כניסה' },
+    { keys: ['nurseRecoveryExit',     'NurseRecoveryExit'],     label: 'אחות התאוששות - יציאה' },
+
+    { keys: ['anesthesiologist',      'Anesthesiologist'],      label: 'מרדים' },
+    { keys: ['anesthesiologistEnter', 'AnesthesiologistEnter'], label: 'מרדים - כניסה' },
+    { keys: ['anesthesiologistExit',  'AnesthesiologistExit'],  label: 'מרדים - יציאה' },
+
+    { keys: ['technician',            'Technician'],            label: 'טכנאי' },
+    { keys: ['technicianEnter',       'TechnicianEnter'],       label: 'טכנאי - כניסה' },
+    { keys: ['technicianExit',        'TechnicianExit'],        label: 'טכנאי - יציאה' },
+
+    { keys: ['pumpist',               'Pumpist'],               label: 'פמפיסט' },
+    { keys: ['pumpistEnter',          'PumpistEnter'],          label: 'פמפיסט - כניסה' },
+    { keys: ['pumpistExit',           'PumpistExit'],           label: 'פמפיסט - יציאה' },
+  ];
+
+  const allCols: ExcelCol[] = [...baseCols, ...extraCols];
+
+  const rows = (this.filteredData || []).map(row => {
+    const out: any = {};
+
+    // Always include surgery date nicely formatted
+    const surgeryDateVal = this.pick(row, 'surgeryDate', 'SurgeryDate');
+    out['תאריך ניתוח'] = this.fmtDate(surgeryDateVal);
+
+    for (const col of allCols) {
+      // skip duplicate surgeryDate if it appears in baseCols
+      if (col.keys.some(k => k.toLowerCase() === 'surgerydate')) continue;
+
+      let v = this.pick(row, ...col.keys);
+      if (col.isDate) v = this.fmtDate(v);
+      out[col.label] = v;
+    }
+    return out;
+  });
+
+  const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(rows);
+  const wb: XLSX.WorkBook = { Sheets: { נתונים: ws }, SheetNames: ['נתונים'] };
+  XLSX.writeFile(wb, 'MainSurgery.xlsx');
+}
+
+
 
   navigateToGraphPage() {
     this.showGraph = !this.showGraph;

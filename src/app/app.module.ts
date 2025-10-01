@@ -196,6 +196,7 @@ import { SitemapComponent } from './sitemap/sitemap.component';
 import { LinksLogComponent } from './links-log/links-log.component';
 import { PptDuplicateComponent } from './ppt-duplicate/ppt-duplicate.component';
 import { DoctorAuthorizationsComponent } from './doctor-authorizations/doctor-authorizations.component';
+import { PsychologyComponent } from './chameleon-reports/psychology/psychology.component';
 
 
 export const MY_DATE_FORMATS: MatDateFormats = {
@@ -368,7 +369,8 @@ export function playerFactory() {
     SitemapComponent,
     LinksLogComponent,
     PptDuplicateComponent,
-    DoctorAuthorizationsComponent
+    DoctorAuthorizationsComponent,
+    PsychologyComponent
  
 
   

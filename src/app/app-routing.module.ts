@@ -105,6 +105,7 @@ import { SitemapComponent } from './sitemap/sitemap.component';
 import { LinksLogComponent } from './links-log/links-log.component';
 import { PptDuplicateComponent } from './ppt-duplicate/ppt-duplicate.component';
 import { DoctorAuthorizationsComponent } from './doctor-authorizations/doctor-authorizations.component';
+import { PsychologyComponent } from './chameleon-reports/psychology/psychology.component';
 
 const routes: Routes = [
   //', component: UsersComponent },
@@ -200,6 +201,8 @@ const routes: Routes = [
 { path: 'breastfeeding-coordinator', component: BreastfeedingCoordinatorComponent , data: { title: ' מתאמת הנקה ' }},//   מתאמת הנקה      
 { path: 'medication-reconciliationr', component: MedicationReconciliationComponent , data: { title: 'MedicationReconciliation' }},//  MedicationReconciliation 
 { path: 'main-surgery', component: MainSurgeryComponent , data: { title: 'מערכת יעל ' }},//  רשימת ניתוחים
+{ path: 'Psychology', component: PsychologyComponent , data: { title: 'פסיכולוגיה' }},//  דוח תפוקות 
+
 
 
 //chemelondashboard
