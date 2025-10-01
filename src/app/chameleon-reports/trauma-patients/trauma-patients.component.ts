@@ -11,6 +11,15 @@ import { MatSort } from '@angular/material/sort';
 import { FormControl, FormGroup, FormBuilder } from '@angular/forms';
 import { environment } from '../../../environments/environment';
 
+export interface TimingRow {
+  caseNumber: string;
+  patientName: string;
+  admissionTime: Date;
+  targetTime: Date;
+  minutes: number;
+  diffText: string; // HH:MM
+}
+
 interface TraumaPatient {
   caseNumber: string;
   admissionDepartment: string;
@@ -114,7 +123,42 @@ export class TraumaPatientsComponent implements OnInit {
     ultrasoundTechTime: 'זמן טכנאי אולטרסאונד',
     executionDetails: 'פרטי ביצוע'
   };
+  get displayedColumnsWithToggle(): string[] {
+    return ['relevantToggle', ...this.displayedColumns];
+  }
+//
+// detail rows: one per patient that has valid times and ShockRoom === 'X'
+ctDetails: Array<{
+  caseNumber: string;
+  patientName: string;
+  admissionDepartment: string;
+  admissionTime: Date;
+  targetTime: Date;
+  minutes: number;
+}> = [];
 
+surgeryDetails: Array<{
+  caseNumber: string;
+  patientName: string;
+  admissionDepartment: string;
+  admissionTime: Date;
+  targetTime: Date;
+  minutes: number;
+}> = [];
+
+// bucket summaries
+ctBuckets: Array<{ bucket: string; count: number }> = [];
+surgeryBuckets: Array<{ bucket: string; count: number }> = [];
+public shockRoomCode: string = 'V';          // selector default (you asked for V)
+public detailsCT: TimingRow[] = [];
+public detailsSurgery: TimingRow[] = [];
+// grouping state + aggregated data
+public ctGrouping: 'year' | 'quarter' | 'month' = 'year';
+public surgGrouping: 'year' | 'quarter' | 'month' = 'year';
+public aggCT: any[] = [];
+public aggSurg: any[] = [];
+
+//
   filterForm: FormGroup;
   totalResults: number = 0;
   titleUnit: string = 'דוח טראומה';
@@ -199,7 +243,12 @@ export class TraumaPatientsComponent implements OnInit {
         });
 
         this.isLoading = false;
-        setTimeout(() => this.applyFilters(), 100);
+        setTimeout(() => {
+          this.applyFilters();
+          this.recomputeMetrics();   // ⬅️ add
+          this.buildTimingTables();
+
+        }, 100);        
       },
       (error) => {
         console.error('Error fetching trauma patients:', error);
@@ -267,6 +316,9 @@ export class TraumaPatientsComponent implements OnInit {
 
     this.dataSource.data = this.filteredData;
     this.totalResults = this.filteredData.length;
+    this.recomputeMetrics();     // ⬅️ add
+    this.buildTimingTables();
+
 
     setTimeout(() => {
       if (this.paginator) {
@@ -430,6 +482,300 @@ export class TraumaPatientsComponent implements OnInit {
       copy[idx] = { ...copy[idx], relevant: newVal };
       this.dataSource.data = copy;
     }
+  }
+
+
+  //
+
+  /** returns Date or null (filters null/empty/"1900-01-01" placeholders) */
+private toRealDate(v: any): Date | null {
+  if (!v) return null;
+  const d = new Date(v);
+  if (Number.isNaN(d.getTime())) return null;
+  if (d.getFullYear() === 1900) return null;   // your sentinel
+  return d;
+}
+
+/** minutes (>=0) or null if invalid */
+private minutesDiff(from: any, to: any): number | null {
+  const a = this.toRealDate(from);
+  const b = this.toRealDate(to);
+  if (!a || !b) return null;
+  const mins = Math.round((+b - +a) / 60000);
+  return mins >= 0 ? mins : null;
+}
+
+/** optional: keep only the last row per caseNumber (if you have duplicates) */
+// private uniqueByCase(rows: TraumaPatient[]): TraumaPatient[] {
+//   const map = new Map<string, TraumaPatient>();
+//   for (const r of rows) map.set(r.caseNumber, r);
+//   return Array.from(map.values());
+// }
+
+private buildDetails(
+  rows: TraumaPatient[],
+  targetKey: 'ctTime' | 'surgeryTime'
+) {
+  type Detail = {
+    caseNumber: string;
+    patientName: string;
+    admissionDepartment: string;
+    admissionTime: Date;
+    targetTime: Date;
+    minutes: number;
+  };
+
+  const arr: Detail[] = rows
+    // only shock room = 'X'
+    .filter(r => (r.shockRoom ?? '').toString().trim().toUpperCase() === 'V')
+    // map to details with minutes diff; drop invalid
+    .map(r => {
+      const mins = this.minutesDiff(r.admissionTime, (r as any)[targetKey]);
+      if (mins === null) return null;
+      return {
+        caseNumber: r.caseNumber,
+        patientName: r.patientName,
+        admissionDepartment: r.admissionDepartment,
+        admissionTime: this.toRealDate(r.admissionTime)!,
+        targetTime: this.toRealDate((r as any)[targetKey])!,
+        minutes: mins
+      } as Detail;
+    })
+    .filter((x): x is Detail => !!x);
+
+  return arr.sort((a, b) => a.minutes - b.minutes);
+}
+
+private toBucket(minutes: number): string {
+  if (minutes < 26) return 'Under 26 Min';
+  if (minutes <= 60) return 'Between 26 and 60 Min';
+  return 'More than 60 Min';
+}
+
+private buildBuckets(details: Array<{ minutes: number }>) {
+  const counts = new Map<string, number>([
+    ['Under 26 Min', 0],
+    ['Between 26 and 60 Min', 0],
+    ['More than 60 Min', 0]
+  ]);
+  for (const d of details) {
+    const b = this.toBucket(d.minutes);
+    counts.set(b, (counts.get(b) || 0) + 1);
+  }
+  return Array.from(counts, ([bucket, count]) => ({ bucket, count }));
+}
+
+/** call this whenever data/filters change */
+private recomputeMetrics() {
+  // work on the *currently filtered* rows; change to originalData if you prefer
+  const base = this.filteredData?.length ? this.filteredData as TraumaPatient[] : this.originalData;
+
+  this.ctDetails     = this.buildDetails(base, 'ctTime');
+  this.ctBuckets     = this.buildBuckets(this.ctDetails);
+
+  this.surgeryDetails = this.buildDetails(base, 'surgeryTime');
+  this.surgeryBuckets = this.buildBuckets(this.surgeryDetails);
+}
+
+  // --- build timing tables from raw data (originalData) ---
+  private buildTimingTables(): void {
+    const base = (this.filteredData?.length ? this.filteredData : this.originalData) || [];
+    const wantCode = (this.shockRoomCode || '').trim().toUpperCase();
+  
+    const isValidDate = (v: any) => !!v && !this.isDefaultDate(v);
+    const toDate = (v: any) => (v instanceof Date ? v : new Date(v));
+    const fmtDiff = (mins: number) => {
+      const m = Math.max(0, Math.round(mins));
+      const h = Math.floor(m / 60);
+      const mm = (m % 60).toString().padStart(2, '0');
+      return `${h}:${mm}`;
+    };
+  
+    // קבלה → CT
+    this.detailsCT = base
+      .filter(r =>
+        (r.shockRoom || '').trim().toUpperCase() === wantCode &&
+        isValidDate(r.admissionTime) &&
+        isValidDate(r.ctTime)
+      )
+      .map(r => {
+        const a = toDate(r.admissionTime);
+        const t = toDate(r.ctTime);
+        const minutes = (t.getTime() - a.getTime()) / 60000;
+        return {
+          caseNumber: r.caseNumber,
+          patientName: r.patientName,
+          admissionTime: a,
+          targetTime: t,
+          minutes: Math.round(minutes),
+          diffText: fmtDiff(minutes)
+        } as TimingRow;
+      })
+      .sort((a, b) => a.minutes - b.minutes);
+  
+    // קבלה → ניתוחים
+    this.detailsSurgery = base
+      .filter(r =>
+        (r.shockRoom || '').trim().toUpperCase() === wantCode &&
+        isValidDate(r.admissionTime) &&
+        isValidDate(r.surgeryTime)
+      )
+      .map(r => {
+        const a = toDate(r.admissionTime);
+        const t = toDate(r.surgeryTime);
+        const minutes = (t.getTime() - a.getTime()) / 60000;
+        return {
+          caseNumber: r.caseNumber,
+          patientName: r.patientName,
+          admissionTime: a,
+          targetTime: t,
+          minutes: Math.round(minutes),
+          diffText: fmtDiff(minutes)
+        } as TimingRow;
+      })
+      .sort((a, b) => a.minutes - b.minutes);
+  
+    // refresh aggregates
+    this.updateAggCT();
+    this.updateAggSurg();
+  }
+  
+  private classifyBucket(mins: number): 'under26' | 'between26_60' | 'over60' {
+    if (mins < 26) return 'under26';
+    if (mins <= 60) return 'between26_60';
+    return 'over60';
+  }
+  
+  private computeAggregate(rows: TimingRow[], mode: 'year' | 'quarter' | 'month'): any[] {
+    const map = new Map<string, any>();
+  
+    for (const r of rows) {
+      const d = r.admissionTime instanceof Date ? r.admissionTime : new Date(r.admissionTime);
+      const year = d.getFullYear();
+      const month = d.getMonth() + 1;
+      const quarter = Math.floor((month - 1) / 3) + 1;
+  
+      const key =
+        mode === 'year'
+          ? `${year}`
+          : mode === 'quarter'
+          ? `${year}|Q${quarter}`
+          : `${year}|M${month.toString().padStart(2, '0')}`;
+  
+      if (!map.has(key)) {
+        map.set(key, {
+          year,
+          quarter: mode === 'quarter' ? quarter : undefined,
+          month: mode === 'month' ? month : undefined,
+          under26: 0,
+          between26_60: 0,
+          over60: 0,
+          total: 0
+        });
+      }
+      const o = map.get(key);
+      o[this.classifyBucket(r.minutes)]++;
+      o.total++;
+    }
+  
+    const out = Array.from(map.values());
+    out.sort((a, b) => {
+      if (b.year !== a.year) return b.year - a.year;
+      if (a.quarter != null && b.quarter != null) return a.quarter - b.quarter;
+      if (a.month != null && b.month != null) return a.month - b.month;
+      return 0;
+    });
+    return out;
+  }
+  
+  // column sets for mat-table
+  public get ctColumns(): string[] {
+    return this.columnsForMode(this.ctGrouping);
+  }
+  public get surgColumns(): string[] {
+    return this.columnsForMode(this.surgGrouping);
+  }
+  private columnsForMode(mode: 'year' | 'quarter' | 'month'): string[] {
+    const base = ['year'];
+    if (mode === 'quarter') base.push('quarter');
+    if (mode === 'month') base.push('month');
+    return [...base, 'under26', 'between26_60', 'over60', 'total'];
+  }
+  
+  // actions
+  public onShockRoomCodeChange(code: string): void {
+    this.shockRoomCode = (code || 'V').toUpperCase();
+    this.buildTimingTables();
+  }
+  public setCTGrouping(mode: 'year' | 'quarter' | 'month') {
+    this.ctGrouping = mode;
+    this.updateAggCT();
+  }
+  public setSurgGrouping(mode: 'year' | 'quarter' | 'month') {
+    this.surgGrouping = mode;
+    this.updateAggSurg();
+  }
+  private updateAggCT() {
+    this.aggCT = this.computeAggregate(this.detailsCT, this.ctGrouping);
+  }
+  private updateAggSurg() {
+    this.aggSurg = this.computeAggregate(this.detailsSurgery, this.surgGrouping);
+  }
+  
+  // exports
+  public exportAggCTToExcel(): void {
+    this.exportAggregate(this.aggCT, this.ctGrouping, 'סיכום_קבלה_עד_CT.xlsx');
+  }
+  public exportAggSurgeryToExcel(): void {
+    this.exportAggregate(this.aggSurg, this.surgGrouping, 'סיכום_קבלה_עד_ניתוחים.xlsx');
+  }
+  private exportAggregate(rows: any[], mode: 'year'|'quarter'|'month', fileName: string) {
+    if (!rows?.length) return;
+    const titleMap: Record<string, string> = {
+      year: 'שנה',
+      quarter: 'רבעון',
+      month: 'חודש',
+      under26: 'מתחת ל-26 דק׳',
+      between26_60: 'בין 26 ל-60 דק׳',
+      over60: 'מעל 60 דק׳',
+      total: 'סה״כ מקרים'
+    };
+    const data = rows.map(r => ({
+      [titleMap['year']]: r.year,
+      ...(mode === 'quarter' ? { [titleMap['quarter']]: r.quarter } : {}),
+      ...(mode === 'month' ? { [titleMap['month']]: r.month } : {}),
+      [titleMap['under26']]: r.under26,
+      [titleMap['between26_60']]: r.between26_60,
+      [titleMap['over60']]: r.over60,
+      [titleMap['total']]: r.total
+    }));
+    const ws = XLSX.utils.json_to_sheet(data);
+    const wb: XLSX.WorkBook = { Sheets: { 'סיכום' : ws }, SheetNames: ['סיכום'] };
+    XLSX.writeFile(wb, fileName);
+  }
+
+  
+  public exportCTToExcel(): void {
+    this.exportTimingToExcel(this.detailsCT, 'זמן_מקבלה_עד_CT.xlsx', 'זמן CT');
+  }
+  
+  public exportSurgeryToExcel(): void {
+    this.exportTimingToExcel(this.detailsSurgery, 'זמן_מקבלה_עד_ניתוחים.xlsx', 'זמן ניתוחים');
+  }
+  
+  private exportTimingToExcel(rows: TimingRow[], fileName: string, targetLabel: string): void {
+    if (!rows?.length) return;
+    const data = rows.map(r => ({
+      'מס׳ מקרה': r.caseNumber,
+      'שם מטופל': r.patientName,
+      'זמן קבלה': this.datePipe.transform(r.admissionTime, 'dd/MM/yyyy HH:mm'),
+      [targetLabel]: this.datePipe.transform(r.targetTime, 'dd/MM/yyyy HH:mm'),
+      'הפרש (ש:ד)': r.diffText,
+      'דקות': r.minutes
+    }));
+    const ws = XLSX.utils.json_to_sheet(data);
+    const wb: XLSX.WorkBook = { Sheets: { 'טבלה' : ws }, SheetNames: ['טבלה'] };
+    XLSX.writeFile(wb, fileName);
   }
   
 }
