@@ -157,9 +157,9 @@ public ctGrouping: 'year' | 'quarter' | 'month' = 'year';
 public surgGrouping: 'year' | 'quarter' | 'month' = 'year';
 public aggCT: any[] = [];
 public aggSurg: any[] = [];
-
-public ctGraphData: any = { labels: [], datasets: [] };
-public surgGraphData: any = { labels: [], datasets: [] };
+// Chart config objects passed to <app-trauma-graph>
+public ctGraphData: { labels: string[]; datasets: any[] } = { labels: [], datasets: [] };
+public surgGraphData: { labels: string[]; datasets: any[] } = { labels: [], datasets: [] };
 // לטבלאות האגרגציות (CT/ניתוחים)
 ctDataSource = new MatTableDataSource<any>([]);
 surgDataSource = new MatTableDataSource<any>([]);
@@ -754,27 +754,34 @@ private recomputeMetrics() {
   }
   private updateAggCT() {
     this.aggCT = this.computeAggregate(this.detailsCT, this.ctGrouping);
-    console.log('[CT] aggCT rows ->', this.aggCT);
   
+    // table
     this.ctDataSource.data = this.aggCT;
     if (this.ctPaginator) this.ctDataSource.paginator = this.ctPaginator;
     if (this.ctSort)      this.ctDataSource.sort      = this.ctSort;
   
-    this.ctGraphData = this.makeYearSeriesChartJs(this.aggCT);
-    console.log('[CT] chartConfig ->', JSON.stringify(this.ctGraphData));
+    // graph (year/quarter/month)
+    this.ctGraphData = this.makeSeriesChartJs(this.aggCT, this.ctGrouping);
+  
+    // DEBUG:
+    // console.log('[CT] graph config ->', this.ctGraphData);
   }
   
   private updateAggSurg() {
     this.aggSurg = this.computeAggregate(this.detailsSurgery, this.surgGrouping);
-    console.log('[SURG] aggSurg rows ->', this.aggSurg);
   
+    // table
     this.surgDataSource.data = this.aggSurg;
     if (this.surgPaginator) this.surgDataSource.paginator = this.surgPaginator;
     if (this.surgSort)      this.surgDataSource.sort      = this.surgSort;
   
-    this.surgGraphData = this.makeYearSeriesChartJs(this.aggSurg);
-    console.log('[SURG] chartConfig ->', JSON.stringify(this.surgGraphData));
+    // graph (year/quarter/month)
+    this.surgGraphData = this.makeSeriesChartJs(this.aggSurg, this.surgGrouping);
+  
+    // DEBUG:
+    // console.log('[SURG] graph config ->', this.surgGraphData);
   }
+  
   
   
   
@@ -872,6 +879,48 @@ private makeYearSeriesChartJs(
   return out;
 }
 
+/** Localized bucket labels on the X axis */
+private readonly BUCKET_LABELS = [
+  'מתחת ל-26 דק׳',
+  'בין 26 ל-60 דק׳',
+  'מעל 60 דק׳'
+];
+
+/**
+ * Build a Chart.js-compatible config with one dataset per period,
+ * using the *current* grouping: 'year' | 'quarter' | 'month'.
+ *
+ * Input rows are the result of computeAggregate(...), so each row has:
+ *   { year, (quarter|month?), under26, between26_60, over60, total }
+ */
+private makeSeriesChartJs(
+  rows: Array<{year:number; quarter?:number; month?:number; under26:number; between26_60:number; over60:number}>,
+  mode: 'year'|'quarter'|'month'
+): { labels: string[]; datasets: any[] } {
+
+  const labels = this.BUCKET_LABELS;
+
+  const datasets = rows.map(r => {
+    const seriesLabel =
+      mode === 'year'
+        ? `${r.year}`
+        : mode === 'quarter'
+          ? `${r.year} Q${r.quarter}`
+          : `${r.year}-${String(r.month ?? 0).padStart(2, '0')}`;
+
+    return {
+      label: seriesLabel,
+      data: [
+        r.under26 ?? 0,
+        r.between26_60 ?? 0,
+        r.over60 ?? 0
+      ]
+      // colors are assigned by <app-trauma-graph>, no need to set here
+    };
+  });
+
+  return { labels, datasets };
+}
 
 
 }
