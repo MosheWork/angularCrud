@@ -752,36 +752,48 @@ private recomputeMetrics() {
     this.surgGrouping = mode;
     this.updateAggSurg();
   }
-  private updateAggCT() {
-    this.aggCT = this.computeAggregate(this.detailsCT, this.ctGrouping);
-  
-    // table
-    this.ctDataSource.data = this.aggCT;
-    if (this.ctPaginator) this.ctDataSource.paginator = this.ctPaginator;
-    if (this.ctSort)      this.ctDataSource.sort      = this.ctSort;
-  
-    // graph (year/quarter/month)
-    this.ctGraphData = this.makeSeriesChartJs(this.aggCT, this.ctGrouping);
-  
-    // DEBUG:
-    // console.log('[CT] graph config ->', this.ctGraphData);
+// CT
+// CT
+public updateAggCT() {
+  // ===== table (unchanged) =====
+  this.aggCT = this.computeAggregate(this.detailsCT, this.ctGrouping);
+  this.ctDataSource.data = this.aggCT;
+  if (this.ctPaginator) this.ctDataSource.paginator = this.ctPaginator;
+  if (this.ctSort)      this.ctDataSource.sort      = this.ctSort;
+
+  // ===== chart =====
+  if (this.ctGrouping === 'quarter') {
+    // inside each bucket show sub-bars for Year×Quarter
+    this.ctGraphData = this.makeQuarterSubgroupChartConfig(this.aggCT);
+  } else {
+    // simple: one dataset per year (keeps 3 bars per bucket overall)
+    this.ctGraphData = this.makeSeriesChartJs(
+      this.computeAggregate(this.detailsCT, 'year'),
+      'year'
+    );
   }
-  
-  private updateAggSurg() {
-    this.aggSurg = this.computeAggregate(this.detailsSurgery, this.surgGrouping);
-  
-    // table
-    this.surgDataSource.data = this.aggSurg;
-    if (this.surgPaginator) this.surgDataSource.paginator = this.surgPaginator;
-    if (this.surgSort)      this.surgDataSource.sort      = this.surgSort;
-  
-    // graph (year/quarter/month)
-    this.surgGraphData = this.makeSeriesChartJs(this.aggSurg, this.surgGrouping);
-  
-    // DEBUG:
-    // console.log('[SURG] graph config ->', this.surgGraphData);
+}
+
+// Surgery
+public updateAggSurg() {
+  // ===== table (unchanged) =====
+  this.aggSurg = this.computeAggregate(this.detailsSurgery, this.surgGrouping);
+  this.surgDataSource.data = this.aggSurg;
+  if (this.surgPaginator) this.surgDataSource.paginator = this.surgPaginator;
+  if (this.surgSort)      this.surgDataSource.sort      = this.surgSort;
+
+  // ===== chart =====
+  if (this.surgGrouping === 'quarter') {
+    this.surgGraphData = this.makeQuarterSubgroupChartConfig(this.aggSurg);
+  } else {
+    this.surgGraphData = this.makeSeriesChartJs(
+      this.computeAggregate(this.detailsSurgery, 'year'),
+      'year'
+    );
   }
-  
+}
+
+
   
   
   
@@ -849,35 +861,7 @@ private recomputeMetrics() {
 
 // X-axis has 3 buckets; each dataset is one year (color per year)
 /** Build Chart.js data: X = 3 buckets; each dataset = a year */
-private makeYearSeriesChartJs(
-  rows: Array<{ year:number; under26:number; between26_60:number; over60:number }>
-): { labels: string[]; datasets: any[] } {
-  console.log('[makeYearSeriesChartJs] input rows ->', rows);
 
-  const byYear = new Map<number, { u:number; b:number; o:number }>();
-  for (const r of rows || []) {
-    const y = Number(r.year);
-    if (!byYear.has(y)) byYear.set(y, { u:0, b:0, o:0 });
-    const acc = byYear.get(y)!;
-    acc.u += r.under26 || 0;
-    acc.b += r.between26_60 || 0;
-    acc.o += r.over60 || 0;
-  }
-
-  const labels = ['מתחת ל-26 דק׳', 'בין 26 ל-60 דק׳', 'מעל 60 דק׳'];
-  const years  = Array.from(byYear.keys()).sort((a,b)=>a-b);
-
-  const datasets = years.map(y => {
-    const t = byYear.get(y)!;
-    const ds = { label: String(y), data: [t.u, t.b, t.o] };
-    console.log('[makeYearSeriesChartJs] dataset for year', y, '->', ds);
-    return ds;
-  });
-
-  const out = { labels, datasets };
-  console.log('[makeYearSeriesChartJs] OUT ->', out);
-  return out;
-}
 
 /** Localized bucket labels on the X axis */
 private readonly BUCKET_LABELS = [
@@ -918,6 +902,51 @@ private makeSeriesChartJs(
       // colors are assigned by <app-trauma-graph>, no need to set here
     };
   });
+
+  return { labels, datasets };
+}
+/** Chart config: 3 buckets on X; inside each bucket sub-bars for every (Year × Quarter). */
+private makeQuarterSubgroupChartConfig(
+  rows: Array<{ year:number; quarter:number; under26:number; between26_60:number; over60:number; }>
+): { labels: string[]; datasets: any[] } {
+
+  // X-axis buckets
+  const labels = ['מתחת ל-26 דק׳', 'בין 26 ל-60 דק׳', 'מעל 60 דק׳'];
+
+  // Unique years present (sorted ascending; change to desc if you prefer)
+  const years = Array.from(new Set(rows.map(r => r.year))).sort((a,b)=>a-b);
+
+  // Colors by quarter (consistent across years)
+  const qColor: Record<number, string> = {
+    1: 'rgba(54, 162, 235, 0.6)',   // Q1
+    2: 'rgba(255, 99, 132, 0.6)',   // Q2
+    3: 'rgba(255, 206, 86, 0.6)',   // Q3
+    4: 'rgba(75, 192, 192, 0.6)'    // Q4
+  };
+
+  const datasets: any[] = [];
+
+  // Order datasets as: 2023-Q1..Q4, 2024-Q1..Q4, 2025-Q1..Q4 ...
+  for (const y of years) {
+    for (let q = 1; q <= 4; q++) {
+      const r = rows.find(x => x.year === y && x.quarter === q);
+
+      datasets.push({
+        label: `${y}-Q${q}`,
+        data: [
+          r?.under26 ?? 0,
+          r?.between26_60 ?? 0,
+          r?.over60 ?? 0
+        ],
+        // Look nice when many bars:
+        barPercentage: 0.85,
+        categoryPercentage: 0.9,
+        backgroundColor: qColor[q],
+        borderColor: qColor[q].replace('0.6', '1'),
+        borderWidth: 1
+      });
+    }
+  }
 
   return { labels, datasets };
 }
