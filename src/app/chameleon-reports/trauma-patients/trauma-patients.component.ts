@@ -752,47 +752,44 @@ private recomputeMetrics() {
     this.surgGrouping = mode;
     this.updateAggSurg();
   }
-// CT
+
 // CT
 public updateAggCT() {
-  // ===== table (unchanged) =====
   this.aggCT = this.computeAggregate(this.detailsCT, this.ctGrouping);
   this.ctDataSource.data = this.aggCT;
   if (this.ctPaginator) this.ctDataSource.paginator = this.ctPaginator;
   if (this.ctSort)      this.ctDataSource.sort      = this.ctSort;
 
-  // ===== chart =====
   if (this.ctGrouping === 'quarter') {
-    // inside each bucket show sub-bars for Year×Quarter
-    this.ctGraphData = this.makeQuarterSubgroupChartConfig(this.aggCT);
-  } else {
-    // simple: one dataset per year (keeps 3 bars per bucket overall)
-    this.ctGraphData = this.makeSeriesChartJs(
-      this.computeAggregate(this.detailsCT, 'year'),
-      'year'
-    );
+    this.ctGraphData    = this.makeQuarterSubgroupChartConfig(this.aggCT);
+    this.ctMonthCharts  = undefined;
+  } else if (this.ctGrouping === 'month') {
+    this.ctMonthCharts  = this.makeMonthSplitChartConfigs(this.aggCT);
+    this.ctGraphData    = { labels: [], datasets: [] }; // not used in month mode
+  } else { // year
+    this.ctGraphData    = this.makeSeriesChartJs(this.aggCT, 'year');
+    this.ctMonthCharts  = undefined;
   }
 }
 
 // Surgery
 public updateAggSurg() {
-  // ===== table (unchanged) =====
   this.aggSurg = this.computeAggregate(this.detailsSurgery, this.surgGrouping);
   this.surgDataSource.data = this.aggSurg;
   if (this.surgPaginator) this.surgDataSource.paginator = this.surgPaginator;
   if (this.surgSort)      this.surgDataSource.sort      = this.surgSort;
 
-  // ===== chart =====
   if (this.surgGrouping === 'quarter') {
-    this.surgGraphData = this.makeQuarterSubgroupChartConfig(this.aggSurg);
-  } else {
-    this.surgGraphData = this.makeSeriesChartJs(
-      this.computeAggregate(this.detailsSurgery, 'year'),
-      'year'
-    );
+    this.surgGraphData   = this.makeQuarterSubgroupChartConfig(this.aggSurg);
+    this.surgMonthCharts = undefined;
+  } else if (this.surgGrouping === 'month') {
+    this.surgMonthCharts = this.makeMonthSplitChartConfigs(this.aggSurg);
+    this.surgGraphData   = { labels: [], datasets: [] };
+  } else { // year
+    this.surgGraphData   = this.makeSeriesChartJs(this.aggSurg, 'year');
+    this.surgMonthCharts = undefined;
   }
 }
-
 
   
   
@@ -950,6 +947,64 @@ private makeQuarterSubgroupChartConfig(
 
   return { labels, datasets };
 }
+
+/** Chart config: 3 buckets on X; inside each bucket sub-bars for every (Year × Month). */
+/** Month split: 3 separate charts (one per bucket) with X = YYYY-MM (sorted). */
+private makeMonthSplitChartConfigs(
+  rows: Array<{ year:number; month:number; under26:number; between26_60:number; over60:number; }>
+) {
+  // unique sets
+  const months = Array.from(new Set(rows.map(r => r.month))).sort((a,b)=>a-b);   // 1..12 present
+  const years  = Array.from(new Set(rows.map(r => r.year))).sort((a,b)=>a-b);   // 2023,2024,2025..
+
+  // build ordered points: month-major, year-minor
+  const pts: Array<{label:string; year:number; u:number; b:number; o:number}> = [];
+  for (const m of months) {
+    for (const y of years) {
+      const r = rows.find(rr => rr.year === y && rr.month === m);
+      const mm = String(m).padStart(2,'0');
+      pts.push({
+        label: `${y}-${mm}`,
+        year: y,
+        u: r?.under26 ?? 0,
+        b: r?.between26_60 ?? 0,
+        o: r?.over60 ?? 0
+      });
+    }
+  }
+
+  const labels = pts.map(p => p.label);
+
+  // palette per year -> one color per bar depending on its year
+  const palette = [
+    'rgba(54, 162, 235, 0.6)', 'rgba(255, 99, 132, 0.6)',
+    'rgba(255, 206, 86, 0.6)', 'rgba(75, 192, 192, 0.6)',
+    'rgba(153, 102, 255, 0.6)', 'rgba(255, 159, 64, 0.6)',
+  ];
+  const yearColor = new Map<number,string>();
+  years.forEach((y,i)=>yearColor.set(y, palette[i % palette.length]));
+
+  const bg = pts.map(p => yearColor.get(p.year)!);
+
+  return {
+    under:   { labels, datasets: [{ label: 'מתחת ל-26 דק׳', data: pts.map(p => p.u), backgroundColor: bg }] },
+    between: { labels, datasets: [{ label: 'בין 26 ל-60 דק׳', data: pts.map(p => p.b), backgroundColor: bg }] },
+    over:    { labels, datasets: [{ label: 'מעל 60 דק׳',    data: pts.map(p => p.o), backgroundColor: bg }] }
+  };
+}
+
+
+// inside TraumaPatientsComponent class:
+
+// when grouping = 'month', we split into 3 charts
+public ctMonthCharts?: { under: {labels:string[];datasets:any[]},
+                         between: {labels:string[];datasets:any[]},
+                         over: {labels:string[];datasets:any[]} };
+
+public surgMonthCharts?: { under: {labels:string[];datasets:any[]},
+                           between: {labels:string[];datasets:any[]},
+                           over: {labels:string[];datasets:any[]} };
+
 
 
 }
