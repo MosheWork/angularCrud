@@ -158,6 +158,33 @@ public surgGrouping: 'year' | 'quarter' | 'month' = 'year';
 public aggCT: any[] = [];
 public aggSurg: any[] = [];
 
+public ctGraphData: any = { labels: [], datasets: [] };
+public surgGraphData: any = { labels: [], datasets: [] };
+// לטבלאות האגרגציות (CT/ניתוחים)
+ctDataSource = new MatTableDataSource<any>([]);
+surgDataSource = new MatTableDataSource<any>([]);
+
+// ViewChilds ייעודיים לטבלאות האגרגציות
+@ViewChild('ctPaginator') ctPaginator!: MatPaginator;
+@ViewChild('surgPaginator') surgPaginator!: MatPaginator;
+@ViewChild('ctSort') ctSort!: MatSort;
+@ViewChild('surgSort') surgSort!: MatSort;
+public showCTGraph = false;
+public showSurgGraph = false;
+
+
+
+// NEW: simple togglers
+public toggleCTGraph(): void {
+  this.showCTGraph = !this.showCTGraph;
+  console.log('[CT] toggle graph:', this.showCTGraph, 'chartConfig:', this.ctGraphData);
+}
+public toggleSurgGraph(): void {
+  this.showSurgGraph = !this.showSurgGraph;
+  console.log('[SURG] toggle graph:', this.showSurgGraph, 'chartConfig:', this.surgGraphData);
+}
+
+
 //
   filterForm: FormGroup;
   totalResults: number = 0;
@@ -205,12 +232,22 @@ public aggSurg: any[] = [];
   }
   ngAfterViewInit(): void {
     setTimeout(() => {
+      // טבלה ראשית (כבר היה)
       if (this.paginator) {
         this.dataSource.paginator = this.paginator;
       }
       this.dataSource.sort = this.sort;
+  
+      // טבלת CT
+      if (this.ctPaginator) this.ctDataSource.paginator = this.ctPaginator;
+      if (this.ctSort)      this.ctDataSource.sort      = this.ctSort;
+  
+      // טבלת ניתוחים
+      if (this.surgPaginator) this.surgDataSource.paginator = this.surgPaginator;
+      if (this.surgSort)      this.surgDataSource.sort      = this.surgSort;
     });
   }
+  
 
 
   fetchTraumaPatients() {
@@ -717,10 +754,31 @@ private recomputeMetrics() {
   }
   private updateAggCT() {
     this.aggCT = this.computeAggregate(this.detailsCT, this.ctGrouping);
+    console.log('[CT] aggCT rows ->', this.aggCT);
+  
+    this.ctDataSource.data = this.aggCT;
+    if (this.ctPaginator) this.ctDataSource.paginator = this.ctPaginator;
+    if (this.ctSort)      this.ctDataSource.sort      = this.ctSort;
+  
+    this.ctGraphData = this.makeYearSeriesChartJs(this.aggCT);
+    console.log('[CT] chartConfig ->', JSON.stringify(this.ctGraphData));
   }
+  
   private updateAggSurg() {
     this.aggSurg = this.computeAggregate(this.detailsSurgery, this.surgGrouping);
+    console.log('[SURG] aggSurg rows ->', this.aggSurg);
+  
+    this.surgDataSource.data = this.aggSurg;
+    if (this.surgPaginator) this.surgDataSource.paginator = this.surgPaginator;
+    if (this.surgSort)      this.surgDataSource.sort      = this.surgSort;
+  
+    this.surgGraphData = this.makeYearSeriesChartJs(this.aggSurg);
+    console.log('[SURG] chartConfig ->', JSON.stringify(this.surgGraphData));
   }
+  
+  
+  
+  
   
   // exports
   public exportAggCTToExcel(): void {
@@ -777,5 +835,43 @@ private recomputeMetrics() {
     const wb: XLSX.WorkBook = { Sheets: { 'טבלה' : ws }, SheetNames: ['טבלה'] };
     XLSX.writeFile(wb, fileName);
   }
-  
+
+
+
+
+
+// X-axis has 3 buckets; each dataset is one year (color per year)
+/** Build Chart.js data: X = 3 buckets; each dataset = a year */
+private makeYearSeriesChartJs(
+  rows: Array<{ year:number; under26:number; between26_60:number; over60:number }>
+): { labels: string[]; datasets: any[] } {
+  console.log('[makeYearSeriesChartJs] input rows ->', rows);
+
+  const byYear = new Map<number, { u:number; b:number; o:number }>();
+  for (const r of rows || []) {
+    const y = Number(r.year);
+    if (!byYear.has(y)) byYear.set(y, { u:0, b:0, o:0 });
+    const acc = byYear.get(y)!;
+    acc.u += r.under26 || 0;
+    acc.b += r.between26_60 || 0;
+    acc.o += r.over60 || 0;
+  }
+
+  const labels = ['מתחת ל-26 דק׳', 'בין 26 ל-60 דק׳', 'מעל 60 דק׳'];
+  const years  = Array.from(byYear.keys()).sort((a,b)=>a-b);
+
+  const datasets = years.map(y => {
+    const t = byYear.get(y)!;
+    const ds = { label: String(y), data: [t.u, t.b, t.o] };
+    console.log('[makeYearSeriesChartJs] dataset for year', y, '->', ds);
+    return ds;
+  });
+
+  const out = { labels, datasets };
+  console.log('[makeYearSeriesChartJs] OUT ->', out);
+  return out;
+}
+
+
+
 }

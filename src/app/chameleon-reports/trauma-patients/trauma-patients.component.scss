@@ -606,3 +606,25 @@
     margin-top: 50px;
     margin-bottom: 50px;
   }
+
+/* keep the tables locked/aligned */
+.full-width {
+  width: 100%;
+  table-layout: fixed;
+  border-spacing: 0;
+}
+
+.trauma-container th[mat-header-cell],
+.trauma-container td[mat-cell] {
+  text-align: center;
+  padding: 8px 12px;
+}
+
+/* optional fixed widths so headers/cells never shift */
+.mat-column-year       { width: 90px; }
+.mat-column-quarter    { width: 90px; }
+.mat-column-month      { width: 90px; }
+.mat-column-under26,
+.mat-column-between26_60,
+.mat-column-over60,
+.mat-column-total      { width: 160px; }

@@ -1,22 +1,26 @@
+<!-- Material Icons (like in your sample) -->
+<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
+
 <app-spinner [isLoading]="isLoading"></app-spinner>
 
 <div class="body" *ngIf="!isLoading">
 
-  <!-- ===================== Filter bar (unchanged style/classes) ===================== -->
-  <div class="filter-card">
-    <form [formGroup]="filterForm" class="filter-form">
-      <button mat-button (click)="resetFilters()" mat-raised-button color="primary">
-        איפוס מסננים
-      </button>
+  <!-- ===== Filters (keep original controls/classes for SCSS) ===== -->
+  <form [formGroup]="filterForm" dir="rtl" class="filter-form" style="gap:8px; align-items:flex-end;">
+    <mat-form-field class="long-search-bar" appearance="outline" style="min-width:320px;">
+      <mat-label class="filters" style="color: blue">חיפוש</mat-label>
+      <input matInput formControlName="globalFilter" class="search-input" />
+    </mat-form-field>
 
-      <img
-        src="../../assets/excel.png"
-        alt="Download"
-        (click)="exportToExcel()"
-        class="download-icon"
-        width="50px"
-      />
+    <button type="button" mat-raised-button color="primary" class="custom-button" matTooltip="איפוס מסננים"
+            (click)="resetFilters()">
+      <i class="material-icons">refresh</i>
+    </button>
 
+    <img src="../../assets/excel.png" alt="Excel" (click)="exportToExcel()"
+         class="download-icon" width="40" />
+
+    <div style="display:flex; flex-wrap:wrap; gap:8px; margin-top:6px; width:100%;">
       <mat-form-field>
         <mat-label>שנה</mat-label>
         <mat-select formControlName="YearFilter" multiple>
@@ -69,47 +73,40 @@
       </mat-form-field>
 
       <!-- רלוונטי -->
-      <div class="filter-radio-group" dir="rtl">
-        <span class="filter-label">רלוונטי: </span>
-        <mat-radio-group formControlName="relevantFilter" class="radio-group">
+      <div class="filter-radio-group" dir="rtl" style="display:flex; align-items:center; gap:10px;">
+        <span class="filter-label">רלוונטי:</span>
+        <mat-radio-group formControlName="relevantFilter" class="radio-group" style="display:flex; gap:12px;">
           <mat-radio-button value="לא עודכן">לא עודכן</mat-radio-button>
           <mat-radio-button value="1">כן</mat-radio-button>
           <mat-radio-button value="2">לא</mat-radio-button>
           <mat-radio-button value="">הכל</mat-radio-button>
         </mat-radio-group>
       </div>
-    </form>
-  </div>
-
-  <!-- Global search (unchanged) -->
-  <form [formGroup]="filterForm" dir="rtl" class="filter-form">
-    <mat-form-field class="long-search-bar">
-      <mat-label>חיפוש</mat-label>
-      <input matInput formControlName="globalFilter" />
-    </mat-form-field>
+    </div>
   </form>
 
-  <!-- ===================== Tabs ===================== -->
-  <mat-tab-group>
+  <!-- ===== Tabs (default = רשימת טראומה) ===== -->
+  <mat-tab-group [selectedIndex]="0">
 
-    <!-- ===================== Tab 1: רשימת טראומה (default first tab) ===================== -->
+    <!-- ========== Tab 1: רשימת טראומה ========== -->
     <mat-tab label="רשימת טראומה">
       <div class="trauma-container">
         <div class="table-responsive">
-          <mat-table [dataSource]="dataSource" matSort class="mat-elevation-z8">
+          <mat-table [dataSource]="dataSource" matSort dir="rtl" class="mat-elevation-z8">
 
-            <!-- 1) Relevant toggle (static column) -->
+            <!-- Toggle -->
             <ng-container matColumnDef="relevantToggle">
               <mat-header-cell *matHeaderCellDef> רלוונטי </mat-header-cell>
               <mat-cell *matCellDef="let element">
                 <mat-checkbox
                   [checked]="element.relevant === 1"
+                  (click)="$event.stopPropagation()"
                   (change)="onRelevantToggle(element, $event.checked)">
                 </mat-checkbox>
               </mat-cell>
             </ng-container>
 
-            <!-- 2) Dynamic columns (skip relevantToggle here) -->
+            <!-- Dynamic columns -->
             <ng-container *ngFor="let column of displayedColumns">
               <ng-container *ngIf="column !== 'relevantToggle'" [matColumnDef]="column">
                 <mat-header-cell *matHeaderCellDef mat-sort-header>
@@ -117,22 +114,20 @@
                 </mat-header-cell>
 
                 <mat-cell *matCellDef="let element" (click)="openDialog(element)">
-                  <!-- textual version for 'relevant' -->
                   <ng-container *ngIf="column === 'relevant'; else defaultColumn">
                     <span *ngIf="element.relevant === 1">כן</span>
                     <span *ngIf="element.relevant === 0">לא</span>
                     <span *ngIf="element.relevant === null">לא עודכן</span>
                   </ng-container>
 
-                  <!-- default cells -->
                   <ng-template #defaultColumn>
-                    <ng-container *ngIf="isDateColumn(column); else textContent">
+                    <ng-container *ngIf="isDateColumn(column); else textCell">
                       <ng-container *ngIf="!isDefaultDate(element[column]); else emptyDate">
                         {{ element[column] | date:'dd/MM/yyyy HH:mm' }}
                       </ng-container>
                       <ng-template #emptyDate> </ng-template>
                     </ng-container>
-                    <ng-template #textContent>
+                    <ng-template #textCell>
                       {{ element[column] }}
                     </ng-template>
                   </ng-template>
@@ -140,12 +135,8 @@
               </ng-container>
             </ng-container>
 
-            <!-- 3) Headers & rows -->
             <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-            <mat-row
-              *matRowDef="let row; columns: displayedColumns;"
-              class="clickable-row">
-            </mat-row>
+            <mat-row *matRowDef="let row; columns: displayedColumns" class="mat-row clickable-row"></mat-row>
           </mat-table>
 
           <mat-paginator
@@ -155,7 +146,7 @@
           </mat-paginator>
         </div>
 
-        <!-- Edit Dialog -->
+        <!-- Edit dialog kept as-is -->
         <div *ngIf="selectedPatient" class="dialog-backdrop">
           <div class="dialog-box large-dialog" style="max-width: 90vw; width: 90vw; max-height: 90vh; overflow: auto;">
             <h2>עריכת מטופל טראומה</h2>
@@ -185,174 +176,183 @@
             </form>
 
             <div class="dialog-actions">
-              <button mat-button (click)="closeDialog()">בטל</button>
-              <button mat-button color="primary" (click)="saveEdit()">שמור</button>
+              <button type="button" mat-button (click)="closeDialog()">בטל</button>
+              <button type="button" mat-button color="primary" (click)="saveEdit()">שמור</button>
             </div>
           </div>
         </div>
       </div>
     </mat-tab>
 
-    <!-- ===================== Tab 2: זמן מקבלה עד CT ===================== -->
+    <!-- ========== Tab 2: זמן מקבלה עד CT ========== -->
     <mat-tab label="זמן מקבלה עד CT">
       <div class="trauma-container">
-
-        <!-- Controls row (keeps your classes) -->
+        <!-- Controls -->
         <div class="filter-form" dir="rtl" style="align-items:center; gap:12px;">
-          <mat-form-field>
+          <mat-form-field appearance="outline">
             <mat-label>קוד חדר הלם</mat-label>
             <mat-select [value]="shockRoomCode" (selectionChange)="onShockRoomCodeChange($event.value)">
               <mat-option value="V">V</mat-option>
               <mat-option value="X">X</mat-option>
             </mat-select>
           </mat-form-field>
-
-          <div class="radio-group">
-            <span style="margin-inline-end:8px;">תצוגה:</span>
-            <button mat-stroked-button color="primary" [disabled]="ctGrouping==='year'" (click)="setCTGrouping('year')">שנה</button>
-            <button mat-stroked-button color="primary" [disabled]="ctGrouping==='quarter'" (click)="setCTGrouping('quarter')">רבעון</button>
-            <button mat-stroked-button color="primary" [disabled]="ctGrouping==='month'" (click)="setCTGrouping('month')">חודש</button>
+    
+          <div class="radio-group" style="display:flex; gap:8px;">
+            <span style="align-self:center; margin-inline-end:8px;">תצוגה:</span>
+            <button type="button" mat-stroked-button color="primary" [disabled]="ctGrouping==='year'" (click)="setCTGrouping('year')">שנה</button>
+            <button type="button" mat-stroked-button color="primary" [disabled]="ctGrouping==='quarter'" (click)="setCTGrouping('quarter')">רבעון</button>
+            <button type="button" mat-stroked-button color="primary" [disabled]="ctGrouping==='month'" (click)="setCTGrouping('month')">חודש</button>
           </div>
-
-          <img
-            src="../../assets/excel.png"
-            alt="Download"
-            (click)="exportAggCTToExcel()"
-            class="download-icon"
-            width="40"
-          />
+    
+          <!-- NEW: toggle graph/table -->
+          <button type="button" mat-icon-button (click)="toggleCTGraph()" matTooltip="הצג/הסתר גרף">
+            <mat-icon>{{ showCTGraph ? 'table_chart' : 'bar_chart' }}</mat-icon>
+          </button>
+    
+          <img src="../../assets/excel.png" alt="Excel"
+               (click)="exportAggCTToExcel()" class="download-icon" width="40" />
         </div>
-
-        <!-- Aggregates table -->
-        <div class="table-responsive">
-          <mat-table [dataSource]="aggCT" class="mat-elevation-z8">
-
-            <!-- year -->
+    
+        <!-- NEW: Graph view -->
+        <app-trauma-graph *ngIf="showCTGraph" [config]="ctGraphData" [height]="360"></app-trauma-graph>
+    
+        <!-- Table view -->
+        <div class="table-responsive" *ngIf="!showCTGraph">
+          <table mat-table [dataSource]="ctDataSource" matSort #ctSort="matSort" class="mat-elevation-z8 full-width">
+    
             <ng-container matColumnDef="year">
-              <mat-header-cell *matHeaderCellDef> שנה </mat-header-cell>
-              <mat-cell *matCellDef="let r"> {{ r.year }} </mat-cell>
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>שנה</th>
+              <td mat-cell *matCellDef="let r">{{ r.year }}</td>
             </ng-container>
-
-            <!-- quarter (only shown when exists in ctColumns) -->
+    
             <ng-container matColumnDef="quarter">
-              <mat-header-cell *matHeaderCellDef> רבעון </mat-header-cell>
-              <mat-cell *matCellDef="let r"> {{ r.quarter }} </mat-cell>
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>רבעון</th>
+              <td mat-cell *matCellDef="let r">{{ r.quarter }}</td>
             </ng-container>
-
-            <!-- month (only shown when exists in ctColumns) -->
+    
             <ng-container matColumnDef="month">
-              <mat-header-cell *matHeaderCellDef> חודש </mat-header-cell>
-              <mat-cell *matCellDef="let r"> {{ r.month }} </mat-cell>
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>חודש</th>
+              <td mat-cell *matCellDef="let r">{{ r.month }}</td>
             </ng-container>
-
+    
             <ng-container matColumnDef="under26">
-              <mat-header-cell *matHeaderCellDef> מתחת ל-26 דק׳ </mat-header-cell>
-              <mat-cell *matCellDef="let r"> {{ r.under26 }} </mat-cell>
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>מתחת ל-26 דק׳</th>
+              <td mat-cell *matCellDef="let r">{{ r.under26 }}</td>
             </ng-container>
-
+    
             <ng-container matColumnDef="between26_60">
-              <mat-header-cell *matHeaderCellDef> בין 26 ל-60 דק׳ </mat-header-cell>
-              <mat-cell *matCellDef="let r"> {{ r.between26_60 }} </mat-cell>
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>בין 26 ל-60 דק׳</th>
+              <td mat-cell *matCellDef="let r">{{ r.between26_60 }}</td>
             </ng-container>
-
+    
             <ng-container matColumnDef="over60">
-              <mat-header-cell *matHeaderCellDef> מעל 60 דק׳ </mat-header-cell>
-              <mat-cell *matCellDef="let r"> {{ r.over60 }} </mat-cell>
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>מעל 60 דק׳</th>
+              <td mat-cell *matCellDef="let r">{{ r.over60 }}</td>
             </ng-container>
-
+    
             <ng-container matColumnDef="total">
-              <mat-header-cell *matHeaderCellDef> סה״כ מקרים </mat-header-cell>
-              <mat-cell *matCellDef="let r"> {{ r.total }} </mat-cell>
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>סה״כ מקרים</th>
+              <td mat-cell *matCellDef="let r">{{ r.total }}</td>
             </ng-container>
-
-            <mat-header-row *matHeaderRowDef="ctColumns"></mat-header-row>
-            <mat-row *matRowDef="let row; columns: ctColumns"></mat-row>
-          </mat-table>
+    
+            <tr mat-header-row *matHeaderRowDef="ctColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: ctColumns"></tr>
+          </table>
+    
+          <mat-paginator #ctPaginator
+                        [pageSize]="25"
+                        [pageSizeOptions]="[10,25,50,100]"
+                        showFirstLastButtons>
+          </mat-paginator>
         </div>
-
-      
       </div>
     </mat-tab>
+    
 
-    <!-- ===================== Tab 3: זמן מקבלה עד ניתוחים ===================== -->
+    <!-- ========== Tab 3: זמן מקבלה עד ניתוחים ========== -->
     <mat-tab label="זמן מקבלה עד ניתוחים">
       <div class="trauma-container">
-
+        <!-- Controls -->
         <div class="filter-form" dir="rtl" style="align-items:center; gap:12px;">
-          <mat-form-field>
+          <mat-form-field appearance="outline">
             <mat-label>קוד חדר הלם</mat-label>
             <mat-select [value]="shockRoomCode" (selectionChange)="onShockRoomCodeChange($event.value)">
               <mat-option value="V">V</mat-option>
               <mat-option value="X">X</mat-option>
             </mat-select>
           </mat-form-field>
-
-          <div class="radio-group">
-            <span style="margin-inline-end:8px;">תצוגה:</span>
-            <button mat-stroked-button color="primary" [disabled]="surgGrouping==='year'" (click)="setSurgGrouping('year')">שנה</button>
-            <button mat-stroked-button color="primary" [disabled]="surgGrouping==='quarter'" (click)="setSurgGrouping('quarter')">רבעון</button>
-            <button mat-stroked-button color="primary" [disabled]="surgGrouping==='month'" (click)="setSurgGrouping('month')">חודש</button>
+    
+          <div class="radio-group" style="display:flex; gap:8px;">
+            <span style="align-self:center; margin-inline-end:8px;">תצוגה:</span>
+            <button type="button" mat-stroked-button color="primary" [disabled]="surgGrouping==='year'" (click)="setSurgGrouping('year')">שנה</button>
+            <button type="button" mat-stroked-button color="primary" [disabled]="surgGrouping==='quarter'" (click)="setSurgGrouping('quarter')">רבעון</button>
+            <button type="button" mat-stroked-button color="primary" [disabled]="surgGrouping==='month'" (click)="setSurgGrouping('month')">חודש</button>
           </div>
-
-          <img
-            src="../../assets/excel.png"
-            alt="Download"
-            (click)="exportAggSurgeryToExcel()"
-            class="download-icon"
-            width="40"
-          />
+    
+          <!-- NEW: toggle graph/table -->
+          <button type="button" mat-icon-button (click)="toggleSurgGraph()" matTooltip="הצג/הסתר גרף">
+            <mat-icon>{{ showSurgGraph ? 'table_chart' : 'bar_chart' }}</mat-icon>
+          </button>
+    
+          <img src="../../assets/excel.png" alt="Excel"
+                (click)="exportAggSurgeryToExcel()" class="download-icon" width="40" />
         </div>
-
-        <!-- Aggregates table -->
-        <div class="table-responsive">
-          <mat-table [dataSource]="aggSurg" class="mat-elevation-z8">
-
-            <!-- year -->
+    
+        <!-- NEW: Graph view -->
+        <app-trauma-graph *ngIf="showSurgGraph" [config]="surgGraphData" [height]="360"></app-trauma-graph>
+    
+        <!-- Table view -->
+        <div class="table-responsive" *ngIf="!showSurgGraph">
+          <table mat-table [dataSource]="surgDataSource" matSort #surgSort="matSort" class="mat-elevation-z8 full-width">
+    
             <ng-container matColumnDef="year">
-              <mat-header-cell *matHeaderCellDef> שנה </mat-header-cell>
-              <mat-cell *matCellDef="let r"> {{ r.year }} </mat-cell>
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>שנה</th>
+              <td mat-cell *matCellDef="let r">{{ r.year }}</td>
             </ng-container>
-
-            <!-- quarter -->
+    
             <ng-container matColumnDef="quarter">
-              <mat-header-cell *matHeaderCellDef> רבעון </mat-header-cell>
-              <mat-cell *matCellDef="let r"> {{ r.quarter }} </mat-cell>
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>רבעון</th>
+              <td mat-cell *matCellDef="let r">{{ r.quarter }}</td>
             </ng-container>
-
-            <!-- month -->
+    
             <ng-container matColumnDef="month">
-              <mat-header-cell *matHeaderCellDef> חודש </mat-header-cell>
-              <mat-cell *matCellDef="let r"> {{ r.month }} </mat-cell>
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>חודש</th>
+              <td mat-cell *matCellDef="let r">{{ r.month }}</td>
             </ng-container>
-
+    
             <ng-container matColumnDef="under26">
-              <mat-header-cell *matHeaderCellDef> מתחת ל-26 דק׳ </mat-header-cell>
-              <mat-cell *matCellDef="let r"> {{ r.under26 }} </mat-cell>
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>מתחת ל-26 דק׳</th>
+              <td mat-cell *matCellDef="let r">{{ r.under26 }}</td>
             </ng-container>
-
+    
             <ng-container matColumnDef="between26_60">
-              <mat-header-cell *matHeaderCellDef> בין 26 ל-60 דק׳ </mat-header-cell>
-              <mat-cell *matCellDef="let r"> {{ r.between26_60 }} </mat-cell>
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>בין 26 ל-60 דק׳</th>
+              <td mat-cell *matCellDef="let r">{{ r.between26_60 }}</td>
             </ng-container>
-
+    
             <ng-container matColumnDef="over60">
-              <mat-header-cell *matHeaderCellDef> מעל 60 דק׳ </mat-header-cell>
-              <mat-cell *matCellDef="let r"> {{ r.over60 }} </mat-cell>
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>מעל 60 דק׳</th>
+              <td mat-cell *matCellDef="let r">{{ r.over60 }}</td>
             </ng-container>
-
+    
             <ng-container matColumnDef="total">
-              <mat-header-cell *matHeaderCellDef> סה״כ מקרים </mat-header-cell>
-              <mat-cell *matCellDef="let r"> {{ r.total }} </mat-cell>
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>סה״כ מקרים</th>
+              <td mat-cell *matCellDef="let r">{{ r.total }}</td>
             </ng-container>
-
-            <mat-header-row *matHeaderRowDef="surgColumns"></mat-header-row>
-            <mat-row *matRowDef="let row; columns: surgColumns"></mat-row>
-          </mat-table>
+    
+            <tr mat-header-row *matHeaderRowDef="surgColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: surgColumns"></tr>
+          </table>
+    
+          <mat-paginator #surgPaginator
+                        [pageSize]="25"
+                        [pageSizeOptions]="[10,25,50,100]"
+                        showFirstLastButtons>
+          </mat-paginator>
         </div>
-
-       
       </div>
     </mat-tab>
+    
 
   </mat-tab-group>
 </div>
