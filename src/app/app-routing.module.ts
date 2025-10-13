@@ -106,6 +106,7 @@ import { LinksLogComponent } from './links-log/links-log.component';
 import { PptDuplicateComponent } from './ppt-duplicate/ppt-duplicate.component';
 import { DoctorAuthorizationsComponent } from './doctor-authorizations/doctor-authorizations.component';
 import { PsychologyComponent } from './chameleon-reports/psychology/psychology.component';
+import { AmbulatoryBirthdayUpdateCRMComponent } from './ServiceCRM/ambulatory-birthday-update-crm/ambulatory-birthday-update-crm.component';
 
 const routes: Routes = [
   //', component: UsersComponent },
@@ -227,8 +228,9 @@ const routes: Routes = [
    { path: 'UserCRM', component: UserCRMComponent , data: { title: ' דאשבורד נציג - CRM  ' }},
    { path: 'AdminCrm', component: AdminCrmComponent , data: { title: ' דאשבורד מנהל - CRM  ' }},
    { path: 'CRMmain', component: MainScreenComponent , data: { title: 'מסך הבית ' }},
-   { path: 'BirthdayUpdateCRM', component: BirthdayUpdateCRMComponent , data: { title: 'מסך יומלדת ' }},
+   { path: 'BirthdayUpdateCRM', component: BirthdayUpdateCRMComponent , data: { title: '- מסך יומלדת  - מאושפזים' }},
    { path: 'questionnaire-remarks', component: QuestionnaireRemarksComponent , data: { title: 'מערכת ניהול תגובות' }},
+   { path: 'AmbulatoryBirthdayUpdate', component: AmbulatoryBirthdayUpdateCRMComponent , data: { title: 'מסך יומלדת - אמבולטורי' }},
 
 
 
