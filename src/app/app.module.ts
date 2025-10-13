@@ -198,6 +198,7 @@ import { PptDuplicateComponent } from './ppt-duplicate/ppt-duplicate.component';
 import { DoctorAuthorizationsComponent } from './doctor-authorizations/doctor-authorizations.component';
 import { PsychologyComponent } from './chameleon-reports/psychology/psychology.component';
 import { TraumaGraphComponent } from './chameleon-reports/trauma-patients/trauma-graph/trauma-graph.component';
+import { AmbulatoryBirthdayUpdateCRMComponent } from './ServiceCRM/ambulatory-birthday-update-crm/ambulatory-birthday-update-crm.component';
 
 
 export const MY_DATE_FORMATS: MatDateFormats = {
@@ -372,7 +373,8 @@ export function playerFactory() {
     PptDuplicateComponent,
     DoctorAuthorizationsComponent,
     PsychologyComponent,
-    TraumaGraphComponent
+    TraumaGraphComponent,
+    AmbulatoryBirthdayUpdateCRMComponent
  
 
   

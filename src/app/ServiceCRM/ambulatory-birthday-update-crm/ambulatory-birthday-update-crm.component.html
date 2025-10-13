@@ -1,0 +1,114 @@
+<app-spinner [isLoading]="isLoading"></app-spinner>
+
+<mat-card *ngIf="!isLoading" class="crm-container">
+  <mat-card-title>יומולדת אמבולטורי - CRM</mat-card-title>
+
+  <mat-card class="crm-card lottie-full-card">
+    <ng-lottie
+      [options]="{
+        path: 'assets/Animation - 1743598989132.json',
+        autoplay: true,
+        loop: true
+      }"
+      (animationCreated)="animationCreated($event)">
+    </ng-lottie>
+  </mat-card>
+
+  <div *ngIf="showLottie" class="balloon-animation-overlay">
+    <ng-lottie
+      [options]="lottieOptions"
+      (animationCreated)="animationCreated($event)"
+      width="400px"
+      height="400px">
+    </ng-lottie>
+  </div>
+
+  <mat-form-field class="long-search-bar" style="flex: 1; margin-right: 10px;">
+    <mat-label class="filters" style="color: blue">חיפוש</mat-label>
+    <input matInput (keyup)="applyFilter($event)" class="search-input" placeholder="הזן ערך לחיפוש..." />
+  </mat-form-field>
+
+  <div class="table-container">
+    <table mat-table [dataSource]="dataSource" matSort class="mat-elevation-z8" dir="rtl">
+
+      <ng-container matColumnDef="caseNumber">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>מספר מקרה</th>
+        <td mat-cell *matCellDef="let row">{{ row.caseNumber }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="departmentName">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>מחלקה</th>
+        <td mat-cell *matCellDef="let row">{{ row.departmentName }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="enterDepartDate">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>תאריך קבלה</th>
+        <td mat-cell *matCellDef="let row">{{ row.enterDepartDate | date: 'dd/MM/yyyy' }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="enterDepartTime">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>שעת קבלה</th>
+        <td mat-cell *matCellDef="let row">{{ row.enterDepartTime }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="exitHospTime">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>שעת שחרור</th>
+        <td mat-cell *matCellDef="let row">{{ row.exitHospTime }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="firstName">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>שם פרטי</th>
+        <td mat-cell *matCellDef="let row">{{ row.firstName }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="lastName">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>שם משפחה</th>
+        <td mat-cell *matCellDef="let row">{{ row.lastName }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="telephone">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>טלפון</th>
+        <td mat-cell *matCellDef="let row">{{ row.telephone }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="mobile">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>נייד</th>
+        <td mat-cell *matCellDef="let row">{{ row.mobile }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="birthDate">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>תאריך לידה</th>
+        <td mat-cell *matCellDef="let row">{{ row.birthDate | date: 'dd/MM/yyyy' }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="isBirthday">
+        <th mat-header-cell *matHeaderCellDef>יומולדת?</th>
+        <td mat-cell *matCellDef="let row">
+          <span [ngClass]="row.isBirthday ? 'birthday-yes' : 'birthday-no'">
+            {{ row.isBirthday ? 'כן' : 'לא' }}
+          </span>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="birthdayUpdate">
+        <th mat-header-cell *matHeaderCellDef>עדכון יומולדת</th>
+        <td mat-cell *matCellDef="let row">
+          <mat-slide-toggle
+            [checked]="row.birthdayUpdate === 'yes'"
+            (change)="onBirthdayToggle(row, $event)">
+          </mat-slide-toggle>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="birthdayUpdateDate">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>תאריך עדכון יומולדת</th>
+        <td mat-cell *matCellDef="let row">{{ row.birthdayUpdateDate | date: 'dd/MM/yyyy' }}</td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    </table>
+
+    <mat-paginator [pageSizeOptions]="[10, 25, 50]" showFirstLastButtons></mat-paginator>
+  </div>
+</mat-card>
