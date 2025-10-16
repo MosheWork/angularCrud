@@ -3,6 +3,7 @@ import {
   AfterViewInit, ViewChild, ElementRef, OnDestroy
 } from '@angular/core';
 import { Chart, registerables } from 'chart.js';
+import ChartDataLabels from 'chartjs-plugin-datalabels';
 
 export type TraumaChartConfig = { labels: string[]; datasets: any[] };
 
@@ -14,11 +15,14 @@ export type TraumaChartConfig = { labels: string[]; datasets: any[] };
 export class TraumaGraphComponent implements OnChanges, AfterViewInit, OnDestroy {
   @Input() config?: TraumaChartConfig;
 
-  /** Hide numbers above bars (chartjs-plugin-datalabels). Default: false (hidden). */
+  /** Show numbers above bars (via chartjs-plugin-datalabels). Default: false. */
   @Input() showValues = false;
 
-  /** Optional height */
+  /** Optional canvas height (px). */
   @Input() height = 360;
+
+  /** If true, Y-axis is 0–100 and values/tooltip are shown as % */
+  @Input() percent = false;
 
   @ViewChild('canvasRef', { static: false }) canvasRef!: ElementRef<HTMLCanvasElement>;
   private chart?: Chart;
@@ -29,10 +33,15 @@ export class TraumaGraphComponent implements OnChanges, AfterViewInit, OnDestroy
     'rgba(153, 102, 255, 0.6)', 'rgba(255, 159, 64, 0.6)',
   ];
 
-  constructor() { Chart.register(...registerables); }
+  constructor() {
+    // Register core chart types + the datalabels plugin
+    Chart.register(...registerables, ChartDataLabels);
+  }
 
   ngAfterViewInit(): void { this.safeRender(); }
-  ngOnChanges(changes: SimpleChanges): void { if (changes['config']) this.safeRender(); }
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['config'] || changes['percent'] || changes['showValues']) this.safeRender();
+  }
   ngOnDestroy(): void { this.destroyChart(); }
 
   private safeRender(): void { requestAnimationFrame(() => this.render()); }
@@ -41,12 +50,12 @@ export class TraumaGraphComponent implements OnChanges, AfterViewInit, OnDestroy
     if (!this.canvasRef?.nativeElement) return;
     if (!this.config?.labels || !this.config?.datasets) return;
 
-    // apply default colors if dataset has none
+    // Apply default colors if a dataset has none
     const datasets = this.config.datasets.map((ds, i) => {
       const bg = ds.backgroundColor ?? this.palette[i % this.palette.length];
       const border = Array.isArray(bg)
-        ? bg.map((c: string) => c.replace('0.6','1'))
-        : (bg as string).replace('0.6','1');
+        ? bg.map((c: string) => c.replace('0.6', '1'))
+        : (bg as string).replace('0.6', '1');
       return {
         barPercentage: 0.7,
         categoryPercentage: 0.6,
@@ -60,27 +69,78 @@ export class TraumaGraphComponent implements OnChanges, AfterViewInit, OnDestroy
     this.destroyChart();
     const ctx = this.canvasRef.nativeElement.getContext('2d')!;
 
-    // plugin options (will be ignored if datalabels plugin isn’t registered globally)
-    const pluginOptions: any = {
-      legend: { position: 'top' },
-      tooltip: { mode: 'index', intersect: false },
-      datalabels: this.showValues ? { anchor: 'end', align: 'top', formatter: (v: number) => v } : { display: false }
-    };
-
+    const isPercent = this.percent === true;
     this.chart = new Chart(ctx, {
       type: 'bar',
       data: { labels: this.config.labels, datasets },
       options: {
         responsive: true,
         maintainAspectRatio: false,
-        plugins: pluginOptions,
+    
+        // room for bottom "count/total" labels
+        layout: { padding: { top: 6, right: 8, bottom: 28, left: 8 } },
+    
+        plugins: {
+          legend: { position: 'top' },
+          tooltip: {
+            mode: 'index',
+            intersect: false,
+            callbacks: isPercent
+              ? { label: (c: any) => `${Math.round(c.raw)}%` }
+              : undefined
+          },
+          datalabels: this.showValues
+            ? {
+                // two labels per bar: top % and bottom count/total
+                labels: {
+                  top: {
+                    anchor: 'end',
+                    align: 'top',
+                    offset: 2,
+                    formatter: (v: number) => (isPercent ? `${Math.round(v)}%` : `${v}`),
+                    font: { weight: 'bold' },
+                    clip: false
+                  },
+                  bottom: {
+                    anchor: 'start',
+                    align: 'bottom',
+                    offset: 4,
+                    formatter: (_: number, ctx: any) => {
+                      const ds: any = ctx.dataset;
+                      const count = ds?.rawCounts?.[ctx.dataIndex];
+                      const total = ds?.rawTotal;
+                      return count != null && total != null ? `${count}/${total}` : '';
+                    },
+                    clip: false
+                  }
+                }
+              }
+            : { display: false }
+        },
+    
         scales: {
-          x: { stacked: false },
-          y: { beginAtZero: true, stacked: false, ticks: { precision: 0 } }
+          x: {
+            position: 'top',      // bucket labels at top
+            ticks: { padding: 8 }
+          },
+          y: {
+            beginAtZero: true,
+            max: isPercent ? 100 : undefined,
+            ticks: isPercent
+              ? { precision: 0, callback: (v: any) => `${v}%` }
+              : { precision: 0 }
+          }
         }
       } as any
     });
+    
+
+    // Optional: ensure the canvas area respects the height input
+    // (If your template container already controls height, you can remove this line)
+    this.canvasRef.nativeElement.style.height = `${this.height}px`;
   }
 
-  private destroyChart(): void { if (this.chart) { this.chart.destroy(); this.chart = undefined; } }
+  private destroyChart(): void {
+    if (this.chart) { this.chart.destroy(); this.chart = undefined; }
+  }
 }

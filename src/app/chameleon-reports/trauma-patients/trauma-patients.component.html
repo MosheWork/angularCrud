@@ -213,25 +213,40 @@
     </div>
 
     <!-- ===== GRAPH VIEW (only when toggled on) ===== -->
-    <ng-container *ngIf="showCTGraph">
-      <!-- Not month: a single chart -->
-      <ng-container *ngIf="ctGrouping !== 'month'; else ctMonthSplit">
-        <app-trauma-graph
-          [config]="ctGraphData"
-          [height]="360"
-          [showValues]="true">
-        </app-trauma-graph>
-      </ng-container>
+  <!-- ===== GRAPH VIEW (only when toggled on) ===== -->
+<ng-container *ngIf="showCTGraph">
+  <ng-container [ngSwitch]="ctGrouping">
 
-      <!-- Month: split into 3 charts -->
-      <ng-template #ctMonthSplit>
-        <div class="three-grid">
-          <app-trauma-graph [config]="ctMonthCharts?.under"   [height]="320" [showValues]="true"></app-trauma-graph>
-          <app-trauma-graph [config]="ctMonthCharts?.between" [height]="320" [showValues]="true"></app-trauma-graph>
-          <app-trauma-graph [config]="ctMonthCharts?.over"    [height]="320" [showValues]="true"></app-trauma-graph>
-        </div>
-      </ng-template>
+    <!-- Year: percent chart (3 buckets) -->
+    <app-trauma-graph
+      *ngSwitchCase="'year'"
+      [config]="ctBucketPercentChart"
+      [height]="360"
+      [showValues]="true"
+      [percent]="true">
+    </app-trauma-graph>
+
+    <!-- Quarter: grouped by quarter (uses ctGraphData built in updateAggCT) -->
+    <app-trauma-graph
+    *ngSwitchCase="'quarter'"
+    [config]="ctGraphData"
+    [height]="360"
+    [showValues]="true"
+    [percent]="true">     <!-- NEW -->
+  </app-trauma-graph>
+
+    <!-- Month: split into 3 charts -->
+    <ng-container *ngSwitchCase="'month'">
+      <div class="three-grid">
+        <app-trauma-graph [config]="ctMonthCharts?.under"   [height]="320" [showValues]="true"></app-trauma-graph>
+        <app-trauma-graph [config]="ctMonthCharts?.between" [height]="320" [showValues]="true"></app-trauma-graph>
+        <app-trauma-graph [config]="ctMonthCharts?.over"    [height]="320" [showValues]="true"></app-trauma-graph>
+      </div>
     </ng-container>
+
+  </ng-container>
+</ng-container>
+
 
     <!-- ===== TABLE VIEW (only when graph is OFF) ===== -->
     <div class="table-responsive" *ngIf="!showCTGraph">
@@ -317,25 +332,40 @@
     </div>
 
     <!-- ===== GRAPH VIEW (only when toggled on) ===== -->
-    <ng-container *ngIf="showSurgGraph">
-      <!-- Not month: a single chart -->
-      <ng-container *ngIf="surgGrouping !== 'month'; else surgMonthSplit">
-        <app-trauma-graph
-          [config]="surgGraphData"
-          [height]="360"
-          [showValues]="true">
-        </app-trauma-graph>
-      </ng-container>
+ <!-- ===== GRAPH VIEW (only when toggled on) ===== -->
+<ng-container *ngIf="showSurgGraph">
+  <ng-container [ngSwitch]="surgGrouping">
 
-      <!-- Month: split into 3 charts -->
-      <ng-template #surgMonthSplit>
-        <div class="three-grid">
-          <app-trauma-graph [config]="surgMonthCharts?.under"   [height]="320" [showValues]="true"></app-trauma-graph>
-          <app-trauma-graph [config]="surgMonthCharts?.between" [height]="320" [showValues]="true"></app-trauma-graph>
-          <app-trauma-graph [config]="surgMonthCharts?.over"    [height]="320" [showValues]="true"></app-trauma-graph>
-        </div>
-      </ng-template>
+    <!-- Year: percent chart (3 buckets) -->
+    <app-trauma-graph
+      *ngSwitchCase="'year'"
+      [config]="surgBucketPercentChart"
+      [height]="360"
+      [showValues]="true"
+      [percent]="true">
+    </app-trauma-graph>
+
+    <!-- Quarter: grouped by quarter (uses surgGraphData built in updateAggSurg) -->
+    <app-trauma-graph
+    *ngSwitchCase="'quarter'"
+    [config]="surgGraphData"
+    [height]="360"
+    [showValues]="true"
+    [percent]="true">     <!-- NEW -->
+  </app-trauma-graph>
+
+    <!-- Month: split into 3 charts -->
+    <ng-container *ngSwitchCase="'month'">
+      <div class="three-grid">
+        <app-trauma-graph [config]="surgMonthCharts?.under"   [height]="320" [showValues]="true"></app-trauma-graph>
+        <app-trauma-graph [config]="surgMonthCharts?.between" [height]="320" [showValues]="true"></app-trauma-graph>
+        <app-trauma-graph [config]="surgMonthCharts?.over"    [height]="320" [showValues]="true"></app-trauma-graph>
+      </div>
     </ng-container>
+
+  </ng-container>
+</ng-container>
+
 
     <!-- ===== TABLE VIEW (only when graph is OFF) ===== -->
     <div class="table-responsive" *ngIf="!showSurgGraph">

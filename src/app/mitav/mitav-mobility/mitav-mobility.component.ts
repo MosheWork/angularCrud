@@ -216,17 +216,21 @@ invalidMobilityCasesBelowThreshold: number = 0;
 applyFilters(): void {
   let filteredData = [...this.originalData];
 
-  // ✅ Apply Date Filter (Check Admission and Release Dates)
-  if (this.startDate || this.endDate) {
-    filteredData = filteredData.filter((item) => {
-      const admissionDate = item.admissionDate? new Date(item.admissionDate) : null;
-      const releaseDate = item.releaseDate? new Date(item.releaseDate) : null;
-      return (
-        (!this.startDate || (admissionDate && admissionDate >= this.startDate) || (releaseDate && releaseDate >= this.startDate)) &&
-        (!this.endDate || (admissionDate && admissionDate <= this.endDate) || (releaseDate && releaseDate <= this.endDate))
-      );
-    });
-  }
+
+ // BEFORE (keeps rows by admission OR release date)
+// AFTER (match Summary: admission date ONLY)
+if (this.startDate || this.endDate) {
+  filteredData = filteredData.filter((item) => {
+    const admissionDate = item.admissionDate ? new Date(item.admissionDate) : null;
+    if (!admissionDate) return false;
+    return (
+      (!this.startDate || admissionDate >= this.startDate) &&
+      (!this.endDate   || admissionDate <= this.endDate)
+    );
+  });
+}
+
+
 
   // ✅ Apply Department Filter
   if (this.selectedDepartments.length > 0) {
@@ -235,14 +239,14 @@ applyFilters(): void {
     );
   }
 
-  // ✅ Apply Year Filter (Check Both Dates)
-  if (this.selectedYear) {
-    filteredData = filteredData.filter((item) => {
-      const admissionYear = item.admissionDate? new Date(item.admissionDate).getFullYear() : null;
-      const releaseYear = item.releaseDate? new Date(item.releaseDate).getFullYear() : null;
-      return (admissionYear === this.selectedYear) || (releaseYear === this.selectedYear);
-    });
-  }
+// AFTER: admissionYear ONLY (match Summary)
+if (this.selectedYear) {
+  filteredData = filteredData.filter((item) => {
+    const admissionYear = item.admissionDate ? new Date(item.admissionDate).getFullYear() : null;
+    return admissionYear === this.selectedYear;
+  });
+}
+
 
   // ✅ Apply Quarter Filter (Fix Quarter Mapping)
   if (this.selectedQuarter) {

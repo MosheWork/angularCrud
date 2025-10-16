@@ -89,39 +89,32 @@ dateTo: Date | null = null;
   
     this.http.get<any[]>(`${environment.apiUrl}MitavSummary/GeriatricConsiliumsRaw`).subscribe(
       (res: any[]) => {
-        const filtered = res.filter(entry => {
-          const date = new Date(entry.entry_Date);
-          if (!date || isNaN(date.getTime())) return false;
+        // 1) admissions currently visible on the page (already filtered by ATD_Admission_Date)
+        const visibleAdmissionNos = new Set(
+          (this.deliriumData || [])
+            .map(d => d.admission_No ?? d.admissionNo ?? d.Admission_No)
+            .filter(Boolean)
+        );
   
-          const year = date.getFullYear();
-          const quarter = Math.ceil((date.getMonth() + 1) / 3);
+        // 2) normalize the API rows from GeriatricConsiliumsRaw
+        const rows = (res || []).map(r => ({
+          admissionNo: r.Admission_No ?? r.admission_No ?? r.admissionNo ?? null,
+          entryDate:   r.Entry_Date   ?? r.entry_Date   ?? r.entrydate   ?? null
+        }));
   
-          const yearPass = !this.selectedYear || year === this.selectedYear;
-          const quarterPass = !this.selectedQuarter || quarter === this.selectedQuarter;
+        // 3) keep only consults that belong to admissions currently in scope
+        const filtered = rows.filter(r => r.admissionNo && visibleAdmissionNos.has(r.admissionNo));
   
-          return yearPass && quarterPass;
-        });
-        console.log('📊 Filtered rows:', filtered.length);
-        console.log('📊 Raw rows:', res.length);
-        console.log(filtered);
-console.log(filtered.map(row => row.admission_No));
+        // 4) count UNIQUE admissions with any consult (not consult events)
+        const uniqueAdmissions = new Set(filtered.map(r => r.admissionNo)).size;
   
-        // ✅ Your Row_IDs should already be unique thanks to SQL, but you can wrap a Set if you want safety:
-        const totalConsiliums = filtered.length;
-        const uniqueRowIDs = new Set(filtered.map(row => row.Row_ID)).size;
-  
-        if (totalConsiliums !== uniqueRowIDs) {
-          console.warn('⚠️ Row_ID duplicates found in response! Double-check your SQL join.');
-        }
-  
-        const uniqueAdmissions = new Set(filtered.map(row => row.admission_No)).size;
+        // (Optional) if you also want number of consult events:
+        const totalConsultEvents = filtered.length;
   
         this.geriatricSummary = {
-          uniqueAdmissions: uniqueAdmissions,
-          totalConsiliums: totalConsiliums
+          uniqueAdmissions,            // "סה״כ מאושפזים 75+ שקיבלו ייעוץ גריאטרי"
+          totalConsiliums: uniqueAdmissions // or set to totalConsultEvents if that's what you want to show
         };
-  
-        console.log('✅ Geriatric Summary:', this.geriatricSummary);
   
         this.isLoading = false;
       },
@@ -131,6 +124,8 @@ console.log(filtered.map(row => row.admission_No));
       }
     );
   }
+  
+  
   
   
   

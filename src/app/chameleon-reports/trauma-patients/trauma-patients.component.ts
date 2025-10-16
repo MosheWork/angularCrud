@@ -10,6 +10,11 @@ import { MatTableDataSource } from '@angular/material/table';
 import { MatSort } from '@angular/material/sort';
 import { FormControl, FormGroup, FormBuilder } from '@angular/forms';
 import { environment } from '../../../environments/environment';
+import { Chart, BarController, BarElement, CategoryScale, LinearScale, Tooltip, Legend } from 'chart.js';
+import ChartDataLabels from 'chartjs-plugin-datalabels';
+
+Chart.register(BarController, BarElement, CategoryScale, LinearScale, Tooltip, Legend, ChartDataLabels);
+type TraumaChartConfig = { labels: string[]; datasets: any[] };
 
 export interface TimingRow {
   caseNumber: string;
@@ -126,7 +131,8 @@ export class TraumaPatientsComponent implements OnInit {
   get displayedColumnsWithToggle(): string[] {
     return ['relevantToggle', ...this.displayedColumns];
   }
-//
+
+
 // detail rows: one per patient that has valid times and ShockRoom === 'X'
 ctDetails: Array<{
   caseNumber: string;
@@ -146,6 +152,17 @@ surgeryDetails: Array<{
   minutes: number;
 }> = [];
 
+// one simple 3-bar chart per flow (CT / Surgery)
+public ctBucketPercentChart: TraumaChartConfig = { labels: [], datasets: [] };
+public surgBucketPercentChart: TraumaChartConfig = { labels: [], datasets: [] };
+public get isCTMonth(): boolean   { return this.ctGrouping === 'month'; }
+public get isSurgMonth(): boolean { return this.surgGrouping === 'month'; }
+// keep your Hebrew X labels
+private readonly BUCKET_LABELS_HE: string[] = [
+  'מתחת ל-26 דק׳',
+  'בין 26 ל-60 דק׳',
+  'מעל 60 דק׳'
+];
 // bucket summaries
 ctBuckets: Array<{ bucket: string; count: number }> = [];
 surgeryBuckets: Array<{ bucket: string; count: number }> = [];
@@ -604,15 +621,21 @@ private buildBuckets(details: Array<{ minutes: number }>) {
 
 /** call this whenever data/filters change */
 private recomputeMetrics() {
-  // work on the *currently filtered* rows; change to originalData if you prefer
   const base = this.filteredData?.length ? this.filteredData as TraumaPatient[] : this.originalData;
 
-  this.ctDetails     = this.buildDetails(base, 'ctTime');
-  this.ctBuckets     = this.buildBuckets(this.ctDetails);
+  this.ctDetails      = this.buildDetails(base, 'ctTime');
+  this.ctBuckets      = this.buildBuckets(this.ctDetails);
 
   this.surgeryDetails = this.buildDetails(base, 'surgeryTime');
   this.surgeryBuckets = this.buildBuckets(this.surgeryDetails);
+
+  // NEW: percent charts
+  const ctCounts   = this.getBucketCounts(this.ctDetails);
+  const surgCounts = this.getBucketCounts(this.surgeryDetails);
+  this.ctBucketPercentChart   = this.makeBucketPercentChart('קבלה → CT', ctCounts);
+  this.surgBucketPercentChart = this.makeBucketPercentChart('קבלה → ניתוחים', surgCounts);
 }
+
 
   // --- build timing tables from raw data (originalData) ---
   private buildTimingTables(): void {
@@ -902,18 +925,15 @@ private makeSeriesChartJs(
 
   return { labels, datasets };
 }
-/** Chart config: 3 buckets on X; inside each bucket sub-bars for every (Year × Quarter). */
+
 private makeQuarterSubgroupChartConfig(
   rows: Array<{ year:number; quarter:number; under26:number; between26_60:number; over60:number; }>
 ): { labels: string[]; datasets: any[] } {
 
-  // X-axis buckets
   const labels = ['מתחת ל-26 דק׳', 'בין 26 ל-60 דק׳', 'מעל 60 דק׳'];
 
-  // Unique years present (sorted ascending; change to desc if you prefer)
   const years = Array.from(new Set(rows.map(r => r.year))).sort((a,b)=>a-b);
 
-  // Colors by quarter (consistent across years)
   const qColor: Record<number, string> = {
     1: 'rgba(54, 162, 235, 0.6)',   // Q1
     2: 'rgba(255, 99, 132, 0.6)',   // Q2
@@ -921,21 +941,22 @@ private makeQuarterSubgroupChartConfig(
     4: 'rgba(75, 192, 192, 0.6)'    // Q4
   };
 
-  const datasets: any[] = [];
+  const pct = (n:number, denom:number) => denom ? (n * 100) / denom : 0;
 
-  // Order datasets as: 2023-Q1..Q4, 2024-Q1..Q4, 2025-Q1..Q4 ...
+  const datasets: any[] = [];
   for (const y of years) {
     for (let q = 1; q <= 4; q++) {
       const r = rows.find(x => x.year === y && x.quarter === q);
+      const u = r?.under26 ?? 0;
+      const b = r?.between26_60 ?? 0;
+      const o = r?.over60 ?? 0;
+      const total = u + b + o;
 
       datasets.push({
         label: `${y}-Q${q}`,
-        data: [
-          r?.under26 ?? 0,
-          r?.between26_60 ?? 0,
-          r?.over60 ?? 0
-        ],
-        // Look nice when many bars:
+        data: [ pct(u,total), pct(b,total), pct(o,total) ], // <-- percentages
+        rawCounts: [u, b, o],                               // <-- for "2/50" bottom labels
+        rawTotal: total,
         barPercentage: 0.85,
         categoryPercentage: 0.9,
         backgroundColor: qColor[q],
@@ -1004,6 +1025,41 @@ public ctMonthCharts?: { under: {labels:string[];datasets:any[]},
 public surgMonthCharts?: { under: {labels:string[];datasets:any[]},
                            between: {labels:string[];datasets:any[]},
                            over: {labels:string[];datasets:any[]} };
+
+/** Count rows into the three buckets */
+private getBucketCounts(details: Array<{ minutes: number }>) {
+  let u = 0, b = 0, o = 0;
+  for (const d of details) {
+    if (d.minutes < 26) u++;
+    else if (d.minutes <= 60) b++;
+    else o++;
+  }
+  const total = u + b + o;
+  return { u, b, o, total };
+}
+
+/** Build a 3-bar % chart (with labels above bars) */
+private makeBucketPercentChart(
+  title: string,
+  counts: { u:number; b:number; o:number; total:number }
+): TraumaChartConfig {
+  const { u, b, o, total } = counts;
+  const pct = (n:number) => (total ? (n * 100) / total : 0);
+
+  return {
+    labels: ['מתחת ל-26 דק׳', 'בין 26 ל-60 דק׳', 'מעל 60 דק׳'],
+    datasets: [{
+      label: title,
+      data: [pct(u), pct(b), pct(o)],               // % values for Y
+      backgroundColor: ['#7fc97f', '#beaed4', '#fdc086'],
+      borderColor:    ['#7fc97f', '#beaed4', '#fdc086'],
+      borderWidth: 1,
+      // 👇 custom fields for bottom labels
+      rawCounts: [u, b, o],
+      rawTotal: total
+    }]
+  };
+}
 
 
 

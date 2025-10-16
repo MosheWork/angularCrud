@@ -165,6 +165,15 @@ export class MitavSummaryComponent implements OnInit {
   
     this.recalculateTables();
   }
+// --- helpers: numeric parsing + dept normalization ---
+private asNum(v: any): number {
+  if (v === null || v === undefined) return NaN;
+  const n = parseFloat(String(v).replace('%', '').trim());
+  return isNaN(n) ? NaN : n;
+}
+private is70Plus = (v: any) => this.asNum(v) >= 70;
+private normDept = (s: any) => String(s ?? '').trim();
+
   
   recalculateTables(): void {
     const data = this.filteredData;
@@ -189,20 +198,23 @@ export class MitavSummaryComponent implements OnInit {
       'מחלקת פנימית ב', 'מחלקת כירורגיה'
     ];
   
-    const filteredData70 = this.filteredData.filter(row => row.totalPercentage >= 70);
+    const filteredData70 = this.filteredData.filter(row => this.is70Plus(row.totalPercentage));
   
     // 1) First table
     const transformedData = {
       totalPatients: data.length,
       internalAndSurgicalPatients: data.filter(row =>
-        internalAndSurgicalDepartments.includes(row.unitName)
+        internalAndSurgicalDepartments.includes(this.normDept(row.unitName))
       ).length,
       walkingProgramPatients: data.filter(row =>
-        walkingProgramDepartments.includes(row.unitName)
+        walkingProgramDepartments.includes(this.normDept(row.unitName))
       ).length,
       walkingProgramAchieved70: data.filter(row =>
-        walkingProgramDepartments.includes(row.unitName) && row.totalPercentage >= 70
+        walkingProgramDepartments.includes(this.normDept(row.unitName)) &&
+        this.is70Plus(row.totalPercentage)
       ).length
+      
+      
     };
     this.tableData = [transformedData];
   
@@ -210,10 +222,11 @@ export class MitavSummaryComponent implements OnInit {
     this.departmentTableData = walkingProgramDepartments.map(department => ({
       departmentType: department.includes('פנימית') ? "פנימית" : "כירורגית",
       departmentName: department,
-      totalPatients: data.filter(row => row.unitName === department).length,
+      totalPatients: data.filter(row => this.normDept(row.unitName) === department).length,
       walkingParticipants: data.filter(row =>
-        row.unitName === department && row.totalPercentage >= 70
+        this.normDept(row.unitName) === department && this.is70Plus(row.totalPercentage)
       ).length
+      
     }));
   
     // helper for age/gender
@@ -243,14 +256,15 @@ export class MitavSummaryComponent implements OnInit {
         achieved70Male: data.filter(row =>
           row.ageYears >= 65 && row.ageYears <= 74 &&
           row.gender.trim() === "זכר" &&
-          walkingProgramDepartments.includes(row.unitName) &&
-          row.totalPercentage >= 70
+          walkingProgramDepartments.includes(this.normDept(row.unitName)) &&
+          this.is70Plus(row.totalPercentage)
         ).length,
+        
         achieved70Female: data.filter(row =>
           row.ageYears >= 65 && row.ageYears <= 74 &&
           row.gender.trim() === "נקבה" &&
           walkingProgramDepartments.includes(row.unitName) &&
-          row.totalPercentage >= 70
+          this.is70Plus(row.totalPercentage)
         ).length
       },
       {
@@ -271,13 +285,13 @@ export class MitavSummaryComponent implements OnInit {
           row.ageYears >= 75 && row.ageYears <= 84 &&
           row.gender.trim() === "זכר" &&
           walkingProgramDepartments.includes(row.unitName) &&
-          row.totalPercentage >= 70
+          this.is70Plus(row.totalPercentage)
         ).length,
         achieved70Female: data.filter(row =>
           row.ageYears >= 75 && row.ageYears <= 84 &&
           row.gender.trim() === "נקבה" &&
           walkingProgramDepartments.includes(row.unitName) &&
-          row.totalPercentage >= 70
+          this.is70Plus(row.totalPercentage)
         ).length
       },
       {
@@ -298,13 +312,13 @@ export class MitavSummaryComponent implements OnInit {
           row.ageYears >= 85 &&
           row.gender.trim() === "זכר" &&
           walkingProgramDepartments.includes(row.unitName) &&
-          row.totalPercentage >= 70
+          this.is70Plus(row.totalPercentage)
         ).length,
         achieved70Female: data.filter(row =>
           row.ageYears >= 85 &&
           row.gender.trim() === "נקבה" &&
           walkingProgramDepartments.includes(row.unitName) &&
-          row.totalPercentage >= 70
+          this.is70Plus(row.totalPercentage)
         ).length
       }
     ];
@@ -335,11 +349,12 @@ export class MitavSummaryComponent implements OnInit {
       ).length;
 
     const getWalkingProgramAchievedData = (minAge: number, maxAge: number, daysMin: number, daysMax: number) =>
-      filteredData70.filter(row =>
-        row.ageYears >= minAge && row.ageYears <= maxAge &&
-        walkingProgramDepartments.includes(row.unitName) &&
-        row.totalDaysInHospital >= daysMin && row.totalDaysInHospital <= daysMax
-      ).length;
+    filteredData70.filter(row =>
+      row.ageYears >= minAge && row.ageYears <= maxAge &&
+      walkingProgramDepartments.includes(this.normDept(row.unitName)) &&
+      row.totalDaysInHospital >= daysMin && row.totalDaysInHospital <= daysMax
+    ).length;
+    
 
     this.hospitalizationTableData = [
       {
@@ -466,7 +481,7 @@ export class MitavSummaryComponent implements OnInit {
       ),
       walkingProgramAchieved70: countByDischargeMobility(
         this.filteredData.filter(row => 
-          walkingProgramDepartments.includes(row.unitName) && row.totalPercentage >= 70
+          walkingProgramDepartments.includes(row.unitName) && this.is70Plus(row.totalPercentage)
         ),
         category.text
       )
@@ -484,7 +499,7 @@ export class MitavSummaryComponent implements OnInit {
       ).length,
       walkingProgramAchieved70: this.filteredData.filter(row =>
         walkingProgramDepartments.includes(row.unitName) &&
-        row.totalPercentage >= 70 &&
+        this.is70Plus(row.totalPercentage) &&
         !mobilityDischargeCategories.some(cat => row.comboText15478?.trim() === cat.text)
       ).length
     };
@@ -524,7 +539,7 @@ export class MitavSummaryComponent implements OnInit {
       ).length,
       walkingProgramAchieved70: data.filter(row =>
         walkingProgramDepartments.includes(row.unitName) &&
-        row.totalPercentage >= 70 &&
+        this.is70Plus(row.totalPercentage) &&
         row.mobilityAssessmentAtDischarge === category.status
       ).length
     }));
@@ -557,7 +572,7 @@ export class MitavSummaryComponent implements OnInit {
       ).length,
       walkingProgramAchieved70: data.filter(row =>
         walkingProgramDepartments.includes(row.unitName) &&
-        row.totalPercentage >= 70 &&
+        this.is70Plus(row.totalPercentage) &&
         row.basicFunctionBeforeHospitalization?.trim() === category.value
       ).length
     }));
