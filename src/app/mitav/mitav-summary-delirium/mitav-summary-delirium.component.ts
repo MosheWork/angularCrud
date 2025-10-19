@@ -45,13 +45,79 @@ export class MitavSummaryDeliriumComponent implements OnInit {
   dateFrom: Date | null = null;
 dateTo: Date | null = null;
 
+geriatricAll: any[] = []; // cache: all rows from GeriatricConsiliumsRaw (loaded once)
 
   constructor(private http: HttpClient) {}
 
   ngOnInit(): void {
-    this.fetchData();
-    this.fetchData2();
+    this.fetchData();           // loads delirium tables
+    this.fetchGeriatricOnce();  // loads geriatric data once
   }
+
+  
+  fetchGeriatricOnce(): void {
+    this.http.get<any[]>(`${environment.apiUrl}MitavSummary/GeriatricConsiliumsRaw`)
+      .subscribe(
+        (res) => {
+          this.geriatricAll = Array.isArray(res) ? res : [];
+          this.recomputeGeriatric(); // compute with current filters (possibly none)
+        },
+        (err) => {
+          console.error('❌ Geriatric fetch error:', err);
+          this.geriatricAll = [];
+          this.geriatricSummary = { uniqueAdmissions: 0, totalConsiliums: 0 };
+        }
+      );
+  }
+private isYes = (v: any) =>
+  typeof v === 'string' && v.replace(/[\u200e\u200f\s]/g, '') === 'כן';
+
+private passesYearQuarter = (d: any): boolean => {
+  const t = d ? new Date(d) : null;
+  if (!t || isNaN(t.getTime())) {
+    // keep rows with missing date only when no filter is selected
+    return this.selectedYear == null && this.selectedQuarter == null;
+  }
+  const y = t.getFullYear();
+  const q = Math.ceil((t.getMonth() + 1) / 3);
+  const yearPass = this.selectedYear == null || y === this.selectedYear;
+  const quarterPass = this.selectedQuarter == null || q === this.selectedQuarter;
+  return yearPass && quarterPass;
+};
+
+recomputeGeriatric(): void {
+  const passYQ = (d: any): boolean => {
+    const t = d ? new Date(d) : null;
+    if (!t || isNaN(t.getTime())) {
+      // keep rows with missing date only when no filter is selected
+      return this.selectedYear == null && this.selectedQuarter == null;
+    }
+    const y = t.getFullYear();
+    const q = Math.ceil((t.getMonth() + 1) / 3);
+    const yearPass = this.selectedYear == null || y === this.selectedYear;
+    const quarterPass = this.selectedQuarter == null || q === this.selectedQuarter;
+    return yearPass && quarterPass;
+  };
+
+  const rows = (this.geriatricAll || []).filter(r => passYQ(r.ATD_Admission_Date));
+  const totalConsiliums = rows.length; // count ALL rows after Y/Q filter
+  const matchedCount = rows.filter(r => this.isYes(r?.MatchInMitav ?? r?.matchInMitav ?? r?.matchInMITAV)).length;
+
+  this.geriatricSummary = {
+    uniqueAdmissions: matchedCount,   // your first <td>
+    totalConsiliums: totalConsiliums  // your second <td>
+  };
+
+  // Debug (remove if you want)
+  console.log('[Geriatric] after filter: rows=', rows.length,
+              ' matched(כן)=', matchedCount,
+              ' y=', this.selectedYear, ' q=', this.selectedQuarter);
+}
+
+private stripRtl(s: string | null): string {
+  return s ? s.replace(/[\u200e\u200f\u200d]/g, '') : '';
+}
+
   fetchData(): void {
     this.isLoading = true;
   
@@ -83,43 +149,51 @@ dateTo: Date | null = null;
   
   
   
-
   fetchData2(): void {
     this.isLoading = true;
   
+    // normalize "כן" with possible RTL marks/spaces
+    const isYes = (v: any) =>
+      typeof v === 'string' && v.replace(/[\u200e\u200f\s]/g, '') === 'כן';
+  
+    // year/quarter predicate on ATD_Admission_Date
+    const passYQ = (d: any): boolean => {
+      const t = d ? new Date(d) : null;
+      if (!t || isNaN(t.getTime())) {
+        // if no date and no filter selected — keep; if filter selected — drop
+        return this.selectedYear == null && this.selectedQuarter == null;
+      }
+      const y = t.getFullYear();
+      const q = Math.ceil((t.getMonth() + 1) / 3);
+      const yearPass = this.selectedYear == null || y === this.selectedYear;
+      const quarterPass = this.selectedQuarter == null || q === this.selectedQuarter;
+      return yearPass && quarterPass;
+    };
+  
     this.http.get<any[]>(`${environment.apiUrl}MitavSummary/GeriatricConsiliumsRaw`).subscribe(
       (res: any[]) => {
-        // 1) admissions currently visible on the page (already filtered by ATD_Admission_Date)
-        const visibleAdmissionNos = new Set(
-          (this.deliriumData || [])
-            .map(d => d.admission_No ?? d.admissionNo ?? d.Admission_No)
-            .filter(Boolean)
-        );
+        // 1) filter by ATD_Admission_Date
+        const rows = (res || []).filter(r => passYQ(r.ATD_Admission_Date));
   
-        // 2) normalize the API rows from GeriatricConsiliumsRaw
-        const rows = (res || []).map(r => ({
-          admissionNo: r.Admission_No ?? r.admission_No ?? r.admissionNo ?? null,
-          entryDate:   r.Entry_Date   ?? r.entry_Date   ?? r.entrydate   ?? null
-        }));
+        // 2) total rows after filter
+        const totalConsiliums = rows.length;
   
-        // 3) keep only consults that belong to admissions currently in scope
-        const filtered = rows.filter(r => r.admissionNo && visibleAdmissionNos.has(r.admissionNo));
+        // 3) rows where MatchInMitav === 'כן'
+        const matchedCount = rows.filter(r =>
+          isYes(r?.MatchInMitav ?? r?.matchInMitav ?? r?.matchInMITAV ?? '')
+        ).length;
   
-        // 4) count UNIQUE admissions with any consult (not consult events)
-        const uniqueAdmissions = new Set(filtered.map(r => r.admissionNo)).size;
-  
-        // (Optional) if you also want number of consult events:
-        const totalConsultEvents = filtered.length;
-  
+        // 4) bind exactly to your template field names
         this.geriatricSummary = {
-          uniqueAdmissions,            // "סה״כ מאושפזים 75+ שקיבלו ייעוץ גריאטרי"
-          totalConsiliums: uniqueAdmissions // or set to totalConsultEvents if that's what you want to show
+          uniqueAdmissions: matchedCount,     // "סה\"כ מאושפזים 75+ שקיבלו ייעוץ גריאטרי"
+          totalConsiliums: totalConsiliums    // "סה\"כ ייעוצים גריאטריים"
         };
   
         this.isLoading = false;
       },
       err => {
         console.error('Error fetching raw geriatric summary:', err);
+        this.geriatricSummary = { uniqueAdmissions: 0, totalConsiliums: 0 };
         this.isLoading = false;
       }
     );
@@ -364,9 +438,10 @@ applyFilter(): void {
   this.calculateSummary();
   this.calculateLengthOfStaySummary();
   this.calculateSummaryByStay();
+  this.recomputeGeriatric();
 
   // only fetch Geriatric data
-  this.fetchData2(); 
+ // this.fetchData2(); 
 }
 
 
@@ -374,7 +449,7 @@ applyFilter(): void {
 
 onDateRangeChange(): void {
   this.applyFilter();
-  this.fetchData2(); // refetch Geriatric summary when filter changes
+ // this.fetchData2(); // refetch Geriatric summary when filter changes
 }
 
 exportAllTables(): void {
