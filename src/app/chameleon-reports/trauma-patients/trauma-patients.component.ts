@@ -898,50 +898,44 @@ private readonly BUCKET_LABELS = [
  *   { year, (quarter|month?), under26, between26_60, over60, total }
  */
 private makeSeriesChartJs(
-  rows: Array<{year:number; quarter?:number; month?:number; under26:number; between26_60:number; over60:number}>,
+  rows: Array<{year:number; under26:number; between26_60:number; over60:number}>,
   mode: 'year'|'quarter'|'month'
-): { labels: string[]; datasets: any[] } {
-
-  const labels = this.BUCKET_LABELS;
+) {
+  const labels = ['מתחת ל-26 דק׳','בין 26 ל-60 דק׳','מעל 60 דק׳'];
 
   const datasets = rows.map(r => {
-    const seriesLabel =
-      mode === 'year'
-        ? `${r.year}`
-        : mode === 'quarter'
-          ? `${r.year} Q${r.quarter}`
-          : `${r.year}-${String(r.month ?? 0).padStart(2, '0')}`;
+    const u = r.under26 ?? 0, b = r.between26_60 ?? 0, o = r.over60 ?? 0;
+    const total = u + b + o;
+    const pct = (n:number) => (total ? (n * 100) / total : 0);
+    const t = `${r.year}`;
 
     return {
-      label: seriesLabel,
-      data: [
-        r.under26 ?? 0,
-        r.between26_60 ?? 0,
-        r.over60 ?? 0
-      ]
-      // colors are assigned by <app-trauma-graph>, no need to set here
+      label: t,
+      data: [pct(u), pct(b), pct(o)],
+      rawCounts: [u, b, o],
+      rawTotal: total,
+      bottomLabels: [t, t, t]
     };
   });
 
   return { labels, datasets };
 }
 
+
 private makeQuarterSubgroupChartConfig(
   rows: Array<{ year:number; quarter:number; under26:number; between26_60:number; over60:number; }>
 ): { labels: string[]; datasets: any[] } {
 
   const labels = ['מתחת ל-26 דק׳', 'בין 26 ל-60 דק׳', 'מעל 60 דק׳'];
-
   const years = Array.from(new Set(rows.map(r => r.year))).sort((a,b)=>a-b);
+  const pct = (n:number, d:number) => (d ? (n * 100) / d : 0);
 
   const qColor: Record<number, string> = {
-    1: 'rgba(54, 162, 235, 0.6)',   // Q1
-    2: 'rgba(255, 99, 132, 0.6)',   // Q2
-    3: 'rgba(255, 206, 86, 0.6)',   // Q3
-    4: 'rgba(75, 192, 192, 0.6)'    // Q4
+    1: 'rgba(54, 162, 235, 0.6)',
+    2: 'rgba(255, 99, 132, 0.6)',
+    3: 'rgba(255, 206, 86, 0.6)',
+    4: 'rgba(75, 192, 192, 0.6)',
   };
-
-  const pct = (n:number, denom:number) => denom ? (n * 100) / denom : 0;
 
   const datasets: any[] = [];
   for (const y of years) {
@@ -952,22 +946,27 @@ private makeQuarterSubgroupChartConfig(
       const o = r?.over60 ?? 0;
       const total = u + b + o;
 
+      const t = `רבעון ${q} - ${y}`;          // time text for bottom
       datasets.push({
         label: `${y}-Q${q}`,
-        data: [ pct(u,total), pct(b,total), pct(o,total) ], // <-- percentages
-        rawCounts: [u, b, o],                               // <-- for "2/50" bottom labels
+        data: [ pct(u,total), pct(b,total), pct(o,total) ], // bar heights in %
+        rawCounts: [u, b, o],                                // MIDDLE label (n/total)
         rawTotal: total,
-        barPercentage: 0.85,
-        categoryPercentage: 0.9,
+        bottomLabels: [t, t, t],                             // BOTTOM label under each bar
         backgroundColor: qColor[q],
-        borderColor: qColor[q].replace('0.6', '1'),
-        borderWidth: 1
+        borderColor: qColor[q].replace('0.6','1'),
+        borderWidth: 1,
+        barPercentage: 0.85,
+        categoryPercentage: 0.9
       });
     }
   }
 
   return { labels, datasets };
 }
+
+
+
 
 /** Chart config: 3 buckets on X; inside each bucket sub-bars for every (Year × Month). */
 /** Month split: 3 separate charts (one per bucket) with X = YYYY-MM (sorted). */
