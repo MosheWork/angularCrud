@@ -928,7 +928,7 @@ private makeQuarterSubgroupChartConfig(
 
   const labels = ['מתחת ל-26 דק׳', 'בין 26 ל-60 דק׳', 'מעל 60 דק׳'];
   const years = Array.from(new Set(rows.map(r => r.year))).sort((a,b)=>a-b);
-  const pct = (n:number, d:number) => (d ? (n * 100) / d : 0);
+  const pct = (n:number, d:number) => d ? (n * 100) / d : 0;
 
   const qColor: Record<number, string> = {
     1: 'rgba(54, 162, 235, 0.6)',
@@ -946,13 +946,17 @@ private makeQuarterSubgroupChartConfig(
       const o = r?.over60 ?? 0;
       const total = u + b + o;
 
-      const t = `רבעון ${q} - ${y}`;          // time text for bottom
+      const t = `${y} רבעון ${q}`; // ⬅️ THIS is the time text you wanted
+
       datasets.push({
         label: `${y}-Q${q}`,
-        data: [ pct(u,total), pct(b,total), pct(o,total) ], // bar heights in %
-        rawCounts: [u, b, o],                                // MIDDLE label (n/total)
+        data: [pct(u,total), pct(b,total), pct(o,total)],
+        rawCounts: [u, b, o],
         rawTotal: total,
-        bottomLabels: [t, t, t],                             // BOTTOM label under each bar
+
+        // ⬇️ Bottom time label (repeated for the 3 buckets)
+        bottomLabels: [t, t, t],
+
         backgroundColor: qColor[q],
         borderColor: qColor[q].replace('0.6','1'),
         borderWidth: 1,
