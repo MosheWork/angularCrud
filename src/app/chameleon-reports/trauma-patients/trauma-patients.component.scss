@@ -682,3 +682,15 @@
 
 /* Keep the toggle column tiny */
 .mat-column-relevantToggle        { min-width: 60px; text-align: center; }
+/* was table-layout:auto; */
+.wide-table {
+  width: max-content;
+  min-width: 100%;
+  table-layout: fixed;          /* ✅ fixed layout: far cheaper */
+  border-collapse: collapse;
+}
+.mat-header-cell, .mat-cell {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

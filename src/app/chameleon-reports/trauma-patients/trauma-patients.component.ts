@@ -12,6 +12,7 @@ import { FormControl, FormGroup, FormBuilder } from '@angular/forms';
 import { environment } from '../../../environments/environment';
 import { Chart, BarController, BarElement, CategoryScale, LinearScale, Tooltip, Legend } from 'chart.js';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
+import { ChangeDetectorRef } from '@angular/core';
 
 Chart.register(BarController, BarElement, CategoryScale, LinearScale, Tooltip, Legend, ChartDataLabels);
 type TraumaChartConfig = { labels: string[]; datasets: any[] };
@@ -128,6 +129,8 @@ export class TraumaPatientsComponent implements OnInit {
     ].includes(column);
   }
 /// new
+private _boundOnce = false;
+public sortDisabled = true;
 // Add this field in the class
 private _pendingData: TraumaPatient[] = [];
 ///
@@ -218,30 +221,16 @@ surgDataSource = new MatTableDataSource<any>([]);
 @ViewChild('surgSort') surgSort!: MatSort;
 public showCTGraph = false;
 public showSurgGraph = false;
-@ViewChild('mainPaginator') set _mainPaginator(p: MatPaginator) {
+@ViewChild('mainPaginator') set _p(p: MatPaginator) {
   if (p) {
     this.dataSource.paginator = p;
-    this.dataSource._updateChangeSubscription();
+    this._kickFirstBind();
   }
 }
-
-@ViewChild('mainSort') set _mainSort(s: MatSort) {
+@ViewChild('mainSort') set _s(s: MatSort) {
   if (s) {
     this.dataSource.sort = s;
-    if (!this.dataSource.sortingDataAccessor) {
-      this.dataSource.sortingDataAccessor = (item: any, prop: string) => {
-        if (prop === 'relevant') return item.relevant ?? -1;
-        if (this.isDateColumn(prop)) {
-          const v = item[prop];
-          if (!v || this.isDefaultDate(v)) return -Infinity;
-          const t = v instanceof Date ? +v : +new Date(v);
-          return Number.isNaN(t) ? -Infinity : t;
-        }
-        const val = item[prop];
-        return val == null ? '' : val.toString().toLowerCase();
-      };
-    }
-    this.dataSource._updateChangeSubscription();
+    this._kickFirstBind();
   }
 }
 @ViewChild('topScroll')    topScrollRef!: ElementRef<HTMLDivElement>;
@@ -289,7 +278,8 @@ public toggleSurgGraph(): void {
     private http: HttpClient,
     private fb: FormBuilder,
     private dialog: MatDialog,
-    private datePipe: DatePipe
+    private datePipe: DatePipe,
+    private cd: ChangeDetectorRef
 
   ) {
     this.filterForm = this.createFilterForm();
@@ -358,17 +348,19 @@ public toggleSurgGraph(): void {
   
         // ---------- preprocess rows (search string + timestamps) ----------
         const tPrep = tStart('prepRows');
-        this.originalData = data.map(r => ({
-          ...r,
-          // one-time searchable string for global filter
-          __search: Object.values(r as any)
-            .map(v => (v ?? '').toString().toLowerCase())
-            .join('|'),
-          // numeric timestamps to avoid repeated Date parsing
-          _admissionTs: r.admissionTime ? +new Date(r.admissionTime) : null,
-          _ctTs:        r.ctTime        ? +new Date(r.ctTime)        : null,
-          _surgTs:      r.surgeryTime   ? +new Date(r.surgeryTime)   : null
-        }));
+      this.originalData = data.map(r => ({
+  ...r,
+  __search: Object.values(r as any).map(v => (v ?? '').toString().toLowerCase()).join('|'),
+  admissionTimeText:    this.fmtDate(r.admissionTime),
+  erReleaseTimeText:    this.fmtDate(r.erReleaseTime),
+  hospitalReleaseTimeText: this.fmtDate(r.hospitalReleaseTime),
+  ctTimeText:           this.fmtDate(r.ctTime),
+  chestXRayTimeText:    this.fmtDate(r.chestXRayTime),
+  deathTimeText:        this.fmtDate(r.deathTime),
+  surgeryTimeText:      this.fmtDate(r.surgeryTime),
+  ultrasoundTechTimeText: this.fmtDate(r.ultrasoundTechTime),
+}));
+
         tPrep.end('prepRows done');
   
         // ---------- unique filter options ----------
@@ -1212,6 +1204,29 @@ private makeBucketPercentChart(
   };
 }
 
+private _kickFirstBind() {
+  if (this._boundOnce) return;
+  if (!this.dataSource.paginator || !this.dataSource.sort) return;
 
+  if (this._pendingData.length) {
+    this.dataSource.data = this._pendingData;
+    this._pendingData = [];
+  }
+  this._boundOnce = true;
+
+  // Let the first lightweight page render, then enable sort
+  requestAnimationFrame(() => {
+    this.sortDisabled = false;
+    this.cd.detectChanges();
+  });
+}
+private fmtDate(s?: string | null): string {
+  if (!s) return '';
+  const d = new Date(s);
+  if (!isFinite(+d) || d.getFullYear() === 1900) return '';
+  // dd/MM/yyyy HH:mm
+  const pad = (n:number)=> String(n).padStart(2,'0');
+  return `${pad(d.getDate())}/${pad(d.getMonth()+1)}/${d.getFullYear()} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
+}
 
 }

@@ -101,12 +101,13 @@
         <!-- ===== MAIN TABLE AREA (BOTTOM SCROLLBAR HIDDEN) ===== -->
         <div #bottomScroll class="table-scroll table-viewport hide-horizontal-scrollbar" dir="rtl">
           <table
-            mat-table
-            [dataSource]="dataSource"
-            matSort
-            #mainSort="matSort"
-            class="mat-elevation-z8 wide-table"
-            dir="rtl">
+  mat-table
+  [dataSource]="dataSource"
+  matSort
+  [matSortDisabled]="sortDisabled"
+  #mainSort="matSort"
+  class="mat-elevation-z8 wide-table"
+  dir="rtl">
     
             <!-- Toggle (NOT sortable) -->
             <ng-container matColumnDef="relevantToggle">
