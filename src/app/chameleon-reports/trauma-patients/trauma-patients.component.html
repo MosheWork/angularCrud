@@ -87,63 +87,62 @@
 
   <!-- ===== Tabs (default = רשימת טראומה) ===== -->
   <mat-tab-group [selectedIndex]="0">
-
     <!-- ========== Tab 1: רשימת טראומה ========== -->
     <mat-tab label="רשימת טראומה">
       <div class="trauma-container">
         <div class="table-responsive">
-          <mat-table [dataSource]="dataSource" matSort dir="rtl" class="mat-elevation-z8">
+          <table mat-table [dataSource]="dataSource" matSort #mainSort="matSort" class="mat-elevation-z8 full-width">
 
-            <!-- Toggle -->
+            <!-- Toggle (NOT sortable) -->
             <ng-container matColumnDef="relevantToggle">
-              <mat-header-cell *matHeaderCellDef> רלוונטי </mat-header-cell>
-              <mat-cell *matCellDef="let element">
+              <th mat-header-cell *matHeaderCellDef>רלוונטי</th>
+              <td mat-cell *matCellDef="let element">
                 <mat-checkbox
                   [checked]="element.relevant === 1"
                   (click)="$event.stopPropagation()"
                   (change)="onRelevantToggle(element, $event.checked)">
                 </mat-checkbox>
-              </mat-cell>
+              </td>
             </ng-container>
-
-            <!-- Dynamic columns -->
+          
+            <!-- Dynamic sortable columns -->
             <ng-container *ngFor="let column of displayedColumns">
               <ng-container *ngIf="column !== 'relevantToggle'" [matColumnDef]="column">
-                <mat-header-cell *matHeaderCellDef mat-sort-header>
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>
                   {{ columnHeaders[column] || column }}
-                </mat-header-cell>
-
-                <mat-cell *matCellDef="let element" (click)="openDialog(element)">
+                </th>
+                <td mat-cell *matCellDef="let element" (click)="openDialog(element)">
                   <ng-container *ngIf="column === 'relevant'; else defaultColumn">
                     <span *ngIf="element.relevant === 1">כן</span>
                     <span *ngIf="element.relevant === 0">לא</span>
                     <span *ngIf="element.relevant === null">לא עודכן</span>
                   </ng-container>
-
+          
                   <ng-template #defaultColumn>
                     <ng-container *ngIf="isDateColumn(column); else textCell">
                       <ng-container *ngIf="!isDefaultDate(element[column]); else emptyDate">
                         {{ element[column] | date:'dd/MM/yyyy HH:mm' }}
                       </ng-container>
-                      <ng-template #emptyDate> </ng-template>
+                      <ng-template #emptyDate></ng-template>
                     </ng-container>
                     <ng-template #textCell>
                       {{ element[column] }}
                     </ng-template>
                   </ng-template>
-                </mat-cell>
+                </td>
               </ng-container>
             </ng-container>
-
-            <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-            <mat-row *matRowDef="let row; columns: displayedColumns" class="mat-row clickable-row"></mat-row>
-          </mat-table>
-
+          
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+          </table>
+          
           <mat-paginator
-            [pageSizeOptions]="[100]"
-            showFirstLastButtons
-            class="mat-paginator">
-          </mat-paginator>
+          #mainPaginator
+          [pageSize]="50"
+          [pageSizeOptions]="[25,50,100]"
+          showFirstLastButtons>
+        </mat-paginator>
         </div>
         <!-- Edit dialog kept as-is -->
         <div *ngIf="selectedPatient" class="dialog-backdrop">
