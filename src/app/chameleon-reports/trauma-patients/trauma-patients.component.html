@@ -90,8 +90,8 @@
     <!-- ========== Tab 1: רשימת טראומה ========== -->
     <mat-tab label="רשימת טראומה">
       <div class="trauma-container">
-        <div class="table-responsive">
-          <table mat-table [dataSource]="dataSource" matSort #mainSort="matSort" class="mat-elevation-z8 full-width">
+        <div class="table-scroll">
+          <table mat-table [dataSource]="dataSource" matSort #mainSort="matSort" class="mat-elevation-z8 wide-table">
 
             <!-- Toggle (NOT sortable) -->
             <ng-container matColumnDef="relevantToggle">
