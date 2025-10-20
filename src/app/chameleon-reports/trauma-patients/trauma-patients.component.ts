@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild,ElementRef } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatDialogRef } from '@angular/material/dialog';
 import { HttpClient } from '@angular/common/http';
@@ -244,7 +244,8 @@ public showSurgGraph = false;
     this.dataSource._updateChangeSubscription();
   }
 }
-
+@ViewChild('topScroll')    topScrollRef!: ElementRef<HTMLDivElement>;
+@ViewChild('bottomScroll') bottomScrollRef!: ElementRef<HTMLDivElement>;
 // NEW: simple togglers
 public toggleCTGraph(): void {
   this.showCTGraph = !this.showCTGraph;
@@ -422,19 +423,35 @@ public toggleSurgGraph(): void {
     });
   }
   
-  // ngAfterViewInit(): void {
-  //   this.wireMainTable();
-  //   requestAnimationFrame(() => {
-  //     if (this._pendingData.length) {
-  //       this.dataSource.data = this._pendingData;
-  //       this._pendingData = [];
-  //       this.wireMainTable(); // table just got data, re-attach to be safe
-  //     }
-  //     this.isLoading = false;
-  //   });
-  // }
+  ngAfterViewInit(): void {
+   
   
+    // sync top/bottom scrollbars
+    const top    = this.topScrollRef.nativeElement;
+    const bottom = this.bottomScrollRef.nativeElement;
   
+    // make the top bar the same width as the table content
+    // (by inserting a dummy inner div that matches table’s scroll width)
+    queueMicrotask(() => {
+      const table = bottom.querySelector('table') as HTMLTableElement;
+      if (!table) return;
+      top.innerHTML = '<div></div>';
+      const ghost = top.firstElementChild as HTMLDivElement;
+      ghost.style.width = table.scrollWidth + 'px';
+      ghost.style.height = '1px';
+    });
+  
+    let locking = false;
+    const sync = (from: HTMLElement, to: HTMLElement) => {
+      if (locking) return;
+      locking = true;
+      to.scrollLeft = from.scrollLeft;
+      locking = false;
+    };
+  
+    top.addEventListener('scroll',    () => sync(top, bottom));
+    bottom.addEventListener('scroll', () => sync(bottom, top));
+  }
   
   
 
