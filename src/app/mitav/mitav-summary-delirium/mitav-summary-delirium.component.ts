@@ -69,8 +69,70 @@ geriatricAll: any[] = []; // cache: all rows from GeriatricConsiliumsRaw (loaded
         }
       );
   }
-private isYes = (v: any) =>
-  typeof v === 'string' && v.replace(/[\u200e\u200f\s]/g, '') === 'כן';
+// Normalizes 'כן' (handles RTL marks/spaces)
+private isYes(v: any): boolean {
+  const s = (v ?? '').toString().replace(/[\u200e\u200f\u200d\s]/g, '');
+  return s === 'כן';
+}
+private uniquePatientKey(r: any): string | null {
+  const patient = this.pick(r, 'Patient', 'patient', 'Mitav_Patient');
+  if (patient != null) return String(patient).trim();
+  const mr = this.pick(r, 'Medical_Record', 'medical_Record');
+  if (mr != null) return `MR:${String(mr).trim()}`;
+  const adm = this.pick(r, 'Admission_No', 'Hosp_Admission_No', 'Mitav_Admission_No');
+  if (adm != null) return `ADM:${String(adm).trim()}`;
+  return null;
+}
+// Robust date parser for: ISO, 'YYYY-MM-DD HH:mm:ss', 'DD/MM/YYYY', etc.
+private parseAnyDate(v: any): Date | null {
+  if (!v) return null;
+  const s = (v instanceof Date) ? v.toISOString() : String(v).trim();
+  // Try native
+  const d1 = new Date(s);
+  if (!isNaN(d1.getTime())) return d1;
+
+  // Try 'YYYY-MM-DD HH:mm:ss'
+  const m1 = /^(\d{4})-(\d{2})-(\d{2})[ T](\d{2}):(\d{2}):(\d{2})$/.exec(s);
+  if (m1) {
+    const [ , yy, mm, dd, hh, mi, ss ] = m1.map(Number);
+    const d = new Date(yy, mm - 1, dd, hh, mi, ss);
+    return isNaN(d.getTime()) ? null : d;
+  }
+
+  // Try 'YYYY-MM-DD'
+  const m2 = /^(\d{4})-(\d{2})-(\d{2})$/.exec(s);
+  if (m2) {
+    const [ , yy, mm, dd ] = m2.map(Number);
+    const d = new Date(yy, mm - 1, dd);
+    return isNaN(d.getTime()) ? null : d;
+  }
+
+  // Try 'DD/MM/YYYY'
+  const m3 = /^(\d{2})\/(\d{2})\/(\d{4})$/.exec(s);
+  if (m3) {
+    const [ , dd, mm, yy ] = m3.map(Number);
+    const d = new Date(yy, mm - 1, dd);
+    return isNaN(d.getTime()) ? null : d;
+  }
+
+  return null;
+}
+private passesYearQuarterByAnyDate(row: any): boolean {
+  // Prefer atD_Admission_Date (per your backend), fallback to Answer_Date or Entry_Date
+  const d = this.parseAnyDate(row?.atD_Admission_Date)
+        ?? this.parseAnyDate(row?.Answer_Date)
+        ?? this.parseAnyDate(row?.Entry_Date);
+
+  // If no date parsed: keep only when no filters selected
+  if (!d) return this.selectedYear == null && this.selectedQuarter == null;
+
+  const year = d.getFullYear();
+  const quarter = Math.ceil((d.getMonth() + 1) / 3);
+  const yearPass = this.selectedYear == null || year === this.selectedYear;
+  const quarterPass = this.selectedQuarter == null || quarter === this.selectedQuarter;
+  return yearPass && quarterPass;
+}
+
 
 private passesYearQuarter = (d: any): boolean => {
   const t = d ? new Date(d) : null;
@@ -85,33 +147,53 @@ private passesYearQuarter = (d: any): boolean => {
   return yearPass && quarterPass;
 };
 
+private pick<T = any>(obj: any, ...keys: string[]): T | null {
+  for (const k of keys) if (obj && obj[k] != null) return obj[k] as T;
+  return null;
+}
+private parseDate(v: any): Date | null {
+  if (!v) return null;
+  const d = new Date(v);
+  return isNaN(d.getTime()) ? null : d;
+}
+
+
 recomputeGeriatric(): void {
-  const passYQ = (d: any): boolean => {
-    const t = d ? new Date(d) : null;
-    if (!t || isNaN(t.getTime())) {
-      // keep rows with missing date only when no filter is selected
-      return this.selectedYear == null && this.selectedQuarter == null;
-    }
-    const y = t.getFullYear();
-    const q = Math.ceil((t.getMonth() + 1) / 3);
+  // 1) Filter by year/quarter on ATD_Admission_Date (any casing)
+  const rows = (this.geriatricAll || []).filter(r => {
+    const atdRaw = this.pick(r, 'ATD_Admission_Date', 'atD_Admission_Date', 'atd_Admission_Date');
+    const d = this.parseDate(atdRaw);
+    if (!d) return this.selectedYear == null && this.selectedQuarter == null;
+    const y = d.getFullYear();
+    const q = Math.ceil((d.getMonth() + 1) / 3); // calendar quarters
     const yearPass = this.selectedYear == null || y === this.selectedYear;
     const quarterPass = this.selectedQuarter == null || q === this.selectedQuarter;
     return yearPass && quarterPass;
-  };
+  });
 
-  const rows = (this.geriatricAll || []).filter(r => passYQ(r.ATD_Admission_Date));
-  const totalConsiliums = rows.length; // count ALL rows after Y/Q filter
-  const matchedCount = rows.filter(r => this.isYes(r?.MatchInMitav ?? r?.matchInMitav ?? r?.matchInMITAV)).length;
+  // 2) Count ALL rows after filter
+  const totalConsiliums = rows.length;
 
+  // 3) Among rows with MatchInMitav='כן', count UNIQUE patients
+  const uniqPatients = new Set<string>();
+  for (const r of rows) {
+    const flag = this.pick(r, 'MatchInMitav', 'matchInMitav', 'matchInMITAV');
+    if (!this.isYes(flag)) continue;
+    const key = this.uniquePatientKey(r);
+    if (key) uniqPatients.add(key);
+  }
+  const matchedUniquePatients = uniqPatients.size;
+
+  // 4) Bind to your template fields
   this.geriatricSummary = {
-    uniqueAdmissions: matchedCount,   // your first <td>
-    totalConsiliums: totalConsiliums  // your second <td>
+    uniqueAdmissions: matchedUniquePatients, // first cell: unique patients with MatchInMitav='כן'
+    totalConsiliums: totalConsiliums        // second cell: all rows after date filter
   };
 
-  // Debug (remove if you want)
-  console.log('[Geriatric] after filter: rows=', rows.length,
-              ' matched(כן)=', matchedCount,
-              ' y=', this.selectedYear, ' q=', this.selectedQuarter);
+  // (Optional) quick log
+  console.log('[Geriatric] total:', totalConsiliums,
+              'matched unique patients:', matchedUniquePatients,
+              'y:', this.selectedYear, 'q:', this.selectedQuarter);
 }
 
 private stripRtl(s: string | null): string {
@@ -156,7 +238,7 @@ private stripRtl(s: string | null): string {
     const isYes = (v: any) =>
       typeof v === 'string' && v.replace(/[\u200e\u200f\s]/g, '') === 'כן';
   
-    // year/quarter predicate on ATD_Admission_Date
+    // year/quarter predicate on atD_Admission_Date
     const passYQ = (d: any): boolean => {
       const t = d ? new Date(d) : null;
       if (!t || isNaN(t.getTime())) {
@@ -172,8 +254,8 @@ private stripRtl(s: string | null): string {
   
     this.http.get<any[]>(`${environment.apiUrl}MitavSummary/GeriatricConsiliumsRaw`).subscribe(
       (res: any[]) => {
-        // 1) filter by ATD_Admission_Date
-        const rows = (res || []).filter(r => passYQ(r.ATD_Admission_Date));
+        // 1) filter by atD_Admission_Date
+        const rows = (res || []).filter(r => passYQ(r.atD_Admission_Date));
   
         // 2) total rows after filter
         const totalConsiliums = rows.length;
