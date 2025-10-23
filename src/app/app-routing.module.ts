@@ -107,6 +107,7 @@ import { PptDuplicateComponent } from './ppt-duplicate/ppt-duplicate.component';
 import { DoctorAuthorizationsComponent } from './doctor-authorizations/doctor-authorizations.component';
 import { PsychologyComponent } from './chameleon-reports/psychology/psychology.component';
 import { AmbulatoryBirthdayUpdateCRMComponent } from './ServiceCRM/ambulatory-birthday-update-crm/ambulatory-birthday-update-crm.component';
+import { GalitComponent } from './chameleon-reports/galit/galit.component';
 
 const routes: Routes = [
   //', component: UsersComponent },
@@ -202,7 +203,9 @@ const routes: Routes = [
 { path: 'breastfeeding-coordinator', component: BreastfeedingCoordinatorComponent , data: { title: ' מתאמת הנקה ' }},//   מתאמת הנקה      
 { path: 'medication-reconciliationr', component: MedicationReconciliationComponent , data: { title: 'MedicationReconciliation' }},//  MedicationReconciliation 
 { path: 'main-surgery', component: MainSurgeryComponent , data: { title: 'מערכת יעל ' }},//  רשימת ניתוחים
-{ path: 'Psychology', component: PsychologyComponent , data: { title: 'פסיכולוגיה' }},//  דוח תפוקות 
+{ path: 'Psychology', component: PsychologyComponent , data: { title: 'פסיכולוגיה' }},//  דוח תפוקות
+{ path: 'Galit', component: GalitComponent , data: { title: 'דוח גלית' }},//  דוח תזונה של גלית 
+
 
 
 
