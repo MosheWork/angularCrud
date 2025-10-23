@@ -26,6 +26,10 @@ type Row = {
   headManagerSignDateTime?: string | Date | null;
   directManagerFunction?: string | null;
   directManagerFunction2?: string | null;
+    // <<< NEW: IDs >>>
+    idDoc?: string | null;
+    idManagerDirect?: string | null;
+    idDirectManager2?: string | null;
 };
 
 
@@ -271,7 +275,7 @@ downloadPermPdf(row: Row) {
   const url = this.resolvePermUrl(row);
   if (!url) return;
 
-  const doctor = (row as any).docname || (row as any).DOCNAME || 'doctor';
+  const doctor = (row as any).docname || 'doctor';
   const date = this.formatDateYMD(new Date());
   const fileName = this.sanitizeFileName(`${doctor} - ${date}.pdf`);
 
@@ -283,19 +287,24 @@ downloadPermPdf(row: Row) {
     waitMs: 12000,
     maxAttempts: 2,
 
-    // >>> send metadata so the info page will be created
-    departnentDescripton: (row as any).departnentDescripton ?? '',
-    functionDescription: (row as any).functionDescription ?? '',
-    docName: (row as any).docname ?? '',
-    doctorSignDateTime: (row as any).doctorSignDateTime ?? '',
+    // metadata
+    departnentDescripton: row.departnentDescripton ?? '',
+    functionDescription: row.functionDescription ?? '',
+    docName: row.docname ?? '',
+    doctorSignDateTime: this.toIsoOrEmpty(row.doctorSignDateTime),
 
-    directManager: (row as any).directManager ?? '',
-    directManagerFunction: (row as any).directManagerFunction ?? '',
-    directManagerSignDateTime: (row as any).directManagerSignDateTime ?? '',
+    directManager: row.directManager ?? '',
+    directManagerFunction: row.directManagerFunction ?? '',
+    directManagerSignDateTime: this.toIsoOrEmpty(row.directManagerSignDateTime),
 
-    directManager2: (row as any).directManager2 ?? '',
-    directManagerFunction2: (row as any).directManagerFunction2 ?? '',
-    headManagerSignDateTime: (row as any).headManagerSignDateTime ?? ''
+    directManager2: row.directManager2 ?? '',
+    directManagerFunction2: row.directManagerFunction2 ?? '',
+    headManagerSignDateTime: this.toIsoOrEmpty(row.headManagerSignDateTime),
+
+    // <<< NEW: IDs → this is why your column was empty >>>
+    idDoc: row.idDoc ?? '',
+    idManagerDirect: row.idManagerDirect ?? '',
+    idDirectManager2: row.idDirectManager2 ?? ''
   };
 
   this.http.get(api, { params, responseType: 'blob' }).subscribe(blob => {
@@ -339,4 +348,10 @@ filterFields: (keyof Row | 'globalFilter')[] = [
   'directManager2',
   'globalFilter' // keep global search
 ];
+
+
+private toIsoOrEmpty(v: string | Date | null | undefined): string {
+  if (!v) return '';
+  return v instanceof Date ? v.toISOString() : String(v);
+}
 }

@@ -282,12 +282,14 @@
           <th mat-header-cell *matHeaderCellDef mat-sort-header>מכנה</th>
           <td mat-cell *matCellDef="let row">{{ row.mechane }}</td>
         </ng-container>
-        <ng-container matColumnDef="avgTotalTimeInUnit">
-          <th mat-header-cell *matHeaderCellDef> זמן ממוצע ביחידה (דק׳) </th>
-          <td mat-cell *matCellDef="let row">
-            {{ row.avgTotalTimeInUnit ?? '' }}
-          </td>
-        </ng-container>
+     <!-- By Measurement table -->
+<ng-container matColumnDef="avgTotalTimeInUnit">
+  <th mat-header-cell *matHeaderCellDef> זמן ממוצע ביחידה (דק׳) </th>
+  <td mat-cell *matCellDef="let row">
+    {{ row.avgTotalTimeInUnit != null ? (row.avgTotalTimeInUnit | number:'1.1-1') : '' }}
+  </td>
+</ng-container>
+
         <ng-container matColumnDef="grade">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>אחוז</th>
           <td mat-cell *matCellDef="let row">
@@ -392,12 +394,13 @@
             {{ getTargetValue(row.measurementCode) ?? '-' }}%
           </td>
         </ng-container>
-        <ng-container matColumnDef="avgTotalTimeInUnit">
-          <th mat-header-cell *matHeaderCellDef> זמן ממוצע ביחידה (דק׳) </th>
-          <td mat-cell *matCellDef="let row">
-            {{ row.avgTotalTimeInUnit ?? '' }}
-          </td>
-        </ng-container>
+       <!-- By Department table -->
+<ng-container matColumnDef="avgTotalTimeInUnit">
+  <th mat-header-cell *matHeaderCellDef> זמן ממוצע ביחידה (דק׳) </th>
+  <td mat-cell *matCellDef="let row">
+    {{ row.avgTotalTimeInUnit != null ? (row.avgTotalTimeInUnit | number:'1.1-1') : '' }}
+  </td>
+</ng-container>
         <tr mat-header-row *matHeaderRowDef="displayedDepartmentColumns"></tr>
         <tr mat-row *matRowDef="let row; columns: displayedDepartmentColumns;"></tr>
       </table>
