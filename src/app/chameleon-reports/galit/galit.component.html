@@ -9,26 +9,46 @@
         <mat-card-content>
           <div class="kpi-grid">
             <!-- No-consilium 10+ days -->
-            <div class="kpi-item kpi-alert">
-              <div class="kpi-title">מטופלים</div>
-              <div class="kpi-value">
-                <span class="kpi-strong">{{ noConsilium150685814Count }}</span>
-                <span class="kpi-sep">/</span>
-                <span class="kpi-total">{{ totalPatients }}</span>
-              </div>
-              <div class="kpi-foot">מטופלים מעל 10 ימי אשפוז ולא בוצע יעוץ</div>
-            </div>
-      
-            <!-- Albumin (<= threshold) -->
-            <div class="kpi-item">
-              <div class="kpi-title">אלבומין ≤ {{ albuminThreshold }}</div>
-              <div class="kpi-value">
-                <span class="kpi-strong kpi-amber">{{ lowAlbuminCount }}</span>
-                <span class="kpi-sep">/</span>
-                <span class="kpi-total">{{ totalPatients }}</span>
-              </div>
-              <div class="kpi-foot">אלבומין נמדד אחרי קבלה </div>
-            </div>
+       <!-- KPI: no-consilium 10+ days -->
+<div class="kpi-item">
+    <div class="kpi-title">מטופלים</div>
+    <div class="kpi-value">
+      <span class="kpi-strong">{{ noConsilium150685814Count }}</span>
+      <span class="kpi-sep">/</span>
+      <span class="kpi-total">{{ totalPatients }}</span>
+    </div>
+    <div class="kpi-foot">מטופלים מעל 10 ימי אשפוז ולא בוצע יעוץ</div>
+  
+    <!-- Toggle moved here, under foot -->
+    <mat-slide-toggle
+      class="kpi-toggle"
+      color="warn"
+      [checked]="filterNoConsilium10d"
+      (change)="filterNoConsilium10d = $event.checked; applyFilters()">
+      הצג רק מקרים אלו
+    </mat-slide-toggle>
+  </div>
+  
+  <!-- KPI: albumin -->
+  <div class="kpi-item">
+    <div class="kpi-title">אלבומין ≤ {{ albuminThreshold }}</div>
+    <div class="kpi-value">
+      <span class="kpi-strong kpi-amber">{{ lowAlbuminCount }}</span>
+      <span class="kpi-sep">/</span>
+      <span class="kpi-total">{{ totalPatients }}</span>
+    </div>
+    <div class="kpi-foot">אלבומין נמדד אחרי קבלה</div>
+  
+    <!-- Toggle moved here, under foot -->
+    <mat-slide-toggle
+      class="kpi-toggle"
+      color="primary"
+      [checked]="filterLowAlbumin"
+      (change)="filterLowAlbumin = $event.checked; applyFilters()">
+      הצג רק מקרים אלו
+    </mat-slide-toggle>
+  </div>
+  
           </div>
         </mat-card-content>
       </mat-card>

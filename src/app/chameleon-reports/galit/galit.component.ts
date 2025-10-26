@@ -68,7 +68,12 @@ export class GalitComponent implements OnInit {
   Title2 = 'סה״כ תוצאות ';
   totalResults = 0;
   loading = false;
-
+  filterNoConsilium10d = false;
+  filterLowAlbumin = false;
+  
+  // Keep albuminThreshold, getters, etc.
+  // We'll compute KPI counts from the base (pre-toggle) filtered set:
+  private baseFilteredForKpi: Row[] = [];
   columns: (keyof Row)[] = [
     'unitName','admission_No','name','age_Years','gender_Text','room','totalDaysInHosp',
     'labResultAfterAdmission','norton','bmi','wayOfFeding','stampGrade',
@@ -162,6 +167,7 @@ export class GalitComponent implements OnInit {
         this.filteredData = [...norm];
         this.matTableDataSource.data = this.filteredData;
         this.totalResults = this.filteredData.length;
+        this.applyFilters();
         setTimeout(() => {
           this.matTableDataSource.paginator = this.paginator;
           this.matTableDataSource.sort = this.sort;
@@ -218,8 +224,9 @@ export class GalitComponent implements OnInit {
   applyFilters(): void {
     const vals = this.filterForm.value as Record<string,string>;
     const global = (vals['globalFilter'] || '').toLowerCase();
-
-    this.filteredData = this.dataSource.filter(row => {
+  
+    // 1) Base filter (form + global)
+    const base = this.dataSource.filter(row => {
       const perCol = this.columns.every(col => {
         const needle = (vals[col as string] || '').toLowerCase().trim();
         if (!needle) return true;
@@ -231,9 +238,30 @@ export class GalitComponent implements OnInit {
       );
       return perCol && globalOk;
     });
-
-    this.totalResults = this.filteredData.length;
+  
+    // keep a copy for KPI counts (not affected by toggles)
+    this.baseFilteredForKpi = base;
+  
+    // 2) Apply KPI toggles (ANDed)
+    let afterToggles = base;
+  
+    if (this.filterNoConsilium10d) {
+      afterToggles = afterToggles.filter(r => {
+        const noCons = (r.hasConsilium150685814 || '').toString().trim().toLowerCase() === 'no';
+        return noCons && (r.totalDaysInHosp ?? 0) >= 10;
+      });
+    }
+  
+    if (this.filterLowAlbumin) {
+      afterToggles = afterToggles.filter(r =>
+        r.labResultAfterAdmission != null && r.labResultAfterAdmission <= this.albuminThreshold
+      );
+    }
+  
+    // 3) Push to table
+    this.filteredData = afterToggles;
     this.matTableDataSource.data = this.filteredData;
+    this.totalResults = this.filteredData.length;
     this.matTableDataSource.paginator = this.paginator;
     this.matTableDataSource.sort = this.sort;
   }
@@ -265,9 +293,8 @@ export class GalitComponent implements OnInit {
     };
   }
   // Counts based on the filtered rows (the user’s view)
-get totalPatients(): number {
-  return this.filteredData.length;
-}
+  get totalPatients(): number { return this.baseFilteredForKpi.length; }
+
 
 get noConsiliumCount(): number {
   return this.filteredData.filter(r =>
@@ -277,7 +304,7 @@ get noConsiliumCount(): number {
 
 // ^ Oops, better correct implementation:
 get noConsilium150685814Count(): number {
-  return this.filteredData.filter(r => {
+  return this.baseFilteredForKpi.filter(r => {
     const noCons = (r.hasConsilium150685814 || '').toString().trim().toLowerCase() === 'no';
     const daysOk = (r.totalDaysInHosp ?? 0) >= 10;
     return noCons && daysOk;
@@ -286,10 +313,9 @@ get noConsilium150685814Count(): number {
 
 
 // Albumin alert: <= 2.5 (change to 3 if you want a wider net)
- readonly albuminThreshold = 2.5;
-
+readonly albuminThreshold = 2.5;
 get lowAlbuminCount(): number {
-  return this.filteredData.filter(r =>
+  return this.baseFilteredForKpi.filter(r =>
     r.labResultAfterAdmission != null && r.labResultAfterAdmission <= this.albuminThreshold
   ).length;
 }
