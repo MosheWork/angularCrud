@@ -86,33 +86,54 @@ export class DepartmentOccupiedMitavComponent implements OnInit {
   }
 
   loadData(): void {
-    this.isLoading = true; // ✅ Show spinner when data is loading
+    this.isLoading = true;
   
-    this.http.get<any[]>(`${environment.apiUrl}DepartmentOccupiedMITAV`).subscribe(
-      (data) => {
-        this.dataSource = new MatTableDataSource(data);
-      
-        this.totalResults = data.length;
-        setTimeout(() => {
-          this.dataSource.paginator = this.paginator;
-          this.dataSource.sort = this.sort;
-        });
-        // Extract unique UnitName values for the dropdown
-        this.unitOptions = [...new Set(data.map((item) => item.UnitName))].sort();
-        this.filteredData = [...data];
-        // Set up the filter predicate
-        this.dataSource.filterPredicate = this.customFilterPredicate();
+    this.http.get<any[]>(`${environment.apiUrl}DepartmentOccupiedMITAV`)
+      .subscribe({
+        next: (data) => {
+          // 🔁 Normalize keys from camelCase (backend) ➜ PascalCase (frontend expects)
+          const normalized = data.map(d => ({
+            AdmissionNo: d.admissionNo,
+            PName: d.pName,
+            UnitName: d.unitName,
+            Room: d.room,
+            BedName: d.bedName,
+            Age: d.age_Years,
+            PhysiotherapyConsultation: d.physiotherapyConsultation,
+            MobilityAssessment: d.mobilityAssessment,
+            WalkingPrescription: d.walkingPrescription,
+            MobilityAssessmentDate: d.mobilityAssessmentDate,
+            MobilityAtReception: d.mobilityAtReception,
+            FunctionalStateExecution: d.functionalStateExecution,
+            DatesWithBothShifts: d.datesWithBothShifts,
+            TotalDaysInHospital: d.totalDaysInHospital,
+            PercentageOfBothShifts: d.percentageOfBothShifts,
+            AdmissionMedicalRecord: d.admissionMedicalRecord
+          }));
   
-        // Update counts after loading data
-        this.updateCounts(data);
+          this.dataSource = new MatTableDataSource(normalized);
+          this.totalResults = normalized.length;
   
-        this.isLoading = false; // ✅ Hide spinner after loading data
-      },
-      (error) => {
-        console.error('Error fetching data', error);
-        this.isLoading = false; // ✅ Hide spinner even if there's an error
-      }
-    );
+          setTimeout(() => {
+            this.dataSource.paginator = this.paginator;
+            this.dataSource.sort = this.sort;
+          });
+  
+          this.unitOptions = [...new Set(normalized.map(x => x.UnitName))].sort();
+          this.filteredData = [...normalized];
+  
+          this.dataSource.filterPredicate = this.customFilterPredicate();
+  
+          // ✅ Now these fields exist with the right casing
+          this.updateCounts(normalized);
+  
+          this.isLoading = false;
+        },
+        error: (err) => {
+          console.error('Error fetching data', err);
+          this.isLoading = false;
+        }
+      });
   }
   
 

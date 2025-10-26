@@ -199,6 +199,7 @@ import { DoctorAuthorizationsComponent } from './doctor-authorizations/doctor-au
 import { PsychologyComponent } from './chameleon-reports/psychology/psychology.component';
 import { TraumaGraphComponent } from './chameleon-reports/trauma-patients/trauma-graph/trauma-graph.component';
 import { AmbulatoryBirthdayUpdateCRMComponent } from './ServiceCRM/ambulatory-birthday-update-crm/ambulatory-birthday-update-crm.component';
+import { GalitComponent } from './chameleon-reports/galit/galit.component';
 
 
 export const MY_DATE_FORMATS: MatDateFormats = {
@@ -374,7 +375,8 @@ export function playerFactory() {
     DoctorAuthorizationsComponent,
     PsychologyComponent,
     TraumaGraphComponent,
-    AmbulatoryBirthdayUpdateCRMComponent
+    AmbulatoryBirthdayUpdateCRMComponent,
+    GalitComponent
  
 
   
