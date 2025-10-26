@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { debounceTime, distinctUntilChanged, finalize } from 'rxjs/operators';
@@ -20,6 +20,7 @@ type Row = {
   unitMonthTotal: number;
   pctOfUnitQuarter: number; // %
   pctOfUnitMonth: number;   // %
+  pctOfUnitYear: number;    // %
 };
 
 type PeriodMode = 'Year' | 'Quarter' | 'Month';
@@ -29,39 +30,22 @@ type PeriodMode = 'Year' | 'Quarter' | 'Month';
   templateUrl: './otc-executions.component.html',
   styleUrls: ['./otc-executions.component.scss']
 })
-export class OtcExecutionsComponent implements OnInit {
+export class OtcExecutionsComponent implements OnInit, AfterViewInit {
 
-  // ---- Titles (reuse your layout text style) ----
+  // Titles / UI
   titleUnit = 'OTC Executions';
   Title1 = '— ';
   Title2 = 'סה״כ רשומות ';
   totalResults = 0;
-
   loading = false;
 
   // Data
-  dataSource: Row[] = [];
-  filteredData: Row[] = [];
+  dataSource: Row[] = [];            // full set from server (loaded once)
+  filteredData: Row[] = [];          // after client filters
   matTableDataSource = new MatTableDataSource<Row>([]);
 
-  // Auto-populated department list
+  // Filters + options
   departments: string[] = [];
-
-  // View columns (keep your class names/structure)
-  columns: (keyof Row)[] = [
-    'year', 'quarter', 'month', 'monthName',
-    'executionUnitName', 'userName',
-    'userCount', 'unitQuarterTotal', 'unitMonthTotal',
-    'pctOfUnitQuarter', 'pctOfUnitMonth'
-  ];
-
-  // Filters form (same class names so same SCSS works)
-  filterForm: FormGroup;
-
-  // Period toggle
-  periodMode: PeriodMode = 'Quarter';
-
-  // default year/quarter/month controls
   years: number[] = [];
   quarters = [1, 2, 3, 4];
   months = [
@@ -71,87 +55,99 @@ export class OtcExecutionsComponent implements OnInit {
     { val:10, name: 'October' }, { val:11, name: 'November' }, { val:12, name: 'December' }
   ];
 
+  // Column definitions
+  columns: (keyof Row)[] = [
+    'year', 'quarter', 'month', 'monthName',
+    'executionUnitName', 'userName',
+    'userCount', 'unitQuarterTotal', 'unitMonthTotal',
+    'pctOfUnitQuarter', 'pctOfUnitMonth', 'pctOfUnitYear'
+  ];
+  displayedColumns: (keyof Row)[] = []; // depends on period mode
+
+  // Forms
+  filterForm: FormGroup;
+  periodMode: PeriodMode = 'Quarter';
+
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
-  constructor(private http: HttpClient, fb: FormBuilder) {
+  constructor(
+    private http: HttpClient,
+    fb: FormBuilder,
+    private cdr: ChangeDetectorRef
+  ) {
+    // Build reactive form controls (include per-column text boxes for compatibility)
     const ctrls: Record<string, FormControl> = {};
-    this.columns.forEach(c => ctrls[c] = new FormControl(''));
-    // global + explicit filters
-    ctrls['globalFilter'] = new FormControl('');
-    ctrls['unitName'] = new FormControl('');
-    ctrls['yearCtrl'] = new FormControl(new Date().getFullYear());
-    ctrls['quarterCtrl'] = new FormControl(this.getQuarter(new Date()));
-    ctrls['monthCtrl'] = new FormControl(new Date().getMonth() + 1);
+    this.columns.forEach(c => ctrls[c] = new FormControl(''));   // per-column text filters
+    ctrls['globalFilter']   = new FormControl('');
+    ctrls['unitName']       = new FormControl('');               // department select
+    ctrls['yearCtrl']       = new FormControl(new Date().getFullYear());
+    ctrls['quarterCtrl']    = new FormControl(this.getQuarter(new Date()));
+    ctrls['monthCtrl']      = new FormControl(new Date().getMonth() + 1);
     ctrls['periodModeCtrl'] = new FormControl('Quarter');
+    ctrls['quarterFilter']  = new FormControl<string[]>([]);     // multi-select quarters
+
     this.filterForm = fb.group(ctrls);
   }
 
   ngOnInit(): void {
-    // Fill years range (e.g., 2020..current+1)
+    // Years range (adjust as you like)
     const nowY = new Date().getFullYear();
     for (let y = 2020; y <= nowY + 1; y++) this.years.push(y);
 
-    // Wire reactive filters
-    Object.keys(this.filterForm.controls).forEach(k => {
-      this.filterForm.get(k)!.valueChanges
-        .pipe(debounceTime(250), distinctUntilChanged())
-        .subscribe(() => {
-          if (k === 'periodModeCtrl' || k === 'yearCtrl' || k === 'quarterCtrl' || k === 'monthCtrl' || k === 'unitName') {
-            this.load(); // server-side filter (date window & unit)
-          } else {
-            this.applyClientFilters(); // client-side table filter
-          }
-        });
+    // Set initial visible columns and re-filter on mode change
+    this.updateDisplayedColumns();
+    this.getFormControl('periodModeCtrl').valueChanges.subscribe(() => {
+      this.updateDisplayedColumns();
+      this.applyClientFilters();
     });
 
-    // Initial load
+    // Client-side filtering only (never calls load())
+    Object.keys(this.filterForm.controls).forEach(k => {
+      this.filterForm.get(k)!.valueChanges
+        .pipe(debounceTime(200), distinctUntilChanged())
+        .subscribe(() => this.applyClientFilters());
+    });
+
+    // Load once (wide window)
     this.load();
   }
 
-  // -------- Helpers --------
-  private getQuarter(d: Date): number {
-    return Math.floor(d.getMonth() / 3) + 1;
+  ngAfterViewInit(): void {
+    // Wire once
+    this.matTableDataSource.paginator = this.paginator;
+    this.matTableDataSource.sort = this.sort;
+    this.cdr.detectChanges();
   }
 
-  private getPeriodRange(): { start: string; end: string } {
-    const mode = (this.filterForm.get('periodModeCtrl')?.value as PeriodMode) || this.periodMode;
-    const y = Number(this.filterForm.get('yearCtrl')?.value) || new Date().getFullYear();
+  // ===== Helpers =====
+  private getQuarter(d: Date): number { return Math.floor(d.getMonth() / 3) + 1; }
 
+  private updateDisplayedColumns(): void {
+    const mode = (this.getFormControl('periodModeCtrl').value as PeriodMode) || 'Quarter';
     if (mode === 'Year') {
-      const start = new Date(y, 0, 1);
-      const end = new Date(y + 1, 0, 1);
-      return { start: start.toISOString().substring(0, 10), end: end.toISOString().substring(0, 10) };
+      this.displayedColumns = ['year', 'executionUnitName', 'userName', 'userCount', 'pctOfUnitYear'];
+    } else if (mode === 'Quarter') {
+      this.displayedColumns = ['year', 'quarter', 'executionUnitName', 'userName', 'userCount', 'unitQuarterTotal', 'pctOfUnitQuarter'];
+    } else {
+      this.displayedColumns = ['year', 'quarter', 'month', 'monthName', 'executionUnitName', 'userName', 'userCount', 'unitMonthTotal', 'pctOfUnitMonth'];
     }
-
-    if (mode === 'Quarter') {
-      const q = Number(this.filterForm.get('quarterCtrl')?.value) || this.getQuarter(new Date());
-      const qStartMonth = (q - 1) * 3; // 0,3,6,9
-      const start = new Date(y, qStartMonth, 1);
-      const end = new Date(y, qStartMonth + 3, 1);
-      return { start: start.toISOString().substring(0, 10), end: end.toISOString().substring(0, 10) };
-    }
-
-    // Month
-    const m = Number(this.filterForm.get('monthCtrl')?.value) || (new Date().getMonth() + 1);
-    const start = new Date(y, m - 1, 1);
-    const end = new Date(y, m, 1);
-    return { start: start.toISOString().substring(0, 10), end: end.toISOString().substring(0, 10) };
+    // Re-tick the table
+    this.matTableDataSource.data = [...this.matTableDataSource.data];
   }
 
-  // -------- Server load --------
+  // ===== Load once from server (wide range) =====
   load(): void {
     this.loading = true;
 
-    const { start, end } = this.getPeriodRange();
-    const unitName = (this.filterForm.get('unitName')?.value || '').trim();
+    // Fetch once (big window). Adjust if needed.
+    const start = '2024-01-01';
+    const end   = '2030-12-31';
 
-    let params = new HttpParams()
+    const params = new HttpParams()
       .set('startDate', start)
       .set('endDate', end)
       .set('protocolLike', '%OTC%');
-
-    if (unitName) params = params.set('unitName', unitName);
 
     this.http.get<Row[]>(`${environment.apiUrl}OTCExecutions/ByPeriod`, { params })
       .pipe(finalize(() => this.loading = false))
@@ -169,21 +165,19 @@ export class OtcExecutionsComponent implements OnInit {
             unitMonthTotal: Number(r.unitMonthTotal ?? 0),
             pctOfUnitQuarter: Number(r.pctOfUnitQuarter ?? 0),
             pctOfUnitMonth: Number(r.pctOfUnitMonth ?? 0),
+            pctOfUnitYear: Number((r as any).pctOfUnitYear ?? 0),
           })) as Row[];
 
           this.dataSource = norm;
 
-          // auto-populate departments (distinct ExecutionUnitName from result)
-          this.departments = Array.from(new Set(this.dataSource.map(d => d.executionUnitName)))
-                                  .filter(x => !!x)
-                                  .sort((a,b) => a.localeCompare(b));
+          // Departments from full dataset
+          this.departments = Array.from(new Set(norm.map(d => d.executionUnitName)))
+            .filter(Boolean)
+            .sort((a, b) => a.localeCompare(b));
 
-          // refresh table
+          // Show all, then client-subset
+          this.matTableDataSource.data = norm;
           this.applyClientFilters();
-          setTimeout(() => {
-            this.matTableDataSource.paginator = this.paginator;
-            this.matTableDataSource.sort = this.sort;
-          });
         },
         error: (err) => {
           console.error('Load error', err);
@@ -192,35 +186,71 @@ export class OtcExecutionsComponent implements OnInit {
       });
   }
 
-  // -------- Client-side filters (search boxes) --------
+  // ===== Client-side filtering =====
   applyClientFilters(): void {
-    const vals = this.filterForm.value as Record<string, string>;
+    const vals = this.filterForm.value as any;
+
+    const mode: PeriodMode = (vals['periodModeCtrl'] as PeriodMode) || 'Quarter';
+    const yearCtrl    = Number(vals['yearCtrl'])    || new Date().getFullYear();
+    const quarterCtrl = Number(vals['quarterCtrl']) || this.getQuarter(new Date());
+    const monthCtrl   = Number(vals['monthCtrl'])   || (new Date().getMonth() + 1);
+    const unitName    = (vals['unitName'] || '').toString().trim();
+    const selectedQuarters: number[] = (vals['quarterFilter'] || []).map((q: string | number) => +q);
     const global = (vals['globalFilter'] || '').toLowerCase().trim();
 
-    const base = this.dataSource.filter(row => {
-      // column filters (optional per-column text boxes; currently empty, but kept for SCSS/class compatibility)
+    const filtered = this.dataSource.filter(row => {
+      // 1) Period logic
+      let periodOk = true;
+      if (mode === 'Year') {
+        periodOk = (row.year ?? 0) === yearCtrl;
+        if (periodOk && selectedQuarters.length > 0) {
+          periodOk = selectedQuarters.includes(Number(row.quarter ?? 0));
+        }
+      } else if (mode === 'Quarter') {
+        const quarterMatch = selectedQuarters.length > 0
+          ? selectedQuarters.includes(Number(row.quarter ?? 0))
+          : (Number(row.quarter ?? 0) === quarterCtrl);
+        periodOk = (row.year ?? 0) === yearCtrl && quarterMatch;
+      } else {
+        const monthMatch = (Number(row.month ?? 0) === monthCtrl);
+        const quarterFilterOk = selectedQuarters.length === 0
+          ? true
+          : selectedQuarters.includes(Number(row.quarter ?? 0));
+        periodOk = (row.year ?? 0) === yearCtrl && monthMatch && quarterFilterOk;
+      }
+      if (!periodOk) return false;
+
+      // 2) Department
+      if (unitName && row.executionUnitName !== unitName) return false;
+
+      // 3) Per-column text filters
       const perCol = this.columns.every(col => {
         const needle = (vals[col as string] || '').toLowerCase().trim();
         if (!needle) return true;
         const val = ((row[col] ?? '') + '').toLowerCase();
         return val.includes(needle);
       });
+      if (!perCol) return false;
 
+      // 4) Global search across all columns
       const globalOk = !global || this.columns.some(col =>
         (((row[col] ?? '') + '').toLowerCase().includes(global))
       );
+      if (!globalOk) return false;
 
-      return perCol && globalOk;
+      return true;
     });
 
-    this.filteredData = base;
-    this.matTableDataSource.data = this.filteredData;
-    this.totalResults = this.filteredData.length;
-    this.matTableDataSource.paginator = this.paginator;
-    this.matTableDataSource.sort = this.sort;
+    // Push to table
+    this.filteredData = filtered;
+    this.matTableDataSource.data = [...filtered]; // new ref so table updates
+    this.totalResults = filtered.length;
+
+    // Keep paginator valid
+    this.paginator?.firstPage();
   }
 
-  // -------- Labels (Hebrew like your example) --------
+  // ===== Labels =====
   getColumnLabel(c: keyof Row | 'globalFilter' | 'unitName'): string {
     const labels: Record<string, string> = {
       year: 'שנה',
@@ -234,13 +264,23 @@ export class OtcExecutionsComponent implements OnInit {
       unitMonthTotal: 'סה״כ יחידה בחודש',
       pctOfUnitQuarter: '% מתוך יחידה (רבעון)',
       pctOfUnitMonth: '% מתוך יחידה (חודש)',
+      pctOfUnitYear: '% מתוך יחידה (שנה)',
       globalFilter: 'חיפוש',
       unitName: 'יחידה'
     };
     return labels[c] ?? (c as string);
   }
 
-  getFormControl(c: keyof Row | 'globalFilter' | 'unitName' | 'yearCtrl' | 'quarterCtrl' | 'monthCtrl' | 'periodModeCtrl') {
+  getFormControl(
+    c: keyof Row
+     | 'globalFilter'
+     | 'unitName'
+     | 'yearCtrl'
+     | 'quarterCtrl'
+     | 'monthCtrl'
+     | 'periodModeCtrl'
+     | 'quarterFilter'
+  ) {
     return this.filterForm.get(c) as FormControl;
   }
 
@@ -256,17 +296,30 @@ export class OtcExecutionsComponent implements OnInit {
       quarterCtrl: q || this.getQuarter(new Date()),
       monthCtrl: m || (new Date().getMonth() + 1),
       unitName: '',
-      globalFilter: ''
+      globalFilter: '',
+      quarterFilter: [] // clear multi-select
     });
 
     this.applyClientFilters();
     this.paginator?.firstPage();
   }
 
+  // Export only currently visible columns (labels as headers)
   exportToExcel(): void {
-    const ws = XLSX.utils.json_to_sheet(this.filteredData);
+    const toExport = this.filteredData.map(row => {
+      const o: any = {};
+      this.displayedColumns.forEach(c => { o[this.getColumnLabel(c)] = (row as any)[c]; });
+      return o;
+    });
+
+    const ws = XLSX.utils.json_to_sheet(toExport);
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, 'OTC-Executions');
     XLSX.writeFile(wb, 'otc-executions.xlsx');
+  }
+
+  // (Optional) For % formatting in template:
+  isPercent(c: keyof Row) {
+    return c === 'pctOfUnitQuarter' || c === 'pctOfUnitMonth' || c === 'pctOfUnitYear';
   }
 }
