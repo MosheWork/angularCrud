@@ -28,8 +28,14 @@ type Row = {
   foodTexture: string;
   daysSinceLastHosp?: number;
 
-  weightKg?: number;         // NEW
-  heightCm?: number;         // NEW
+  weightKg?: number;
+  heightCm?: number;
+
+  // NEW
+  allergy?: string;          // Allergy_IDTextList
+  mustGrade?: number;        // AE2_Grade (>=2)
+  dxICD9List?: string;       // Diagnosis ICD-9 matches
+  procICD9List?: string;     // Procedure ICD-9 matches
 
   isAgeRule: boolean;
   isRecent30dRule: boolean;
@@ -39,8 +45,16 @@ type Row = {
   isNonOralRouteRule: boolean;
   stampRule: boolean;
   isSkinIntegrityRule: boolean;
+
+  // NEW rule bits
+  allergyRule?: boolean;
+  mustRule?: boolean;
+  dxICD9Rule?: boolean;
+  procICD9Rule?: boolean;
+
   reason: string;
 };
+
 
 @Component({
   selector: 'app-galit',
@@ -56,13 +70,16 @@ export class GalitComponent implements OnInit {
   loading = false;
 
   columns: (keyof Row)[] = [
-    'unitName','admission_No','name','age_Years','gender_Text','room',
+    'unitName','admission_No','name','age_Years','gender_Text','room','totalDaysInHosp',
     'labResultAfterAdmission','norton','bmi','wayOfFeding','stampGrade',
     'skinIntegrityAnswer','hasConsilium150685814','lastConsiliumAnswerDate',
     'typeOfFood','foodTexture','daysSinceLastHosp',
-    'weightKg','heightCm'         // NEW
-    //'reason'
+    'weightKg','heightCm',
+    // NEW visible columns
+    'allergy','mustGrade','dxICD9List','procICD9List'
+    // 'reason'
   ];
+  
 
   filterForm: FormGroup;
   matTableDataSource = new MatTableDataSource<Row>([]);
@@ -112,8 +129,17 @@ export class GalitComponent implements OnInit {
           typeOfFood: r.TypeOfFood ?? r.typeOfFood ?? '',
           foodTexture: r.FoodTexture ?? r.foodTexture ?? '',
           daysSinceLastHosp: r.DaysSinceLastHosp ?? r.daysSinceLastHosp ?? null,
+        
+          // assumes SQL alias fix: WeightKg=105, HeightCm=4
           weightKg: r.WeightKg ?? r.weightKg ?? null,
           heightCm: r.HeightCm ?? r.heightCm ?? null,
+        
+          // NEW columns
+          allergy: r.Allergy ?? r.allergy ?? '',
+          mustGrade: r.MustGrade ?? r.mustGrade ?? null,
+          dxICD9List: r.DxICD9List ?? r.dxICD9List ?? '',
+          procICD9List: r.ProcICD9List ?? r.procICD9List ?? '',
+        
           isAgeRule: !!(r.IsAgeRule ?? r.isAgeRule),
           isRecent30dRule: !!(r.IsRecent30dRule ?? r.isRecent30dRule),
           isLabRule: !!(r.IsLabRule ?? r.isLabRule),
@@ -122,9 +148,16 @@ export class GalitComponent implements OnInit {
           isNonOralRouteRule: !!(r.IsNonOralRouteRule ?? r.isNonOralRouteRule),
           stampRule: !!(r.StampRule ?? r.stampRule),
           isSkinIntegrityRule: !!(r.IsSkinIntegrityRule ?? r.isSkinIntegrityRule),
+        
+          // NEW rule bits
+          allergyRule: !!(r.AllergyRule ?? r.allergyRule),
+          mustRule: !!(r.MustRule ?? r.mustRule),
+          dxICD9Rule: !!(r.DxICD9Rule ?? r.dxICD9Rule),
+          procICD9Rule: !!(r.ProcICD9Rule ?? r.procICD9Rule),
+        
           reason: r.Reason ?? r.reason ?? ''
         })) as Row[];
-
+        
         this.dataSource = norm;
         this.filteredData = [...norm];
         this.matTableDataSource.data = this.filteredData;
@@ -148,21 +181,26 @@ export class GalitComponent implements OnInit {
       room:'חדר',
       gender_Text:'מין',
       totalDaysInHosp:'ימי אשפוז',
-      labResultAfterAdmission:'בדיקה 882040010 (אחרי קבלה)',
-      norton:'נורטון (אחרון)',
+      labResultAfterAdmission:'אלבומין ',
+      norton:'נורטון ',
       bmi:'BMI',
-      wayOfFeding:'דרך הזנה',
-      stampGrade:'דרגת חותמת',
-      skinIntegrityAnswer:'שלמות עור (Type=3)',
-      hasConsilium150685814:'קונסיליום 150685814',
-      lastConsiliumAnswerDate:'תאריך קונסיליום (אחרון)',
-      typeOfFood:'סוג מזון',
+      wayOfFeding:'דרך מתן',
+      stampGrade:'Stamp',
+      skinIntegrityAnswer:' פצע לחץ ',
+      hasConsilium150685814:'האם קיים ייעוץ  ',
+      lastConsiliumAnswerDate:'תאריך ייעוץ תזונה אחרון ',
+      typeOfFood:' תזונה ',
       foodTexture:'מרקם מזון',
       daysSinceLastHosp:'ימים מאז שחרור קודם',
       weightKg:'משקל (ק״ג)',
       heightCm:'גובה (ס״מ)',
       reason:'נימוק',
-      globalFilter:'חיפוש'
+      globalFilter:'חיפוש',
+      allergy:'אלרגיות (שם)',
+      mustGrade:'Must',
+      dxICD9List:'אבחנות',
+      procICD9List:'פרוצדורות '
+     
     };
     return labels[c] ?? (c as string);
   }
@@ -206,4 +244,54 @@ export class GalitComponent implements OnInit {
     XLSX.utils.book_append_sheet(wb, ws, 'Galit');
     XLSX.writeFile(wb, 'galit.xlsx');
   }
+
+  getCellClass(c: string, row: Row): Record<string, boolean> {
+    const hasCons = (row.hasConsilium150685814 || '').toString().trim().toLowerCase();
+    const noCons = hasCons === 'no' || hasCons === 'לא'; // keep Hebrew “No” if needed
+  
+    const isHospDanger =
+      c === 'totalDaysInHosp' &&
+      row.totalDaysInHosp != null &&
+      row.totalDaysInHosp >= 10 &&
+      noCons;
+  
+    const isLabDanger =
+      c === 'labResultAfterAdmission' &&
+      row.labResultAfterAdmission != null &&
+      row.labResultAfterAdmission <= 2.5;
+  
+    return {
+      danger: isHospDanger || isLabDanger
+    };
+  }
+  // Counts based on the filtered rows (the user’s view)
+get totalPatients(): number {
+  return this.filteredData.length;
+}
+
+get noConsiliumCount(): number {
+  return this.filteredData.filter(r =>
+    (r.hasConsilium150685814? r.hasConsilium150685814 : r.hasConsilium150685814) // guard if typo
+  ,).length;
+}
+
+// ^ Oops, better correct implementation:
+get noConsilium150685814Count(): number {
+  return this.filteredData.filter(r => {
+    const noCons = (r.hasConsilium150685814 || '').toString().trim().toLowerCase() === 'no';
+    const daysOk = (r.totalDaysInHosp ?? 0) >= 10;
+    return noCons && daysOk;
+  }).length;
+}
+
+
+// Albumin alert: <= 2.5 (change to 3 if you want a wider net)
+ readonly albuminThreshold = 2.5;
+
+get lowAlbuminCount(): number {
+  return this.filteredData.filter(r =>
+    r.labResultAfterAdmission != null && r.labResultAfterAdmission <= this.albuminThreshold
+  ).length;
+}
+
 }

@@ -3,7 +3,37 @@
   
  
     <app-spinner [isLoading]="loading"></app-spinner>
-
+    <mat-card class="kpi-card" *ngIf="!loading" dir="rtl">
+     
+      
+        <mat-card-content>
+          <div class="kpi-grid">
+            <!-- No-consilium 10+ days -->
+            <div class="kpi-item kpi-alert">
+              <div class="kpi-title">מטופלים</div>
+              <div class="kpi-value">
+                <span class="kpi-strong">{{ noConsilium150685814Count }}</span>
+                <span class="kpi-sep">/</span>
+                <span class="kpi-total">{{ totalPatients }}</span>
+              </div>
+              <div class="kpi-foot">מטופלים מעל 10 ימי אשפוז ולא בוצע יעוץ</div>
+            </div>
+      
+            <!-- Albumin (<= threshold) -->
+            <div class="kpi-item">
+              <div class="kpi-title">אלבומין ≤ {{ albuminThreshold }}</div>
+              <div class="kpi-value">
+                <span class="kpi-strong kpi-amber">{{ lowAlbuminCount }}</span>
+                <span class="kpi-sep">/</span>
+                <span class="kpi-total">{{ totalPatients }}</span>
+              </div>
+              <div class="kpi-foot">אלבומין נמדד אחרי קבלה </div>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+      
+  
     <form [formGroup]="filterForm" class="filter-form" *ngIf="!loading">
             <div class="container-fluid mb-2">
            
@@ -40,8 +70,18 @@
         <mat-header-cell *matHeaderCellDef mat-sort-header>
           {{ getColumnLabel(c) }}
         </mat-header-cell>
-        <mat-cell *matCellDef="let row">{{ row[c] }}</mat-cell>
-      </ng-container>
+        <mat-cell *matCellDef="let row" [ngClass]="getCellClass(c, row)">
+            <ng-container [ngSwitch]="c">
+              <span *ngSwitchCase="'lastConsiliumAnswerDate'">
+                {{ row[c] | date:'dd/MM/yyyy, HH:mm' }}
+              </span>
+              <span *ngSwitchDefault>
+                {{ row[c] }}
+              </span>
+            </ng-container>
+          </mat-cell>
+           
+        </ng-container>
   
       <mat-header-row *matHeaderRowDef="columns"></mat-header-row>
       <mat-row *matRowDef="let row; columns: columns;"></mat-row>
