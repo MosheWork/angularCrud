@@ -108,6 +108,7 @@ import { DoctorAuthorizationsComponent } from './doctor-authorizations/doctor-au
 import { PsychologyComponent } from './chameleon-reports/psychology/psychology.component';
 import { AmbulatoryBirthdayUpdateCRMComponent } from './ServiceCRM/ambulatory-birthday-update-crm/ambulatory-birthday-update-crm.component';
 import { GalitComponent } from './chameleon-reports/galit/galit.component';
+import { OtcExecutionsComponent } from './chameleon-reports/otc-executions/otc-executions.component';
 
 const routes: Routes = [
   //', component: UsersComponent },
@@ -204,7 +205,8 @@ const routes: Routes = [
 { path: 'medication-reconciliationr', component: MedicationReconciliationComponent , data: { title: 'MedicationReconciliation' }},//  MedicationReconciliation 
 { path: 'main-surgery', component: MainSurgeryComponent , data: { title: 'מערכת יעל ' }},//  רשימת ניתוחים
 { path: 'Psychology', component: PsychologyComponent , data: { title: 'פסיכולוגיה' }},//  דוח תפוקות
-{ path: 'Galit', component: GalitComponent , data: { title: 'דוח גלית' }},//  דוח תזונה של גלית 
+{ path: 'Galit', component: GalitComponent , data: { title: 'דוח גלית' }},//  דוח תזונה של גלית
+{ path: 'otc-executions', component: OtcExecutionsComponent , data: { title: 'OTC ' }},//  דוח של קרן OTC
 
 
 
