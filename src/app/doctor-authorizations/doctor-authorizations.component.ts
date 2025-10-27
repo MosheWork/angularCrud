@@ -53,7 +53,7 @@ export class DoctorAuthorizationsComponent implements OnInit, AfterViewInit {
     'docname',
     'cellNumber',
     'link',
-    'linkPdf',
+    //'linkPdf',
    // 'email',                      // NEW
     'directManager',
     'directManagerFunction',      // NEW
@@ -113,7 +113,9 @@ export class DoctorAuthorizationsComponent implements OnInit, AfterViewInit {
     this.visibleFilterFields = (this.filterFields as (keyof Row | 'globalFilter')[])
   .filter(f => f !== 'globalFilter') as (keyof Row)[];
   }
-
+  get displayedColumns(): (keyof Row)[] {
+    return this.columns.filter(c => c !== 'linkPdf');
+  }
   ngAfterViewInit(): void {
     this.matTableDataSource.paginator = this.paginator;
     this.matTableDataSource.sort = this.sort;
