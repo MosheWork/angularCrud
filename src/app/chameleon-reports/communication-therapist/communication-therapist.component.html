@@ -24,14 +24,22 @@
               </mat-select>
             </mat-form-field>
   
-            <!-- Month Dropdown -->
-            <mat-form-field appearance="outline" class="filter-field">
-              <mat-label>חודש</mat-label>
-              <mat-select formControlName="month">
-                <mat-option *ngFor="let month of months" [value]="month.value">{{ month.name }}</mat-option>
-              </mat-select>
-            </mat-form-field>
-  
+          <!-- Month Multi Select -->
+<mat-form-field appearance="outline" class="filter-field">
+  <mat-label>חודשים</mat-label>
+  <mat-select formControlName="months" multiple (selectionChange)="onMonthsChange()">
+    <!-- Select All -->
+    <mat-option (click)="toggleAllMonths()" [value]="'__all__'">
+      {{ isAllMonthsSelected ? 'נקה הכול' : 'בחר הכול' }}
+    </mat-option>
+
+    <!-- Months -->
+    <mat-option *ngFor="let m of months" [value]="m.value">
+      {{ m.name }}
+    </mat-option>
+  </mat-select>
+</mat-form-field>
+
             <!-- Apply Filters Button -->
             <button mat-raised-button color="primary" (click)="applyFilters()">הפעל חיפוש</button>
   
