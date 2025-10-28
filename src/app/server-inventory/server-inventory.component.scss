@@ -1,0 +1,60 @@
+.wrapper {
+    display: grid;
+    gap: 16px;
+    grid-template-columns: 1fr;
+  }
+  
+  .form-card, .table-card {
+    padding: 12px;
+  }
+  
+  .form-grid {
+    display: grid;
+    gap: 12px;
+  
+    .row {
+      display: grid;
+      gap: 12px;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  
+    .desc {
+      grid-column: 1 / -1;
+    }
+  
+    .actions {
+      display: flex;
+      gap: 10px;
+    }
+  }
+  
+  .table-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  
+    .search {
+      width: 360px;
+      max-width: 100%;
+    }
+  }
+  
+  .table-wrap {
+    overflow: auto;
+  
+    table {
+      width: 100%;
+    }
+  
+    .wrap {
+      white-space: pre-wrap;
+      word-wrap: break-word;
+    }
+  }
+  
+  @media (max-width: 900px) {
+    .form-grid .row {
+      grid-template-columns: 1fr;
+    }
+  }
+  

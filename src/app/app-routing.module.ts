@@ -109,6 +109,7 @@ import { PsychologyComponent } from './chameleon-reports/psychology/psychology.c
 import { AmbulatoryBirthdayUpdateCRMComponent } from './ServiceCRM/ambulatory-birthday-update-crm/ambulatory-birthday-update-crm.component';
 import { GalitComponent } from './chameleon-reports/galit/galit.component';
 import { OtcExecutionsComponent } from './chameleon-reports/otc-executions/otc-executions.component';
+import { ServerInventoryComponent } from './server-inventory/server-inventory.component';
 
 const routes: Routes = [
   //', component: UsersComponent },
@@ -271,8 +272,10 @@ const routes: Routes = [
 
 //
 { path: 'ppt-duplicate', component: PptDuplicateComponent , data: { title: 'מצגות ' } },
-{ path: 'doctor-authorizations', component: DoctorAuthorizationsComponent , data: { title: 'הרשאות רפואיות - רופאים' } }
+{ path: 'doctor-authorizations', component: DoctorAuthorizationsComponent , data: { title: 'הרשאות רפואיות - רופאים' } },
 
+//מצב שרת
+{ path: 'server-inventory', component: ServerInventoryComponent , data: { title: 'מצב שרתים' } }
 
 
 

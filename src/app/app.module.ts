@@ -201,6 +201,7 @@ import { TraumaGraphComponent } from './chameleon-reports/trauma-patients/trauma
 import { AmbulatoryBirthdayUpdateCRMComponent } from './ServiceCRM/ambulatory-birthday-update-crm/ambulatory-birthday-update-crm.component';
 import { GalitComponent } from './chameleon-reports/galit/galit.component';
 import { OtcExecutionsComponent } from './chameleon-reports/otc-executions/otc-executions.component';
+import { ServerInventoryComponent } from './server-inventory/server-inventory.component';
 
 
 export const MY_DATE_FORMATS: MatDateFormats = {
@@ -378,7 +379,8 @@ export function playerFactory() {
     TraumaGraphComponent,
     AmbulatoryBirthdayUpdateCRMComponent,
     GalitComponent,
-    OtcExecutionsComponent
+    OtcExecutionsComponent,
+    ServerInventoryComponent
  
 
   
