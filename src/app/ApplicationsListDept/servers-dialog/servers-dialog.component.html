@@ -52,7 +52,9 @@
                 <div class="fill" [style.width.%]="r.stats?.cpuPercent || 0"></div>
               </div>
               <div class="label">
-                {{ (r.stats?.cpuPercent ?? 0) | number:'1.0-0' }}%
+                <span class="status-badge" [ngClass]="cpuClass(r.stats?.cpuPercent)">
+                  {{ (r.stats?.cpuPercent ?? 0) | number:'1.0-0' }}%
+                </span>
               </div>
             </div>
           </td>
@@ -67,7 +69,12 @@
                 <div class="fill" [style.width.%]="ramPercent(r.stats)"></div>
               </div>
               <div class="label">
-                {{ formatGb(r.stats?.ramUsedGb) }} / {{ formatGb(r.stats?.ramTotalGb) }}
+                <span class="numbers">
+                  {{ formatGb(r.stats?.ramUsedGb) }} / {{ formatGb(r.stats?.ramTotalGb) }}
+                </span>
+                <span class="status-badge" [ngClass]="ramClass(r.stats)">
+                  {{ ramPercent(r.stats) | number:'1.0-0' }}%
+                </span>
               </div>
             </div>
           </td>
@@ -82,7 +89,12 @@
                 <div class="fill" [style.width.%]="diskPercent(r.stats)"></div>
               </div>
               <div class="label">
-                {{ formatGb(r.stats?.diskUsedGb) }} / {{ formatGb(r.stats?.diskTotalGb) }}
+                <span class="numbers">
+                  {{ formatGb(r.stats?.diskUsedGb) }} / {{ formatGb(r.stats?.diskTotalGb) }}
+                </span>
+                <span class="status-badge" [ngClass]="diskClass(r.stats)">
+                  {{ diskPercent(r.stats) | number:'1.0-0' }}%
+                </span>
               </div>
             </div>
           </td>
@@ -92,7 +104,6 @@
         <ng-container matColumnDef="actions">
           <th mat-header-cell *matHeaderCellDef> פעולות </th>
           <td mat-cell *matCellDef="let r">
-            <!-- place for future actions (ssh, RDP link, details, etc.) -->
             <button mat-icon-button matTooltip="רענן שרת זה בלבד" (click)="reload()">
               <mat-icon>refresh</mat-icon>
             </button>

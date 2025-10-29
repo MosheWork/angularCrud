@@ -125,39 +125,29 @@ export class ServersDialogComponent implements OnInit {
   }
 
   // ===== Helpers for UI =====
-  cpuClass(v?: number): string {
-    const x = v ?? 0;
-    if (x >= 90) return 'sev-red';
-    if (x >= 80) return 'sev-orange';
-    return 'sev-green';
+  cpuClass(pct?: number): 'ok' | 'warn' | 'crit' {
+    return this.level(pct);
   }
 
-  ramPercent(r?: ServerStats): number {
-    if (!r || !r.ramTotalGb) return 0;
-    return Math.max(0, Math.min(100, (r.ramUsedGb / r.ramTotalGb) * 100));
+  ramPercent(s?: { ramUsedGb?: number; ramTotalGb?: number }): number {
+    if (!s?.ramTotalGb) return 0;
+    return (100 * (s.ramUsedGb ?? 0)) / s.ramTotalGb;
   }
-  ramClass(r?: ServerStats): string {
-    const p = this.ramPercent(r);
-    if (p >= 90) return 'sev-red';
-    if (p >= 80) return 'sev-orange';
-    return 'sev-green';
+  ramClass(s?: { ramUsedGb?: number; ramTotalGb?: number }): 'ok' | 'warn' | 'crit' {
+    return this.level(this.ramPercent(s));
   }
 
-  diskPercent(r?: ServerStats): number {
-    if (!r || !r.diskTotalGb) return 0;
-    return Math.max(0, Math.min(100, (r.diskUsedGb / r.diskTotalGb) * 100));
+  diskPercent(s?: { diskUsedGb?: number; diskTotalGb?: number }): number {
+    if (!s?.diskTotalGb) return 0;
+    return (100 * (s.diskUsedGb ?? 0)) / s.diskTotalGb;
   }
-  diskClass(r?: ServerStats): string {
-    const p = this.diskPercent(r);
-    if (p >= 90) return 'sev-red';
-    if (p >= 80) return 'sev-orange';
-    return 'sev-green';
+  diskClass(s?: { diskUsedGb?: number; diskTotalGb?: number }): 'ok' | 'warn' | 'crit' {
+    return this.level(this.diskPercent(s));
   }
-
-  formatGb(n?: number): string {
-    if (n == null || isNaN(n)) return '—';
-    return `${n.toFixed(1)} GB`;
+  formatGb(v?: number): string {
+    return (v ?? 0).toFixed(1);
   }
+  
 
   close(): void {
     this.dialogRef.close();
@@ -185,6 +175,12 @@ diskBadge(r?: ServerStats): 'ok' | 'warn' | 'crit' {
   return this.badgeClassFromPercent(this.diskPercent(r));
 }
 
-
+// --- class resolvers (must return: 'ok' | 'warn' | 'crit') ---
+private level(pct?: number): 'ok' | 'warn' | 'crit' {
+  const p = pct ?? 0;
+  if (p >= 90) return 'crit';
+  if (p >= 80) return 'warn';
+  return 'ok';
+}
 
 }
