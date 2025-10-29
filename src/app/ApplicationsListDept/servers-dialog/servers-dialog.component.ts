@@ -133,7 +133,7 @@ export class ServersDialogComponent implements OnInit {
   }
 
   ramPercent(r?: ServerStats): number {
-    if (!r || !r.ramTotalGb || r.ramTotalGb <= 0) return 0;
+    if (!r || !r.ramTotalGb) return 0;
     return Math.max(0, Math.min(100, (r.ramUsedGb / r.ramTotalGb) * 100));
   }
   ramClass(r?: ServerStats): string {
@@ -144,7 +144,7 @@ export class ServersDialogComponent implements OnInit {
   }
 
   diskPercent(r?: ServerStats): number {
-    if (!r || !r.diskTotalGb || r.diskTotalGb <= 0) return 0;
+    if (!r || !r.diskTotalGb) return 0;
     return Math.max(0, Math.min(100, (r.diskUsedGb / r.diskTotalGb) * 100));
   }
   diskClass(r?: ServerStats): string {
@@ -162,4 +162,29 @@ export class ServersDialogComponent implements OnInit {
   close(): void {
     this.dialogRef.close();
   }
+
+  // --- BADGE HELPERS (just color) ---
+private badgeClassFromPercent(p?: number): 'ok' | 'warn' | 'crit' {
+  const x = p ?? 0;
+  if (x >= 90) return 'crit';
+  if (x >= 80) return 'warn';
+  return 'ok';
+}
+
+cpuBadge(r?: ServerStats): 'ok' | 'warn' | 'crit' {
+  return this.badgeClassFromPercent(r?.cpuPercent ?? 0);
+}
+
+
+ramBadge(r?: ServerStats): 'ok' | 'warn' | 'crit' {
+  return this.badgeClassFromPercent(this.ramPercent(r));
+}
+
+
+diskBadge(r?: ServerStats): 'ok' | 'warn' | 'crit' {
+  return this.badgeClassFromPercent(this.diskPercent(r));
+}
+
+
+
 }
