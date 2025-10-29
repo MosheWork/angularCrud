@@ -13,7 +13,7 @@ export class MeasurementRemarksDialogComponent implements OnInit {
   remarks: string = '';
   subtract: boolean = false;
   aprovedMabar: boolean = false;
-
+  isNBenShimon: boolean = false;
   loginUserName: string = '';
   showSubtractMeta: boolean = false;
   showApproveMeta: boolean = false;
@@ -33,6 +33,7 @@ export class MeasurementRemarksDialogComponent implements OnInit {
   ngOnInit(): void {
     this.authenticationService.getAuthentication().subscribe(res => {
       this.loginUserName = res.message.split('\\')[1].toUpperCase();
+      this.isNBenShimon = this.loginUserName === 'NBENSHIMON';
     });
   }
 
@@ -71,8 +72,7 @@ export class MeasurementRemarksDialogComponent implements OnInit {
       Case_Number:   String(caseNumber),
       Remarks:       this.remarks?.trim() || null, // backend treats NULL specially
       Subtract:      !!this.subtract,
-      AprovedMabar:  !!this.aprovedMabar,
-      EntryUser:     this.loginUserName || null
+      AprovedMabar:  this.isNBenShimon ? !!this.aprovedMabar : (this.data.AprovedMabar ?? this.data.aprovedMabar) ?? false,      EntryUser:     this.loginUserName || null
     };
   
     if (this.subtract)      payload.EntryUserSubtract     = this.loginUserName || null;

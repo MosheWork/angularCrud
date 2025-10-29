@@ -1,65 +1,97 @@
+<div class="body">
+
 <div class="wrapper" dir="rtl">
-                <mat-card class="table-card">
-              <div class="table-header">
-                <mat-form-field class="search" appearance="outline">
-                  <mat-label>חיפוש</mat-label>
-                  <input
-                    matInput
-                    [value]="globalFilter"
-                    (input)="applyGlobalFilter($any($event.target).value)"
-                    placeholder="חפש לפי שם שרת" />
-                </mat-form-field>
-          
-                <mat-progressbar *ngIf="loading" mode="indeterminate"></mat-progressbar>
-              </div>
-          
-              <div class="table-wrap">
-                <table mat-table [dataSource]="dataSource" matSort class="mat-elevation-z8">
-          
-                            <ng-container matColumnDef="serverName">
-                    <th mat-header-cell *matHeaderCellDef mat-sort-header>שרת</th>
-                    <td mat-cell *matCellDef="let r">{{ r.serverName }}</td>
-                  </ng-container>
-          
-                            <ng-container matColumnDef="ramUsage">
-                    <th mat-header-cell *matHeaderCellDef mat-sort-header>RAM</th>
-                    <td mat-cell *matCellDef="let r">
-                      {{ r.usedRamGb | number:'1.0-1' }} / {{ r.totalRamGb | number:'1.0-1' }} GB
-                      ({{ (r.usedRamGb / r.totalRamGb) * 100 | number:'1.0-1' }}%)
-                    </td>
-                  </ng-container>
-          
-                            <ng-container matColumnDef="cpuUsage">
-                    <th mat-header-cell *matHeaderCellDef mat-sort-header>ניצול CPU</th>
-                    <td mat-cell *matCellDef="let r">
-                      {{ r.cpuUsagePercent | number:'1.0-1' }}%
-                    </td>
-                  </ng-container>
-          
-                            <ng-container matColumnDef="diskUsage">
-                    <th mat-header-cell *matHeaderCellDef mat-sort-header>שטח דיסק (C:)</th>
-                    <td mat-cell *matCellDef="let r">
-                      {{ (r.totalDiskGb - r.freeDiskGb) | number:'1.0-1' }} / {{ r.totalDiskGb | number:'1.0-1' }} GB
-                      ({{ ((r.totalDiskGb - r.freeDiskGb) / r.totalDiskGb) * 100 | number:'1.0-1' }}%)
-                    </td>
-                  </ng-container>
-          
-                            <ng-container matColumnDef="actions">
-                    <th mat-header-cell *matHeaderCellDef>פעולות</th>
-                    <td mat-cell *matCellDef="let r" class="actions-cell">
-                                    <button mat-stroked-button color="accent" (click)="checkHealth(r.serverName)">סטטוס</button>
-                    </td>
-                  </ng-container>
-          
-                  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-                  <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
-                </table>
-              </div>
-          
-              <mat-paginator
-                [pageSizeOptions]="[5, 10, 25, 50]"
-                [pageSize]="10"
-                showFirstLastButtons>
-              </mat-paginator>
-            </mat-card>
-        </div>
+    <mat-card class="table-card">
+      <div class="table-header">
+        <mat-form-field class="search" appearance="outline">
+          <mat-label>חיפוש</mat-label>
+          <input
+            matInput
+            [value]="globalFilter"
+            (input)="applyGlobalFilter($any($event.target).value)"
+            placeholder="חפש לפי שם שרת" />
+        </mat-form-field>
+  
+        <span class="spacer"></span>
+  
+        <button mat-raised-button color="primary" (click)="openAddDialog()">
+          הוסף שרת
+        </button>
+  
+        <mat-progressbar *ngIf="loading" mode="indeterminate"></mat-progressbar>
+      </div>
+  
+      <div class="table-wrap">
+        <table mat-table [dataSource]="dataSource" matSort class="mat-elevation-z8 full-width">
+  
+          <!-- Server -->
+          <ng-container matColumnDef="serverName">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>שרת</th>
+            <td mat-cell *matCellDef="let r">{{ r.serverName }}</td>
+          </ng-container>
+  
+          <!-- RAM -->
+          <ng-container matColumnDef="ramUsage">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>RAM</th>
+            <td mat-cell *matCellDef="let r">
+              <div class="metric">
+                <span class="numbers">
+                  {{ r.usedRamGb | number:'1.0-1' }} / {{ r.totalRamGb | number:'1.0-1' }} GB
+                </span>
+                <span class="status-badge" [ngClass]="getRamClass(r)">
+                  {{ getRamPercent(r) | number:'1.0-1' }}%
+                </span>
+              </div>
+            </td>
+          </ng-container>
+  
+          <!-- CPU -->
+          <ng-container matColumnDef="cpuUsage">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>ניצול CPU</th>
+            <td mat-cell *matCellDef="let r">
+              <div class="metric">
+                <span class="status-badge" [ngClass]="getCpuClass(r)">
+                  {{ r.cpuUsagePercent | number:'1.0-1' }}%
+                </span>
+              </div>
+            </td>
+          </ng-container>
+  
+          <!-- Disk -->
+          <ng-container matColumnDef="diskUsage">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>שטח דיסק (C:)</th>
+            <td mat-cell *matCellDef="let r">
+              <div class="metric">
+                <span class="numbers">
+                  {{ (r.totalDiskGb - r.freeDiskGb) | number:'1.0-1' }} / {{ r.totalDiskGb | number:'1.0-1' }} GB
+                </span>
+                <span class="status-badge" [ngClass]="getDiskClass(r)">
+                  {{ getDiskPercent(r) | number:'1.0-1' }}%
+                </span>
+              </div>
+            </td>
+          </ng-container>
+  
+          <!-- Actions -->
+          <ng-container matColumnDef="actions">
+            <th mat-header-cell *matHeaderCellDef>פעולות</th>
+            <td mat-cell *matCellDef="let r" class="actions-cell">
+              <button mat-stroked-button color="primary" (click)="openEditDialog(r)">ערוך</button>
+              <button mat-stroked-button color="accent" (click)="checkHealth(r.serverName)">סטטוס</button>
+              <button mat-stroked-button color="warn" (click)="delete(r)" [disabled]="!r.id">מחק</button>
+            </td>
+          </ng-container>
+  
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+        </table>
+      </div>
+  
+      <mat-paginator
+        [pageSizeOptions]="[5, 10, 25, 50]"
+        [pageSize]="10"
+        showFirstLastButtons>
+      </mat-paginator>
+    </mat-card>
+  </div>
+</div>

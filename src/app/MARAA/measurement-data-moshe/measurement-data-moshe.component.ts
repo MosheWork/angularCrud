@@ -117,7 +117,7 @@ export class MeasurementDataMosheComponent implements OnInit, AfterViewInit {
     'allUnitsGrade'
   ];
 
-  
+  isNBenShimon: boolean = false;
   years: number[] = [];
 quarters: string[] = ['Q1', 'Q2', 'Q3', 'Q4'];
 months: string[] = ['ינואר', 'פברואר', 'מרץ', 'אפריל', 'מאי', 'יוני', 'יולי', 'אוגוסט', 'ספטמבר', 'אוקטובר', 'נובמבר', 'דצמבר'];
@@ -456,6 +456,7 @@ profilePictureUrl: string = 'assets/default-user.png';
         (data) => {
           this.loginUserName = data.UserName;
           this.profilePictureUrl = data.ProfilePicture || 'assets/default-user.png';
+          this.isNBenShimon = this.loginUserName === 'NBENSHIMON';
         },
         (error) => {
           console.error('❌ Error fetching employee info:', error);

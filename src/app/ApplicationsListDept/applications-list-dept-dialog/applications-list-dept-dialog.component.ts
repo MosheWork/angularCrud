@@ -22,32 +22,24 @@ export class ApplicationsListDeptDialogComponent implements OnInit {
     @Inject(MAT_DIALOG_DATA) public data: any,
     private http: HttpClient
   ) {
-    // tolerate either lowerCamel (front) or Pascal/ALLCAPS (back) coming in
-    const row = data ?? {};
-    const norm = {
-      id:              row.id ?? row.Id ?? row.ID ?? null,
-      appName:         row.appName ?? row.AppName ?? '',
-      companyName:     row.companyName ?? row.CompanyName ?? '',
-      appDescription:  row.appDescription ?? row.AppDescription ?? '',
-      primaryReference:row.primaryReference ?? row.PrimaryReference ?? '',
-      secondaryReference: row.secondaryReference ?? row.SecondaryReference ?? '',
-      remarks:         row.remarks ?? row.Remarks ?? '',
-      phones:          row.phones ?? row.Phones ?? '',
-      guides:          row.guides ?? row.Guides ?? ''   // DB stores only one guide (string)
-    };
-
     this.form = this.fb.group({
-      id: [norm.id],
-      appName: [norm.appName, Validators.required],
-      companyName: [norm.companyName],
-      appDescription: [norm.appDescription],
-      primaryReference: [norm.primaryReference],
-      secondaryReference: [norm.secondaryReference],
-      remarks: [norm.remarks],
-      phones: [norm.phones],
-      guides: [norm.guides] // file name or absolute URL
+      id: [null],
+      appName: [''],
+      companyName: [''],
+      appDescription: [''],
+      primaryReference: [''],
+      secondaryReference: [''],
+      remarks: [''],
+      phones: [''],
+      guides: ['']
     });
+  
+    // 👇 Fill all fields immediately from data
+    if (data) {
+      this.form.patchValue(data, { emitEvent: false });
+    }
   }
+  
 
   ngOnInit(): void {
     const g = (this.form.value.guides || '').toString().trim();
@@ -117,13 +109,29 @@ export class ApplicationsListDeptDialogComponent implements OnInit {
   }
 
   save() {
-    const payload = this.buildPayload();
-    const endpoint = payload.id ? 'ApplicationsListDept/Update' : 'ApplicationsListDept/Insert';
-
+    // Always read the form’s live values
+    const v = this.form.value;
+  
+    const payload = {
+      id: v.id,
+      appName: (v.appName || '').trim(),
+      companyName: (v.companyName || '').trim(),
+      appDescription: (v.appDescription || '').trim(),
+      primaryReference: (v.primaryReference || '').trim(),
+      secondaryReference: (v.secondaryReference || '').trim(),
+      remarks: (v.remarks || '').trim(),
+      phones: (v.phones || '').trim(),
+      guides: (v.guides || '').trim()
+    };
+  
+    const endpoint = payload.id
+      ? 'ApplicationsListDept/Update'
+      : 'ApplicationsListDept/Insert';
+  
     this.http.post(environment.apiUrl + endpoint, payload)
       .subscribe(() => this.dialogRef.close(true));
   }
-
+  
   close(): void {
     this.dialogRef.close();
   }

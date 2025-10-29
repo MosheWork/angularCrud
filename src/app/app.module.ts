@@ -202,6 +202,8 @@ import { AmbulatoryBirthdayUpdateCRMComponent } from './ServiceCRM/ambulatory-bi
 import { GalitComponent } from './chameleon-reports/galit/galit.component';
 import { OtcExecutionsComponent } from './chameleon-reports/otc-executions/otc-executions.component';
 import { ServerInventoryComponent } from './server-inventory/server-inventory.component';
+import { ServerInventoryEditDialogComponent } from './server-inventory/server-inventory-edit-dialog/server-inventory-edit-dialog.component';
+import { ServersDialogComponent } from './ApplicationsListDept/servers-dialog/servers-dialog.component';
 
 
 export const MY_DATE_FORMATS: MatDateFormats = {
@@ -380,7 +382,9 @@ export function playerFactory() {
     AmbulatoryBirthdayUpdateCRMComponent,
     GalitComponent,
     OtcExecutionsComponent,
-    ServerInventoryComponent
+    ServerInventoryComponent,
+    ServerInventoryEditDialogComponent,
+    ServersDialogComponent
  
 
   
