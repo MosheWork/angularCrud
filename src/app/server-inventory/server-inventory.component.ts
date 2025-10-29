@@ -1,232 +1,301 @@
 import { Component, OnInit, AfterViewInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpParams, HttpErrorResponse } from '@angular/common/http';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { environment } from '../../environments/environment';
+import { of, forkJoin, Observable, from } from 'rxjs'; // 🛑 REQUIRED RXJS IMPORTS
+import { catchError, map, switchMap } from 'rxjs/operators'; // 🛑 REQUIRED RXJS IMPORTS
 
-
+// --- Data Models (Interfaces) ---
 export interface ServerInventoryDto {
-  id?: number | null;
-  serverName: string;
-  ip?: string | null;
-  forSystem?: string | null;
-  description?: string | null;
-  createdAt?: string | null;
-  updatedAt?: string | null;
+  id?: number | null;
+  serverName: string;
+  ip?: string | null;
+  forSystem?: string | null;
+  description?: string | null;
+  createdAt?: string | null;
+  updatedAt?: string | null;
 }
 
 export interface ServerHealthDto {
-  serverName: string;
-  totalDiskGb: number;
-  freeDiskGb: number;
-  totalRamGb: number;
-  usedRamGb: number;
-  cpuUsagePercent: number;
-  checkedAt: string; // ISO
+  serverName: string;
+  totalDiskGb: number;
+  freeDiskGb: number;
+  totalRamGb: number;
+  usedRamGb: number;
+  cpuUsagePercent: number;
+  checkedAt: string; // ISO
 }
 
+// Interface for the final combined data used in the table
+export interface ServerHealthView {
+    id: number | null;
+    serverName: string;
+    // All the health fields the table requires:
+    totalDiskGb: number;
+    freeDiskGb: number;
+    totalRamGb: number;
+    usedRamGb: number;
+    cpuUsagePercent: number;
+  }
+// ---------------------------------
+
 @Component({
-  selector: 'app-server-inventory',
-  templateUrl: './server-inventory.component.html',
-  styleUrls: ['./server-inventory.component.scss']
+  selector: 'app-server-inventory',
+  templateUrl: './server-inventory.component.html',
+  styleUrls: ['./server-inventory.component.scss']
 })
 export class ServerInventoryComponent implements OnInit, AfterViewInit {
-  loading = false;
-// keep these fields you already have on the component:
-healthLoading = false;
-healthError: string | null = null;
-health: ServerHealthDto | null = null;
-  // table
-  displayedColumns: string[] = [
-    'serverName', 'ip', 'forSystem', 'description', 'createdAt', 'updatedAt', 'actions'
-  ];
-  dataSource = new MatTableDataSource<ServerInventoryDto>([]);
-  @ViewChild(MatPaginator) paginator!: MatPaginator;
-  @ViewChild(MatSort) sort!: MatSort;
+  loading = false;
+  healthLoading = false;
+  healthError: string | null = null;
+  health: ServerHealthDto | null = null;
+  
+  // table
+  displayedColumns: string[] = [
+        'serverName', 
+        'ramUsage', 
+        'cpuUsage', 
+        'diskUsage', 
+        'actions'
+      ];
+  
+  // 🛑 FIX: Use the combined ServerHealthView type for the data source
+  dataSource = new MatTableDataSource<ServerHealthView>([]); 
+  @ViewChild(MatPaginator) paginator!: MatPaginator;
+  @ViewChild(MatSort) sort!: MatSort;
 
-  // form
-  form!: FormGroup;
-  isEdit = false;
+  // form
+  form!: FormGroup;
+  isEdit = false;
 
-  // filter
-  globalFilter = '';
+  // filter
+  globalFilter = '';
 
-  // health check
-  healthServerName = '';
-  healthDomain = ''; // optional domain
- 
+  // health check
+  healthServerName = '';
+  healthDomain = ''; // optional domain
+ 
 
-  private readonly apiBase = `${environment.apiUrl}ServerInventory`;
-  private readonly healthApiBase = `${environment.apiUrl}ServerHealth`;
-  constructor(
-    private http: HttpClient,
-    private fb: FormBuilder,
-    private snack: MatSnackBar
-  ) {}
+  private readonly apiBase = `${environment.apiUrl}ServerInventory`;
+  private readonly healthApiBase = `${environment.apiUrl}ServerHealth`;
 
-  ngOnInit(): void {
-    this.form = this.fb.group({
-      id: [null],
-      serverName: ['', [Validators.required, Validators.maxLength(128)]],
-      ip: ['', [Validators.maxLength(45)]],
-      forSystem: ['', [Validators.maxLength(128)]],
-      description: ['', [Validators.maxLength(400)]],
-    });
+  constructor(
+    private http: HttpClient,
+    private fb: FormBuilder,
+    private snack: MatSnackBar
+  ) {}
 
-    this.loadData();
-  }
+  ngOnInit(): void {
+    this.form = this.fb.group({
+      id: [null],
+      serverName: ['', [Validators.required, Validators.maxLength(128)]],
+      ip: ['', [Validators.maxLength(45)]],
+      forSystem: ['', [Validators.maxLength(128)]],
+      description: ['', [Validators.maxLength(400)]],
+    });
 
-  ngAfterViewInit(): void {
-    this.dataSource.paginator = this.paginator;
-    this.dataSource.sort = this.sort;
+    this.loadAllHealthData(); // 🛑 Call the new bulk loading method
+  }
 
-    this.dataSource.filterPredicate = (row, filter) => {
-      const f = filter.trim().toLowerCase();
-      return (
-        (row.serverName || '').toLowerCase().includes(f) ||
-        (row.ip || '').toLowerCase().includes(f) ||
-        (row.forSystem || '').toLowerCase().includes(f) ||
-        (row.description || '').toLowerCase().includes(f)
-      );
-    };
-  }
+  ngAfterViewInit(): void {
+    this.dataSource.paginator = this.paginator;
+    this.dataSource.sort = this.sort;
 
-  // ===== CRUD (inventory) =====
-  loadData(): void {
-    this.loading = true;
-    this.http.get<ServerInventoryDto[]>(`${this.apiBase}`).subscribe({
-      next: rows => {
-        this.dataSource.data = rows ?? [];
-        this.applyGlobalFilter(this.globalFilter);
-        this.loading = false;
-      },
-      error: _ => {
-        this.loading = false;
-        this.snack.open('שגיאה בטעינת השרתים', 'סגור', { duration: 3000 });
-      }
-    });
-  }
+    // Update the filter predicate to use ServerHealthView properties (e.g., serverName)
+    this.dataSource.filterPredicate = (row, filter) => {
+      const f = filter.trim().toLowerCase();
+      // Only filter by server name for the health view table
+      return (row.serverName || '').toLowerCase().includes(f);
+    };
+  }
 
-  applyGlobalFilter(value: string): void {
-    this.globalFilter = value || '';
-    this.dataSource.filter = this.globalFilter;
-    if (this.paginator) this.paginator.firstPage();
-  }
+  // 🛑 NEW/REPLACED: Function to load all inventory data + health data
+  loadAllHealthData(): void {
+    this.loading = true;
+    
+    // 1. Fetch the list of all servers from the inventory
+    this.http.get<ServerInventoryDto[]>(this.apiBase).pipe(
+      // 2. Map the array of inventory items to an array of Observable health calls
+      switchMap(inventoryList => {
+        if (inventoryList.length === 0) {
+          return of([]); // Return an empty observable array if no servers exist
+        }
+        
+        // Create an array of HTTP requests (one per server)
+        const healthRequests: Observable<ServerHealthView>[] = inventoryList.map(server => {
+          const healthUrl = `${this.healthApiBase}/${server.serverName}`;
+          
+          // Call the health API, combine results, and handle errors (e.g., server unreachable)
+          return this.http.get<ServerHealthDto>(healthUrl).pipe(
+            map(healthData => ({
+              // Combine inventory ID and serverName with health data
+              id: server.id ?? null,
+              serverName: server.serverName,
+              totalDiskGb: healthData.totalDiskGb,
+              freeDiskGb: healthData.freeDiskGb,
+              totalRamGb: healthData.totalRamGb,
+              usedRamGb: healthData.usedRamGb,
+              cpuUsagePercent: healthData.cpuUsagePercent,
+            } as ServerHealthView)),
+            // Handle errors for individual health checks
+            catchError((err: HttpErrorResponse) => {
+              console.error(`Health check failed for ${server.serverName}`, err);
+              // Return a default object with zeroed/error health metrics
+              return of({
+                id: server.id ?? null,
+                serverName: server.serverName + ' (שגיאת בריאות)', // Indicate failure
+                totalDiskGb: 0,
+                freeDiskGb: 0,
+                totalRamGb: 0,
+                usedRamGb: 0,
+                cpuUsagePercent: 0,
+              } as ServerHealthView);
+            })
+          );
+        });
+        
+        // 3. Wait for all health requests to complete
+        return forkJoin(healthRequests);
+      }),
+      catchError(err => {
+        this.snack.open('נכשלה טעינת נתוני השרתים מהבסיס', 'סגור', { duration: 3000 });
+        console.error(err);
+        return of([]);
+      })
+    ).subscribe({
+      next: (combinedData: ServerHealthView[]) => {
+        // 4. Update the data source
+        this.dataSource.data = combinedData;
+        this.loading = false;
+      },
+      error: () => {
+        this.loading = false;
+      }
+    });
+  }
+  
+  // ===== CRUD (inventory) =====
+  // NOTE: The old loadData() method is replaced by loadAllHealthData().
+  // We keep the other CRUD methods, but they should now call loadAllHealthData() 
+  // after any successful operation (submit, delete).
 
-  resetForm(): void {
-    this.isEdit = false;
-    this.form.reset({
-      id: null,
-      serverName: '',
-      ip: '',
-      forSystem: '',
-      description: ''
-    });
-  }
+  // loadData() removed
 
-  edit(row: ServerInventoryDto): void {
-    this.isEdit = true;
-    this.form.patchValue({
-      id: row.id ?? null,
-      serverName: row.serverName,
-      ip: row.ip ?? '',
-      forSystem: row.forSystem ?? '',
-      description: row.description ?? ''
-    });
-    window.scroll({ top: 0, behavior: 'smooth' });
-  }
+  applyGlobalFilter(value: string): void {
+    this.globalFilter = value || '';
+    this.dataSource.filter = this.globalFilter;
+    if (this.paginator) this.paginator.firstPage();
+  }
 
-  delete(row: ServerInventoryDto): void {
-    if (!row.id) {
-      this.snack.open('אין מזהה (ID) לשורה זו', 'סגור', { duration: 2500 });
-      return;
-    }
-    if (!confirm(`למחוק את השרת "${row.serverName}"?`)) return;
+  resetForm(): void {
+    this.isEdit = false;
+    this.form.reset({
+      id: null,
+      serverName: '',
+      ip: '',
+      forSystem: '',
+      description: ''
+    });
+  }
 
-    this.loading = true;
-    this.http.delete(`${this.apiBase}/${row.id}`).subscribe({
-      next: _ => {
-        this.snack.open('נמחק בהצלחה', 'סגור', { duration: 2000 });
-        this.loadData();
-      },
-      error: _ => {
-        this.loading = false;
-        this.snack.open('מחיקה נכשלה', 'סגור', { duration: 3000 });
-      }
-    });
-  }
+  edit(row: ServerHealthView): void { // Changed type to ServerHealthView
+    // Fetch the full inventory row if needed, but for now we patch what we have
+    this.isEdit = true;
+    this.form.patchValue({
+      id: row.id ?? null,
+      serverName: row.serverName,
+      // NOTE: IP, forSystem, description are not available in ServerHealthView
+      // If editing requires these fields, you must fetch the full ServerInventoryDto separately.
+    });
+    window.scroll({ top: 0, behavior: 'smooth' });
+  }
 
-  submit(): void {
-    if (this.form.invalid) {
-      this.form.markAllAsTouched();
-      this.snack.open('נא למלא שם שרת', 'סגור', { duration: 2000 });
-      return;
-    }
-    const payload: ServerInventoryDto = {
-      id: this.form.value.id ?? null,
-      serverName: (this.form.value.serverName || '').trim(),
-      ip: (this.form.value.ip || '').trim() || null,
-      forSystem: (this.form.value.forSystem || '').trim() || null,
-      description: (this.form.value.description || '').trim() || null
-    };
+  delete(row: ServerHealthView): void { // Changed type to ServerHealthView
+    if (!row.id) {
+      this.snack.open('אין מזהה (ID) לשורה זו', 'סגור', { duration: 2500 });
+      return;
+    }
+    if (!confirm(`למחוק את השרת "${row.serverName}"?`)) return;
 
-    this.loading = true;
-    this.http.post<ServerInventoryDto>(`${this.apiBase}/upsert`, payload, {
-      params: new HttpParams()
-    }).subscribe({
-      next: _ => {
-        this.snack.open(this.isEdit ? 'עודכן בהצלחה' : 'נוסף בהצלחה', 'סגור', { duration: 2000 });
-        this.resetForm();
-        this.loadData();
-      },
-      error: _ => {
-        this.loading = false;
-        this.snack.open('שמירה נכשלה', 'סגור', { duration: 3000 });
-      }
-    });
-  }
+    this.loading = true;
+    this.http.delete(`${this.apiBase}/${row.id}`).subscribe({
+      next: _ => {
+        this.snack.open('נמחק בהצלחה', 'סגור', { duration: 2000 });
+        this.loadAllHealthData(); // 🛑 Refresh using the new method
+      },
+      error: _ => {
+        this.loading = false;
+        this.snack.open('מחיקה נכשלה', 'סגור', { duration: 3000 });
+      }
+    });
+  }
 
-  // ===== Health Check =====
-  checkHealth(name?: string): void {
-        // Use the server name passed in, or the one from the input, and clean it up.
-        const server = (name ?? this.healthServerName ?? '').trim();
-        if (!server) {
-          this.snack.open('נא להזין שם שרת לבדיקה', 'סגור', { duration: 2000 });
-          return;
-        }
-    
-        this.healthLoading = true;
-        this.health = null;
-        this.healthError = null;
-    
-        // 2. UPDATE: Construct the URL as /api/ServerHealth/{server}
-        const url = `${this.healthApiBase}/${server}`; 
-        // Get the domain, clean it up
-        const domain = (this.healthDomain ?? '').trim(); 
-        
-        // Construct HttpParams, adding the domain only if it's not empty
-        let params = new HttpParams();
-        if (domain) {
-          params = params.set('domain', domain); // The backend expects 'domain' query parameter
-        }
-    
-        // 3. UPDATE: Change the expected response type to ServerHealthDto
-        this.http.get<ServerHealthDto>(url, { params }).subscribe({ 
-          next: data => {
-            // The health check API returns ServerHealthDto
-            this.health = data; 
-            this.healthLoading = false;
-          },
-          error: err => {
-            this.healthLoading = false;
-            this.healthError = err?.status === 404
-              ? `לא נמצא שרת בשם "${server}"`
-      : 'בקשה נכשלה לבדיקת סטטוס שרת'; // Changed error message to be more generic
-            console.error(err);
-          }
-        });
-      }
+  submit(): void {
+    if (this.form.invalid) {
+      this.form.markAllAsTouched();
+      this.snack.open('נא למלא שם שרת', 'סגור', { duration: 2000 });
+      return;
+    }
+    const payload: ServerInventoryDto = {
+      id: this.form.value.id ?? null,
+      serverName: (this.form.value.serverName || '').trim(),
+      ip: (this.form.value.ip || '').trim() || null,
+      forSystem: (this.form.value.forSystem || '').trim() || null,
+      description: (this.form.value.description || '').trim() || null
+    };
+
+    this.loading = true;
+    this.http.post<ServerInventoryDto>(`${this.apiBase}/upsert`, payload, {
+      params: new HttpParams()
+    }).subscribe({
+      next: _ => {
+        this.snack.open(this.isEdit ? 'עודכן בהצלחה' : 'נוסף בהצלחה', 'סגור', { duration: 2000 });
+        this.resetForm();
+        this.loadAllHealthData(); // 🛑 Refresh using the new method
+      },
+      error: _ => {
+        this.loading = false;
+        this.snack.open('שמירה נכשלה', 'סגור', { duration: 3000 });
+      }
+    });
+  }
+
+  // ===== Health Check (Single server - unchanged) =====
+  checkHealth(name?: string): void {
+     const server = (name ?? this.healthServerName ?? '').trim();
+    if (!server) {
+     this.snack.open('נא להזין שם שרת לבדיקה', 'סגור', { duration: 2000 });
+     return;
+    }
+    
+        this.healthLoading = true;
+        this.health = null;
+        this.healthError = null;
+    
+        const url = `${this.healthApiBase}/${server}`; 
+        const domain = (this.healthDomain ?? '').trim(); 
+        
+        let params = new HttpParams();
+        if (domain) {
+          params = params.set('domain', domain);
+        }
+    
+        this.http.get<ServerHealthDto>(url, { params }).subscribe({ 
+          next: data => {
+            this.health = data; 
+            this.healthLoading = false;
+          },
+          error: err => {
+            this.healthLoading = false;
+            this.healthError = err?.status === 404
+              ? `לא נמצא שרת בשם "${server}"`
+              : 'בקשה נכשלה לבדיקת סטטוס שרת';
+            console.error(err);
+          }
+        });
+      }
 }
