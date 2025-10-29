@@ -21,16 +21,29 @@ interface BackendHealthDto {
   usedRamGb: number;
   cpuUsagePercent: number;
   checkedAt?: string;
+
+  // 👇 add these (match backend)
+  pingOk?: boolean;
+  pingSent?: number;
+  pingReceived?: number;
+  packetLossPercent?: number;
+  pingAvgMs?: number;
+  pingMinMs?: number;
+  pingMaxMs?: number;
 }
+
 
 /** What our table component uses internally */
 interface ServerStats {
   serverName: string;
-  cpuPercent: number;      // 0..100
+  cpuPercent: number;
   ramUsedGb: number;
   ramTotalGb: number;
   diskUsedGb: number;
   diskTotalGb: number;
+
+  // 👇 add this
+  pingOk?: boolean;
 }
 
 type UiRow = ServerRow & { stats?: ServerStats };
@@ -44,7 +57,7 @@ export class ServersDialogComponent implements OnInit {
   loading = false;
   errorMsg = '';
   rows: UiRow[] = [];
-  displayedColumns = ['serverName', 'cpu', 'ram', 'disk', 'actions'];
+  displayedColumns = ['serverName', 'cpu', 'ram', 'disk','pingOk' ,'actions'];
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: { forSystem: string },
@@ -67,8 +80,10 @@ export class ServersDialogComponent implements OnInit {
       ramTotalGb: d.totalRamGb ?? 0,
       diskUsedGb: diskUsed < 0 ? 0 : diskUsed,
       diskTotalGb: d.totalDiskGb ?? 0,
+      pingOk: d.pingOk === true
     };
   }
+  
 
   reload(): void {
     const forSystem = (this.data?.forSystem || '').trim();

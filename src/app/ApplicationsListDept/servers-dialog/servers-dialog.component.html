@@ -99,7 +99,20 @@
             </div>
           </td>
         </ng-container>
-  
+    <!-- Ping (Alive/Down) -->
+<ng-container matColumnDef="pingOk">
+    <th mat-header-cell *matHeaderCellDef> Ping </th>
+    <td mat-cell *matCellDef="let r">
+      <span class="ping-dot"
+            [class.up]="r?.stats?.pingOk === true"
+            [class.down]="r?.stats?.pingOk === false"
+            [matTooltip]="r?.stats?.pingOk ? 'Alive' : 'No reply'">
+      </span>
+      <span class="ping-text">
+        {{ r?.stats?.pingOk ? 'Alive' : 'No reply' }}
+      </span>
+    </td>
+  </ng-container>
         <!-- Actions -->
         <ng-container matColumnDef="actions">
           <th mat-header-cell *matHeaderCellDef> פעולות </th>
