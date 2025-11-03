@@ -204,6 +204,7 @@ import { OtcExecutionsComponent } from './chameleon-reports/otc-executions/otc-e
 import { ServerInventoryComponent } from './server-inventory/server-inventory.component';
 import { ServerInventoryEditDialogComponent } from './server-inventory/server-inventory-edit-dialog/server-inventory-edit-dialog.component';
 import { ServersDialogComponent } from './ApplicationsListDept/servers-dialog/servers-dialog.component';
+import { IdEncryptComponent } from './id-encrypt/id-encrypt.component';
 
 
 export const MY_DATE_FORMATS: MatDateFormats = {
@@ -384,7 +385,8 @@ export function playerFactory() {
     OtcExecutionsComponent,
     ServerInventoryComponent,
     ServerInventoryEditDialogComponent,
-    ServersDialogComponent
+    ServersDialogComponent,
+    IdEncryptComponent
  
 
   

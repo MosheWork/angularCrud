@@ -1,0 +1,71 @@
+<div class="body">
+
+
+<mat-card class="container">
+
+    <div class="header">
+      <h2>הצפנת ת"ז </h2>
+    </div>
+  
+    <!-- Single encrypt -->
+    <div class="row">
+      <mat-form-field appearance="outline" class="grow">
+        <mat-label>מספר ת"ז</mat-label>
+        <input matInput [(ngModel)]="idNumber" (keyup.enter)="encryptOne()" dir="ltr" />
+      </mat-form-field>
+  
+      <button mat-raised-button color="primary" (click)="encryptOne()" [disabled]="loading">
+        להצפין
+      </button>
+    </div>
+  
+    <div class="result" *ngIf="encrypted !== undefined && !errorMsg">
+      <div class="label">תוצאה:</div>
+      <div class="value" dir="ltr">{{ encrypted || 'NULL' }}</div>
+      <button mat-stroked-button (click)="copy(encrypted)" [disabled]="!encrypted">העתק</button>
+    </div>
+  
+    <mat-divider class="spacer"></mat-divider>
+  
+    <!-- Batch encrypt (optional) -->
+    <!-- <div class="batch">
+      <div class="batch-title">Batch – שים כל מספר ת"ז בשורה נפרדת</div>
+      <mat-form-field appearance="outline" class="full">
+        <mat-label>רשימת מזהים</mat-label>
+        <textarea matInput rows="6" [(ngModel)]="batchInput" dir="ltr"></textarea>
+      </mat-form-field>
+  
+      <div class="row">
+        <button mat-raised-button color="accent" (click)="encryptBatch()" [disabled]="loading">
+          להצפין רשימה
+        </button>
+      </div>
+  
+      <table class="mat-elevation-z2" *ngIf="batchResult.length">
+        <thead>
+          <tr>
+            <th>קלט</th>
+            <th>מוצפן</th>
+            <th>העתק</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let r of batchResult">
+            <td dir="ltr">{{ r.input }}</td>
+            <td dir="ltr">{{ r.encrypted || 'NULL' }}</td>
+            <td>
+              <button mat-button (click)="copy(r.encrypted)" [disabled]="!r.encrypted">העתק</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+   -->
+    <!-- Loading + error -->
+    <mat-progress-bar *ngIf="loading" mode="indeterminate"></mat-progress-bar>
+  
+    <mat-card *ngIf="errorMsg" class="error">
+      {{ errorMsg }}
+    </mat-card>
+  </mat-card>
+</div>

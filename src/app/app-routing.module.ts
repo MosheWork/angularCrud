@@ -110,6 +110,7 @@ import { AmbulatoryBirthdayUpdateCRMComponent } from './ServiceCRM/ambulatory-bi
 import { GalitComponent } from './chameleon-reports/galit/galit.component';
 import { OtcExecutionsComponent } from './chameleon-reports/otc-executions/otc-executions.component';
 import { ServerInventoryComponent } from './server-inventory/server-inventory.component';
+import { IdEncryptComponent } from './id-encrypt/id-encrypt.component';
 
 const routes: Routes = [
   //', component: UsersComponent },
@@ -275,9 +276,11 @@ const routes: Routes = [
 { path: 'doctor-authorizations', component: DoctorAuthorizationsComponent , data: { title: 'הרשאות רפואיות - רופאים' } },
 
 //מצב שרת
-{ path: 'server-inventory', component: ServerInventoryComponent , data: { title: 'מצב שרתים' } }
+{ path: 'server-inventory', component: ServerInventoryComponent , data: { title: 'מצב שרתים' } },
 
 
+//מערכת להצפנת תז
+{ path: 'id-encrypt', component: IdEncryptComponent , data: { title: 'הצפנת ת"ז ' } }
 
 
 
