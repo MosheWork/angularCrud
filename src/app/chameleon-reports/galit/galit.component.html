@@ -93,7 +93,7 @@
         <mat-cell *matCellDef="let row" [ngClass]="getCellClass(c, row)">
             <ng-container [ngSwitch]="c">
               <span *ngSwitchCase="'lastConsiliumAnswerDate'">
-                {{ row[c] | date:'dd/MM/yyyy, HH:mm' }}
+                {{ row[c] | date:'dd/MM/yyyy' }}
               </span>
               <span *ngSwitchDefault>
                 {{ row[c] }}

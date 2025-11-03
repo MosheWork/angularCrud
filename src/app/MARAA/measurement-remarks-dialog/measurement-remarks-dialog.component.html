@@ -7,7 +7,8 @@
         <div>
           <div><strong>קוד מדד:</strong> {{ data?.Measurment_ID }}</div>
           <div><strong>מספר מקרה:</strong> {{ data?.Case_Number }}</div>
-        </div>        <div><strong>תיאור:</strong> {{ (data?.measurementShortDesc || data?.measurementShortDesc) }}</div>
+        </div>
+        <div><strong>תיאור:</strong> {{ (data?.measurementShortDesc || data?.measurementShortDesc) }}</div>
         <div><strong>תאריך:</strong> {{ (data?.date || data?.Date) | date:'dd/MM/yyyy' }}</div>
         <div><strong>מונה:</strong> {{ (data?.mone || data?.Mone) }}</div>
         <div><strong>מכנה:</strong> {{ (data?.mechane || data?.Mechane) }}</div>
@@ -21,33 +22,49 @@
     <textarea matInput [(ngModel)]="remarks" rows="3"></textarea>
   </mat-form-field>
 
+  <!-- בקשה לגרוע -->
   <mat-checkbox [(ngModel)]="subtract" (change)="onSubtractChange()">בקשה לגרוע</mat-checkbox>
-    <div class="meta">
-      <span *ngIf="(data?.entryUserSubtract || data?.EntryUserSubtract)">
-        נרשם על ידי: {{ (data?.entryUserSubtract || data?.EntryUserSubtract) }}
-      </span>
-      <span *ngIf="(data?.entryDateSubtract || data?.EntryDateSubtract)">
-        בתאריך {{ (data?.entryDateSubtract || data?.EntryDateSubtract) | date:'dd/MM/yyyy HH:mm' }}
-      </span>
-    </div>
-  
+  <div class="meta">
+    <span *ngIf="(data?.entryUserSubtract || data?.EntryUserSubtract)">
+      נרשם על ידי: {{ (data?.entryUserSubtract || data?.EntryUserSubtract) }}
+    </span>
+    <span *ngIf="(data?.entryDateSubtract || data?.EntryDateSubtract)">
+      בתאריך {{ (data?.entryDateSubtract || data?.EntryDateSubtract) | date:'dd/MM/yyyy HH:mm' }}
+    </span>
+  </div>
+
+  <!-- מאושר מבר (רק NBENSHIMON) -->
   <ng-container *ngIf="isNBenShimon">
-      <mat-checkbox 
-          [(ngModel)]="aprovedMabar" 
-          (change)="onApproveChange()">
-          מאושר מבר
+    <mat-checkbox [(ngModel)]="aprovedMabar" (change)="onApproveChange()">
+      מאושר מבר
     </mat-checkbox>
-    
-      <div class="meta">
-        <span *ngIf="(data?.entryUserAprovedMabar || data?.EntryUserAprovedMabar)">
-          נרשם על ידי: {{ (data?.entryUserAprovedMabar || data?.EntryUserAprovedMabar) }}
-        </span>
-        <span *ngIf="(data?.entryDateAprovedMabar || data?.EntryDateAprovedMabar)">
-          בתאריך {{ (data?.entryDateAprovedMabar || data?.EntryDateAprovedMabar) | date:'dd/MM/yyyy HH:mm' }}
-        </span>
-      </div>
+    <div class="meta">
+      <span *ngIf="(data?.entryUserAprovedMabar || data?.EntryUserAprovedMabar)">
+        נרשם על ידי: {{ (data?.entryUserAprovedMabar || data?.EntryUserAprovedMabar) }}
+      </span>
+      <span *ngIf="(data?.entryDateAprovedMabar || data?.EntryDateAprovedMabar)">
+        בתאריך {{ (data?.entryDateAprovedMabar || data?.EntryDateAprovedMabar) | date:'dd/MM/yyyy HH:mm' }}
+      </span>
+    </div>
   </ng-container>
-  </mat-dialog-content>
+
+  <!-- NEW: בקשה אישית -->
+ <!-- add a new checkbox next to the others -->
+<mat-checkbox [(ngModel)]="personalRequest" (change)="onPersonalChange()">
+  בקשה להשגה פרטנית
+</mat-checkbox>
+
+<div class="meta">
+  <span *ngIf="(data?.EntryUserPersonalRequest || data?.entryUserPersonalRequest)">
+    נרשם על ידי: {{ (data?.EntryUserPersonalRequest || data?.entryUserPersonalRequest) }}
+  </span>
+  <span *ngIf="(data?.EntryDatePersonalRequest || data?.entryDatePersonalRequest)">
+    בתאריך {{ (data?.EntryDatePersonalRequest || data?.entryDatePersonalRequest) | date:'dd/MM/yyyy HH:mm' }}
+  </span>
+</div>
+
+
+</mat-dialog-content>
 
 <mat-dialog-actions align="end">
   <button mat-button (click)="dialogRef.close()">ביטול</button>
