@@ -205,6 +205,7 @@ import { ServerInventoryComponent } from './server-inventory/server-inventory.co
 import { ServerInventoryEditDialogComponent } from './server-inventory/server-inventory-edit-dialog/server-inventory-edit-dialog.component';
 import { ServersDialogComponent } from './ApplicationsListDept/servers-dialog/servers-dialog.component';
 import { IdEncryptComponent } from './id-encrypt/id-encrypt.component';
+import { ChameleonUserProfileUnitMapComponent } from './chameleon-reports/chameleon-user-profile-unit-map/chameleon-user-profile-unit-map.component';
 
 
 export const MY_DATE_FORMATS: MatDateFormats = {
@@ -386,7 +387,8 @@ export function playerFactory() {
     ServerInventoryComponent,
     ServerInventoryEditDialogComponent,
     ServersDialogComponent,
-    IdEncryptComponent
+    IdEncryptComponent,
+    ChameleonUserProfileUnitMapComponent
  
 
   

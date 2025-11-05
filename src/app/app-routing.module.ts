@@ -111,6 +111,7 @@ import { GalitComponent } from './chameleon-reports/galit/galit.component';
 import { OtcExecutionsComponent } from './chameleon-reports/otc-executions/otc-executions.component';
 import { ServerInventoryComponent } from './server-inventory/server-inventory.component';
 import { IdEncryptComponent } from './id-encrypt/id-encrypt.component';
+import { ChameleonUserProfileUnitMapComponent } from './chameleon-reports/chameleon-user-profile-unit-map/chameleon-user-profile-unit-map.component';
 
 const routes: Routes = [
   //', component: UsersComponent },
@@ -210,6 +211,7 @@ const routes: Routes = [
 { path: 'Galit', component: GalitComponent , data: { title: 'דוח גלית' }},//  דוח תזונה של גלית
 { path: 'otc-executions', component: OtcExecutionsComponent , data: { title: 'OTC ' }},//  דוח של קרן OTC
 
+{ path: 'ChameleonUserProfileUnitMap', component: ChameleonUserProfileUnitMapComponent , data: { title: 'הרשאות בקמיליון' }},//  
 
 
 
