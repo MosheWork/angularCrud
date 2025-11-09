@@ -14,14 +14,14 @@
       class="filters-row"
       style="display:flex; flex-wrap:wrap; gap:12px; align-items:center; margin: 8px 0 16px;"
     >
-      <!-- TopProcedure (step filter: 10..selected) -->
+      <!-- TopProcedure (step filter: 10..selected)
       <mat-form-field appearance="fill" style="min-width:180px;">
         <mat-label>TopProcedure</mat-label>
         <mat-select formControlName="topProcedureFilter" (selectionChange)="applyFilters()">
           <mat-option [value]="null">הכול</mat-option>
           <mat-option *ngFor="let n of topProcedureOptions" [value]="n">{{ n }}</mat-option>
         </mat-select>
-      </mat-form-field>
+      </mat-form-field> -->
 
       <!-- Surgery Department -->
       <mat-form-field appearance="fill" style="min-width:220px;">
@@ -32,23 +32,23 @@
         </mat-select>
       </mat-form-field>
 
-      <!-- GiveOrderName -->
+      <!-- GiveOrderName
       <mat-form-field appearance="fill" style="min-width:220px;">
         <mat-label>נותן התרופה</mat-label>
         <mat-select formControlName="giveOrderNameFilter" (selectionChange)="applyFilters()">
           <mat-option value="">הכול</mat-option>
           <mat-option *ngFor="let g of giveOrderNameOptions" [value]="g">{{ g }}</mat-option>
         </mat-select>
-      </mat-form-field>
+      </mat-form-field> -->
 
       <!-- TimeGroup -->
-      <mat-form-field appearance="fill" style="min-width:200px;">
+      <!-- <mat-form-field appearance="fill" style="min-width:200px;">
         <mat-label>קבוצת זמן</mat-label>
         <mat-select formControlName="timeGroup" (selectionChange)="applyFilters()">
           <mat-option value="">הכול</mat-option>
           <mat-option *ngFor="let tg of timeGroupOptions" [value]="tg">{{ tg }}</mat-option>
         </mat-select>
-      </mat-form-field>
+      </mat-form-field> -->
     </form>
 
     <!-- Gauge -->
@@ -63,6 +63,18 @@
         סה״כ: {{ totalRows }} | ללא תרופות: {{ noDrugsMatTableDataSource.data.length }}
       </div>
     </div>
+
+<!-- Monthly stacked chart (always visible, FIXED SIZE) -->
+<div class="monthly-chart-fixed">
+  <h3 style="margin:0 0 8px;">תקין לעומת סה״כ לפי חודש</h3>
+  <div *ngIf="!monthLabels.length" style="opacity:.7;">אין נתונים להצגה</div>
+
+  <!-- Fixed-size wrapper + fixed-size canvas -->
+  <div class="monthly-canvas-wrap">
+    <canvas #monthlyCanvas width="1100" height="420"></canvas>
+  </div>
+</div>
+
 
     <!-- ICD9 button -->
     <button

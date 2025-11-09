@@ -10,7 +10,7 @@ import { environment } from '../../../environments/environment';
 import { MatDialog } from '@angular/material/dialog';
 import { ProcedureICD9ManagerDialogComponent } from './procedure-icd9-manager-dialog/procedure-icd9-manager-dialog.component';
 import { AuthenticationService } from '../../../app/services/authentication-service/authentication-service.component';
-import { Chart, registerables } from 'chart.js';
+import { Chart, registerables, ChartData, ChartConfiguration } from 'chart.js';
 Chart.register(...registerables);
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 Chart.register(ChartDataLabels);  // ← add this
@@ -56,6 +56,19 @@ giveOrderMatrixData = new MatTableDataSource<any>([]);
 showMatrixGraph = false;
 @ViewChild('matrixCanvas') matrixCanvas!: ElementRef<HTMLCanvasElement>;
 matrixChart: Chart | null = null;
+
+// ▼ add near your other chart fields
+@ViewChild('monthlyCanvas') monthlyCanvas!: ElementRef<HTMLCanvasElement>;
+monthlyChart: Chart | null = null;
+showMonthlyGraph = false;
+chartHeightMonthly = 600;
+
+// internal arrays for the plugin
+monthLabels: string[] = [];
+monthValidCounts: number[] = [];
+monthInvalidCounts: number[] = [];
+monthTotals: number[] = [];   
+
 
   timeGroupCounts: Array<{ group: string; count: number }> = [];
   maxTimeGroupCount = 0;
@@ -140,6 +153,8 @@ chartHeightMatrix = 820;  // matrix Valid% chart (tab 3)
 
       this.calculateSummary(data);
       this.updateGauge();
+      this.refreshMonthlyChart();
+
 
       // 🔹 Build dropdown options
       this.buildFilterOptions(this.dataSource);
@@ -365,6 +380,8 @@ this.giveOrderMatrixData.sort      = this.matrixSort;
     this.matTableDataSource.paginator = this.mainPaginator;
     this.graphData = this.filteredData;
     this.updateGauge();
+    this.refreshMonthlyChart();   // keep the monthly chart in sync with filters
+
   }
   
   
@@ -697,39 +714,20 @@ this.giveOrderMatrixData.sort      = this.matrixSort;
   
   
  // Replace the current isGreenGroup with this:
-private isGreenGroup(group: string): boolean {
+ private isGreenGroup(group: string): boolean {
   if (!group) return false;
+  const g = group.toString().normalize('NFKC').toLowerCase().replace(/\s+/g,'').replace(/[‐–—−-]/g,'-');
 
-  // Normalize: lowercase, unify dashes, strip diacritics, remove spaces
-  const g = group
-    .toString()
-    .normalize('NFKC')
-    .toLowerCase()
-    .replace(/[‐-–—−]/g, '-')     // all dash types -> '-'
-    .replace(/\s+/g, '');         // remove spaces
+  // canonical
+  if (g === 'in60min') return true;
 
-  // Common aliases seen in data (English/Hebrew/compact)
-  const aliases = new Set([
-    '2-between30and60',
-    'between30and60',
-    '30-60',
-    '30to60',
-    '3060',
-    'בין30ל-60',     // likely Hebrew compact
-    'בין30ל60',
-    '2-30-60'        // sometimes prefixed with bucket index
-  ]);
+  // old & friendly aliases -> still treat as green
+  if (g === 'in30min' || g === '2-between30and60' || /30\D*60/.test(g) || /0\D*60/.test(g) || /(<=|upto|under)\s*60/.test(g) || g.includes('עד60'))
+    return true;
 
-  if (aliases.has(g)) return true;
-
-  // Fallback: any form that clearly indicates 30..60 window
-  // e.g., "2 - between 30 and 60", "בין 30 ל 60", "30 – 60", etc.
-  const digitsOnly = g.replace(/[^0-9]/g, '');
-  if (digitsOnly === '3060') return true;
-
-  // Generic regex: contains "30" then "60" (any non-digits between)
-  return /30\D*60/.test(g);
+  return false;
 }
+
 
   
   trackByGroup = (_: number, item: { group: string }) => item.group;
@@ -756,7 +754,8 @@ private isGreenGroup(group: string): boolean {
   
     for (const r of rows) {
       const name = this.getRowGiveOrderName(r);
-      const tg   = this.getRowTimeGroup(r);
+      const tgRaw = this.getRowTimeGroup(r);
+      const tg    = this.normalizeTimeGroupLabel(tgRaw);   // ✅ normalize here
       tgSet.add(tg);
   
       if (!map.has(name)) map.set(name, new Map<string, number>());
@@ -764,31 +763,25 @@ private isGreenGroup(group: string): boolean {
       inner.set(tg, (inner.get(tg) ?? 0) + 1);
     }
   
-    const timeGroups = Array.from(tgSet.values()).sort((a, b) => a.localeCompare(b, 'he'));
+    const timeGroups = Array.from(tgSet.values())
+      .sort((a, b) => a.localeCompare(b, 'he'));
   
-    // Columns: name | …timeGroups… | total | validPercent
     this.giveOrderMatrixColumns = ['giveOrderName', ...timeGroups, 'total', 'validPercent'];
   
     const tableRows = Array.from(map.entries()).map(([name, inner]) => {
       const row: any = { giveOrderName: name };
-      let sum = 0;
-      let validCount = 0;
+      let sum = 0, validCount = 0;
   
       for (const tg of timeGroups) {
         const c = inner.get(tg) ?? 0;
         row[tg] = c;
         sum += c;
-        if (this.isGreenGroup ? this.isGreenGroup(tg) : (tg || '').replace(/\s+/g,'').toLowerCase() === '2-between30and60') {
-          validCount += c;
-        }
+        if (this.isGreenGroup(tg)) validCount += c;   // ✅ green = In60Min
       }
   
       row.total = sum;
       row.validPercent = sum ? Number(((validCount / sum) * 100).toFixed(1)) : 0;
-  
       return row;
-
-     
     });
   
     this.giveOrderMatrixData.data = tableRows;
@@ -797,12 +790,10 @@ private isGreenGroup(group: string): boolean {
       if (this.matrixPaginator) this.giveOrderMatrixData.paginator = this.matrixPaginator;
       if (this.matrixSort)      this.giveOrderMatrixData.sort      = this.matrixSort;
     });
-
-    if (this.showMatrixGraph) {
-      // keep chart in sync with current pivot
-      setTimeout(() => this.refreshMatrixChart(), 0);
-    }
+  
+    if (this.showMatrixGraph) setTimeout(() => this.refreshMatrixChart(), 0);
   }
+  
   
   
   applyGiveOrderMatrixFilter(ev: Event): void {
@@ -1016,11 +1007,7 @@ private attachMatrixTableAdapters(): void {
 }
 // Desired order for the first-tab graph:
 private readonly TIMEGROUP_ORDER = [
-  'In30Min',
-  'Between30And60',
-  'Morethen60',
-  'AfterStart',
-  'NoTime'
+  'In60Min','Morethen60','AfterStart','NoTime'
 ];
 
 // Map any backend label variant → our canonical display label above
@@ -1032,15 +1019,156 @@ private normalizeTimeGroupLabel(raw: string): string {
     .replace(/[‐–—−-]/g, '-')   // unify dashes
     .replace(/\s+/g, '');       // remove spaces
 
-  if (/(between|בין).*30.*60/.test(s) || s === '2-between30and60') return 'Between30And60';
+  // ✅ everything up to 60 min → one bucket
+  if (s === 'in60min' || s === 'in30min' || s === '2-between30and60' ||
+      /0\D*60/.test(s) || /30\D*60/.test(s) || /(<=|upto|under)\s*60/.test(s) || s.includes('עד60'))
+    return 'In60Min';
+
   if (/(morethen60|morethan60|over60|>60|60\+)/.test(s) || s === '3-morethen60') return 'Morethen60';
   if (/(afterstart|after-incision|afterincision|<0|minus|negative)/.test(s) || s === '4-afterstart') return 'AfterStart';
   if (/(notime|ללא|איןשעה|missing|null)/.test(s) || s === '5-notime' || s === 'ללא') return 'NoTime';
-  if (/(in30|min30|<=30|upto30|under30|עד30|0-30)/.test(s) || s === '1-in30min') return 'In30Min';
 
-  // default fallback: keep original (trimmed) or map to NoTime if empty
   const trimmed = (raw || '').toString().trim();
   return trimmed ? trimmed : 'NoTime';
+}
+
+private getRowMonthKey(r: any): string {
+  // prefer operationStartTime, then drugGiveTime
+  const d = r?.operationStartTime || r?.drugGiveTime || r?.OperationStartTime || r?.DrugGiveTime;
+  if (!d) return '—';
+  const dt = new Date(d);
+  if (isNaN(dt.getTime())) return '—';
+  return `${dt.getFullYear()}-${String(dt.getMonth()+1).padStart(2,'0')}`; // YYYY-MM
+}
+private buildMonthlyValidSeries(): void {
+  const rows = this.matTableDataSource?.data ?? [];
+  const byMonth = new Map<string, {valid: number; invalid: number; total: number}>();
+
+  for (const r of rows) {
+    const month = this.getRowMonthKey(r);
+    const tg    = this.normalizeTimeGroupLabel(this.getRowTimeGroup(r));
+    const rec   = byMonth.get(month) || {valid: 0, invalid: 0, total: 0};
+
+    if (this.isGreenGroup(tg)) rec.valid += 1; else rec.invalid += 1;
+    rec.total += 1;
+    byMonth.set(month, rec);
+  }
+
+  // sort by month key ascending
+  const entries = Array.from(byMonth.entries()).sort(([a],[b]) => a.localeCompare(b));
+
+  this.monthLabels        = entries.map(([m]) => m);
+  this.monthValidCounts   = entries.map(([,v]) => v.valid);
+  this.monthInvalidCounts = entries.map(([,v]) => v.invalid);
+  this.monthTotals        = entries.map(([,v]) => v.total);
+}
+private topPercentPlugin = {
+  id: 'topPercent',
+  afterDatasetsDraw: (chart: any) => {
+    const ctx = chart.ctx;
+    const xScale = chart.scales.x;
+    const yScale = chart.scales.y;
+    if (!xScale || !yScale) return;
+
+    this.monthLabels.forEach((_, i) => {
+      const total = this.monthTotals[i] ?? 0;
+      const valid = this.monthValidCounts[i] ?? 0;
+      const pct = total ? +(valid / total * 100).toFixed(1) : 0;
+
+      // top of stacked bar = y(total)
+      const x = xScale.getPixelForValue(i);
+      const y = yScale.getPixelForValue((this.monthValidCounts[i]||0)+(this.monthInvalidCounts[i]||0)) - 6;
+
+      ctx.save();
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'bottom';
+      ctx.font = '600 12px sans-serif';
+      ctx.fillStyle = '#111';
+      ctx.fillText(`${pct}%`, x, y);
+      ctx.restore();
+    });
+  }
+};
+private refreshMonthlyChart(): void {
+  this.buildMonthlyValidSeries();
+  const labels = this.monthLabels;
+
+  const data: ChartData<'bar', number[], string> = {
+    labels,
+    datasets: [
+      {
+        type: 'bar',                     // ← REQUIRED for TS
+        label: 'Valid',
+        data: this.monthValidCounts,
+        backgroundColor: 'rgba(165, 214, 167, 0.85)',
+        borderColor: 'rgba(76, 175, 80, 1)',
+        borderWidth: 1,
+        stack: 'stack',
+        datalabels: {
+          display: true,
+          formatter: (v: number) => v ? `${v}` : '',
+          anchor: 'center',
+          align: 'center',
+          color: '#111',
+          font: { weight: 600 }
+        }
+      } as any, // (optional) quiets 'datalabels' prop typing
+      {
+        type: 'bar',                     // ← REQUIRED for TS
+        label: 'Not valid',
+        data: this.monthInvalidCounts,
+        backgroundColor: 'rgba(255, 205, 210, 0.85)',
+        borderColor: 'rgba(239, 83, 80, 1)',
+        borderWidth: 1,
+        stack: 'stack',
+        datalabels: { display: false }
+      } as any
+    ]
+  };
+  
+
+  const options: any = {
+    responsive: false,
+    maintainAspectRatio: false,
+    scales: {
+      x: { stacked: true },
+      y: { stacked: true, beginAtZero: true, ticks: { precision: 0 } }
+    },
+    plugins: {
+      legend: { display: true, position: 'top' },
+      tooltip: {
+        callbacks: {
+          title: (items: any[]) => labels[items[0].dataIndex] || '',
+          afterBody: (items: any[]) => {
+            const i = items[0].dataIndex;
+            const t = this.monthTotals[i] ?? 0;
+            const v = this.monthValidCounts[i] ?? 0;
+            const p = t ? +(v/t*100).toFixed(1) : 0;
+            return [`סה״כ: ${t}`, `Valid: ${v} (${p}%)`];
+          }
+        }
+      }
+    }
+  };
+
+  // (re)create
+  if (this.monthlyChart) { this.monthlyChart.destroy(); this.monthlyChart = null; }
+  const canvas = this.monthlyCanvas?.nativeElement;
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  if (!ctx) return;
+
+  // register the custom plugin only for this chart
+  this.monthlyChart = new Chart(ctx, {
+    type: 'bar',
+    data,
+    options,
+    plugins: [this.topPercentPlugin]   // ← draws the % above each bar
+  });
+}
+setMonthlyChartHeight(h: number) {
+  this.chartHeightMonthly = h;
+  setTimeout(() => this.monthlyChart?.resize(), 0);
 }
 
 }
