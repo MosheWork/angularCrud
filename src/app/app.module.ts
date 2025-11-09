@@ -198,6 +198,10 @@ import { PptDuplicateComponent } from './ppt-duplicate/ppt-duplicate.component';
 import { DoctorAuthorizationsComponent } from './doctor-authorizations/doctor-authorizations.component';
 import { PsychologyComponent } from './chameleon-reports/psychology/psychology.component';
 import { TraumaGraphComponent } from './chameleon-reports/trauma-patients/trauma-graph/trauma-graph.component';
+import { CommonModule } from '@angular/common';
+import { QueriesListComponent } from './Noya-Apps/QueriesList/QueriesList.component';
+import { QueriesDialogComponent } from './Noya-Apps/QueriesList/QL-dialog.component';
+
 
 
 export const MY_DATE_FORMATS: MatDateFormats = {
@@ -372,7 +376,10 @@ export function playerFactory() {
     PptDuplicateComponent,
     DoctorAuthorizationsComponent,
     PsychologyComponent,
-    TraumaGraphComponent
+    TraumaGraphComponent,
+    QueriesListComponent,
+    QueriesDialogComponent
+
  
 
   
@@ -415,7 +422,8 @@ export function playerFactory() {
     DragDropModule,
     MatButtonToggleModule,
     CdkTableModule,
-    LottieModule.forRoot({ player: playerFactory })
+    LottieModule.forRoot({ player: playerFactory }),
+    CommonModule,
 
 
   ],
