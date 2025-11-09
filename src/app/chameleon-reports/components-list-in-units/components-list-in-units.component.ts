@@ -50,7 +50,10 @@ export class ComponentsListInUnitsComponent implements OnInit {
     'heading',
     'name',
     'record_Name',
-    'answer_Text'
+    'answer_Text',
+    'folder',
+    'field',
+    'screen'
   ];
 
   parseDate(dateString: string | null): Date | null {
@@ -85,7 +88,10 @@ export class ComponentsListInUnitsComponent implements OnInit {
       name: 'שם יחידה',
       heading: 'שם הרכיב ',
       record_Name: 'גיליון ',
-      answer_Text: ' חוצץ'
+      answer_Text: ' חוצץ',
+      folder: 'תיקייה',
+      field: 'שדה',
+      screen: 'מסך'
     };
     return columnLabels[column] || column;
   }
@@ -102,33 +108,47 @@ export class ComponentsListInUnitsComponent implements OnInit {
 
   ngOnInit() {
     this.http.get<any[]>(environment.apiUrl + 'ComponentsListInUnitsAPI').subscribe((data) => {
-      this.dataSource = data;
-      this.filteredData = [...data];
+      // 🔁 Normalize keys (API → component keys)
+      const normalized = data.map(d => ({
+        row_id:       d.row_id ?? d.Row_id ?? d.Row_ID ?? null,
+        unit:         d.unit   ?? d.Unit   ?? null,
+        heading:      d.heading?? d.Heading?? '',
+        name:         d.name   ?? d.Name   ?? '',
+        record_Name:  d.record_Name ?? d.Record_Name ?? '',
+        answer_Text:  d.answer_Text ?? d.Answer_Text ?? '',
+  
+        // ⬇️ NEW: cast numeric smallint to string for display/filter
+        folder:       (d.folder ?? d.Folder ?? '')?.toString(),
+        field:        (d.field  ?? d.Field  ?? '')?.toString(),
+        screen:       (d.screen ?? d.Screen ?? '')?.toString()
+      }));
+  
+      this.dataSource = normalized;
+      this.filteredData = [...normalized];
       this.matTableDataSource = new MatTableDataSource(this.filteredData);
       this.matTableDataSource.paginator = this.paginator;
       this.matTableDataSource.sort = this.sort;
-      
+  
       this.columns.forEach((column) => {
-        this.filterForm.get(column)?.valueChanges.pipe(debounceTime(300), distinctUntilChanged()).subscribe(() => this.applyFilters());
+        this.filterForm.get(column)?.valueChanges
+          .pipe(debounceTime(300), distinctUntilChanged())
+          .subscribe(() => this.applyFilters());
       });
-
-      this.fetchAnswerTextOptions();
-      this.fetchAnswerTextTypeOptions();
-
+  
+      this.fetchAnswerTextOptions();      // now reads from normalized keys
+      this.fetchAnswerTextTypeOptions();  // now reads from normalized keys
+  
       this.filterForm.valueChanges.subscribe(() => {
         this.applyFilters();
         this.paginator.firstPage();
       });
-
+  
       this.applyFilters();
     });
-
-    this.filteredResponsibilities = this.getFormControl('departName').valueChanges.pipe(
-      startWith(''),
-      map((value) => this._filter(value)),
-      tap((filteredValues) => console.log('Filtered Values:', filteredValues))
-    );
+  
+    // ... rest unchanged
   }
+  
 
   private _filter(value: string): string[] {
     const filterValue = value.toLowerCase();
@@ -201,21 +221,27 @@ export class ComponentsListInUnitsComponent implements OnInit {
 
   fetchAnswerTextOptions() {
     this.http.get<any[]>(environment.apiUrl + 'ComponentsListInUnitsAPI').subscribe((data) => {
-      this.answerTextOptions = [...new Set(data.map((item) => item.answer_text))];
+      const normalized = data.map(d => ({
+        answer_Text: d.answer_Text ?? d.Answer_Text ?? '',
+      }));
+      this.answerTextOptions = [...new Set(normalized.map(x => x.answer_Text))];
     });
   }
-
+  
   fetchAnswerTextTypeOptions() {
     this.http.get<any[]>(environment.apiUrl + 'ComponentsListInUnitsAPI').subscribe((data) => {
+      const normalized = data.map(d => ({
+        record_Name: d.record_Name ?? d.Record_Name ?? '',
+      }));
       this.answerTextTypeOptions = [];
-      data.forEach((item: any) => {
-        if (this.answerTextTypeOptions.indexOf(item.record_name) < 0 && item.record_name) {
-          this.answerTextTypeOptions.push(item.record_name);
+      normalized.forEach((x) => {
+        if (x.record_Name && this.answerTextTypeOptions.indexOf(x.record_Name) < 0) {
+          this.answerTextTypeOptions.push(x.record_Name);
         }
       });
-      console.log('Record Name Options:', this.answerTextTypeOptions);
     });
   }
+  
 
   getFormControl(column: string): FormControl {
     return (this.filterForm.get(column) as FormControl) || new FormControl('');

@@ -201,7 +201,8 @@ import { TraumaGraphComponent } from './chameleon-reports/trauma-patients/trauma
 import { CommonModule } from '@angular/common';
 import { QueriesListComponent } from './Noya-Apps/QueriesList/QueriesList.component';
 import { QueriesDialogComponent } from './Noya-Apps/QueriesList/QL-dialog.component';
-
+import { AmbulatoryBirthdayUpdateCRMComponent } from './ServiceCRM/ambulatory-birthday-update-crm/ambulatory-birthday-update-crm.component';
+import { GalitComponent } from './chameleon-reports/galit/galit.component';
 
 
 export const MY_DATE_FORMATS: MatDateFormats = {
@@ -378,11 +379,10 @@ export function playerFactory() {
     PsychologyComponent,
     TraumaGraphComponent,
     QueriesListComponent,
-    QueriesDialogComponent
-
+    QueriesDialogComponent,
+    AmbulatoryBirthdayUpdateCRMComponent,
+    GalitComponent,
  
-
-  
   ],
   imports: [
     BrowserModule,

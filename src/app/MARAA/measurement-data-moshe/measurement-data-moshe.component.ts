@@ -18,6 +18,8 @@ export interface MeasurementSummaryModel {
   mone: number;
   mechane: number;
   grade: number | null;
+  avgTotalTimeInUnit?: number | null; 
+
 }
 
 export interface QuarterlyPivotFlatModel {
@@ -97,9 +99,11 @@ export class MeasurementDataMosheComponent implements OnInit, AfterViewInit {
     'measurementShortDesc',
     'mone',
     'mechane',
+    'avgTotalTimeInUnit',
     'grade',
     'target',
     'allUnitsGrade',
+   
     'pdf'
   ];
   displayedDepartmentColumns: string[] = [
@@ -1234,7 +1238,9 @@ profilePictureUrl: string = 'assets/default-user.png';
       measurementShortDesc: 'תיאור',
       mone: 'מונה',
       mechane: 'מכנה',
-      grade: 'אחוז'
+      grade: 'אחוז',
+      avgTotalTimeInUnit: 'זמן ממוצע ביחידה (דק׳)'
+
     };
 
     this.exportExcelFromTable(this.measurementDataSource.filteredData, 'סיכום_לפי_מדד', headersMap);
@@ -1246,7 +1252,9 @@ profilePictureUrl: string = 'assets/default-user.png';
       department: 'מחלקה',
       mone: 'מונה',
       mechane: 'מכנה',
-      grade: 'אחוז'
+      grade: 'אחוז',
+      avgTotalTimeInUnit: 'זמן ממוצע ביחידה (דק׳)'
+
     };
 
     this.exportExcelFromTable(this.departmentDataSource.filteredData, 'סיכום_לפי_מחלקה', headersMap);

@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild,ElementRef } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatDialogRef } from '@angular/material/dialog';
 import { HttpClient } from '@angular/common/http';
@@ -10,6 +10,12 @@ import { MatTableDataSource } from '@angular/material/table';
 import { MatSort } from '@angular/material/sort';
 import { FormControl, FormGroup, FormBuilder } from '@angular/forms';
 import { environment } from '../../../environments/environment';
+import { Chart, BarController, BarElement, CategoryScale, LinearScale, Tooltip, Legend } from 'chart.js';
+import ChartDataLabels from 'chartjs-plugin-datalabels';
+import { ChangeDetectorRef } from '@angular/core';
+
+Chart.register(BarController, BarElement, CategoryScale, LinearScale, Tooltip, Legend, ChartDataLabels);
+type TraumaChartConfig = { labels: string[]; datasets: any[] };
 
 export interface TimingRow {
   caseNumber: string;
@@ -46,6 +52,33 @@ interface TraumaPatient {
   transferToOtherInstitution: string;
   executionDetails: string;
   icdName?: string;
+}
+
+
+// ===== Simple timing helpers =====
+function tStart(label: string) {
+  const id = `${label}-${Math.random().toString(36).slice(2,7)}`;
+  // prefer performance if available
+  const start = (typeof performance !== 'undefined' && performance.now) ? performance.now() : Date.now();
+  console.time(id); // human-friendly
+  return {
+    step(stepLabel: string) {
+      const now = (typeof performance !== 'undefined' && performance.now) ? performance.now() : Date.now();
+      console.log(`[TIMING] ${label} :: ${stepLabel} @ ${Math.round(now - start)} ms`);
+    },
+    end(finalLabel?: string) {
+      if (finalLabel) console.log(`[TIMING] ${label} :: ${finalLabel}`);
+      console.timeEnd(id);
+    }
+  };
+}
+
+// Optional: perf marks for Chrome Performance panel
+function perfMark(name: string) {
+  try { performance.mark(name); } catch {}
+}
+function perfMeasure(name: string, startMark: string, endMark: string) {
+  try { performance.measure(name, startMark, endMark); } catch {}
 }
 
 @Component({
@@ -95,7 +128,12 @@ export class TraumaPatientsComponent implements OnInit {
       'ultrasoundTechTime'
     ].includes(column);
   }
-
+/// new
+private _boundOnce = false;
+public sortDisabled = true;
+// Add this field in the class
+private _pendingData: TraumaPatient[] = [];
+///
   // כותרות בעברית לפי המפתחות החדשים (camelCase)
   columnHeaders: { [key: string]: string } = {
     remarks: 'הערות',
@@ -126,7 +164,8 @@ export class TraumaPatientsComponent implements OnInit {
   get displayedColumnsWithToggle(): string[] {
     return ['relevantToggle', ...this.displayedColumns];
   }
-//
+
+
 // detail rows: one per patient that has valid times and ShockRoom === 'X'
 ctDetails: Array<{
   caseNumber: string;
@@ -146,6 +185,17 @@ surgeryDetails: Array<{
   minutes: number;
 }> = [];
 
+// one simple 3-bar chart per flow (CT / Surgery)
+public ctBucketPercentChart: TraumaChartConfig = { labels: [], datasets: [] };
+public surgBucketPercentChart: TraumaChartConfig = { labels: [], datasets: [] };
+public get isCTMonth(): boolean   { return this.ctGrouping === 'month'; }
+public get isSurgMonth(): boolean { return this.surgGrouping === 'month'; }
+// keep your Hebrew X labels
+private readonly BUCKET_LABELS_HE: string[] = [
+  'מתחת ל-26 דק׳',
+  'בין 26 ל-60 דק׳',
+  'מעל 60 דק׳'
+];
 // bucket summaries
 ctBuckets: Array<{ bucket: string; count: number }> = [];
 surgeryBuckets: Array<{ bucket: string; count: number }> = [];
@@ -171,9 +221,20 @@ surgDataSource = new MatTableDataSource<any>([]);
 @ViewChild('surgSort') surgSort!: MatSort;
 public showCTGraph = false;
 public showSurgGraph = false;
-
-
-
+@ViewChild('mainPaginator') set _p(p: MatPaginator) {
+  if (p) {
+    this.dataSource.paginator = p;
+    this._kickFirstBind();
+  }
+}
+@ViewChild('mainSort') set _s(s: MatSort) {
+  if (s) {
+    this.dataSource.sort = s;
+    this._kickFirstBind();
+  }
+}
+@ViewChild('topScroll')    topScrollRef!: ElementRef<HTMLDivElement>;
+@ViewChild('bottomScroll') bottomScrollRef!: ElementRef<HTMLDivElement>;
 // NEW: simple togglers
 public toggleCTGraph(): void {
   this.showCTGraph = !this.showCTGraph;
@@ -210,58 +271,100 @@ public toggleSurgGraph(): void {
   uniqueReceiveCauses: string[] = [];
   TransferToOtherInstitution: string[] = [];
 
-  @ViewChild(MatPaginator) paginator!: MatPaginator;
-  @ViewChild(MatSort) sort!: MatSort;
+  // @ViewChild(MatPaginator) paginator!: MatPaginator;
+  // @ViewChild(MatSort) sort!: MatSort;
 
   constructor(
     private http: HttpClient,
     private fb: FormBuilder,
     private dialog: MatDialog,
-    private datePipe: DatePipe
+    private datePipe: DatePipe,
+    private cd: ChangeDetectorRef
 
   ) {
     this.filterForm = this.createFilterForm();
   }
+
+
+
+
   ngOnInit(): void {
-    this.fetchTraumaPatients();
+    // 1) sorting accessor for main table
+    this.dataSource.sortingDataAccessor = (item: any, property: string) => {
+      if (property === 'relevant') return item.relevant ?? -1;
   
-    // ✅ Automatically apply filters when form changes
-    this.filterForm.valueChanges.subscribe(() => {
-      this.applyFilters();
-    });
-  }
-  ngAfterViewInit(): void {
-    setTimeout(() => {
-      // טבלה ראשית (כבר היה)
-      if (this.paginator) {
-        this.dataSource.paginator = this.paginator;
+      if (this.isDateColumn(property)) {
+        const v = item[property];
+        if (!v || this.isDefaultDate(v)) return -Infinity;
+        const t = v instanceof Date ? +v : +new Date(v);
+        return Number.isNaN(t) ? -Infinity : t;
       }
-      this.dataSource.sort = this.sort;
   
-      // טבלת CT
-      if (this.ctPaginator) this.ctDataSource.paginator = this.ctPaginator;
-      if (this.ctSort)      this.ctDataSource.sort      = this.ctSort;
+      const val = item[property];
+      return val == null ? '' : val.toString().toLowerCase();
+    };
   
-      // טבלת ניתוחים
-      if (this.surgPaginator) this.surgDataSource.paginator = this.surgPaginator;
-      if (this.surgSort)      this.surgDataSource.sort      = this.surgSort;
-    });
+    // 2) fetch + set up filters
+    this.fetchTraumaPatients();
+    this.filterForm.valueChanges.subscribe(() => this.applyFilters());
   }
+  
+  // gAfterViewInit(): void {
+  //   // attach once
+
+  
+  //   // now push data in the next tick so MatTable renders only the first page
+  //   requestAnimationFrame(() => {
+  //     if (this._pendingData.length) {
+  //       this.dataSource.data = this._pendingData;
+  //       this._pendingData = [];
+  //       this.wireMainTable();
+  //     }
+  //     this.isLoading = false;
+  //   });
+  
+  //   // existing CT/Surg attachments:
+  //   if (this.ctPaginator) this.ctDataSource.paginator = this.ctPaginator;
+  //   if (this.ctSort)      this.ctDataSource.sort      = this.ctSort;
+    
+  //   if (this.surgPaginator) this.surgDataSource.paginator = this.surgPaginator;
+  //   if (this.surgSort)      this.surgDataSource.sort      = this.surgSort;
+  // }
   
 
 
   fetchTraumaPatients() {
+    const t = tStart('fetchTraumaPatients');
     this.isLoading = true;
+    perfMark('fetchTraumaPatients:start');
+  
+    const url = environment.apiUrl.replace(/\/$/, '') + '/Trauma/GetTraumaPatients';
+  
+    this.http.get<TraumaPatient[]>(url).subscribe({
+      next: (raw) => {
+        t.step('HTTP complete');
+        const data = raw ?? [];
+        console.log('[DATA] rows:', data.length);
+  
+        // ---------- preprocess rows (search string + timestamps) ----------
+        const tPrep = tStart('prepRows');
+      this.originalData = data.map(r => ({
+  ...r,
+  __search: Object.values(r as any).map(v => (v ?? '').toString().toLowerCase()).join('|'),
+  admissionTimeText:    this.fmtDate(r.admissionTime),
+  erReleaseTimeText:    this.fmtDate(r.erReleaseTime),
+  hospitalReleaseTimeText: this.fmtDate(r.hospitalReleaseTime),
+  ctTimeText:           this.fmtDate(r.ctTime),
+  chestXRayTimeText:    this.fmtDate(r.chestXRayTime),
+  deathTimeText:        this.fmtDate(r.deathTime),
+  surgeryTimeText:      this.fmtDate(r.surgeryTime),
+  ultrasoundTechTimeText: this.fmtDate(r.ultrasoundTechTime),
+}));
 
-    this.http.get<TraumaPatient[]>(environment.apiUrl + 'Trauma/GetTraumaPatients').subscribe(
-      (data) => {
-        // הנתונים כבר ב-camelCase מה־backend
-        this.originalData = [...data];
-        this.filteredData = [...data];
-        this.dataSource.data = this.filteredData;
-        this.totalResults = data.length;
-
-        // סט ערכים ייחודיים לפילטרים
+        tPrep.end('prepRows done');
+  
+        // ---------- unique filter options ----------
+        const tU = tStart('buildUniqueFilters');
         this.uniqueYears = [...new Set(data.map(i => i.year).filter(Boolean))].sort((a, b) => b - a);
         this.uniqueMonths = [...new Set(data.map(i => i.month).filter(Boolean))].sort((a, b) => b - a);
         this.uniqueWeeks = [...new Set(data.map(i => i.week).filter(Boolean))].sort((a, b) => b - a);
@@ -269,30 +372,79 @@ public toggleSurgGraph(): void {
         this.uniqueShockRooms = [...new Set(data.map(i => i.shockRoom).filter(Boolean))].sort();
         this.uniqueTransfers = [...new Set(data.map(i => i.transferToOtherInstitution).filter(Boolean))].sort();
         this.uniqueReceiveCauses = [...new Set(data.map(i => i.receiveCauseDescription).filter(Boolean))].sort();
-
-        // טפסי עריכה לשורות
-        data.forEach(p => {
-          this.editForms[p.caseNumber] = new FormGroup({
-            CaseNumber: new FormControl(p.caseNumber), // נשאר PascalCase ל־POST
-            Remarks: new FormControl(p.remarks),
-            Relevant: new FormControl(p.relevant)
-          });
+        tU.end('unique filters done');
+  
+        // ---------- initial dataset for the table (no filters yet) ----------
+        this.filteredData = [...this.originalData];
+        this.totalResults = this.filteredData.length;
+  
+        // ---------- compute metrics & timing tables ONCE ----------
+        const tMetrics = tStart('recomputeMetrics');
+        this.recomputeMetrics();
+        tMetrics.end('recomputeMetrics done');
+  
+        const tTables = tStart('buildTimingTables');
+        this.buildTimingTables();
+        tTables.end('buildTimingTables done');
+  
+        // ---------- DO NOT bind to mat-table yet (avoid rendering 3k rows) ----------
+        this._pendingData = this.filteredData;
+  
+        // mark code portion done
+        t.end('fetchTraumaPatients code done');
+        perfMark('fetchTraumaPatients:end');
+        perfMeasure('fetchTraumaPatients total', 'fetchTraumaPatients:start', 'fetchTraumaPatients:end');
+  
+        // this ensures only the first page renders
+        requestAnimationFrame(() => {
+          if (this._pendingData.length) {
+            this.dataSource.data = this._pendingData;
+            this._pendingData = [];
+          }
+          this.isLoading = false; // flip loading AFTER first bind
+          // optional: measure first paint
+          const tPaint = tStart('first-table-paint');
+          requestAnimationFrame(() => tPaint.end('first table paint done'));
         });
-
-        this.isLoading = false;
-        setTimeout(() => {
-          this.applyFilters();
-          this.recomputeMetrics();   // ⬅️ add
-          this.buildTimingTables();
-
-        }, 100);        
       },
-      (error) => {
-        console.error('Error fetching trauma patients:', error);
+      error: (err) => {
+        console.error('Error fetching trauma patients:', err);
         this.isLoading = false;
+        t.end('fetchTraumaPatients error');
       }
-    );
+    });
   }
+  
+  ngAfterViewInit(): void {
+   
+  
+    // sync top/bottom scrollbars
+    const top    = this.topScrollRef.nativeElement;
+    const bottom = this.bottomScrollRef.nativeElement;
+  
+    // make the top bar the same width as the table content
+    // (by inserting a dummy inner div that matches table’s scroll width)
+    queueMicrotask(() => {
+      const table = bottom.querySelector('table') as HTMLTableElement;
+      if (!table) return;
+      top.innerHTML = '<div></div>';
+      const ghost = top.firstElementChild as HTMLDivElement;
+      ghost.style.width = table.scrollWidth + 'px';
+      ghost.style.height = '1px';
+    });
+  
+    let locking = false;
+    const sync = (from: HTMLElement, to: HTMLElement) => {
+      if (locking) return;
+      locking = true;
+      to.scrollLeft = from.scrollLeft;
+      locking = false;
+    };
+  
+    top.addEventListener('scroll',    () => sync(top, bottom));
+    bottom.addEventListener('scroll', () => sync(bottom, top));
+  }
+  
   
 
   private createFilterForm(): FormGroup {
@@ -308,62 +460,63 @@ public toggleSurgGraph(): void {
       ReceiveCauseDesFilter: new FormControl([])
     });
   }
-
   applyFilters() {
+    const t = tStart('applyFilters');
     const f = this.filterForm.value;
+  
     const globalFilter = (f.globalFilter || '').toLowerCase();
-    const relevantFilter = f.relevantFilter;
-
-    const selectedYears = f.YearFilter || [];
+    const selectedYears  = f.YearFilter || [];
     const selectedMonths = f.MonthFilter || [];
-    const selectedWeeks = f.WeekFilter || [];
+    const selectedWeeks  = f.WeekFilter || [];
     const selectedAdmissionDepartments = f.AdmissionDepartmentFilter || [];
     const selectedShockRooms = f.ShockRoomFilter || [];
-    const selectedTransfers = f.TransferFilter || [];
+    const selectedTransfers  = f.TransferFilter || [];
     const selectedReceiveCauses = f.ReceiveCauseDesFilter || [];
-
-    this.filteredData = this.originalData.filter((item) => {
-      const matchesGlobal = globalFilter
-        ? Object.values(item as any).some(v => v && v.toString().toLowerCase().includes(globalFilter))
-        : true;
-
+    const relevantFilter = f.relevantFilter;
+  
+    const tFilter = tStart('filter pass');
+    this.filteredData = this.originalData.filter((item:any) => {
+      const matchesGlobal = globalFilter ? item.__search?.includes(globalFilter) : true;
+  
       let matchesRelevant = true;
       if (relevantFilter === 'לא עודכן') matchesRelevant = item.relevant === null;
-      else if (relevantFilter === '1') matchesRelevant = item.relevant === 1;
-      else if (relevantFilter === '2') matchesRelevant = item.relevant === 2;
-
-      const matchesYear = selectedYears.length ? selectedYears.includes(item.year) : true;
+      else if (relevantFilter === '1')   matchesRelevant = item.relevant === 1;
+      else if (relevantFilter === '2')   matchesRelevant = item.relevant === 2;
+  
+      const matchesYear = selectedYears.length   ? selectedYears.includes(item.year) : true;
       const matchesMonth = selectedMonths.length ? selectedMonths.includes(item.month) : true;
-      const matchesWeek = selectedWeeks.length ? selectedWeeks.includes(item.week) : true;
+      const matchesWeek = selectedWeeks.length   ? selectedWeeks.includes(item.week) : true;
       const matchesAdmissionDepartment = selectedAdmissionDepartments.length ? selectedAdmissionDepartments.includes(item.admissionDepartment) : true;
       const matchesShockRoom = selectedShockRooms.length ? selectedShockRooms.includes(item.shockRoom) : true;
-      const matchesTransfer = selectedTransfers.length ? selectedTransfers.includes(item.transferToOtherInstitution) : true;
+      const matchesTransfer  = selectedTransfers.length ? selectedTransfers.includes(item.transferToOtherInstitution) : true;
       const matchesReceiveCause = selectedReceiveCauses.length ? selectedReceiveCauses.includes(item.receiveCauseDescription) : true;
-
-      return matchesGlobal &&
-             matchesRelevant &&
-             matchesYear &&
-             matchesMonth &&
-             matchesWeek &&
-             matchesAdmissionDepartment &&
-             matchesShockRoom &&
-             matchesTransfer &&
-             matchesReceiveCause;
+  
+      return matchesGlobal && matchesRelevant && matchesYear && matchesMonth && matchesWeek &&
+             matchesAdmissionDepartment && matchesShockRoom && matchesTransfer && matchesReceiveCause;
     });
-
+    tFilter.end('filter pass done');
+  
     this.dataSource.data = this.filteredData;
     this.totalResults = this.filteredData.length;
-    this.recomputeMetrics();     // ⬅️ add
+    t.step(`after filter: ${this.totalResults} rows`);
+  
+    const tMetrics = tStart('recomputeMetrics');
+    this.recomputeMetrics();
+    tMetrics.end();
+  
+    const tTables = tStart('buildTimingTables');
     this.buildTimingTables();
-
-
-    setTimeout(() => {
-      if (this.paginator) {
-        this.paginator.firstPage();
-        this.dataSource.paginator = this.paginator;
-      }
-    });
+    tTables.end();
+  
+    // setTimeout(() => {
+    //   if (this.mainPaginator) {
+    //     this.mainPaginator.firstPage();
+    //     // do NOT reassign paginator/sort here; they’re already attached
+    //   }
+    // });
+    t.end('applyFilters done');
   }
+  
 
   resetFilters() {
     this.filterForm.reset({
@@ -382,12 +535,7 @@ public toggleSurgGraph(): void {
     this.dataSource.data = this.filteredData;
     this.totalResults = this.filteredData.length;
 
-    setTimeout(() => {
-      if (this.paginator) {
-        this.paginator.firstPage();
-        this.dataSource.paginator = this.paginator;
-      }
-    });
+  
   }
 
   
@@ -464,9 +612,18 @@ public toggleSurgGraph(): void {
     return this.editForms[caseNumber]?.get(field) as FormControl;
   }
 
-  openDialog(patient: any) {
+  openDialog(patient: TraumaPatient) {
     this.selectedPatient = patient;
+  
+    if (!this.editForms[patient.caseNumber]) {
+      this.editForms[patient.caseNumber] = new FormGroup({
+        CaseNumber: new FormControl(patient.caseNumber), // PascalCase for backend
+        Remarks:    new FormControl(patient.remarks ?? ''),
+        Relevant:   new FormControl(patient.relevant ?? null)
+      });
+    }
   }
+  
   closeDialog() {
     this.selectedPatient = null;
   }
@@ -604,15 +761,21 @@ private buildBuckets(details: Array<{ minutes: number }>) {
 
 /** call this whenever data/filters change */
 private recomputeMetrics() {
-  // work on the *currently filtered* rows; change to originalData if you prefer
   const base = this.filteredData?.length ? this.filteredData as TraumaPatient[] : this.originalData;
 
-  this.ctDetails     = this.buildDetails(base, 'ctTime');
-  this.ctBuckets     = this.buildBuckets(this.ctDetails);
+  this.ctDetails      = this.buildDetails(base, 'ctTime');
+  this.ctBuckets      = this.buildBuckets(this.ctDetails);
 
   this.surgeryDetails = this.buildDetails(base, 'surgeryTime');
   this.surgeryBuckets = this.buildBuckets(this.surgeryDetails);
+
+  // NEW: percent charts
+  const ctCounts   = this.getBucketCounts(this.ctDetails);
+  const surgCounts = this.getBucketCounts(this.surgeryDetails);
+  this.ctBucketPercentChart   = this.makeBucketPercentChart('קבלה → CT', ctCounts);
+  this.surgBucketPercentChart = this.makeBucketPercentChart('קבלה → ניתוחים', surgCounts);
 }
+
 
   // --- build timing tables from raw data (originalData) ---
   private buildTimingTables(): void {
@@ -875,78 +1038,79 @@ private readonly BUCKET_LABELS = [
  *   { year, (quarter|month?), under26, between26_60, over60, total }
  */
 private makeSeriesChartJs(
-  rows: Array<{year:number; quarter?:number; month?:number; under26:number; between26_60:number; over60:number}>,
+  rows: Array<{year:number; under26:number; between26_60:number; over60:number}>,
   mode: 'year'|'quarter'|'month'
-): { labels: string[]; datasets: any[] } {
-
-  const labels = this.BUCKET_LABELS;
+) {
+  const labels = ['מתחת ל-26 דק׳','בין 26 ל-60 דק׳','מעל 60 דק׳'];
 
   const datasets = rows.map(r => {
-    const seriesLabel =
-      mode === 'year'
-        ? `${r.year}`
-        : mode === 'quarter'
-          ? `${r.year} Q${r.quarter}`
-          : `${r.year}-${String(r.month ?? 0).padStart(2, '0')}`;
+    const u = r.under26 ?? 0, b = r.between26_60 ?? 0, o = r.over60 ?? 0;
+    const total = u + b + o;
+    const pct = (n:number) => (total ? (n * 100) / total : 0);
+    const t = `${r.year}`;
 
     return {
-      label: seriesLabel,
-      data: [
-        r.under26 ?? 0,
-        r.between26_60 ?? 0,
-        r.over60 ?? 0
-      ]
-      // colors are assigned by <app-trauma-graph>, no need to set here
+      label: t,
+      data: [pct(u), pct(b), pct(o)],
+      rawCounts: [u, b, o],
+      rawTotal: total,
+      bottomLabels: [t, t, t]
     };
   });
 
   return { labels, datasets };
 }
-/** Chart config: 3 buckets on X; inside each bucket sub-bars for every (Year × Quarter). */
+
+
 private makeQuarterSubgroupChartConfig(
   rows: Array<{ year:number; quarter:number; under26:number; between26_60:number; over60:number; }>
 ): { labels: string[]; datasets: any[] } {
 
-  // X-axis buckets
   const labels = ['מתחת ל-26 דק׳', 'בין 26 ל-60 דק׳', 'מעל 60 דק׳'];
-
-  // Unique years present (sorted ascending; change to desc if you prefer)
   const years = Array.from(new Set(rows.map(r => r.year))).sort((a,b)=>a-b);
+  const pct = (n:number, d:number) => d ? (n * 100) / d : 0;
 
-  // Colors by quarter (consistent across years)
   const qColor: Record<number, string> = {
-    1: 'rgba(54, 162, 235, 0.6)',   // Q1
-    2: 'rgba(255, 99, 132, 0.6)',   // Q2
-    3: 'rgba(255, 206, 86, 0.6)',   // Q3
-    4: 'rgba(75, 192, 192, 0.6)'    // Q4
+    1: 'rgba(54, 162, 235, 0.6)',
+    2: 'rgba(255, 99, 132, 0.6)',
+    3: 'rgba(255, 206, 86, 0.6)',
+    4: 'rgba(75, 192, 192, 0.6)',
   };
 
   const datasets: any[] = [];
-
-  // Order datasets as: 2023-Q1..Q4, 2024-Q1..Q4, 2025-Q1..Q4 ...
   for (const y of years) {
     for (let q = 1; q <= 4; q++) {
       const r = rows.find(x => x.year === y && x.quarter === q);
+      const u = r?.under26 ?? 0;
+      const b = r?.between26_60 ?? 0;
+      const o = r?.over60 ?? 0;
+      const total = u + b + o;
+
+      const t = `${y} רבעון ${q}`; // ⬅️ THIS is the time text you wanted
 
       datasets.push({
         label: `${y}-Q${q}`,
-        data: [
-          r?.under26 ?? 0,
-          r?.between26_60 ?? 0,
-          r?.over60 ?? 0
-        ],
-        // Look nice when many bars:
-        barPercentage: 0.85,
-        categoryPercentage: 0.9,
+        data: [pct(u,total), pct(b,total), pct(o,total)],
+        rawCounts: [u, b, o],
+        rawTotal: total,
+
+        // ⬇️ Bottom time label (repeated for the 3 buckets)
+        bottomLabels: [t, t, t],
+
         backgroundColor: qColor[q],
-        borderColor: qColor[q].replace('0.6', '1'),
-        borderWidth: 1
+        borderColor: qColor[q].replace('0.6','1'),
+        borderWidth: 1,
+        barPercentage: 0.85,
+        categoryPercentage: 0.9
       });
     }
   }
 
   return { labels, datasets };
 }
+
+
+
 
 /** Chart config: 3 buckets on X; inside each bucket sub-bars for every (Year × Month). */
 /** Month split: 3 separate charts (one per bucket) with X = YYYY-MM (sorted). */
@@ -1005,6 +1169,64 @@ public surgMonthCharts?: { under: {labels:string[];datasets:any[]},
                            between: {labels:string[];datasets:any[]},
                            over: {labels:string[];datasets:any[]} };
 
+/** Count rows into the three buckets */
+private getBucketCounts(details: Array<{ minutes: number }>) {
+  let u = 0, b = 0, o = 0;
+  for (const d of details) {
+    if (d.minutes < 26) u++;
+    else if (d.minutes <= 60) b++;
+    else o++;
+  }
+  const total = u + b + o;
+  return { u, b, o, total };
+}
 
+/** Build a 3-bar % chart (with labels above bars) */
+private makeBucketPercentChart(
+  title: string,
+  counts: { u:number; b:number; o:number; total:number }
+): TraumaChartConfig {
+  const { u, b, o, total } = counts;
+  const pct = (n:number) => (total ? (n * 100) / total : 0);
+
+  return {
+    labels: ['מתחת ל-26 דק׳', 'בין 26 ל-60 דק׳', 'מעל 60 דק׳'],
+    datasets: [{
+      label: title,
+      data: [pct(u), pct(b), pct(o)],               // % values for Y
+      backgroundColor: ['#7fc97f', '#beaed4', '#fdc086'],
+      borderColor:    ['#7fc97f', '#beaed4', '#fdc086'],
+      borderWidth: 1,
+      // 👇 custom fields for bottom labels
+      rawCounts: [u, b, o],
+      rawTotal: total
+    }]
+  };
+}
+
+private _kickFirstBind() {
+  if (this._boundOnce) return;
+  if (!this.dataSource.paginator || !this.dataSource.sort) return;
+
+  if (this._pendingData.length) {
+    this.dataSource.data = this._pendingData;
+    this._pendingData = [];
+  }
+  this._boundOnce = true;
+
+  // Let the first lightweight page render, then enable sort
+  requestAnimationFrame(() => {
+    this.sortDisabled = false;
+    this.cd.detectChanges();
+  });
+}
+private fmtDate(s?: string | null): string {
+  if (!s) return '';
+  const d = new Date(s);
+  if (!isFinite(+d) || d.getFullYear() === 1900) return '';
+  // dd/MM/yyyy HH:mm
+  const pad = (n:number)=> String(n).padStart(2,'0');
+  return `${pad(d.getDate())}/${pad(d.getMonth()+1)}/${d.getFullYear()} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
+}
 
 }

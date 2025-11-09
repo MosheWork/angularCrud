@@ -637,3 +637,60 @@
 }
 .graph-title { font-weight: 600; text-align: center; margin-bottom: 6px; }
 .graph-wrap { width: 100%; }
+/* The scroll container */
+.table-scroll {
+  overflow-x: auto;           /* horizontal scrollbar when needed */
+  overflow-y: hidden;         /* no vertical scroll here */
+  -webkit-overflow-scrolling: touch; /* smooth on mobile */
+}
+
+/* Let the table be only as wide as it needs (so overflow-x actually happens) */
+.wide-table {
+  width: max-content;         /* modern browsers */
+  min-width: 100%;            /* still fill if content is narrow */
+  table-layout: auto;         /* size columns by content */
+}
+
+/* Keep text on a single line; no wrapping */
+.mat-header-cell,
+.mat-cell {
+  white-space: nowrap;
+}
+
+/* Optional: add some breathing room */
+.mat-header-cell, .mat-cell {
+  padding-inline: 12px;
+}
+
+/* Optional: set sensible minimum widths per column (Material auto adds these classes) */
+.mat-column-remarks               { min-width: 240px; }
+.mat-column-executionDetails      { min-width: 240px; }
+.mat-column-patientName           { min-width: 160px; }
+.mat-column-admissionDepartment,
+.mat-column-departmentName        { min-width: 140px; }
+.mat-column-caseNumber            { min-width: 120px; }
+
+/* Date/time columns narrower but still readable */
+.mat-column-admissionTime,
+.mat-column-erReleaseTime,
+.mat-column-hospitalReleaseTime,
+.mat-column-ctTime,
+.mat-column-chestXRayTime,
+.mat-column-deathTime,
+.mat-column-surgeryTime,
+.mat-column-ultrasoundTechTime    { min-width: 155px; }
+
+/* Keep the toggle column tiny */
+.mat-column-relevantToggle        { min-width: 60px; text-align: center; }
+/* was table-layout:auto; */
+.wide-table {
+  width: max-content;
+  min-width: 100%;
+  table-layout: fixed;          /* ✅ fixed layout: far cheaper */
+  border-collapse: collapse;
+}
+.mat-header-cell, .mat-cell {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

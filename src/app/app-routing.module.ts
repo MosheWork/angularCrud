@@ -107,6 +107,8 @@ import { PptDuplicateComponent } from './ppt-duplicate/ppt-duplicate.component';
 import { DoctorAuthorizationsComponent } from './doctor-authorizations/doctor-authorizations.component';
 import { PsychologyComponent } from './chameleon-reports/psychology/psychology.component';
 import { QueriesListComponent } from './Noya-Apps/QueriesList/QueriesList.component';
+import { AmbulatoryBirthdayUpdateCRMComponent } from './ServiceCRM/ambulatory-birthday-update-crm/ambulatory-birthday-update-crm.component';
+import { GalitComponent } from './chameleon-reports/galit/galit.component';
 
 const routes: Routes = [
   //', component: UsersComponent },
@@ -202,7 +204,9 @@ const routes: Routes = [
 { path: 'breastfeeding-coordinator', component: BreastfeedingCoordinatorComponent , data: { title: ' מתאמת הנקה ' }},//   מתאמת הנקה      
 { path: 'medication-reconciliationr', component: MedicationReconciliationComponent , data: { title: 'MedicationReconciliation' }},//  MedicationReconciliation 
 { path: 'main-surgery', component: MainSurgeryComponent , data: { title: 'מערכת יעל ' }},//  רשימת ניתוחים
-{ path: 'Psychology', component: PsychologyComponent , data: { title: 'פסיכולוגיה' }},//  דוח תפוקות 
+{ path: 'Psychology', component: PsychologyComponent , data: { title: 'פסיכולוגיה' }},//  דוח תפוקות
+{ path: 'Galit', component: GalitComponent , data: { title: 'דוח גלית' }},//  דוח תזונה של גלית 
+
 
 
 
@@ -228,8 +232,9 @@ const routes: Routes = [
    { path: 'UserCRM', component: UserCRMComponent , data: { title: ' דאשבורד נציג - CRM  ' }},
    { path: 'AdminCrm', component: AdminCrmComponent , data: { title: ' דאשבורד מנהל - CRM  ' }},
    { path: 'CRMmain', component: MainScreenComponent , data: { title: 'מסך הבית ' }},
-   { path: 'BirthdayUpdateCRM', component: BirthdayUpdateCRMComponent , data: { title: 'מסך יומלדת ' }},
+   { path: 'BirthdayUpdateCRM', component: BirthdayUpdateCRMComponent , data: { title: '- מסך יומלדת  - מאושפזים' }},
    { path: 'questionnaire-remarks', component: QuestionnaireRemarksComponent , data: { title: 'מערכת ניהול תגובות' }},
+   { path: 'AmbulatoryBirthdayUpdate', component: AmbulatoryBirthdayUpdateCRMComponent , data: { title: 'מסך יומלדת - אמבולטורי' }},
 
 
 
