@@ -1,0 +1,39 @@
+<h2 mat-dialog-title>{{ isEdit ? 'Edit Query' : 'Add Query' }}</h2>
+
+<mat-dialog-content>
+  <form [formGroup]="form" class="dialog-form" (ngSubmit)="save()">
+    
+    <mat-form-field appearance="fill" class="full-width">
+      <mat-label>Query Name</mat-label>
+      <input matInput formControlName="QueryName" />
+    </mat-form-field>
+
+    <mat-form-field appearance="fill" class="full-width">
+      <mat-label>SQL Text</mat-label>
+      <textarea matInput formControlName="QueryText" rows="6"></textarea>
+    </mat-form-field>
+
+    <mat-form-field appearance="fill" class="full-width">
+      <mat-label>Description</mat-label>
+      <textarea matInput formControlName="Description" rows="2"></textarea>
+    </mat-form-field>
+
+    <mat-form-field appearance="fill" class="full-width">
+      <mat-label>Subject</mat-label>
+      <input matInput formControlName="Subject" />
+    </mat-form-field>
+
+    <mat-form-field appearance="fill" class="full-width">
+      <mat-label>Sub-Subject</mat-label>
+      <input matInput formControlName="SubSubject" />
+    </mat-form-field>
+
+    <mat-checkbox formControlName="IsActive">Active</mat-checkbox>
+
+    <div class="form-actions">
+      <button mat-raised-button color="primary" type="submit">Save</button>
+      <button mat-raised-button type="button" (click)="cancel()">Cancel</button>
+    </div>
+
+  </form>
+</mat-dialog-content>
