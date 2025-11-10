@@ -1,0 +1,155 @@
+<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
+
+<div class="body">
+  <!-- Top-right home button -->
+  <div class="top-right-container">
+    <button mat-icon-button (click)="goToHome()" matTooltip="Go to Home">
+      <mat-icon>home</mat-icon>
+    </button>
+  </div>
+
+  <!-- Title -->
+  <div class="nine">
+    <h1>
+      {{ titleUnit }}
+      <span>{{ Title1 }}{{ Title2 }}{{ totalResults }}</span>
+    </h1>
+  </div>
+
+  <!-- Filters form (RTL) -->
+  <form [formGroup]="filterForm" dir="rtl" class="filter-form">
+
+    <!-- Checkbox filters row (replaces the per-column text filters) -->
+    <div class="container-fluid mb-2">
+      <div class="row search-count">
+        <div class="col">
+          <div dir="rtl" class="card">
+            <div dir="rtl" class="card-body" style="display:flex; gap:24px; align-items:center; flex-wrap:wrap">
+              
+              <!-- כשמסומן: מציג רק שורות שיש בהן ערך בשדה הזה -->
+              <mat-checkbox
+                formControlName="hasEitanOnly"
+                (change)="applyFilters()"
+                matTooltip="כשהתיבה מסומנת: מציג רק שורות עם ערך"
+              >
+                קבוצת AD איתן/זלמן — רק עם ערך
+              </mat-checkbox>
+
+              <mat-checkbox
+                formControlName="hasNamerOnly"
+                (change)="applyFilters()"
+                matTooltip="כשהתיבה מסומנת: מציג רק שורות עם ערך"
+              >
+                NAMER משתמש פעיל — רק עם ערך
+              </mat-checkbox>
+
+              <mat-checkbox
+                formControlName="hasAdActiveOnly"
+                (change)="applyFilters()"
+                matTooltip="כשהתיבה מסומנת: מציג רק שורות עם ערך"
+              >
+                AD פעיל — רק עם ערך
+              </mat-checkbox>
+
+              <div class="reset-button-container" style="margin-inline-start:auto">
+                <button
+                  mat-button
+                  (click)="filterForm.reset({ globalFilter: '', hasEitanOnly: false, hasNamerOnly: false, hasAdActiveOnly: false }); applyFilters()"
+                  mat-raised-button
+                  color="primary"
+                  class="custom-button"
+                  matTooltip="נקה מסננים"
+                >
+                  <i class="material-icons">refresh</i>
+                </button>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Global search + Excel -->
+    <div dir="rtl" style="display:flex; justify-content:space-between; align-items:center">
+      <mat-form-field class="long-search-bar" style="flex:1; padding-right:10px">
+        <mat-label class="filters" style="color: blue"> חיפוש</mat-label>
+        <input matInput formControlName="globalFilter" (input)="applyFilters()" class="search-input" />
+      </mat-form-field>
+
+      <div class="icon" matTooltip="הורד לאקסל">
+        <img
+          src="../../assets/excel.png"
+          alt="Download"
+          (click)="exportToExcel()"
+          class="download-icon"
+          width="50px"
+        />
+      </div>
+    </div>
+  </form>
+
+  <!-- Data table -->
+  <mat-table [dataSource]="matTableDataSource" matSort dir="rtl" class="mat-elevation-z8">
+
+    <!-- Generic column template -->
+    <ng-container *ngFor="let column of columns" [matColumnDef]="column">
+      <mat-header-cell *matHeaderCellDef mat-sort-header>
+        {{ getColumnLabel(column) }}
+      </mat-header-cell>
+
+      <mat-cell *matCellDef="let element">
+        <ng-container [ngSwitch]="column">
+          
+          <!-- Avatar -->
+          <span *ngSwitchCase="'profilePicture'">
+            <img
+              *ngIf="element.profilePicture"
+              [src]="element.profilePicture"
+              alt="pic"
+              style="height:32px;width:32px;border-radius:50%"
+            />
+          </span>
+
+          <!-- Long text columns wrapped with tooltip -->
+          <span *ngSwitchCase="'eitanChameleonADGroupPermision'">
+            <div class="cell-text" [matTooltip]="element.eitanChameleonADGroupPermision || ''">
+              {{ element.eitanChameleonADGroupPermision || '' }}
+            </div>
+          </span>
+
+          <span *ngSwitchCase="'namerUserActivePermision'">
+            <div class="cell-text" [matTooltip]="element.namerUserActivePermision || ''">
+              {{ element.namerUserActivePermision || '' }}
+            </div>
+          </span>
+
+          <span *ngSwitchCase="'adActivePermision'">
+            <div class="cell-text" [matTooltip]="element.adActivePermision || ''">
+              {{ element.adActivePermision || '' }}
+            </div>
+          </span>
+
+          <!-- Default -->
+          <span *ngSwitchDefault>
+            <div class="cell-text" [matTooltip]="element[column]">
+              {{ element[column] }}
+            </div>
+          </span>
+        </ng-container>
+      </mat-cell>
+    </ng-container>
+
+    <mat-header-row *matHeaderRowDef="columns"></mat-header-row>
+    <mat-row *matRowDef="let row; columns: columns" class="mat-row"></mat-row>
+  </mat-table>
+
+  <!-- Paginator -->
+  <mat-paginator
+    [length]="matTableDataSource?.data?.length || 0"
+    [pageIndex]="0"
+    [pageSize]="15"
+    [pageSizeOptions]="[15, 50, 100]"
+  >
+  </mat-paginator>
+</div>
