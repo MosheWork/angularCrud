@@ -72,6 +72,7 @@ monthTotals: number[] = [];
 procedureNameOptions: string[] = [];
 yearOptions: number[] = [];
 monthOptions: number[] = [];  // 1..12 that actually appear in the data
+monthPercents: number[] = [];   // 0..100 for the Y axis
 
   timeGroupCounts: Array<{ group: string; count: number }> = [];
   maxTimeGroupCount = 0;
@@ -1123,14 +1124,46 @@ private buildMonthlyValidSeries(): void {
     byMonth.set(month, rec);
   }
 
-  // sort by month key ascending
   const entries = Array.from(byMonth.entries()).sort(([a],[b]) => a.localeCompare(b));
 
-  this.monthLabels        = entries.map(([m]) => m);
+  this.monthLabels        = entries.map(([m])  => m);
   this.monthValidCounts   = entries.map(([,v]) => v.valid);
   this.monthInvalidCounts = entries.map(([,v]) => v.invalid);
   this.monthTotals        = entries.map(([,v]) => v.total);
+  this.monthPercents      = entries.map(([,v]) => v.total ? +(v.valid / v.total * 100).toFixed(1) : 0);
 }
+
+private insideCountPlugin = {
+  id: 'insideCount',
+  afterDatasetsDraw: (chart: any) => {
+    const meta = chart.getDatasetMeta(0);        // the % dataset
+    if (!meta?.data?.length) return;
+
+    const { ctx } = chart;
+    const yScale = chart.scales.y;
+
+    ctx.save();
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.font = '600 12px sans-serif';
+    ctx.fillStyle = '#111';
+
+    meta.data.forEach((bar: any, i: number) => {
+      // center point inside the bar = halfway between base (0%) and value (%)
+      const baseY = bar.base ?? yScale.getPixelForValue(0);
+      const valueY = bar.y;
+      const cx = bar.x;
+      const cy = (baseY + valueY) / 2;
+
+      const valid = this.monthValidCounts[i] ?? 0;
+      const total = this.monthTotals[i] ?? 0;
+      if (total > 0) ctx.fillText(`${valid}/${total}`, cx, cy);
+    });
+
+    ctx.restore();
+  }
+};
+
 private topPercentPlugin = {
   id: 'topPercent',
   afterDatasetsDraw: (chart: any) => {
@@ -1139,14 +1172,9 @@ private topPercentPlugin = {
     const yScale = chart.scales.y;
     if (!xScale || !yScale) return;
 
-    this.monthLabels.forEach((_, i) => {
-      const total = this.monthTotals[i] ?? 0;
-      const valid = this.monthValidCounts[i] ?? 0;
-      const pct = total ? +(valid / total * 100).toFixed(1) : 0;
-
-      // top of stacked bar = y(total)
+    this.monthPercents.forEach((pct, i) => {
       const x = xScale.getPixelForValue(i);
-      const y = yScale.getPixelForValue((this.monthValidCounts[i]||0)+(this.monthInvalidCounts[i]||0)) - 6;
+      const y = yScale.getPixelForValue(pct) - 6; // a bit above the bar top
 
       ctx.save();
       ctx.textAlign = 'center';
@@ -1158,83 +1186,82 @@ private topPercentPlugin = {
     });
   }
 };
+
 private refreshMonthlyChart(): void {
+  // build counts per month first
   this.buildMonthlyValidSeries();
+
   const labels = this.monthLabels;
+
+  // % Valid per month (0..100)
+  const percents: number[] = labels.map((_, i) => {
+    const t = this.monthTotals[i] ?? 0;
+    const v = this.monthValidCounts[i] ?? 0;
+    return t ? +(v / t * 100).toFixed(1) : 0;
+  });
+
+  // colors: green if ≥ 90%, else red
+  const barColors: string[]   = percents.map(p => p >= 90 ? 'rgba(165, 214, 167, 0.85)' : 'rgba(255, 205, 210, 0.85)');
+  const borderColors: string[]= percents.map(p => p >= 90 ? 'rgba(76, 175, 80, 1)'      : 'rgba(239, 83, 80, 1)');
 
   const data: ChartData<'bar', number[], string> = {
     labels,
-    datasets: [
-      {
-        type: 'bar',                     // ← REQUIRED for TS
-        label: 'Valid',
-        data: this.monthValidCounts,
-        backgroundColor: 'rgba(165, 214, 167, 0.85)',
-        borderColor: 'rgba(76, 175, 80, 1)',
-        borderWidth: 1,
-        stack: 'stack',
-        datalabels: {
-          display: true,
-          formatter: (v: number) => v ? `${v}` : '',
-          anchor: 'center',
-          align: 'center',
-          color: '#111',
-          font: { weight: 600 }
-        }
-      } as any, // (optional) quiets 'datalabels' prop typing
-      {
-        type: 'bar',                     // ← REQUIRED for TS
-        label: 'Not valid',
-        data: this.monthInvalidCounts,
-        backgroundColor: 'rgba(255, 205, 210, 0.85)',
-        borderColor: 'rgba(239, 83, 80, 1)',
-        borderWidth: 1,
-        stack: 'stack',
-        datalabels: { display: false }
-      } as any
-    ]
+    datasets: [{
+      type: 'bar',
+      label: '% Valid',
+      data: percents,
+      backgroundColor: barColors,
+      borderColor: borderColors,
+      borderWidth: 1,
+      datalabels: { display: false }   // we draw our own labels inside the bar
+    } as any]
   };
-  
 
-  const options: any = {
+  const chartOptions: ChartConfiguration<'bar'>['options'] = {
     responsive: false,
     maintainAspectRatio: false,
     scales: {
-      x: { stacked: true },
-      y: { stacked: true, beginAtZero: true, ticks: { precision: 0 } }
+      x: { stacked: false },
+      y: {
+        beginAtZero: true,
+        min: 0, max: 100,
+        ticks: { stepSize: 10, callback: (v) => `${v}%` }
+      }
     },
     plugins: {
       legend: { display: true, position: 'top' },
       tooltip: {
         callbacks: {
           title: (items: any[]) => labels[items[0].dataIndex] || '',
-          afterBody: (items: any[]) => {
-            const i = items[0].dataIndex;
+          label: (item: any) => {
+            const i = item.dataIndex;
             const t = this.monthTotals[i] ?? 0;
             const v = this.monthValidCounts[i] ?? 0;
-            const p = t ? +(v/t*100).toFixed(1) : 0;
-            return [`סה״כ: ${t}`, `Valid: ${v} (${p}%)`];
+            const p = percents[i] ?? 0;
+            return `Valid: ${v}/${t} (${p}%)`;
           }
         }
       }
     }
   };
 
-  // (re)create
+  // (re)create chart
   if (this.monthlyChart) { this.monthlyChart.destroy(); this.monthlyChart = null; }
   const canvas = this.monthlyCanvas?.nativeElement;
   if (!canvas) return;
-  const ctx = canvas.getContext('2d');
-  if (!ctx) return;
+  const ctx2 = canvas.getContext('2d');
+  if (!ctx2) return;
 
-  // register the custom plugin only for this chart
-  this.monthlyChart = new Chart(ctx, {
+  this.monthlyChart = new Chart(ctx2, {
     type: 'bar',
     data,
-    options,
-    plugins: [this.topPercentPlugin]   // ← draws the % above each bar
+    options: chartOptions,
+    // draw % above bar + valid/total *inside* the bar
+    plugins: [this.topPercentPlugin, this.insideCountPlugin]
   });
 }
+
+
 setMonthlyChartHeight(h: number) {
   this.chartHeightMonthly = h;
   setTimeout(() => this.monthlyChart?.resize(), 0);
