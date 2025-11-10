@@ -69,6 +69,9 @@ monthValidCounts: number[] = [];
 monthInvalidCounts: number[] = [];
 monthTotals: number[] = [];   
 
+procedureNameOptions: string[] = [];
+yearOptions: number[] = [];
+monthOptions: number[] = [];  // 1..12 that actually appear in the data
 
   timeGroupCounts: Array<{ group: string; count: number }> = [];
   maxTimeGroupCount = 0;
@@ -210,6 +213,29 @@ this.giveOrderMatrixData.sort      = this.matrixSort;
     this.surgeryDepartmentOptions = this.distinctSorted(data.map(r => r?.surgeryDepartment));
     this.giveOrderNameOptions     = this.distinctSorted(data.map(r => r?.giveOrderName));
     this.timeGroupOptions         = this.distinctSorted(data.map(r => r?.timeGroup));
+
+
+    // 1) ProcedureName
+this.procedureNameOptions = this.distinctSorted((data || []).map(r => r?.procedureName));
+
+// 2) Year (numeric ascending, unique)
+this.yearOptions = Array.from(
+  new Set(
+    (data || [])
+      .map(r => this.getRowYear(r))
+      .filter((y): y is number => typeof y === 'number')
+  )
+).sort((a, b) => a - b);
+
+// 3) Month (only months that appear, numeric ascending 1..12)
+this.monthOptions = Array.from(
+  new Set(
+    (data || [])
+      .map(r => this.getRowMonthNumber(r))
+      .filter((m): m is number => typeof m === 'number' && m >= 1 && m <= 12)
+  )
+).sort((a, b) => a - b);
+
   }
   
   
@@ -258,7 +284,10 @@ this.giveOrderMatrixData.sort      = this.matrixSort;
     formControls['pageSize'] = new FormControl(10);
     formControls['pageIndex'] = new FormControl(0);
     formControls['globalFilter'] = new FormControl('');
-
+    formControls['procedureNameFilter'] = new FormControl<string[] | null>(null); // multi
+    formControls['yearFilter']         = new FormControl<number[] | null>(null);  // multi
+    formControls['monthFilter']        = new FormControl<number[] | null>(null);  // multi
+    
     // NEW filter controls:
     formControls['topProcedure'] = new FormControl(null);         // number, threshold filter (<=)
     formControls['surgeryDepartmentFilter'] = new FormControl(''); // text equality
@@ -320,44 +349,55 @@ this.giveOrderMatrixData.sort      = this.matrixSort;
 
   // 🔹 Apply the 4 new filters in addition to your existing logic
   applyFilters() {
+    // keep graph counts fresh if graph view is on
     if (this.showGraph) this.buildTimeGroupCounts();
-
+  
     const f = this.filterForm.value;
     const globalFilter = (f['globalFilter'] || '').toLowerCase();
   
-    // read from the separate control
-    const selTopRaw = this.filterForm.get('topProcedureFilter')?.value;
-    const selTop: number | null =
-      selTopRaw === null || selTopRaw === undefined || selTopRaw === '' ? null : Number(selTopRaw);
-  
+    // ── existing selects ──────────────────────────────────────────────
     const selDept  = (f['surgeryDepartmentFilter'] || '').trim();
     const selGive  = (f['giveOrderNameFilter'] || '').trim();
     const selGroup = (f['timeGroup'] || '').trim();
   
-    // steps set: if 40 selected, [10,20,30,40] (derived from existing options)
+    // TopProcedure threshold logic (10..selected)
+    const selTopRaw = this.filterForm.get('topProcedureFilter')?.value;
+    const selTop: number | null =
+      selTopRaw === null || selTopRaw === undefined || selTopRaw === '' ? null : Number(selTopRaw);
     const allowedSteps = selTop === null ? null : this.topProcedureOptions.filter(n => n <= selTop);
   
-    this.filteredData = this.dataSource.filter(item => {
+    // ── NEW multi-selects ─────────────────────────────────────────────
+    const selProcedures: string[] = (f['procedureNameFilter'] || []) as string[];
+    const selYears: number[]      = (f['yearFilter'] || []) as number[];
+    const selMonths: number[]     = (f['monthFilter'] || []) as number[];
+  
+    const wantProc  = selProcedures?.length > 0;
+    const wantYear  = selYears?.length > 0;
+    const wantMonth = selMonths?.length > 0;
+  
+    // ── MAIN TABLE FILTER ─────────────────────────────────────────────
+    this.filteredData = (this.dataSource || []).filter(item => {
+      // topProcedure step (choose 20 -> allow 10 & 20)
       const itemTop = this.parseTopProcedure(item?.topProcedure);
+      const topOk   = allowedSteps === null ? true : (itemTop !== null && allowedSteps.includes(itemTop));
   
-      // step logic (choose 20 -> allow 10 & 20)
-      const topOk = allowedSteps === null ? true : (itemTop !== null && allowedSteps.includes(itemTop));
-  
+      // single-selects
       const deptOk  = !selDept  || String(item?.surgeryDepartment || '') === selDept;
       const giveOk  = !selGive  || String(item?.giveOrderName     || '') === selGive;
       const groupOk = !selGroup || String(item?.timeGroup         || '') === selGroup;
-      this.filteredNoDrugsData = this.noDrugsDataSource.filter(item => {
-        const deptOk  = !selDept  || String(item?.surgeryDepartment ?? item?.SurgeryDepartment ?? '') === selDept;
-        const giveOk  = !selGive  || String(item?.giveOrderName     ?? item?.GiveOrderName     ?? '') === selGive;
-        const groupOk = !selGroup || String(item?.timeGroup         ?? item?.TimeGroup         ?? '') === selGroup; // harmless if missing
-        return deptOk && giveOk && groupOk;
-      });
-    
-      this.noDrugsMatTableDataSource.data = this.filteredNoDrugsData;
-      if (this.noDrugsMatTableDataSource.paginator) this.noDrugsMatTableDataSource.paginator.firstPage();
+  
+      // multi-selects
+      const itemProc = String(item?.procedureName ?? '');
+      const itemYear = this.getRowYear(item);
+      const itemMon  = this.getRowMonthNumber(item);
+  
+      const procOk  = !wantProc  || (itemProc && selProcedures.includes(itemProc));
+      const yearOk  = !wantYear  || (itemYear !== null && selYears.includes(itemYear));
+      const monthOk = !wantMonth || (itemMon  !== null && selMonths.includes(itemMon));
+  
       // generic per-column text filters, but skip 'topProcedure' so it doesn't override step logic
       const perColumnOk = this.columns.every(column => {
-        if (column === 'topProcedure') return true; // ⬅️ critical
+        if (column === 'topProcedure') return true;
         const ctlVal = f[column];
         if (!ctlVal) return true;
         const value = String(item[column] ?? '').toLowerCase();
@@ -367,21 +407,50 @@ this.giveOrderMatrixData.sort      = this.matrixSort;
       const globalOk = !globalFilter ||
         this.columns.some(column => String(item[column] || '').toLowerCase().includes(globalFilter));
   
-      return perColumnOk && globalOk && topOk && deptOk && giveOk && groupOk;
+      return perColumnOk && globalOk && topOk && deptOk && giveOk && groupOk && procOk && yearOk && monthOk;
     });
   
+    // bind main table + count
     this.totalResults = this.filteredData.length;
     this.matTableDataSource.data = this.filteredData;
-    this.buildGiveOrderMatrix();
-    if (this.showGraph) {
-      this.refreshChart();
-    }
-    this.matTableDataSource.filter = ''; // don’t let MatTable’s built-in filter fight ours
+    this.matTableDataSource.filter = ''; // prevent MatTable built-in filter interference
     this.matTableDataSource.paginator = this.mainPaginator;
+  
+    // ── NO-DRUGS TABLE FILTER ─────────────────────────────────────────
+    this.filteredNoDrugsData = (this.noDrugsDataSource || []).filter(item => {
+      // single-selects
+      const deptOk  = !selDept  || String(item?.surgeryDepartment ?? item?.SurgeryDepartment ?? '') === selDept;
+      const giveOk  = !selGive  || String(item?.giveOrderName     ?? item?.GiveOrderName     ?? '') === selGive;
+      const groupOk = !selGroup || String(item?.timeGroup         ?? item?.TimeGroup         ?? '') === selGroup;
+  
+      // multi-selects
+      const itemProc = String(item?.procedureName ?? item?.ProcedureName ?? '');
+      const itemYear = this.getRowYear(item);
+      const itemMon  = this.getRowMonthNumber(item);
+  
+      const procOk  = !wantProc  || (itemProc && selProcedures.includes(itemProc));
+      const yearOk  = !wantYear  || (itemYear !== null && selYears.includes(itemYear));
+      const monthOk = !wantMonth || (itemMon  !== null && selMonths.includes(itemMon));
+  
+      // global text filter over the displayed columns in this table
+      const globalOk = !globalFilter || this.noDrugsColumns.some(c =>
+        String(item?.[c] ?? item?.[c[0].toUpperCase() + c.slice(1)] ?? '').toLowerCase().includes(globalFilter)
+      );
+  
+      return deptOk && giveOk && groupOk && procOk && yearOk && monthOk && globalOk;
+    });
+  
+    // bind no-drugs table
+    this.noDrugsMatTableDataSource.data = this.filteredNoDrugsData;
+    if (this.noDrugsMatTableDataSource.paginator) this.noDrugsMatTableDataSource.paginator.firstPage();
+  
+    // ── PIVOT + CHARTS + GAUGE ────────────────────────────────────────
+    this.buildGiveOrderMatrix();   // pivot table + (if on) matrix chart refresh inside
+    if (this.showGraph) this.refreshChart();          // TimeGroup chart
+    if (this.showMatrixGraph) this.refreshMatrixChart();
+    this.refreshMonthlyChart();    // monthly stacked Valid vs Total
     this.graphData = this.filteredData;
     this.updateGauge();
-    this.refreshMonthlyChart();   // keep the monthly chart in sync with filters
-
   }
   
   
@@ -1170,5 +1239,55 @@ setMonthlyChartHeight(h: number) {
   this.chartHeightMonthly = h;
   setTimeout(() => this.monthlyChart?.resize(), 0);
 }
+private getRowPrimaryDate(r: any): Date | null {
+  // same priority you used for monthly chart
+  const tryFields = [
+    r?.operationStartTime, r?.OperationStartTime,
+    r?.drugGiveTime,       r?.DrugGiveTime,
+    r?.operationEndTime,   r?.OperationEndTime
+  ];
+  for (const f of tryFields) {
+    const d = this.parseDateLike(f);
+    if (d) return d;
+  }
+  return null;
+}
+
+private getRowYear(r: any): number | null {
+  const d = this.getRowPrimaryDate(r);
+  return d ? d.getFullYear() : null;
+}
+
+private getRowMonthNumber(r: any): number | null {
+  const d = this.getRowPrimaryDate(r);
+  return d ? (d.getMonth() + 1) : null; // 1..12
+}
+private parseDateLike(v: any): Date | null {
+  if (!v) return null;
+  if (v instanceof Date && !isNaN(v.getTime())) return v;
+
+  // Handle strings: ISO, 'yyyy-MM-dd HH:mm', '/Date(...)' ticks, etc.
+  if (typeof v === 'string') {
+    // /Date(1699488000000)/
+    const m = v.match(/\/Date\((\d+)\)\//);
+    if (m) {
+      const d = new Date(Number(m[1]));
+      return isNaN(d.getTime()) ? null : d;
+    }
+    // Try replace space with 'T' for non-ISO SQL strings
+    const isoish = v.includes(' ') ? v.replace(' ', 'T') : v;
+    const d = new Date(isoish);
+    return isNaN(d.getTime()) ? null : d;
+  }
+
+  // Ticks or millis as number
+  if (typeof v === 'number') {
+    const d = new Date(v);
+    return isNaN(d.getTime()) ? null : d;
+  }
+
+  return null;
+}
+
 
 }
