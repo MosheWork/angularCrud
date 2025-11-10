@@ -32,15 +32,14 @@
                 (change)="applyFilters()"
                 matTooltip="כשהתיבה מסומנת: מציג רק שורות עם ערך"
               >
-                קבוצת AD איתן/זלמן — רק עם ערך
-              </mat-checkbox>
+קיימת קבוצה ב AD              </mat-checkbox>
 
               <mat-checkbox
                 formControlName="hasNamerOnly"
                 (change)="applyFilters()"
                 matTooltip="כשהתיבה מסומנת: מציג רק שורות עם ערך"
               >
-                NAMER משתמש פעיל — רק עם ערך
+                NAMER 
               </mat-checkbox>
 
               <mat-checkbox
@@ -48,7 +47,7 @@
                 (change)="applyFilters()"
                 matTooltip="כשהתיבה מסומנת: מציג רק שורות עם ערך"
               >
-                AD פעיל — רק עם ערך
+                AD קבוצות ב
               </mat-checkbox>
 
               <div class="reset-button-container" style="margin-inline-start:auto">
@@ -101,34 +100,34 @@
       <mat-cell *matCellDef="let element">
         <ng-container [ngSwitch]="column">
           
-          <!-- Avatar -->
-          <span *ngSwitchCase="'profilePicture'">
-            <img
-              *ngIf="element.profilePicture"
-              [src]="element.profilePicture"
-              alt="pic"
-              style="height:32px;width:32px;border-radius:50%"
-            />
-          </span>
+     <!-- profilePicture -->
+<span *ngSwitchCase="'profilePicture'">
+    <img
+      *ngIf="element.profilePicture"
+      [src]="element.profilePicture"
+      alt="pic"
+      class="avatar-lg" />
+  </span>
 
-          <!-- Long text columns wrapped with tooltip -->
-          <span *ngSwitchCase="'eitanChameleonADGroupPermision'">
-            <div class="cell-text" [matTooltip]="element.eitanChameleonADGroupPermision || ''">
-              {{ element.eitanChameleonADGroupPermision || '' }}
-            </div>
-          </span>
+          <!-- eitanChameleonADGroupPermision -->
+<span *ngSwitchCase="'eitanChameleonADGroupPermision'">
+    <div class="cell-text" [matTooltip]="element.eitanChameleonADGroupPermision || ''">
+      {{ element.eitanChameleonADGroupPermision || '' }}
+    </div>
+  </span>
 
-          <span *ngSwitchCase="'namerUserActivePermision'">
-            <div class="cell-text" [matTooltip]="element.namerUserActivePermision || ''">
-              {{ element.namerUserActivePermision || '' }}
-            </div>
-          </span>
-
-          <span *ngSwitchCase="'adActivePermision'">
-            <div class="cell-text" [matTooltip]="element.adActivePermision || ''">
-              {{ element.adActivePermision || '' }}
-            </div>
-          </span>
+         <!-- namerUserActivePermision -->
+<span *ngSwitchCase="'namerUserActivePermision'">
+    <div class="cell-text" [matTooltip]="element.namerUserActivePermision || ''">
+      {{ element.namerUserActivePermision || '' }}
+    </div>
+  </span>
+          <!-- adActivePermision (this is the LONG one) -->
+<span *ngSwitchCase="'adActivePermision'">
+    <div class="cell-text cell-text-long" [matTooltip]="element.adActivePermision || ''">
+      {{ element.adActivePermision || '' }}
+    </div>
+  </span>
 
           <!-- Default -->
           <span *ngSwitchDefault>
@@ -146,7 +145,7 @@
 
   <!-- Paginator -->
   <mat-paginator
-    [length]="matTableDataSource?.data?.length || 0"
+    [length]="matTableDataSource.data.length || 0"
     [pageIndex]="0"
     [pageSize]="15"
     [pageSizeOptions]="[15, 50, 100]"
