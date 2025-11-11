@@ -55,28 +55,29 @@
               </div>
   
             </div>
+            <div dir="rtl" style="display:flex; justify-content:space-between; align-items:center">
+                <mat-form-field class="long-search-bar" style="flex:1; padding-right:10px">
+                  <mat-label class="filters" style="color: blue"> חיפוש</mat-label>
+                  <input matInput formControlName="globalFilter" (input)="applyFilters()" class="search-input" />
+                </mat-form-field>
+              
+                <div class="icon" matTooltip="הורד לאקסל">
+                  <img
+                    src="../../assets/excel.png"
+                    alt="Download"
+                    (click)="exportToExcel()"
+                    class="download-icon"
+                    width="50px"
+                  />
+                </div>
+              </div>
           </div>
         </div>
       </div>
     </div>
   </form>
   <!-- Global search + Excel -->
-<div dir="rtl" style="display:flex; justify-content:space-between; align-items:center">
-    <mat-form-field class="long-search-bar" style="flex:1; padding-right:10px">
-      <mat-label class="filters" style="color: blue"> חיפוש</mat-label>
-      <input matInput formControlName="globalFilter" (input)="applyFilters()" class="search-input" />
-    </mat-form-field>
-  
-    <div class="icon" matTooltip="הורד לאקסל">
-      <img
-        src="../../assets/excel.png"
-        alt="Download"
-        (click)="exportToExcel()"
-        class="download-icon"
-        width="50px"
-      />
-    </div>
-  </div>
+
   
   <!-- Data table -->
   <mat-table [dataSource]="matTableDataSource" matSort dir="rtl" class="mat-elevation-z8">
