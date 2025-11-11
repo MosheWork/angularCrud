@@ -317,4 +317,86 @@ margin-top: 50px;}
     color: #c62828;   /* red */
     font-weight: 700; /* bold */
   }
+  /* Layout: two cards side-by-side */
+.filters-wrap {
+    display: flex;
+    gap: 16px;
+    align-items: stretch;
+  }
+  
+  /* 30% card */
+  .stats-card {
+    flex: 0 0 30%;
+    max-width: 30%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding-inline: 16px;
+  }
+  
+  /* 70% card */
+  .controls-card {
+    flex: 1 1 70%;
+    max-width: 70%;
+  }
+  
+  /* Inside the controls card */
+  .controls-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    align-items: center;
+    margin-bottom: 8px;
+  }
+  
+  .online-field {
+    width: 220px;
+    min-width: 200px;
+  }
+  
+  .spacer {
+    flex: 1 1 auto;
+  }
+  
+  .search-export-row {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+  }
+  
+  .long-search-bar {
+    flex: 1 1 auto;
+  }
+  
+  /* Stats look */
+  .stats-title {
+    font-size: 14px;
+    color: #546e7a;
+    margin-bottom: 8px;
+  }
+  .big-number {
+    font-size: 32px;
+    line-height: 1;
+    font-weight: 800;
+    color: #1565c0;
+    text-align: start;
+  }
+  
+  /* Red/bold labels for those two toggles */
+  .toggle-red {
+    color: #c62828;
+    font-weight: 700;
+  }
+  
+  /* Responsive: stack on narrow screens */
+  @media (max-width: 992px) {
+    .filters-wrap {
+      flex-direction: column;
+    }
+    .stats-card,
+    .controls-card {
+      max-width: 100%;
+      flex: 1 1 100%;
+    }
+  }
   

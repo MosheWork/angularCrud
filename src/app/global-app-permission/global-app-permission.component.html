@@ -12,13 +12,7 @@
           <div dir="rtl" class="card">
             <div dir="rtl" class="card-body" style="display:flex; gap:24px; align-items:center; flex-wrap:wrap">
   
-              <!-- Existing toggles -->
-              <!-- <mat-slide-toggle
-  formControlName="activeToggle"
-  (change)="applyFilters()"
-  matTooltip="דלוק: רק עובדים פעילים (EndWorkDate ריק). כבוי: רק לא פעילים">
-  עובד פעיל / לא פעיל
-</mat-slide-toggle> -->
+   
 <mat-form-field  style="width: 220px">
     <mat-label>משתמש פעיל Online</mat-label>
     <mat-select formControlName="onlineFilter" (selectionChange)="applyFilters()">
