@@ -279,7 +279,7 @@ export class GlobalAppPermissionComponent implements OnInit {
 
       // REPLACED: was hasOnlineOnly (boolean). Now a dropdown:
       // 'all' | 'active' | 'inactive'
-      onlineFilter: ['all'],
+      onlineFilter: ['active'],
 
       // NEW: Active/Inactive employee slide-toggle
       // null (no filter) | true (Active) | false (Inactive)
