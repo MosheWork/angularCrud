@@ -13,6 +13,12 @@
             <div dir="rtl" class="card-body" style="display:flex; gap:24px; align-items:center; flex-wrap:wrap">
   
               <!-- Existing toggles -->
+              <mat-slide-toggle
+  formControlName="activeToggle"
+  (change)="applyFilters()"
+  matTooltip="דלוק: רק עובדים פעילים (EndWorkDate ריק). כבוי: רק לא פעילים">
+  עובד פעיל / לא פעיל
+</mat-slide-toggle>
               <mat-slide-toggle formControlName="hasEitanOnly" (change)="applyFilters()" matTooltip="דלוק: הצג רק שורות עם ערך">
                 קיימת קבוצה ב-AD
               </mat-slide-toggle>
@@ -34,9 +40,14 @@
                 יחידות חסויות בקמיליון
               </mat-slide-toggle>
   
-              <mat-slide-toggle formControlName="hasOnlineOnly" (change)="applyFilters()" matTooltip="דלוק: הצג רק שורות עם ערך">
-                משתמש פעיל Online
-              </mat-slide-toggle>
+              <mat-form-field appearance="outline" style="width: 220px">
+                <mat-label>משתמש פעיל Online</mat-label>
+                <mat-select formControlName="onlineFilter" (selectionChange)="applyFilters()">
+                  <mat-option value="all">הכל</mat-option>
+                  <mat-option value="active">פעיל</mat-option>
+                  <mat-option value="inactive">לא פעיל</mat-option>
+                </mat-select>
+              </mat-form-field>
   
               <mat-slide-toggle formControlName="hasEveOnly" (change)="applyFilters()" matTooltip="דלוק: הצג רק שורות עם ערך">
                 EVE - יחידה חסויה

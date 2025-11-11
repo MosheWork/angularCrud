@@ -18,10 +18,7 @@ const EXCEL_CELL_LIMIT = 32767;
 // We chunk slightly below the limit to be safe
 const CHUNK_LIMIT = 32000;
 
-/**
- * Split a long string into chunks of "size" characters.
- * This prevents a single cell from exceeding Excel's 32,767 char limit.
- */
+/** Split a long string into chunks so no cell exceeds Excel limits */
 function splitToChunks(v: string, size = CHUNK_LIMIT): string[] {
   const s = (v ?? '').toString();
   if (!s) return [''];
@@ -32,14 +29,14 @@ function splitToChunks(v: string, size = CHUNK_LIMIT): string[] {
   return chunks;
 }
 
-/** Keys that can get very long and should be chunked for Excel export */
+/** Keys that can be very long and must be chunked for Excel */
 const LONG_KEYS = [
   'adActivePermision',
   'ChamelleonGropPermision',
   'ChamelleonRestrictedGropPermision'
 ];
 
-/** Column header labels used for Excel export */
+/** Column labels for Excel export */
 const HEADER_LABELS: Record<string, string> = {
   profilePicture: 'תמונת פרופיל',
   employeeID: 'מס׳ עובד',
@@ -54,14 +51,10 @@ const HEADER_LABELS: Record<string, string> = {
   EVEActiveUser: 'משתמש פעיל EVE'
 };
 
-/**
- * Take a row and produce an Excel-safe object:
- * - short fields copied as-is (clamped if someone pastes an extreme value)
- * - long fields split across multiple "field_1", "field_2", ... keys
- */
+/** Convert one row into an Excel-safe object (splits long cells) */
 function flattenRowForExcel(row: any): any {
   const out: any = {};
-  // Copy short fields (clamp to avoid accidental oversize)
+  // Copy short fields (clamp if someone pasted extreme text)
   for (const key of Object.keys(row)) {
     const val = row[key];
     if (!LONG_KEYS.includes(key)) {
@@ -75,22 +68,13 @@ function flattenRowForExcel(row: any): any {
   // Expand long fields into numbered chunks
   for (const key of LONG_KEYS) {
     const chunks = splitToChunks((row as any)[key] || '');
-    if (chunks.length === 1) {
-      out[key] = chunks[0];
-    } else {
-      chunks.forEach((c, idx) => {
-        out[`${key}_${idx + 1}`] = c;
-      });
-    }
+    if (chunks.length === 1) out[key] = chunks[0];
+    else chunks.forEach((c, idx) => (out[`${key}_${idx + 1}`] = c));
   }
   return out;
 }
 
-/**
- * Generate an ordered list of keys for the Excel sheet:
- * - use the table "columns" first
- * - append any chunked keys (like "adActivePermision_2") discovered in the flattened rows
- */
+/** Generate ordered headers: table columns first, then any chunked extras */
 function headerOrderFromColumns(columns: string[], sample: any): string[] {
   const base = [...columns];
   const extras = Object.keys(sample || {}).filter(k => !base.includes(k));
@@ -109,12 +93,13 @@ type Row = {
   eitanChameleonADGroupPermision: string;
   namerUserActivePermision: string;
   adActivePermision: string;
-
-  // Extra fields
   ChamelleonGropPermision: string;
   ChamelleonRestrictedGropPermision: string;
   OnnLineActiveUser: string;
   EVEActiveUser: string;
+
+  // NEW: not displayed as a column, used for the Active/Inactive filter
+  endWorkDate: string | null;
 };
 
 interface FormControls {
@@ -131,7 +116,6 @@ interface FormControls {
   styleUrls: ['./global-app-permission.component.scss']
 })
 export class GlobalAppPermissionComponent implements OnInit {
-
   // Title text shown above the table
   Title1: string = ' הרשאות אפליקציות גלובליות - ';
   Title2: string = 'סה"כ תוצאות ';
@@ -142,15 +126,15 @@ export class GlobalAppPermissionComponent implements OnInit {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
-  // Reactive form for filters (global search + toggles)
+  // Reactive form for filters (global search + toggles + dropdown)
   filterForm: FormGroup;
 
   // Data sources
-  dataSource: Row[] = [];                  // original data
-  filteredData: Row[] = [];                // filtered view
-  matTableDataSource: MatTableDataSource<Row>; // Material wrapper (paging/sort)
+  dataSource: Row[] = [];                         // original data
+  filteredData: Row[] = [];                       // filtered view
+  matTableDataSource: MatTableDataSource<Row>;    // Material wrapper (paging/sort)
 
-  // Column order for the table
+  // Column order for the table (NO endWorkDate here on purpose)
   columns = [
     'profilePicture', 'employeeID','name','adUserName',
     'eitanChameleonADGroupPermision','namerUserActivePermision','adActivePermision',
@@ -169,10 +153,29 @@ export class GlobalAppPermissionComponent implements OnInit {
   }
 
   /**
-   * Lifecycle hook
-   * - Loads data from API
-   * - Normalizes keys/casing
-   * - Wires form changes to filtering
+   * Parse a "truthy/active" string into boolean when possible.
+   * Returns: true / false / null (unknown or empty)
+   */
+  private parseBoolish(v: any): boolean | null {
+    if (v === null || v === undefined) return null;
+    const s = String(v).trim().toLowerCase();
+    if (s === '') return null;
+
+    // numeric
+    if (!isNaN(+s)) return +s !== 0;
+
+    // true-ish
+    if (['true','t','yes','y','כן','active','פעיל','on'].includes(s)) return true;
+
+    // false-ish
+    if (['false','f','no','n','לא','inactive','לא פעיל','off'].includes(s)) return false;
+
+    // fallback: any non-empty value treated as "has value" → consider active
+    return true;
+  }
+
+  /**
+   * Lifecycle hook: load data, normalize, wire filters.
    */
   ngOnInit(): void {
     this.http.get<any[]>(environment.apiUrl + 'GlobalAppPermission/all')
@@ -191,7 +194,10 @@ export class GlobalAppPermissionComponent implements OnInit {
           ChamelleonGropPermision:           d.ChamelleonGropPermision ?? d.chamelleonGropPermision ?? '',
           ChamelleonRestrictedGropPermision: d.ChamelleonRestrictedGropPermision ?? d.chamelleonRestrictedGropPermision ?? '',
           OnnLineActiveUser:                 d.OnnLineActiveUser ?? d.onnLineActiveUser ?? '',
-          EVEActiveUser:                     d.EVEActiveUser ?? d.eveActiveUser ?? ''
+          EVEActiveUser:                     d.EVEActiveUser ?? d.eveActiveUser ?? '',
+
+          // NEW: used only for Active/Inactive filter
+          endWorkDate: d.endWorkDate ?? d.EndWorkDate ?? null
         }));
 
         // Bind to UI
@@ -211,9 +217,7 @@ export class GlobalAppPermissionComponent implements OnInit {
       });
   }
 
-  /**
-   * Return the display label for a column key in the table header.
-   */
+  /** Display labels in the table header */
   getColumnLabel(column: string): string {
     const labels: Record<string, string> = {
       employeeID: 'מס׳ עובד',
@@ -233,43 +237,53 @@ export class GlobalAppPermissionComponent implements OnInit {
 
   /**
    * Build the reactive form with all filters:
-   * - globalFilter: free text search across all columns
-   * - has*Only: slide toggles that keep rows with non-empty values in a given column
+   * - globalFilter: free text across columns
+   * - has*Only: keep rows with non-empty values in that field
+   * - activeToggle: עובד פעיל/לא פעיל
+   * - onlineFilter: dropdown (הכל/פעיל/לא פעיל)
    */
   private createFilterForm(): FormGroup {
     return this.fb.group({
       globalFilter: [''],
+
+      // existing toggles (presence filter)
       hasEitanOnly: [false],
       hasNamerOnly: [false],
       hasAdActiveOnly: [false],
       hasChameleonOnly: [false],
       hasChameleonRestrictedOnly: [false],
-      hasOnlineOnly: [false],
+
+      // REPLACED: was hasOnlineOnly (boolean). Now a dropdown:
+      // 'all' | 'active' | 'inactive'
+      onlineFilter: ['all'],
+
+      // NEW: Active/Inactive employee slide-toggle
+      // null (no filter) | true (Active) | false (Inactive)
+      activeToggle: [null as boolean | null],
+
+      // keep Eve toggle as presence filter (as before)
       hasEveOnly: [false]
     });
   }
 
-  /**
-   * Utility: determine if a value is considered "present" (non-empty after trim)
-   */
+  /** Value considered "present" (non-empty after trim) */
   private hasValue(v: any): boolean {
     if (v === null || v === undefined) return false;
     const s = String(v).trim();
     return s.length > 0;
   }
 
-  /**
-   * Utility: get a typed FormControl by column key (used by templates if needed)
-   */
-  getFormControl(column: string): FormControl {
-    return (this.filterForm.get(column) as FormControl) || new FormControl('');
+  /** Get a typed FormControl by key (useful in templates) */
+  getFormControl(key: string): FormControl {
+    return (this.filterForm.get(key) as FormControl) || new FormControl('');
   }
 
   /**
-   * Apply all active filters:
-   * - slide toggles: keep rows with non-empty values in the respective fields
-   * - global text filter: includes a row if any visible column contains the term
-   * Updates: filteredData, matTableDataSource, and totalResults.
+   * Apply all filters:
+   * - Presence toggles: keep rows with non-empty value in that column
+   * - Active toggle: EndWorkDate null => Active; not null => Inactive
+   * - Online dropdown: interpret value via parseBoolish and compare to desired
+   * - Global text search across visible columns
    */
   applyFilters(): void {
     const {
@@ -279,23 +293,36 @@ export class GlobalAppPermissionComponent implements OnInit {
       hasAdActiveOnly,
       hasChameleonOnly,
       hasChameleonRestrictedOnly,
-      hasOnlineOnly,
+      onlineFilter,       // 'all' | 'active' | 'inactive'
+      activeToggle,       // null | true | false
       hasEveOnly
     } = this.filterForm.value;
 
     const gf = (globalFilter || '').toString().toLowerCase();
 
     this.filteredData = this.dataSource.filter(r => {
-      // Toggle filters → keep only if value exists
+      // Presence filters
       if (hasEitanOnly && !this.hasValue(r.eitanChameleonADGroupPermision)) return false;
       if (hasNamerOnly && !this.hasValue(r.namerUserActivePermision)) return false;
       if (hasAdActiveOnly && !this.hasValue(r.adActivePermision)) return false;
       if (hasChameleonOnly && !this.hasValue(r.ChamelleonGropPermision)) return false;
       if (hasChameleonRestrictedOnly && !this.hasValue(r.ChamelleonRestrictedGropPermision)) return false;
-      if (hasOnlineOnly && !this.hasValue(r.OnnLineActiveUser)) return false;
       if (hasEveOnly && !this.hasValue(r.EVEActiveUser)) return false;
 
-      // Global filter across visible columns
+      // Active/Inactive toggle (based on EndWorkDate)
+      // true  => Active  (EndWorkDate == null)
+      // false => Inactive (EndWorkDate != null)
+      if (activeToggle === true && r.endWorkDate !== null) return false;
+      if (activeToggle === false && r.endWorkDate === null) return false;
+
+      // Online dropdown
+      if (onlineFilter !== 'all') {
+        const onlineParsed = this.parseBoolish(r.OnnLineActiveUser); // true/false/null
+        if (onlineFilter === 'active' && onlineParsed !== true) return false;
+        if (onlineFilter === 'inactive' && onlineParsed !== false) return false;
+      }
+
+      // Global text filter across visible columns
       if (!gf) return true;
       return this.columns.some(c => (r as any)[c]?.toString().toLowerCase().includes(gf));
     });
@@ -306,20 +333,11 @@ export class GlobalAppPermissionComponent implements OnInit {
     this.matTableDataSource.paginator = this.paginator;
   }
 
-  /**
-   * Export the filtered grid to XLSX, chunking very long text columns
-   * so no cell exceeds Excel's 32,767 char limit.
-   * Also sets human-friendly column headers.
-   */
+  /** Export current filtered view to XLSX (safe for long text) */
   exportToExcel(): void {
     try {
-      // 1) Flatten/Chunk each row
       const flat = this.filteredData.map(r => flattenRowForExcel(r));
-
-      // 2) Build ordered headers (table order + any chunked extras)
       const headerOrder = headerOrderFromColumns(this.columns, flat[0] || {});
-
-      // 3) Create display-labeled objects in header order
       const labeled = flat.map(row => {
         const obj: any = {};
         for (const key of headerOrder) {
@@ -331,12 +349,10 @@ export class GlobalAppPermissionComponent implements OnInit {
         return obj;
       });
 
-      // 4) Build worksheet/workbook
       const ws = XLSX.utils.json_to_sheet(labeled);
       const wb: XLSX.WorkBook = { Sheets: { data: ws }, SheetNames: ['data'] };
-
-      // 5) Write and download
       const buf = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
+
       const blob = new Blob([buf], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
@@ -348,57 +364,44 @@ export class GlobalAppPermissionComponent implements OnInit {
       URL.revokeObjectURL(url);
     } catch (e) {
       console.error('Export failed:', e);
-      // Optional: fallback to CSV if XLSX fails for any reason
       this.exportToCsvFallback();
     }
   }
 
-  /**
-   * CSV fallback exporter (optional).
-   * Uses the same flattening/chunking so each line stays reasonable.
-   */
-// Put this in your component (replaces exportToCsvFallback)
-private exportToCsvFallback(): void {
-  // 1) Flatten/Chunk and type the rows
-  const flat: Array<Record<string, any>> =
-    this.filteredData.map(r => flattenRowForExcel(r)) as Array<Record<string, any>>;
+  /** CSV fallback exporter (ES2018-safe, typed) */
+  private exportToCsvFallback(): void {
+    const flat: Array<Record<string, any>> =
+      this.filteredData.map(r => flattenRowForExcel(r)) as Array<Record<string, any>>;
 
-  // 2) Build a deterministic column list without flatMap (ES2018 safe)
-  const colSet = new Set<string>();
-  flat.forEach((row: Record<string, any>) => {
-    Object.keys(row).forEach((k: string) => colSet.add(k));
-  });
-  const cols: string[] = Array.from(colSet);
+    const colSet = new Set<string>();
+    flat.forEach((row: Record<string, any>) => {
+      Object.keys(row).forEach((k: string) => colSet.add(k));
+    });
+    const cols: string[] = Array.from(colSet);
 
-  // 3) CSV-escape helper
-  const esc = (s: any): string => {
-    const v = (s ?? '').toString().replace(/"/g, '""');
-    return `"${v}"`;
-  };
+    const esc = (s: any): string => {
+      const v = (s ?? '').toString().replace(/"/g, '""');
+      return `"${v}"`;
+    };
 
-  // 4) Compose CSV
-  const header = cols.join(',');
-  const rows = flat.map((row: Record<string, any>) =>
-    cols.map((c: string) => esc(row[c])).join(',')
-  );
-  const csv = [header, ...rows].join('\r\n');
+    const header = cols.join(',');
+    const rows = flat.map((row: Record<string, any>) =>
+      cols.map((c: string) => esc(row[c])).join(',')
+    );
+    const csv = [header, ...rows].join('\r\n');
 
-  // 5) Download
-  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = 'GlobalAppPermission.csv';
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  URL.revokeObjectURL(url);
-}
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'GlobalAppPermission.csv';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }
 
-
-  /**
-   * Reset all filters (global text + toggles) to defaults and re-apply.
-   */
+  /** Reset all filters (global text + toggles + dropdown) */
   resetAllFilters(): void {
     this.filterForm.reset({
       globalFilter: '',
@@ -407,15 +410,14 @@ private exportToCsvFallback(): void {
       hasAdActiveOnly: false,
       hasChameleonOnly: false,
       hasChameleonRestrictedOnly: false,
-      hasOnlineOnly: false,
+      onlineFilter: 'all',   // dropdown back to "all"
+      activeToggle: null,    // no Active/Inactive filter
       hasEveOnly: false
     });
     this.applyFilters();
   }
 
-  /**
-   * Navigate back to home (if you render a home button in the template).
-   */
+  /** Navigate to home (if used in template) */
   goToHome(): void {
     this.router.navigate(['/MainPageReports']);
   }
