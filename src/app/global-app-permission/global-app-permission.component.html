@@ -13,12 +13,20 @@
             <div dir="rtl" class="card-body" style="display:flex; gap:24px; align-items:center; flex-wrap:wrap">
   
               <!-- Existing toggles -->
-              <mat-slide-toggle
+              <!-- <mat-slide-toggle
   formControlName="activeToggle"
   (change)="applyFilters()"
   matTooltip="דלוק: רק עובדים פעילים (EndWorkDate ריק). כבוי: רק לא פעילים">
   עובד פעיל / לא פעיל
-</mat-slide-toggle>
+</mat-slide-toggle> -->
+<mat-form-field  style="width: 220px">
+    <mat-label>משתמש פעיל Online</mat-label>
+    <mat-select formControlName="onlineFilter" (selectionChange)="applyFilters()">
+      <mat-option value="all">הכל</mat-option>
+      <mat-option value="active">פעיל</mat-option>
+      <mat-option value="inactive">לא פעיל</mat-option>
+    </mat-select>
+  </mat-form-field>
               <mat-slide-toggle formControlName="hasEitanOnly" (change)="applyFilters()" matTooltip="דלוק: הצג רק שורות עם ערך">
                 קיימת קבוצה ב-AD
               </mat-slide-toggle>
@@ -36,22 +44,18 @@
                 Chameleon קבוצה
               </mat-slide-toggle>
   
-              <mat-slide-toggle formControlName="hasChameleonRestrictedOnly" (change)="applyFilters()" matTooltip="דלוק: הצג רק שורות עם ערך">
-                יחידות חסויות בקמיליון
-              </mat-slide-toggle>
-  
-              <mat-form-field appearance="outline" style="width: 220px">
-                <mat-label>משתמש פעיל Online</mat-label>
-                <mat-select formControlName="onlineFilter" (selectionChange)="applyFilters()">
-                  <mat-option value="all">הכל</mat-option>
-                  <mat-option value="active">פעיל</mat-option>
-                  <mat-option value="inactive">לא פעיל</mat-option>
-                </mat-select>
-              </mat-form-field>
-  
-              <mat-slide-toggle formControlName="hasEveOnly" (change)="applyFilters()" matTooltip="דלוק: הצג רק שורות עם ערך">
-                EVE - יחידה חסויה
-              </mat-slide-toggle>
+              <mat-slide-toggle
+              formControlName="hasChameleonRestrictedOnly"
+              (change)="applyFilters()">
+              <span class="toggle-red">יחידות חסויות בקמיליון</span>
+            </mat-slide-toggle>
+            
+            <mat-slide-toggle
+              formControlName="hasEveOnly"
+              (change)="applyFilters()">
+              <span class="toggle-red">EVE - יחידה חסויה</span>
+            </mat-slide-toggle>
+            
   
               <div class="reset-button-container" style="margin-inline-start:auto">
                 <button
@@ -86,6 +90,8 @@
         </div>
       </div>
     </div>
+
+    
   </form>
   <!-- Global search + Excel -->
 
@@ -137,13 +143,7 @@
     </div>
   </span>
   
-  <!-- Chameleon restricted group -->
-  <span *ngSwitchCase="'ChamelleonRestrictedGropPermision'">
-    <div class="cell-text cell-text-long" [matTooltip]="element.ChamelleonRestrictedGropPermision || ''">
-      {{ element.ChamelleonRestrictedGropPermision || '' }}
-    </div>
-  </span>
-  
+
   <!-- Online active user -->
   <span *ngSwitchCase="'OnnLineActiveUser'">
     <div class="cell-text" [matTooltip]="element.OnnLineActiveUser || ''">
@@ -151,9 +151,19 @@
     </div>
   </span>
   
+
+    <!-- Chameleon restricted group -->
+    <span *ngSwitchCase="'ChamelleonRestrictedGropPermision'">
+        <div class="cell-text cell-text-long highlight-red"
+             [matTooltip]="element.ChamelleonRestrictedGropPermision || ''">
+          {{ element.ChamelleonRestrictedGropPermision || '' }}
+        </div>
+      </span>
+      
   <!-- EVE active user -->
   <span *ngSwitchCase="'EVEActiveUser'">
-    <div class="cell-text" [matTooltip]="element.EVEActiveUser || ''">
+    <div class="cell-text highlight-red"
+         [matTooltip]="element.EVEActiveUser || ''">
       {{ element.EVEActiveUser || '' }}
     </div>
   </span>

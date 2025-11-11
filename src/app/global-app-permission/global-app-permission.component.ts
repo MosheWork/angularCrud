@@ -44,12 +44,18 @@ const HEADER_LABELS: Record<string, string> = {
   adUserName: 'AD משתמש',
   eitanChameleonADGroupPermision: 'קבוצה באיתן',
   namerUserActivePermision: 'NAMER',
-  adActivePermision: 'AD קבוצות',
+  adActivePermision: 'קבוצות ב-AD',
   ChamelleonGropPermision: 'Chameleon קבוצה',
   ChamelleonRestrictedGropPermision: 'Chameleon קבוצה מוגבלת',
   OnnLineActiveUser: 'משתמש פעיל Online',
-  EVEActiveUser: 'משתמש פעיל EVE'
+  EVEActiveUser: 'משתמש פעיל EVE',
+
+  // ⬅️ חדשים
+  departnentDescripton: 'מחלקה',
+  functionDescription: 'תפקיד',
+  description: 'סיבת סיום עבודה'
 };
+
 
 /** Convert one row into an Excel-safe object (splits long cells) */
 function flattenRowForExcel(row: any): any {
@@ -85,22 +91,28 @@ function headerOrderFromColumns(columns: string[], sample: any): string[] {
    Component types
    ========================= */
 
-type Row = {
-  employeeID: string | null;
-  name: string | null;
-  adUserName: string | null;
-  profilePicture: string | null;
-  eitanChameleonADGroupPermision: string;
-  namerUserActivePermision: string;
-  adActivePermision: string;
-  ChamelleonGropPermision: string;
-  ChamelleonRestrictedGropPermision: string;
-  OnnLineActiveUser: string;
-  EVEActiveUser: string;
-
-  // NEW: not displayed as a column, used for the Active/Inactive filter
-  endWorkDate: string | null;
-};
+   type Row = {
+    employeeID: string | null;
+    name: string | null;
+    adUserName: string | null;
+    profilePicture: string | null;
+    eitanChameleonADGroupPermision: string;
+    namerUserActivePermision: string;
+    adActivePermision: string;
+    ChamelleonGropPermision: string;
+    ChamelleonRestrictedGropPermision: string;
+    OnnLineActiveUser: string;
+    EVEActiveUser: string;
+  
+    // קיים כבר לסינון עובד פעיל/לא פעיל (לא מוצג בטבלה)
+    endWorkDate: string | null;
+  
+    // ⬅️ חדשים
+    description: string;              // מ-EP_EndWorkReason.Description
+    departnentDescripton: string;     // מ-EP_Departnents.DepartnentDescripton
+    functionDescription: string;      // מ-EP_Functions.FunctionDescription
+  };
+  
 
 interface FormControls {
   [key: string]: FormControl;
@@ -137,6 +149,7 @@ export class GlobalAppPermissionComponent implements OnInit {
   // Column order for the table (NO endWorkDate here on purpose)
   columns = [
     'profilePicture', 'employeeID','name','adUserName',
+    'departnentDescripton', 'functionDescription', 'description', 
     'eitanChameleonADGroupPermision','namerUserActivePermision','adActivePermision',
     'ChamelleonGropPermision','ChamelleonRestrictedGropPermision',
     'OnnLineActiveUser','EVEActiveUser'
@@ -186,19 +199,24 @@ export class GlobalAppPermissionComponent implements OnInit {
           name: d.name ?? d.Name ?? null,
           adUserName: d.adUserName ?? d.ADUserName ?? null,
           profilePicture: d.profilePicture ?? d.ProfilePicture ?? null,
-
+        
           eitanChameleonADGroupPermision: d.eitanChameleonADGroupPermision ?? d.EitanChameleonADGroupPermision ?? '',
           namerUserActivePermision:       d.namerUserActivePermision ?? d.NAMERUserActivePermision ?? '',
           adActivePermision:              d.adActivePermision ?? d.ADActivePermision ?? '',
-
+        
           ChamelleonGropPermision:           d.ChamelleonGropPermision ?? d.chamelleonGropPermision ?? '',
           ChamelleonRestrictedGropPermision: d.ChamelleonRestrictedGropPermision ?? d.chamelleonRestrictedGropPermision ?? '',
           OnnLineActiveUser:                 d.OnnLineActiveUser ?? d.onnLineActiveUser ?? '',
           EVEActiveUser:                     d.EVEActiveUser ?? d.eveActiveUser ?? '',
-
-          // NEW: used only for Active/Inactive filter
-          endWorkDate: d.endWorkDate ?? d.EndWorkDate ?? null
+        
+          endWorkDate: d.endWorkDate ?? d.EndWorkDate ?? null,
+        
+          // ⬅️ חדשים (שמות העמודות מה-SQL)
+          description: d.Description ?? d.description ?? '',
+          departnentDescripton: d.DepartnentDescripton ?? d.departnentDescripton ?? '',
+          functionDescription: d.FunctionDescription ?? d.functionDescription ?? ''
         }));
+        
 
         // Bind to UI
         this.dataSource = rows;
@@ -220,20 +238,26 @@ export class GlobalAppPermissionComponent implements OnInit {
   /** Display labels in the table header */
   getColumnLabel(column: string): string {
     const labels: Record<string, string> = {
-      employeeID: 'מס׳ עובד',
+      employeeID: 'ת"ז ',
       name: 'שם',
       adUserName: 'AD משתמש',
       profilePicture: 'תמונת פרופיל',
       eitanChameleonADGroupPermision: 'קבוצה באיתן',
       namerUserActivePermision: 'NAMER',
-      adActivePermision: 'AD קבוצות',
+      adActivePermision: 'קבוצות ב-AD',
       ChamelleonGropPermision: 'Chameleon קבוצה',
       ChamelleonRestrictedGropPermision: 'Chameleon קבוצה מוגבלת',
       OnnLineActiveUser: 'משתמש פעיל Online',
-      EVEActiveUser: 'משתמש פעיל EVE'
+      EVEActiveUser: 'משתמש פעיל EVE',
+  
+      // ⬅️ חדשים
+      departnentDescripton: 'מחלקה',
+      functionDescription: 'תפקיד',
+      description: 'סיבת סיום עבודה'
     };
     return labels[column] ?? column;
   }
+  
 
   /**
    * Build the reactive form with all filters:
