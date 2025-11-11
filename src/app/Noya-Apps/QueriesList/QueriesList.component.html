@@ -1,42 +1,39 @@
-<div class="spmeta container">
+<div class="spmeta container" dir="rtl">
 
   <!-- Header -->
   <div class="header">
     <mat-form-field appearance="outline" class="global-search">
-      <mat-label>Search Queries</mat-label>
-      <input matInput [formControl]="globalFilter" placeholder="Type to filter..." />
+      <mat-label>חיפוש כללי</mat-label>
+      <input matInput [formControl]="globalFilter" placeholder="הקלד כדי לחפש..." />
     </mat-form-field>
 
     <span class="fill"></span>
 
-    <button mat-flat-button color="primary" (click)="onAdd()">Add Query</button>
-    <button mat-flat-button color="warn" (click)="onDeleteSelected()" [disabled]="!hasSelection()">Delete Selected</button>
-    <button mat-stroked-button color="accent" (click)="resetFilters()">Reset Filters</button>
+    <button mat-flat-button color="primary" (click)="onAdd()">הוסף שאילתא</button>
+    <button mat-flat-button color="warn" (click)="onDeleteSelected()" [disabled]="!hasSelection()">מחק נבחרים</button>
+    <button mat-stroked-button color="accent" (click)="resetFilters()">נקה סינונים</button>
   </div>
 
-  <!-- Advanced Filters -->
+  <!-- Filters -->
   <div class="filters">
     <mat-form-field appearance="fill">
-      <mat-label>Query Name</mat-label>
-      <input matInput [formControl]="filterQueryName" placeholder="Filter by name">
+      <mat-label>שם השאילתא</mat-label>
+      <input matInput [formControl]="filterQueryName" placeholder="סינון לפי שם">
     </mat-form-field>
-
     <mat-form-field appearance="fill">
-      <mat-label>Subject</mat-label>
-      <input matInput [formControl]="filterSubject" placeholder="Filter by subject">
+      <mat-label>נושא</mat-label>
+      <input matInput [formControl]="filterSubject" placeholder="סינון לפי נושא">
     </mat-form-field>
-
     <mat-form-field appearance="fill">
-      <mat-label>SubSubject</mat-label>
-      <input matInput [formControl]="filterSubSubject" placeholder="Filter by sub-subject">
+      <mat-label>נושא משנה</mat-label>
+      <input matInput [formControl]="filterSubSubject" placeholder="סינון לפי נושא משנה">
     </mat-form-field>
-
     <mat-form-field appearance="fill">
-      <mat-label>Status</mat-label>
+      <mat-label>סטטוס</mat-label>
       <mat-select [formControl]="filterStatus">
-        <mat-option value="">All</mat-option>
-        <mat-option value="active">Active</mat-option>
-        <mat-option value="inactive">Inactive</mat-option>
+        <mat-option value="">כולם</mat-option>
+        <mat-option value="active">פעיל</mat-option>
+        <mat-option value="inactive">לא פעיל</mat-option>
       </mat-select>
     </mat-form-field>
   </div>
@@ -48,24 +45,24 @@
       <!-- Select -->
       <ng-container matColumnDef="select">
         <th mat-header-cell *matHeaderCellDef>
-          <mat-checkbox
-            [checked]="isAllSelected()"
-            [indeterminate]="isIndeterminate()"
-            (change)="toggleAllSelection($event)">
+          <mat-checkbox [checked]="isAllSelected()" [indeterminate]="isIndeterminate()" (change)="toggleAllSelection($event)">
           </mat-checkbox>
         </th>
         <td mat-cell *matCellDef="let row">
-          <mat-checkbox (change)="toggleSelection(row)" [checked]="selection.has(row.id)"></mat-checkbox>
+          <mat-checkbox [checked]="selection.has(row.id)" (change)="toggleSelection(row)"></mat-checkbox>
         </td>
       </ng-container>
 
-      <!-- Dynamic Columns -->
+      <!-- Data Columns -->
       <ng-container *ngFor="let col of displayedColumns" [matColumnDef]="col">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ col | titlecase }}</th>
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ headerLabels[col] }}</th>
         <td mat-cell *matCellDef="let row">
           <ng-container [ngSwitch]="col">
-            <span *ngSwitchCase="'isActive'" [class.ok]="row.isActive" [class.no]="!row.isActive">{{ row.isActive ? 'Active' : 'Inactive' }}</span>
+            <span *ngSwitchCase="'isActive'" [class.ok]="row.isActive" [class.no]="!row.isActive">
+              {{ row.isActive ? 'פעיל' : 'לא פעיל' }}
+            </span>
             <span *ngSwitchCase="'createdAt'">{{ row.createdAt | date:'short' }}</span>
+            <span *ngSwitchCase="'updatedAt'">{{ row.updatedAt ? (row.updatedAt | date:'short') : '' }}</span>
             <span *ngSwitchDefault>{{ row[col] }}</span>
           </ng-container>
         </td>
@@ -73,20 +70,21 @@
 
       <!-- Actions -->
       <ng-container matColumnDef="actions">
-        <th mat-header-cell *matHeaderCellDef>Actions</th>
+        <th mat-header-cell *matHeaderCellDef>{{ headerLabels['actions'] }}</th>
         <td mat-cell *matCellDef="let row">
-          <button mat-icon-button color="primary" (click)="onEdit(row)"><mat-icon>edit</mat-icon></button>
-          <button mat-icon-button color="warn" (click)="onDelete(row)"><mat-icon>delete</mat-icon></button>
+          <button mat-icon-button color="primary" (click)="onEdit(row)" matTooltip="ערוך"><mat-icon>edit</mat-icon></button>
+          <button mat-icon-button color="warn" (click)="onDelete(row)" matTooltip="מחק רך"><mat-icon>delete</mat-icon></button>
+          <button mat-icon-button color="accent" (click)="onView(row)" matTooltip="צפה בקוד"><mat-icon>visibility</mat-icon></button>
+          <button mat-icon-button color="secondary" (click)="copyText(row)" matTooltip="העתק טקסט"><mat-icon>content_copy</mat-icon></button>
         </td>
       </ng-container>
 
-
+      <!-- Rows -->
       <tr mat-header-row *matHeaderRowDef="displayedColumnsWithSelect"></tr>
       <tr mat-row *matRowDef="let row; columns: displayedColumnsWithSelect;"></tr>
 
     </table>
 
-    <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
+    <mat-paginator [pageSizeOptions]="[5,10,20]" showFirstLastButtons></mat-paginator>
   </div>
-
 </div>

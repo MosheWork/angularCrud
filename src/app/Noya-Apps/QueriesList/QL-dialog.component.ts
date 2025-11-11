@@ -58,6 +58,7 @@ export class QueriesDialogComponent implements OnInit {
     payload.append('Description', this.form.value.Description ?? '');
     payload.append('Subject', this.form.value.Subject ?? '');
     payload.append('SubSubject', this.form.value.SubSubject ?? '');
+    payload.append('CreatedFor', this.form.value.CreatedFor ?? '');
     payload.append('IsActive', this.form.value.IsActive ? '1' : '0');
     payload.append('UpdatedBy', this.currentUser);
 

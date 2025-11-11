@@ -6,6 +6,8 @@ import { MatDialog } from '@angular/material/dialog';
 import { FormControl } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { QueriesDialogComponent } from './QL-dialog.component';
+import { QueriesViewDialogComponent } from './QueriesViewDialogComponent';
+
 
 export interface QueryItem {
   id: number;
@@ -16,6 +18,7 @@ export interface QueryItem {
   subSubject: string;
   isActive: boolean;
   createdBy: string;
+  createdFor: string;
   updatedBy: string;
   createdAt: string;
   updatedAt?: string | null;
@@ -28,147 +31,141 @@ export interface QueryItem {
 })
 export class QueriesListComponent implements OnInit, AfterViewInit {
 
-  // Define displayed columns without 'select' and 'actions'
-  displayedColumns = ['id', 'queryName', 'description', 'subject', 'subSubject', 'isActive', 'createdBy', 'createdAt'];
-  displayedColumnsWithSelect = ['select', ...this.displayedColumns];  // Add 'select' to the beginning for checkbox column
+  displayedColumns = [
+    'id', 'queryName', 'description', 'subject', 'subSubject', 
+    'isActive', 'createdBy', 'createdFor', 'createdAt', 'updatedAt'
+  ];
+
+  displayedColumnsWithSelect = ['select', ...this.displayedColumns, 'actions'];
+
+  headerLabels: Record<string,string> = {
+    id: 'מזהה',
+    queryName: 'שם השאילתא',
+    description: 'תיאור',
+    subject: 'נושא',
+    subSubject: 'נושא משנה',
+    isActive: 'סטטוס',
+    createdBy: 'נוצר על ידי',
+    createdFor: 'נוצר עבור',
+    createdAt: 'נוצר בתאריך',
+    updatedAt: 'עודכן בתאריך',
+    actions: 'פעולות'
+  };
 
   dataSource = new MatTableDataSource<QueryItem>();
 
-  // Filters
   globalFilter = new FormControl('');
   filterQueryName = new FormControl('');
   filterSubject = new FormControl('');
   filterSubSubject = new FormControl('');
   filterStatus = new FormControl('');
 
-  // Selection state
   selection = new Set<number>();
 
   @ViewChild(MatSort) sort!: MatSort;
   @ViewChild(MatPaginator) paginator!: MatPaginator;
 
-  currentUser = 'SYSTEM'; // Replace with actual auth logic
-  base = 'http://localhost:44310'; // API host
+  currentUser = 'SYSTEM';
+  base = 'http://localhost:44310';
 
   constructor(private http: HttpClient, public dialog: MatDialog) {}
 
-  ngOnInit(): void {
+  ngOnInit(): void { 
     this.loadQueries();
-
-    // Apply filters on value changes
-    const applyFilters = () => {
-      const globalValue = (this.globalFilter.value || '').trim().toLowerCase();
-      const queryNameValue = (this.filterQueryName.value || '').toLowerCase();
-      const subjectValue = (this.filterSubject.value || '').toLowerCase();
-      const subSubjectValue = (this.filterSubSubject.value || '').toLowerCase();
-      const statusValue = this.filterStatus.value;
-
-      this.dataSource.filterPredicate = (row: QueryItem) => {
-        const matchGlobal = `${row.id}|${row.queryName}|${row.description}|${row.subject}|${row.subSubject}|${row.createdBy}`
-          .toLowerCase().includes(globalValue);
-
-        const matchQueryName = row.queryName.toLowerCase().includes(queryNameValue);
-        const matchSubject = row.subject.toLowerCase().includes(subjectValue);
-        const matchSub = row.subSubject.toLowerCase().includes(subSubjectValue);
-
-        let matchStatus = true;
-        if (statusValue === 'active') matchStatus = row.isActive;
-        else if (statusValue === 'inactive') matchStatus = !row.isActive;
-
-        return matchGlobal && matchQueryName && matchSubject && matchSub && matchStatus;
-      };
-
-      // Trigger a re-filter when filters change
-      this.dataSource.filter = Math.random().toString();
-    };
-
-    // Subscribe to filter changes
-    [this.globalFilter, this.filterQueryName, this.filterSubject, this.filterSubSubject, this.filterStatus]
-      .forEach(ctrl => ctrl.valueChanges.subscribe(applyFilters));
+    this.setupFilters();
   }
 
   ngAfterViewInit(): void {
-    // Initialize paginator and sort after view is initialized
     this.dataSource.sort = this.sort;
     this.dataSource.paginator = this.paginator;
   }
 
+  // ---------------------- API Calls ----------------------
   loadQueries(): void {
     this.http.get<QueryItem[]>(`${this.base}/api/QueriesList/list`)
-      .subscribe(rows => {
-        console.log('Fetched rows:', rows); // Check data load in console
-        this.dataSource.data = rows; // Assign fetched data to dataSource
-      }, error => {
-        console.error('Error fetching data:', error);
-      });
+      .subscribe(rows => this.dataSource.data = rows, err => console.error(err));
   }
 
-  onAdd(): void {
-    const dialogRef = this.dialog.open(QueriesDialogComponent, {
-      width: '800px',
-      data: { mode: 'add', currentUser: this.currentUser }
-    });
-    dialogRef.afterClosed().subscribe(result => { if (result) this.loadQueries(); });
+  // ---------------------- CRUD Actions ----------------------
+  onAdd() {
+    const dialogRef = this.dialog.open(QueriesDialogComponent, { width: '800px', data: { mode: 'add', currentUser: this.currentUser } });
+    dialogRef.afterClosed().subscribe(res => { if(res) this.loadQueries(); });
   }
 
-  onEdit(row: QueryItem): void {
-    const dialogRef = this.dialog.open(QueriesDialogComponent, {
-      width: '800px',
-      data: { mode: 'edit', row, currentUser: this.currentUser }
-    });
-    dialogRef.afterClosed().subscribe(result => { if (result) this.loadQueries(); });
+  onEdit(row: QueryItem) {
+    const dialogRef = this.dialog.open(QueriesDialogComponent, { width: '800px', data: { mode: 'edit', row, currentUser: this.currentUser } });
+    dialogRef.afterClosed().subscribe(res => { if(res) this.loadQueries(); });
   }
 
-  onDelete(row: QueryItem): void {
-    if (!row.id || !confirm(`Delete "${row.queryName}"?`)) return;
-    this.http.post(`${this.base}/api/QueriesList/delete`, [row.id])
-      .subscribe(() => this.loadQueries());
+  onDelete(row: QueryItem) {
+    if(!row.id || !confirm(`למחוק את השאילתא "${row.queryName}"?`)) return;
+    this.http.post(`${this.base}/api/QueriesList/softDelete`, [row.id]).subscribe(() => this.loadQueries());
   }
 
-  toggleSelection(row: QueryItem) {
-    if (this.selection.has(row.id)) {
-      this.selection.delete(row.id);
-    } else {
-      this.selection.add(row.id);
-    }
-  }
-
-  toggleAllSelection(event: any) {
-    const filteredRows = this.dataSource.filteredData;
-    if (event.checked) {
-      filteredRows.forEach(row => this.selection.add(row.id));
-    } else {
-      filteredRows.forEach(row => this.selection.delete(row.id));
-    }
-  }
-
-  isAllSelected() {
-    const filteredRows = this.dataSource.filteredData;
-    return filteredRows.every(row => this.selection.has(row.id)) && filteredRows.length > 0;
-  }
-
-  isIndeterminate() {
-    const filteredRows = this.dataSource.filteredData;
-    const selectedCount = filteredRows.filter(r => this.selection.has(r.id)).length;
-    return selectedCount > 0 && selectedCount < filteredRows.length;
-  }
-
-  hasSelection() {
-    return this.selection.size > 0;
-  }
-
-  onDeleteSelected() {
-    if (!this.hasSelection() || !confirm(`Delete ${this.selection.size} selected queries?`)) return;
+  onDeleteSelected(): void {
+    if(!this.hasSelection() || !confirm(`למחוק ${this.selection.size} שאילתות נבחרות?`)) return;
     const ids = Array.from(this.selection);
-    this.http.post(`${this.base}/api/QueriesList/delete`, ids)
+    this.http.post(`${this.base}/api/QueriesList/softDelete`, ids)
       .subscribe(() => { this.loadQueries(); this.selection.clear(); });
   }
 
+  onView(row: QueryItem) {
+    this.dialog.open(QueriesViewDialogComponent, { width: '600px', data: { query: row } });
+  }
+
+  copyText(row: QueryItem) {
+    navigator.clipboard.writeText(row.queryText).then(() => alert('הטקסט הועתק בהצלחה!'));
+  }
+
+  // ---------------------- Selection ----------------------
+  toggleSelection(row: QueryItem) { this.selection.has(row.id) ? this.selection.delete(row.id) : this.selection.add(row.id); }
+
+  toggleAllSelection(event: any) {
+    const rows = this.dataSource.filteredData;
+    event.checked ? rows.forEach(r => this.selection.add(r.id)) : rows.forEach(r => this.selection.delete(r.id));
+  }
+
+  isAllSelected() {
+    const rows = this.dataSource.filteredData;
+    return rows.length > 0 && rows.every(r => this.selection.has(r.id));
+  }
+
+  isIndeterminate() {
+    const rows = this.dataSource.filteredData;
+    const count = rows.filter(r => this.selection.has(r.id)).length;
+    return count > 0 && count < rows.length;
+  }
+
+  hasSelection() { return this.selection.size > 0; }
+
   resetFilters() {
-    this.globalFilter.setValue('');
-    this.filterQueryName.setValue('');
-    this.filterSubject.setValue('');
-    this.filterSubSubject.setValue('');
-    this.filterStatus.setValue('');
+    [this.globalFilter, this.filterQueryName, this.filterSubject, this.filterSubSubject, this.filterStatus].forEach(f => f.setValue(''));
+  }
+
+  // ---------------------- Filtering ----------------------
+  private setupFilters() {
+    const apply = () => {
+      const global = (this.globalFilter.value||'').toLowerCase();
+      const qName = (this.filterQueryName.value||'').toLowerCase();
+      const subject = (this.filterSubject.value||'').toLowerCase();
+      const sub = (this.filterSubSubject.value||'').toLowerCase();
+      const status = this.filterStatus.value;
+
+      this.dataSource.filterPredicate = (row: QueryItem) => {
+        const matchGlobal = `${row.id}|${row.queryName}|${row.description}|${row.subject}|${row.subSubject}|${row.createdBy}`.toLowerCase().includes(global);
+        const matchQueryName = row.queryName.toLowerCase().includes(qName);
+        const matchSubject = row.subject.toLowerCase().includes(subject);
+        const matchSub = row.subSubject.toLowerCase().includes(sub);
+        let matchStatus = true; 
+        if(status==='active') matchStatus = row.isActive; 
+        else if(status==='inactive') matchStatus = !row.isActive;
+        return matchGlobal && matchQueryName && matchSubject && matchSub && matchStatus;
+      };
+
+      this.dataSource.filter = Math.random().toString();
+    };
+
+    [this.globalFilter, this.filterQueryName, this.filterSubject, this.filterSubSubject, this.filterStatus]
+      .forEach(f => f.valueChanges.subscribe(apply));
   }
 }
