@@ -251,21 +251,15 @@ export class GlobalAppPermissionComponent implements OnInit {
       EVEActiveUser: 'משתמש פעיל EVE',
   
       // ⬅️ חדשים
-      departnentDescripton: 'מחלקה',
-      functionDescription: 'תפקיד',
+      departnentDescripton: '(onnline)מחלקה',
+      functionDescription: '(onnline)תפקיד',
       description: 'סיבת סיום עבודה'
     };
     return labels[column] ?? column;
   }
   
 
-  /**
-   * Build the reactive form with all filters:
-   * - globalFilter: free text across columns
-   * - has*Only: keep rows with non-empty values in that field
-   * - activeToggle: עובד פעיל/לא פעיל
-   * - onlineFilter: dropdown (הכל/פעיל/לא פעיל)
-   */
+
   private createFilterForm(): FormGroup {
     return this.fb.group({
       globalFilter: [''],
@@ -277,38 +271,28 @@ export class GlobalAppPermissionComponent implements OnInit {
       hasChameleonOnly: [false],
       hasChameleonRestrictedOnly: [false],
 
-      // REPLACED: was hasOnlineOnly (boolean). Now a dropdown:
-      // 'all' | 'active' | 'inactive'
+      
       onlineFilter: ['active'],
 
-      // NEW: Active/Inactive employee slide-toggle
-      // null (no filter) | true (Active) | false (Inactive)
       activeToggle: [null as boolean | null],
 
-      // keep Eve toggle as presence filter (as before)
-      hasEveOnly: [false]
+      
+      hasEveOnly: [false],
+      hasEitanPsychOnly: [false],
     });
   }
 
-  /** Value considered "present" (non-empty after trim) */
   private hasValue(v: any): boolean {
     if (v === null || v === undefined) return false;
     const s = String(v).trim();
     return s.length > 0;
   }
 
-  /** Get a typed FormControl by key (useful in templates) */
   getFormControl(key: string): FormControl {
     return (this.filterForm.get(key) as FormControl) || new FormControl('');
   }
 
-  /**
-   * Apply all filters:
-   * - Presence toggles: keep rows with non-empty value in that column
-   * - Active toggle: EndWorkDate null => Active; not null => Inactive
-   * - Online dropdown: interpret value via parseBoolish and compare to desired
-   * - Global text search across visible columns
-   */
+
   applyFilters(): void {
     const {
       globalFilter,
@@ -319,7 +303,8 @@ export class GlobalAppPermissionComponent implements OnInit {
       hasChameleonRestrictedOnly,
       onlineFilter,       // 'all' | 'active' | 'inactive'
       activeToggle,       // null | true | false
-      hasEveOnly
+      hasEveOnly,
+      hasEitanPsychOnly,
     } = this.filterForm.value;
 
     const gf = (globalFilter || '').toString().toLowerCase();
@@ -332,7 +317,12 @@ export class GlobalAppPermissionComponent implements OnInit {
       if (hasChameleonOnly && !this.hasValue(r.ChamelleonGropPermision)) return false;
       if (hasChameleonRestrictedOnly && !this.hasValue(r.ChamelleonRestrictedGropPermision)) return false;
       if (hasEveOnly && !this.hasValue(r.EVEActiveUser)) return false;
-
+      if (hasEitanPsychOnly) {
+        const s = (r.eitanChameleonADGroupPermision ?? '').toString();
+        // look for U_ChamPsyc as a whole token between start/end or delimiters
+        const hasPsych = /(^|[,\s;|])U_ChamPsyc([,\s;|]|$)/i.test(s);
+        if (!hasPsych) return false;
+      }
       // Active/Inactive toggle (based on EndWorkDate)
       // true  => Active  (EndWorkDate == null)
       // false => Inactive (EndWorkDate != null)
@@ -436,7 +426,9 @@ export class GlobalAppPermissionComponent implements OnInit {
       hasChameleonRestrictedOnly: false,
       onlineFilter: 'all',   // dropdown back to "all"
       activeToggle: null,    // no Active/Inactive filter
-      hasEveOnly: false
+      hasEveOnly: false,
+      hasEitanPsychOnly: false,  // NEW
+
     });
     this.applyFilters();
   }

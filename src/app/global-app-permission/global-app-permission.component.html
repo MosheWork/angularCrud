@@ -2,9 +2,12 @@
 
 <div class="body">
 
+      <div class="nine">
+        <h1>
+         <span>{{ Title2 }}{{ totalResults }}</span>
+        </h1>
+      </div>
 
-  <!-- Filters form (RTL) -->
-<!-- Filters form (RTL) -->
 <form [formGroup]="filterForm" dir="rtl" class="filter-form">
     <div class="container-fluid mb-2">
       <div class="row search-count">
@@ -55,7 +58,12 @@
               (change)="applyFilters()">
               <span class="toggle-red">EVE - יחידה חסויה</span>
             </mat-slide-toggle>
-            
+            <mat-slide-toggle
+  formControlName="hasEitanPsychOnly"
+  (change)="applyFilters()"
+  matTooltip="הצג רק עובדים שקבוצה באיתן = U_ChamPsyc">
+  <span class="toggle-red"> איתן - הרשאות פסיכיאטר</span>
+</mat-slide-toggle>
   
               <div class="reset-button-container" style="margin-inline-start:auto">
                 <button
