@@ -14,9 +14,15 @@ type Row = {
   name: string | null;
   adUserName: string | null;
   profilePicture: string | null;
-  eitanChameleonADGroupPermision: string; // raw string from DB (may be empty)
-  namerUserActivePermision: string;       // raw string from DB (may be empty)
-  adActivePermision: string;              // raw string from DB (may be long)
+  eitanChameleonADGroupPermision: string;
+  namerUserActivePermision: string;
+  adActivePermision: string;
+
+  // ⬇️ NEW FIELDS
+  ChamelleonGropPermision: string;
+  ChamelleonRestrictedGropPermision: string;
+  OnnLineActiveUser: string;
+  EVEActiveUser: string;
 };
 
 interface FormControls {
@@ -43,15 +49,12 @@ export class GlobalAppPermissionComponent implements OnInit {
   filteredData: Row[] = [];
   matTableDataSource: MatTableDataSource<Row>;
 
-  // Keep the same class-based structure; columns are adapted for this grid
-  columns: string[] = [
-    'profilePicture',
-    'employeeID',
-    'name',
-    'adUserName',
-    'eitanChameleonADGroupPermision',
-    'namerUserActivePermision',
-    'adActivePermision'
+  // already includes new columns 👍
+  columns = [
+    'profilePicture', 'employeeID','name','adUserName',
+    'eitanChameleonADGroupPermision','namerUserActivePermision','adActivePermision',
+    'ChamelleonGropPermision','ChamelleonRestrictedGropPermision',
+    'OnnLineActiveUser','EVEActiveUser'
   ];
 
   constructor(
@@ -72,8 +75,14 @@ export class GlobalAppPermissionComponent implements OnInit {
           adUserName: d.adUserName ?? d.ADUserName ?? null,
           profilePicture: d.profilePicture ?? d.ProfilePicture ?? null,
           eitanChameleonADGroupPermision: d.eitanChameleonADGroupPermision ?? d.EitanChameleonADGroupPermision ?? '',
-          namerUserActivePermision: d.namerUserActivePermision ?? d.NAMERUserActivePermision ?? '',
-          adActivePermision: d.adActivePermision ?? d.ADActivePermision ?? ''
+          namerUserActivePermision:       d.namerUserActivePermision ?? d.NAMERUserActivePermision ?? '',
+          adActivePermision:              d.adActivePermision ?? d.ADActivePermision ?? '',
+
+          // ⬇️ MAP NEW FIELDS (PascalCase or camelCase)
+          ChamelleonGropPermision:           d.ChamelleonGropPermision ?? d.chamelleonGropPermision ?? '',
+          ChamelleonRestrictedGropPermision: d.ChamelleonRestrictedGropPermision ?? d.chamelleonRestrictedGropPermision ?? '',
+          OnnLineActiveUser:                 d.OnnLineActiveUser ?? d.onnLineActiveUser ?? '',
+          EVEActiveUser:                     d.EVEActiveUser ?? d.eveActiveUser ?? ''
         }));
 
         this.dataSource = rows;
@@ -82,7 +91,6 @@ export class GlobalAppPermissionComponent implements OnInit {
         this.matTableDataSource.paginator = this.paginator;
         this.matTableDataSource.sort = this.sort;
 
-        // any change on the form re-applies filters
         this.filterForm.valueChanges
           .pipe(debounceTime(100), distinctUntilChanged())
           .subscribe(() => this.applyFilters());
@@ -98,8 +106,14 @@ export class GlobalAppPermissionComponent implements OnInit {
       adUserName: 'AD משתמש',
       profilePicture: 'תמונת פרופיל',
       eitanChameleonADGroupPermision: 'קבוצה באיתן',
-      namerUserActivePermision: 'NAMER  ',
-      adActivePermision: 'AD קבוצות'
+      namerUserActivePermision: 'NAMER',
+      adActivePermision: 'AD קבוצות',
+
+      // ⬇️ LABELS FOR NEW FIELDS
+      ChamelleonGropPermision: 'Chameleon קבוצה',
+      ChamelleonRestrictedGropPermision: 'Chameleon קבוצה מוגבלת',
+      OnnLineActiveUser: 'משתמש פעיל Online',
+      EVEActiveUser: 'משתמש פעיל EVE'
     };
     return labels[column] ?? column;
   }
@@ -109,13 +123,19 @@ export class GlobalAppPermissionComponent implements OnInit {
       globalFilter: [''],
       hasEitanOnly: [false],
       hasNamerOnly: [false],
-      hasAdActiveOnly: [false]
+      hasAdActiveOnly: [false],
+      hasChameleonOnly: [false],           // NEW
+      hasChameleonRestrictedOnly: [false], // NEW
+      hasOnlineOnly: [false],              // NEW
+      hasEveOnly: [false]                  // NEW
     });
   }
+  
+
   private hasValue(v: any): boolean {
     if (v === null || v === undefined) return false;
     const s = String(v).trim();
-    return s.length > 0; // treat any non-empty string as “has value”
+    return s.length > 0;
   }
 
   getFormControl(column: string): FormControl {
@@ -123,24 +143,37 @@ export class GlobalAppPermissionComponent implements OnInit {
   }
 
   applyFilters(): void {
-    const { globalFilter, hasEitanOnly, hasNamerOnly, hasAdActiveOnly } = this.filterForm.value;
+    const {
+      globalFilter,
+      hasEitanOnly,
+      hasNamerOnly,
+      hasAdActiveOnly,
+      hasChameleonOnly,
+      hasChameleonRestrictedOnly,
+      hasOnlineOnly,
+      hasEveOnly
+    } = this.filterForm.value;
+  
     const gf = (globalFilter || '').toString().toLowerCase();
-
+  
     this.filteredData = this.dataSource.filter(r => {
-      // checkbox filters (keep rows that HAVE a value when checked)
       if (hasEitanOnly && !this.hasValue(r.eitanChameleonADGroupPermision)) return false;
       if (hasNamerOnly && !this.hasValue(r.namerUserActivePermision)) return false;
       if (hasAdActiveOnly && !this.hasValue(r.adActivePermision)) return false;
-
-      // global text filter across visible columns
+      if (hasChameleonOnly && !this.hasValue(r.ChamelleonGropPermision)) return false;
+      if (hasChameleonRestrictedOnly && !this.hasValue(r.ChamelleonRestrictedGropPermision)) return false;
+      if (hasOnlineOnly && !this.hasValue(r.OnnLineActiveUser)) return false;
+      if (hasEveOnly && !this.hasValue(r.EVEActiveUser)) return false;
+  
       if (!gf) return true;
       return this.columns.some(c => (r as any)[c]?.toString().toLowerCase().includes(gf));
     });
-
+  
     this.totalResults = this.filteredData.length;
     this.matTableDataSource.data = this.filteredData;
     this.matTableDataSource.paginator = this.paginator;
   }
+  
 
   exportToExcel(): void {
     const ws = XLSX.utils.json_to_sheet(this.filteredData);
@@ -153,7 +186,18 @@ export class GlobalAppPermissionComponent implements OnInit {
     link.click();
   }
 
-  goToHome(): void {
-    this.router.navigate(['/MainPageReports']);
+  resetAllFilters(): void {
+    this.filterForm.reset({
+      globalFilter: '',
+      hasEitanOnly: false,
+      hasNamerOnly: false,
+      hasAdActiveOnly: false,
+      hasChameleonOnly: false,
+      hasChameleonRestrictedOnly: false,
+      hasOnlineOnly: false,
+      hasEveOnly: false
+    });
+    this.applyFilters();
   }
+  
 }
