@@ -1,45 +1,47 @@
+<div dir="rtl" style="text-align: right;">
 
-<h2 mat-dialog-title>{{ isEdit ? 'Edit Query' : 'Add Query' }}</h2>
+  <h2 mat-dialog-title>{{ isEdit ? 'ערוך שאילתא' : 'הוסף שאילתא' }}</h2>
 
-<mat-dialog-content>
-  <form [formGroup]="form" class="dialog-form" (ngSubmit)="save()">
-    
-    <mat-form-field appearance="fill" class="full-width">
-      <mat-label>שם השאילתא</mat-label>
-      <input matInput formControlName="QueryName" />
-    </mat-form-field>
+  <mat-dialog-content>
+    <form [formGroup]="form" class="dialog-form" (ngSubmit)="save()">
 
-    <mat-form-field appearance="fill" class="full-width">
-      <mat-label>SQL קוד</mat-label>
-      <textarea matInput formControlName="QueryText" rows="6"></textarea>
-    </mat-form-field>
+      <mat-form-field appearance="fill" class="full-width">
+        <mat-label>שם השאילתא</mat-label>
+        <input matInput formControlName="QueryName" />
+      </mat-form-field>
 
-    <mat-form-field appearance="fill" class="full-width">
-      <mat-label>תיאור</mat-label>
-      <textarea matInput formControlName="Description" rows="2"></textarea>
-    </mat-form-field>
+      <mat-form-field appearance="fill" class="full-width">
+        <mat-label>SQL קוד</mat-label>
+        <textarea matInput formControlName="QueryText" rows="6"></textarea>
+      </mat-form-field>
 
-    <mat-form-field appearance="fill" class="full-width">
-      <mat-label>נושא</mat-label>
-      <input matInput formControlName="Subject" />
-    </mat-form-field>
+      <mat-form-field appearance="fill" class="full-width">
+        <mat-label>תיאור</mat-label>
+        <textarea matInput formControlName="Description" rows="2"></textarea>
+      </mat-form-field>
 
-    <mat-form-field appearance="fill" class="full-width">
-      <mat-label>נושא משנה</mat-label>
-      <input matInput formControlName="SubSubject" />
-    </mat-form-field>
+      <mat-form-field appearance="fill" class="full-width">
+        <mat-label>נושא</mat-label>
+        <input matInput formControlName="Subject" />
+      </mat-form-field>
 
-    <mat-form-field appearance="fill" class="full-width">
-      <mat-label>נוצר עבור</mat-label>
-      <input matInput formControlName="createdFor" />
-    </mat-form-field>
+      <mat-form-field appearance="fill" class="full-width">
+        <mat-label>נושא משנה</mat-label>
+        <input matInput formControlName="SubSubject" />
+      </mat-form-field>
 
-    <mat-checkbox formControlName="IsActive">פעילה</mat-checkbox>
+      <mat-form-field appearance="fill" class="full-width">
+        <mat-label>נוצר עבור</mat-label>
+        <input matInput formControlName="createdFor" />
+      </mat-form-field>
 
-    <div class="form-actions">
-      <button mat-raised-button color="primary" type="submit">Save</button>
-      <button mat-raised-button type="button" (click)="cancel()">Cancel</button>
-    </div>
+      <mat-checkbox formControlName="IsActive">פעילה</mat-checkbox>
 
-  </form>
-</mat-dialog-content>
+      <div class="form-actions">
+        <button mat-raised-button color="primary" type="submit">שמירה</button>
+        <button mat-raised-button type="button" (click)="cancel()">ביטול</button>
+      </div>
+
+    </form>
+  </mat-dialog-content>
+</div>

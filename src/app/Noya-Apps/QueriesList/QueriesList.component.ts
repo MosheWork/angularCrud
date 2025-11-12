@@ -36,7 +36,7 @@ export class QueriesListComponent implements OnInit, AfterViewInit {
     'isActive', 'createdBy', 'createdFor', 'createdAt', 'updatedAt'
   ];
 
-  displayedColumnsWithSelect = ['select', ...this.displayedColumns, 'actions'];
+  displayedColumnsWithSelect = ['select', ...this.displayedColumns,'actions' ];
 
   headerLabels: Record<string,string> = {
     id: 'מזהה',
@@ -58,6 +58,7 @@ export class QueriesListComponent implements OnInit, AfterViewInit {
   filterQueryName = new FormControl('');
   filterSubject = new FormControl('');
   filterSubSubject = new FormControl('');
+  filterCreatedFor = new FormControl('');
   filterStatus = new FormControl('');
 
   selection = new Set<number>();
@@ -99,13 +100,13 @@ export class QueriesListComponent implements OnInit, AfterViewInit {
 
   onDelete(row: QueryItem) {
     if(!row.id || !confirm(`למחוק את השאילתא "${row.queryName}"?`)) return;
-    this.http.post(`${this.base}/api/QueriesList/softDelete`, [row.id]).subscribe(() => this.loadQueries());
+    this.http.post(`${this.base}/api/QueriesList/delete`, [row.id]).subscribe(() => this.loadQueries());
   }
 
   onDeleteSelected(): void {
     if(!this.hasSelection() || !confirm(`למחוק ${this.selection.size} שאילתות נבחרות?`)) return;
     const ids = Array.from(this.selection);
-    this.http.post(`${this.base}/api/QueriesList/softDelete`, ids)
+    this.http.post(`${this.base}/api/QueriesList/delete`, ids)
       .subscribe(() => { this.loadQueries(); this.selection.clear(); });
   }
 
@@ -139,7 +140,7 @@ export class QueriesListComponent implements OnInit, AfterViewInit {
   hasSelection() { return this.selection.size > 0; }
 
   resetFilters() {
-    [this.globalFilter, this.filterQueryName, this.filterSubject, this.filterSubSubject, this.filterStatus].forEach(f => f.setValue(''));
+    [this.globalFilter, this.filterQueryName, this.filterSubject, this.filterSubSubject, this.filterCreatedFor, this.filterStatus].forEach(f => f.setValue(''));
   }
 
   // ---------------------- Filtering ----------------------
@@ -149,6 +150,7 @@ export class QueriesListComponent implements OnInit, AfterViewInit {
       const qName = (this.filterQueryName.value||'').toLowerCase();
       const subject = (this.filterSubject.value||'').toLowerCase();
       const sub = (this.filterSubSubject.value||'').toLowerCase();
+      const createdFor = (this.filterCreatedFor.value||'').toLowerCase();
       const status = this.filterStatus.value;
 
       this.dataSource.filterPredicate = (row: QueryItem) => {
@@ -165,7 +167,7 @@ export class QueriesListComponent implements OnInit, AfterViewInit {
       this.dataSource.filter = Math.random().toString();
     };
 
-    [this.globalFilter, this.filterQueryName, this.filterSubject, this.filterSubSubject, this.filterStatus]
+    [this.globalFilter, this.filterQueryName, this.filterSubject, this.filterSubSubject, this.filterCreatedFor, this.filterStatus]
       .forEach(f => f.valueChanges.subscribe(apply));
   }
 }
