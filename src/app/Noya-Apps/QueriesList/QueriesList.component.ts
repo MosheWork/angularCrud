@@ -110,7 +110,7 @@ export class QueriesListComponent implements OnInit, AfterViewInit {
   }
 
   onView(row: QueryItem) {
-    this.dialog.open(QueriesViewDialogComponent, { width: '600px', data: { query: row } });
+    this.dialog.open(QueriesViewDialogComponent, { width: '800px', data: { query: row } });
   }
 
   copyText(row: QueryItem) {

@@ -73,9 +73,9 @@
         <th mat-header-cell *matHeaderCellDef>{{ headerLabels['actions'] }}</th>
         <td mat-cell *matCellDef="let row">
           <button mat-icon-button color="primary" (click)="onEdit(row)" matTooltip="ערוך"><mat-icon>edit</mat-icon></button>
-          <button mat-icon-button color="warn" (click)="onDelete(row)" matTooltip="מחק רך"><mat-icon>delete</mat-icon></button>
+          <button mat-icon-button color="warn" (click)="onDelete(row)" matTooltip="הפוך ללא פעיל"><mat-icon>delete</mat-icon></button>
           <button mat-icon-button color="accent" (click)="onView(row)" matTooltip="צפה בקוד"><mat-icon>visibility</mat-icon></button>
-          <button mat-icon-button color="secondary" (click)="copyText(row)" matTooltip="העתק טקסט"><mat-icon>content_copy</mat-icon></button>
+          <button mat-icon-button color="secondary" (click)="copyText(row)" matTooltip="העתק קוד"><mat-icon>content_copy</mat-icon></button>
         </td>
       </ng-container>
 
