@@ -10,7 +10,7 @@
     <span class="fill"></span>
 
     <button mat-flat-button color="primary" (click)="onAdd()">הוסף שאילתא</button>
-    <button mat-flat-button color="warn" (click)="onDeleteSelected()" [disabled]="!hasSelection()">מחק נבחרים</button>
+    <button mat-flat-button color="warn" (click)="onDeleteSelected()" [disabled]="!selection || selection.size === 0">מחק נבחרים</button>
     <button mat-stroked-button color="accent" (click)="resetFilters()">נקה סינונים</button>
   </div>
 
@@ -41,6 +41,41 @@
       </mat-select>
     </mat-form-field>
   </div>
+
+  <div
+      dir="rtl"
+      style="display: flex; justify-content: space-between; align-items: center"
+    >
+      <mat-form-field
+        class="long-search-bar"
+        style="flex: 1; padding-right: 10px"
+      >
+        <mat-label class="filters" style="color: blue"> חיפוש</mat-label>
+        <input
+          matInput
+          [formControl]="globalFilter"
+          class="search-input"
+          placeholder="הקלד כדי לחפש..."
+        />
+      </mat-form-field>
+      <div class="graph-button-container">
+        <img
+          (click)="navigateToGraphPage()"
+          matTooltip="Move To Graph"
+          src="../../../../assets/graphIcon.png"
+          width="50px"
+        />
+      </div>
+      <div class="icon" matTooltip="Download Excel">
+        <img
+          src="../../assets/excel.png"
+          alt="Download"
+          (click)="exportToExcel()"
+          class="download-icon"
+          width="50px"
+        />
+      </div>
+    </div>
 
   <!-- Table -->
   <div class="table-wrapper">
@@ -80,7 +115,7 @@
           <button mat-icon-button color="primary" (click)="onEdit(row)" matTooltip="ערוך"><mat-icon>edit</mat-icon></button>
           <button mat-icon-button color="warn" (click)="onDelete(row)" matTooltip="הפוך ללא פעיל"><mat-icon>delete</mat-icon></button>
           <button mat-icon-button color="accent" (click)="onView(row)" matTooltip="צפה בקוד"><mat-icon>visibility</mat-icon></button>
-          <button mat-icon-button color="secondary" (click)="copyText(row)" matTooltip="העתק קוד"><mat-icon>content_copy</mat-icon></button>
+          <button mat-icon-button color="accent" (click)="copyText(row)" matTooltip="העתק קוד"><mat-icon>content_copy</mat-icon></button>
         </td>
       </ng-container>
 
@@ -91,5 +126,8 @@
     </table>
   </div>
 
-    <mat-paginator [pageSizeOptions]="[5,10,20]" showFirstLastButtons></mat-paginator>
+</div>
+
+<div class="last-row">
+  <mat-paginator [pageSizeOptions]="[5,10,20]" showFirstLastButtons></mat-paginator>
 </div>
