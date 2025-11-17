@@ -5,14 +5,13 @@
 
 <div class="body">
 
-
   <div class="nine">
     <h1>
-     <span>{{ Title2 }}{{ totalResults }}</span>
+      {{ Title1 }}<span>{{ Title2 }}{{ totalResults }}</span>
     </h1>
   </div>
 
-  <!-- FILTERS -->
+  <!-- FILTERS: רק תאריך ניתוח + קרן -->
   <form [formGroup]="filterForm" dir="rtl" class="filter-form">
     <div class="container-fluid mb-2">
       <div class="row search-count">
@@ -20,55 +19,58 @@
           <div dir="rtl" class="card">
             <div dir="rtl" class="card-body">
               <div class="filter-row">
-                <ng-container *ngFor="let column of columns">
-                  <mat-form-field class="filter-field">
-                    <mat-label class="filters">
-                      {{ getColumnLabel(column) }}
-                    </mat-label>
-                    <input
-                      matInput
-                      [formControl]="getFormControl(column)"
-                      class="filter-input"
-                    />
-                  </mat-form-field>
-                </ng-container>
-              </div>
-            </div>
 
-            <div class="reset-button-container">
-              <button
-                mat-button
-                (click)="resetFilters()"
-                mat-raised-button
-                color="primary"
-                class="custom-button"
-                matTooltip="Reset Filters"
-              >
-                <i class="material-icons">refresh</i>
-              </button>
+                <!-- מתאריך ניתוח -->
+                <mat-form-field class="filter-field">
+                  <mat-label class="filters">מתאריך ניתוח</mat-label>
+                  <input matInput [matDatepicker]="pickerFrom" formControlName="fromDate" />
+                  <mat-datepicker-toggle matSuffix [for]="pickerFrom"></mat-datepicker-toggle>
+                  <mat-datepicker #pickerFrom></mat-datepicker>
+                </mat-form-field>
+
+                <!-- עד תאריך ניתוח -->
+                <mat-form-field class="filter-field">
+                  <mat-label class="filters">עד תאריך ניתוח</mat-label>
+                  <input matInput [matDatepicker]="pickerTo" formControlName="toDate" />
+                  <mat-datepicker-toggle matSuffix [for]="pickerTo"></mat-datepicker-toggle>
+                  <mat-datepicker #pickerTo></mat-datepicker>
+                </mat-form-field>
+
+                <!-- קרן – multi select -->
+                <mat-form-field class="filter-field">
+                  <mat-label class="filters">קרן</mat-label>
+                  <mat-select formControlName="kerenFilter" multiple>
+                    <mat-option *ngFor="let k of kerenOptions" [value]="k">
+                      {{ k }}
+                    </mat-option>
+                  </mat-select>
+                </mat-form-field>
+
+                <div class="reset-button-container" style="margin-inline-start:auto">
+                  <button
+                    mat-button
+                    (click)="resetFilters()"
+                    mat-raised-button
+                    color="primary"
+                    class="custom-button"
+                    matTooltip="ניקוי מסננים"
+                  >
+                    <i class="material-icons">refresh</i>
+                  </button>
+                </div>
+
+              </div>
             </div>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- Global search + actions -->
+    <!-- actions: גרף + אקסל -->
     <div
       dir="rtl"
-      style="display: flex; justify-content: space-between; align-items: center"
+      style="display: flex; justify-content: flex-end; align-items: center"
     >
-      <mat-form-field
-        class="long-search-bar"
-        style="flex: 1; padding-right: 10px"
-      >
-        <mat-label class="filters" style="color: blue"> חיפוש</mat-label>
-        <input
-          matInput
-          [formControlName]="'globalFilter'"
-          class="search-input"
-        />
-      </mat-form-field>
-
       <div class="graph-button-container">
         <img
           (click)="navigateToGraphPage()"
@@ -93,35 +95,47 @@
   <!-- GRAPH -->
   <app-sys-graph *ngIf="showGraph" [graphData]="graphData"></app-sys-graph>
 
-  <!-- TABLE -->
-  <mat-table
+  <div class="table-scroll-wrapper" *ngIf="!showGraph">
+    <mat-table
     *ngIf="!showGraph"
     [dataSource]="matTableDataSource"
     matSort
     dir="rtl"
-    class="mat-elevation-z8"
+    class="mat-elevation-z8 sesia-table"
   >
-    <!-- Loop through columns to define each column in the table -->
     <ng-container *ngFor="let column of columns" [matColumnDef]="column">
       <mat-header-cell *matHeaderCellDef mat-sort-header>
         {{ getColumnLabel(column) }}
       </mat-header-cell>
+  
       <mat-cell *matCellDef="let element">
-        {{ element[column] }}
+        <ng-container [ngSwitch]="column">
+  
+          <!-- תאריך ניתוח בפורמט רגיל -->
+          <span *ngSwitchCase="'surgeryDate'">
+            {{ element.surgeryDate | date:'dd/MM/yyyy' }}
+          </span>
+  
+          <!-- ברירת מחדל לכל שאר העמודות -->
+          <span *ngSwitchDefault>
+            {{ element[column] }}
+          </span>
+  
+        </ng-container>
       </mat-cell>
     </ng-container>
-
+  
     <mat-header-row *matHeaderRowDef="columns"></mat-header-row>
-    <mat-row
-      *matRowDef="let row; columns: columns"
-      class="mat-row"
-    ></mat-row>
+    <mat-row *matRowDef="let row; columns: columns" class="mat-row"></mat-row>
   </mat-table>
+  
+  </div>
+  
 
   <mat-paginator
     [length]="totalResults"
-    [pageSize]=5
-    [pageSizeOptions]="[15, 50, 100]"
+    [pageSize]="5"
+    [pageSizeOptions]="[5, 15, 50, 100]"
     showFirstLastButtons
   >
   </mat-paginator>

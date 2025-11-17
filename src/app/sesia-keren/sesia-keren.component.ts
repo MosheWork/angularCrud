@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { FormControl, FormGroup, FormBuilder } from '@angular/forms';
+import { FormGroup, FormBuilder } from '@angular/forms';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
@@ -10,8 +10,50 @@ import { Router } from '@angular/router';
 import * as XLSX from 'xlsx';
 import { environment } from '../../environments/environment';
 
-interface FormControls {
-  [key: string]: FormControl;
+interface Row {
+  caseNumber: string | null;
+  patientName: string | null;
+  surgeryDate: string | null;
+  hDayOfWeek: string | null;
+  timeRoomEnter: string | null;
+  timeRoomExit: string | null;
+  keren: string | null;
+  drg: string | null;
+  surgery_NAME: string | null;
+  department: string | null;
+  icd9: string | null;
+  surgeryLangth: string | null;
+  invoiceTotalAmount: number | null;
+  surgeryRunk: string | null;
+  mainSurgeonNameFirst1: string | null;
+  mainSurgeonNameLast1: string | null;
+  mainSurgeonNameFirst2: string | null;
+  mainSurgeonNameLast2: string | null;
+  secretaryDRG: string | null;
+  nurseScrub: string | null;
+  nurseScrubEnter: string | null;
+  nurseScrubExit: string | null;
+  nurseCirculating: string | null;
+  nurseCirculatingEnter: string | null;
+  nurseCirculatingExit: string | null;
+  nurseRecovery: string | null;
+  nurseRecoveryEnter: string | null;
+  nurseRecoveryExit: string | null;
+  anesthesiologist: string | null;
+  anesthesiologistEnter: string | null;
+  anesthesiologistExit: string | null;
+  technician: string | null;
+  technicianEnter: string | null;
+  technicianExit: string | null;
+  pumpist: string | null;
+  pumpistEnter: string | null;
+  pumpistExit: string | null;
+  ssia: string | null;
+  nurseScrubID: string | null;
+  nurseCirculatingID: string | null;
+  nurseRecoveryID: string | null;
+  technicianID: string | null;
+  pumpistID: string | null;
 }
 
 @Component({
@@ -31,14 +73,14 @@ export class SesiaKerenComponent implements OnInit {
   @ViewChild(MatSort) sort!: MatSort;
 
   filterForm: FormGroup;
-  graphData: any[] = [];
+  graphData: Row[] = [];
 
-  dataSource: any[] = [];
-  filteredData: any[] = [];
+  dataSource: Row[] = [];
+  filteredData: Row[] = [];
 
-  matTableDataSource: MatTableDataSource<any>;
+  matTableDataSource: MatTableDataSource<Row>;
 
-  // 👇 Columns shown in table + used for filters
+  // רק העמודות שביקשת
   columns: string[] = [
     'caseNumber',
     'patientName',
@@ -46,41 +88,68 @@ export class SesiaKerenComponent implements OnInit {
     'hDayOfWeek',
     'timeRoomEnter',
     'timeRoomExit',
-    'department',
-    'icd9',
     'keren',
     'drg',
+    'surgery_NAME',
+    'department',
+    'icd9',
+    'surgeryLangth',
+    'invoiceTotalAmount',
     'surgeryRunk',
-    'surgerY_NAME',
-    'diagCode',
-    'diagDesc',
+    'mainSurgeonNameFirst1',
+    'mainSurgeonNameLast1',
+    'mainSurgeonNameFirst2',
+    'mainSurgeonNameLast2',
     'secretaryDRG',
-    'surgeryCodeList',
-    'timeGroup'
+    'nurseScrub',
+    'nurseScrubEnter',
+    'nurseScrubExit',
+    'nurseCirculating',
+    'nurseCirculatingEnter',
+    'nurseCirculatingExit',
+    'nurseRecovery',
+    'nurseRecoveryEnter',
+    'nurseRecoveryExit',
+    'anesthesiologist',
+    'anesthesiologistEnter',
+    'anesthesiologistExit',
+    'technician',
+    'technicianEnter',
+    'technicianExit',
+    'pumpist',
+    'pumpistEnter',
+    'pumpistExit',
+    'ssia',
+    'nurseScrubID',
+    'nurseCirculatingID',
+    'nurseRecoveryID',
+    'technicianID',
+    'pumpistID'
   ];
+
+  // options for קרן multi-select
+  kerenOptions: string[] = [];
 
   constructor(
     private http: HttpClient,
     private fb: FormBuilder,
     private router: Router
   ) {
-    this.filterForm = this.createFilterForm();
-    this.matTableDataSource = new MatTableDataSource<any>([]);
+    this.filterForm = this.fb.group({
+      fromDate: [null],
+      toDate: [null],
+      kerenFilter: [[]]
+    });
+
+    this.matTableDataSource = new MatTableDataSource<Row>([]);
   }
 
   ngOnInit() {
     this.loadData();
 
-    // Per-column filters
-    this.columns.forEach((column) => {
-      this.getFormControl(column)?.valueChanges
-        .pipe(debounceTime(300), distinctUntilChanged())
-        .subscribe(() => this.applyFilters());
-    });
-
-    // Global filter
-    this.filterForm.get('globalFilter')?.valueChanges
-      .pipe(debounceTime(300), distinctUntilChanged())
+    // טווח תאריך + קרן – כל שינוי מפעיל פילטר
+    this.filterForm.valueChanges
+      .pipe(debounceTime(200), distinctUntilChanged())
       .subscribe(() => this.applyFilters());
   }
 
@@ -88,31 +157,64 @@ export class SesiaKerenComponent implements OnInit {
   loadData() {
     this.http.get<any[]>(environment.apiUrl + 'SesiaKeren/GetAll')
       .subscribe((data) => {
-        // 🔁 Normalize keys from backend → front-end
-        const normalized = data.map(d => ({
-          caseNumber:      d.caseNumber      ?? d.CaseNumber      ?? '',
-          patientName:     d.patientName     ?? d.PatientName     ?? '',
+        const normalized: Row[] = data.map(d => ({
+          caseNumber:      d.caseNumber      ?? d.CaseNumber      ?? null,
+          patientName:     d.patientName     ?? d.PatientName     ?? null,
           surgeryDate:     d.surgeryDate     ?? d.SurgeryDate     ?? null,
-          hDayOfWeek:      d.hDayOfWeek      ?? d.HDayOfWeek      ?? '',
-          timeRoomEnter:   d.timeRoomEnter   ?? d.TIME_ROOM_ENTER ?? '',
-          timeRoomExit:    d.timeRoomExit    ?? d.TIME_ROOM_EXIT  ?? '',
-          department:      d.department      ?? d.Department      ?? '',
-          icd9:            d.icd9            ?? d.icD9            ?? d.ICD9 ?? '',
-          keren:           d.keren           ?? d.Keren           ?? '',
-          drg:             d.drg             ?? d.DRG             ?? '',
-          surgeryRunk:     d.surgeryRunk     ?? d.SurgeryRunk     ?? '',
-          surgerY_NAME:    d.surgerY_NAME    ?? d.SURGERY_NAME    ?? '',
-          diagCode:        d.diagCode        ?? d.DiagCode        ?? '',
-          diagDesc:        d.diagDesc        ?? d.DiagDesc        ?? '',
-          secretaryDRG:    d.secretaryDRG    ?? d.SecretaryDRG    ?? '',
-          surgeryCodeList: d.surgeryCodeList ?? d.SurgeryCodeList ?? '',
-          timeGroup:       d.timeGroup       ?? d.TimeGroup       ?? ''
+          hDayOfWeek:      d.hDayOfWeek      ?? d.HDayOfWeek      ?? null,
+          timeRoomEnter:   d.timeRoomEnter   ?? d.TIME_ROOM_ENTER ?? null,
+          timeRoomExit:    d.timeRoomExit    ?? d.TIME_ROOM_EXIT  ?? null,
+          keren:           d.keren           ?? d.Keren           ?? null,
+          drg:             d.drg             ?? d.DRG             ?? null,
+          surgery_NAME:    d.surgery_NAME    ?? d.SURGERY_NAME    ?? null,
+          department:      d.department      ?? d.Department      ?? null,
+          icd9:            d.icd9            ?? d.ICD9            ?? d.Icd9 ?? null,
+          surgeryLangth:   d.surgeryLangth   ?? d.SurgeryLangth   ?? null,
+          invoiceTotalAmount: d.invoiceTotalAmount ?? d.InvoiceTotalAmount ?? null,
+          surgeryRunk:     d.surgeryRunk     ?? d.SurgeryRunk     ?? null,
+          mainSurgeonNameFirst1: d.mainSurgeonNameFirst1 ?? d.MainSurgeonNameFirst1 ?? null,
+          mainSurgeonNameLast1:  d.mainSurgeonNameLast1  ?? d.MainSurgeonNameLast1  ?? null,
+          mainSurgeonNameFirst2: d.mainSurgeonNameFirst2 ?? d.MainSurgeonNameFirst2 ?? null,
+          mainSurgeonNameLast2:  d.mainSurgeonNameLast2  ?? d.MainSurgeonNameLast2  ?? null,
+          secretaryDRG:    d.secretaryDRG    ?? d.SecretaryDRG    ?? null,
+          nurseScrub:      d.nurseScrub      ?? d.NurseScrub      ?? null,
+          nurseScrubEnter: d.nurseScrubEnter ?? d.NurseScrubEnter ?? null,
+          nurseScrubExit:  d.nurseScrubExit  ?? d.NurseScrubExit  ?? null,
+          nurseCirculating:      d.nurseCirculating      ?? d.NurseCirculating      ?? null,
+          nurseCirculatingEnter: d.nurseCirculatingEnter ?? d.NurseCirculatingEnter ?? null,
+          nurseCirculatingExit:  d.nurseCirculatingExit  ?? d.NurseCirculatingExit  ?? null,
+          nurseRecovery:      d.nurseRecovery      ?? d.NurseRecovery      ?? null,
+          nurseRecoveryEnter: d.nurseRecoveryEnter ?? d.NurseRecoveryEnter ?? null,
+          nurseRecoveryExit:  d.nurseRecoveryExit  ?? d.NurseRecoveryExit  ?? null,
+          anesthesiologist:      d.anesthesiologist      ?? d.Anesthesiologist      ?? null,
+          anesthesiologistEnter: d.anesthesiologistEnter ?? d.AnesthesiologistEnter ?? null,
+          anesthesiologistExit:  d.anesthesiologistExit  ?? d.AnesthesiologistExit  ?? null,
+          technician:      d.technician      ?? d.Technician      ?? null,
+          technicianEnter: d.technicianEnter ?? d.TechnicianEnter ?? null,
+          technicianExit:  d.technicianExit  ?? d.TechnicianExit  ?? null,
+          pumpist:      d.pumpist      ?? d.Pumpist      ?? null,
+          pumpistEnter: d.pumpistEnter ?? d.PumpistEnter ?? null,
+          pumpistExit:  d.pumpistExit  ?? d.PumpistExit  ?? null,
+          ssia:         d.ssia         ?? d.SSIA         ?? null,
+          nurseScrubID:        d.nurseScrubID        ?? d.NurseScrubID        ?? null,
+          nurseCirculatingID:  d.nurseCirculatingID  ?? d.NurseCirculatingID  ?? null,
+          nurseRecoveryID:     d.nurseRecoveryID     ?? d.NurseRecoveryID     ?? null,
+          technicianID:        d.technicianID        ?? d.TechnicianID        ?? null,
+          pumpistID:           d.pumpistID           ?? d.PumpistID           ?? null
         }));
 
         this.dataSource = normalized;
         this.filteredData = [...normalized];
 
-        this.matTableDataSource = new MatTableDataSource(this.filteredData);
+        // fill קרן options
+        const ks = new Set<string>();
+        this.dataSource.forEach(r => {
+          const k = (r.keren ?? '').trim();
+          if (k) ks.add(k);
+        });
+        this.kerenOptions = Array.from(ks).sort();
+
+        this.matTableDataSource = new MatTableDataSource<Row>(this.filteredData);
         this.matTableDataSource.paginator = this.paginator;
         this.matTableDataSource.sort = this.sort;
 
@@ -121,71 +223,83 @@ export class SesiaKerenComponent implements OnInit {
       });
   }
 
-  // ====== FILTER FORM ======
-  private createFilterForm() {
-    const formControls: FormControls = {};
-    this.columns.forEach((column) => {
-      formControls[column] = new FormControl('');
-    });
-
-    formControls['pageSize'] = new FormControl(15);
-    formControls['pageIndex'] = new FormControl(0);
-    formControls['globalFilter'] = new FormControl('');
-
-    return this.fb.group(formControls);
-  }
-
-  getFormControl(column: string): FormControl {
-    return (this.filterForm.get(column) as FormControl) || new FormControl('');
-  }
-
   // ====== LABELS ======
   getColumnLabel(column: string): string {
     const columnLabels: Record<string, string> = {
-      caseNumber:      'מספר מקרה',
-      patientName:     'שם מטופל',
-      surgeryDate:     'תאריך ניתוח',
-      hDayOfWeek:      'יום בשבוע',
-      timeRoomEnter:   'כניסה לחדר ניתוח',
-      timeRoomExit:    'יציאה מחדר ניתוח',
-      department:      'מחלקה',
-      icd9:            'ICD9 פעולה',
-      keren:           'קרן',
-      drg:             'DRG',
-      surgeryRunk:     'דירוג ניתוח',
-      surgerY_NAME:    'שם ניתוח',
-      diagCode:        'קוד אבחנה',
-      diagDesc:        'תיאור אבחנה',
-      secretaryDRG:    'DRG מזכירות',
-      surgeryCodeList: 'רשימת קודי ניתוח',
-      timeGroup:       'קבוצת זמן'
+      caseNumber: 'מספר מקרה',
+      patientName: 'שם מטופל',
+      surgeryDate: 'תאריך ניתוח',
+      hDayOfWeek: 'יום בשבוע',
+      timeRoomEnter: 'כניסה לחדר ניתוח',
+      timeRoomExit: 'יציאה מחדר ניתוח',
+      keren: 'קרן',
+      drg: 'DRG',
+      surgery_NAME: 'שם ניתוח',
+      department: 'מחלקה',
+      icd9: 'ICD9',
+      surgeryLangth: 'משך ניתוח',
+      invoiceTotalAmount: 'סכום חשבונית',
+      surgeryRunk: 'דחיפות / דירוג ניתוח',
+      mainSurgeonNameFirst1: 'שם פרטי מנתח 1',
+      mainSurgeonNameLast1: 'שם משפחה מנתח 1',
+      mainSurgeonNameFirst2: 'שם פרטי מנתח 2',
+      mainSurgeonNameLast2: 'שם משפחה מנתח 2',
+      secretaryDRG: 'DRG מזכירות',
+      nurseScrub: 'אח/ות מעבירה',
+      nurseScrubEnter: 'כניסת אח/ות מעבירה',
+      nurseScrubExit: 'יציאת אח/ות מעבירה',
+      nurseCirculating: 'אח/ות מסתובבת',
+      nurseCirculatingEnter: 'כניסת אח/ות מסתובבת',
+      nurseCirculatingExit: 'יציאת אח/ות מסתובבת',
+      nurseRecovery: 'אח/ות התאוששות',
+      nurseRecoveryEnter: 'כניסת אח/ות התאוששות',
+      nurseRecoveryExit: 'יציאת אח/ות התאוששות',
+      anesthesiologist: 'מרדים/ה',
+      anesthesiologistEnter: 'כניסת מרדים/ה',
+      anesthesiologistExit: 'יציאת מרדים/ה',
+      technician: 'טכנאי/ת',
+      technicianEnter: 'כניסת טכנאי/ת',
+      technicianExit: 'יציאת טכנאי/ת',
+      pumpist: 'פמפיסט/ית',
+      pumpistEnter: 'כניסת פמפיסט/ית',
+      pumpistExit: 'יציאת פמפיסט/ית',
+      ssia: 'SSIA',
+      nurseScrubID: 'ת"ז אח/ות מעבירה',
+      nurseCirculatingID: 'ת"ז אח/ות מסתובבת',
+      nurseRecoveryID: 'ת"ז אח/ות התאוששות',
+      technicianID: 'ת"ז טכנאי/ת',
+      pumpistID: 'ת"ז פמפיסט/ית'
     };
     return columnLabels[column] || column;
   }
 
-  // ====== FILTERING ======
+  // ====== FILTERING (date range + keren) ======
   applyFilters() {
-    const filters = this.filterForm.value;
-    const globalFilter = (filters['globalFilter'] || '').toString().toLowerCase();
+    const { fromDate, toDate, kerenFilter } = this.filterForm.value;
+
+    const from = fromDate ? new Date(fromDate) : null;
+    const to = toDate ? new Date(toDate) : null;
+    if (to) {
+      to.setHours(23, 59, 59, 999); // inclusive
+    }
 
     this.filteredData = this.dataSource.filter((item) => {
-      // Per-column filters
-      const perColumnOk = this.columns.every((column) => {
-        const filterVal = (filters[column] || '').toString().toLowerCase();
-        if (!filterVal) return true;
-        const value = (item[column] ?? '').toString().toLowerCase();
-        return value.includes(filterVal);
-      });
+      // filter by surgeryDate
+      let d: Date | null = null;
+      if (item.surgeryDate) {
+        d = new Date(item.surgeryDate);
+        if (isNaN(d.getTime())) {
+          d = null;
+        }
+      }
 
-      if (!perColumnOk) return false;
+      if (from && (!d || d < from)) return false;
+      if (to && (!d || d > to)) return false;
 
-      // Global filter
-      if (globalFilter) {
-        const found = this.columns.some((column) => {
-          const value = (item[column] ?? '').toString().toLowerCase();
-          return value.includes(globalFilter);
-        });
-        if (!found) return false;
+      // filter by Keren (multi-select)
+      if (kerenFilter && Array.isArray(kerenFilter) && kerenFilter.length > 0) {
+        const k = (item.keren ?? '').trim();
+        if (!k || !kerenFilter.includes(k)) return false;
       }
 
       return true;
@@ -198,14 +312,17 @@ export class SesiaKerenComponent implements OnInit {
   }
 
   resetFilters() {
-    this.filterForm.reset();
-    this.filterForm.get('globalFilter')?.setValue('');
-    this.filterForm.get('pageSize')?.setValue(15);
+    this.filterForm.reset({
+      fromDate: null,
+      toDate: null,
+      kerenFilter: []
+    });
 
     this.filteredData = [...this.dataSource];
     this.totalResults = this.filteredData.length;
     this.matTableDataSource.data = this.filteredData;
     this.matTableDataSource.paginator = this.paginator;
+    this.graphData = this.filteredData;
   }
 
   // ====== EXCEL ======
