@@ -1,0 +1,240 @@
+.body {
+    margin-top: 50px;
+    margin-bottom: 50px;
+  }
+  
+  #rolesDetailsBtn {
+    position: fixed;
+    bottom: 50px;
+    left: 125px;
+    z-index: 10;
+  }
+  table {
+    width: 95%;
+    margin: 20px 23px 1px 0px;
+  }
+  .mat-row:nth-child(odd) {
+    background-color: white;
+  }
+  .spinner {
+    left: 50%;
+    display: unset;
+  }
+  .mat-row:nth-child(even) {
+    background-color: aliceblue;
+  }
+  .mat-row:hover {
+    background-color: darkgray;
+    cursor: pointer;
+  }
+  .container {
+    min-width: 100%;
+  }
+  mat-card:hover {
+    cursor: pointer;
+  }
+  mat-card {
+    width: 48%;
+    margin-top: 10%;
+    text-align: center;
+    margin-right: 2%;
+    background: burlywood;
+  }
+  mat-card-content {
+    font-size: 30px;
+    font-weight: bold;
+  }
+  a {
+    cursor: pointer;
+  }
+  
+  .filter-form {
+    width: 100%; /* Set the width to 100% to match the table's width */
+    padding: 10px; /* Add padding for spacing */
+    box-sizing: border-box; /* Include padding in the width calculation */
+  }
+  
+  /* Style the 'name' select box */
+  .name-select {
+    /* Set a fixed width to match other input fields */
+    width: auto; /* or specify a width in pixels or percentage */
+    display: flex;
+    align-items: center;
+  }
+  
+  /* Add this CSS to your stylesheet */
+  .name-select .mat-select-arrow {
+    position: absolute !important;
+    top: 5px !important; /* Adjust this value to position the arrow vertically as needed */
+    left: 5px !important; /* Adjust this value to position the arrow horizontally as needed */
+  }
+  /* Add this CSS to your stylesheet */
+  .name-select {
+    width: 170px; /* Adjust the width to your desired size */
+    height: 0px;
+  }
+  /* Add margin to the mat-form-field elements */
+  .filter-field {
+    margin-right: 20px; /* Adjust the margin as needed */
+  }
+  /* Set a fixed width and height for the mat-form-field elements */
+  .filter-field {
+    width: 315px; /* Adjust the width as needed */
+    height: 80px; /* Adjust the height as needed */
+    width: calc(25% - 20px); /* 25% to fit four filters in a row with spacing */
+    padding-top: 5px; /* Adjust this value to control the vertical spacing */
+    //padding-left: -15px;
+    //padding-right: 0px;
+  }
+  
+  // /* Add this CSS to your stylesheet */
+  // .name-select {
+  //   width: 170px !important; /* Adjust the width to your desired size */
+  //   display: flex !important;
+  //   align-items: center !important;
+  //   position: relative !important; /* Add this line to make it a positioned container */
+  // }
+  
+  // /* Adjust the position of the select arrow */
+  // .name-select {
+  //   position: absolute !important;
+  //   top: 70% !important; /* Center vertically */
+  //   left: 1px !important; /* Adjust this value to position the arrow to the right */
+  //   transform: translateY(
+  //     -50%
+  //   ) !important; /* Center vertically using translation */
+  // }
+  
+  /* Change the font family, color, and font size of the filter labels */
+  .filter-field mat-label {
+    font-family: Arial, sans-serif; /* Change to your desired font family */
+    color: black; /* Change to your desired color */
+    font-size: 16px;
+    //padding-right: none;
+  }
+  /* CSS */
+  .filter-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .filter-field {
+    flex-grow: 1;
+    margin-right: 20px;
+    width: calc(25% - 20px); /* 25% to fit four filters in a row with spacing */
+  }
+  
+  /* Add this CSS to ensure proper alignment of name-select */
+  .name-select {
+    width: 100%;
+  }
+  
+  /* Remove the width and height of name-select */
+  .name-select-wrapper .mat-select-arrow {
+    position: absolute !important;
+    top: 5px !important;
+    left: 5px !important;
+    /* Adjust this value to position the arrow horizontally as needed */
+  }
+  
+  /* Move the reset button to the bottom-left corner of the card-body */
+  .reset-button-container {
+    position: absolute;
+    bottom: 10px; /* Adjust the bottom position as needed */
+    left: 10px; /* Adjust the left position as needed */
+  }
+  
+  /* Adjust the padding of the card-body to make space for the reset button */
+  .card-body {
+    position: relative;
+    padding-left: 40px; /* Adjust the padding-left to make space for the button */
+  }
+  /* Add space between the end of the search bar and the start of the Excel icon */
+  .icon {
+    margin-right: 50px; /* Adjust the margin as needed for spacing */
+  }
+  /* Add this CSS to your stylesheet */
+  .filter-input {
+    text-align: right; /* Align the input text to the right */
+    direction: rtl; /* Set the text direction to right-to-left */
+  }
+  /* Add this CSS to your stylesheet */
+  .name-select .mat-select-value {
+    text-align: right; /* Align the selected text to the right */
+    direction: rtl; /* Set the text direction to right-to-left */
+  }
+  /* Use ::ng-deep to override Angular's View Encapsulation */
+  ::ng-deep .mat-select-trigger {
+    text-align: right !important;
+    direction: rtl !important;
+  }
+  
+  .nine h1 {
+    text-align: center;
+    font-size: 50px;
+    text-transform: uppercase;
+    color: rgb(54, 10, 214);
+    letter-spacing: 1px;
+    font-family: "Playfair Display", serif;
+    font-weight: 400;
+  }
+  .nine h1 span {
+    margin-top: 5px;
+    font-size: 15px;
+    color: rgb(159, 52, 235);
+    word-spacing: 1px;
+    font-weight: normal;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    font-family: "Raleway", sans-serif;
+    font-weight: 500;
+  
+    display: grid;
+    grid-template-columns: 1fr max-content 1fr;
+    grid-template-rows: 27px 0;
+    grid-gap: 20px;
+    align-items: center;
+  }
+  
+  .nine h1 span:after,
+  .nine h1 span:before {
+    content: " ";
+    display: block;
+    // border-bottom: 1px solid rgb(60, 15, 223);
+    // border-top: 1px solid rgb(60, 15, 223);
+    //height: 5px;
+    //background-color: rgb(187, 215, 254);
+  }
+  /* Adjust the position of the date picker icon */
+  ::ng-deep .mat-datepicker-toggle {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    align-items: center;
+    justify-content: flex-start;
+    padding-left: 5px; /* Adjust as needed for positioning */
+  }
+  
+  /* Adjust the input padding to avoid overlap with the icon */
+  ::ng-deep .mat-form-field-infix {
+    padding-left: 30px; /* Adjust the padding to accommodate the icon size */
+  }
+  
+  /* If needed, adjust the alignment of the datepicker input text */
+  ::ng-deep .mat-input-element {
+    text-align: right; /* or 'left' depending on your layout */
+  }
+  .top-right-container {
+    display: flex;
+    justify-content: flex-end; /* Aligns horizontally to the right */
+    padding: 10px; /* Add some padding */
+  }
+  
+  .mat-row.clickable:hover {
+    background: #f1f5ff;
+    cursor: pointer;
+  }
+  

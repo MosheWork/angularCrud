@@ -113,6 +113,7 @@ import { ServerInventoryComponent } from './server-inventory/server-inventory.co
 import { IdEncryptComponent } from './id-encrypt/id-encrypt.component';
 import { ChameleonUserProfileUnitMapComponent } from './chameleon-reports/chameleon-user-profile-unit-map/chameleon-user-profile-unit-map.component';
 import { GlobalAppPermissionComponent } from './global-app-permission/global-app-permission.component';
+import { SesiaKerenComponent } from './sesia-keren/sesia-keren.component';
 
 const routes: Routes = [
   //', component: UsersComponent },
@@ -285,7 +286,10 @@ const routes: Routes = [
 //מערכת להצפנת תז
 { path: 'id-encrypt', component: IdEncryptComponent , data: { title: 'הצפנת ת"ז ' } },
 //מערכת הרשאות 
-{ path: 'GlobalAppPermission', component: GlobalAppPermissionComponent , data: { title: ' הרשאות' } }
+{ path: 'GlobalAppPermission', component: GlobalAppPermissionComponent , data: { title: ' הרשאות' } },
+
+//מערכת ססיות לקרן 
+{ path: 'sesia-keren', component: SesiaKerenComponent , data: { title: 'ססיות' } }
 
 
 
