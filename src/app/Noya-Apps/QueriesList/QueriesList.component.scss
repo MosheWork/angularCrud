@@ -32,7 +32,7 @@
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
     gap: 12px;
-    margin-bottom: 16px;
+    margin: 16px 50px 16px 10px;
   }
 
   .table-wrapper {
@@ -84,7 +84,6 @@
 .last-row {
   margin-bottom: 60px;
 }
-
 
 
 
@@ -242,6 +241,7 @@
   
   /* Move the reset button to the bottom-left corner of the card-body */
   .reset-button-container {
+    margin-right: 210px;
     position: absolute;
     bottom: 10px; /* Adjust the bottom position as needed */
     left: 10px; /* Adjust the left position as needed */
@@ -278,7 +278,7 @@
     text-transform: uppercase;
     color: rgb(54, 10, 214);
     letter-spacing: 1px;
-    font-family: "Playfair Display", serif;
+    font-family: "Playfair Display", Calibri;
     font-weight: 400;
   }
   .nine h1 span {

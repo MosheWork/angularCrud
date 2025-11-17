@@ -34,6 +34,11 @@ export interface QueryItem {
 export class QueriesListComponent implements OnInit, AfterViewInit {
 
   filteredData: any[] = [];
+  Title1: string = ' רשימת שאילתות - ';
+  Title2: string = 'סה"כ תוצאות ';
+  titleUnit: string = 'שאילתות ';
+  totalResults: number = 0;
+
 
   displayedColumns = [
     'id', 'queryName', 'description', 'subject', 'subSubject', 
@@ -91,8 +96,22 @@ export class QueriesListComponent implements OnInit, AfterViewInit {
       .subscribe({
         next: rows => {
           this.dataSource.data = rows || [];
-          // keep filteredData in sync after load
-          this.filteredData = this.dataSource.filteredData || [];
+
+          // ensure paginator and sort are attached so filteredData is computed correctly
+          if (this.paginator) this.dataSource.paginator = this.paginator;
+          if (this.sort) this.dataSource.sort = this.sort;
+
+          // ensure a filterPredicate exists (default to include all) so filteredData is available
+          if (!this.dataSource.filterPredicate) {
+            this.dataSource.filterPredicate = () => true;
+          }
+
+          // trigger Material table filter to update filteredData
+          this.dataSource.filter = Math.random().toString();
+
+          // keep filteredData in sync after load and update total count
+          this.filteredData = [...(this.dataSource.filteredData || [])];
+          this.totalResults = this.filteredData.length;
         },
         error: err => console.error(err)
       });
@@ -178,6 +197,8 @@ export class QueriesListComponent implements OnInit, AfterViewInit {
     [this.globalFilter, this.filterQueryName, this.filterSubject, this.filterSubSubject, this.filterCreatedFor, this.filterStatus]
       .forEach(f => f.valueChanges.subscribe(apply));
 
+    this.totalResults = this.filteredData.length;
+
     // initial application so filteredData is populated
     apply();
   }
@@ -191,6 +212,7 @@ export class QueriesListComponent implements OnInit, AfterViewInit {
     this.filterSubSubject.setValue('');
     this.filterCreatedFor.setValue('');
     this.filterStatus.setValue('');
+    this.totalResults = this.filteredData.length;
 
     // trigger the table to re-evaluate the filter predicate
     this.dataSource.filter = Math.random().toString();

@@ -1,11 +1,13 @@
 <div class="spmeta container" dir="rtl">
 
+  <div class="nine">
+    <h1>
+      {{ titleUnit }}<span>{{ Title1 }}{{ Title2 }}{{ totalResults }}</span>
+    </h1>
+  </div>
+
   <!-- Header -->
   <div class="header">
-    <mat-form-field appearance="outline" class="global-search">
-      <mat-label>חיפוש כללי</mat-label>
-      <input matInput [formControl]="globalFilter" placeholder="הקלד כדי לחפש..." />
-    </mat-form-field>
 
     <span class="fill"></span>
 
@@ -15,31 +17,47 @@
   </div>
 
   <!-- Filters -->
-  <div class="filters">
-    <mat-form-field appearance="fill">
-      <mat-label>שם השאילתא</mat-label>
-      <input matInput [formControl]="filterQueryName" placeholder="סינון לפי שם">
-    </mat-form-field>
-    <mat-form-field appearance="fill">
-      <mat-label>נושא</mat-label>
-      <input matInput [formControl]="filterSubject" placeholder="סינון לפי נושא">
-    </mat-form-field>
-    <mat-form-field appearance="fill">
-      <mat-label>נושא משנה</mat-label>
-      <input matInput [formControl]="filterSubSubject" placeholder="סינון לפי נושא משנה">
-    </mat-form-field>
-    <mat-form-field appearance="fill">
-      <mat-label>נוצר עבור</mat-label>
-      <input matInput [formControl]="filterCreatedFor" placeholder="סינון לפי נוצר עבור">
-    </mat-form-field>
-    <mat-form-field appearance="fill">
-      <mat-label>סטטוס</mat-label>
-      <mat-select [formControl]="filterStatus">
-        <mat-option value="">כולם</mat-option>
-        <mat-option value="active">פעיל</mat-option>
-        <mat-option value="inactive">לא פעיל</mat-option>
-      </mat-select>
-    </mat-form-field>
+  <div class="card">
+    <div class="filters">
+      <mat-form-field appearance="fill">
+        <mat-label>שם השאילתא</mat-label>
+        <input matInput [formControl]="filterQueryName" placeholder="סינון לפי שם">
+        </mat-form-field>
+        <mat-form-field appearance="fill">
+        <mat-label>נושא</mat-label>
+        <input matInput [formControl]="filterSubject" placeholder="סינון לפי נושא">
+      </mat-form-field>
+      <mat-form-field appearance="fill">
+        <mat-label>נושא משנה</mat-label>
+        <input matInput [formControl]="filterSubSubject" placeholder="סינון לפי נושא משנה">
+      </mat-form-field>
+      <mat-form-field appearance="fill">
+        <mat-label>נוצר עבור</mat-label>
+        <input matInput [formControl]="filterCreatedFor" placeholder="סינון לפי נוצר עבור">
+      </mat-form-field>
+      <mat-form-field appearance="fill">
+        <mat-label>סטטוס</mat-label>
+        <mat-select [formControl]="filterStatus">
+          <mat-option value="">כולם</mat-option>
+          <mat-option value="active">פעיל</mat-option>
+          <mat-option value="inactive">לא פעיל</mat-option>
+        </mat-select>
+      </mat-form-field>
+      &nbsp;
+      <div class="reset-button-container">
+        <button
+          mat-button
+          (click)="resetFilters()"
+          mat-raised-button
+          color="primary"
+          class="custom-button"
+          matTooltip="Reset Filters"
+        >
+          <i class="material-icons">refresh</i>
+          <!-- Icon for reset -->
+        </button>
+      </div>
+    </div>
   </div>
 
   <div
@@ -58,14 +76,14 @@
           placeholder="הקלד כדי לחפש..."
         />
       </mat-form-field>
-      <div class="graph-button-container">
+      <!-- <div class="graph-button-container">
         <img
           (click)="navigateToGraphPage()"
           matTooltip="Move To Graph"
           src="../../../../assets/graphIcon.png"
           width="50px"
         />
-      </div>
+      </div> -->
       <div class="icon" matTooltip="Download Excel">
         <img
           src="../../assets/excel.png"
@@ -129,5 +147,5 @@
 </div>
 
 <div class="last-row">
-  <mat-paginator [pageSizeOptions]="[5,10,20]" showFirstLastButtons></mat-paginator>
+  <mat-paginator [pageSizeOptions]="[5,10,50,100]" showFirstLastButtons></mat-paginator>
 </div>

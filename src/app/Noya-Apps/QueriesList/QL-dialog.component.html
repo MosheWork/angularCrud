@@ -30,9 +30,20 @@
         <input matInput formControlName="SubSubject" />
       </mat-form-field>
 
-      <mat-form-field appearance="fill" class="full-width">
+      <mat-form-field appearance="outline" class="full-width">
         <mat-label>נוצר עבור</mat-label>
-        <input matInput formControlName="createdFor" />
+        <input matInput
+               [formControl]="createdForControl"
+               [matAutocomplete]="auto"
+               autocomplete="off">
+
+        <mat-autocomplete #auto="matAutocomplete"
+                          [displayWith]="displayEmployee"
+                          (optionSelected)="onSelectEmployee($event.option.value)">
+          <mat-option *ngFor="let emp of filteredEmployees" [value]="emp">
+            {{ displayEmployee(emp) }}
+          </mat-option>
+        </mat-autocomplete>
       </mat-form-field>
 
       <mat-checkbox formControlName="IsActive">פעילה</mat-checkbox>
@@ -44,4 +55,5 @@
 
     </form>
   </mat-dialog-content>
+
 </div>
