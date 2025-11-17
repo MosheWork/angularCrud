@@ -31,7 +31,7 @@
     </mat-select>
   </mat-form-field>
               <mat-slide-toggle formControlName="hasEitanOnly" (change)="applyFilters()" matTooltip="דלוק: הצג רק שורות עם ערך">
-                קיימת קבוצה ב-AD
+               הרשאות לאיתן
               </mat-slide-toggle>
   
               <mat-slide-toggle formControlName="hasNamerOnly" (change)="applyFilters()" matTooltip="דלוק: הצג רק שורות עם ערך">
@@ -39,14 +39,20 @@
               </mat-slide-toggle>
   
               <mat-slide-toggle formControlName="hasAdActiveOnly" (change)="applyFilters()" matTooltip="דלוק: הצג רק שורות עם ערך">
-                קבוצות ב-AD
+               קיימות קבוצות ב AD
               </mat-slide-toggle>
   
               <!-- NEW TOGGLES -->
               <mat-slide-toggle formControlName="hasChameleonOnly" (change)="applyFilters()" matTooltip="דלוק: הצג רק שורות עם ערך">
                 Chameleon קבוצה
               </mat-slide-toggle>
-  
+              <mat-slide-toggle
+              formControlName="hasMetaVisionOnly"
+              (change)="applyFilters()"
+              matTooltip="הצג רק משתמשים שיש להם קבוצת MetaVision ב-AD">
+              <span > MetaVision</span>
+            </mat-slide-toggle>
+            
               <mat-slide-toggle
               formControlName="hasChameleonRestrictedOnly"
               (change)="applyFilters()">

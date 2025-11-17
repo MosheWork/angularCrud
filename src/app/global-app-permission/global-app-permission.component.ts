@@ -33,7 +33,9 @@ function splitToChunks(v: string, size = CHUNK_LIMIT): string[] {
 const LONG_KEYS = [
   'adActivePermision',
   'ChamelleonGropPermision',
-  'ChamelleonRestrictedGropPermision'
+  'ChamelleonRestrictedGropPermision',
+  'metaVision'  
+
 ];
 
 /** Column labels for Excel export */
@@ -50,12 +52,48 @@ const HEADER_LABELS: Record<string, string> = {
   OnnLineActiveUser: 'משתמש פעיל Online',
   EVEActiveUser: 'משתמש פעיל EVE',
 
-  // ⬅️ חדשים
-  departnentDescripton: 'מחלקה',
-  functionDescription: 'תפקיד',
-  description: 'סיבת סיום עבודה'
+  // חדשים
+  departnentDescripton: '(onnline) מחלקה',
+  functionDescription: '(onnline) תפקיד',
+  metaVision: 'metaVision',
+  description: 'סיבת סיום עבודה',
+
+  // MetaVision – Hebrew roles (optional for Excel)
+  metaVisionRoles: 'תפקידי MetaVision'
 };
 
+/** MetaVision AD groups → Hebrew role name */
+const METAVISION_GROUPS: { adGroup: string; labelHe: string }[] = [
+  { adGroup: 'U_MV_Admins',                    labelHe: 'מנהל מערכת / מערכות מידע' },
+  { adGroup: 'U_MV_ICU_DOC',                   labelHe: 'רופא/ה ט.נ כללי' },
+  { adGroup: 'U_MV_PICU_DOC',                  labelHe: 'רופא/ה ט.נ ילדים' },
+  { adGroup: 'U_MV_DOC_CONSULT',               labelHe: 'רופא/ה מייעצ/ת' },
+  { adGroup: 'U_MV_DOCTORS_READONLY',          labelHe: 'רופא/ה קריאה בלבד' },
+  { adGroup: 'U_MV_ICU_NURSE',                 labelHe: 'אח/ות ט.נ כללי' },
+  { adGroup: 'U_MV_PICU_NURSE',                labelHe: 'אח/ות ט.נ ילדים' },
+  { adGroup: 'U_MV_NURSE_READONLY',            labelHe: 'אח/ות קריאה בלבד' },
+  { adGroup: 'U_MV_PHYSIOTHERAPISTS',          labelHe: 'פיזיותרפיסט/ית' },
+  { adGroup: 'U_MV_DIETICIANS',                labelHe: 'תזונאי/ת' },
+  { adGroup: 'U_MV_OCCUPATIONAL_THERAPISTS',   labelHe: 'מרפא/ת בעיסוק' },
+  { adGroup: 'U_MV_SOCIAL_WORKERS',            labelHe: 'עובד/ת סוציאלית' },
+  { adGroup: 'U_MV_COMMUNICATION_CLINICS',     labelHe: 'קלינאי/ת תקשורת' },
+  { adGroup: 'U_MV_PSYCHOLOGISTS',             labelHe: 'פסיכולוג/ית' },
+  { adGroup: 'U_MV_STAGER',                    labelHe: "סטאז'ר/ית" },
+  { adGroup: 'U_MV_NURSING_STUDENT',           labelHe: 'סטודנט/ית לסיעוד' },
+  { adGroup: 'U_MV_MEDICAL_STUDENTS',          labelHe: 'סטודנט/ית לרפואה' },
+  { adGroup: 'U_MV_MEDICAL_RECORDS',           labelHe: 'רשמ/ת רפואי/ת' },
+  { adGroup: 'U_MV_SECRETARY',                 labelHe: 'מזכיר/ה רפואי/ת' },
+  { adGroup: 'U_MV_NURSES_MGMT',               labelHe: 'מנהלת הסיעוד' },
+  { adGroup: 'U_MV_RISK_MGMT',                 labelHe: 'בטיחות הטיפול' },
+  { adGroup: 'U_MV_PHARMACISTS',               labelHe: 'רוקח/ת' },
+  { adGroup: 'U_MV_CONTROLLERS',               labelHe: 'בקר/ית' },
+  { adGroup: 'U_MV_CLINICAL_RESEARCHES',       labelHe: 'מתאמ/ת מחקר' },
+  { adGroup: 'U_MV_DOC_ASSISTANTS',            labelHe: 'עוזר/ת רופא' },
+  { adGroup: 'U_MV_ANESTHESIOLOGISTS',         labelHe: 'רופא/ה מרדימ/ה' },
+  { adGroup: 'U_MV_DOCTORS_TEST',              labelHe: 'רופא/ה טסט' },
+  { adGroup: 'U_MV_NURSES_TEST',               labelHe: 'אח/ות טסט' },
+  { adGroup: 'U_MV_PARA',                      labelHe: 'קבוצת פרא רפואי' }
+];
 
 /** Convert one row into an Excel-safe object (splits long cells) */
 function flattenRowForExcel(row: any): any {
@@ -91,28 +129,32 @@ function headerOrderFromColumns(columns: string[], sample: any): string[] {
    Component types
    ========================= */
 
-   type Row = {
-    employeeID: string | null;
-    name: string | null;
-    adUserName: string | null;
-    profilePicture: string | null;
-    eitanChameleonADGroupPermision: string;
-    namerUserActivePermision: string;
-    adActivePermision: string;
-    ChamelleonGropPermision: string;
-    ChamelleonRestrictedGropPermision: string;
-    OnnLineActiveUser: string;
-    EVEActiveUser: string;
-  
-    // קיים כבר לסינון עובד פעיל/לא פעיל (לא מוצג בטבלה)
-    endWorkDate: string | null;
-  
-    // ⬅️ חדשים
-    description: string;              // מ-EP_EndWorkReason.Description
-    departnentDescripton: string;     // מ-EP_Departnents.DepartnentDescripton
-    functionDescription: string;      // מ-EP_Functions.FunctionDescription
-  };
-  
+type Row = {
+  employeeID: string | null;
+  name: string | null;
+  adUserName: string | null;
+  profilePicture: string | null;
+  eitanChameleonADGroupPermision: string;
+  namerUserActivePermision: string;
+  adActivePermision: string;
+  ChamelleonGropPermision: string;
+  ChamelleonRestrictedGropPermision: string;
+  OnnLineActiveUser: string;
+  EVEActiveUser: string;
+
+  // Active / not active
+  endWorkDate: string | null;
+
+  // חדשים
+  description: string;              // EP_EndWorkReason.Description
+  metaVision: string;              // EP_EndWorkReason.Description
+
+  departnentDescripton: string;     // EP_Departnents.DepartnentDescripton
+  functionDescription: string;      // EP_Functions.FunctionDescription
+
+  // MetaVision – comma-separated Hebrew roles (derived)
+  metaVisionRoles?: string;
+};
 
 interface FormControls {
   [key: string]: FormControl;
@@ -128,31 +170,28 @@ interface FormControls {
   styleUrls: ['./global-app-permission.component.scss']
 })
 export class GlobalAppPermissionComponent implements OnInit {
-  // Title text shown above the table
   Title1: string = ' הרשאות אפליקציות גלובליות - ';
   Title2: string = 'סה"כ תוצאות ';
   titleUnit: string = 'הרשאות ';
   totalResults: number = 0;
 
-  // Material table controls
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
-  // Reactive form for filters (global search + toggles + dropdown)
   filterForm: FormGroup;
 
-  // Data sources
-  dataSource: Row[] = [];                         // original data
-  filteredData: Row[] = [];                       // filtered view
-  matTableDataSource: MatTableDataSource<Row>;    // Material wrapper (paging/sort)
+  dataSource: Row[] = [];
+  filteredData: Row[] = [];
+  matTableDataSource: MatTableDataSource<Row>;
 
-  // Column order for the table (NO endWorkDate here on purpose)
+  // Column order (endWorkDate intentionally not shown)
   columns = [
-    'profilePicture', 'employeeID','name','adUserName',
-    'departnentDescripton', 'functionDescription', 'description', 
-    'eitanChameleonADGroupPermision','namerUserActivePermision','adActivePermision',
-    'ChamelleonGropPermision','ChamelleonRestrictedGropPermision',
-    'OnnLineActiveUser','EVEActiveUser'
+    'profilePicture', 'employeeID', 'name', 'adUserName',
+    'departnentDescripton', 'functionDescription', 'description','metaVision',
+    'eitanChameleonADGroupPermision', 'namerUserActivePermision', 'adActivePermision',
+    'ChamelleonGropPermision', 'ChamelleonRestrictedGropPermision',
+    'OnnLineActiveUser', 'EVEActiveUser',
+    // 'metaVisionRoles' // ← uncomment if you want a column with MetaVision roles in Hebrew
   ];
 
   constructor(
@@ -160,7 +199,6 @@ export class GlobalAppPermissionComponent implements OnInit {
     private fb: FormBuilder,
     private router: Router
   ) {
-    // Initialize the reactive form and the material table
     this.filterForm = this.createFilterForm();
     this.matTableDataSource = new MatTableDataSource<Row>([]);
   }
@@ -192,45 +230,58 @@ export class GlobalAppPermissionComponent implements OnInit {
    */
   ngOnInit(): void {
     this.http.get<any[]>(environment.apiUrl + 'GlobalAppPermission/all')
-      .subscribe(data => {
-        // Normalize payload casing and map to our Row type
-        const rows: Row[] = data.map(d => ({
+    .subscribe(data => {
+      const rows: Row[] = data.map(d => {
+        const adActive = d.adActivePermision ?? d.ADActivePermision ?? '';
+  
+        // find MV roles for this row (Hebrew labels)
+        const adStr = (adActive || '').toString();
+        const mvLabels: string[] = [];
+        METAVISION_GROUPS.forEach(g => {
+          const regex = new RegExp(`(^|[;,\\s|])${g.adGroup}([;,\\s|]|$)`, 'i');
+          if (regex.test(adStr)) {
+            mvLabels.push(g.labelHe);
+          }
+        });
+  
+        return {
           employeeID: (d.employeeID ?? d.EmployeeID ?? null)?.toString() ?? null,
           name: d.name ?? d.Name ?? null,
           adUserName: d.adUserName ?? d.ADUserName ?? null,
           profilePicture: d.profilePicture ?? d.ProfilePicture ?? null,
-        
+  
           eitanChameleonADGroupPermision: d.eitanChameleonADGroupPermision ?? d.EitanChameleonADGroupPermision ?? '',
           namerUserActivePermision:       d.namerUserActivePermision ?? d.NAMERUserActivePermision ?? '',
-          adActivePermision:              d.adActivePermision ?? d.ADActivePermision ?? '',
-        
+          adActivePermision:              adActive,
+  
           ChamelleonGropPermision:           d.ChamelleonGropPermision ?? d.chamelleonGropPermision ?? '',
           ChamelleonRestrictedGropPermision: d.ChamelleonRestrictedGropPermision ?? d.chamelleonRestrictedGropPermision ?? '',
           OnnLineActiveUser:                 d.OnnLineActiveUser ?? d.onnLineActiveUser ?? '',
           EVEActiveUser:                     d.EVEActiveUser ?? d.eveActiveUser ?? '',
-        
+  
           endWorkDate: d.endWorkDate ?? d.EndWorkDate ?? null,
-        
-          // ⬅️ חדשים (שמות העמודות מה-SQL)
-          description: d.Description ?? d.description ?? '',
+  
+          description:          d.Description ?? d.description ?? '',
           departnentDescripton: d.DepartnentDescripton ?? d.departnentDescripton ?? '',
-          functionDescription: d.FunctionDescription ?? d.functionDescription ?? ''
-        }));
-        
-
-        // Bind to UI
+          functionDescription:  d.FunctionDescription ?? d.functionDescription ?? '',
+  
+          // 🔹 NEW: take MetaVision string from backend
+          metaVision: d.metaVision ?? d.MetaVision ?? '',
+  
+          // optional: Hebrew roles derived on the client
+          metaVisionRoles: mvLabels.join(', ')
+        };
+      });
         this.dataSource = rows;
         this.filteredData = [...rows];
         this.matTableDataSource = new MatTableDataSource<Row>(this.filteredData);
         this.matTableDataSource.paginator = this.paginator;
         this.matTableDataSource.sort = this.sort;
 
-        // Re-apply filters on any change (debounced)
         this.filterForm.valueChanges
           .pipe(debounceTime(100), distinctUntilChanged())
           .subscribe(() => this.applyFilters());
 
-        // Initial filter calc (sets totalResults)
         this.applyFilters();
       });
   }
@@ -250,35 +301,38 @@ export class GlobalAppPermissionComponent implements OnInit {
       OnnLineActiveUser: 'משתמש פעיל Online',
       EVEActiveUser: 'משתמש פעיל EVE',
   
-      // ⬅️ חדשים
       departnentDescripton: '(onnline)מחלקה',
       functionDescription: '(onnline)תפקיד',
-      description: 'סיבת סיום עבודה'
+      description: 'סיבת סיום עבודה',
+  
+      // 🔹 NEW
+      metaVision: 'משתמש MV משוייך',
+  
+      metaVisionRoles: 'תפקידי MetaVision'
     };
     return labels[column] ?? column;
   }
   
 
-
   private createFilterForm(): FormGroup {
     return this.fb.group({
       globalFilter: [''],
 
-      // existing toggles (presence filter)
       hasEitanOnly: [false],
       hasNamerOnly: [false],
       hasAdActiveOnly: [false],
       hasChameleonOnly: [false],
       hasChameleonRestrictedOnly: [false],
 
-      
       onlineFilter: ['active'],
 
       activeToggle: [null as boolean | null],
 
-      
       hasEveOnly: [false],
       hasEitanPsychOnly: [false],
+
+      // NEW: MetaVision toggle
+      hasMetaVisionOnly: [false]
     });
   }
 
@@ -292,7 +346,6 @@ export class GlobalAppPermissionComponent implements OnInit {
     return (this.filterForm.get(key) as FormControl) || new FormControl('');
   }
 
-
   applyFilters(): void {
     const {
       globalFilter,
@@ -305,6 +358,7 @@ export class GlobalAppPermissionComponent implements OnInit {
       activeToggle,       // null | true | false
       hasEveOnly,
       hasEitanPsychOnly,
+      hasMetaVisionOnly
     } = this.filterForm.value;
 
     const gf = (globalFilter || '').toString().toLowerCase();
@@ -317,31 +371,41 @@ export class GlobalAppPermissionComponent implements OnInit {
       if (hasChameleonOnly && !this.hasValue(r.ChamelleonGropPermision)) return false;
       if (hasChameleonRestrictedOnly && !this.hasValue(r.ChamelleonRestrictedGropPermision)) return false;
       if (hasEveOnly && !this.hasValue(r.EVEActiveUser)) return false;
+
+      // איתן - פסיכיאטר
       if (hasEitanPsychOnly) {
         const s = (r.eitanChameleonADGroupPermision ?? '').toString();
-        // look for U_ChamPsyc as a whole token between start/end or delimiters
         const hasPsych = /(^|[,\s;|])U_ChamPsyc([,\s;|]|$)/i.test(s);
         if (!hasPsych) return false;
       }
-      // Active/Inactive toggle (based on EndWorkDate)
-      // true  => Active  (EndWorkDate == null)
-      // false => Inactive (EndWorkDate != null)
+
+      // NEW: MetaVision – at least one U_MV_* group in ADActivePermision
+      if (hasMetaVisionOnly) {
+        const adStr = (r.adActivePermision ?? '').toString();
+        const hasMv = METAVISION_GROUPS.some(g =>
+          new RegExp(`(^|[;,\\s|])${g.adGroup}([;,\\s|]|$)`, 'i').test(adStr)
+        );
+        if (!hasMv) return false;
+      }
+
+      // Active/Inactive toggle (EndWorkDate)
       if (activeToggle === true && r.endWorkDate !== null) return false;
       if (activeToggle === false && r.endWorkDate === null) return false;
 
       // Online dropdown
       if (onlineFilter !== 'all') {
-        const onlineParsed = this.parseBoolish(r.OnnLineActiveUser); // true/false/null
+        const onlineParsed = this.parseBoolish(r.OnnLineActiveUser);
         if (onlineFilter === 'active' && onlineParsed !== true) return false;
         if (onlineFilter === 'inactive' && onlineParsed !== false) return false;
       }
 
       // Global text filter across visible columns
       if (!gf) return true;
-      return this.columns.some(c => (r as any)[c]?.toString().toLowerCase().includes(gf));
+      return this.columns.some(c =>
+        (r as any)[c]?.toString().toLowerCase().includes(gf)
+      );
     });
 
-    // Push results to the table + paginator
     this.totalResults = this.filteredData.length;
     this.matTableDataSource.data = this.filteredData;
     this.matTableDataSource.paginator = this.paginator;
@@ -382,7 +446,6 @@ export class GlobalAppPermissionComponent implements OnInit {
     }
   }
 
-  /** CSV fallback exporter (ES2018-safe, typed) */
   private exportToCsvFallback(): void {
     const flat: Array<Record<string, any>> =
       this.filteredData.map(r => flattenRowForExcel(r)) as Array<Record<string, any>>;
@@ -415,7 +478,7 @@ export class GlobalAppPermissionComponent implements OnInit {
     URL.revokeObjectURL(url);
   }
 
-  /** Reset all filters (global text + toggles + dropdown) */
+  /** Reset all filters */
   resetAllFilters(): void {
     this.filterForm.reset({
       globalFilter: '',
@@ -424,16 +487,15 @@ export class GlobalAppPermissionComponent implements OnInit {
       hasAdActiveOnly: false,
       hasChameleonOnly: false,
       hasChameleonRestrictedOnly: false,
-      onlineFilter: 'all',   // dropdown back to "all"
-      activeToggle: null,    // no Active/Inactive filter
+      onlineFilter: 'all',
+      activeToggle: null,
       hasEveOnly: false,
-      hasEitanPsychOnly: false,  // NEW
-
+      hasEitanPsychOnly: false,
+      hasMetaVisionOnly: false
     });
     this.applyFilters();
   }
 
-  /** Navigate to home (if used in template) */
   goToHome(): void {
     this.router.navigate(['/MainPageReports']);
   }
