@@ -6,6 +6,8 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatSort } from '@angular/material/sort';
 import { Router } from '@angular/router';
+import { MatDialog } from '@angular/material/dialog';
+import {SesiaKerenCommentDialogComponent} from './sesia-keren-comment-dialog/sesia-keren-comment-dialog.component'
 
 import * as XLSX from 'xlsx';
 import { environment } from '../../environments/environment';
@@ -54,6 +56,8 @@ interface Row {
   nurseRecoveryID: string | null;
   technicianID: string | null;
   pumpistID: string | null;
+  comment: string | null;
+
 }
 
 @Component({
@@ -124,7 +128,9 @@ export class SesiaKerenComponent implements OnInit {
     'nurseCirculatingID',
     'nurseRecoveryID',
     'technicianID',
-    'pumpistID'
+    'pumpistID',
+    'comment'
+
   ];
 
   // options for קרן multi-select
@@ -133,7 +139,8 @@ export class SesiaKerenComponent implements OnInit {
   constructor(
     private http: HttpClient,
     private fb: FormBuilder,
-    private router: Router
+    private router: Router,
+    private dialog: MatDialog 
   ) {
     this.filterForm = this.fb.group({
       fromDate: [null],
@@ -200,7 +207,9 @@ export class SesiaKerenComponent implements OnInit {
           nurseCirculatingID:  d.nurseCirculatingID  ?? d.NurseCirculatingID  ?? null,
           nurseRecoveryID:     d.nurseRecoveryID     ?? d.NurseRecoveryID     ?? null,
           technicianID:        d.technicianID        ?? d.TechnicianID        ?? null,
-          pumpistID:           d.pumpistID           ?? d.PumpistID           ?? null
+          pumpistID:           d.pumpistID           ?? d.PumpistID           ?? null,
+          comment: d.comment ?? d.Comment ?? null
+
         }));
 
         this.dataSource = normalized;
@@ -268,7 +277,9 @@ export class SesiaKerenComponent implements OnInit {
       nurseCirculatingID: 'ת"ז אח/ות מסתובבת',
       nurseRecoveryID: 'ת"ז אח/ות התאוששות',
       technicianID: 'ת"ז טכנאי/ת',
-      pumpistID: 'ת"ז פמפיסט/ית'
+      pumpistID: 'ת"ז פמפיסט/ית',
+      comment: 'הערה כללית'  
+
     };
     return columnLabels[column] || column;
   }
@@ -346,11 +357,57 @@ export class SesiaKerenComponent implements OnInit {
     link.click();
   }
 
+
   navigateToGraphPage() {
     this.showGraph = !this.showGraph;
   }
-
-  goToHome() {
-    this.router.navigate(['/MainPageReports']);
+  
+  onRowClick(row: Row) {
+    if (!row.caseNumber) {
+      return;
+    }
+  
+    const dialogRef = this.dialog.open(SesiaKerenCommentDialogComponent, {
+      width: '600px',
+      direction: 'rtl',
+      data: {
+        caseNumber: row.caseNumber,
+        patientName: row.patientName,
+        surgeryDate: row.surgeryDate,
+        comment: row.comment
+      }
+    });
+  
+    dialogRef.afterClosed().subscribe((result: { comment: string } | undefined) => {
+      if (!result) return;
+  
+      this.saveComment(row, result.comment);
+    });
   }
+  
+  private saveComment(row: Row, newComment: string) {
+    if (!row.caseNumber) return;
+  
+    const payload = {
+      caseNumber: row.caseNumber,
+      comment: newComment,
+      // plug your login user here if you have AuthenticationService:
+      // entryUser: this.authService.loginUserName
+      entryUser: null
+    };
+  
+    this.http.post(environment.apiUrl + 'SesiaKeren/SaveComment', payload)
+      .subscribe({
+        next: () => {
+          // update UI
+          row.comment = newComment;
+          this.matTableDataSource.data = [...this.filteredData];
+        },
+        error: err => {
+          console.error('SaveComment failed', err);
+          // you can show a snackbar/toast here if you want
+        }
+      });
+  }
+  
 }

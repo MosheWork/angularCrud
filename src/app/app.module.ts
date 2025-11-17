@@ -208,6 +208,7 @@ import { IdEncryptComponent } from './id-encrypt/id-encrypt.component';
 import { ChameleonUserProfileUnitMapComponent } from './chameleon-reports/chameleon-user-profile-unit-map/chameleon-user-profile-unit-map.component';
 import { GlobalAppPermissionComponent } from './global-app-permission/global-app-permission.component';
 import { SesiaKerenComponent } from './sesia-keren/sesia-keren.component';
+import { SesiaKerenCommentDialogComponent } from './sesia-keren/sesia-keren-comment-dialog/sesia-keren-comment-dialog.component';
 
 
 export const MY_DATE_FORMATS: MatDateFormats = {
@@ -392,7 +393,8 @@ export function playerFactory() {
     IdEncryptComponent,
     ChameleonUserProfileUnitMapComponent,
     GlobalAppPermissionComponent,
-    SesiaKerenComponent
+    SesiaKerenComponent,
+    SesiaKerenCommentDialogComponent
  
 
   

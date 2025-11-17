@@ -33,3 +33,23 @@
   padding: 4px 8px;
   box-sizing: border-box;
 }
+.table-scroll-wrapper {
+  width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  direction: rtl;        // scrollbar behaves RTL
+  padding-bottom: 4px;
+}
+
+/* make the table wide so it really scrolls, adjust as needed */
+.table-scroll-wrapper .mat-table {
+  min-width: 2200px;     // or bigger if still cuts columns
+}
+/* Bold headers for this table */
+.mat-elevation-z8 .mat-header-cell,
+.mat-elevation-z8 .mat-mdc-header-cell {
+  font-weight: 700;      // bold
+  /* optional extras: */
+  // text-align: center;
+  // white-space: nowrap;
+}

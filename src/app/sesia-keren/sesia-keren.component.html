@@ -95,7 +95,7 @@
   <!-- GRAPH -->
   <app-sys-graph *ngIf="showGraph" [graphData]="graphData"></app-sys-graph>
 
-  <div class="table-scroll-wrapper" *ngIf="!showGraph">
+  <div #scrollWrapper class="table-scroll-wrapper" *ngIf="!showGraph">
     <mat-table
     *ngIf="!showGraph"
     [dataSource]="matTableDataSource"
@@ -126,7 +126,11 @@
     </ng-container>
   
     <mat-header-row *matHeaderRowDef="columns"></mat-header-row>
-    <mat-row *matRowDef="let row; columns: columns" class="mat-row"></mat-row>
+    <mat-row
+    *matRowDef="let row; columns: columns"
+    class="mat-row"
+    (click)="onRowClick(row)"
+  ></mat-row>
   </mat-table>
   
   </div>
