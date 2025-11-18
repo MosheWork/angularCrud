@@ -30,6 +30,18 @@
       <mat-option value="inactive">לא פעיל</mat-option>
     </mat-select>
   </mat-form-field>
+  <mat-form-field style="width: 220px">
+    <mat-label>  קבוצות ב AD</mat-label>
+    <mat-select
+      multiple
+      [value]="selectedGroupDescs"
+      (selectionChange)="onAdGroupsChange($event.value)">
+      <mat-option *ngFor="let g of adGroups" [value]="g.groupDesc">
+        {{ g.groupDesc }}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+  
               <mat-slide-toggle formControlName="hasEitanOnly" (change)="applyFilters()" matTooltip="דלוק: הצג רק שורות עם ערך">
                הרשאות לאיתן
               </mat-slide-toggle>

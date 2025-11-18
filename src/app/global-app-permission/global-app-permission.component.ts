@@ -28,7 +28,10 @@ function splitToChunks(v: string, size = CHUNK_LIMIT): string[] {
   }
   return chunks;
 }
-
+export interface AdGroupOption {
+  groupDesc: string;  // "איתן"
+  groups: string;     // "U_ChamDoctor,U_ChamNurse,..."
+}
 /** Keys that can be very long and must be chunked for Excel */
 const LONG_KEYS = [
   'adActivePermision',
@@ -178,8 +181,15 @@ export class GlobalAppPermissionComponent implements OnInit {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
-  filterForm: FormGroup;
 
+  // what user chooses in the multi-select (by GroupDesc, e.g. "איתן")
+selectedGroupDescs: string[] = [];
+
+// all AD group codes (U_ChamDoctor, U_ChamNurse, ...) derived from selection
+selectedGroupsFlat: string[] = [];
+  filterForm: FormGroup;
+  adGroups: AdGroupOption[] = [];
+  selectedAdGroups: string[] = []; // this will hold [Group] values
   dataSource: Row[] = [];
   filteredData: Row[] = [];
   matTableDataSource: MatTableDataSource<Row>;
@@ -283,9 +293,40 @@ export class GlobalAppPermissionComponent implements OnInit {
           .subscribe(() => this.applyFilters());
 
         this.applyFilters();
+        this.loadAdGroups();
+
       });
   }
-
+  loadAdGroups(): void {
+    this.http.get<AdGroupOption[]>(`${environment.apiUrl}/GlobalAppPermission/ad-groups`)
+      .subscribe({
+        next: res => {
+          this.adGroups = res;
+        },
+        error: err => console.error('Failed to load AD groups', err)
+      });
+  }
+  
+  onAdGroupsChange(selectedDescs: string[]): void {
+    this.selectedGroupDescs = selectedDescs || [];
+  
+    const flat = new Set<string>();
+  
+    for (const desc of this.selectedGroupDescs) {
+      const option = this.adGroups.find(g => g.groupDesc === desc);
+      if (!option) continue;
+  
+      (option.groups || '')
+        .split(',')
+        .map(x => x.trim())
+        .filter(x => !!x)
+        .forEach(code => flat.add(code.toLowerCase()));
+    }
+  
+    this.selectedGroupsFlat = Array.from(flat);
+    this.applyFilters();
+  }
+  
   /** Display labels in the table header */
   getColumnLabel(column: string): string {
     const labels: Record<string, string> = {
@@ -398,6 +439,16 @@ export class GlobalAppPermissionComponent implements OnInit {
         if (onlineFilter === 'active' && onlineParsed !== true) return false;
         if (onlineFilter === 'inactive' && onlineParsed !== false) return false;
       }
+    // 🔹 New: filter by selected AD group families (איתן etc.)
+    if (this.selectedGroupsFlat && this.selectedGroupsFlat.length > 0) {
+      const adStr = (r.adActivePermision ?? '').toString().toLowerCase();
+
+      const matchesAny = this.selectedGroupsFlat.some(code =>
+        adStr.includes(code)
+      );
+
+      if (!matchesAny) return false;
+    }
 
       // Global text filter across visible columns
       if (!gf) return true;
