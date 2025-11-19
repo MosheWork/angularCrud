@@ -1,4 +1,4 @@
-<div dir="rtl" style="text-align: right;">
+<div class="dialog-wrapper" dir="rtl">
 
   <h2 mat-dialog-title>{{ isEdit ? 'ערוך שאילתא' : 'הוסף שאילתא' }}</h2>
 
@@ -7,7 +7,7 @@
 
       <mat-form-field appearance="fill" class="full-width">
         <mat-label>שם השאילתא</mat-label>
-        <input matInput formControlName="QueryName" />
+        <input matInput formControlName="QueryName">
       </mat-form-field>
 
       <mat-form-field appearance="fill" class="full-width">
@@ -22,35 +22,39 @@
 
       <mat-form-field appearance="fill" class="full-width">
         <mat-label>נושא</mat-label>
-        <input matInput formControlName="Subject" />
+        <input matInput formControlName="Subject">
       </mat-form-field>
 
       <mat-form-field appearance="fill" class="full-width">
         <mat-label>נושא משנה</mat-label>
-        <input matInput formControlName="SubSubject" />
+        <input matInput formControlName="SubSubject">
       </mat-form-field>
 
+      <!-- EMPLOYEE AUTOCOMPLETE -->
       <mat-form-field appearance="outline" class="full-width">
-        <mat-label>נוצר עבור</mat-label>
-        <input matInput
-               [formControl]="createdForControl"
-               [matAutocomplete]="auto"
-               autocomplete="off">
+      <mat-label>נוצר עבור</mat-label>
 
-        <mat-autocomplete #auto="matAutocomplete"
-                          [displayWith]="displayEmployee"
-                          (optionSelected)="onSelectEmployee($event.option.value)">
-          <mat-option *ngFor="let emp of filteredEmployees" [value]="emp">
-            {{ displayEmployee(emp) }}
-          </mat-option>
-        </mat-autocomplete>
-      </mat-form-field>
+      <input matInput
+            [formControl]="createdForControl"
+            [matAutocomplete]="auto"
+            autocomplete="off">
+
+      <mat-autocomplete #auto="matAutocomplete"
+                        [displayWith]="displayEmployee"
+                        [compareWith]="compareEmployees"
+                        (optionSelected)="onSelectEmployee($event.option.value)">
+        <mat-option *ngFor="let emp of filteredEmployees" [value]="emp">
+          {{ displayEmployee(emp) }}
+        </mat-option>
+      </mat-autocomplete>
+    </mat-form-field>
+
 
       <mat-checkbox formControlName="IsActive">פעילה</mat-checkbox>
 
       <div class="form-actions">
-        <button mat-raised-button color="primary" type="submit">שמירה</button>
-        <button mat-raised-button type="button" (click)="cancel()">ביטול</button>
+        <button mat-flat-button color="primary" type="submit">שמירה</button>
+        <button mat-flat-button type="button" (click)="cancel()">ביטול</button>
       </div>
 
     </form>

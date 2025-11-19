@@ -1,3 +1,7 @@
+.dialog-wrapper {
+  text-align: right;
+}
+
 .full-width {
   width: 100%;
 }
@@ -5,23 +9,24 @@
 .dialog-form {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 14px;
 }
-
-.form-actions {
-  display: flex;
-  justify-content: center; /* center the buttons */
-  gap: 10px;
-  margin-top: 16px;
-}
-
 
 textarea {
-  min-height: 60px;
   font-family: monospace;
 }
 
-mat-dialog-content, form, input, textarea {
+.form-actions {
+  margin-top: 20px;
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+}
+
+mat-dialog-content,
+form,
+input,
+textarea {
   direction: rtl;
   text-align: right;
 }

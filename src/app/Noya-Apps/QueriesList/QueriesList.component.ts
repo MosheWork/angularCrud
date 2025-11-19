@@ -9,7 +9,7 @@ import { QueriesDialogComponent } from './QL-dialog.component';
 import { QueriesViewDialogComponent } from './QueriesViewDialogComponent';
 import * as XLSX from 'xlsx';
 import { Router } from '@angular/router';
-
+import { firstValueFrom } from 'rxjs';
 
 export interface QueryItem {
   id: number;
@@ -20,10 +20,18 @@ export interface QueryItem {
   subSubject: string;
   isActive: boolean;
   createdBy: string;
-  createdFor: string;
+  createdFor?: number;
   updatedBy: string;
   createdAt: string;
   updatedAt?: string | null;
+  createdForName?: string;
+}
+
+export interface EmployeeLookupDto {
+  employeeID: string;
+  fullName?: string;
+  firstName?: string;
+  lastName?: string;
 }
 
 @Component({
@@ -33,19 +41,16 @@ export interface QueryItem {
 })
 export class QueriesListComponent implements OnInit, AfterViewInit {
 
-  filteredData: any[] = [];
-  Title1: string = ' רשימת שאילתות - ';
-  Title2: string = 'סה"כ תוצאות ';
-  titleUnit: string = 'שאילתות ';
-  totalResults: number = 0;
-
+  titleUnit = 'שאילתות ';
+  Title1 = ' רשימת שאילתות - ';
+  Title2 = 'סה"כ תוצאות ';
+  totalResults = 0;
 
   displayedColumns = [
-    'id', 'queryName', 'description', 'subject', 'subSubject', 
-    'isActive', 'createdBy', 'createdFor', 'createdAt', 'updatedAt'
+    'id', 'queryName', 'description', 'subject', 'subSubject',
+    'isActive', 'createdBy', 'createdForName', 'createdAt', 'updatedAt'
   ];
-
-  displayedColumnsWithSelect = ['select', ...this.displayedColumns,'actions' ];
+  displayedColumnsWithSelect = ['select', ...this.displayedColumns, 'actions'];
 
   headerLabels: Record<string,string> = {
     id: 'מזהה',
@@ -55,13 +60,14 @@ export class QueriesListComponent implements OnInit, AfterViewInit {
     subSubject: 'נושא משנה',
     isActive: 'סטטוס',
     createdBy: 'נוצר על ידי',
-    createdFor: 'נוצר עבור',
+    createdForName: 'נוצר עבור',
     createdAt: 'נוצר בתאריך',
     updatedAt: 'עודכן בתאריך',
     actions: 'פעולות'
   };
 
   dataSource = new MatTableDataSource<QueryItem>();
+  filteredData: QueryItem[] = [];
 
   globalFilter = new FormControl('');
   filterQueryName = new FormControl('');
@@ -78,9 +84,12 @@ export class QueriesListComponent implements OnInit, AfterViewInit {
   currentUser = 'SYSTEM';
   base = 'http://localhost:44310';
 
+  employeeLookup: Record<number, string> = {};
+
   constructor(private http: HttpClient, public dialog: MatDialog, private router: Router) {}
 
-  ngOnInit(): void { 
+  ngOnInit(): void {
+    console.log('[QL] Component init');
     this.loadQueries();
     this.setupFilters();
   }
@@ -90,54 +99,112 @@ export class QueriesListComponent implements OnInit, AfterViewInit {
     this.dataSource.paginator = this.paginator;
   }
 
-  // ---------------------- API Calls ----------------------
-  loadQueries(): void {
-    this.http.get<QueryItem[]>(`${this.base}/api/QueriesList/list`)
-      .subscribe({
-        next: rows => {
-          this.dataSource.data = rows || [];
-
-          // ensure paginator and sort are attached so filteredData is computed correctly
-          if (this.paginator) this.dataSource.paginator = this.paginator;
-          if (this.sort) this.dataSource.sort = this.sort;
-
-          // ensure a filterPredicate exists (default to include all) so filteredData is available
-          if (!this.dataSource.filterPredicate) {
-            this.dataSource.filterPredicate = () => true;
-          }
-
-          // trigger Material table filter to update filteredData
-          this.dataSource.filter = Math.random().toString();
-
-          // keep filteredData in sync after load and update total count
-          this.filteredData = [...(this.dataSource.filteredData || [])];
-          this.totalResults = this.filteredData.length;
-        },
-        error: err => console.error(err)
-      });
+  // -------------------- Normalization --------------------
+  private normalizeId(id?: number | string): string {
+    if (id == null) return '';
+    const num = typeof id === 'number' ? id : parseInt(id, 10);
+    return num.toString().padStart(9, '0');
   }
 
-  // ---------------------- CRUD Actions ----------------------
+  // -------------------- Load Queries --------------------
+  async loadQueries(): Promise<void> {
+    console.log('[QL] Loading queries...');
+    try {
+      const rows = await firstValueFrom(this.http.get<QueryItem[]>(`${this.base}/api/QueriesList/list`)) || [];
+      console.log('[QL] Queries loaded (count):', rows.length, rows);
+
+      await this.mapCreatedForNames(rows);
+
+      this.dataSource.data = rows;
+
+      if (this.sort) this.dataSource.sort = this.sort;
+      if (this.paginator) this.dataSource.paginator = this.paginator;
+
+      this.dataSource.filterPredicate = this.dataSource.filterPredicate || (() => true);
+      this.dataSource.filter = Math.random().toString();
+      this.filteredData = [...this.dataSource.filteredData];
+      this.totalResults = this.filteredData.length;
+
+      console.log('[QL] Queries assigned to table. totalResults=', this.totalResults);
+      console.log('[QL] Sample mapped createdForName:', this.filteredData.map(r => ({id: r.id, createdForName: r.createdForName})));
+    } catch (err) {
+      console.error('[QL] Failed to load queries:', err);
+    }
+  }
+
+  // -------------------- Map Employee Names --------------------
+  private async mapCreatedForNames(rows: QueryItem[]): Promise<void> {
+    // Only take non-zero IDs that are not already cached
+    const idsToFetch = Array.from(new Set(
+      rows
+        .map(r => r.createdFor)
+        .filter(id => id && !this.employeeLookup[id])
+    )) as number[];
+
+    if (idsToFetch.length === 0) {
+      // nothing to fetch, just map from cache
+      rows.forEach(r => {
+        r.createdForName = r.createdFor ? this.employeeLookup[r.createdFor] || '---' : '---';
+      });
+      return;
+    }
+
+    // Convert numeric IDs to 9-digit strings for the API
+    const normalizeId = (id: number) => id.toString().padStart(9, '0');
+
+    const queryStr = idsToFetch.map(normalizeId).join(',');
+    console.log('[QL] Batch query (padded):', queryStr);
+
+    try {
+      const res = await firstValueFrom(
+        this.http.get<EmployeeLookupDto[]>(`${this.base}/api/EmployeeLookup/search?query=${queryStr}`)
+      ) || [];
+
+      console.log('[QL] Lookup API returned items count:', res.length);
+
+      // Create a map EmployeeID(string) → FullName
+      const lookupMap = new Map(res.map(e => [e.employeeID, e.fullName]));
+
+      idsToFetch.forEach(id => {
+        const normalized = normalizeId(id);
+        this.employeeLookup[id] = lookupMap.get(normalized) || '---';
+        console.log(`[QL] ID ${id} -> padded: ${normalized} matched: ${lookupMap.has(normalized) ? 'YES' : 'NONE'} mapped to: ${this.employeeLookup[id]}`);
+      });
+    } catch (err) {
+      console.error('[QL] Employee lookup failed:', err);
+      idsToFetch.forEach(id => this.employeeLookup[id] = '---');
+    }
+
+    // Apply the mapping to all rows
+    rows.forEach(r => {
+      r.createdForName = r.createdFor ? this.employeeLookup[r.createdFor] : '---';
+    });
+
+    console.log('[QL] Finished mapping createdForName for rows. Sample:', rows.slice(0, 4));
+  }
+
+  // -------------------- CRUD --------------------
   onAdd() {
-    const dialogRef = this.dialog.open(QueriesDialogComponent, { width: '800px', data: { mode: 'add', currentUser: this.currentUser } });
-    dialogRef.afterClosed().subscribe(res => { if(res) this.loadQueries(); });
+    const ref = this.dialog.open(QueriesDialogComponent, { width: '800px', data: { mode: 'add', currentUser: this.currentUser } });
+    ref.afterClosed().subscribe(ok => { if (ok) this.loadQueries(); });
   }
 
   onEdit(row: QueryItem) {
-    const dialogRef = this.dialog.open(QueriesDialogComponent, { width: '800px', data: { mode: 'edit', row, currentUser: this.currentUser } });
-    dialogRef.afterClosed().subscribe(res => { if(res) this.loadQueries(); });
+    const ref = this.dialog.open(QueriesDialogComponent, { width: '800px', data: { mode: 'edit', row, currentUser: this.currentUser } });
+    ref.afterClosed().subscribe(ok => { if (ok) this.loadQueries(); });
   }
 
   onDelete(row: QueryItem) {
-    if(!row.id || !confirm(`למחוק את השאילתא "${row.queryName}"?`)) return;
+    if (!confirm(`למחוק את "${row.queryName}"?`)) return;
     this.http.post(`${this.base}/api/QueriesList/delete`, [row.id]).subscribe(() => this.loadQueries());
   }
 
-  onDeleteSelected(): void {
-    if(!this.selection || !confirm(`למחוק ${this.selection.size} שאילתות נבחרות?`)) return;
-    const ids = Array.from(this.selection);
-    this.http.post(`${this.base}/api/QueriesList/delete`, ids)
-      .subscribe(() => { this.loadQueries(); this.selection.clear(); });
+  onDeleteSelected() {
+    if (!this.selection.size || !confirm(`למחוק ${this.selection.size} שורות?`)) return;
+    this.http.post(`${this.base}/api/QueriesList/delete`, [...this.selection]).subscribe(() => {
+      this.selection.clear();
+      this.loadQueries();
+    });
   }
 
   onView(row: QueryItem) {
@@ -145,122 +212,91 @@ export class QueriesListComponent implements OnInit, AfterViewInit {
   }
 
   copyText(row: QueryItem) {
-    navigator.clipboard.writeText(row.queryText).then(() => alert('הטקסט הועתק בהצלחה!'));
+    navigator.clipboard.writeText(row.queryText).then(() => alert('הועתק!'));
   }
 
-  // ---------------------- Selection ----------------------
-  toggleSelection(row: QueryItem) { this.selection.has(row.id) ? this.selection.delete(row.id) : this.selection.add(row.id); }
+  // -------------------- Selection --------------------
+  toggleSelection(row: QueryItem) {
+    this.selection.has(row.id) ? this.selection.delete(row.id) : this.selection.add(row.id);
+  }
 
   toggleAllSelection(event: any) {
-    const rows = this.dataSource.filteredData;
-    event.checked ? rows.forEach(r => this.selection.add(r.id)) : rows.forEach(r => this.selection.delete(r.id));
+    const checked = event.checked;
+    this.dataSource.filteredData.forEach(r => checked ? this.selection.add(r.id) : this.selection.delete(r.id));
   }
 
   isAllSelected() {
-    const rows = this.dataSource.filteredData;
-    return rows.length > 0 && rows.every(r => this.selection.has(r.id));
+    return this.dataSource.filteredData.length > 0 &&
+           this.dataSource.filteredData.every(r => this.selection.has(r.id));
   }
 
   isIndeterminate() {
-    const rows = this.dataSource.filteredData;
-    const count = rows.filter(r => this.selection.has(r.id)).length;
-    return count > 0 && count < rows.length;
+    const sel = this.dataSource.filteredData.filter(r => this.selection.has(r.id)).length;
+    return sel > 0 && sel < this.dataSource.filteredData.length;
   }
-  // ---------------------- Filtering ----------------------
 
+  // -------------------- Filtering --------------------
   private setupFilters() {
     const apply = () => {
-      const global = String(this.globalFilter.value || '').toLowerCase();
-      const qName = String(this.filterQueryName.value || '').toLowerCase();
-      const subject = String(this.filterSubject.value || '').toLowerCase();
-      const sub = String(this.filterSubSubject.value || '').toLowerCase();
-      const createdFor = String(this.filterCreatedFor.value || '').toLowerCase();
-      const status = String(this.filterStatus.value || '');
+      const global = (this.globalFilter.value || '').toLowerCase();
+      const qName = (this.filterQueryName.value || '').toLowerCase();
+      const subject = (this.filterSubject.value || '').toLowerCase();
+      const sub = (this.filterSubSubject.value || '').toLowerCase();
+      const createdFor = (this.filterCreatedFor.value || '').toLowerCase();
+      const status = (this.filterStatus.value || '');
 
-      this.dataSource.filterPredicate = (row: QueryItem) => {
-        const matchGlobal = `${row.id}|${row.queryName}|${row.description}|${row.subject}|${row.subSubject}|${row.createdBy}`.toLowerCase().includes(global);
-        const matchQueryName = String(row.queryName || '').toLowerCase().includes(qName);
-        const matchSubject = String(row.subject || '').toLowerCase().includes(subject);
-        const matchSub = String(row.subSubject || '').toLowerCase().includes(sub);
-        const matchCreatedFor = String(row.createdFor || '').toLowerCase().includes(createdFor);
-        let matchStatus = true;
-        if (status === 'active') matchStatus = Boolean(row.isActive);
-        else if (status === 'inactive') matchStatus = !row.isActive;
-        return matchGlobal && matchQueryName && matchSubject && matchSub && matchCreatedFor && matchStatus;
+      this.dataSource.filterPredicate = (row: QueryItem, _filter: string) => {
+        const matchGlobal = (`${row.id}|${row.queryName || ''}|${row.description || ''}|${row.subject || ''}|${row.subSubject || ''}|${row.createdBy || ''}|${row.createdForName || ''}`)
+          .toLowerCase()
+          .includes(global);
+
+        const okName = (row.queryName || '').toLowerCase().includes(qName);
+        const okSubject = (row.subject || '').toLowerCase().includes(subject);
+        const okSub = (row.subSubject || '').toLowerCase().includes(sub);
+        const okCreatedFor = (row.createdForName || '').toLowerCase().includes(createdFor);
+
+        let okStatus = true;
+        if (status === 'active') okStatus = !!row.isActive;
+        else if (status === 'inactive') okStatus = !row.isActive;
+
+        return Boolean(matchGlobal && okName && okSubject && okSub && okCreatedFor && okStatus);
       };
 
-      // trigger Material table filter and update filteredData safely
       this.dataSource.filter = Math.random().toString();
-      this.filteredData = this.dataSource.filteredData || [];
+      this.filteredData = [...this.dataSource.filteredData];
+      this.totalResults = this.filteredData.length;
+      console.log('[QL] Filters applied. totalResults=', this.totalResults);
     };
 
     [this.globalFilter, this.filterQueryName, this.filterSubject, this.filterSubSubject, this.filterCreatedFor, this.filterStatus]
-      .forEach(f => f.valueChanges.subscribe(apply));
+      .forEach(ctrl => ctrl.valueChanges.subscribe(apply));
 
-    this.totalResults = this.filteredData.length;
-
-    // initial application so filteredData is populated
     apply();
   }
 
-  
   resetFilters() {
-    // reset individual filter form controls (we don't have a FormGroup named filterForm)
     this.globalFilter.setValue('');
     this.filterQueryName.setValue('');
     this.filterSubject.setValue('');
     this.filterSubSubject.setValue('');
     this.filterCreatedFor.setValue('');
     this.filterStatus.setValue('');
-    this.totalResults = this.filteredData.length;
-
-    // trigger the table to re-evaluate the filter predicate
-    this.dataSource.filter = Math.random().toString();
-
-    // update cached filtered data and ensure paginator is attached
-    this.filteredData = [...(this.dataSource.filteredData || [])];
-    if (this.paginator) {
-      this.dataSource.paginator = this.paginator;
-    }
   }
 
-  // ---------------------- Moshe's utiles ----------------------
+  // -------------------- Excel --------------------
   exportToExcel() {
-    const excelBuffer = this.convertToExcelFormat(this.filteredData || []);
+    const ws = XLSX.utils.json_to_sheet(this.filteredData);
+    const wb = { Sheets: { data: ws }, SheetNames: ['data'] };
+    const file = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
 
-    const blob = new Blob([excelBuffer], {
-      type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-    });
-
-    const link = document.createElement('a');
-    link.href = window.URL.createObjectURL(blob);
-    link.download = 'filtered_data.xlsx';
-    link.click();
-    // cleanup
-    window.URL.revokeObjectURL(link.href);
+    const blob = new Blob([file], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'filtered_data.xlsx';
+    a.click();
   }
 
-  convertToExcelFormat(data: any[]): ArrayBuffer {
-    const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(data || []);
-    const workbook: XLSX.WorkBook = {
-      Sheets: { data: worksheet },
-      SheetNames: ['data'],
-    };
-    const excelBuffer: any = XLSX.write(workbook, {
-      bookType: 'xlsx',
-      type: 'array',
-    });
-    return excelBuffer;
-  }
-
-  showGraph: boolean = false;
-  navigateToGraphPage() {
-    this.showGraph = !this.showGraph;
-  }
-
-  goToHome() {
-    this.router.navigate(['/MainPageReports']);
-  }
-
-
+  showGraph = false;
+  navigateToGraphPage() { this.showGraph = !this.showGraph; }
+  goToHome() { this.router.navigate(['/MainPageReports']); }
 }
