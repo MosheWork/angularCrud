@@ -36,6 +36,10 @@
         <input matInput [formControl]="filterCreatedFor" placeholder="סינון לפי נוצר עבור">
       </mat-form-field>
       <mat-form-field appearance="fill">
+        <mat-label>נוצר על ידי</mat-label>
+        <input matInput [formControl]="filterCreatedBy" placeholder="סינון לפי נוצר על ידי">
+      </mat-form-field>
+      <mat-form-field appearance="fill">
         <mat-label>סטטוס</mat-label>
         <mat-select [formControl]="filterStatus">
           <mat-option value="">כולם</mat-option>

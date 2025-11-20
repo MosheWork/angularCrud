@@ -30,25 +30,41 @@
         <input matInput formControlName="SubSubject">
       </mat-form-field>
 
-      <!-- EMPLOYEE AUTOCOMPLETE -->
+      <!-- CREATED FOR AUTOCOMPLETE -->
       <mat-form-field appearance="outline" class="full-width">
-      <mat-label>נוצר עבור</mat-label>
+        <mat-label>נוצר עבור</mat-label>
 
-      <input matInput
-            [formControl]="createdForControl"
-            [matAutocomplete]="auto"
-            autocomplete="off">
+        <input matInput
+              [formControl]="createdForControl"
+              [matAutocomplete]="autoFor"
+              autocomplete="off">
 
-      <mat-autocomplete #auto="matAutocomplete"
-                        [displayWith]="displayEmployee"
-                        [compareWith]="compareEmployees"
-                        (optionSelected)="onSelectEmployee($event.option.value)">
-        <mat-option *ngFor="let emp of filteredEmployees" [value]="emp">
-          {{ displayEmployee(emp) }}
-        </mat-option>
-      </mat-autocomplete>
-    </mat-form-field>
+        <mat-autocomplete #autoFor="matAutocomplete"
+                          [displayWith]="displayEmployee"
+                          (optionSelected)="onSelectCreatedFor($event.option.value)">
+          <mat-option *ngFor="let emp of filteredCreatedFor" [value]="emp">
+            {{ displayEmployee(emp) }}
+          </mat-option>
+        </mat-autocomplete>
+      </mat-form-field>
 
+      <!-- CREATED BY AUTOCOMPLETE -->
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>נוצר על ידי</mat-label>
+
+        <input matInput
+              [formControl]="createdByControl"
+              [matAutocomplete]="autoBy"
+              autocomplete="off">
+
+        <mat-autocomplete #autoBy="matAutocomplete"
+                          [displayWith]="displayEmployee"
+                          (optionSelected)="onSelectCreatedBy($event.option.value)">
+          <mat-option *ngFor="let emp of filteredCreatedBy" [value]="emp">
+            {{ displayEmployee(emp) }}
+          </mat-option>
+        </mat-autocomplete>
+      </mat-form-field>
 
       <mat-checkbox formControlName="IsActive">פעילה</mat-checkbox>
 

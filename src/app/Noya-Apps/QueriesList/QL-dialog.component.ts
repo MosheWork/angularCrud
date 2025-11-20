@@ -19,13 +19,16 @@ export interface QueriesRow {
   subject?: string;
   subSubject?: string;
   isActive: boolean;
-  createdFor?: number;              // EmployeeID stored as number
+  createdFor?: number;
   createdForFirstName?: string;
   createdForLastName?: string;
+  createdBy?: number;
+  createdByFirstName?: string;
+  createdByLastName?: string;
 }
 
 export interface EmployeeLookupDto {
-  employeeID: string;   // lowercase as returned by API
+  employeeID: string;
   firstName?: string;
   lastName?: string;
   fullName?: string;
@@ -39,8 +42,13 @@ export interface EmployeeLookupDto {
 export class QueriesDialogComponent implements OnInit {
 
   form!: FormGroup;
+
   createdForControl = new FormControl<EmployeeLookupDto | null>(null);
+  createdByControl = new FormControl<EmployeeLookupDto | null>(null);
+
   filteredEmployees: EmployeeLookupDto[] = [];
+  filteredCreatedFor: EmployeeLookupDto[] = [];
+  filteredCreatedBy: EmployeeLookupDto[] = [];
 
   isEdit = false;
   currentUser = '';
@@ -61,39 +69,17 @@ export class QueriesDialogComponent implements OnInit {
 
   ngOnInit(): void {
     this.buildForm();
-    this.setupEmployeeAutocomplete();
+    this.setupAutocomplete(this.createdForControl, list => this.filteredCreatedFor = list);
+    this.setupAutocomplete(this.createdByControl, list => this.filteredCreatedBy = list);
 
-    // Prefill in ngOnInit
     if (this.editingRow?.createdFor != null) {
-      const normalizedID = String(this.editingRow.createdFor).padStart(9, '0');
-      console.log('Prefilling CreatedFor with normalized ID:', normalizedID);
+      this.prefillEmployee(this.editingRow.createdFor, this.createdForControl, 'CreatedFor');
+    }
 
-      this.http.get<EmployeeLookupDto[]>(`${this.base}/api/EmployeeLookup/search/?query=${normalizedID}`)
-        .subscribe(empArray => {
-          const emp = (empArray && empArray.length > 0) ? empArray[0] : null;
-          if (!emp) {
-            const fallbackEmp: EmployeeLookupDto = { employeeID: normalizedID, fullName: normalizedID };
-            this.createdForControl.setValue(fallbackEmp);
-            this.form.get('CreatedFor')!.setValue(normalizedID);
-            return;
-          }
-
-          const sanitizedEmp: EmployeeLookupDto = {
-            ...emp,
-            fullName: emp.fullName || `${emp.firstName ?? ''} ${emp.lastName ?? ''}`.trim()
-          };
-          this.createdForControl.setValue(sanitizedEmp);
-          this.form.get('CreatedFor')!.setValue(sanitizedEmp.employeeID);
-          console.log('Prefilled CreatedFor:', sanitizedEmp);
-        }, err => {
-          console.error('Failed to fetch employee info:', err);
-          const fallbackEmp: EmployeeLookupDto = { employeeID: normalizedID, fullName: normalizedID };
-          this.createdForControl.setValue(fallbackEmp);
-          this.form.get('CreatedFor')!.setValue(normalizedID);
-        });
+    if (this.editingRow?.createdBy != null) {
+      this.prefillEmployee(this.editingRow.createdBy, this.createdByControl, 'CreatedBy');
     }
   }
-
 
   private buildForm(): void {
     this.form = this.fb.group({
@@ -103,24 +89,30 @@ export class QueriesDialogComponent implements OnInit {
       Subject: [this.editingRow?.subject || ''],
       SubSubject: [this.editingRow?.subSubject || ''],
       IsActive: [this.editingRow?.isActive ?? true],
-      CreatedFor: [this.editingRow?.createdFor != null ? String(this.editingRow.createdFor) : null]
+      CreatedFor: [this.editingRow?.createdFor != null ? String(this.editingRow.createdFor) : null],
+      CreatedBy: [this.editingRow?.createdBy != null ? String(this.editingRow.createdBy) : null]
     });
 
     this.createdForControl.valueChanges.subscribe(val => {
       if (val && typeof val === 'object') {
-        console.log('Autocomplete selection changed:', val);
         this.form.get('CreatedFor')!.setValue(val.employeeID);
       } else {
-        console.log('Autocomplete cleared');
         this.form.get('CreatedFor')!.setValue(null);
       }
-      console.log('Form CreatedFor value now:', this.form.value.CreatedFor);
+    });
+
+    this.createdByControl.valueChanges.subscribe(val => {
+      if (val && typeof val === 'object') {
+        this.form.get('CreatedBy')!.setValue(val.employeeID);
+      } else {
+        this.form.get('CreatedBy')!.setValue(null);
+      }
     });
   }
 
-  private setupEmployeeAutocomplete(): void {
-    this.createdForControl.valueChanges.pipe(
-      startWith(this.createdForControl.value),
+  private setupAutocomplete(control: FormControl, assign: (list: EmployeeLookupDto[]) => void): void {
+    control.valueChanges.pipe(
+      startWith(control.value),
       debounceTime(300),
       distinctUntilChanged(),
       switchMap((value: any) => {
@@ -128,15 +120,39 @@ export class QueriesDialogComponent implements OnInit {
           ? value.trim()
           : `${value?.firstName ?? ''} ${value?.lastName ?? ''}`.trim();
 
-        console.log('Searching employees for query:', query);
         if (!query) return of([]);
 
         return this.http.get<EmployeeLookupDto[]>(`${this.base}/api/EmployeeLookup/search?query=${encodeURIComponent(query)}`);
       })
-    ).subscribe(list => {
-      this.filteredEmployees = list || [];
-      console.log('Filtered employees updated:', this.filteredEmployees);
-    });
+    ).subscribe(list => assign(list || []));
+  }
+
+  private prefillEmployee(id: number, control: FormControl, formField: string): void {
+    const normalized = String(id).padStart(9, '0');
+
+    this.http.get<EmployeeLookupDto[]>(`${this.base}/api/EmployeeLookup/search/?query=${normalized}`)
+      .subscribe(empArray => {
+        const emp = (empArray && empArray.length > 0) ? empArray[0] : null;
+
+        if (!emp) {
+          const fallback: EmployeeLookupDto = { employeeID: normalized, fullName: normalized };
+          control.setValue(fallback);
+          this.form.get(formField)!.setValue(normalized);
+          return;
+        }
+
+        const sanitized: EmployeeLookupDto = {
+          ...emp,
+          fullName: emp.fullName || `${emp.firstName ?? ''} ${emp.lastName ?? ''}`.trim()
+        };
+
+        control.setValue(sanitized);
+        this.form.get(formField)!.setValue(sanitized.employeeID);
+      }, _ => {
+        const fallback: EmployeeLookupDto = { employeeID: normalized, fullName: normalized };
+        control.setValue(fallback);
+        this.form.get(formField)!.setValue(normalized);
+      });
   }
 
   displayEmployee(emp: EmployeeLookupDto | null): string {
@@ -150,34 +166,43 @@ export class QueriesDialogComponent implements OnInit {
   }
 
   onSelectEmployee(emp: EmployeeLookupDto): void {
-    console.log('Employee selected from autocomplete:', emp);
     this.createdForControl.setValue(emp);
     this.form.get('CreatedFor')!.setValue(emp.employeeID);
   }
 
+  onSelectCreatedFor(emp: EmployeeLookupDto): void {
+    this.createdForControl.setValue(emp);
+    this.form.get('CreatedFor')!.setValue(emp.employeeID);
+  }
+
+  onSelectCreatedBy(emp: EmployeeLookupDto): void {
+    this.createdByControl.setValue(emp);
+    this.form.get('CreatedBy')!.setValue(emp.employeeID);
+  }
+
   save(): void {
     if (this.form.invalid) {
-      console.warn('Form invalid, save aborted');
       return;
     }
 
     const payload = new FormData();
+
     if (this.isEdit && this.editingRow) payload.append('Id', String(this.editingRow.id));
 
     const createdForValue = this.form.value.CreatedFor;
-    const createdForNumber = createdForValue != null ? Number(createdForValue) : null;
+    const createdByValue = this.form.value.CreatedBy;
 
     payload.append('QueryName', this.form.value.QueryName);
     payload.append('QueryText', this.form.value.QueryText);
     payload.append('Description', this.form.value.Description || '');
     payload.append('Subject', this.form.value.Subject || '');
     payload.append('SubSubject', this.form.value.SubSubject || '');
-    payload.append('CreatedFor', createdForNumber != null ? String(createdForNumber) : '');
+    payload.append('CreatedFor', createdForValue != null ? String(createdForValue) : '');
+    payload.append('CreatedBy', createdByValue != null ? String(createdByValue) : '');
     payload.append('IsActive', this.form.value.IsActive ? '1' : '0');
     payload.append('UpdatedBy', this.currentUser);
 
     const endpoint = this.isEdit ? 'update' : 'create';
-    console.log('POSTing payload to:', `${this.base}/api/QueriesList/${endpoint}`);
 
     this.http.post(`${this.base}/api/QueriesList/${endpoint}`, payload)
       .subscribe({

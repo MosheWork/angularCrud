@@ -19,12 +19,13 @@ export interface QueryItem {
   subject: string;
   subSubject: string;
   isActive: boolean;
-  createdBy: string;
+  createdBy: string; // store ID as string, display name mapped
   createdFor?: number;
   updatedBy: string;
   createdAt: string;
   updatedAt?: string | null;
   createdForName?: string;
+  createdByName?: string;
 }
 
 export interface EmployeeLookupDto {
@@ -48,7 +49,7 @@ export class QueriesListComponent implements OnInit, AfterViewInit {
 
   displayedColumns = [
     'id', 'queryName', 'description', 'subject', 'subSubject',
-    'isActive', 'createdBy', 'createdForName', 'createdAt', 'updatedAt'
+    'isActive', 'createdByName', 'createdForName', 'createdAt', 'updatedAt'
   ];
   displayedColumnsWithSelect = ['select', ...this.displayedColumns, 'actions'];
 
@@ -59,7 +60,7 @@ export class QueriesListComponent implements OnInit, AfterViewInit {
     subject: 'נושא',
     subSubject: 'נושא משנה',
     isActive: 'סטטוס',
-    createdBy: 'נוצר על ידי',
+    createdByName: 'נוצר על ידי',
     createdForName: 'נוצר עבור',
     createdAt: 'נוצר בתאריך',
     updatedAt: 'עודכן בתאריך',
@@ -74,6 +75,7 @@ export class QueriesListComponent implements OnInit, AfterViewInit {
   filterSubject = new FormControl('');
   filterSubSubject = new FormControl('');
   filterCreatedFor = new FormControl('');
+  filterCreatedBy = new FormControl('');
   filterStatus = new FormControl('');
 
   selection = new Set<number>();
@@ -84,7 +86,8 @@ export class QueriesListComponent implements OnInit, AfterViewInit {
   currentUser = 'SYSTEM';
   base = 'http://localhost:44310';
 
-  employeeLookup: Record<number, string> = {};
+  employeeLookup: Record<number, string> = {}; // for createdFor
+  employeeCreatedByLookup: Record<number, string> = {}; // for createdBy
 
   constructor(private http: HttpClient, public dialog: MatDialog, private router: Router) {}
 
@@ -114,6 +117,7 @@ export class QueriesListComponent implements OnInit, AfterViewInit {
       console.log('[QL] Queries loaded (count):', rows.length, rows);
 
       await this.mapCreatedForNames(rows);
+      await this.mapCreatedByNames(rows);
 
       this.dataSource.data = rows;
 
@@ -126,7 +130,7 @@ export class QueriesListComponent implements OnInit, AfterViewInit {
       this.totalResults = this.filteredData.length;
 
       console.log('[QL] Queries assigned to table. totalResults=', this.totalResults);
-      console.log('[QL] Sample mapped createdForName:', this.filteredData.map(r => ({id: r.id, createdForName: r.createdForName})));
+      console.log('[QL] Sample mapped createdForName / createdByName:', this.filteredData.map(r => ({id: r.id, createdForName: r.createdForName, createdByName: r.createdByName})));
     } catch (err) {
       console.error('[QL] Failed to load queries:', err);
     }
@@ -142,24 +146,42 @@ export class QueriesListComponent implements OnInit, AfterViewInit {
       if (this.employeeLookup[id]) continue;
 
       const padded = id.toString().padStart(9, '0');
-
       try {
         const res = await firstValueFrom(
-          this.http.get<EmployeeLookupDto[]>(
-            `${this.base}/api/EmployeeLookup/search?query=${padded}`
-          )
+          this.http.get<EmployeeLookupDto[]>(`${this.base}/api/EmployeeLookup/search?query=${padded}`)
         ) || [];
-
         this.employeeLookup[id] = res[0]?.fullName || '---';
       } catch {
         this.employeeLookup[id] = '---';
       }
     }
 
-    // Now apply mapping
     rows.forEach(r => {
-      r.createdForName =
-        r.createdFor != null ? this.employeeLookup[r.createdFor] : '---';
+      r.createdForName = r.createdFor != null ? this.employeeLookup[r.createdFor] : '---';
+    });
+  }
+
+  private async mapCreatedByNames(rows: QueryItem[]): Promise<void> {
+    const uniqueIds = Array.from(new Set(
+      rows.map(r => r.createdBy ? parseInt(r.createdBy, 10) : null).filter(id => id != null)
+    )) as number[];
+
+    for (const id of uniqueIds) {
+      if (this.employeeCreatedByLookup[id]) continue;
+
+      const padded = id.toString().padStart(9, '0');
+      try {
+        const res = await firstValueFrom(
+          this.http.get<EmployeeLookupDto[]>(`${this.base}/api/EmployeeLookup/search?query=${padded}`)
+        ) || [];
+        this.employeeCreatedByLookup[id] = res[0]?.fullName || '---';
+      } catch {
+        this.employeeCreatedByLookup[id] = '---';
+      }
+    }
+
+    rows.forEach(r => {
+      r.createdByName = r.createdBy ? this.employeeCreatedByLookup[parseInt(r.createdBy, 10)] : '---';
     });
   }
 
@@ -223,10 +245,11 @@ export class QueriesListComponent implements OnInit, AfterViewInit {
       const subject = (this.filterSubject.value || '').toLowerCase();
       const sub = (this.filterSubSubject.value || '').toLowerCase();
       const createdFor = (this.filterCreatedFor.value || '').toLowerCase();
+      const createdBy = (this.filterCreatedBy.value || '').toLowerCase();
       const status = (this.filterStatus.value || '');
 
       this.dataSource.filterPredicate = (row: QueryItem, _filter: string) => {
-        const matchGlobal = (`${row.id}|${row.queryName || ''}|${row.description || ''}|${row.subject || ''}|${row.subSubject || ''}|${row.createdBy || ''}|${row.createdForName || ''}`)
+        const matchGlobal = (`${row.id}|${row.queryName || ''}|${row.description || ''}|${row.subject || ''}|${row.subSubject || ''}|${row.createdByName || ''}|${row.createdForName || ''}`)
           .toLowerCase()
           .includes(global);
 
@@ -234,21 +257,21 @@ export class QueriesListComponent implements OnInit, AfterViewInit {
         const okSubject = (row.subject || '').toLowerCase().includes(subject);
         const okSub = (row.subSubject || '').toLowerCase().includes(sub);
         const okCreatedFor = (row.createdForName || '').toLowerCase().includes(createdFor);
+        const okCreatedBy = (row.createdByName || '').toLowerCase().includes(createdBy);
 
         let okStatus = true;
         if (status === 'active') okStatus = !!row.isActive;
         else if (status === 'inactive') okStatus = !row.isActive;
 
-        return Boolean(matchGlobal && okName && okSubject && okSub && okCreatedFor && okStatus);
+        return Boolean(matchGlobal && okName && okSubject && okSub && okCreatedFor && okCreatedBy && okStatus);
       };
 
       this.dataSource.filter = Math.random().toString();
       this.filteredData = [...this.dataSource.filteredData];
       this.totalResults = this.filteredData.length;
-      console.log('[QL] Filters applied. totalResults=', this.totalResults);
     };
 
-    [this.globalFilter, this.filterQueryName, this.filterSubject, this.filterSubSubject, this.filterCreatedFor, this.filterStatus]
+    [this.globalFilter, this.filterQueryName, this.filterSubject, this.filterSubSubject, this.filterCreatedFor, this.filterCreatedBy, this.filterStatus]
       .forEach(ctrl => ctrl.valueChanges.subscribe(apply));
 
     apply();
@@ -260,6 +283,7 @@ export class QueriesListComponent implements OnInit, AfterViewInit {
     this.filterSubject.setValue('');
     this.filterSubSubject.setValue('');
     this.filterCreatedFor.setValue('');
+    this.filterCreatedBy.setValue('');
     this.filterStatus.setValue('');
   }
 
