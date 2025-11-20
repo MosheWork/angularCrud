@@ -134,53 +134,33 @@ export class QueriesListComponent implements OnInit, AfterViewInit {
 
   // -------------------- Map Employee Names --------------------
   private async mapCreatedForNames(rows: QueryItem[]): Promise<void> {
-    // Only take non-zero IDs that are not already cached
-    const idsToFetch = Array.from(new Set(
-      rows
-        .map(r => r.createdFor)
-        .filter(id => id && !this.employeeLookup[id])
+    const uniqueIds = Array.from(new Set(
+      rows.map(r => r.createdFor).filter(id => id != null)
     )) as number[];
 
-    if (idsToFetch.length === 0) {
-      // nothing to fetch, just map from cache
-      rows.forEach(r => {
-        r.createdForName = r.createdFor ? this.employeeLookup[r.createdFor] || '---' : '---';
-      });
-      return;
+    for (const id of uniqueIds) {
+      if (this.employeeLookup[id]) continue;
+
+      const padded = id.toString().padStart(9, '0');
+
+      try {
+        const res = await firstValueFrom(
+          this.http.get<EmployeeLookupDto[]>(
+            `${this.base}/api/EmployeeLookup/search?query=${padded}`
+          )
+        ) || [];
+
+        this.employeeLookup[id] = res[0]?.fullName || '---';
+      } catch {
+        this.employeeLookup[id] = '---';
+      }
     }
 
-    // Convert numeric IDs to 9-digit strings for the API
-    const normalizeId = (id: number) => id.toString().padStart(9, '0');
-
-    const queryStr = idsToFetch.map(normalizeId).join(',');
-    console.log('[QL] Batch query (padded):', queryStr);
-
-    try {
-      const res = await firstValueFrom(
-        this.http.get<EmployeeLookupDto[]>(`${this.base}/api/EmployeeLookup/search?query=${queryStr}`)
-      ) || [];
-
-      console.log('[QL] Lookup API returned items count:', res.length);
-
-      // Create a map EmployeeID(string) → FullName
-      const lookupMap = new Map(res.map(e => [e.employeeID, e.fullName]));
-
-      idsToFetch.forEach(id => {
-        const normalized = normalizeId(id);
-        this.employeeLookup[id] = lookupMap.get(normalized) || '---';
-        console.log(`[QL] ID ${id} -> padded: ${normalized} matched: ${lookupMap.has(normalized) ? 'YES' : 'NONE'} mapped to: ${this.employeeLookup[id]}`);
-      });
-    } catch (err) {
-      console.error('[QL] Employee lookup failed:', err);
-      idsToFetch.forEach(id => this.employeeLookup[id] = '---');
-    }
-
-    // Apply the mapping to all rows
+    // Now apply mapping
     rows.forEach(r => {
-      r.createdForName = r.createdFor ? this.employeeLookup[r.createdFor] : '---';
+      r.createdForName =
+        r.createdFor != null ? this.employeeLookup[r.createdFor] : '---';
     });
-
-    console.log('[QL] Finished mapping createdForName for rows. Sample:', rows.slice(0, 4));
   }
 
   // -------------------- CRUD --------------------

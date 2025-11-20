@@ -103,7 +103,7 @@ export class QueriesDialogComponent implements OnInit {
       Subject: [this.editingRow?.subject || ''],
       SubSubject: [this.editingRow?.subSubject || ''],
       IsActive: [this.editingRow?.isActive ?? true],
-      CreatedFor: [this.editingRow?.createdFor != null ? String(this.editingRow.createdFor) : null, Validators.required]
+      CreatedFor: [this.editingRow?.createdFor != null ? String(this.editingRow.createdFor) : null]
     });
 
     this.createdForControl.valueChanges.subscribe(val => {
