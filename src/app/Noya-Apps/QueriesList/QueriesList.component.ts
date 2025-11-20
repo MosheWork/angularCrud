@@ -95,6 +95,7 @@ export class QueriesListComponent implements OnInit, AfterViewInit {
     console.log('[QL] Component init');
     this.loadQueries();
     this.setupFilters();
+    this.filterStatus.setValue('active');
   }
 
   ngAfterViewInit(): void {
@@ -284,7 +285,7 @@ export class QueriesListComponent implements OnInit, AfterViewInit {
     this.filterSubSubject.setValue('');
     this.filterCreatedFor.setValue('');
     this.filterCreatedBy.setValue('');
-    this.filterStatus.setValue('');
+    this.filterStatus.setValue('active');
   }
 
   // -------------------- Excel --------------------
