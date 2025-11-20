@@ -2,114 +2,116 @@
    
   
  
-    <app-spinner [isLoading]="loading"></app-spinner>
-    <mat-card class="kpi-card" *ngIf="!loading" dir="rtl">
-     
-      
-        <mat-card-content>
-          <div class="kpi-grid">
-            <!-- No-consilium 10+ days -->
-       <!-- KPI: no-consilium 10+ days -->
+  <app-spinner [isLoading]="loading"></app-spinner>
+  <mat-card class="kpi-card" *ngIf="!loading" dir="rtl">
+   
+    
+      <mat-card-content>
+        <div class="kpi-grid">
+          <!-- No-consilium 10+ days -->
+     <!-- KPI: no-consilium 10+ days -->
 <div class="kpi-item">
-    <div class="kpi-title">מטופלים</div>
-    <div class="kpi-value">
-      <span class="kpi-strong">{{ noConsilium150685814Count }}</span>
-      <span class="kpi-sep">/</span>
-      <span class="kpi-total">{{ totalPatients }}</span>
-    </div>
-    <div class="kpi-foot">מטופלים מעל 10 ימי אשפוז ולא בוצע יעוץ</div>
-  
-    <!-- Toggle moved here, under foot -->
-    <mat-slide-toggle
-      class="kpi-toggle"
-      color="warn"
-      [checked]="filterNoConsilium10d"
-      (change)="filterNoConsilium10d = $event.checked; applyFilters()">
-      הצג רק מקרים אלו
-    </mat-slide-toggle>
+  <div class="kpi-title">מטופלים</div>
+  <div class="kpi-value">
+    <span class="kpi-strong">{{ noConsilium150685814Count }}</span>
+    <span class="kpi-sep">/</span>
+    <span class="kpi-total">{{ totalPatients }}</span>
   </div>
-  
-  <!-- KPI: albumin -->
-  <div class="kpi-item">
-    <div class="kpi-title">אלבומין ≤ {{ albuminThreshold }}</div>
-    <div class="kpi-value">
-      <span class="kpi-strong kpi-amber">{{ lowAlbuminCount }}</span>
-      <span class="kpi-sep">/</span>
-      <span class="kpi-total">{{ totalPatients }}</span>
-    </div>
-    <div class="kpi-foot">אלבומין נמדד אחרי קבלה</div>
-  
-    <!-- Toggle moved here, under foot -->
-    <mat-slide-toggle
-      class="kpi-toggle"
-      color="primary"
-      [checked]="filterLowAlbumin"
-      (change)="filterLowAlbumin = $event.checked; applyFilters()">
-      הצג רק מקרים אלו
-    </mat-slide-toggle>
+  <div class="kpi-foot">מטופלים מעל 10 ימי אשפוז ולא בוצע יעוץ</div>
+
+  <!-- Toggle moved here, under foot -->
+  <mat-slide-toggle
+    class="kpi-toggle"
+    color="warn"
+    [checked]="filterNoConsilium10d"
+    (change)="filterNoConsilium10d = $event.checked; applyFilters()">
+    הצג רק מקרים אלו
+  </mat-slide-toggle>
+</div>
+
+<!-- KPI: albumin -->
+<div class="kpi-item">
+  <div class="kpi-title">אלבומין ≤ {{ albuminThreshold }}</div>
+  <div class="kpi-value">
+    <span class="kpi-strong kpi-amber">{{ lowAlbuminCount }}</span>
+    <span class="kpi-sep">/</span>
+    <span class="kpi-total">{{ totalPatients }}</span>
   </div>
-  
-          </div>
-        </mat-card-content>
-      </mat-card>
-      
-  
-    <form [formGroup]="filterForm" class="filter-form" *ngIf="!loading">
-            <div class="container-fluid mb-2">
-           
-            </div>
-            <div
-              dir="rtl"
-              style="display: flex; justify-content: space-between; align-items: center"
-            >
-              <mat-form-field
-                class="long-search-bar"
-                style="flex: 1; padding-right: 10px"
-              >
-                <mat-label class="filters" style="color: blue"> חיפוש</mat-label>
-                <input
-                  matInput
-                  [formControlName]="'globalFilter'"
-                  class="search-input"
-                />
-              </mat-form-field>
+  <div class="kpi-foot">אלבומין נמדד אחרי קבלה</div>
+
+  <!-- Toggle moved here, under foot -->
+  <mat-slide-toggle
+    class="kpi-toggle"
+    color="primary"
+    [checked]="filterLowAlbumin"
+    (change)="filterLowAlbumin = $event.checked; applyFilters()">
+    הצג רק מקרים אלו
+  </mat-slide-toggle>
+</div>
+
+        </div>
+      </mat-card-content>
+    </mat-card>
+    
+
+  <form [formGroup]="filterForm" class="filter-form" *ngIf="!loading">
+          <div class="container-fluid mb-2">
          
-              <div class="icon" matTooltip="Download Excel">
-                <img
-                  src="../../assets/excel.png"
-                  alt="Download"
-                  (click)="exportToExcel()"
-                  class="download-icon"
-                  width="50px"
-                />
-              </div>
+          </div>
+          <div
+            dir="rtl"
+            style="display: flex; justify-content: space-between; align-items: center"
+          >
+            <mat-form-field
+              class="long-search-bar"
+              style="flex: 1; padding-right: 10px"
+            >
+              <mat-label class="filters" style="color: blue"> חיפוש</mat-label>
+              <input
+                matInput
+                [formControlName]="'globalFilter'"
+                class="search-input"
+              />
+            </mat-form-field>
+       
+            <div class="icon" matTooltip="Download Excel">
+              <img
+                src="../../assets/excel.png"
+                alt="Download"
+                (click)="exportToExcel()"
+                class="download-icon"
+                width="50px"
+              />
             </div>
-          </form>
-    <mat-table *ngIf="!loading" [dataSource]="matTableDataSource" matSort class="mat-elevation-z8">
-      <ng-container *ngFor="let c of columns" [matColumnDef]="c">
-        <mat-header-cell *matHeaderCellDef mat-sort-header>
-          {{ getColumnLabel(c) }}
-        </mat-header-cell>
-        <mat-cell *matCellDef="let row" [ngClass]="getCellClass(c, row)">
-            <ng-container [ngSwitch]="c">
-              <span *ngSwitchCase="'lastConsiliumAnswerDate'">
-                {{ row[c] | date:'dd/MM/yyyy' }}
-              </span>
-              <span *ngSwitchDefault>
-                {{ row[c] }}
-              </span>
-            </ng-container>
-          </mat-cell>
-           
-        </ng-container>
-  
-      <mat-header-row *matHeaderRowDef="columns"></mat-header-row>
-      <mat-row *matRowDef="let row; columns: columns;"></mat-row>
-    </mat-table>
-  
-    <mat-paginator [length]="matTableDataSource.data.length"
-                   [pageSize]="5"
-                   [pageSizeOptions]="[15,50,100]">
-    </mat-paginator>
-  </div>
-  
+          </div>
+        </form>
+  <mat-table *ngIf="!loading" [dataSource]="matTableDataSource" matSort class="mat-elevation-z8">
+    <ng-container *ngFor="let c of columns" [matColumnDef]="c">
+      <mat-header-cell *matHeaderCellDef mat-sort-header>
+        {{ getColumnLabel(c) }}
+      </mat-header-cell>
+      <mat-cell *matCellDef="let row" [ngClass]="getCellClass(c, row)">
+          <ng-container [ngSwitch]="c">
+            <span *ngSwitchCase="'lastConsiliumAnswerDate'">
+              {{ row[c] | date:'dd/MM/yyyy' }}
+            </span>
+            <span *ngSwitchDefault>
+              {{ row[c] }}
+            </span>
+          </ng-container>
+        </mat-cell>
+         
+      </ng-container>
+
+    <mat-header-row *matHeaderRowDef="columns"></mat-header-row>
+    <!-- ADD CLICK HANDLER HERE -->
+    <mat-row *matRowDef="let row; columns: columns;" 
+             (click)="openRulesDialog(row)"
+             class="clickable-row"></mat-row>
+  </mat-table>
+
+  <mat-paginator [length]="matTableDataSource.data.length"
+                 [pageSize]="5"
+                 [pageSizeOptions]="[15,50,100]">
+  </mat-paginator>
+</div>

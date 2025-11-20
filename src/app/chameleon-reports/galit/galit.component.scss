@@ -333,4 +333,11 @@ mat-cell.danger {
     border-radius: 4px;
   }
   mat-row:hover mat-cell.danger { background: #d32f2f; }
-  
+  .clickable-row {
+    cursor: pointer;
+    transition: background-color 0.2s;
+    
+    &:hover {
+      background-color: #f5f5f5;
+    }
+  }

@@ -8,6 +8,9 @@ import { MatSort } from '@angular/material/sort';
 import * as XLSX from 'xlsx';
 import { environment } from '../../../environments/environment';
 import { finalize } from 'rxjs/operators';
+import { MatDialog } from '@angular/material/dialog';
+import { RulesDialogComponent } from './rules-dialog/rules-dialog.component'; // adjust path as needed
+
 
 type Row = {
   unitName: string;
@@ -55,6 +58,8 @@ type Row = {
   procICD9Rule?: boolean;
 
   reason: string;
+  rulesDescription?: string;  // <-- ADD THIS
+
 };
 
 
@@ -95,11 +100,11 @@ export class GalitComponent implements OnInit {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
-  constructor(private http: HttpClient, fb: FormBuilder) {
+  constructor(private http: HttpClient, fb: FormBuilder,private dialog: MatDialog) {
     const ctrls: Record<string, FormControl> = {};
     this.columns.forEach(c => ctrls[c] = new FormControl(''));
     ctrls['globalFilter'] = new FormControl('');
-    this.filterForm = fb.group(ctrls);
+    this.filterForm = fb.group(ctrls)
   }
 
   ngOnInit(): void {
@@ -157,6 +162,8 @@ export class GalitComponent implements OnInit {
               mustRule: !!(r.MustRule ?? r.mustRule),
               dxICD9Rule: !!(r.DxICD9Rule ?? r.dxICD9Rule),
               procICD9Rule: !!(r.ProcICD9Rule ?? r.procICD9Rule),
+              rulesDescription: r.RulesDescription ?? r.rulesDescription ?? '',  
+
               reason: r.Reason ?? r.reason ?? ''
             })) as Row[];
   
@@ -349,5 +356,18 @@ get lowAlbuminCount(): number {
     r.labResultAfterAdmission != null && r.labResultAfterAdmission <= this.albuminThreshold
   ).length;
 }
+  // Add this method to open the dialog
+  openRulesDialog(row: Row): void {
+    this.dialog.open(RulesDialogComponent, {
+      width: '600px',
+      data: {
+        name: row.name,
+        admission_No: row.admission_No,
+        age_Years: row.age_Years,
+        room: row.room,
+        rulesDescription: row.rulesDescription
+      }
+    });
+  }
 
 }

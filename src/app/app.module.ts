@@ -209,6 +209,7 @@ import { ChameleonUserProfileUnitMapComponent } from './chameleon-reports/chamel
 import { GlobalAppPermissionComponent } from './global-app-permission/global-app-permission.component';
 import { SesiaKerenComponent } from './sesia-keren/sesia-keren.component';
 import { SesiaKerenCommentDialogComponent } from './sesia-keren/sesia-keren-comment-dialog/sesia-keren-comment-dialog.component';
+import { RulesDialogComponent } from './chameleon-reports/galit/rules-dialog/rules-dialog.component';
 
 
 export const MY_DATE_FORMATS: MatDateFormats = {
@@ -394,7 +395,8 @@ export function playerFactory() {
     ChameleonUserProfileUnitMapComponent,
     GlobalAppPermissionComponent,
     SesiaKerenComponent,
-    SesiaKerenCommentDialogComponent
+    SesiaKerenCommentDialogComponent,
+    RulesDialogComponent
  
 
   
