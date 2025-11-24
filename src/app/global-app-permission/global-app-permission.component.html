@@ -23,7 +23,7 @@
   עובד פעיל / לא פעיל
 </mat-slide-toggle> -->
 <mat-form-field  style="width: 220px">
-    <mat-label>משתמש פעיל Online</mat-label>
+    <mat-label>משתמש  Online</mat-label>
     <mat-select formControlName="onlineFilter" (selectionChange)="applyFilters()">
       <mat-option value="all">הכל</mat-option>
       <mat-option value="active">פעיל</mat-option>
@@ -31,12 +31,25 @@
     </mat-select>
   </mat-form-field>
   <mat-form-field style="width: 220px">
-    <mat-label>  קבוצות ב AD</mat-label>
+    <mat-label>קבוצות ב AD</mat-label>
     <mat-select
       multiple
       [value]="selectedGroupDescs"
       (selectionChange)="onAdGroupsChange($event.value)">
-      <mat-option *ngFor="let g of adGroups" [value]="g.groupDesc">
+      
+      <!-- Search input -->
+      <mat-option disabled>
+        <input 
+          matInput
+          [formControl]="adGroupSearchControl"
+          placeholder="חפש..."
+          (click)="$event.stopPropagation()"
+          (keydown)="$event.stopPropagation()"
+          style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
+      </mat-option>
+      
+      <!-- Options -->
+      <mat-option *ngFor="let g of filteredAdGroups" [value]="g.groupDesc">
         {{ g.groupDesc }}
       </mat-option>
     </mat-select>
@@ -50,10 +63,10 @@
                 NAMER
               </mat-slide-toggle>
   
-              <mat-slide-toggle formControlName="hasAdActiveOnly" (change)="applyFilters()" matTooltip="דלוק: הצג רק שורות עם ערך">
+              <!-- <mat-slide-toggle formControlName="hasAdActiveOnly" (change)="applyFilters()" matTooltip="דלוק: הצג רק שורות עם ערך">
                קיימות קבוצות ב AD
               </mat-slide-toggle>
-  
+   -->
               <!-- NEW TOGGLES -->
               <mat-slide-toggle formControlName="hasChameleonOnly" (change)="applyFilters()" matTooltip="דלוק: הצג רק שורות עם ערך">
                 Chameleon קבוצה

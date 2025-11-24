@@ -194,6 +194,13 @@ selectedGroupsFlat: string[] = [];
   filteredData: Row[] = [];
   matTableDataSource: MatTableDataSource<Row>;
 
+  // Add these two lines:
+  adGroupSearchControl = new FormControl('');
+  filteredAdGroups: AdGroupOption[] = [];
+
+
+
+
   // Column order (endWorkDate intentionally not shown)
   columns = [
     'profilePicture', 'employeeID', 'name', 'adUserName',
@@ -302,9 +309,30 @@ selectedGroupsFlat: string[] = [];
       .subscribe({
         next: res => {
           this.adGroups = res;
+          this.filteredAdGroups = res;
+          
+          // Setup search filtering
+          this.adGroupSearchControl.valueChanges
+            .pipe(debounceTime(200), distinctUntilChanged())
+            .subscribe(searchText => {
+              this.filterAdGroups(searchText || '');
+            });
         },
         error: err => console.error('Failed to load AD groups', err)
       });
+  }
+  
+  filterAdGroups(searchText: string): void {
+    const search = searchText.toLowerCase().trim();
+    
+    if (!search) {
+      this.filteredAdGroups = this.adGroups;
+      return;
+    }
+    
+    this.filteredAdGroups = this.adGroups.filter(g => 
+      g.groupDesc.toLowerCase().includes(search)
+    );
   }
   
   onAdGroupsChange(selectedDescs: string[]): void {
@@ -530,23 +558,32 @@ selectedGroupsFlat: string[] = [];
   }
 
   /** Reset all filters */
-  resetAllFilters(): void {
-    this.filterForm.reset({
-      globalFilter: '',
-      hasEitanOnly: false,
-      hasNamerOnly: false,
-      hasAdActiveOnly: false,
-      hasChameleonOnly: false,
-      hasChameleonRestrictedOnly: false,
-      onlineFilter: 'all',
-      activeToggle: null,
-      hasEveOnly: false,
-      hasEitanPsychOnly: false,
-      hasMetaVisionOnly: false
-    });
-    this.applyFilters();
-  }
-
+/** Reset all filters */
+resetAllFilters(): void {
+  this.filterForm.reset({
+    globalFilter: '',
+    hasEitanOnly: false,
+    hasNamerOnly: false,
+    hasAdActiveOnly: false,
+    hasChameleonOnly: false,
+    hasChameleonRestrictedOnly: false,
+    onlineFilter: 'all',
+    activeToggle: null,
+    hasEveOnly: false,
+    hasEitanPsychOnly: false,
+    hasMetaVisionOnly: false
+  });
+  
+  // Reset AD groups selection
+  this.selectedGroupDescs = [];
+  this.selectedGroupsFlat = [];
+  
+  // Reset search box
+  this.adGroupSearchControl.setValue('');
+  this.filteredAdGroups = this.adGroups;
+  
+  this.applyFilters();
+}
   goToHome(): void {
     this.router.navigate(['/MainPageReports']);
   }
