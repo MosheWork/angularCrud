@@ -65,21 +65,28 @@ export class ApplicationsListDeptDialogComponent implements OnInit {
     const formData = new FormData();
     formData.append('file', input.files[0]);
 
-    this.http.post<{ FileName: string; OriginalName: string; Url: string }>(
+    this.http.post<any>(
       environment.apiUrl + 'ApplicationsListDept/UploadFile',
       formData
     ).subscribe(res => {
-      // ✅ DB should store just the file name
-      this.form.patchValue({ guides: res.FileName });
-
-      // UI preview uses the served URL
-      this.uploadedFileUrl = res.Url;
-      this.uploadedFileName = res.OriginalName || res.FileName;
-
+    
+      const fileName = res.fileName ?? res.FileName;          // ✅ handle both
+      const url       = res.url ?? res.Url;
+      const original  = res.originalName ?? res.OriginalName;
+    
+      // store file name in DB (recommended)
+      this.form.patchValue({ guides: fileName });
+    
+      // preview
+      this.uploadedFileUrl  = url;
+      this.uploadedFileName = original || fileName;
+    
       input.value = '';
-    }, _ => {
+    }, err => {
+      alert(err?.error || 'Upload failed');
       input.value = '';
     });
+    
   }
 
   onDeleteGuide() {
