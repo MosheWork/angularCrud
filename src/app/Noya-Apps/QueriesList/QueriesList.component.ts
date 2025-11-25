@@ -290,7 +290,21 @@ export class QueriesListComponent implements OnInit, AfterViewInit {
 
   // -------------------- Excel --------------------
   exportToExcel() {
-    const ws = XLSX.utils.json_to_sheet(this.filteredData);
+    // apply the sort the user selected in the UI
+    // this.dataSource.sort can be null (MatSort | null) so use the component ViewChild sort as a non-null fallback
+    const sorted = this.dataSource.sortData(
+      this.dataSource.filteredData,
+      this.sort
+    );
+
+    // map dates to dd/mm/yy
+    const dataToExport = sorted.map(row => ({
+      ...row,
+      createdAt: row.createdAt ? this.formatDate(row.createdAt) : '',
+      updatedAt: row.updatedAt ? this.formatDate(row.updatedAt) : ''
+    }));
+
+    const ws = XLSX.utils.json_to_sheet(dataToExport);
     const wb = { Sheets: { data: ws }, SheetNames: ['data'] };
     const file = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
 
@@ -301,7 +315,13 @@ export class QueriesListComponent implements OnInit, AfterViewInit {
     a.click();
   }
 
-  showGraph = false;
-  navigateToGraphPage() { this.showGraph = !this.showGraph; }
-  goToHome() { this.router.navigate(['/MainPageReports']); }
+  // helper function
+  formatDate(dateStr: string | Date): string {
+    const d = new Date(dateStr);
+    const day = String(d.getDate()).padStart(2, '0');
+    const month = String(d.getMonth() + 1).padStart(2, '0');
+    const year = String(d.getFullYear()).slice(-2); // last 2 digits
+    return `${day}/${month}/${year}`;
+  }
+  
 }
