@@ -58,7 +58,7 @@ export class QueriesListComponent implements OnInit, AfterViewInit {
     queryName: 'שם השאילתא',
     description: 'תיאור',
     subject: 'נושא',
-    subSubject: 'נושא משנה',
+    subSubject: 'תת נושא',
     isActive: 'סטטוס',
     createdByName: 'נוצר על ידי',
     createdForName: 'נוצר עבור',

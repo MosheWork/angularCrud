@@ -13,7 +13,6 @@
 
     <button mat-flat-button color="primary" (click)="onAdd()">הוסף שאילתא</button>
     <button mat-flat-button color="warn" (click)="onDeleteSelected()" [disabled]="!selection || selection.size === 0">מחק נבחרים</button>
-    <button mat-stroked-button color="accent" (click)="resetFilters()">נקה סינונים</button>
   </div>
 
   <!-- Filters -->
@@ -28,8 +27,8 @@
         <input matInput [formControl]="filterSubject" placeholder="סינון לפי נושא">
       </mat-form-field>
       <mat-form-field appearance="fill">
-        <mat-label>נושא משנה</mat-label>
-        <input matInput [formControl]="filterSubSubject" placeholder="סינון לפי נושא משנה">
+        <mat-label>תת נושא</mat-label>
+        <input matInput [formControl]="filterSubSubject" placeholder="סינון לפי תת נושא">
       </mat-form-field>
       <mat-form-field appearance="fill">
         <mat-label>נוצר עבור</mat-label>
@@ -123,8 +122,8 @@
             <span *ngSwitchCase="'isActive'" [class.ok]="row.isActive" [class.no]="!row.isActive">
               {{ row.isActive ? 'פעיל' : 'לא פעיל' }}
             </span>
-            <span *ngSwitchCase="'createdAt'">{{ row.createdAt | date:'short' }}</span>
-            <span *ngSwitchCase="'updatedAt'">{{ row.updatedAt ? (row.updatedAt | date:'short') : '' }}</span>
+            <span *ngSwitchCase="'createdAt'">{{ row.createdAt | date:'dd/MM/yy' }}</span>
+            <span *ngSwitchCase="'updatedAt'">{{ row.updatedAt ? (row.updatedAt | date:'dd/MM/yy') : '' }}</span>
             <span *ngSwitchDefault>{{ row[col] }}</span>
           </ng-container>
         </td>
