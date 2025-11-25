@@ -210,6 +210,7 @@ import { GlobalAppPermissionComponent } from './global-app-permission/global-app
 import { SesiaKerenComponent } from './sesia-keren/sesia-keren.component';
 import { SesiaKerenCommentDialogComponent } from './sesia-keren/sesia-keren-comment-dialog/sesia-keren-comment-dialog.component';
 import { RulesDialogComponent } from './chameleon-reports/galit/rules-dialog/rules-dialog.component';
+import { AdGroupsDialogComponent } from './global-app-permission/ad-groups-dialog/ad-groups-dialog.component';
 
 
 export const MY_DATE_FORMATS: MatDateFormats = {
@@ -396,7 +397,8 @@ export function playerFactory() {
     GlobalAppPermissionComponent,
     SesiaKerenComponent,
     SesiaKerenCommentDialogComponent,
-    RulesDialogComponent
+    RulesDialogComponent,
+    AdGroupsDialogComponent
  
 
   

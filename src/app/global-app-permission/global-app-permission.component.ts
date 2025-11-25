@@ -8,6 +8,8 @@ import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import * as XLSX from 'xlsx';
 import { environment } from '../../environments/environment';
 import { Router } from '@angular/router';
+import { MatDialog } from '@angular/material/dialog';
+import { AdGroupsDialogComponent } from './ad-groups-dialog/ad-groups-dialog.component';
 
 /* =========================
    Excel limits & helpers
@@ -205,7 +207,7 @@ selectedGroupsFlat: string[] = [];
   columns = [
     'profilePicture', 'employeeID', 'name', 'adUserName',
     'departnentDescripton', 'functionDescription', 'description','metaVision',
-    'eitanChameleonADGroupPermision', 'namerUserActivePermision', 'adActivePermision',
+    'eitanChameleonADGroupPermision', 'namerUserActivePermision', 
     'ChamelleonGropPermision', 'ChamelleonRestrictedGropPermision',
     'OnnLineActiveUser', 'EVEActiveUser',
     // 'metaVisionRoles' // ← uncomment if you want a column with MetaVision roles in Hebrew
@@ -214,7 +216,8 @@ selectedGroupsFlat: string[] = [];
   constructor(
     private http: HttpClient,
     private fb: FormBuilder,
-    private router: Router
+    private router: Router,
+    private dialog: MatDialog 
   ) {
     this.filterForm = this.createFilterForm();
     this.matTableDataSource = new MatTableDataSource<Row>([]);
@@ -584,7 +587,58 @@ resetAllFilters(): void {
   
   this.applyFilters();
 }
-  goToHome(): void {
-    this.router.navigate(['/MainPageReports']);
+openAdGroupsDialog(row: Row): void {
+  const raw = (row.adActivePermision || '').toString().trim();
+  if (!raw) {
+    // אם אין קבוצות – אפשר או להתעלם מהלחיצה או לפתוח דיאלוג "אין קבוצות"
+    return;
   }
+
+  // מפצלים את המחרוזת של הקבוצות לרשימת קודים ייחודיים
+  const codes = Array.from(
+    new Set(
+      raw
+        .split(/[,\s;|]+/)
+        .map(g => g.trim())
+        .filter(g => !!g)
+    )
+  );
+
+  // בונים רשימת שורות עם קוד + GroupDesc (אם קיים)
+  const groupsDetailed = codes.map((code, idx) => {
+    const owners = this.adGroups.filter(opt => {
+      const list = (opt.groups || '')
+        .split(',')
+        .map(x => x.trim().toLowerCase())
+        .filter(x => !!x);
+      return list.includes(code.toLowerCase());
+    });
+  
+    const groupDescs = owners
+      .map(o => o.groupDesc)
+      .filter(Boolean)
+      .map(d => d.trim())
+      .filter(d => d !== 'הכל');   // 👈 מסנן "הכל"
+  
+    return {
+      index: idx + 1,
+      code,
+      groupDescs
+    };
+  });
+  
+
+  this.dialog.open(AdGroupsDialogComponent, {
+    width: '700px',
+    data: {
+      fullName: row.name,
+      adUserName: row.adUserName,
+      raw,
+      groups: groupsDetailed
+    },
+    direction: 'rtl' // 👈 כל הדיאלוג LTR
+  });
+}
+
+
 }

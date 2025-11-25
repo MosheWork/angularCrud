@@ -400,4 +400,11 @@ margin-top: 50px;}
     }
   }
 
+  .clickable-row {
+    cursor: pointer;
+  }
+  
+  .clickable-row:hover {
+    background-color: rgba(0, 0, 0, 0.03);
+  }
   
