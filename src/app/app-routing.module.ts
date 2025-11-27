@@ -216,7 +216,7 @@ const routes: Routes = [
 { path: 'otc-executions', component: OtcExecutionsComponent , data: { title: 'OTC ' }},//  דוח של קרן OTC
 
 { path: 'ChameleonUserProfileUnitMap', component: ChameleonUserProfileUnitMapComponent , data: { title: 'הרשאות בקמיליון' }},//  
-{ path: 'DiabetesDailyReport', component: DiabetesDailyReportComponent , data: { title: ' דוח סכרת יומי' }},//  
+{ path: 'DiabetesDailyReport', component: DiabetesDailyReportComponent , data: { title: ' דוח סוכרת יומי' }},//  
 
 
 

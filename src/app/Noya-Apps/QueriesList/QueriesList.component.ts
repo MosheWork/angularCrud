@@ -10,6 +10,7 @@ import { QueriesViewDialogComponent } from './QueriesViewDialogComponent';
 import * as XLSX from 'xlsx';
 import { Router } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
+import { environment } from '../../../environments/environment';
 
 export interface QueryItem {
   id: number;
@@ -61,6 +62,7 @@ export class QueriesListComponent implements OnInit, AfterViewInit {
     subSubject: 'תת נושא',
     isActive: 'סטטוס',
     createdByName: 'נוצר על ידי',
+    
     createdForName: 'נוצר עבור',
     createdAt: 'נוצר בתאריך',
     updatedAt: 'עודכן בתאריך',
@@ -84,7 +86,9 @@ export class QueriesListComponent implements OnInit, AfterViewInit {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
 
   currentUser = 'SYSTEM';
-  base = 'http://localhost:44310';
+  // base = 'http://localhost:44310';
+  base = `${environment.apiUrl}`;
+
 
   employeeLookup: Record<number, string> = {}; // for createdFor
   employeeCreatedByLookup: Record<number, string> = {}; // for createdBy
@@ -114,7 +118,7 @@ export class QueriesListComponent implements OnInit, AfterViewInit {
   async loadQueries(): Promise<void> {
     console.log('[QL] Loading queries...');
     try {
-      const rows = await firstValueFrom(this.http.get<QueryItem[]>(`${this.base}/api/QueriesList/list`)) || [];
+      const rows = await firstValueFrom(this.http.get<QueryItem[]>(`${this.base}/QueriesList/list`)) || [];
       console.log('[QL] Queries loaded (count):', rows.length, rows);
 
       await this.mapCreatedForNames(rows);
@@ -149,7 +153,7 @@ export class QueriesListComponent implements OnInit, AfterViewInit {
       const padded = id.toString().padStart(9, '0');
       try {
         const res = await firstValueFrom(
-          this.http.get<EmployeeLookupDto[]>(`${this.base}/api/EmployeeLookup/search?query=${padded}`)
+          this.http.get<EmployeeLookupDto[]>(`${this.base}/EmployeeLookup/search?query=${padded}`)
         ) || [];
         this.employeeLookup[id] = res[0]?.fullName || '---';
       } catch {
@@ -173,7 +177,7 @@ export class QueriesListComponent implements OnInit, AfterViewInit {
       const padded = id.toString().padStart(9, '0');
       try {
         const res = await firstValueFrom(
-          this.http.get<EmployeeLookupDto[]>(`${this.base}/api/EmployeeLookup/search?query=${padded}`)
+          this.http.get<EmployeeLookupDto[]>(`${this.base}/EmployeeLookup/search?query=${padded}`)
         ) || [];
         this.employeeCreatedByLookup[id] = res[0]?.fullName || '---';
       } catch {
@@ -199,12 +203,12 @@ export class QueriesListComponent implements OnInit, AfterViewInit {
 
   onDelete(row: QueryItem) {
     if (!confirm(`למחוק את "${row.queryName}"?`)) return;
-    this.http.post(`${this.base}/api/QueriesList/delete`, [row.id]).subscribe(() => this.loadQueries());
+    this.http.post(`${this.base}/QueriesList/delete`, [row.id]).subscribe(() => this.loadQueries());
   }
 
   onDeleteSelected() {
     if (!this.selection.size || !confirm(`למחוק ${this.selection.size} שורות?`)) return;
-    this.http.post(`${this.base}/api/QueriesList/delete`, [...this.selection]).subscribe(() => {
+    this.http.post(`${this.base}/QueriesList/delete`, [...this.selection]).subscribe(() => {
       this.selection.clear();
       this.loadQueries();
     });

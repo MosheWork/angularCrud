@@ -4,6 +4,8 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { HttpClient } from '@angular/common/http';
 import { debounceTime, distinctUntilChanged, switchMap, startWith } from 'rxjs/operators';
 import { of } from 'rxjs';
+import { environment } from '../../../environments/environment';
+
 
 export interface QueriesDialogData {
   mode: 'add' | 'edit';
@@ -54,7 +56,9 @@ export class QueriesDialogComponent implements OnInit {
   currentUser = '';
   editingRow?: QueriesRow;
 
-  private base = 'http://localhost:44310';
+  // private base = 'http://localhost:44310';
+  // private base = environment.apiUrl;
+  private base = `${environment.apiUrl}`;
 
   constructor(
     private fb: FormBuilder,
@@ -122,7 +126,7 @@ export class QueriesDialogComponent implements OnInit {
 
         if (!query) return of([]);
 
-        return this.http.get<EmployeeLookupDto[]>(`${this.base}/api/EmployeeLookup/search?query=${encodeURIComponent(query)}`);
+        return this.http.get<EmployeeLookupDto[]>(`${this.base}/EmployeeLookup/search?query=${encodeURIComponent(query)}`);
       })
     ).subscribe(list => assign(list || []));
   }
@@ -130,7 +134,7 @@ export class QueriesDialogComponent implements OnInit {
   private prefillEmployee(id: number, control: FormControl, formField: string): void {
     const normalized = String(id).padStart(9, '0');
 
-    this.http.get<EmployeeLookupDto[]>(`${this.base}/api/EmployeeLookup/search/?query=${normalized}`)
+    this.http.get<EmployeeLookupDto[]>(`${this.base}/EmployeeLookup/search/?query=${normalized}`)
       .subscribe(empArray => {
         const emp = (empArray && empArray.length > 0) ? empArray[0] : null;
 
@@ -204,7 +208,7 @@ export class QueriesDialogComponent implements OnInit {
 
     const endpoint = this.isEdit ? 'update' : 'create';
 
-    this.http.post(`${this.base}/api/QueriesList/${endpoint}`, payload)
+    this.http.post(`${this.base}/QueriesList/${endpoint}`, payload)
       .subscribe({
         next: () => this.dialogRef.close(true),
         error: err => console.error('Save failed:', err)

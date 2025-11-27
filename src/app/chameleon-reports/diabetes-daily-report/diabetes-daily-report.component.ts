@@ -50,6 +50,10 @@ export class DiabetesDailyReportComponent implements OnInit {
   totalResults = 0;
   loading = false;
 
+  // יחידות למולטיסלקט
+  unitOptions: string[] = [];
+  selectedUnits: string[] = [];
+
   /** ---------- 3-state filters: הכל / כן / לא ---------- */
   sugarAboveFilter: TriState = 'all';
   sugarBelowFilter: TriState = 'all';
@@ -141,6 +145,16 @@ export class DiabetesDailyReportComponent implements OnInit {
             })) as Row[];
 
             this.dataSource = norm;
+
+            // לבנות רשימת יחידות ייחודית למולטיסלקט
+            this.unitOptions = Array.from(
+              new Set(
+                this.dataSource
+                  .map(r => r.unitName)
+                  .filter(u => !!u)
+              )
+            ).sort();
+
             this.applyFilters();
 
             setTimeout(() => {
@@ -187,12 +201,17 @@ export class DiabetesDailyReportComponent implements OnInit {
   resetFilters(): void {
     this.filterForm.reset();
     this.filterForm.get('globalFilter')!.setValue('');
+
     // reset tri-state filters
     this.sugarAboveFilter = 'all';
     this.sugarBelowFilter = 'all';
     this.diagnosisFilter = 'all';
     this.footFilter = 'all';
     this.insulinFilter = 'all';
+
+    // reset selected units
+    this.selectedUnits = [];
+
     this.applyFilters();
     this.paginator?.firstPage();
   }
@@ -201,8 +220,13 @@ export class DiabetesDailyReportComponent implements OnInit {
     const vals = this.filterForm.value as Record<string, string>;
     const global = (vals['globalFilter'] || '').toLowerCase();
 
-    // 1) base filter from form + global search
+    // 1) base filter from unit multi-select + form + global search
     const base = this.dataSource.filter(row => {
+      // סינון לפי יחידות שנבחרו
+      const unitMatch =
+        this.selectedUnits.length === 0 ||
+        this.selectedUnits.includes(row.unitName);
+
       const perCol = this.columns.every(col => {
         const needle = (vals[col as string] || '').toLowerCase().trim();
         if (!needle) return true;
@@ -216,7 +240,7 @@ export class DiabetesDailyReportComponent implements OnInit {
           (((row[col] ?? '') + '').toLowerCase().includes(global))
         );
 
-      return perCol && globalOk;
+      return unitMatch && perCol && globalOk;
     });
 
     // used for all KPI counters
