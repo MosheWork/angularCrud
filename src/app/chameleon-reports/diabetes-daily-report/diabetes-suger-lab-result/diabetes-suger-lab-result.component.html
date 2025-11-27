@@ -1,33 +1,45 @@
-<h2 mat-dialog-title>
-    בדיקות סוכר ל־{{ data.name }} ({{ data.idNum }})
-  </h2>
-  
-  <mat-dialog-content>
-    <app-spinner [isLoading]="loading"></app-spinner>
-  
-    <table *ngIf="!loading" class="labs-table" dir="rtl">
-      <thead>
-        <tr>
-          <th>תאריך</th>
-          <th>קוד</th>
-          <th>שם בדיקה</th>
-          <th>תוצאה</th>
-          <th>יחידות</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let l of labResults">
-          <td>{{ l.resultDate | date: 'dd/MM/yyyy HH:mm' }}</td>
-          <td>{{ l.testCode }}</td>
-          <td>{{ l.testName }}</td>
-          <td>{{ l.numericResult ?? l.result }}</td>
-          <td>{{ l.units }}</td>
-        </tr>
-      </tbody>
-    </table>
-  </mat-dialog-content>
-  
-  <mat-dialog-actions align="end">
-    <button mat-button (click)="close()">סגור</button>
-  </mat-dialog-actions>
-  
+<h2
+  mat-dialog-title
+  class="dialog-title"
+  style="text-align: center; width: 100%;"
+>
+  תוצאות סוכר 72 שעות אחרונות –
+  {{ data.name }} ({{ data.idNum }})
+</h2>
+
+<mat-dialog-content class="dialog-content" dir="rtl">
+  <app-spinner [isLoading]="loading"></app-spinner>
+
+  <table *ngIf="!loading" class="labs-table">
+    <thead>
+      <tr>
+        <th>תאריך ושעה</th>
+        <!-- <th>קוד בדיקה</th> -->
+        <th>שם בדיקה</th>
+        <th>תוצאה</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let r of labs">
+        <td>{{ r.resultDate | date: 'dd/MM/yyyy HH:mm' }}</td>
+        <!-- <td>{{ r.testCode }}</td> -->
+        <td>{{ r.testName }}</td>
+
+        <!-- תוצאה – אדום מודגש אם >180 או <70 -->
+        <td [ngClass]="getResultClass(r.numericResult)">
+          {{ r.result }}
+        </td>
+      </tr>
+
+      <tr *ngIf="labs.length === 0">
+        <td colspan="3" class="no-data">
+          אין תוצאות ל־72 השעות האחרונות
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="close()">סגור</button>
+</mat-dialog-actions>

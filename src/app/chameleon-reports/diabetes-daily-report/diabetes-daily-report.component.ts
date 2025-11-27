@@ -7,6 +7,8 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import * as XLSX from 'xlsx';
 import { environment } from '../../../environments/environment';
+import { MatDialog } from '@angular/material/dialog';
+import { DiabetesSugerResultsDialogComponent } from './diabetes-suger-lab-result/diabetes-suger-lab-result.component';
 
 type Row = {
   patient: number;
@@ -82,7 +84,11 @@ export class DiabetesDailyReportComponent implements OnInit {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
-  constructor(private http: HttpClient, fb: FormBuilder) {
+  constructor(
+    private http: HttpClient,
+    fb: FormBuilder,
+    private dialog: MatDialog
+  ) {
     const ctrls: Record<string, FormControl> = {};
     this.columns.forEach(c => (ctrls[c] = new FormControl('')));
     ctrls['globalFilter'] = new FormControl('');
@@ -334,7 +340,23 @@ export class DiabetesDailyReportComponent implements OnInit {
     ).length;
   }
 
-  // small helpers for HTML
+  // ----- dialog: open labs for patient -----
+  openLabsDialog(row: Row): void {
+    if (!row.patient) {
+      return;
+    }
+
+    this.dialog.open(DiabetesSugerResultsDialogComponent, {
+      width: '800px',
+      data: {
+        patient: row.patient,
+        name: row.name,
+        idNum: row.idNum
+      }
+    });
+  }
+
+  // small helpers for HTML (tri-state)
   onSugarAboveFilterChange(val: TriState) {
     this.sugarAboveFilter = val;
     this.applyFilters();

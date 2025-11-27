@@ -1,8 +1,8 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { HttpClient } from '@angular/common/http';
-import { finalize } from 'rxjs/operators';
 import { environment } from '../../../../environments/environment';
+import { finalize } from 'rxjs/operators';
 
 export interface DiabetesSugerLabResult {
   patient: number;
@@ -12,9 +12,9 @@ export interface DiabetesSugerLabResult {
   testCode: number;
   testName: string;
   result: string;
-  numericResult: number | null;
+  numericResult?: number | null;
   units: string;
-  resultDate: string; // ISO string from backend
+  resultDate: string; // or Date
 }
 
 @Component({
@@ -24,30 +24,40 @@ export interface DiabetesSugerLabResult {
 })
 export class DiabetesSugerResultsDialogComponent implements OnInit {
   loading = false;
-  labResults: DiabetesSugerLabResult[] = [];
+  labs: DiabetesSugerLabResult[] = [];
+
+  displayedColumns: string[] = [
+    'resultDate',
+    'testCode',
+    'testName',
+    'result',
+    'units',
+    'numericResult'
+  ];
 
   constructor(
-    @Inject(MAT_DIALOG_DATA)
-    public data: { patient: number; name: string; idNum: string },
     private http: HttpClient,
-    private dialogRef: MatDialogRef<DiabetesSugerResultsDialogComponent>
+    private dialogRef: MatDialogRef<DiabetesSugerResultsDialogComponent>,
+    @Inject(MAT_DIALOG_DATA)
+    public data: { patient: number; name: string; idNum: string }
   ) {}
 
   ngOnInit(): void {
-    this.loading = true;
+    this.loadLabs();
+  }
 
+  private loadLabs(): void {
+    this.loading = true;
     this.http
       .get<DiabetesSugerLabResult[]>(
         `${environment.apiUrl}DiabetesDailyReport/Labs?patient=${this.data.patient}`
       )
       .pipe(finalize(() => (this.loading = false)))
       .subscribe({
-        next: res => {
-          this.labResults = res || [];
-        },
+        next: res => (this.labs = res || []),
         error: err => {
-          console.error('Error loading sugar results', err);
-          alert('שגיאה בטעינת בדיקות סוכר');
+          console.error('Error loading labs', err);
+          this.labs = [];
         }
       });
   }
@@ -55,4 +65,14 @@ export class DiabetesSugerResultsDialogComponent implements OnInit {
   close(): void {
     this.dialogRef.close();
   }
+
+  getResultClass(value: number | null | undefined): Record<string, boolean> {
+    if (value == null) {
+      return {};
+    }
+    return {
+      'danger-sugar': value > 180 || value < 70
+    };
+  }
+  
 }
