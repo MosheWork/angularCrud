@@ -1,0 +1,58 @@
+<h1 mat-dialog-title>
+    קבוצות AD עבור
+    <ng-container *ngIf="data.fullName; else noName">
+      {{ data.fullName }}
+    </ng-container>
+    <ng-template #noName>משתמש</ng-template>
+    <span *ngIf="data.adUserName"> ({{ data.adUserName }})</span>
+  </h1>
+  
+  <div mat-dialog-content dir="rtl">
+    <ng-container *ngIf="dataSource?.length; else noGroups">
+      <p>סה"כ קבוצות: {{ dataSource.length }}</p>
+  
+      <table
+        mat-table
+        [dataSource]="dataSource"
+        class="mat-elevation-z2 groups-mat-table"
+        dir="rtl">
+  
+        <!-- # -->
+        <ng-container matColumnDef="index">
+          <th mat-header-cell *matHeaderCellDef>#</th>
+          <td mat-cell *matCellDef="let row">{{ row.index }}</td>
+        </ng-container>
+  
+        <!-- קוד קבוצה -->
+        <ng-container matColumnDef="code">
+          <th mat-header-cell *matHeaderCellDef>קוד קבוצה</th>
+          <td mat-cell *matCellDef="let row">
+            <code>{{ row.code }}</code>
+          </td>
+        </ng-container>
+  
+        <!-- Desc -->
+        <ng-container matColumnDef="desc">
+          <th mat-header-cell *matHeaderCellDef>GroupDesc</th>
+          <td mat-cell *matCellDef="let row">
+            <ng-container *ngIf="row.groupDescs?.length; else emptyDesc">
+              {{ row.groupDescs.join(', ') }}
+            </ng-container>
+            <ng-template #emptyDesc></ng-template>
+          </td>
+        </ng-container>
+  
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+      </table>
+    </ng-container>
+  
+    <ng-template #noGroups>
+      <p>לא נמצאו קבוצות AD למשתמש זה.</p>
+    </ng-template>
+  </div>
+  
+  <div mat-dialog-actions align="start">
+    <button mat-button mat-dialog-close>סגור</button>
+  </div>
+  

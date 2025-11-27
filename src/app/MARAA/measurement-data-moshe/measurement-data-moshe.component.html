@@ -37,10 +37,30 @@
       <!-- מדד -->
       <mat-form-field class="wide-select">
         <mat-label>מדד</mat-label>
-        <mat-select [(ngModel)]="selectedMeasurements" multiple>
-          <mat-option *ngFor="let m of measurements" [value]="m">{{ m }}</mat-option>
+      
+        <mat-select [(ngModel)]="selectedMeasurements" multiple (openedChange)="opened = $event">
+          <!-- Search box pinned at top of panel -->
+          <mat-option disabled (click)="$event.stopPropagation()">
+            <mat-form-field appearance="outline" style="width:100%; margin-top:4px;">
+              <input
+                matInput
+                #searchBox
+                placeholder="חיפוש…"
+                [value]="measurementSearch"
+                (keydown)="$event.stopPropagation()"
+                (input)="onMeasurementSearch(searchBox.value)" />
+            </mat-form-field>
+          </mat-option>
+      
+          <!-- Filtered options -->
+          <mat-option *ngFor="let m of measurementsFiltered" [value]="m">
+            {{ m }}
+          </mat-option>
         </mat-select>
       </mat-form-field>
+      
+      
+      
 
       <button mat-raised-button color="primary" (click)="applyFilter()">סנן</button>
       <button mat-raised-button color="warn" (click)="resetFilter()">איפוס</button>
@@ -602,7 +622,10 @@
             <th mat-header-cell *matHeaderCellDef>מאושר מבר</th>
             <td mat-cell *matCellDef="let row">{{ row.aprovedMabar ? 'כן' : '' }}</td>
           </ng-container>
-
+          <ng-container matColumnDef="personalRequest">
+            <th mat-header-cell *matHeaderCellDef> בקשה להשגה פרטנית</th>
+            <td mat-cell *matCellDef="let row">{{ row.personalRequest ? 'כן' : '' }}</td>
+          </ng-container>
           <tr mat-header-row *matHeaderRowDef="failedCasesDisplayedColumns"></tr>
           <tr mat-row *matRowDef="let row; columns: failedCasesDisplayedColumns;" (click)="openRemarksDialog(row)"></tr>
         </table>

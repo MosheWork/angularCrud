@@ -6,25 +6,13 @@
     <div class="welcome-text">ברוך הבא {{ UserName }}</div>
   </div>
 
-  <!-- 🔽 Filters + Gauge -->
-  <div class="summary-card-wrapper">
-    <!-- Reactive filters (bound to filterForm) -->
-    <form
-      [formGroup]="filterForm"
-      class="filters-row"
-      style="display:flex; flex-wrap:wrap; gap:12px; align-items:center; margin: 8px 0 16px;"
-    >
-      <!-- TopProcedure (step filter: 10..selected) -->
-      <mat-form-field appearance="fill" style="min-width:180px;">
-        <mat-label>TopProcedure</mat-label>
-        <mat-select formControlName="topProcedureFilter" (selectionChange)="applyFilters()">
-          <mat-option [value]="null">הכול</mat-option>
-          <mat-option *ngFor="let n of topProcedureOptions" [value]="n">{{ n }}</mat-option>
-        </mat-select>
-      </mat-form-field>
-
-      <!-- Surgery Department -->
-      <mat-form-field appearance="fill" style="min-width:220px;">
+<!-- ======================= TOP SUMMARY ROW (FILTERS | GAUGE | GRAPH) ======================= -->
+<div class="summary-row" style="display:flex; gap:12px; align-items:stretch; margin:12px 0;">
+  <!-- LEFT: Filters (40%) -->
+  <div class="card" style="flex:0 0 40%; padding:12px; border-radius:10px; background:#fff; box-shadow:0 2px 10px rgba(0,0,0,.08);">
+    <form [formGroup]="filterForm" class="filters-row" style="display:flex; flex-wrap:wrap; gap:12px; align-items:flex-start;">
+      <!-- מחלקת ניתוח -->
+      <mat-form-field appearance="fill" style="min-width:220px; flex:1 1 220px;">
         <mat-label>מחלקת ניתוח</mat-label>
         <mat-select formControlName="surgeryDepartmentFilter" (selectionChange)="applyFilters()">
           <mat-option value="">הכול</mat-option>
@@ -32,49 +20,65 @@
         </mat-select>
       </mat-form-field>
 
-      <!-- GiveOrderName -->
-      <mat-form-field appearance="fill" style="min-width:220px;">
-        <mat-label>נותן התרופה</mat-label>
-        <mat-select formControlName="giveOrderNameFilter" (selectionChange)="applyFilters()">
-          <mat-option value="">הכול</mat-option>
-          <mat-option *ngFor="let g of giveOrderNameOptions" [value]="g">{{ g }}</mat-option>
+      <!-- שם פרוצדורה (multi) -->
+      <mat-form-field appearance="fill" style="min-width:260px; flex:1 1 260px;">
+        <mat-label>שם פרוצדורה</mat-label>
+        <mat-select formControlName="procedureNameFilter" multiple (selectionChange)="applyFilters()">
+          <mat-option *ngFor="let p of procedureNameOptions" [value]="p">{{ p }}</mat-option>
         </mat-select>
       </mat-form-field>
 
-      <!-- TimeGroup -->
-      <mat-form-field appearance="fill" style="min-width:200px;">
-        <mat-label>קבוצת זמן</mat-label>
-        <mat-select formControlName="timeGroup" (selectionChange)="applyFilters()">
-          <mat-option value="">הכול</mat-option>
-          <mat-option *ngFor="let tg of timeGroupOptions" [value]="tg">{{ tg }}</mat-option>
+      <!-- שנה (multi) -->
+      <mat-form-field appearance="fill" style="min-width:160px; flex:1 1 160px;">
+        <mat-label>שנה</mat-label>
+        <mat-select formControlName="yearFilter" multiple (selectionChange)="applyFilters()">
+          <mat-option *ngFor="let y of yearOptions" [value]="y">{{ y }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <!-- חודש (multi) -->
+      <mat-form-field appearance="fill" style="min-width:160px; flex:1 1 160px;">
+        <mat-label>חודש</mat-label>
+        <mat-select formControlName="monthFilter" multiple (selectionChange)="applyFilters()">
+          <mat-option *ngFor="let m of monthOptions" [value]="m">
+            {{ m | number:'2.0-0' }}
+          </mat-option>
         </mat-select>
       </mat-form-field>
     </form>
+  </div>
 
-    <!-- Gauge -->
-    <div class="gauge-wrapper">
-      <ngx-gauge
-        [value]="noDrugsPercentage"
-        [label]="'ללא תרופות ברשימה %'"
-        [append]="'%'"
-      ></ngx-gauge>
+  <!-- MIDDLE: Gauge (20%) -->
+  <div class="card" style="flex:0 0 20%; padding:12px; border-radius:10px; background:#fff; box-shadow:0 2px 10px rgba(0,0,0,.08); display:flex; flex-direction:column; align-items:center; justify-content:center;">
+    <ngx-gauge
+      [value]="noDrugsPercentage"
+      [label]="'ללא תרופות ברשימה %'"
+      [append]="'%'">
+    </ngx-gauge>
+    <div class="gauge-summary" style="margin-top:8px; text-align:center;">
+      סה״כ: {{ totalRows }}<br />
+      ללא תרופות: {{ noDrugsMatTableDataSource.data.length }}
+    </div>
+  </div>
 
-      <div class="gauge-summary">
-        סה״כ: {{ totalRows }} | ללא תרופות: {{ noDrugsMatTableDataSource.data.length }}
+  <!-- RIGHT: Monthly chart (40%) -->
+  <div class="card" style="flex:0 0 40%; padding:12px; border-radius:10px; background:#fff; box-shadow:0 2px 10px rgba(0,0,0,.08);">
+    <div style="display:flex; align-items:center; justify-content:space-between;">
+      <h3 style="margin:0;">    אחוז תקין פר חודש</h3>
+    </div>
+    <div *ngIf="!monthLabels.length" style="opacity:.7;">אין נתונים להצגה</div>
+
+    <!-- Fixed internal resolution, fluid layout -->
+    <div style="width:100%; max-width:100%;">
+      <div style="position:relative; width:100%; height:auto;">
+        <canvas #monthlyCanvas
+                width="1100" height="420"
+                style="display:block; width:100%; height:auto;"></canvas>
       </div>
     </div>
-
-    <!-- ICD9 button -->
-    <button
-      *ngIf="canManageICD9()"
-      mat-raised-button
-      color="primary"
-      (click)="openProcedureDialog()"
-      style="margin: 10px;"
-    >
-      ניהול קודי ICD9
-    </button>
   </div>
+</div>
+<!-- ======================= /TOP SUMMARY ROW ======================= -->
 
   <!-- 🔍 Global search -->
   <form [formGroup]="filterForm" class="filter-form">

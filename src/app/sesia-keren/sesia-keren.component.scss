@@ -1,0 +1,55 @@
+.table-scroll-wrapper {
+  width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
+/* תן לטבלה רוחב מינימלי גדול כדי שלא תידחס */
+.sesia-table {
+  width: 100%;
+  min-width: 4200px;   // ☚ תעלה/תוריד לפי הצורך (3500–5000)
+  table-layout: auto;
+}
+
+/* אל תיתן לטקסט להיחתך באמצע שורה */
+.sesia-table .mat-header-row,
+.sesia-table .mat-row {
+  white-space: nowrap;
+}
+
+/* אפשר גם להגדיר מינימום רוחב לכמה עמודות חשובות */
+.sesia-table .mat-column-caseNumber        { min-width: 110px; }
+.sesia-table .mat-column-patientName       { min-width: 180px; }
+.sesia-table .mat-column-surgeryDate       { min-width: 130px; }
+.sesia-table .mat-column-hDayOfWeek        { min-width: 130px; }
+.sesia-table .mat-column-keren             { min-width: 100px; }
+.sesia-table .mat-column-drg               { min-width: 100px; }
+.sesia-table .mat-column-department        { min-width: 150px; }
+.sesia-table .mat-column-surgerY_NAME      { min-width: 220px; }
+
+/* קצת רווח בין תאים */
+.sesia-table .mat-cell,
+.sesia-table .mat-header-cell {
+  padding: 4px 8px;
+  box-sizing: border-box;
+}
+.table-scroll-wrapper {
+  width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  direction: rtl;        // scrollbar behaves RTL
+  padding-bottom: 4px;
+}
+
+/* make the table wide so it really scrolls, adjust as needed */
+.table-scroll-wrapper .mat-table {
+  min-width: 2200px;     // or bigger if still cuts columns
+}
+/* Bold headers for this table */
+.mat-elevation-z8 .mat-header-cell,
+.mat-elevation-z8 .mat-mdc-header-cell {
+  font-weight: 700;      // bold
+  /* optional extras: */
+  // text-align: center;
+  // white-space: nowrap;
+}

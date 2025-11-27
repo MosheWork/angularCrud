@@ -1,0 +1,135 @@
+<h2 mat-dialog-title dir="rtl">
+    שרתים עבור המערכת: <b>{{ data.forSystem }}</b>
+  </h2>
+  
+  <mat-dialog-content class="content" dir="rtl">
+    <div class="toolbar">
+      <button mat-stroked-button (click)="reload()">
+        <mat-icon>refresh</mat-icon>
+        רענן
+      </button>
+  
+      <span class="spacer"></span>
+  
+      <mat-progress-bar *ngIf="loading" mode="indeterminate"></mat-progress-bar>
+    </div>
+  
+    <mat-card *ngIf="errorMsg" class="error-card">
+      {{ errorMsg }}
+    </mat-card>
+  
+    <mat-card *ngIf="!loading && rows.length === 0 && !errorMsg" class="empty-card">
+      אין שרתים למערכת זו.
+    </mat-card>
+  
+    <div *ngIf="rows.length">
+      <table mat-table [dataSource]="rows" class="mat-elevation-z8" dir="rtl">
+  
+        <!-- Server Name -->
+        <ng-container matColumnDef="serverName">
+          <th mat-header-cell *matHeaderCellDef> שרת </th>
+          <td mat-cell *matCellDef="let r">
+            <div class="server-name">
+              <mat-icon class="dns">dns</mat-icon>
+              <div>
+                <div class="name">{{ r.serverName }}</div>
+                <div class="sub" *ngIf="r.ip || r.description">
+                  <span *ngIf="r.ip">IP: {{ r.ip }}</span>
+                  <span *ngIf="r.ip && r.description">&nbsp;•&nbsp;</span>
+                  <span *ngIf="r.description">{{ r.description }}</span>
+                </div>
+              </div>
+            </div>
+          </td>
+        </ng-container>
+  
+        <!-- CPU -->
+        <ng-container matColumnDef="cpu">
+          <th mat-header-cell *matHeaderCellDef> CPU </th>
+          <td mat-cell *matCellDef="let r">
+            <div class="metric">
+              <div class="bar" [ngClass]="cpuClass(r.stats?.cpuPercent)">
+                <div class="fill" [style.width.%]="r.stats?.cpuPercent || 0"></div>
+              </div>
+              <div class="label">
+                <span class="status-badge" [ngClass]="cpuClass(r.stats?.cpuPercent)">
+                  {{ (r.stats?.cpuPercent ?? 0) | number:'1.0-0' }}%
+                </span>
+              </div>
+            </div>
+          </td>
+        </ng-container>
+  
+        <!-- RAM -->
+        <ng-container matColumnDef="ram">
+          <th mat-header-cell *matHeaderCellDef> זיכרון </th>
+          <td mat-cell *matCellDef="let r">
+            <div class="metric">
+              <div class="bar" [ngClass]="ramClass(r.stats)">
+                <div class="fill" [style.width.%]="ramPercent(r.stats)"></div>
+              </div>
+              <div class="label">
+                <span class="numbers">
+                  {{ formatGb(r.stats?.ramUsedGb) }} / {{ formatGb(r.stats?.ramTotalGb) }}
+                </span>
+                <span class="status-badge" [ngClass]="ramClass(r.stats)">
+                  {{ ramPercent(r.stats) | number:'1.0-0' }}%
+                </span>
+              </div>
+            </div>
+          </td>
+        </ng-container>
+  
+        <!-- Disk -->
+        <ng-container matColumnDef="disk">
+          <th mat-header-cell *matHeaderCellDef> דיסק </th>
+          <td mat-cell *matCellDef="let r">
+            <div class="metric">
+              <div class="bar" [ngClass]="diskClass(r.stats)">
+                <div class="fill" [style.width.%]="diskPercent(r.stats)"></div>
+              </div>
+              <div class="label">
+                <span class="numbers">
+                  {{ formatGb(r.stats?.diskUsedGb) }} / {{ formatGb(r.stats?.diskTotalGb) }}
+                </span>
+                <span class="status-badge" [ngClass]="diskClass(r.stats)">
+                  {{ diskPercent(r.stats) | number:'1.0-0' }}%
+                </span>
+              </div>
+            </div>
+          </td>
+        </ng-container>
+    <!-- Ping (Alive/Down) -->
+<ng-container matColumnDef="pingOk">
+    <th mat-header-cell *matHeaderCellDef> Ping </th>
+    <td mat-cell *matCellDef="let r">
+      <span class="ping-dot"
+            [class.up]="r?.stats?.pingOk === true"
+            [class.down]="r?.stats?.pingOk === false"
+            [matTooltip]="r?.stats?.pingOk ? 'Alive' : 'No reply'">
+      </span>
+      <span class="ping-text">
+        {{ r?.stats?.pingOk ? 'Alive' : 'No reply' }}
+      </span>
+    </td>
+  </ng-container>
+        <!-- Actions -->
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef> פעולות </th>
+          <td mat-cell *matCellDef="let r">
+            <button mat-icon-button matTooltip="רענן שרת זה בלבד" (click)="reload()">
+              <mat-icon>refresh</mat-icon>
+            </button>
+          </td>
+        </ng-container>
+  
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row        *matRowDef="let row; columns: displayedColumns"></tr>
+      </table>
+    </div>
+  </mat-dialog-content>
+  
+  <mat-dialog-actions align="end">
+    <button mat-stroked-button (click)="close()">סגור</button>
+  </mat-dialog-actions>
+  

@@ -22,32 +22,24 @@ export class ApplicationsListDeptDialogComponent implements OnInit {
     @Inject(MAT_DIALOG_DATA) public data: any,
     private http: HttpClient
   ) {
-    // tolerate either lowerCamel (front) or Pascal/ALLCAPS (back) coming in
-    const row = data ?? {};
-    const norm = {
-      id:              row.id ?? row.Id ?? row.ID ?? null,
-      appName:         row.appName ?? row.AppName ?? '',
-      companyName:     row.companyName ?? row.CompanyName ?? '',
-      appDescription:  row.appDescription ?? row.AppDescription ?? '',
-      primaryReference:row.primaryReference ?? row.PrimaryReference ?? '',
-      secondaryReference: row.secondaryReference ?? row.SecondaryReference ?? '',
-      remarks:         row.remarks ?? row.Remarks ?? '',
-      phones:          row.phones ?? row.Phones ?? '',
-      guides:          row.guides ?? row.Guides ?? ''   // DB stores only one guide (string)
-    };
-
     this.form = this.fb.group({
-      id: [norm.id],
-      appName: [norm.appName, Validators.required],
-      companyName: [norm.companyName],
-      appDescription: [norm.appDescription],
-      primaryReference: [norm.primaryReference],
-      secondaryReference: [norm.secondaryReference],
-      remarks: [norm.remarks],
-      phones: [norm.phones],
-      guides: [norm.guides] // file name or absolute URL
+      id: [null],
+      appName: [''],
+      companyName: [''],
+      appDescription: [''],
+      primaryReference: [''],
+      secondaryReference: [''],
+      remarks: [''],
+      phones: [''],
+      guides: ['']
     });
+  
+    // 👇 Fill all fields immediately from data
+    if (data) {
+      this.form.patchValue(data, { emitEvent: false });
+    }
   }
+  
 
   ngOnInit(): void {
     const g = (this.form.value.guides || '').toString().trim();
@@ -73,21 +65,28 @@ export class ApplicationsListDeptDialogComponent implements OnInit {
     const formData = new FormData();
     formData.append('file', input.files[0]);
 
-    this.http.post<{ FileName: string; OriginalName: string; Url: string }>(
+    this.http.post<any>(
       environment.apiUrl + 'ApplicationsListDept/UploadFile',
       formData
     ).subscribe(res => {
-      // ✅ DB should store just the file name
-      this.form.patchValue({ guides: res.FileName });
-
-      // UI preview uses the served URL
-      this.uploadedFileUrl = res.Url;
-      this.uploadedFileName = res.OriginalName || res.FileName;
-
+    
+      const fileName = res.fileName ?? res.FileName;          // ✅ handle both
+      const url       = res.url ?? res.Url;
+      const original  = res.originalName ?? res.OriginalName;
+    
+      // store file name in DB (recommended)
+      this.form.patchValue({ guides: fileName });
+    
+      // preview
+      this.uploadedFileUrl  = url;
+      this.uploadedFileName = original || fileName;
+    
       input.value = '';
-    }, _ => {
+    }, err => {
+      alert(err?.error || 'Upload failed');
       input.value = '';
     });
+    
   }
 
   onDeleteGuide() {
@@ -117,13 +116,29 @@ export class ApplicationsListDeptDialogComponent implements OnInit {
   }
 
   save() {
-    const payload = this.buildPayload();
-    const endpoint = payload.id ? 'ApplicationsListDept/Update' : 'ApplicationsListDept/Insert';
-
+    // Always read the form’s live values
+    const v = this.form.value;
+  
+    const payload = {
+      id: v.id,
+      appName: (v.appName || '').trim(),
+      companyName: (v.companyName || '').trim(),
+      appDescription: (v.appDescription || '').trim(),
+      primaryReference: (v.primaryReference || '').trim(),
+      secondaryReference: (v.secondaryReference || '').trim(),
+      remarks: (v.remarks || '').trim(),
+      phones: (v.phones || '').trim(),
+      guides: (v.guides || '').trim()
+    };
+  
+    const endpoint = payload.id
+      ? 'ApplicationsListDept/Update'
+      : 'ApplicationsListDept/Insert';
+  
     this.http.post(environment.apiUrl + endpoint, payload)
       .subscribe(() => this.dialogRef.close(true));
   }
-
+  
   close(): void {
     this.dialogRef.close();
   }

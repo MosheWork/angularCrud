@@ -1,0 +1,27 @@
+<h2 mat-dialog-title>הערה למקרה {{ data.caseNumber }}</h2>
+
+<mat-dialog-content dir="rtl">
+  <div style="margin-bottom: 8px;">
+    <strong>מטופל:</strong> {{ data.patientName }}
+  </div>
+  <div style="margin-bottom: 8px;">
+    <strong>תאריך ניתוח:</strong>
+    <span *ngIf="data.surgeryDate as d">
+      {{ d | date:'dd/MM/yyyy' }}
+    </span>
+  </div>
+
+  <mat-form-field style="width: 100%;">
+    <mat-label>הערה כללית</mat-label>
+    <textarea
+      matInput
+      [(ngModel)]="commentText"
+      rows="6"
+    ></textarea>
+  </mat-form-field>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="onCancel()">ביטול</button>
+  <button mat-raised-button color="primary" (click)="onSave()">שמור</button>
+</mat-dialog-actions>

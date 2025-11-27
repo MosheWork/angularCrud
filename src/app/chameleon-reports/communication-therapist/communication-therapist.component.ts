@@ -16,6 +16,7 @@ import * as XLSX from 'xlsx';
 export class CommunicationTherapistComponent implements OnInit {
   loading: boolean = false;
   isGraphVisible: boolean = false;
+  isAllMonthsSelected = false;
 
   chart: Chart | null = null;
   chartType: ChartType = 'bar';
@@ -95,12 +96,11 @@ export class CommunicationTherapistComponent implements OnInit {
   constructor(private http: HttpClient, private fb: FormBuilder) {
     this.filterForm = this.fb.group({
       year: new FormControl(new Date().getFullYear()),
-      month: new FormControl(null),
-      // optional extra filters (if you add inputs in the template)
+      months: new FormControl<number[]>([]),       // <-- במקום month: number | null
       admissionNo: new FormControl(null),
       idNum: new FormControl(null),
     });
-
+  
     Chart.register(...registerables);
   }
 
@@ -119,78 +119,87 @@ export class CommunicationTherapistComponent implements OnInit {
   }
 
   applyFilters(): void {
-    const { year, month, admissionNo, idNum } = this.filterForm.value;
-
-    this.fetchDailyFollowUpData(year, month);
-    this.fetchAnamnesisResultsData(year, month);
-    this.fetchFullListDailyFollowUp(year, month);
-    this.fetchFilteredAnamnesisResults(year, month, admissionNo, idNum);
+    const { year, months, admissionNo, idNum } = this.filterForm.value as {
+      year: number;
+      months: number[];
+      admissionNo?: string;
+      idNum?: string;
+    };
+  
+    this.fetchDailyFollowUpData(year, months);
+    this.fetchAnamnesisResultsData(year, months);
+    this.fetchFullListDailyFollowUp(year, months);
+    this.fetchFilteredAnamnesisResults(year, months, admissionNo, idNum);
   }
-
+  
   resetFilters(): void {
     this.filterForm.reset({
       year: new Date().getFullYear(),
-      month: null,
+      months: [],            // איפוס רב-בחירה
       admissionNo: null,
       idNum: null,
     });
+    this.isAllMonthsSelected = false;
     this.applyFilters();
   }
+  
 
-  fetchDailyFollowUpData(year?: number, month?: number): void {
+  fetchDailyFollowUpData(year?: number, months?: number[]): void {
     this.loading = true;
-
     const params: any = {};
     if (year) params.year = year;
-    if (month) params.month = month;
-
-    this.http
-      .get<any[]>(`${environment.apiUrl}CommunicationTherapist/V_DailyFollowUp`, { params })
+    const m = this.monthsParam(months);
+    if (m) params.months = m;
+  
+    this.http.get<any[]>(`${environment.apiUrl}CommunicationTherapist/V_DailyFollowUp`, { params })
       .subscribe(
-        (data) => {
+        data => {
           this.dailyFollowUpDataSource.data = data;
           if (this.dailyFollowUpPaginator) {
             this.dailyFollowUpDataSource.paginator = this.dailyFollowUpPaginator;
           }
           this.loading = false;
         },
-        () => (this.loading = false)
+        () => this.loading = false
       );
   }
 
-  fetchFilteredAnamnesisResults(year?: number, month?: number, admissionNo?: string, idNum?: string): void {
+  fetchFilteredAnamnesisResults(
+    year?: number,
+    months?: number[],
+    admissionNo?: string,
+    idNum?: string
+  ): void {
     this.loading = true;
-
     const params: any = {};
     if (year) params.year = year;
-    if (month) params.month = month;
+    const m = this.monthsParam(months);
+    if (m) params.months = m;
     if (admissionNo) params.admissionNo = admissionNo;
     if (idNum) params.idNum = idNum;
-
-    this.http
-      .get<any[]>(`${environment.apiUrl}CommunicationTherapist/FilteredAnamnesisResults`, { params })
+  
+    this.http.get<any[]>(`${environment.apiUrl}CommunicationTherapist/FilteredAnamnesisResults`, { params })
       .subscribe(
-        (data) => {
+        data => {
           this.fullListDataSource.data = data;
           if (this.fullListPaginator) this.fullListDataSource.paginator = this.fullListPaginator;
           if (this.fullListSort) this.fullListDataSource.sort = this.fullListSort;
           this.loading = false;
         },
-        () => (this.loading = false)
+        () => this.loading = false
       );
   }
 
-  fetchAnamnesisResultsData(year?: number, month?: number): void {
+  fetchAnamnesisResultsData(year?: number, months?: number[]): void {
     this.loading = true;
-
     const params: any = {};
     if (year) params.year = year;
-    if (month) params.month = month;
-
-    this.http
-      .get<any[]>(`${environment.apiUrl}CommunicationTherapist/AnamnesisResults`, { params })
+    const m = this.monthsParam(months);
+    if (m) params.months = m;
+  
+    this.http.get<any[]>(`${environment.apiUrl}CommunicationTherapist/AnamnesisResults`, { params })
       .subscribe(
-        (data) => {
+        data => {
           this.anamnesisResultsDataSource.data = data;
           if (this.anamnesisResultsPaginator) {
             this.anamnesisResultsDataSource.paginator = this.anamnesisResultsPaginator;
@@ -200,27 +209,26 @@ export class CommunicationTherapistComponent implements OnInit {
           }
           this.loading = false;
         },
-        () => (this.loading = false)
+        () => this.loading = false
       );
   }
 
-  fetchFullListDailyFollowUp(year?: number, month?: number): void {
+  fetchFullListDailyFollowUp(year?: number, months?: number[]): void {
     this.loading = true;
-
     const params: any = {};
     if (year) params.year = year;
-    if (month) params.month = month;
-
-    this.http
-      .get<any[]>(`${environment.apiUrl}CommunicationTherapist/FullListDailyFollowUp`, { params })
+    const m = this.monthsParam(months);
+    if (m) params.months = m;
+  
+    this.http.get<any[]>(`${environment.apiUrl}CommunicationTherapist/FullListDailyFollowUp`, { params })
       .subscribe(
-        (data) => {
+        data => {
           this.fullListDataSource.data = data;
           if (this.fullListPaginator) this.fullListDataSource.paginator = this.fullListPaginator;
           if (this.fullListSort) this.fullListDataSource.sort = this.fullListSort;
           this.loading = false;
         },
-        () => (this.loading = false)
+        () => this.loading = false
       );
   }
 
@@ -297,5 +305,26 @@ export class CommunicationTherapistComponent implements OnInit {
     };
 
     XLSX.writeFile(workbook, fileName);
+  }
+  onMonthsChange(): void {
+    const selected: number[] = this.filterForm.value.months ?? [];
+    this.isAllMonthsSelected = selected.length === this.months.length;
+  }
+  
+  toggleAllMonths(): void {
+    if (this.isAllMonthsSelected) {
+      // נקה הכול
+      this.filterForm.patchValue({ months: [] });
+      this.isAllMonthsSelected = false;
+    } else {
+      // בחר הכול
+      this.filterForm.patchValue({ months: this.months.map(m => m.value) });
+      this.isAllMonthsSelected = true;
+    }
+  }
+
+  private monthsParam(months?: number[]): string | undefined {
+    if (!months || months.length === 0) return undefined;
+    return months.join(','); // "1,2,3"
   }
 }

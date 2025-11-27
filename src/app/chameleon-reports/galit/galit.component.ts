@@ -8,11 +8,15 @@ import { MatSort } from '@angular/material/sort';
 import * as XLSX from 'xlsx';
 import { environment } from '../../../environments/environment';
 import { finalize } from 'rxjs/operators';
+import { MatDialog } from '@angular/material/dialog';
+import { RulesDialogComponent } from './rules-dialog/rules-dialog.component'; // adjust path as needed
+
 
 type Row = {
   unitName: string;
   admission_No: number;
   name: string;
+  father_Name: string;
   age_Years: number;
   room: string;
   gender_Text: string;
@@ -54,6 +58,8 @@ type Row = {
   procICD9Rule?: boolean;
 
   reason: string;
+  rulesDescription?: string;  // <-- ADD THIS
+
 };
 
 
@@ -76,11 +82,11 @@ export class GalitComponent implements OnInit {
   // We'll compute KPI counts from the base (pre-toggle) filtered set:
   private baseFilteredForKpi: Row[] = [];
   columns: (keyof Row)[] = [
-    'unitName','admission_No','name','age_Years','gender_Text','room','totalDaysInHosp',
+    'unitName','admission_No','name','father_Name','age_Years','gender_Text','room','totalDaysInHosp',
     'dxICD9List','procICD9List',
     'hasConsilium150685814','lastConsiliumAnswerDate','daysSinceLastHosp',
-    'labResultAfterAdmission','norton','bmi','wayOfFeding','stampGrade',
-    'skinIntegrityAnswer','typeOfFood','foodTexture',
+    'labResultAfterAdmission','norton','wayOfFeding','stampGrade',
+    'skinIntegrityAnswer','typeOfFood','foodTexture','bmi',
     'weightKg','heightCm','allergy','mustGrade'
   ];
   
@@ -94,11 +100,11 @@ export class GalitComponent implements OnInit {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
-  constructor(private http: HttpClient, fb: FormBuilder) {
+  constructor(private http: HttpClient, fb: FormBuilder,private dialog: MatDialog) {
     const ctrls: Record<string, FormControl> = {};
     this.columns.forEach(c => ctrls[c] = new FormControl(''));
     ctrls['globalFilter'] = new FormControl('');
-    this.filterForm = fb.group(ctrls);
+    this.filterForm = fb.group(ctrls)
   }
 
   ngOnInit(): void {
@@ -122,6 +128,7 @@ export class GalitComponent implements OnInit {
               unitName: r.UnitName ?? r.unitName ?? '',
               admission_No: r.Admission_No ?? r.admission_No ?? null,
               name: r.Name ?? r.name ?? '',
+              father_Name: r.father_Name ?? r.father_Name ?? '',
               age_Years: r.Age_Years ?? r.age_Years ?? null,
               room: r.Room ?? r.room ?? '',
               gender_Text: r.Gender_Text ?? r.gender_Text ?? '',
@@ -155,6 +162,8 @@ export class GalitComponent implements OnInit {
               mustRule: !!(r.MustRule ?? r.mustRule),
               dxICD9Rule: !!(r.DxICD9Rule ?? r.dxICD9Rule),
               procICD9Rule: !!(r.ProcICD9Rule ?? r.procICD9Rule),
+              rulesDescription: r.RulesDescription ?? r.rulesDescription ?? '',  
+
               reason: r.Reason ?? r.reason ?? ''
             })) as Row[];
   
@@ -188,6 +197,7 @@ export class GalitComponent implements OnInit {
       unitName:'שם יחידה',
       admission_No:'מס׳ אשפוז',
       name:'שם',
+      father_Name:'  שם האבא',
       age_Years:'גיל',
       room:'חדר',
       gender_Text:'מין',
@@ -272,12 +282,34 @@ export class GalitComponent implements OnInit {
   }
 
   exportToExcel(): void {
-    const ws = XLSX.utils.json_to_sheet(this.filteredData);
+    // Map the data to use Hebrew headers
+    const hebrewData = this.filteredData.map(row => {
+      const hebrewRow: Record<string, any> = {};
+      this.columns.forEach(col => {
+        const hebrewLabel = this.getColumnLabel(col);
+        
+        // Format date columns to show only date without time
+        if (col === 'lastConsiliumAnswerDate' && row[col]) {
+          const dateValue = row[col];
+          if (dateValue) {  // Extra null check
+            const date = new Date(dateValue);
+            hebrewRow[hebrewLabel] = date.toLocaleDateString('en-GB'); // dd/MM/yyyy
+            // Or use: date.toISOString().split('T')[0]; // yyyy-MM-dd
+          } else {
+            hebrewRow[hebrewLabel] = '';
+          }
+        } else {
+          hebrewRow[hebrewLabel] = row[col];
+        }
+      });
+      return hebrewRow;
+    });
+  
+    const ws = XLSX.utils.json_to_sheet(hebrewData);
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, 'Galit');
     XLSX.writeFile(wb, 'galit.xlsx');
   }
-
   getCellClass(c: string, row: Row): Record<string, boolean> {
     const hasCons = (row.hasConsilium150685814 || '').toString().trim().toLowerCase();
     const noCons = hasCons === 'no' || hasCons === 'לא'; // keep Hebrew “No” if needed
@@ -324,5 +356,18 @@ get lowAlbuminCount(): number {
     r.labResultAfterAdmission != null && r.labResultAfterAdmission <= this.albuminThreshold
   ).length;
 }
+  // Add this method to open the dialog
+  openRulesDialog(row: Row): void {
+    this.dialog.open(RulesDialogComponent, {
+      width: '600px',
+      data: {
+        name: row.name,
+        admission_No: row.admission_No,
+        age_Years: row.age_Years,
+        room: row.room,
+        rulesDescription: row.rulesDescription
+      }
+    });
+  }
 
 }
