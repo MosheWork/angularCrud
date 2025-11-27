@@ -1,0 +1,33 @@
+<h2 mat-dialog-title>
+    בדיקות סוכר ל־{{ data.name }} ({{ data.idNum }})
+  </h2>
+  
+  <mat-dialog-content>
+    <app-spinner [isLoading]="loading"></app-spinner>
+  
+    <table *ngIf="!loading" class="labs-table" dir="rtl">
+      <thead>
+        <tr>
+          <th>תאריך</th>
+          <th>קוד</th>
+          <th>שם בדיקה</th>
+          <th>תוצאה</th>
+          <th>יחידות</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let l of labResults">
+          <td>{{ l.resultDate | date: 'dd/MM/yyyy HH:mm' }}</td>
+          <td>{{ l.testCode }}</td>
+          <td>{{ l.testName }}</td>
+          <td>{{ l.numericResult ?? l.result }}</td>
+          <td>{{ l.units }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </mat-dialog-content>
+  
+  <mat-dialog-actions align="end">
+    <button mat-button (click)="close()">סגור</button>
+  </mat-dialog-actions>
+  

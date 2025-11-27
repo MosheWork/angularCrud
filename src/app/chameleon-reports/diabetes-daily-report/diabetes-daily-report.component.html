@@ -1,0 +1,188 @@
+<div class="body" dir="rtl">
+    <app-spinner [isLoading]="loading"></app-spinner>
+  
+    <!-- KPI card -->
+    <mat-card class="kpi-card" *ngIf="!loading" dir="rtl">
+      <mat-card-content>
+        <div class="kpi-grid">
+  
+          <!-- סוכר > 180 -->
+          <div class="kpi-item">
+            <div class="kpi-title">סוכר &gt; 180 ב־72 שעות</div>
+            <div class="kpi-value">
+              <!-- total / count -->
+              <span class="kpi-total">{{ totalPatients }}</span>
+              <span class="kpi-sep">/</span>
+              <span class="kpi-strong kpi-amber">{{ above180Count }}</span>
+            </div>
+            <div class="kpi-foot">מטופלים עם לפחות בדיקה אחת מעל 180</div>
+  
+            <mat-button-toggle-group
+              class="kpi-toggle-group small-toggle"
+              [value]="sugarAboveFilter"
+              (change)="onSugarAboveFilterChange($event.value)"
+              name="sugarAboveFilterGroup"
+            >
+              <mat-button-toggle value="all">הכל</mat-button-toggle>
+              <mat-button-toggle value="yes">כן</mat-button-toggle>
+              <mat-button-toggle value="no">לא</mat-button-toggle>
+            </mat-button-toggle-group>
+          </div>
+  
+          <!-- סוכר < 70 -->
+          <div class="kpi-item">
+            <div class="kpi-title">סוכר &lt; 70 ב־72 שעות</div>
+            <div class="kpi-value">
+              <!-- total / count -->
+              <span class="kpi-total">{{ totalPatients }}</span>
+              <span class="kpi-sep">/</span>
+              <span class="kpi-strong kpi-amber">{{ below70Count }}</span>
+            </div>
+            <div class="kpi-foot">מטופלים עם לפחות בדיקה אחת מתחת 70</div>
+  
+            <mat-button-toggle-group
+              class="kpi-toggle-group small-toggle"
+              [value]="sugarBelowFilter"
+              (change)="onSugarBelowFilterChange($event.value)"
+              name="sugarBelowFilterGroup"
+            >
+              <mat-button-toggle value="all">הכל</mat-button-toggle>
+              <mat-button-toggle value="yes">כן</mat-button-toggle>
+              <mat-button-toggle value="no">לא</mat-button-toggle>
+            </mat-button-toggle-group>
+          </div>
+  
+          <!-- אבחנת סוכרת -->
+          <div class="kpi-item">
+            <div class="kpi-title">אבחנת סוכרת</div>
+            <div class="kpi-value">
+              <!-- total / count -->
+              <span class="kpi-total">{{ totalPatients }}</span>
+              <span class="kpi-sep">/</span>
+              <span class="kpi-strong kpi-amber">{{ diagnosisCount }}</span>
+            </div>
+            <div class="kpi-foot">מטופלים עם אבחנת סוכרת</div>
+  
+            <mat-button-toggle-group
+              class="kpi-toggle-group small-toggle"
+              [value]="diagnosisFilter"
+              (change)="onDiagnosisFilterChange($event.value)"
+              name="diagnosisFilterGroup"
+            >
+              <mat-button-toggle value="all">הכל</mat-button-toggle>
+              <mat-button-toggle value="yes">כן</mat-button-toggle>
+              <mat-button-toggle value="no">לא</mat-button-toggle>
+            </mat-button-toggle-group>
+          </div>
+  
+          <!-- הערכת כף רגל -->
+          <div class="kpi-item">
+            <div class="kpi-title">הערכת כף רגל</div>
+            <div class="kpi-value">
+              <!-- total / count -->
+              <span class="kpi-total">{{ totalPatients }}</span>
+              <span class="kpi-sep">/</span>
+              <span class="kpi-strong kpi-amber">{{ footCount }}</span>
+            </div>
+            <div class="kpi-foot">מטופלים עם תיעוד הערכת כף רגל</div>
+  
+            <mat-button-toggle-group
+              class="kpi-toggle-group small-toggle"
+              [value]="footFilter"
+              (change)="onFootFilterChange($event.value)"
+              name="footFilterGroup"
+            >
+              <mat-button-toggle value="all">הכל</mat-button-toggle>
+              <mat-button-toggle value="yes">כן</mat-button-toggle>
+              <mat-button-toggle value="no">לא</mat-button-toggle>
+            </mat-button-toggle-group>
+          </div>
+  
+          <!-- אינסולין -->
+          <div class="kpi-item">
+            <div class="kpi-title">אינסולין</div>
+            <div class="kpi-value">
+              <!-- total / count -->
+              <span class="kpi-total">{{ totalPatients }}</span>
+              <span class="kpi-sep">/</span>
+              <span class="kpi-strong kpi-amber">{{ insulinCount }}</span>
+            </div>
+            <div class="kpi-foot">מטופלים שקיבלו אינסולין באשפוז</div>
+  
+            <mat-button-toggle-group
+              class="kpi-toggle-group small-toggle"
+              [value]="insulinFilter"
+              (change)="onInsulinFilterChange($event.value)"
+              name="insulinFilterGroup"
+            >
+              <mat-button-toggle value="all">הכל</mat-button-toggle>
+              <mat-button-toggle value="yes">כן</mat-button-toggle>
+              <mat-button-toggle value="no">לא</mat-button-toggle>
+            </mat-button-toggle-group>
+          </div>
+  
+        </div>
+      </mat-card-content>
+    </mat-card>
+  
+    <!-- Filters + Excel -->
+    <form [formGroup]="filterForm" class="filter-form" *ngIf="!loading">
+      <div
+        dir="rtl"
+        style="display: flex; justify-content: space-between; align-items: center"
+      >
+        <mat-form-field
+          class="long-search-bar"
+          style="flex: 1; padding-right: 10px"
+        >
+          <mat-label class="filters" style="color: blue"> חיפוש</mat-label>
+          <input
+            matInput
+            [formControlName]="'globalFilter'"
+            class="search-input"
+          />
+        </mat-form-field>
+  
+        <div class="icon" matTooltip="Download Excel">
+          <img
+            src="../../assets/excel.png"
+            alt="Download"
+            (click)="exportToExcel()"
+            class="download-icon"
+            width="50px"
+          />
+        </div>
+      </div>
+    </form>
+  
+    <!-- Table -->
+    <mat-table
+      *ngIf="!loading"
+      [dataSource]="matTableDataSource"
+      matSort
+      class="mat-elevation-z8"
+    >
+      <ng-container *ngFor="let c of columns" [matColumnDef]="c">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>
+          {{ getColumnLabel(c) }}
+        </mat-header-cell>
+        <mat-cell *matCellDef="let row" [ngClass]="getCellClass(c, row)">
+          {{ row[c] }}
+        </mat-cell>
+      </ng-container>
+  
+      <mat-header-row *matHeaderRowDef="columns"></mat-header-row>
+      <mat-row
+        *matRowDef="let row; columns: columns"
+        class="clickable-row"
+      ></mat-row>
+    </mat-table>
+  
+    <mat-paginator
+      [length]="matTableDataSource.data.length"
+      [pageSize]="5"
+      [pageSizeOptions]="[15, 50, 100]"
+    >
+    </mat-paginator>
+  </div>
+  

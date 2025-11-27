@@ -211,6 +211,8 @@ import { SesiaKerenComponent } from './sesia-keren/sesia-keren.component';
 import { SesiaKerenCommentDialogComponent } from './sesia-keren/sesia-keren-comment-dialog/sesia-keren-comment-dialog.component';
 import { RulesDialogComponent } from './chameleon-reports/galit/rules-dialog/rules-dialog.component';
 import { AdGroupsDialogComponent } from './global-app-permission/ad-groups-dialog/ad-groups-dialog.component';
+import { DiabetesDailyReportComponent } from './chameleon-reports/diabetes-daily-report/diabetes-daily-report.component';
+import { DiabetesSugerResultsDialogComponent  } from './chameleon-reports/diabetes-daily-report/diabetes-suger-lab-result/diabetes-suger-lab-result.component';
 
 
 export const MY_DATE_FORMATS: MatDateFormats = {
@@ -398,7 +400,10 @@ export function playerFactory() {
     SesiaKerenComponent,
     SesiaKerenCommentDialogComponent,
     RulesDialogComponent,
-    AdGroupsDialogComponent
+    AdGroupsDialogComponent,
+    DiabetesDailyReportComponent,
+    DiabetesSugerResultsDialogComponent 
+    
  
 
   

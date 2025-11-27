@@ -114,6 +114,7 @@ import { IdEncryptComponent } from './id-encrypt/id-encrypt.component';
 import { ChameleonUserProfileUnitMapComponent } from './chameleon-reports/chameleon-user-profile-unit-map/chameleon-user-profile-unit-map.component';
 import { GlobalAppPermissionComponent } from './global-app-permission/global-app-permission.component';
 import { SesiaKerenComponent } from './sesia-keren/sesia-keren.component';
+import { DiabetesDailyReportComponent } from './chameleon-reports/diabetes-daily-report/diabetes-daily-report.component';
 
 const routes: Routes = [
   //', component: UsersComponent },
@@ -214,6 +215,7 @@ const routes: Routes = [
 { path: 'otc-executions', component: OtcExecutionsComponent , data: { title: 'OTC ' }},//  דוח של קרן OTC
 
 { path: 'ChameleonUserProfileUnitMap', component: ChameleonUserProfileUnitMapComponent , data: { title: 'הרשאות בקמיליון' }},//  
+{ path: 'DiabetesDailyReport', component: DiabetesDailyReportComponent , data: { title: ' דוח סכרת יומי' }},//  
 
 
 
