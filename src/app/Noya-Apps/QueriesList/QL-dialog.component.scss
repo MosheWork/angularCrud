@@ -1,0 +1,32 @@
+.dialog-wrapper {
+  text-align: right;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.dialog-form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+textarea {
+  font-family: monospace;
+}
+
+.form-actions {
+  margin-top: 20px;
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+}
+
+mat-dialog-content,
+form,
+input,
+textarea {
+  direction: rtl;
+  text-align: right;
+}

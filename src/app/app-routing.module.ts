@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { HashLocationStrategy, LocationStrategy } from '@angular/common';
-import { NgModule } from '@angular/core';
+import { NgModule, Query } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { UsersComponent } from './users/users.component';
 import { SQLComponent } from './sql/sql.component';
@@ -106,6 +106,7 @@ import { LinksLogComponent } from './links-log/links-log.component';
 import { PptDuplicateComponent } from './ppt-duplicate/ppt-duplicate.component';
 import { DoctorAuthorizationsComponent } from './doctor-authorizations/doctor-authorizations.component';
 import { PsychologyComponent } from './chameleon-reports/psychology/psychology.component';
+import { QueriesListComponent } from './Noya-Apps/QueriesList/QueriesList.component';
 import { AmbulatoryBirthdayUpdateCRMComponent } from './ServiceCRM/ambulatory-birthday-update-crm/ambulatory-birthday-update-crm.component';
 import { GalitComponent } from './chameleon-reports/galit/galit.component';
 import { OtcExecutionsComponent } from './chameleon-reports/otc-executions/otc-executions.component';
@@ -293,6 +294,8 @@ const routes: Routes = [
 //מערכת ססיות לקרן 
 { path: 'sesia-keren', component: SesiaKerenComponent , data: { title: 'ססיות' } }
 
+//NOYA's APPS
+{ path: 'QueriesList', component: QueriesListComponent, data: { title: 'רשימת שאילתות' } }
 
 
 ];

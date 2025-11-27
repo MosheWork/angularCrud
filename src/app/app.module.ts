@@ -198,6 +198,9 @@ import { PptDuplicateComponent } from './ppt-duplicate/ppt-duplicate.component';
 import { DoctorAuthorizationsComponent } from './doctor-authorizations/doctor-authorizations.component';
 import { PsychologyComponent } from './chameleon-reports/psychology/psychology.component';
 import { TraumaGraphComponent } from './chameleon-reports/trauma-patients/trauma-graph/trauma-graph.component';
+import { CommonModule } from '@angular/common';
+import { QueriesListComponent } from './Noya-Apps/QueriesList/QueriesList.component';
+import { QueriesDialogComponent } from './Noya-Apps/QueriesList/QL-dialog.component';
 import { AmbulatoryBirthdayUpdateCRMComponent } from './ServiceCRM/ambulatory-birthday-update-crm/ambulatory-birthday-update-crm.component';
 import { GalitComponent } from './chameleon-reports/galit/galit.component';
 import { OtcExecutionsComponent } from './chameleon-reports/otc-executions/otc-executions.component';
@@ -388,6 +391,8 @@ export function playerFactory() {
     DoctorAuthorizationsComponent,
     PsychologyComponent,
     TraumaGraphComponent,
+    QueriesListComponent,
+    QueriesDialogComponent,
     AmbulatoryBirthdayUpdateCRMComponent,
     GalitComponent,
     OtcExecutionsComponent,
@@ -405,8 +410,6 @@ export function playerFactory() {
     DiabetesSugerResultsDialogComponent 
     
  
-
-  
   ],
   imports: [
     BrowserModule,
@@ -446,7 +449,8 @@ export function playerFactory() {
     DragDropModule,
     MatButtonToggleModule,
     CdkTableModule,
-    LottieModule.forRoot({ player: playerFactory })
+    LottieModule.forRoot({ player: playerFactory }),
+    CommonModule,
 
 
   ],
