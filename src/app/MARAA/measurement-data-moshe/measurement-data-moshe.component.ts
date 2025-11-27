@@ -43,11 +43,14 @@ export interface FailedMeasurementCaseModel {
   id: number;
   subtract?: boolean;
   aprovedMabar?: boolean;
+  personalRequest?: boolean;
   entryUserSubtract?: string;
   entryDateSubtract?: Date | null;
   entryUserAprovedMabar?: string;
   entryDateAprovedMabar?: Date | null;
   remarks?: string; // <-- add this line
+  entryUserPersonalRequest?: string;
+  entryDatePersonalRequest?: Date | null;
 
 }
 
@@ -117,7 +120,7 @@ export class MeasurementDataMosheComponent implements OnInit, AfterViewInit {
     'allUnitsGrade'
   ];
 
-  
+  isNBenShimon: boolean = false;
   years: number[] = [];
 quarters: string[] = ['Q1', 'Q2', 'Q3', 'Q4'];
 months: string[] = ['ינואר', 'פברואר', 'מרץ', 'אפריל', 'מאי', 'יוני', 'יולי', 'אוגוסט', 'ספטמבר', 'אוקטובר', 'נובמבר', 'דצמבר'];
@@ -151,6 +154,7 @@ yearlyGauge: number | null = null;
 gaugeRawData: any[] = [];
 
 // 🔹 Add at top of class (e.g., below your other component-level vars)
+measurementSearch: string = '';
 
 yearGaugeTarget: number | null = null;
 quarterGaugeTarget: number | null = null;
@@ -173,6 +177,9 @@ summaryInfo: {
   }[];
 } | null = null;
 
+opened = false;
+measurementsFiltered: string[] = [];
+allMeasurementsSelected = false;
 
 selectedYear: number[] = [];
 selectedQuarter: string[] = [];
@@ -353,6 +360,7 @@ failedCasesDisplayedColumns: string[] = [
   'entryDate',
   'subtract',
   'aprovedMabar',
+  'personalRequest'
 ];
 
 
@@ -390,6 +398,8 @@ profilePictureUrl: string = 'assets/default-user.png';
     this.loadDepartments();
     this.fetchMeasurement();
     this.fetchAllUnitsGrades();
+    this.measurementsFiltered = [...this.measurements];
+
 
     // ✅ Fetch latest gauge summary
     this.http.get<MeasurementGaugeSummaryModel[]>(
@@ -456,6 +466,7 @@ profilePictureUrl: string = 'assets/default-user.png';
         (data) => {
           this.loginUserName = data.UserName;
           this.profilePictureUrl = data.ProfilePicture || 'assets/default-user.png';
+          this.isNBenShimon = this.loginUserName === 'NBENSHIMON';
         },
         (error) => {
           console.error('❌ Error fetching employee info:', error);
@@ -600,10 +611,15 @@ profilePictureUrl: string = 'assets/default-user.png';
     this.http.get<string[]>(`${environment.apiUrl}/MeasurementDataMoshe/GetDepartments`)
       .subscribe(data => this.departments = data);
   }
-  fetchMeasurement() : void{
+  fetchMeasurement(): void {
     this.http.get<string[]>(`${environment.apiUrl}/MeasurementDataMoshe/GetMeasurements`)
-      .subscribe(data => this.measurements = data);
+      .subscribe(data => {
+        this.measurements = data || [];
+        this.measurementsFiltered = [...this.measurements];   // <-- init filtered view
+        this.updateAllSelectedFlag();                         // <-- init select-all state
+      });
   }
+  
 
   fetchQuarterlyPivot(): void {
     const params: { [key: string]: string } = {};
@@ -1223,10 +1239,13 @@ profilePictureUrl: string = 'assets/default-user.png';
       case_Number: 'מספר מקרה',
       subtract: 'הפחתה',
       aprovedMabar: 'מאושר מעבר',
+      personalRequest: 'בקשה להשגה פרטנית ',
       entryUserSubtract: 'משתמש שהפחית',
       entryDateSubtract: 'תאריך הפחתה',
       entryUserAprovedMabar: 'משתמש שאישר מעבר',
-      entryDateAprovedMabar: 'תאריך אישור מעבר'
+      entryDateAprovedMabar: 'תאריך אישור מעבר',
+      entryUserPersonalRequest: 'משתמש בקשה אישית',
+      entryDatePersonalRequest: 'תאריך בקשה אישית',
     };
 
     this.exportExcelFromTable(this.failedCasesDataSource.filteredData, 'מדדים_שלא_בוצעו', headersMap);
@@ -1291,6 +1310,7 @@ profilePictureUrl: string = 'assets/default-user.png';
       Remarks:       row.remarks ?? '',
       Subtract:      row.subtract ?? false,
       AprovedMabar:  row.aprovedMabar ?? false,
+      personalRequest:  row.personalRequest ?? false,
   
       // extra context for display (optional)
       MeasurementShortDesc: row.measurementShortDesc,
@@ -1302,7 +1322,9 @@ profilePictureUrl: string = 'assets/default-user.png';
       EntryUserSubtract:        row.entryUserSubtract || '',
       EntryDateSubtract:        row.entryDateSubtract ?? null,
       EntryUserAprovedMabar:    row.entryUserAprovedMabar || '',
-      EntryDateAprovedMabar:    row.entryDateAprovedMabar ?? null
+      EntryDateAprovedMabar:    row.entryDateAprovedMabar ?? null,
+      EntryUserPersonalRequest:    row.entryUserPersonalRequest || '',
+      EntryDatePersonalRequest:    row.entryDatePersonalRequest ?? null
     };
   
     console.log('[openRemarksDialog] passing data → dialog', data);
@@ -1519,5 +1541,41 @@ profilePictureUrl: string = 'assets/default-user.png';
     };
   }
   
+  filterMeasurements(query: string): void {
+    const q = (query || '').toLowerCase().trim();
+    this.measurementsFiltered = (this.measurements || []).filter(m =>
+      m.toLowerCase().includes(q)
+    );
+    this.updateAllSelectedFlag();
+  }
+  
+  toggleAllMeasurements(): void {
+    const current = new Set(this.selectedMeasurements || []);
+  
+    if (this.allMeasurementsSelected) {
+      // remove all currently filtered items
+      this.measurementsFiltered.forEach(m => current.delete(m));
+    } else {
+      // add all currently filtered items
+      this.measurementsFiltered.forEach(m => current.add(m));
+    }
+  
+    this.selectedMeasurements = Array.from(current);
+    this.updateAllSelectedFlag();
+  }
+  
+  private updateAllSelectedFlag(): void {
+    const filtered = this.measurementsFiltered || [];
+    const selected = new Set(this.selectedMeasurements || []);
+    this.allMeasurementsSelected =
+      filtered.length > 0 && filtered.every(m => selected.has(m));
+  }
+  onMeasurementSearch(q: string | null | undefined): void {
+    this.measurementSearch = (q ?? '').trim();
+    const qLower = this.measurementSearch.toLowerCase();
+    this.measurementsFiltered = (this.measurements ?? []).filter(m =>
+      (m ?? '').toLowerCase().includes(qLower)
+    );
+  }
   
 }

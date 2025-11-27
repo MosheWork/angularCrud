@@ -109,6 +109,13 @@ import { PsychologyComponent } from './chameleon-reports/psychology/psychology.c
 import { QueriesListComponent } from './Noya-Apps/QueriesList/QueriesList.component';
 import { AmbulatoryBirthdayUpdateCRMComponent } from './ServiceCRM/ambulatory-birthday-update-crm/ambulatory-birthday-update-crm.component';
 import { GalitComponent } from './chameleon-reports/galit/galit.component';
+import { OtcExecutionsComponent } from './chameleon-reports/otc-executions/otc-executions.component';
+import { ServerInventoryComponent } from './server-inventory/server-inventory.component';
+import { IdEncryptComponent } from './id-encrypt/id-encrypt.component';
+import { ChameleonUserProfileUnitMapComponent } from './chameleon-reports/chameleon-user-profile-unit-map/chameleon-user-profile-unit-map.component';
+import { GlobalAppPermissionComponent } from './global-app-permission/global-app-permission.component';
+import { SesiaKerenComponent } from './sesia-keren/sesia-keren.component';
+import { DiabetesDailyReportComponent } from './chameleon-reports/diabetes-daily-report/diabetes-daily-report.component';
 
 const routes: Routes = [
   //', component: UsersComponent },
@@ -205,8 +212,11 @@ const routes: Routes = [
 { path: 'medication-reconciliationr', component: MedicationReconciliationComponent , data: { title: 'MedicationReconciliation' }},//  MedicationReconciliation 
 { path: 'main-surgery', component: MainSurgeryComponent , data: { title: 'מערכת יעל ' }},//  רשימת ניתוחים
 { path: 'Psychology', component: PsychologyComponent , data: { title: 'פסיכולוגיה' }},//  דוח תפוקות
-{ path: 'Galit', component: GalitComponent , data: { title: 'דוח גלית' }},//  דוח תזונה של גלית 
+{ path: 'Galit', component: GalitComponent , data: { title: 'דוח גלית' }},//  דוח תזונה של גלית
+{ path: 'otc-executions', component: OtcExecutionsComponent , data: { title: 'OTC ' }},//  דוח של קרן OTC
 
+{ path: 'ChameleonUserProfileUnitMap', component: ChameleonUserProfileUnitMapComponent , data: { title: 'הרשאות בקמיליון' }},//  
+{ path: 'DiabetesDailyReport', component: DiabetesDailyReportComponent , data: { title: ' דוח סכרת יומי' }},//  
 
 
 
@@ -272,6 +282,17 @@ const routes: Routes = [
 { path: 'ppt-duplicate', component: PptDuplicateComponent , data: { title: 'מצגות ' } },
 { path: 'doctor-authorizations', component: DoctorAuthorizationsComponent , data: { title: 'הרשאות רפואיות - רופאים' } },
 
+//מצב שרת
+{ path: 'server-inventory', component: ServerInventoryComponent , data: { title: 'מצב שרתים' } },
+
+
+//מערכת להצפנת תז
+{ path: 'id-encrypt', component: IdEncryptComponent , data: { title: 'הצפנת ת"ז ' } },
+//מערכת הרשאות 
+{ path: 'GlobalAppPermission', component: GlobalAppPermissionComponent , data: { title: ' הרשאות' } },
+
+//מערכת ססיות לקרן 
+{ path: 'sesia-keren', component: SesiaKerenComponent , data: { title: 'ססיות' } }
 
 //NOYA's APPS
 { path: 'QueriesList', component: QueriesListComponent, data: { title: 'רשימת שאילתות' } }

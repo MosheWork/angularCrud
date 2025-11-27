@@ -1,0 +1,41 @@
+:host {
+    display: block;
+  }
+  
+  .groups-mat-table {
+    width: 100%;
+    margin-top: 8px;
+    border-radius: 4px;
+    overflow: hidden; // שיהיה יפה עם ה-shadow
+  
+    .mat-header-row {
+      background-color: #f5f5f5;
+    }
+  
+    .mat-header-cell {
+      font-weight: 600;
+      font-size: 13px;
+      text-align: right;
+    }
+  
+    .mat-cell {
+      font-size: 12px;
+      text-align: right;
+      padding-top: 4px;
+      padding-bottom: 4px;
+    }
+  
+    .mat-row:nth-child(even) {
+      background-color: #fafafa;
+    }
+  
+    .mat-row:hover {
+      background-color: rgba(0, 0, 0, 0.04);
+    }
+  
+    code {
+      font-family: Consolas, 'Courier New', monospace;
+      direction: ltr;
+    }
+  }
+  

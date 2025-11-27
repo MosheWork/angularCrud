@@ -10,7 +10,7 @@ import { environment } from '../../../environments/environment';
 import { MatDialog } from '@angular/material/dialog';
 import { ProcedureICD9ManagerDialogComponent } from './procedure-icd9-manager-dialog/procedure-icd9-manager-dialog.component';
 import { AuthenticationService } from '../../../app/services/authentication-service/authentication-service.component';
-import { Chart, registerables } from 'chart.js';
+import { Chart, registerables, ChartData, ChartConfiguration } from 'chart.js';
 Chart.register(...registerables);
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 Chart.register(ChartDataLabels);  // ← add this
@@ -56,6 +56,23 @@ giveOrderMatrixData = new MatTableDataSource<any>([]);
 showMatrixGraph = false;
 @ViewChild('matrixCanvas') matrixCanvas!: ElementRef<HTMLCanvasElement>;
 matrixChart: Chart | null = null;
+
+// ▼ add near your other chart fields
+@ViewChild('monthlyCanvas') monthlyCanvas!: ElementRef<HTMLCanvasElement>;
+monthlyChart: Chart | null = null;
+showMonthlyGraph = false;
+chartHeightMonthly = 600;
+
+// internal arrays for the plugin
+monthLabels: string[] = [];
+monthValidCounts: number[] = [];
+monthInvalidCounts: number[] = [];
+monthTotals: number[] = [];   
+
+procedureNameOptions: string[] = [];
+yearOptions: number[] = [];
+monthOptions: number[] = [];  // 1..12 that actually appear in the data
+monthPercents: number[] = [];   // 0..100 for the Y axis
 
   timeGroupCounts: Array<{ group: string; count: number }> = [];
   maxTimeGroupCount = 0;
@@ -140,6 +157,8 @@ chartHeightMatrix = 820;  // matrix Valid% chart (tab 3)
 
       this.calculateSummary(data);
       this.updateGauge();
+      this.refreshMonthlyChart();
+
 
       // 🔹 Build dropdown options
       this.buildFilterOptions(this.dataSource);
@@ -195,6 +214,29 @@ this.giveOrderMatrixData.sort      = this.matrixSort;
     this.surgeryDepartmentOptions = this.distinctSorted(data.map(r => r?.surgeryDepartment));
     this.giveOrderNameOptions     = this.distinctSorted(data.map(r => r?.giveOrderName));
     this.timeGroupOptions         = this.distinctSorted(data.map(r => r?.timeGroup));
+
+
+    // 1) ProcedureName
+this.procedureNameOptions = this.distinctSorted((data || []).map(r => r?.procedureName));
+
+// 2) Year (numeric ascending, unique)
+this.yearOptions = Array.from(
+  new Set(
+    (data || [])
+      .map(r => this.getRowYear(r))
+      .filter((y): y is number => typeof y === 'number')
+  )
+).sort((a, b) => a - b);
+
+// 3) Month (only months that appear, numeric ascending 1..12)
+this.monthOptions = Array.from(
+  new Set(
+    (data || [])
+      .map(r => this.getRowMonthNumber(r))
+      .filter((m): m is number => typeof m === 'number' && m >= 1 && m <= 12)
+  )
+).sort((a, b) => a - b);
+
   }
   
   
@@ -243,7 +285,10 @@ this.giveOrderMatrixData.sort      = this.matrixSort;
     formControls['pageSize'] = new FormControl(10);
     formControls['pageIndex'] = new FormControl(0);
     formControls['globalFilter'] = new FormControl('');
-
+    formControls['procedureNameFilter'] = new FormControl<string[] | null>(null); // multi
+    formControls['yearFilter']         = new FormControl<number[] | null>(null);  // multi
+    formControls['monthFilter']        = new FormControl<number[] | null>(null);  // multi
+    
     // NEW filter controls:
     formControls['topProcedure'] = new FormControl(null);         // number, threshold filter (<=)
     formControls['surgeryDepartmentFilter'] = new FormControl(''); // text equality
@@ -305,44 +350,55 @@ this.giveOrderMatrixData.sort      = this.matrixSort;
 
   // 🔹 Apply the 4 new filters in addition to your existing logic
   applyFilters() {
+    // keep graph counts fresh if graph view is on
     if (this.showGraph) this.buildTimeGroupCounts();
-
+  
     const f = this.filterForm.value;
     const globalFilter = (f['globalFilter'] || '').toLowerCase();
   
-    // read from the separate control
-    const selTopRaw = this.filterForm.get('topProcedureFilter')?.value;
-    const selTop: number | null =
-      selTopRaw === null || selTopRaw === undefined || selTopRaw === '' ? null : Number(selTopRaw);
-  
+    // ── existing selects ──────────────────────────────────────────────
     const selDept  = (f['surgeryDepartmentFilter'] || '').trim();
     const selGive  = (f['giveOrderNameFilter'] || '').trim();
     const selGroup = (f['timeGroup'] || '').trim();
   
-    // steps set: if 40 selected, [10,20,30,40] (derived from existing options)
+    // TopProcedure threshold logic (10..selected)
+    const selTopRaw = this.filterForm.get('topProcedureFilter')?.value;
+    const selTop: number | null =
+      selTopRaw === null || selTopRaw === undefined || selTopRaw === '' ? null : Number(selTopRaw);
     const allowedSteps = selTop === null ? null : this.topProcedureOptions.filter(n => n <= selTop);
   
-    this.filteredData = this.dataSource.filter(item => {
+    // ── NEW multi-selects ─────────────────────────────────────────────
+    const selProcedures: string[] = (f['procedureNameFilter'] || []) as string[];
+    const selYears: number[]      = (f['yearFilter'] || []) as number[];
+    const selMonths: number[]     = (f['monthFilter'] || []) as number[];
+  
+    const wantProc  = selProcedures?.length > 0;
+    const wantYear  = selYears?.length > 0;
+    const wantMonth = selMonths?.length > 0;
+  
+    // ── MAIN TABLE FILTER ─────────────────────────────────────────────
+    this.filteredData = (this.dataSource || []).filter(item => {
+      // topProcedure step (choose 20 -> allow 10 & 20)
       const itemTop = this.parseTopProcedure(item?.topProcedure);
+      const topOk   = allowedSteps === null ? true : (itemTop !== null && allowedSteps.includes(itemTop));
   
-      // step logic (choose 20 -> allow 10 & 20)
-      const topOk = allowedSteps === null ? true : (itemTop !== null && allowedSteps.includes(itemTop));
-  
+      // single-selects
       const deptOk  = !selDept  || String(item?.surgeryDepartment || '') === selDept;
       const giveOk  = !selGive  || String(item?.giveOrderName     || '') === selGive;
       const groupOk = !selGroup || String(item?.timeGroup         || '') === selGroup;
-      this.filteredNoDrugsData = this.noDrugsDataSource.filter(item => {
-        const deptOk  = !selDept  || String(item?.surgeryDepartment ?? item?.SurgeryDepartment ?? '') === selDept;
-        const giveOk  = !selGive  || String(item?.giveOrderName     ?? item?.GiveOrderName     ?? '') === selGive;
-        const groupOk = !selGroup || String(item?.timeGroup         ?? item?.TimeGroup         ?? '') === selGroup; // harmless if missing
-        return deptOk && giveOk && groupOk;
-      });
-    
-      this.noDrugsMatTableDataSource.data = this.filteredNoDrugsData;
-      if (this.noDrugsMatTableDataSource.paginator) this.noDrugsMatTableDataSource.paginator.firstPage();
+  
+      // multi-selects
+      const itemProc = String(item?.procedureName ?? '');
+      const itemYear = this.getRowYear(item);
+      const itemMon  = this.getRowMonthNumber(item);
+  
+      const procOk  = !wantProc  || (itemProc && selProcedures.includes(itemProc));
+      const yearOk  = !wantYear  || (itemYear !== null && selYears.includes(itemYear));
+      const monthOk = !wantMonth || (itemMon  !== null && selMonths.includes(itemMon));
+  
       // generic per-column text filters, but skip 'topProcedure' so it doesn't override step logic
       const perColumnOk = this.columns.every(column => {
-        if (column === 'topProcedure') return true; // ⬅️ critical
+        if (column === 'topProcedure') return true;
         const ctlVal = f[column];
         if (!ctlVal) return true;
         const value = String(item[column] ?? '').toLowerCase();
@@ -352,17 +408,48 @@ this.giveOrderMatrixData.sort      = this.matrixSort;
       const globalOk = !globalFilter ||
         this.columns.some(column => String(item[column] || '').toLowerCase().includes(globalFilter));
   
-      return perColumnOk && globalOk && topOk && deptOk && giveOk && groupOk;
+      return perColumnOk && globalOk && topOk && deptOk && giveOk && groupOk && procOk && yearOk && monthOk;
     });
   
+    // bind main table + count
     this.totalResults = this.filteredData.length;
     this.matTableDataSource.data = this.filteredData;
-    this.buildGiveOrderMatrix();
-    if (this.showGraph) {
-      this.refreshChart();
-    }
-    this.matTableDataSource.filter = ''; // don’t let MatTable’s built-in filter fight ours
+    this.matTableDataSource.filter = ''; // prevent MatTable built-in filter interference
     this.matTableDataSource.paginator = this.mainPaginator;
+  
+    // ── NO-DRUGS TABLE FILTER ─────────────────────────────────────────
+    this.filteredNoDrugsData = (this.noDrugsDataSource || []).filter(item => {
+      // single-selects
+      const deptOk  = !selDept  || String(item?.surgeryDepartment ?? item?.SurgeryDepartment ?? '') === selDept;
+      const giveOk  = !selGive  || String(item?.giveOrderName     ?? item?.GiveOrderName     ?? '') === selGive;
+      const groupOk = !selGroup || String(item?.timeGroup         ?? item?.TimeGroup         ?? '') === selGroup;
+  
+      // multi-selects
+      const itemProc = String(item?.procedureName ?? item?.ProcedureName ?? '');
+      const itemYear = this.getRowYear(item);
+      const itemMon  = this.getRowMonthNumber(item);
+  
+      const procOk  = !wantProc  || (itemProc && selProcedures.includes(itemProc));
+      const yearOk  = !wantYear  || (itemYear !== null && selYears.includes(itemYear));
+      const monthOk = !wantMonth || (itemMon  !== null && selMonths.includes(itemMon));
+  
+      // global text filter over the displayed columns in this table
+      const globalOk = !globalFilter || this.noDrugsColumns.some(c =>
+        String(item?.[c] ?? item?.[c[0].toUpperCase() + c.slice(1)] ?? '').toLowerCase().includes(globalFilter)
+      );
+  
+      return deptOk && giveOk && groupOk && procOk && yearOk && monthOk && globalOk;
+    });
+  
+    // bind no-drugs table
+    this.noDrugsMatTableDataSource.data = this.filteredNoDrugsData;
+    if (this.noDrugsMatTableDataSource.paginator) this.noDrugsMatTableDataSource.paginator.firstPage();
+  
+    // ── PIVOT + CHARTS + GAUGE ────────────────────────────────────────
+    this.buildGiveOrderMatrix();   // pivot table + (if on) matrix chart refresh inside
+    if (this.showGraph) this.refreshChart();          // TimeGroup chart
+    if (this.showMatrixGraph) this.refreshMatrixChart();
+    this.refreshMonthlyChart();    // monthly stacked Valid vs Total
     this.graphData = this.filteredData;
     this.updateGauge();
   }
@@ -697,39 +784,20 @@ this.giveOrderMatrixData.sort      = this.matrixSort;
   
   
  // Replace the current isGreenGroup with this:
-private isGreenGroup(group: string): boolean {
+ private isGreenGroup(group: string): boolean {
   if (!group) return false;
+  const g = group.toString().normalize('NFKC').toLowerCase().replace(/\s+/g,'').replace(/[‐–—−-]/g,'-');
 
-  // Normalize: lowercase, unify dashes, strip diacritics, remove spaces
-  const g = group
-    .toString()
-    .normalize('NFKC')
-    .toLowerCase()
-    .replace(/[‐-–—−]/g, '-')     // all dash types -> '-'
-    .replace(/\s+/g, '');         // remove spaces
+  // canonical
+  if (g === 'in60min') return true;
 
-  // Common aliases seen in data (English/Hebrew/compact)
-  const aliases = new Set([
-    '2-between30and60',
-    'between30and60',
-    '30-60',
-    '30to60',
-    '3060',
-    'בין30ל-60',     // likely Hebrew compact
-    'בין30ל60',
-    '2-30-60'        // sometimes prefixed with bucket index
-  ]);
+  // old & friendly aliases -> still treat as green
+  if (g === 'in30min' || g === '2-between30and60' || /30\D*60/.test(g) || /0\D*60/.test(g) || /(<=|upto|under)\s*60/.test(g) || g.includes('עד60'))
+    return true;
 
-  if (aliases.has(g)) return true;
-
-  // Fallback: any form that clearly indicates 30..60 window
-  // e.g., "2 - between 30 and 60", "בין 30 ל 60", "30 – 60", etc.
-  const digitsOnly = g.replace(/[^0-9]/g, '');
-  if (digitsOnly === '3060') return true;
-
-  // Generic regex: contains "30" then "60" (any non-digits between)
-  return /30\D*60/.test(g);
+  return false;
 }
+
 
   
   trackByGroup = (_: number, item: { group: string }) => item.group;
@@ -756,7 +824,8 @@ private isGreenGroup(group: string): boolean {
   
     for (const r of rows) {
       const name = this.getRowGiveOrderName(r);
-      const tg   = this.getRowTimeGroup(r);
+      const tgRaw = this.getRowTimeGroup(r);
+      const tg    = this.normalizeTimeGroupLabel(tgRaw);   // ✅ normalize here
       tgSet.add(tg);
   
       if (!map.has(name)) map.set(name, new Map<string, number>());
@@ -764,31 +833,25 @@ private isGreenGroup(group: string): boolean {
       inner.set(tg, (inner.get(tg) ?? 0) + 1);
     }
   
-    const timeGroups = Array.from(tgSet.values()).sort((a, b) => a.localeCompare(b, 'he'));
+    const timeGroups = Array.from(tgSet.values())
+      .sort((a, b) => a.localeCompare(b, 'he'));
   
-    // Columns: name | …timeGroups… | total | validPercent
     this.giveOrderMatrixColumns = ['giveOrderName', ...timeGroups, 'total', 'validPercent'];
   
     const tableRows = Array.from(map.entries()).map(([name, inner]) => {
       const row: any = { giveOrderName: name };
-      let sum = 0;
-      let validCount = 0;
+      let sum = 0, validCount = 0;
   
       for (const tg of timeGroups) {
         const c = inner.get(tg) ?? 0;
         row[tg] = c;
         sum += c;
-        if (this.isGreenGroup ? this.isGreenGroup(tg) : (tg || '').replace(/\s+/g,'').toLowerCase() === '2-between30and60') {
-          validCount += c;
-        }
+        if (this.isGreenGroup(tg)) validCount += c;   // ✅ green = In60Min
       }
   
       row.total = sum;
       row.validPercent = sum ? Number(((validCount / sum) * 100).toFixed(1)) : 0;
-  
       return row;
-
-     
     });
   
     this.giveOrderMatrixData.data = tableRows;
@@ -797,12 +860,10 @@ private isGreenGroup(group: string): boolean {
       if (this.matrixPaginator) this.giveOrderMatrixData.paginator = this.matrixPaginator;
       if (this.matrixSort)      this.giveOrderMatrixData.sort      = this.matrixSort;
     });
-
-    if (this.showMatrixGraph) {
-      // keep chart in sync with current pivot
-      setTimeout(() => this.refreshMatrixChart(), 0);
-    }
+  
+    if (this.showMatrixGraph) setTimeout(() => this.refreshMatrixChart(), 0);
   }
+  
   
   
   applyGiveOrderMatrixFilter(ev: Event): void {
@@ -1016,11 +1077,7 @@ private attachMatrixTableAdapters(): void {
 }
 // Desired order for the first-tab graph:
 private readonly TIMEGROUP_ORDER = [
-  'In30Min',
-  'Between30And60',
-  'Morethen60',
-  'AfterStart',
-  'NoTime'
+  'In60Min','Morethen60','AfterStart','NoTime'
 ];
 
 // Map any backend label variant → our canonical display label above
@@ -1032,15 +1089,232 @@ private normalizeTimeGroupLabel(raw: string): string {
     .replace(/[‐–—−-]/g, '-')   // unify dashes
     .replace(/\s+/g, '');       // remove spaces
 
-  if (/(between|בין).*30.*60/.test(s) || s === '2-between30and60') return 'Between30And60';
+  // ✅ everything up to 60 min → one bucket
+  if (s === 'in60min' || s === 'in30min' || s === '2-between30and60' ||
+      /0\D*60/.test(s) || /30\D*60/.test(s) || /(<=|upto|under)\s*60/.test(s) || s.includes('עד60'))
+    return 'In60Min';
+
   if (/(morethen60|morethan60|over60|>60|60\+)/.test(s) || s === '3-morethen60') return 'Morethen60';
   if (/(afterstart|after-incision|afterincision|<0|minus|negative)/.test(s) || s === '4-afterstart') return 'AfterStart';
   if (/(notime|ללא|איןשעה|missing|null)/.test(s) || s === '5-notime' || s === 'ללא') return 'NoTime';
-  if (/(in30|min30|<=30|upto30|under30|עד30|0-30)/.test(s) || s === '1-in30min') return 'In30Min';
 
-  // default fallback: keep original (trimmed) or map to NoTime if empty
   const trimmed = (raw || '').toString().trim();
   return trimmed ? trimmed : 'NoTime';
 }
+
+private getRowMonthKey(r: any): string {
+  // prefer operationStartTime, then drugGiveTime
+  const d = r?.operationStartTime || r?.drugGiveTime || r?.OperationStartTime || r?.DrugGiveTime;
+  if (!d) return '—';
+  const dt = new Date(d);
+  if (isNaN(dt.getTime())) return '—';
+  return `${dt.getFullYear()}-${String(dt.getMonth()+1).padStart(2,'0')}`; // YYYY-MM
+}
+private buildMonthlyValidSeries(): void {
+  const rows = this.matTableDataSource?.data ?? [];
+  const byMonth = new Map<string, {valid: number; invalid: number; total: number}>();
+
+  for (const r of rows) {
+    const month = this.getRowMonthKey(r);
+    const tg    = this.normalizeTimeGroupLabel(this.getRowTimeGroup(r));
+    const rec   = byMonth.get(month) || {valid: 0, invalid: 0, total: 0};
+
+    if (this.isGreenGroup(tg)) rec.valid += 1; else rec.invalid += 1;
+    rec.total += 1;
+    byMonth.set(month, rec);
+  }
+
+  const entries = Array.from(byMonth.entries()).sort(([a],[b]) => a.localeCompare(b));
+
+  this.monthLabels        = entries.map(([m])  => m);
+  this.monthValidCounts   = entries.map(([,v]) => v.valid);
+  this.monthInvalidCounts = entries.map(([,v]) => v.invalid);
+  this.monthTotals        = entries.map(([,v]) => v.total);
+  this.monthPercents      = entries.map(([,v]) => v.total ? +(v.valid / v.total * 100).toFixed(1) : 0);
+}
+
+private insideCountPlugin = {
+  id: 'insideCount',
+  afterDatasetsDraw: (chart: any) => {
+    const meta = chart.getDatasetMeta(0);        // the % dataset
+    if (!meta?.data?.length) return;
+
+    const { ctx } = chart;
+    const yScale = chart.scales.y;
+
+    ctx.save();
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.font = '600 12px sans-serif';
+    ctx.fillStyle = '#111';
+
+    meta.data.forEach((bar: any, i: number) => {
+      // center point inside the bar = halfway between base (0%) and value (%)
+      const baseY = bar.base ?? yScale.getPixelForValue(0);
+      const valueY = bar.y;
+      const cx = bar.x;
+      const cy = (baseY + valueY) / 2;
+
+      const valid = this.monthValidCounts[i] ?? 0;
+      const total = this.monthTotals[i] ?? 0;
+      if (total > 0) ctx.fillText(`${valid}/${total}`, cx, cy);
+    });
+
+    ctx.restore();
+  }
+};
+
+private topPercentPlugin = {
+  id: 'topPercent',
+  afterDatasetsDraw: (chart: any) => {
+    const ctx = chart.ctx;
+    const xScale = chart.scales.x;
+    const yScale = chart.scales.y;
+    if (!xScale || !yScale) return;
+
+    this.monthPercents.forEach((pct, i) => {
+      const x = xScale.getPixelForValue(i);
+      const y = yScale.getPixelForValue(pct) - 6; // a bit above the bar top
+
+      ctx.save();
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'bottom';
+      ctx.font = '600 12px sans-serif';
+      ctx.fillStyle = '#111';
+      ctx.fillText(`${pct}%`, x, y);
+      ctx.restore();
+    });
+  }
+};
+
+private refreshMonthlyChart(): void {
+  // build counts per month first
+  this.buildMonthlyValidSeries();
+
+  const labels = this.monthLabels;
+
+  // % Valid per month (0..100)
+  const percents: number[] = labels.map((_, i) => {
+    const t = this.monthTotals[i] ?? 0;
+    const v = this.monthValidCounts[i] ?? 0;
+    return t ? +(v / t * 100).toFixed(1) : 0;
+  });
+
+  // colors: green if ≥ 90%, else red
+  const barColors: string[]   = percents.map(p => p >= 90 ? 'rgba(165, 214, 167, 0.85)' : 'rgba(255, 205, 210, 0.85)');
+  const borderColors: string[]= percents.map(p => p >= 90 ? 'rgba(76, 175, 80, 1)'      : 'rgba(239, 83, 80, 1)');
+
+  const data: ChartData<'bar', number[], string> = {
+    labels,
+    datasets: [{
+      type: 'bar',
+      label: '% Valid',
+      data: percents,
+      backgroundColor: barColors,
+      borderColor: borderColors,
+      borderWidth: 1,
+      datalabels: { display: false }   // we draw our own labels inside the bar
+    } as any]
+  };
+
+  const chartOptions: ChartConfiguration<'bar'>['options'] = {
+    responsive: false,
+    maintainAspectRatio: false,
+    scales: {
+      x: { stacked: false },
+      y: {
+        beginAtZero: true,
+        min: 0, max: 100,
+        ticks: { stepSize: 10, callback: (v) => `${v}%` }
+      }
+    },
+    plugins: {
+      legend: { display: true, position: 'top' },
+      tooltip: {
+        callbacks: {
+          title: (items: any[]) => labels[items[0].dataIndex] || '',
+          label: (item: any) => {
+            const i = item.dataIndex;
+            const t = this.monthTotals[i] ?? 0;
+            const v = this.monthValidCounts[i] ?? 0;
+            const p = percents[i] ?? 0;
+            return `Valid: ${v}/${t} (${p}%)`;
+          }
+        }
+      }
+    }
+  };
+
+  // (re)create chart
+  if (this.monthlyChart) { this.monthlyChart.destroy(); this.monthlyChart = null; }
+  const canvas = this.monthlyCanvas?.nativeElement;
+  if (!canvas) return;
+  const ctx2 = canvas.getContext('2d');
+  if (!ctx2) return;
+
+  this.monthlyChart = new Chart(ctx2, {
+    type: 'bar',
+    data,
+    options: chartOptions,
+    // draw % above bar + valid/total *inside* the bar
+    plugins: [this.topPercentPlugin, this.insideCountPlugin]
+  });
+}
+
+
+setMonthlyChartHeight(h: number) {
+  this.chartHeightMonthly = h;
+  setTimeout(() => this.monthlyChart?.resize(), 0);
+}
+private getRowPrimaryDate(r: any): Date | null {
+  // same priority you used for monthly chart
+  const tryFields = [
+    r?.operationStartTime, r?.OperationStartTime,
+    r?.drugGiveTime,       r?.DrugGiveTime,
+    r?.operationEndTime,   r?.OperationEndTime
+  ];
+  for (const f of tryFields) {
+    const d = this.parseDateLike(f);
+    if (d) return d;
+  }
+  return null;
+}
+
+private getRowYear(r: any): number | null {
+  const d = this.getRowPrimaryDate(r);
+  return d ? d.getFullYear() : null;
+}
+
+private getRowMonthNumber(r: any): number | null {
+  const d = this.getRowPrimaryDate(r);
+  return d ? (d.getMonth() + 1) : null; // 1..12
+}
+private parseDateLike(v: any): Date | null {
+  if (!v) return null;
+  if (v instanceof Date && !isNaN(v.getTime())) return v;
+
+  // Handle strings: ISO, 'yyyy-MM-dd HH:mm', '/Date(...)' ticks, etc.
+  if (typeof v === 'string') {
+    // /Date(1699488000000)/
+    const m = v.match(/\/Date\((\d+)\)\//);
+    if (m) {
+      const d = new Date(Number(m[1]));
+      return isNaN(d.getTime()) ? null : d;
+    }
+    // Try replace space with 'T' for non-ISO SQL strings
+    const isoish = v.includes(' ') ? v.replace(' ', 'T') : v;
+    const d = new Date(isoish);
+    return isNaN(d.getTime()) ? null : d;
+  }
+
+  // Ticks or millis as number
+  if (typeof v === 'number') {
+    const d = new Date(v);
+    return isNaN(d.getTime()) ? null : d;
+  }
+
+  return null;
+}
+
 
 }

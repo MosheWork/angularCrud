@@ -203,6 +203,19 @@ import { QueriesListComponent } from './Noya-Apps/QueriesList/QueriesList.compon
 import { QueriesDialogComponent } from './Noya-Apps/QueriesList/QL-dialog.component';
 import { AmbulatoryBirthdayUpdateCRMComponent } from './ServiceCRM/ambulatory-birthday-update-crm/ambulatory-birthday-update-crm.component';
 import { GalitComponent } from './chameleon-reports/galit/galit.component';
+import { OtcExecutionsComponent } from './chameleon-reports/otc-executions/otc-executions.component';
+import { ServerInventoryComponent } from './server-inventory/server-inventory.component';
+import { ServerInventoryEditDialogComponent } from './server-inventory/server-inventory-edit-dialog/server-inventory-edit-dialog.component';
+import { ServersDialogComponent } from './ApplicationsListDept/servers-dialog/servers-dialog.component';
+import { IdEncryptComponent } from './id-encrypt/id-encrypt.component';
+import { ChameleonUserProfileUnitMapComponent } from './chameleon-reports/chameleon-user-profile-unit-map/chameleon-user-profile-unit-map.component';
+import { GlobalAppPermissionComponent } from './global-app-permission/global-app-permission.component';
+import { SesiaKerenComponent } from './sesia-keren/sesia-keren.component';
+import { SesiaKerenCommentDialogComponent } from './sesia-keren/sesia-keren-comment-dialog/sesia-keren-comment-dialog.component';
+import { RulesDialogComponent } from './chameleon-reports/galit/rules-dialog/rules-dialog.component';
+import { AdGroupsDialogComponent } from './global-app-permission/ad-groups-dialog/ad-groups-dialog.component';
+import { DiabetesDailyReportComponent } from './chameleon-reports/diabetes-daily-report/diabetes-daily-report.component';
+import { DiabetesSugerResultsDialogComponent  } from './chameleon-reports/diabetes-daily-report/diabetes-suger-lab-result/diabetes-suger-lab-result.component';
 
 
 export const MY_DATE_FORMATS: MatDateFormats = {
@@ -382,6 +395,20 @@ export function playerFactory() {
     QueriesDialogComponent,
     AmbulatoryBirthdayUpdateCRMComponent,
     GalitComponent,
+    OtcExecutionsComponent,
+    ServerInventoryComponent,
+    ServerInventoryEditDialogComponent,
+    ServersDialogComponent,
+    IdEncryptComponent,
+    ChameleonUserProfileUnitMapComponent,
+    GlobalAppPermissionComponent,
+    SesiaKerenComponent,
+    SesiaKerenCommentDialogComponent,
+    RulesDialogComponent,
+    AdGroupsDialogComponent,
+    DiabetesDailyReportComponent,
+    DiabetesSugerResultsDialogComponent 
+    
  
   ],
   imports: [

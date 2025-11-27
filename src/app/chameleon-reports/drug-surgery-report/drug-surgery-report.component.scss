@@ -391,4 +391,13 @@
   }
 
 
+  .monthly-chart-fixed {
+    margin-top: 8px;
+  }
+  
+  /* Match the canvas attributes for crisp rendering */
+  .monthly-canvas-wrap {
+    width: 1100px;
+    height: 420px;
+  }
   

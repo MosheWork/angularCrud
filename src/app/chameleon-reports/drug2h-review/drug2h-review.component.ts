@@ -148,13 +148,20 @@ export class Drug2hReviewComponent implements OnInit, AfterViewInit {
     if (filters.quarter?.length) {
       params.quarter = filters.quarter.join(','); // "1,2"
     }
-  
     if (filters.unitName?.length) {
-      params.unitName = filters.unitName.join(','); // "Cardiology,ICU"
+      params.unitName = filters.unitName.join(',');
+      console.log('Selected unit names:', filters.unitName);
+      console.log('Params being sent:', params);
+      
+      // Debug: Show character codes
+      console.log('Character codes:', 
+        [...params.unitName].map(c => c.charCodeAt(0).toString(16)).join(' ')
+      );
     }
-  
     this.http.get<any[]>(`${environment.apiUrl}Drug2hReview`, { params }).subscribe(
       (data) => {
+        console.log('Response data:', data);
+
         this.dataSource = data;
         this.matTableDataSource.data = [...this.dataSource];
         this.unitNames = Array.from(new Set(data.map((item) => item.unit_Name))).sort();

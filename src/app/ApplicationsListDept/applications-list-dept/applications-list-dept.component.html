@@ -13,6 +13,7 @@
         {{ (appsWithGuides / (totalApps || 1) * 100) | number:'1.0-0' }}%
       </div>
     </mat-card>
+
     <mat-card class="stat">
       <div class="stat-value">{{ missingTotal }}</div>
       <div class="stat-label">אפליקציות עם מידע חסר</div>
@@ -25,34 +26,35 @@
   <!-- 🔍 Filter + Actions Form -->
   <form [formGroup]="filterForm" dir="rtl" class="filter-form">
     <div class="form-footer">
-      <!-- Global Filter -->
       <mat-form-field class="long-search-bar" appearance="fill">
         <mat-label>חיפוש</mat-label>
         <input matInput [formControlName]="'globalFilter'" />
       </mat-form-field>
 
-      <!-- Reset Filters -->
-      <button mat-raised-button color="primary" (click)="resetFilters()" matTooltip="איפוס סינונים">
+      <button mat-raised-button color="primary"
+              (click)="resetFilters()"
+              matTooltip="איפוס סינונים">
         <i class="material-icons">refresh</i>
       </button>
 
-      <!-- Export to Excel -->
-      <img
-        src="../../assets/excel.png"
-        alt="Download"
-        (click)="exportToExcel()"
-        class="download-icon"
-        width="50px"
-      />
+      <img src="../../assets/excel.png"
+           alt="Download"
+           (click)="exportToExcel()"
+           class="download-icon"
+           width="50px" />
     </div>
 
-    <!-- Add Button -->
     <button mat-raised-button color="primary" (click)="openAddDialog()">הוסף יישום חדש</button>
   </form>
 
   <!-- 📋 Applications Table -->
-  <mat-table [dataSource]="matTableDataSource" matSort dir="rtl" class="mat-elevation-z8">
+  <mat-table *ngIf="matTableDataSource"
+             [dataSource]="matTableDataSource"
+             matSort
+             dir="rtl"
+             class="mat-elevation-z8">
 
+    <!-- Dynamic data columns -->
     <ng-container *ngFor="let column of columns" [matColumnDef]="column">
       <mat-header-cell *matHeaderCellDef mat-sort-header [ngClass]="column + '-col'">
         {{ getColumnLabel(column) }}
@@ -61,7 +63,7 @@
       <mat-cell *matCellDef="let element" [ngClass]="column + '-col'">
         <ng-container [ngSwitch]="column">
 
-          <!-- Guides column (lower-first key) -->
+          <!-- Guides column -->
           <ng-container *ngSwitchCase="'guides'">
             <a *ngIf="element.guideUrl; else noGuide"
                [href]="element.guideUrl" target="_blank" rel="noopener"
@@ -81,18 +83,38 @@
       </mat-cell>
     </ng-container>
 
-    <!-- Actions -->
+    <!-- Missing info column -->
+    <ng-container matColumnDef="missing">
+      <mat-header-cell *matHeaderCellDef>חסר</mat-header-cell>
+      <mat-cell *matCellDef="let r">
+        <ng-container *ngIf="hasMissing(r); else okTpl">
+          <mat-chip-list>
+            <mat-chip *ngIf="isEmpty(r.primaryReference)" color="warn" selected>רפרנט ראשי</mat-chip>
+            <mat-chip *ngIf="isEmpty(r.phones)"          color="warn" selected>טלפונים</mat-chip>
+            <mat-chip *ngIf="isEmpty(r.companyName)"     color="warn" selected>חברה</mat-chip>
+            <mat-chip *ngIf="isEmpty(r.appDescription)"  color="warn" selected>הסבר</mat-chip>
+          </mat-chip-list>
+        </ng-container>
+        <ng-template #okTpl>—</ng-template>
+      </mat-cell>
+    </ng-container>
+
+    <!-- Actions column -->
     <ng-container matColumnDef="actions">
       <mat-header-cell *matHeaderCellDef>פעולות</mat-header-cell>
       <mat-cell *matCellDef="let element">
         <button mat-icon-button (click)="openEditDialog(element)" matTooltip="עריכה">
           <mat-icon>edit</mat-icon>
         </button>
+        <button mat-icon-button (click)="openServersDialog(element)" matTooltip="שרתים עבור המערכת">
+          <mat-icon>dns</mat-icon>
+        </button>
       </mat-cell>
     </ng-container>
 
-    <mat-header-row *matHeaderRowDef="columns.concat(['actions'])"></mat-header-row>
-    <mat-row *matRowDef="let row; columns: columns.concat(['actions'])"></mat-row>
+    <!-- Header & Rows -->
+    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+    <mat-row *matRowDef="let row; columns: displayedColumns"></mat-row>
   </mat-table>
 
   <!-- 📄 Paginator -->
@@ -100,7 +122,6 @@
     *ngIf="matTableDataSource"
     [length]="matTableDataSource.data.length"
     [pageSize]="5"
-    [pageSizeOptions]="[15, 50, 100]"
-  >
+    [pageSizeOptions]="[15, 50, 100]">
   </mat-paginator>
 </div>

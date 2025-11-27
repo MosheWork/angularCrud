@@ -17,6 +17,7 @@ type Row = {
   docname: string;
   email?: string;
   link: string;
+  linkPdf: string;
   directManager: string;
   directManager2: string;
 
@@ -52,6 +53,7 @@ export class DoctorAuthorizationsComponent implements OnInit, AfterViewInit {
     'docname',
     'cellNumber',
     'link',
+    //'linkPdf',
    // 'email',                      // NEW
     'directManager',
     'directManagerFunction',      // NEW
@@ -111,7 +113,9 @@ export class DoctorAuthorizationsComponent implements OnInit, AfterViewInit {
     this.visibleFilterFields = (this.filterFields as (keyof Row | 'globalFilter')[])
   .filter(f => f !== 'globalFilter') as (keyof Row)[];
   }
-
+  get displayedColumns(): (keyof Row)[] {
+    return this.columns.filter(c => c !== 'linkPdf');
+  }
   ngAfterViewInit(): void {
     this.matTableDataSource.paginator = this.paginator;
     this.matTableDataSource.sort = this.sort;
@@ -207,7 +211,7 @@ export class DoctorAuthorizationsComponent implements OnInit, AfterViewInit {
     const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(this.filteredData);
     const wb: XLSX.WorkBook = { Sheets: { Data: ws }, SheetNames: ['Data'] };
     const buf = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
-    const blob = new Blob([buf], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+    const blob = new Blob([buf], { type: 'application/vnd.openxmlformatlinks-officedocument.spreadsheetml.sheet' });
     const a = document.createElement('a');
     a.href = URL.createObjectURL(blob);
     a.download = 'doctor_authorizations.xlsx';
@@ -259,7 +263,7 @@ makePermUrlFromMobile(mobile?: string): string {
 
 // Decide what URL to use: prefer explicit link; otherwise derive from cellNumber
 resolvePermUrl(row: Row): string {
-  const explicit = (row as any).link as string | undefined;
+  const explicit = (row as any).linkPdf as string | undefined;
   const url = explicit && explicit.trim() ? this.normalizeLink(explicit) : this.makePermUrlFromMobile(row.cellNumber);
   return url;
 }

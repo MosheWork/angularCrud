@@ -9,6 +9,8 @@ import * as XLSX from 'xlsx';
 import { environment } from '../../../environments/environment';
 import { ApplicationsListDeptDialogComponent } from '../applications-list-dept-dialog/applications-list-dept-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
+import { ServerInventoryComponent } from '../../server-inventory/server-inventory.component';
+import { ServersDialogComponent } from '../servers-dialog/servers-dialog.component';
 
 @Component({
   selector: 'app-applications-list-dept',
@@ -18,6 +20,7 @@ import { MatDialog } from '@angular/material/dialog';
 export class ApplicationsListDeptComponent implements OnInit {
   title: string = 'רשימת מערכות לפי מחלקות';
   totalResults = 0;
+  showGaps = false;
 
   // counters
   totalApps = 0;
@@ -48,7 +51,11 @@ export class ApplicationsListDeptComponent implements OnInit {
     'guides',
     'companyName'
   ];
-
+ get displayedColumns(): string[] {
+  return this.columns
+    .concat(this.showGaps ? ['missing'] : [])
+    .concat(['actions']);
+}
   constructor(private http: HttpClient, private fb: FormBuilder, public dialog: MatDialog) {
     this.filterForm = this.createFilterForm();
     this.matTableDataSource = new MatTableDataSource<any>([]);
@@ -187,6 +194,7 @@ export class ApplicationsListDeptComponent implements OnInit {
       if (result) this.fetchData();
     });
   }
+  
 
   getColumnLabel(column: string): string {
     switch (column) {
@@ -236,16 +244,28 @@ export class ApplicationsListDeptComponent implements OnInit {
   }
 
   // treat empty/null/placeholder values as missing
-  private isEmpty(v: any): boolean {
+  isEmpty(v: any): boolean {
     const s = `${v ?? ''}`.replace(/\u00A0/g, ' ').trim(); // handles &nbsp;
-    return s === '' || s === '-' || s === '—' || s.toLowerCase() === 'null' || s.toLowerCase() === 'undefined';
+    return s === '' || s === '-' || s === '—'
+        || s.toLowerCase() === 'null'
+        || s.toLowerCase() === 'undefined';
   }
 
   // does a row miss at least one required field?
-  private hasMissing(r: any): boolean {
+   hasMissing(r: any): boolean {
     return this.isEmpty(r.primaryReference)
         || this.isEmpty(r.phones)
         || this.isEmpty(r.companyName)
         || this.isEmpty(r.appDescription);
   }
+
+
+  openServersDialog(row: any) {
+    this.dialog.open(ServersDialogComponent, {
+      width: '1000px',
+      data: { forSystem: row.appName }   // 👈 send the AppName
+    });
+  }
+  
+  
 }

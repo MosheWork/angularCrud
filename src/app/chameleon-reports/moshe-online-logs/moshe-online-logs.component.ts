@@ -11,12 +11,12 @@ export class MosheOnlineLogsComponent implements OnInit {
 
 
   // Table 1: Request Count Per Controller
-  requestCountColumns: string[] = ['ControllerName', 'RequestCount'];
+  requestCountColumns: string[] = ['controllerName', 'requestCount'];
   requestCountData: any[] = [];
   isLoadingRequestCount = true;
 
   // Table 2: Detailed Online Logs
-  logColumns: string[] = ['RequestTime', 'RequestUrl', 'HttpMethod', 'UserIP'];
+  logColumns: string[] = ['requestTime', 'requestUrl', 'httpMethod', 'userIP'];
   logsData: any[] = [];
   isLoadingLogs = true;
 

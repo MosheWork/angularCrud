@@ -1,0 +1,33 @@
+<h2 mat-dialog-title>{{ isEdit ? 'עריכת שרת' : 'שרת חדש' }}</h2>
+
+<mat-dialog-content [formGroup]="form">
+  <div class="grid">
+    <mat-form-field appearance="outline">
+      <mat-label>Server Name</mat-label>
+      <input matInput formControlName="serverName" />
+      <mat-error *ngIf="form.get('serverName')?.hasError('required')">חובה למלא שם</mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>IP</mat-label>
+      <input matInput formControlName="ip" />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>For System</mat-label>
+      <input matInput formControlName="forSystem" />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full">
+      <mat-label>Description</mat-label>
+      <textarea matInput rows="3" formControlName="description"></textarea>
+    </mat-form-field>
+  </div>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="close()">ביטול</button>
+  <button mat-flat-button color="primary" (click)="save()" [disabled]="loading">
+    {{ isEdit ? 'שמור' : 'הוסף' }}
+  </button>
+</mat-dialog-actions>
