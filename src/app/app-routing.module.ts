@@ -292,7 +292,7 @@ const routes: Routes = [
 { path: 'GlobalAppPermission', component: GlobalAppPermissionComponent , data: { title: ' הרשאות' } },
 
 //מערכת ססיות לקרן 
-{ path: 'sesia-keren', component: SesiaKerenComponent , data: { title: 'ססיות' } }
+{ path: 'sesia-keren', component: SesiaKerenComponent , data: { title: 'ססיות' } },
 
 //NOYA's APPS
 { path: 'QueriesList', component: QueriesListComponent, data: { title: 'רשימת שאילתות' } }
